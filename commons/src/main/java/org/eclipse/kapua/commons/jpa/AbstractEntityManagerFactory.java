@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.jpa;
 
+import com.google.common.base.Strings;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.commons.setting.system.SystemSettingKey;
@@ -34,6 +35,8 @@ public abstract class AbstractEntityManagerFactory implements org.eclipse.kapua.
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractEntityManagerFactory.class);
 
+    private static final SystemSetting SYSTEM_SETTING = SystemSetting.getInstance();
+
     private static final Map<String, String> UNIQUE_CONTRAINTS = new HashMap<>();
     private EntityManagerFactory entityManagerFactory;
 
@@ -50,12 +53,19 @@ public abstract class AbstractEntityManagerFactory implements org.eclipse.kapua.
         //
         // Initialize the EntityManagerFactory
         try {
+
             // JPA configuration overrides
             Map<String, Object> configOverrides = new HashMap<>();
             configOverrides.put("javax.persistence.jdbc.driver", config.getString(SystemSettingKey.DB_JDBC_DRIVER));
 
-            configOverrides.put("eclipselink.cache.shared.default", "false"); // This has to be set to false in order to disable the local object cache of EclipseLink.
+            configOverrides.put(PersistenceUnitProperties.CACHE_SHARED_DEFAULT, "false"); // This has to be set to false in order to disable the local object cache of EclipseLink.
 
+            String targetDatabase = SYSTEM_SETTING.getString(SystemSettingKey.DB_JDBC_DATABASE_TARGET);
+            if (!Strings.isNullOrEmpty(targetDatabase)) {
+                configOverrides.put(PersistenceUnitProperties.TARGET_DATABASE, targetDatabase);
+            }
+
+            // Connection pooling
             configOverrides.put("eclipselink.connection-pool.default.url", JdbcConnectionUrlResolvers.resolveJdbcUrl());
             configOverrides.put("eclipselink.connection-pool.default.user", config.getString(SystemSettingKey.DB_USERNAME));
             configOverrides.put("eclipselink.connection-pool.default.password", config.getString(SystemSettingKey.DB_PASSWORD));
@@ -66,10 +76,13 @@ public abstract class AbstractEntityManagerFactory implements org.eclipse.kapua.
             configOverrides.put("eclipselink.connection-pool.default.max", config.getString(SystemSettingKey.DB_POOL_SIZE_MAX));
             configOverrides.put("eclipselink.connection-pool.default.wait", config.getString(SystemSettingKey.DB_POOL_BORROW_TIMEOUT));
 
+            // Logging
             configOverrides.put("eclipselink.logging.level", "FINE");
             configOverrides.put("eclipselink.logging.parameters", "true");
 
+            // Others
             configOverrides.put(PersistenceUnitProperties.SESSION_CUSTOMIZER, "org.eclipse.kapua.commons.jpa.KapuaSessionCustomizer");
+
             // Standalone JPA
             entityManagerFactory = Persistence.createEntityManagerFactory(persistenceUnitName, configOverrides);
         } catch (Throwable ex) {
@@ -86,6 +99,7 @@ public abstract class AbstractEntityManagerFactory implements org.eclipse.kapua.
     }
 
     // Entity manager factory methods
+
     /**
      * Returns an EntityManager instance.
      *
@@ -93,8 +107,8 @@ public abstract class AbstractEntityManagerFactory implements org.eclipse.kapua.
      * @throws KapuaException If {@link EntityManagerFactory#createEntityManager()} cannot create the {@link EntityManager}
      * @since 1.0.0
      */
-    public EntityManager createEntityManager()
-            throws KapuaException {
+    @Override
+    public EntityManager createEntityManager() throws KapuaException {
         return new EntityManager(entityManagerFactory.createEntityManager());
     }
 

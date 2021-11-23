@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.setting.system;
 
-import javax.persistence.EntityExistsException;
-
 import org.eclipse.kapua.commons.setting.SettingKey;
+
+import javax.persistence.EntityExistsException;
 
 /**
  * Setting system key implementation.
@@ -83,6 +83,10 @@ public enum SystemSettingKey implements SettingKey {
      * Database jdbc driver class
      */
     DB_JDBC_DRIVER("commons.db.jdbc.driver"),
+    /**
+     * Database jdbc driver class
+     */
+    DB_JDBC_DATABASE_TARGET("commons.db.jdbc.database.target"),
     /**
      * Database connection schema
      */
