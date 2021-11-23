@@ -13,31 +13,34 @@
 package org.eclipse.kapua.service.authentication.token.shiro;
 
 import org.eclipse.kapua.commons.jpa.AbstractEntityManagerFactory;
-import org.eclipse.kapua.commons.jpa.EntityManager;
 import org.eclipse.kapua.commons.jpa.EntityManagerFactory;
+import org.eclipse.kapua.service.authentication.shiro.AuthenticationServiceShiroImpl;
 
 /**
- * Entity manager factory for the {@link AccessTokenServiceImpl} module.
+ * {@link AuthenticationServiceShiroImpl} {@link EntityManagerFactory} implementation.
  *
  * @since 1.0.0
  */
-public class AccessTokenEntityManagerFactory extends AbstractEntityManagerFactory {
+public class AccessTokenEntityManagerFactory extends AbstractEntityManagerFactory implements EntityManagerFactory {
 
     private static final String PERSISTENCE_UNIT_NAME = "kapua-authentication";
 
     private static final AccessTokenEntityManagerFactory INSTANCE = new AccessTokenEntityManagerFactory();
 
     /**
-     * Constructs a new entity manager factory and configure it to use the user persistence unit.
+     * Constructor.
+     *
+     * @since 1.0.0
      */
     private AccessTokenEntityManagerFactory() {
         super(PERSISTENCE_UNIT_NAME);
     }
 
     /**
-     * Return the {@link EntityManager} singleton instance
+     * Returns the {@link EntityManagerFactory} instance.
      *
-     * @return
+     * @return The {@link EntityManagerFactory} instance.
+     * @since 1.0.0
      */
     public static EntityManagerFactory getInstance() {
         return INSTANCE;

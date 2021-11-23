@@ -13,13 +13,12 @@
 package org.eclipse.kapua.service.datastore.internal;
 
 import org.eclipse.kapua.commons.jpa.AbstractEntityManagerFactory;
-import org.eclipse.kapua.commons.jpa.EntityManager;
 import org.eclipse.kapua.commons.jpa.EntityManagerFactory;
 
 /**
- * Datastore entity manager factory implementation
+ * Datastore module {@link EntityManagerFactory} impleemntation
  *
- * @since 1.0
+ * @since 1.0.0
  */
 public class DatastoreEntityManagerFactory extends AbstractEntityManagerFactory implements EntityManagerFactory {
 
@@ -28,16 +27,19 @@ public class DatastoreEntityManagerFactory extends AbstractEntityManagerFactory 
     private static final DatastoreEntityManagerFactory INSTANCE = new DatastoreEntityManagerFactory();
 
     /**
-     * Constructs a new entity manager factory and configure it to use the account persistence unit.
+     * Constructor.
+     *
+     * @since 1.0.0
      */
     private DatastoreEntityManagerFactory() {
         super(PERSISTENCE_UNIT_NAME);
     }
 
     /**
-     * Return the {@link EntityManager} singleton instance
+     * Returns the {@link EntityManagerFactory} instance.
      *
-     * @return
+     * @return The {@link EntityManagerFactory} instance.
+     * @since 1.0.0
      */
     public static DatastoreEntityManagerFactory getInstance() {
         return INSTANCE;

@@ -13,11 +13,10 @@
 package org.eclipse.kapua.service.device.management.job.internal;
 
 import org.eclipse.kapua.commons.jpa.AbstractEntityManagerFactory;
-import org.eclipse.kapua.commons.jpa.EntityManager;
 import org.eclipse.kapua.commons.jpa.EntityManagerFactory;
 
 /**
- * {@link org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperation} {@link EntityManagerFactory}
+ * {@link JobDeviceManagementOperationServiceImpl} {@link EntityManagerFactory} implementation.
  *
  * @since 1.1.0
  */
@@ -28,7 +27,7 @@ public class JobDeviceManagementOperationEntityManagerFactory extends AbstractEn
     private static final JobDeviceManagementOperationEntityManagerFactory INSTANCE = new JobDeviceManagementOperationEntityManagerFactory();
 
     /**
-     * Constructs a new entity manager factory and configure it to use the job persistence unit.
+     * Constructor.
      *
      * @since 1.1.0
      */
@@ -37,9 +36,9 @@ public class JobDeviceManagementOperationEntityManagerFactory extends AbstractEn
     }
 
     /**
-     * Return the {@link EntityManager} singleton instance
+     * Returns the {@link EntityManagerFactory} instance
      *
-     * @return
+     * @return The {@link EntityManagerFactory} instance.
      * @since 1.1.0
      */
     public static JobDeviceManagementOperationEntityManagerFactory getInstance() {

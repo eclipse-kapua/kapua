@@ -53,7 +53,7 @@ public class DeviceConnectionServiceImpl extends AbstractKapuaConfigurableServic
     private static final Logger LOGGER = LoggerFactory.getLogger(DeviceConnectionServiceImpl.class);
 
     public DeviceConnectionServiceImpl() {
-        this(DeviceEntityManagerFactory.instance());
+        this(DeviceEntityManagerFactory.getInstance());
     }
 
     public DeviceConnectionServiceImpl(DeviceEntityManagerFactory deviceEntityManagerFactory) {

@@ -80,7 +80,7 @@ public class CucumberWithPropertiesForDeviceRegistry extends CucumberWithPropert
                 bind(KapuaMetatypeFactory.class).toInstance(new KapuaMetatypeFactoryImpl());
 
                 // Inject actual Device registry service related services
-                DeviceEntityManagerFactory deviceEntityManagerFactory = DeviceEntityManagerFactory.instance();
+                DeviceEntityManagerFactory deviceEntityManagerFactory = DeviceEntityManagerFactory.getInstance();
                 bind(DeviceEntityManagerFactory.class).toInstance(deviceEntityManagerFactory);
 
                 bind(DeviceRegistryService.class).toInstance(new DeviceRegistryServiceImpl());

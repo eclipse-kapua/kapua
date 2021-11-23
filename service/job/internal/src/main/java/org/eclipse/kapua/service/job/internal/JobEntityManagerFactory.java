@@ -13,13 +13,12 @@
 package org.eclipse.kapua.service.job.internal;
 
 import org.eclipse.kapua.commons.jpa.AbstractEntityManagerFactory;
-import org.eclipse.kapua.commons.jpa.EntityManager;
 import org.eclipse.kapua.commons.jpa.EntityManagerFactory;
 
 /**
- * Entity manager factory for the job module.
+ * {@link JobServiceImpl} {@link EntityManagerFactory} implementation.
  *
- * @since 1.0
+ * @since 1.0.0
  */
 public class JobEntityManagerFactory extends AbstractEntityManagerFactory implements EntityManagerFactory {
 
@@ -28,16 +27,19 @@ public class JobEntityManagerFactory extends AbstractEntityManagerFactory implem
     private static final JobEntityManagerFactory INSTANCE = new JobEntityManagerFactory();
 
     /**
-     * Constructs a new entity manager factory and configure it to use the job persistence unit.
+     * Constructor.
+     *
+     * @since 1.0.0
      */
     private JobEntityManagerFactory() {
         super(PERSISTENCE_UNIT_NAME);
     }
 
     /**
-     * Return the {@link EntityManager} singleton instance
+     * Returns the {@link EntityManagerFactory} instance.
      *
-     * @return
+     * @return The {@link EntityManagerFactory} instance.
+     * @since 1.0.0
      */
     public static JobEntityManagerFactory getInstance() {
         return INSTANCE;

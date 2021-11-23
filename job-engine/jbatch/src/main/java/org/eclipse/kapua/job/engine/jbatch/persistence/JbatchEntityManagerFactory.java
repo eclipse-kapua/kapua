@@ -13,11 +13,11 @@
 package org.eclipse.kapua.job.engine.jbatch.persistence;
 
 import org.eclipse.kapua.commons.jpa.AbstractEntityManagerFactory;
-import org.eclipse.kapua.commons.jpa.EntityManager;
 import org.eclipse.kapua.commons.jpa.EntityManagerFactory;
+import org.eclipse.kapua.job.engine.jbatch.driver.JbatchDriver;
 
 /**
- * {@link EntityManagerFactory} for the jBatch module.
+ * {@link JbatchDriver} {@link EntityManagerFactory} implementation.
  *
  * @since 1.2.0
  */
@@ -28,16 +28,19 @@ public class JbatchEntityManagerFactory extends AbstractEntityManagerFactory imp
     private static final JbatchEntityManagerFactory INSTANCE = new JbatchEntityManagerFactory();
 
     /**
-     * Constructs a new entity manager factory and configure it to use the job persistence unit.
+     * Constructor.
+     *
+     * @since 1.2.0
      */
     private JbatchEntityManagerFactory() {
         super(PERSISTENCE_UNIT_NAME);
     }
 
     /**
-     * Return the {@link EntityManager} singleton instance
+     * Returns the {@link EntityManagerFactory} instance.
      *
-     * @return
+     * @return The {@link EntityManagerFactory} instance.
+     * @since 1.2.0
      */
     public static JbatchEntityManagerFactory getInstance() {
         return INSTANCE;

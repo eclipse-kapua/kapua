@@ -18,9 +18,9 @@ import org.eclipse.kapua.commons.jpa.EntityManager;
 import org.eclipse.kapua.commons.jpa.EntityManagerFactory;
 
 /**
- * Entity manager factory for the authentication module.
+ * {@link AuthenticationServiceShiroImpl} {@link EntityManagerFactory} implementation.
  *
- * @since 1.0
+ * @since 1.0.0
  */
 public class AuthenticationEntityManagerFactory extends AbstractEntityManagerFactory implements EntityManagerFactory {
 
@@ -29,26 +29,29 @@ public class AuthenticationEntityManagerFactory extends AbstractEntityManagerFac
     private static final AuthenticationEntityManagerFactory INSTANCE = new AuthenticationEntityManagerFactory();
 
     /**
-     * Constructs a new entity manager factory and configure it to use the authentication persistence unit.
+     * Constructor.
+     *
+     * @since 1.0.0
      */
     private AuthenticationEntityManagerFactory() {
         super(PERSISTENCE_UNIT_NAME);
     }
 
     /**
-     * Return the {@link EntityManager} singleton instance
+     * Returns a {@link EntityManager} instance
      *
-     * @return
-     * @throws KapuaException
+     * @return A {@link EntityManager} instance.
+     * @since 1.0.0
      */
     public static EntityManager getEntityManager() throws KapuaException {
         return INSTANCE.createEntityManager();
     }
 
     /**
-     * Return the {@link EntityManager} singleton instance
+     * Returns the {@link EntityManagerFactory} instance.
      *
-     * @return
+     * @return The {@link EntityManagerFactory} instance.
+     * @since 1.0.0
      */
     public static AuthenticationEntityManagerFactory getInstance() {
         return INSTANCE;

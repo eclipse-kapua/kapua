@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Utility class for JPA operations.
+ * Base {@code abstract} {@link EntityManager}.
  *
  * @since 1.0.0
  */
@@ -134,6 +134,14 @@ public abstract class AbstractEntityManagerFactory implements org.eclipse.kapua.
     // Private Methods
     //
 
+    /**
+     * Prints the {@link EntityManager}'s configuration.
+     *
+     * @param persistenceUnitName The {@link PersistenceUnit#name()}.
+     * @param datasourceName      The datasource name.
+     * @param configOverrides     The configuration overrides for the {@link EntityManager}.
+     * @since 1.6.0
+     */
     private void printEntityManagerConfiguration(String persistenceUnitName, String datasourceName, Map<String, Object> configOverrides) {
         ConfigurationPrinter configurationPrinter =
                 ConfigurationPrinter.create()

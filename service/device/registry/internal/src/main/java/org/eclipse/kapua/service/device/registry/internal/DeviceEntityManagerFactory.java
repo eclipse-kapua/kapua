@@ -15,40 +15,45 @@ package org.eclipse.kapua.service.device.registry.internal;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.jpa.AbstractEntityManagerFactory;
 import org.eclipse.kapua.commons.jpa.EntityManager;
+import org.eclipse.kapua.commons.jpa.EntityManagerFactory;
 
 /**
- * Entity manager factory for the device module.
+ * {@link DeviceRegistryServiceImpl} {@link EntityManagerFactory} implementation.
  *
- * @since 1.0
+ * @since 1.0.0
  */
-public class DeviceEntityManagerFactory extends AbstractEntityManagerFactory {
+public class DeviceEntityManagerFactory extends AbstractEntityManagerFactory implements EntityManagerFactory {
 
     private static final String PERSISTENCE_UNIT_NAME = "kapua-device";
 
     private static final DeviceEntityManagerFactory INSTANCE = new DeviceEntityManagerFactory();
 
     /**
-     * Constructs a new entity manager factory and configure it to use the device persistence unit.
+     * Constructor.
+     *
+     * @since 1.0.0
      */
     private DeviceEntityManagerFactory() {
         super(PERSISTENCE_UNIT_NAME);
     }
 
     /**
-     * Return a new {@link EntityManager} instance
+     * Returns a {@link EntityManager} instance.
      *
-     * @return
+     * @return A {@link EntityManager} instance.
+     * @since 1.0.0
      */
     public static EntityManager getEntityManager() throws KapuaException {
         return INSTANCE.createEntityManager();
     }
 
     /**
-     * Return the {@link EntityManager} singleton instance
+     * Returns the {@link EntityManagerFactory} instance.
      *
-     * @return
+     * @return The {@link EntityManagerFactory} instance.
+     * @since 1.0.0
      */
-    public static DeviceEntityManagerFactory instance() {
+    public static DeviceEntityManagerFactory getInstance() {
         return INSTANCE;
     }
 

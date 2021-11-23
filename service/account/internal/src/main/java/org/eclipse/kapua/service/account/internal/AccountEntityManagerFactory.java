@@ -13,7 +13,6 @@
 package org.eclipse.kapua.service.account.internal;
 
 import org.eclipse.kapua.commons.jpa.AbstractEntityManagerFactory;
-import org.eclipse.kapua.commons.jpa.EntityManager;
 import org.eclipse.kapua.commons.jpa.EntityManagerFactory;
 
 /**
@@ -37,9 +36,9 @@ public class AccountEntityManagerFactory extends AbstractEntityManagerFactory im
     }
 
     /**
-     * Returns the {@link EntityManager} instance
+     * Returns the {@link EntityManagerFactory} instance.
      *
-     * @return The {@link EntityManager} instance.
+     * @return The {@link EntityManagerFactory} instance.
      * @since 1.0.0
      */
     public static AccountEntityManagerFactory getInstance() {

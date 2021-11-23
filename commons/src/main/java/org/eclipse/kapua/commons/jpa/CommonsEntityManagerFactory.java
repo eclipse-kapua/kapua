@@ -15,37 +15,40 @@ package org.eclipse.kapua.commons.jpa;
 import org.eclipse.kapua.KapuaException;
 
 /**
- * Commons module entity manager reference service.
+ * Commons module {@link EntityManagerFactory} implementation.
  *
- * @since 1.0
+ * @since 1.0.0
  */
-public class CommonsEntityManagerFactory extends AbstractEntityManagerFactory {
+public class CommonsEntityManagerFactory extends AbstractEntityManagerFactory implements EntityManagerFactory {
 
     private static final String PERSISTENCE_UNIT_NAME = "kapua-commons";
 
     private static final CommonsEntityManagerFactory INSTANCE = new CommonsEntityManagerFactory();
 
     /**
-     * Constructor
+     * Constructor.
+     *
+     * @since 1.0.0
      */
     private CommonsEntityManagerFactory() {
         super(PERSISTENCE_UNIT_NAME);
     }
 
     /**
-     * Return the entity manager
+     * Returns a {@link EntityManager} instance
      *
-     * @return
-     * @throws KapuaException
+     * @return A {@link EntityManager} instance.
+     * @since 1.0.0
      */
     public static EntityManager getEntityManager() throws KapuaException {
         return INSTANCE.createEntityManager();
     }
 
     /**
-     * Return the {@link CommonsEntityManagerFactory} instance (singleton)
+     * Returns the {@link EntityManagerFactory} instance.
      *
-     * @return
+     * @return The {@link EntityManagerFactory} instance.
+     * @since 1.0.0
      */
     public static CommonsEntityManagerFactory getInstance() {
         return INSTANCE;
