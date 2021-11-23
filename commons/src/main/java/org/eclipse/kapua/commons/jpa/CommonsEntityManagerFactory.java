@@ -12,9 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.jpa;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.kapua.KapuaException;
 
 /**
@@ -25,18 +22,14 @@ import org.eclipse.kapua.KapuaException;
 public class CommonsEntityManagerFactory extends AbstractEntityManagerFactory {
 
     private static final String PERSISTENCE_UNIT_NAME = "kapua-commons";
-    private static final String DATASOURCE_NAME = "kapua-dbpool";
-    private static final Map<String, String> UNIQUE_CONTRAINTS = new HashMap<>();
 
-    private static CommonsEntityManagerFactory instance = new CommonsEntityManagerFactory();
+    private static final CommonsEntityManagerFactory INSTANCE = new CommonsEntityManagerFactory();
 
     /**
      * Constructor
      */
     private CommonsEntityManagerFactory() {
-        super(PERSISTENCE_UNIT_NAME,
-                DATASOURCE_NAME,
-                UNIQUE_CONTRAINTS);
+        super(PERSISTENCE_UNIT_NAME);
     }
 
     /**
@@ -45,9 +38,8 @@ public class CommonsEntityManagerFactory extends AbstractEntityManagerFactory {
      * @return
      * @throws KapuaException
      */
-    public static EntityManager getEntityManager()
-            throws KapuaException {
-        return instance.createEntityManager();
+    public static EntityManager getEntityManager() throws KapuaException {
+        return INSTANCE.createEntityManager();
     }
 
     /**
@@ -56,6 +48,6 @@ public class CommonsEntityManagerFactory extends AbstractEntityManagerFactory {
      * @return
      */
     public static CommonsEntityManagerFactory getInstance() {
-        return instance;
+        return INSTANCE;
     }
 }

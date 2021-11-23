@@ -16,9 +16,6 @@ import org.eclipse.kapua.commons.jpa.AbstractEntityManagerFactory;
 import org.eclipse.kapua.commons.jpa.EntityManager;
 import org.eclipse.kapua.commons.jpa.EntityManagerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * `kapua-scheduler-internal` {@link EntityManagerFactory}.
  *
@@ -27,10 +24,8 @@ import java.util.Map;
 public class SchedulerEntityManagerFactory extends AbstractEntityManagerFactory implements EntityManagerFactory {
 
     private static final String PERSISTENCE_UNIT_NAME = "kapua-scheduler";
-    private static final String DATASOURCE_NAME = "kapua-dbpool";
-    private static final Map<String, String> UNIQUE_CONTRAINTS = new HashMap<>();
 
-    private static SchedulerEntityManagerFactory instance = new SchedulerEntityManagerFactory();
+    private static final SchedulerEntityManagerFactory INSTANCE = new SchedulerEntityManagerFactory();
 
     /**
      * Constructs a new entity manager factory and configure it to use the scheduler persistence unit.
@@ -38,9 +33,7 @@ public class SchedulerEntityManagerFactory extends AbstractEntityManagerFactory 
      * @since 1.0.0
      */
     private SchedulerEntityManagerFactory() {
-        super(PERSISTENCE_UNIT_NAME,
-                DATASOURCE_NAME,
-                UNIQUE_CONTRAINTS);
+        super(PERSISTENCE_UNIT_NAME);
     }
 
     /**
@@ -50,6 +43,6 @@ public class SchedulerEntityManagerFactory extends AbstractEntityManagerFactory 
      * @since 1.0.0
      */
     public static SchedulerEntityManagerFactory getInstance() {
-        return instance;
+        return INSTANCE;
     }
 }

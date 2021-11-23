@@ -22,9 +22,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.PersistenceUnit;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * Utility class for JPA operations.
@@ -37,22 +37,46 @@ public abstract class AbstractEntityManagerFactory implements org.eclipse.kapua.
 
     private static final SystemSetting SYSTEM_SETTING = SystemSetting.getInstance();
 
-    private static final Map<String, String> UNIQUE_CONTRAINTS = new HashMap<>();
+    private static final String DEFAULT_DATASOURCE_NAME = "kapua-dbpool";
+
     private EntityManagerFactory entityManagerFactory;
 
     /**
-     * Protected constructor
+     * Constructor.
      *
-     * @param persistenceUnitName
-     * @param datasourceName
-     * @param uniqueConstraints
+     * @param persistenceUnitName The {@link PersistenceUnit} name.
+     * @param datasourceName      The {@link javax.sql.DataSource} name.
+     * @param uniqueConstraints   The unique constraints for the given {@link PersistenceUnit}.
+     * @since 1.0.0
+     * @deprecated Since 1.6.0. Unique constraint are not used.
      */
+    @Deprecated
     protected AbstractEntityManagerFactory(String persistenceUnitName, String datasourceName, Map<String, String> uniqueConstraints) {
-        SystemSetting config = SystemSetting.getInstance();
+        this(persistenceUnitName, datasourceName);
+    }
 
+    /**
+     * Constructor.
+     *
+     * @param persistenceUnitName The {@link PersistenceUnit} name.
+     * @since 1.6.0
+     */
+    protected AbstractEntityManagerFactory(String persistenceUnitName) {
+        this(persistenceUnitName, DEFAULT_DATASOURCE_NAME);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param persistenceUnitName The {@link PersistenceUnit} name.
+     * @param datasourceName      The {@link javax.sql.DataSource} name.
+     * @since 1.6.0
+     */
+    protected AbstractEntityManagerFactory(String persistenceUnitName, String datasourceName) {
         //
         // Initialize the EntityManagerFactory
         try {
+            SystemSetting config = SystemSetting.getInstance();
 
             // JPA configuration overrides
             Map<String, Object> configOverrides = new HashMap<>();
@@ -88,13 +112,6 @@ public abstract class AbstractEntityManagerFactory implements org.eclipse.kapua.
         } catch (Throwable ex) {
             LOG.error("Error creating EntityManagerFactory", ex);
             throw new ExceptionInInitializerError(ex);
-        }
-
-        //
-        // Set unique constrains for this persistence unit
-        // FIXME: this is needed? With EclipseLink we lost the ConstraintViolationException.
-        for (Entry<String, String> uc : uniqueConstraints.entrySet()) {
-            UNIQUE_CONTRAINTS.put(uc.getKey(), uc.getValue());
         }
     }
 

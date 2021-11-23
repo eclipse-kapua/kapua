@@ -16,9 +16,6 @@ import org.eclipse.kapua.commons.jpa.AbstractEntityManagerFactory;
 import org.eclipse.kapua.commons.jpa.EntityManager;
 import org.eclipse.kapua.commons.jpa.EntityManagerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * {@link EntityManagerFactory} for the jBatch module.
  *
@@ -27,18 +24,14 @@ import java.util.Map;
 public class JbatchEntityManagerFactory extends AbstractEntityManagerFactory implements EntityManagerFactory {
 
     private static final String PERSISTENCE_UNIT_NAME = "jbatch";
-    private static final String DATASOURCE_NAME = "kapua-dbpool";
-    private static final Map<String, String> UNIQUE_CONTRAINTS = new HashMap<>();
 
-    private static JbatchEntityManagerFactory instance = new JbatchEntityManagerFactory();
+    private static final JbatchEntityManagerFactory INSTANCE = new JbatchEntityManagerFactory();
 
     /**
      * Constructs a new entity manager factory and configure it to use the job persistence unit.
      */
     private JbatchEntityManagerFactory() {
-        super(PERSISTENCE_UNIT_NAME,
-                DATASOURCE_NAME,
-                UNIQUE_CONTRAINTS);
+        super(PERSISTENCE_UNIT_NAME);
     }
 
     /**
@@ -47,6 +40,6 @@ public class JbatchEntityManagerFactory extends AbstractEntityManagerFactory imp
      * @return
      */
     public static JbatchEntityManagerFactory getInstance() {
-        return instance;
+        return INSTANCE;
     }
 }
