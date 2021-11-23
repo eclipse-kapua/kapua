@@ -56,7 +56,7 @@ public class ScratchCodeServiceImpl extends AbstractKapuaService implements Scra
     private static final MfaAuthenticator MFA_AUTHENTICATOR = MFA_AUTH_SERVICE_LOCATOR.getMfaAuthenticator();
 
     public ScratchCodeServiceImpl() {
-        super(ScratchCodeEntityManagerFactory.getInstance());
+        super(AuthenticationEntityManagerFactory.getInstance());
     }
 
     @Override

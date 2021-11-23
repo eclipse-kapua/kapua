@@ -24,6 +24,7 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authentication.AuthenticationDomains;
+import org.eclipse.kapua.service.authentication.shiro.AuthenticationEntityManagerFactory;
 import org.eclipse.kapua.service.authentication.token.AccessToken;
 import org.eclipse.kapua.service.authentication.token.AccessTokenAttributes;
 import org.eclipse.kapua.service.authentication.token.AccessTokenCreator;
@@ -56,7 +57,7 @@ public class AccessTokenServiceImpl extends AbstractKapuaService implements Acce
      * Constructor
      */
     public AccessTokenServiceImpl() {
-        super(AccessTokenEntityManagerFactory.getInstance());
+        super(AuthenticationEntityManagerFactory.getInstance());
     }
 
     @Override
