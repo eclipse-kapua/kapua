@@ -64,7 +64,7 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-security-authentication-api</artifactId>
+            <artifactId>kapua-service-client</artifactId>
         </dependency>
 
         <dependency>
@@ -92,10 +92,6 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-service-client</artifactId>
         </dependency>
     </dependencies>
     <build>
