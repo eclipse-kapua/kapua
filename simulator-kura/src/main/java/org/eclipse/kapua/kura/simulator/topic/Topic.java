@@ -20,9 +20,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import com.google.common.base.Function;
 
 public final class Topic {
 
@@ -172,15 +171,14 @@ public final class Topic {
     }
 
     /**
-     * Renders all tokens from {@code fromIndex} (inclusive) to {@code toIndex}
-     * (exclusive)
+     * Renders all tokens from {@code fromIndex} (inclusive) to {@code toIndex} (exclusive)
      *
      * @param fromIndex
-     *            first item to render
+     *         first item to render
      * @param toIndex
-     *            first item <strong>not</strong> to render
+     *         first item <strong>not</strong> to render
      * @param context
-     *            the additional context to use
+     *         the additional context to use
      * @return the rendered string
      */
     public String render(final int fromIndex, final int toIndex, final Map<String, String> context) {
@@ -192,13 +190,12 @@ public final class Topic {
     }
 
     /**
-     * Renders all tokens from {@code fromIndex} (inclusive) to {@code toIndex}
-     * (exclusive)
+     * Renders all tokens from {@code fromIndex} (inclusive) to {@code toIndex} (exclusive)
      *
      * @param fromIndex
-     *            first item to render
+     *         first item to render
      * @param toIndex
-     *            first item <strong>not</strong> to render
+     *         first item <strong>not</strong> to render
      * @return the rendered string
      */
     public String render(final int fromIndex, final int toIndex) {
@@ -243,7 +240,7 @@ public final class Topic {
      * </p>
      *
      * @param application
-     *            the application ID
+     *         the application ID
      * @return a new topic
      */
     public static Topic application(final String application) {
@@ -278,9 +275,9 @@ public final class Topic {
      * Attach information to the local topic context
      *
      * @param key
-     *            the key of the value
+     *         the key of the value
      * @param value
-     *            the value to attach
+     *         the value to attach
      * @return the current instance
      */
     public Topic attach(final String key, final String value) {

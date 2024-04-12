@@ -12,17 +12,18 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.account.xml;
 
-import com.google.common.base.Strings;
+import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+
 import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaIdFactory;
 import org.eclipse.kapua.service.account.Account;
-
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * {@link Account#getParentAccountPath()} {@link XmlAdapter}.
@@ -35,37 +36,37 @@ public class AccountParentPathXmlAdapter extends XmlAdapter<String, String> {
 
     @Override
     public String marshal(String parentAccountPathLong) {
-        if (Strings.isNullOrEmpty(parentAccountPathLong)) {
-            return null;
-        } else {
-            String[] parentAccountPathLongTokens = parentAccountPathLong.substring(1).split("/");
+        return Optional.ofNullable(parentAccountPathLong)
+                .filter(s -> s.length() > 0)
+                .map(s -> {
+                    String[] parentAccountPathLongTokens = s.substring(1).split("/");
 
-            List<String> parentAccountPathBase64List =
-                    Arrays.stream(parentAccountPathLongTokens)
-                            .map(p -> kapuaIdFactory.newKapuaId(new BigInteger(p)).toCompactId())
-                            .collect(Collectors.toList());
+                    List<String> parentAccountPathBase64List =
+                            Arrays.stream(parentAccountPathLongTokens)
+                                    .map(p -> kapuaIdFactory.newKapuaId(new BigInteger(p)).toCompactId())
+                                    .collect(Collectors.toList());
 
-            return "/" + String.join("/", parentAccountPathBase64List);
-        }
+                    return "/" + String.join("/", parentAccountPathBase64List);
+                })
+                .orElse(null);
     }
 
     @Override
     public String unmarshal(String parentAccountPathBase64) throws KapuaIllegalArgumentException {
-        if (Strings.isNullOrEmpty(parentAccountPathBase64)) {
+        if (parentAccountPathBase64 == null || parentAccountPathBase64.length() == 0) {
             return null;
-        } else {
-            String[] parentAccountPathBase64Tokens = parentAccountPathBase64.substring(1).split("/");
+        }
+        String[] parentAccountPathBase64Tokens = parentAccountPathBase64.substring(1).split("/");
 
-            try {
-                List<String> parentAccountPathLongList =
-                        Arrays.stream(parentAccountPathBase64Tokens)
-                                .map(p -> kapuaIdFactory.newKapuaId(p).toStringId())
-                                .collect(Collectors.toList());
+        try {
+            List<String> parentAccountPathLongList =
+                    Arrays.stream(parentAccountPathBase64Tokens)
+                            .map(p -> kapuaIdFactory.newKapuaId(p).toStringId())
+                            .collect(Collectors.toList());
 
-                return "/" + String.join("/", parentAccountPathLongList);
-            } catch (IllegalArgumentException e) {
-                throw new KapuaIllegalArgumentException("account.parentAccountPath", parentAccountPathBase64);
-            }
+            return "/" + String.join("/", parentAccountPathLongList);
+        } catch (IllegalArgumentException e) {
+            throw new KapuaIllegalArgumentException("account.parentAccountPath", parentAccountPathBase64);
         }
     }
 }
