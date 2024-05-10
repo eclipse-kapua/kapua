@@ -41,6 +41,7 @@ import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.EntityType;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.eclipse.kapua.KapuaEntityExistsException;
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaErrorCodes;
@@ -354,11 +355,11 @@ public class KapuaEntityJpaRepository<E extends KapuaEntity, C extends E, L exte
      * @throws KapuaException
      *         If any problem occurs.
      */
-    private <E> Predicate handleKapuaQueryPredicates(QueryPredicate queryPredicate,
-            Map<ParameterExpression, Object> binds,
-            CriteriaBuilder cb,
-            Root<E> userPermissionRoot,
-            EntityType<E> entityType)
+    private <E> Predicate handleKapuaQueryPredicates(@NonNull QueryPredicate queryPredicate,
+            @NonNull Map<ParameterExpression, Object> binds,
+            @NonNull CriteriaBuilder cb,
+            @NonNull Root<E> userPermissionRoot,
+            @NonNull EntityType<E> entityType)
             throws KapuaException {
         Predicate predicate = null;
         if (queryPredicate instanceof AttributePredicate) {
@@ -381,11 +382,11 @@ public class KapuaEntityJpaRepository<E extends KapuaEntity, C extends E, L exte
         return predicate;
     }
 
-    private <E> Predicate handleAndPredicate(AndPredicate andPredicate,
-            Map<ParameterExpression, Object> binds,
-            CriteriaBuilder cb,
-            Root<E> entityRoot,
-            EntityType<E> entityType)
+    private <E> Predicate handleAndPredicate(@NonNull AndPredicate andPredicate,
+            @NonNull Map<ParameterExpression, Object> binds,
+            @NonNull CriteriaBuilder cb,
+            @NonNull Root<E> entityRoot,
+            @NonNull EntityType<E> entityType)
             throws KapuaException {
 
         Predicate[] jpaAndPredicates =
@@ -400,11 +401,11 @@ public class KapuaEntityJpaRepository<E extends KapuaEntity, C extends E, L exte
 
     }
 
-    private <E> Predicate handleOrPredicate(OrPredicate orPredicate,
-            Map<ParameterExpression, Object> binds,
-            CriteriaBuilder cb,
-            Root<E> entityRoot,
-            EntityType<E> entityType)
+    private <E> Predicate handleOrPredicate(@NonNull OrPredicate orPredicate,
+            @NonNull Map<ParameterExpression, Object> binds,
+            @NonNull CriteriaBuilder cb,
+            @NonNull Root<E> entityRoot,
+            @NonNull EntityType<E> entityType)
             throws KapuaException {
 
         Predicate[] jpaOrPredicates =
@@ -418,11 +419,11 @@ public class KapuaEntityJpaRepository<E extends KapuaEntity, C extends E, L exte
         return cb.or(jpaOrPredicates);
     }
 
-    private <E> Predicate[] handlePredicate(List<QueryPredicate> orPredicates,
-            Map<ParameterExpression, Object> binds,
-            CriteriaBuilder cb,
-            Root<E> entityRoot,
-            EntityType<E> entityType) throws KapuaException {
+    private <E> Predicate[] handlePredicate(@NonNull List<QueryPredicate> orPredicates,
+            @NonNull Map<ParameterExpression, Object> binds,
+            @NonNull CriteriaBuilder cb,
+            @NonNull Root<E> entityRoot,
+            @NonNull EntityType<E> entityType) throws KapuaException {
         Predicate[] jpaOrPredicates = new Predicate[orPredicates.size()];
 
         for (int i = 0; i < orPredicates.size(); i++) {
@@ -432,11 +433,11 @@ public class KapuaEntityJpaRepository<E extends KapuaEntity, C extends E, L exte
         return jpaOrPredicates;
     }
 
-    private <E> Predicate handleAttributePredicate(AttributePredicate<?> attrPred,
-            Map<ParameterExpression, Object> binds,
-            CriteriaBuilder cb,
-            Root<E> entityRoot,
-            EntityType<E> entityType)
+    private <E> Predicate handleAttributePredicate(@NonNull AttributePredicate<?> attrPred,
+            @NonNull Map<ParameterExpression, Object> binds,
+            @NonNull CriteriaBuilder cb,
+            @NonNull Root<E> entityRoot,
+            @NonNull EntityType<E> entityType)
             throws KapuaException {
         Predicate expr;
         String attrName = attrPred.getAttributeName();
@@ -583,7 +584,7 @@ public class KapuaEntityJpaRepository<E extends KapuaEntity, C extends E, L exte
      * @return The {@link Path} expression that matches the given {@code attributeName} parameter.
      * @since 1.0.0
      */
-    private <E, P> Path<P> extractAttribute(Root<E> entityRoot, String attributeName) {
+    private <E, P> Path<P> extractAttribute(@NonNull Root<E> entityRoot, @NonNull String attributeName) {
         Path<P> expressionPath;
         if (attributeName.contains(ATTRIBUTE_SEPARATOR)) {
             String[] pathComponents = attributeName.split(ATTRIBUTE_SEPARATOR_ESCAPED);
@@ -607,7 +608,7 @@ public class KapuaEntityJpaRepository<E extends KapuaEntity, C extends E, L exte
      * @return {@code true} if it is a constraint validation error, {@code false} otherwise.
      * @since 1.0.0
      */
-    public static boolean isInsertConstraintViolation(PersistenceException persistenceException) {
+    public static boolean isInsertConstraintViolation(@NonNull PersistenceException persistenceException) {
         Throwable cause = persistenceException.getCause();
         while (cause != null && !(cause instanceof SQLException)) {
             cause = cause.getCause();
@@ -621,10 +622,10 @@ public class KapuaEntityJpaRepository<E extends KapuaEntity, C extends E, L exte
         return SQL_ERROR_CODE_CONSTRAINT_VIOLATION.equals(innerExc.getSQLState());
     }
 
-    protected Optional<E> doFindByField(TxContext txContext,
-            KapuaId scopeId,
-            String fieldName,
-            Object fieldValue) {
+    protected Optional<E> doFindByField(@NonNull TxContext txContext,
+            @NonNull KapuaId scopeId,
+            @NonNull String fieldName,
+            @NonNull Object fieldValue) {
         final List<C> result = doFindAllByField(txContext, scopeId, fieldName, fieldValue);
         switch (result.size()) {
         case 0:
