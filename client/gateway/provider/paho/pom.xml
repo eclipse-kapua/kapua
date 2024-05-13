@@ -41,16 +41,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-client-gateway-spi</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.eclipse.paho</groupId>
             <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
         </dependency>
