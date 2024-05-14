@@ -10,7 +10,7 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.rest.model;
+package org.eclipse.kapua.job.engine;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -10,13 +10,15 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.job.engine.app.core.jackson.mixin;
+package org.eclipse.kapua.job.engine.app.core.mixin;
+
+import org.eclipse.kapua.service.job.step.definition.internal.JobStepPropertyImpl;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.eclipse.kapua.service.job.step.definition.internal.JobStepPropertyImpl;
 
 @JsonDeserialize(as = JobStepPropertyImpl.class)
 @JsonIgnoreProperties("type")
 public interface JobStepPropertyMixin {
+
 }
