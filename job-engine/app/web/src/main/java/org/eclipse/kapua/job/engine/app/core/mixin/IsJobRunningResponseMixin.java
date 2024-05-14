@@ -10,7 +10,7 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.job.engine.app.core.jackson.mixin;
+package org.eclipse.kapua.job.engine.app.core.mixin;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

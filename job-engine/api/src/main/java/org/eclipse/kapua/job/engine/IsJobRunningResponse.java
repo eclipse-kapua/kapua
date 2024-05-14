@@ -20,6 +20,7 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdAdapter;
 
 @XmlRootElement(name = "isJobRunningResponse")
+
 public class IsJobRunningResponse {
 
     private KapuaId jobId;

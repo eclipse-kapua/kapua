@@ -10,13 +10,16 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.job.engine.app.core.jackson.mixin;
+package org.eclipse.kapua.job.engine.app.core.mixin;
 
-import org.eclipse.kapua.job.engine.jbatch.JobStartOptionsImpl;
+import org.eclipse.kapua.job.engine.app.core.deserializer.KapuaIdDeserializer;
+import org.eclipse.kapua.job.engine.app.core.serializer.KapuaIdSerializer;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-@JsonDeserialize(as = JobStartOptionsImpl.class)
-@JsonIgnoreProperties("type")
-public interface JobStartOptionsMixin { }
+@JsonDeserialize(using = KapuaIdDeserializer.class)
+@JsonSerialize(using = KapuaIdSerializer.class)
+public interface KapuaIdMixin {
+
+}
