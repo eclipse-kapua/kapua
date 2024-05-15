@@ -12,9 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.job.engine.client;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -163,10 +165,11 @@ public class JobEngineServiceClient implements JobEngineService {
             String responseText = checkResponse("POST", path, response);
 
             IsJobRunningMultipleResponse isJobRunningMultipleResponse = xmlUtil.unmarshalJson(responseText, IsJobRunningMultipleResponse.class);
-
-            return isJobRunningMultipleResponse.getList()
-                    .stream()
-                    .collect(Collectors.toMap(IsJobRunningResponse::getJobId, IsJobRunningResponse::isRunning));
+            Map<KapuaId, Boolean> res = new HashMap<>();
+            Optional.ofNullable(isJobRunningMultipleResponse.getList())
+                    .orElse(new ArrayList<>())
+                    .forEach(r -> res.put(r.getJobId(), r.isRunning()));
+            return res;
         } catch (ClientErrorException | JAXBException | SAXException e) {
             throw KapuaException.internalError(e);
         }
