@@ -12,7 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.message.internal;
 
-import com.google.inject.Provides;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.event.ServiceEventBusDriver;
 import org.eclipse.kapua.event.ServiceEvent;
@@ -21,11 +23,11 @@ import org.eclipse.kapua.event.ServiceEventBusException;
 import org.eclipse.kapua.event.Subscription;
 import org.eclipse.kapua.locator.guice.OverridingModule;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import com.google.inject.Provides;
 
 @OverridingModule
 public class TestModule extends AbstractKapuaModule {
+
     @Override
     protected void configureModule() {
 
@@ -68,6 +70,7 @@ public class TestModule extends AbstractKapuaModule {
             @Override
             public ServiceEventBus getEventBus() {
                 return new ServiceEventBus() {
+
                     @Override
                     public void publish(String address, ServiceEvent event) throws ServiceEventBusException {
                         //Nothing to do!

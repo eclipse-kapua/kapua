@@ -12,6 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.message.internal;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.util.xml.JAXBContextProvider;
 import org.eclipse.kapua.message.KapuaChannel;
@@ -20,15 +26,11 @@ import org.eclipse.kapua.message.KapuaPayload;
 import org.eclipse.kapua.message.KapuaPosition;
 import org.eclipse.kapua.message.xml.XmlAdaptedMetric;
 import org.eclipse.kapua.message.xml.XmlAdaptedMetrics;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
 import org.eclipse.persistence.jaxb.JAXBContextFactory;
 import org.eclipse.persistence.jaxb.MarshallerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class MessageJAXBContextProvider implements JAXBContextProvider {
 
@@ -39,11 +41,12 @@ public class MessageJAXBContextProvider implements JAXBContextProvider {
     @Override
     public JAXBContext getJAXBContext() throws KapuaException {
         if (context == null) {
-            Class<?>[] classes = new Class<?>[]{
+            Class<?>[] classes = new Class<?>[] {
                     KapuaMessage.class,
                     KapuaChannel.class,
                     KapuaPayload.class,
                     KapuaPosition.class,
+                    KapuaIdAdapter.class,
 
                     XmlAdaptedMetric.class,
                     XmlAdaptedMetrics.class,
