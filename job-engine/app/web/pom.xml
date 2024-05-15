@@ -154,10 +154,6 @@
             <groupId>org.eclipse.kapua</groupId>
             <artifactId>kapua-security-certificate-internal</artifactId>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>org.eclipse.kapua</groupId>-->
-        <!--            <artifactId>kapua-security-registration-simple</artifactId>-->
-        <!--        </dependency>-->
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
             <artifactId>kapua-foreignkeys</artifactId>
