@@ -19,21 +19,25 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Parameterless methods annotated with this will be invoked immediately after the KapuaLocator
- * has been fully initialized, as long as the class is initialized within the Locator itself (e.g.: in a guice module)
+ * Parameterless methods annotated with this will be invoked immediately after the KapuaLocator has been fully initialized, as long as the class is initialized within the Locator itself (e.g.: in a
+ * guice module)
  * <p>
- * Methods with the lowest priority will be called first, then the others in ascending order.
- * <p>
- * Please notice this is different from use of {@link javax.annotation.PostConstruct}. Methods annotated with PostConstruct are executed immediately after instantiation  of the object,
- * but potentially before the entire Locator context is fully initialized - so indirect dependencies are not guaranteed (e.g.: JAXB/XMLUtils being fully initialized)
- * <p>
+ * Methods with the lowest priority will be called first, then the others in ascending order:
+ * <ul>
+ * <li>
  * priority 10 is used for database initialization (e.g.: DB driver init and liquibase run)
+ * </li>
+ * <li>
  * priority 20 is used for data populators/initializators (e.g.: wired-to-db entity aligners)
+ * </li>
+ * </ul>
+ * <p>
  *
  * @since 2.0.0
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface KapuaInitializingMethod {
+
     short priority() default 100;
 }
