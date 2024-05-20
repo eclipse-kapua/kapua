@@ -40,14 +40,6 @@
             <version>${jersey.version}</version>
         </dependency>
 
-        <!--        <dependency>-->
-        <!--            <groupId>org.eclipse.kapua</groupId>-->
-        <!--            <artifactId>kapua-device-registry-api</artifactId>-->
-        <!--        </dependency>-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.eclipse.kapua</groupId>-->
-        <!--            <artifactId>kapua-device-call-api</artifactId>-->
-        <!--        </dependency>-->
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
             <artifactId>kapua-device-call-kura</artifactId>
@@ -95,6 +87,10 @@
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
             <artifactId>kapua-job-internal</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-job-engine-app-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.kapua</groupId>

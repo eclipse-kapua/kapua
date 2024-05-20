@@ -26,11 +26,11 @@ import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.app.api.core.model.EntityId;
 import org.eclipse.kapua.app.api.core.model.ScopeId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
-import org.eclipse.kapua.job.engine.IsJobRunningMultipleResponse;
-import org.eclipse.kapua.job.engine.IsJobRunningResponse;
+import org.eclipse.kapua.commons.rest.model.IsJobRunningMultipleResponse;
+import org.eclipse.kapua.commons.rest.model.IsJobRunningResponse;
+import org.eclipse.kapua.commons.rest.model.MultipleJobIdRequest;
 import org.eclipse.kapua.job.engine.JobEngineService;
 import org.eclipse.kapua.job.engine.JobStartOptions;
-import org.eclipse.kapua.job.engine.MultipleJobIdRequest;
 import org.eclipse.kapua.job.engine.exception.JobNotRunningException;
 
 @Path("{scopeId}/jobs")
