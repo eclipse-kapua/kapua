@@ -12,19 +12,18 @@
  *******************************************************************************/
 package org.eclipse.kapua.job.engine.app.core.jackson;
 
-import javax.ws.rs.ext.ContextResolver;
-import javax.ws.rs.ext.Provider;
-
-import org.eclipse.kapua.job.engine.IsJobRunningResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eclipse.kapua.commons.rest.model.IsJobRunningResponse;
 import org.eclipse.kapua.job.engine.JobStartOptions;
-import org.eclipse.kapua.job.engine.app.core.mixin.IsJobRunningResponseMixin;
-import org.eclipse.kapua.job.engine.app.core.mixin.JobStartOptionsMixin;
-import org.eclipse.kapua.job.engine.app.core.mixin.JobStepPropertyMixin;
-import org.eclipse.kapua.job.engine.app.core.mixin.KapuaIdMixin;
+import org.eclipse.kapua.job.engine.app.core.jackson.mixin.IsJobRunningResponseMixin;
+import org.eclipse.kapua.job.engine.app.core.jackson.mixin.JobStartOptionsMixin;
+import org.eclipse.kapua.job.engine.app.core.jackson.mixin.JobStepPropertyMixin;
+import org.eclipse.kapua.job.engine.app.core.jackson.mixin.KapuaIdMixin;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.job.step.definition.JobStepProperty;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.ws.rs.ext.ContextResolver;
+import javax.ws.rs.ext.Provider;
 
 @Provider
 public class ObjectMapperProvider implements ContextResolver<ObjectMapper> {

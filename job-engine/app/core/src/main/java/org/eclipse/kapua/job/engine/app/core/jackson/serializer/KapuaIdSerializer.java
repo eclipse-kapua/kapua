@@ -10,7 +10,7 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.job.engine.app.core.serializer;
+package org.eclipse.kapua.job.engine.app.core.jackson.serializer;
 
 import java.io.IOException;
 

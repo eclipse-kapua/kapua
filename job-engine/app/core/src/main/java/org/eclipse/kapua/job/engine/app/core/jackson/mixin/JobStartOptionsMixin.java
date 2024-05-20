@@ -10,16 +10,13 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.job.engine;
+package org.eclipse.kapua.job.engine.app.core.jackson.mixin;
 
-/**
- * List of headers name used by the job engine client and read by the job engine service to rebuild the session
- *
- * @since 1.5.0
- */
-public interface SessionInfoHttpHeaders {
+import org.eclipse.kapua.job.engine.jbatch.JobStartOptionsImpl;
 
-    String SCOPE_ID_HTTP_HEADER = "X-Kapua-Scope-ID";
-    String USER_ID_HTTP_HEADER = "X-Kapua-User-ID";
-    String AUTH_MODE = "X-Kapua-Auth-Mode";
-}
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+@JsonDeserialize(as = JobStartOptionsImpl.class)
+@JsonIgnoreProperties("type")
+public interface JobStartOptionsMixin { }

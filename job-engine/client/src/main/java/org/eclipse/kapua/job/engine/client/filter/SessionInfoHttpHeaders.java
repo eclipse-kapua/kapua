@@ -10,16 +10,16 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.job.engine.app.core.mixin;
+package org.eclipse.kapua.job.engine.client.filter;
 
-import org.eclipse.kapua.job.engine.app.core.deserializer.KapuaIdDeserializer;
-import org.eclipse.kapua.job.engine.app.core.serializer.KapuaIdSerializer;
+/**
+ * List of headers name used by the job engine client and read by the job engine service to rebuild the session
+ *
+ * @since 1.5.0
+ */
+public interface SessionInfoHttpHeaders {
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
-@JsonDeserialize(using = KapuaIdDeserializer.class)
-@JsonSerialize(using = KapuaIdSerializer.class)
-public interface KapuaIdMixin {
-
+    String SCOPE_ID_HTTP_HEADER = "X-Kapua-Scope-ID";
+    String USER_ID_HTTP_HEADER = "X-Kapua-User-ID";
+    String AUTH_MODE = "X-Kapua-Auth-Mode";
 }
