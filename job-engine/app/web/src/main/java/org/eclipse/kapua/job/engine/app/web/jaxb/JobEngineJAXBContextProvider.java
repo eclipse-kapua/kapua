@@ -86,6 +86,7 @@ import org.eclipse.persistence.jaxb.MarshallerProperties;
 /**
  * @deprecated since 2.1.0 - rely on autodiscovery. Leaving this here for comparison
  */
+@Deprecated
 public class JobEngineJAXBContextProvider implements JAXBContextProvider {
 
     private JAXBContext jaxbContext;

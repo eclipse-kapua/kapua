@@ -13,8 +13,9 @@
 package org.eclipse.kapua.job.engine.app.core.jackson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.eclipse.kapua.commons.rest.model.IsJobRunningResponse;
+
 import org.eclipse.kapua.job.engine.JobStartOptions;
+import org.eclipse.kapua.job.engine.IsJobRunningResponse;
 import org.eclipse.kapua.job.engine.app.core.jackson.mixin.IsJobRunningResponseMixin;
 import org.eclipse.kapua.job.engine.app.core.jackson.mixin.JobStartOptionsMixin;
 import org.eclipse.kapua.job.engine.app.core.jackson.mixin.JobStepPropertyMixin;

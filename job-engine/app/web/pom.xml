@@ -44,22 +44,6 @@
             <groupId>org.eclipse.kapua</groupId>
             <artifactId>kapua-device-call-kura</artifactId>
         </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>org.eclipse.kapua</groupId>-->
-        <!--            <artifactId>kapua-security-registration-simple</artifactId>-->
-        <!--        </dependency>-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.eclipse.kapua</groupId>-->
-        <!--            <artifactId>kapua-device-registry-internal</artifactId>-->
-        <!--        </dependency>-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.eclipse.kapua</groupId>-->
-        <!--            <artifactId>kapua-device-management-all-api</artifactId>-->
-        <!--        </dependency>-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.eclipse.kapua</groupId>-->
-        <!--            <artifactId>kapua-device-management-all-internal</artifactId>-->
-        <!--        </dependency>-->
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
             <artifactId>kapua-device-management-all-job</artifactId>
