@@ -17,6 +17,7 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdAdapter;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -29,6 +30,15 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  */
 @XmlType(propOrder = {"scopeId"})
 public interface Storable extends KapuaSerializable {
+
+    /**
+     * Gets the type.
+     *
+     * @return The type.
+     * @since 2.0.0
+     */
+    @XmlTransient
+    String getType();
 
     /**
      * Gets the scope {@link KapuaId}.
