@@ -31,6 +31,10 @@
             <groupId>org.eclipse.kapua</groupId>
             <artifactId>kapua-endpoint-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-service-storable-api</artifactId>
+        </dependency>
 
         <!-- re-declare as provided as our web container will provide this -->
         <dependency>
