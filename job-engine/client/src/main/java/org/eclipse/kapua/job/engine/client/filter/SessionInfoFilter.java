@@ -19,6 +19,7 @@ import javax.ws.rs.client.ClientRequestFilter;
 
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.security.KapuaSession;
+import org.eclipse.kapua.job.engine.SessionInfoHttpHeaders;
 import org.eclipse.kapua.job.engine.client.settings.JobEngineClientSetting;
 import org.eclipse.kapua.job.engine.client.settings.JobEngineClientSettingKeys;
 import org.eclipse.kapua.locator.KapuaLocator;
