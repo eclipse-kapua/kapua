@@ -10,7 +10,7 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.job.engine.client.filter;
+package org.eclipse.kapua.job.engine;
 
 /**
  * List of headers name used by the job engine client and read by the job engine service to rebuild the session
