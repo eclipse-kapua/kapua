@@ -12,17 +12,17 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.core.resources;
 
-import org.eclipse.kapua.app.api.core.model.ScopeId;
+import java.math.BigInteger;
+
+import javax.ws.rs.NotFoundException;
+
+import org.eclipse.kapua.commons.rest.model.ScopeId;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import javax.ws.rs.NotFoundException;
-import java.math.BigInteger;
-
 
 @Category(JUnitTests.class)
 public class AbstractKapuaResourceTest {
@@ -37,7 +37,7 @@ public class AbstractKapuaResourceTest {
     @Before
     public void initialize() {
         abstractKapuaResource = new TestKapuaResource();
-        objects = new Object[]{new Object(), "", "string", 10, 'c', KapuaId.ONE, new Throwable(), new ScopeId(BigInteger.valueOf(111))};
+        objects = new Object[] { new Object(), "", "string", 10, 'c', KapuaId.ONE, new Throwable(), new ScopeId(BigInteger.valueOf(111)) };
     }
 
     @Test
@@ -54,18 +54,21 @@ public class AbstractKapuaResourceTest {
 
     @Test
     public void returnOkTest() {
-        Assert.assertEquals("Expected and actual values should be the same.", "OutboundJaxrsResponse{status=200, reason=OK, hasEntity=false, closed=false, buffered=false}", abstractKapuaResource.returnOk().toString());
+        Assert.assertEquals("Expected and actual values should be the same.", "OutboundJaxrsResponse{status=200, reason=OK, hasEntity=false, closed=false, buffered=false}",
+                abstractKapuaResource.returnOk().toString());
     }
 
     @Test
     public void returnNoContentTest() {
-        Assert.assertEquals("Expected and actual values should be the same.", "OutboundJaxrsResponse{status=204, reason=No Content, hasEntity=false, closed=false, buffered=false}", abstractKapuaResource.returnNoContent().toString());
+        Assert.assertEquals("Expected and actual values should be the same.", "OutboundJaxrsResponse{status=204, reason=No Content, hasEntity=false, closed=false, buffered=false}",
+                abstractKapuaResource.returnNoContent().toString());
     }
 
     @Test
     public void returnCreatedTest() {
         for (Object object : objects) {
-            Assert.assertEquals("Expected and actual values should be the same.", "OutboundJaxrsResponse{status=201, reason=Created, hasEntity=true, closed=false, buffered=false}", abstractKapuaResource.returnCreated(object).toString());
+            Assert.assertEquals("Expected and actual values should be the same.", "OutboundJaxrsResponse{status=201, reason=Created, hasEntity=true, closed=false, buffered=false}",
+                    abstractKapuaResource.returnCreated(object).toString());
             Assert.assertEquals("Expected and actual values should be the same.", object, abstractKapuaResource.returnCreated(object).getEntity());
         }
     }

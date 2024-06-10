@@ -26,12 +26,11 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.google.common.base.Strings;
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.app.api.core.model.CountResult;
-import org.eclipse.kapua.app.api.core.model.EntityId;
-import org.eclipse.kapua.app.api.core.model.ScopeId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
+import org.eclipse.kapua.commons.rest.model.CountResult;
+import org.eclipse.kapua.commons.rest.model.EntityId;
+import org.eclipse.kapua.commons.rest.model.ScopeId;
 import org.eclipse.kapua.model.query.SortOrder;
 import org.eclipse.kapua.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.service.KapuaService;
@@ -42,6 +41,8 @@ import org.eclipse.kapua.service.endpoint.EndpointInfoFactory;
 import org.eclipse.kapua.service.endpoint.EndpointInfoListResult;
 import org.eclipse.kapua.service.endpoint.EndpointInfoQuery;
 import org.eclipse.kapua.service.endpoint.EndpointInfoService;
+
+import com.google.common.base.Strings;
 
 @Path("{scopeId}/endpointInfos")
 public class EndpointInfos extends AbstractKapuaResource {
@@ -54,17 +55,22 @@ public class EndpointInfos extends AbstractKapuaResource {
     /**
      * Gets the {@link EndpointInfo} list in the scope.
      *
-     * @param scopeId The {@link ScopeId} in which to search results.
-     * @param usage   The {@link EndpointInfo} usage to filter results
-     * @param offset  The result set offset.
-     * @param limit   The result set limit.
+     * @param scopeId
+     *         The {@link ScopeId} in which to search results.
+     * @param usage
+     *         The {@link EndpointInfo} usage to filter results
+     * @param offset
+     *         The result set offset.
+     * @param limit
+     *         The result set limit.
      * @return The {@link EndpointInfoListResult} of all the endpointInfos associated to the current selected scope.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
 
     @GET
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public EndpointInfoListResult simpleQuery(
             @PathParam("scopeId") ScopeId scopeId,
             @QueryParam("usage") String usage,
@@ -99,17 +105,20 @@ public class EndpointInfos extends AbstractKapuaResource {
     /**
      * Queries the results with the given {@link EndpointInfoQuery} parameter.
      *
-     * @param scopeId The {@link ScopeId} in which to search results.
-     * @param query   The {@link EndpointInfoQuery} to use to filter results.
+     * @param scopeId
+     *         The {@link ScopeId} in which to search results.
+     * @param query
+     *         The {@link EndpointInfoQuery} to use to filter results.
      * @return The {@link EndpointInfoListResult} of all the result matching the given {@link EndpointInfoQuery} parameter.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
 
     @POST
     @Path("_query")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public EndpointInfoListResult query(
             @PathParam("scopeId") ScopeId scopeId,
             @QueryParam("endpointType") @DefaultValue(EndpointInfo.ENDPOINT_TYPE_RESOURCE) String endpointType,
@@ -122,17 +131,20 @@ public class EndpointInfos extends AbstractKapuaResource {
     /**
      * Counts the results with the given {@link EndpointInfoQuery} parameter.
      *
-     * @param scopeId The {@link ScopeId} in which to search results.
-     * @param query   The {@link EndpointInfoQuery} to use to filter results.
+     * @param scopeId
+     *         The {@link ScopeId} in which to search results.
+     * @param query
+     *         The {@link EndpointInfoQuery} to use to filter results.
      * @return The count of all the result matching the given {@link EndpointInfoQuery} parameter.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
 
     @POST
     @Path("_count")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public CountResult count(
             @PathParam("scopeId") ScopeId scopeId,
             @QueryParam("endpointType") @DefaultValue(EndpointInfo.ENDPOINT_TYPE_RESOURCE) String endpointType,
@@ -143,19 +155,21 @@ public class EndpointInfos extends AbstractKapuaResource {
     }
 
     /**
-     * Creates a new EndpointInfo based on the information provided in EndpointInfoCreator
-     * parameter.
+     * Creates a new EndpointInfo based on the information provided in EndpointInfoCreator parameter.
      *
-     * @param scopeId             The {@link ScopeId} in which to create the {@link EndpointInfo}
-     * @param endpointInfoCreator Provides the information for the new {@link EndpointInfo} to be created.
+     * @param scopeId
+     *         The {@link ScopeId} in which to create the {@link EndpointInfo}
+     * @param endpointInfoCreator
+     *         Provides the information for the new {@link EndpointInfo} to be created.
      * @return The newly created {@link EndpointInfo} object.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
 
     @POST
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public Response create(
             @PathParam("scopeId") ScopeId scopeId,
             EndpointInfoCreator endpointInfoCreator) throws KapuaException {
@@ -167,39 +181,46 @@ public class EndpointInfos extends AbstractKapuaResource {
     /**
      * Returns the EndpointInfo specified by the "endpointInfoId" path parameter.
      *
-     * @param scopeId        The {@link ScopeId} of the requested {@link EndpointInfo}.
-     * @param endpointInfoId The id of the requested EndpointInfo.
+     * @param scopeId
+     *         The {@link ScopeId} of the requested {@link EndpointInfo}.
+     * @param endpointInfoId
+     *         The id of the requested EndpointInfo.
      * @return The requested EndpointInfo object.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
 
     @GET
     @Path("{endpointInfoId}")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public EndpointInfo find(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("endpointInfoId") EntityId endpointInfoId) throws KapuaException {
         EndpointInfo endpointInfo = endpointInfoService.find(scopeId, endpointInfoId);
 
-        return returnNotNullEntity(endpointInfo,EndpointInfo.TYPE, endpointInfoId);
+        return returnNotNullEntity(endpointInfo, EndpointInfo.TYPE, endpointInfoId);
     }
 
     /**
      * Updates the EndpointInfo based on the information provided in the EndpointInfo parameter.
      *
-     * @param scopeId        The ScopeId of the requested {@link EndpointInfo}.
-     * @param endpointInfoId The id of the requested {@link EndpointInfo}
-     * @param endpointInfo   The modified EndpointInfo whose attributed need to be updated.
+     * @param scopeId
+     *         The ScopeId of the requested {@link EndpointInfo}.
+     * @param endpointInfoId
+     *         The id of the requested {@link EndpointInfo}
+     * @param endpointInfo
+     *         The modified EndpointInfo whose attributed need to be updated.
      * @return The updated endpointInfo.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
 
     @PUT
     @Path("{endpointInfoId}")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public EndpointInfo update(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("endpointInfoId") EntityId endpointInfoId,
@@ -213,10 +234,13 @@ public class EndpointInfos extends AbstractKapuaResource {
     /**
      * Deletes the EndpointInfo specified by the "endpointInfoId" path parameter.
      *
-     * @param scopeId        The ScopeId of the requested {@link EndpointInfo}.
-     * @param endpointInfoId The id of the EndpointInfo to be deleted.
+     * @param scopeId
+     *         The ScopeId of the requested {@link EndpointInfo}.
+     * @param endpointInfoId
+     *         The id of the EndpointInfo to be deleted.
      * @return HTTP 200 if operation has completed successfully.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
 

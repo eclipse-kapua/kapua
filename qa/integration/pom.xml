@@ -292,6 +292,10 @@
             <groupId>org.eclipse.kapua</groupId>
             <artifactId>kapua-rest-api-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-commons-rest-jersey</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.eclipse.kapua</groupId>

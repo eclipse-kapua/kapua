@@ -13,8 +13,8 @@
 package org.eclipse.kapua.app.api.resources.v1.resources;
 
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.app.api.core.model.EntityId;
-import org.eclipse.kapua.app.api.core.model.ScopeId;
+import org.eclipse.kapua.commons.rest.model.EntityId;
+import org.eclipse.kapua.commons.rest.model.ScopeId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
 import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.device.management.command.DeviceCommandInput;
@@ -61,18 +61,23 @@ public class DeviceManagementCommands extends AbstractKapuaResource {
      * DeviceCommandOutput commandOutput = deviceCommandWebXml.post(DeviceCommandOutput.class, commandInput);
      * </pre>
      *
-     * @param scopeId      The {@link ScopeId} of the {@link Device}.
-     * @param deviceId     The {@link Device} ID.
-     * @param timeout      The timeout of the command execution
-     * @param commandInput The input command
+     * @param scopeId
+     *         The {@link ScopeId} of the {@link Device}.
+     * @param deviceId
+     *         The {@link Device} ID.
+     * @param timeout
+     *         The timeout of the command execution
+     * @param commandInput
+     *         The input command
      * @return The command output.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @POST
     @Path("_execute")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public DeviceCommandOutput sendCommand(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,

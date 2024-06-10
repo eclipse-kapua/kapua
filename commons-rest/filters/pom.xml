@@ -27,10 +27,6 @@
             <groupId>org.eclipse.kapua</groupId>
             <artifactId>kapua-endpoint-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-rest-api-core</artifactId>
-        </dependency>
         <!-- re-declare as provided as our web container will provide this -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -51,6 +47,15 @@
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
             <artifactId>kapua-commons</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-security-shiro</artifactId>
         </dependency>
     </dependencies>
 </project>

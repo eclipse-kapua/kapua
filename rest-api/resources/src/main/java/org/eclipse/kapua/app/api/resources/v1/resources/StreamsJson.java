@@ -13,7 +13,7 @@
 package org.eclipse.kapua.app.api.resources.v1.resources;
 
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.app.api.core.model.ScopeId;
+import org.eclipse.kapua.commons.rest.model.ScopeId;
 import org.eclipse.kapua.app.api.core.model.data.JsonKapuaDataMessage;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
 import org.eclipse.kapua.app.api.resources.v1.resources.marker.JsonSerializationFixed;
@@ -45,9 +45,7 @@ public class StreamsJson extends AbstractKapuaResource implements JsonSerializat
     public StreamService streamService;
 
     /**
-     * Publishes a fire-and-forget message to a topic composed of:
-     * [account-name] / [client-id] / [semtantic-parts]
-     * In such a schema, the parts are defined as follows:
+     * Publishes a fire-and-forget message to a topic composed of: [account-name] / [client-id] / [semtantic-parts] In such a schema, the parts are defined as follows:
      * <ul>
      * <li>account-name: the name of the current scope</li>
      * <li>client-id: from the "clientId" property in the body</li>
@@ -93,7 +91,7 @@ public class StreamsJson extends AbstractKapuaResource implements JsonSerializat
      */
     @POST
     @Path("messages")
-    @Consumes({MediaType.APPLICATION_JSON})
+    @Consumes({ MediaType.APPLICATION_JSON })
     public Response publish(
             @PathParam("scopeId") ScopeId scopeId,
             @QueryParam("timeout") @DefaultValue("30000") Long timeout,

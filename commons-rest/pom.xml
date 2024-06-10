@@ -27,5 +27,13 @@
         <module>model</module>
         <module>errors</module>
         <module>filters</module>
+        <module>jersey</module>
     </modules>
+    <dependencies>
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-qa-markers</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 </project>

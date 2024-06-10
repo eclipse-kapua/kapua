@@ -13,8 +13,8 @@
 package org.eclipse.kapua.app.api.resources.v1.resources;
 
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.app.api.core.model.EntityId;
-import org.eclipse.kapua.app.api.core.model.ScopeId;
+import org.eclipse.kapua.commons.rest.model.EntityId;
+import org.eclipse.kapua.commons.rest.model.ScopeId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
 import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssetChannel;
@@ -50,15 +50,19 @@ public class DeviceManagementAssets extends AbstractKapuaResource {
     /**
      * Returns the list of all the Assets configured on the device.
      *
-     * @param scopeId  The {@link ScopeId} of the {@link Device}.
-     * @param deviceId The id of the device
-     * @param timeout  The timeout of the operation in milliseconds
+     * @param scopeId
+     *         The {@link ScopeId} of the {@link Device}.
+     * @param deviceId
+     *         The id of the device
+     * @param timeout
+     *         The timeout of the operation in milliseconds
      * @return The list of Assets
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @GET
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public DeviceAssets get(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,
@@ -69,15 +73,19 @@ public class DeviceManagementAssets extends AbstractKapuaResource {
     /**
      * Returns the list of all the Assets configured on the device filtered by the {@link DeviceAssets} parameter.
      *
-     * @param scopeId  The {@link ScopeId} of the {@link Device}.
-     * @param deviceId The id of the device
-     * @param timeout  The timeout of the operation in milliseconds
+     * @param scopeId
+     *         The {@link ScopeId} of the {@link Device}.
+     * @param deviceId
+     *         The id of the device
+     * @param timeout
+     *         The timeout of the operation in milliseconds
      * @return The list of Assets
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @POST
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public DeviceAssets get(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,
@@ -89,16 +97,20 @@ public class DeviceManagementAssets extends AbstractKapuaResource {
     /**
      * Reads {@link DeviceAssetChannel}s values available on the device filtered by the {@link DeviceAssets} parameter.
      *
-     * @param scopeId  The {@link ScopeId} of the {@link Device}.
-     * @param deviceId The id of the device
-     * @param timeout  The timeout of the operation in milliseconds
+     * @param scopeId
+     *         The {@link ScopeId} of the {@link Device}.
+     * @param deviceId
+     *         The id of the device
+     * @param timeout
+     *         The timeout of the operation in milliseconds
      * @return The list of Assets
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @POST
     @Path("_read")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public DeviceAssets read(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,
@@ -110,16 +122,20 @@ public class DeviceManagementAssets extends AbstractKapuaResource {
     /**
      * Writes {@link DeviceAssetChannel}s configured on the device filtered by the {@link DeviceAssets} parameter.
      *
-     * @param scopeId  The {@link ScopeId} of the {@link Device}.
-     * @param deviceId The id of the device
-     * @param timeout  The timeout of the operation in milliseconds
+     * @param scopeId
+     *         The {@link ScopeId} of the {@link Device}.
+     * @param deviceId
+     *         The id of the device
+     * @param timeout
+     *         The timeout of the operation in milliseconds
      * @return The list of Assets
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @POST
     @Path("_write")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public DeviceAssets write(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,
@@ -130,7 +146,7 @@ public class DeviceManagementAssets extends AbstractKapuaResource {
 
     @GET
     @Path("_settings")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public DeviceAssetStoreSettings getSettings(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId)
@@ -140,7 +156,7 @@ public class DeviceManagementAssets extends AbstractKapuaResource {
 
     @PUT
     @Path("_settings")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public Response postSettings(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,

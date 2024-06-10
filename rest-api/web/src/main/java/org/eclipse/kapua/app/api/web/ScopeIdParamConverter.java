@@ -12,19 +12,21 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.web;
 
+import java.math.BigInteger;
+import java.util.Base64;
+
+import javax.ws.rs.ext.ParamConverter;
+
 import org.eclipse.kapua.app.api.core.exception.SessionNotPopulatedException;
-import org.eclipse.kapua.app.api.core.model.ScopeId;
 import org.eclipse.kapua.app.api.core.settings.KapuaApiCoreSetting;
 import org.eclipse.kapua.app.api.core.settings.KapuaApiCoreSettingKeys;
+import org.eclipse.kapua.commons.rest.model.ScopeId;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.security.KapuaSession;
 import org.eclipse.kapua.locator.KapuaLocator;
 
-import javax.ws.rs.ext.ParamConverter;
-import java.math.BigInteger;
-import java.util.Base64;
-
 public class ScopeIdParamConverter implements ParamConverter<ScopeId> {
+
     private static final String SCOPE_ID_WILDCARD = KapuaLocator.getInstance().getComponent(KapuaApiCoreSetting.class).getString(KapuaApiCoreSettingKeys.API_PATH_PARAM_SCOPEID_WILDCARD);
 
     @Override

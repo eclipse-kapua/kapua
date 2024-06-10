@@ -12,11 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.web;
 
-import org.eclipse.kapua.app.api.core.model.ScopeId;
+import org.eclipse.kapua.commons.rest.model.ScopeId;
 
 import javax.ws.rs.ext.ParamConverter;
 import javax.ws.rs.ext.ParamConverterProvider;
 import javax.ws.rs.ext.Provider;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
@@ -25,7 +26,7 @@ public class ScopeIdParamConverterProvider implements ParamConverterProvider {
 
     @Override
     public <T> ParamConverter<T> getConverter(Class<T> rawType, Type genericType,
-                                              Annotation[] annotations) {
+            Annotation[] annotations) {
         if (rawType.equals(ScopeId.class)) {
             return (ParamConverter<T>) new ScopeIdParamConverter();
         }

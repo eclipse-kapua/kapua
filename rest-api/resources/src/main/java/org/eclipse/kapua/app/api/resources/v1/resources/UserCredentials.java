@@ -13,7 +13,7 @@
 package org.eclipse.kapua.app.api.resources.v1.resources;
 
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.app.api.core.model.EntityId;
+import org.eclipse.kapua.commons.rest.model.EntityId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.service.KapuaService;
@@ -46,14 +46,16 @@ public class UserCredentials extends AbstractKapuaResource {
     /**
      * Change the user password
      *
-     * @param passwordChangeRequest The {@link PasswordChangeRequest} represents the changing
+     * @param passwordChangeRequest
+     *         The {@link PasswordChangeRequest} represents the changing
      * @return The updated {@link Credential}
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      */
     @Path("password")
     @POST
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public Credential newPassword(
             PasswordChangeRequest passwordChangeRequest) throws KapuaException {
         return userCredentialsService.changePassword(KapuaSecurityUtils.getSession().getScopeId(), KapuaSecurityUtils.getSession().getUserId(), passwordChangeRequest);
@@ -62,14 +64,17 @@ public class UserCredentials extends AbstractKapuaResource {
     /**
      * Reset the password of a {@link Credential}.
      *
-     * @param credentialId         The id of the Credential to reset the password.
-     * @param passwordResetRequest Request for resetting credential password
+     * @param credentialId
+     *         The id of the Credential to reset the password.
+     * @param passwordResetRequest
+     *         Request for resetting credential password
      * @return The updated credential.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 2.0.0
-     * @deprecated since 2.0.0 - use POST /{scopeId}/users/{userId}/password/_reset instead (see {@link UsersCredentials})
-     * It has been considered that a user might want to reset a password credential using another type of credential (e.g.: apiKey), but for security reasons (e.g.: avoid a leaked apiKey to be used
-     * to steal the whole account) only the admin's controlled password reset is left
+     * @deprecated since 2.0.0 - use POST /{scopeId}/users/{userId}/password/_reset instead (see {@link UsersCredentials}) It has been considered that a user might want to reset a password credential
+     *         using another type of credential (e.g.: apiKey), but for security reasons (e.g.: avoid a leaked apiKey to be used to steal the whole account) only the admin's controlled password reset
+     *         is left
      */
     @POST
     @Path("{credentialId}/_reset")

@@ -13,6 +13,7 @@
 package org.eclipse.kapua.app.api.resources.v1.resources;
 
 import java.util.List;
+
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -27,12 +28,11 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.google.common.base.Strings;
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.app.api.core.model.CountResult;
-import org.eclipse.kapua.app.api.core.model.EntityId;
-import org.eclipse.kapua.app.api.core.model.ScopeId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
+import org.eclipse.kapua.commons.rest.model.CountResult;
+import org.eclipse.kapua.commons.rest.model.EntityId;
+import org.eclipse.kapua.commons.rest.model.ScopeId;
 import org.eclipse.kapua.model.KapuaEntityAttributes;
 import org.eclipse.kapua.model.KapuaNamedEntityAttributes;
 import org.eclipse.kapua.model.id.KapuaId;
@@ -51,6 +51,8 @@ import org.eclipse.kapua.service.user.UserListResult;
 import org.eclipse.kapua.service.user.UserQuery;
 import org.eclipse.kapua.service.user.UserService;
 
+import com.google.common.base.Strings;
+
 @Path("{scopeId}/roles")
 public class Roles extends AbstractKapuaResource {
 
@@ -66,16 +68,21 @@ public class Roles extends AbstractKapuaResource {
     /**
      * Gets the {@link Role} list in the scope.
      *
-     * @param scopeId The {@link ScopeId} in which to search results.
-     * @param name    The {@link Role} name in which to search results.
-     * @param offset  The result set offset.
-     * @param limit   The result set limit.
+     * @param scopeId
+     *         The {@link ScopeId} in which to search results.
+     * @param name
+     *         The {@link Role} name in which to search results.
+     * @param offset
+     *         The result set offset.
+     * @param limit
+     *         The result set limit.
      * @return The {@link RoleListResult} of all the roles associated to the current selected scope.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @GET
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public RoleListResult simpleQuery(
             @PathParam("scopeId") ScopeId scopeId,
             @QueryParam("name") String name,
@@ -109,16 +116,19 @@ public class Roles extends AbstractKapuaResource {
     /**
      * Queries the results with the given {@link RoleQuery} parameter.
      *
-     * @param scopeId The {@link ScopeId} in which to search results.
-     * @param query   The {@link RoleQuery} to use to filter results.
+     * @param scopeId
+     *         The {@link ScopeId} in which to search results.
+     * @param query
+     *         The {@link RoleQuery} to use to filter results.
      * @return The {@link RoleListResult} of all the result matching the given {@link RoleQuery} parameter.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @POST
     @Path("_query")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public RoleListResult query(
             @PathParam("scopeId") ScopeId scopeId,
             RoleQuery query) throws KapuaException {
@@ -130,16 +140,19 @@ public class Roles extends AbstractKapuaResource {
     /**
      * Counts the results with the given {@link RoleQuery} parameter.
      *
-     * @param scopeId The {@link ScopeId} in which to search results.
-     * @param query   The {@link RoleQuery} to use to filter results.
+     * @param scopeId
+     *         The {@link ScopeId} in which to search results.
+     * @param query
+     *         The {@link RoleQuery} to use to filter results.
      * @return The count of all the result matching the given {@link RoleQuery} parameter.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @POST
     @Path("_count")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public CountResult count(
             @PathParam("scopeId") ScopeId scopeId,
             RoleQuery query) throws KapuaException {
@@ -149,18 +162,20 @@ public class Roles extends AbstractKapuaResource {
     }
 
     /**
-     * Creates a new Role based on the information provided in RoleCreator
-     * parameter.
+     * Creates a new Role based on the information provided in RoleCreator parameter.
      *
-     * @param scopeId     The {@link ScopeId} in which to create the {@link Role}
-     * @param roleCreator Provides the information for the new {@link Role} to be created.
+     * @param scopeId
+     *         The {@link ScopeId} in which to create the {@link Role}
+     * @param roleCreator
+     *         Provides the information for the new {@link Role} to be created.
      * @return The newly created {@link Role} object.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @POST
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public Response create(
             @PathParam("scopeId") ScopeId scopeId,
             RoleCreator roleCreator) throws KapuaException {
@@ -172,15 +187,18 @@ public class Roles extends AbstractKapuaResource {
     /**
      * Returns the Role specified by the "roleId" path parameter.
      *
-     * @param scopeId The {@link ScopeId} of the requested {@link Role}.
-     * @param roleId  The id of the requested {@link Role}.
+     * @param scopeId
+     *         The {@link ScopeId} of the requested {@link Role}.
+     * @param roleId
+     *         The id of the requested {@link Role}.
      * @return The requested {@link Role} object.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @GET
     @Path("{roleId}")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public Role find(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("roleId") EntityId roleId) throws KapuaException {
@@ -192,17 +210,21 @@ public class Roles extends AbstractKapuaResource {
     /**
      * Updates the Role based on the information provided in the Role parameter.
      *
-     * @param scopeId The ScopeId of the requested {@link Role}.
-     * @param roleId  The id of the requested {@link Role}
-     * @param role    The modified Role whose attributed need to be updated.
+     * @param scopeId
+     *         The ScopeId of the requested {@link Role}.
+     * @param roleId
+     *         The id of the requested {@link Role}
+     * @param role
+     *         The modified Role whose attributed need to be updated.
      * @return The updated {@link Role}.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @PUT
     @Path("{roleId}")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public Role update(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("roleId") EntityId roleId,
@@ -216,10 +238,13 @@ public class Roles extends AbstractKapuaResource {
     /**
      * Deletes the Role specified by the "roleId" path parameter.
      *
-     * @param scopeId The ScopeId of the requested {@link Role}.
-     * @param roleId  The id of the Role to be deleted.
+     * @param scopeId
+     *         The ScopeId of the requested {@link Role}.
+     * @param roleId
+     *         The id of the Role to be deleted.
      * @return HTTP 200 if operation has completed successfully.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @DELETE
@@ -235,14 +260,21 @@ public class Roles extends AbstractKapuaResource {
     /**
      * Gets all the {@link User}s for a given {@link Role}
      *
-     * @param scopeId   The ScopeId of the requested {@link Role}.
-     * @param roleId    The id of the Role to be deleted.
-     * @param offset    The result set offset.
-     * @param limit     The result set limit.
-     * @param sortParam The name of the parameter that will be used as a sorting key for the users
-     * @param sortDir   The sort direction. Can be ASCENDING (default), DESCENDING. Case-insensitive.
+     * @param scopeId
+     *         The ScopeId of the requested {@link Role}.
+     * @param roleId
+     *         The id of the Role to be deleted.
+     * @param offset
+     *         The result set offset.
+     * @param limit
+     *         The result set limit.
+     * @param sortParam
+     *         The name of the parameter that will be used as a sorting key for the users
+     * @param sortDir
+     *         The sort direction. Can be ASCENDING (default), DESCENDING. Case-insensitive.
      * @return An {@link UserListResult} containing the {@link User}s for the given {@link Role}
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.2.0
      */
     @GET

@@ -19,8 +19,6 @@ import javax.xml.bind.JAXBContext;
 
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaSerializable;
-import org.eclipse.kapua.app.api.core.model.CountResult;
-import org.eclipse.kapua.app.api.core.model.SetResult;
 import org.eclipse.kapua.app.api.core.model.StorableEntityId;
 import org.eclipse.kapua.app.api.core.model.data.JsonDatastoreMessage;
 import org.eclipse.kapua.app.api.core.model.data.JsonMessageQuery;
@@ -28,9 +26,11 @@ import org.eclipse.kapua.app.api.core.model.device.management.JsonGenericRequest
 import org.eclipse.kapua.app.api.core.model.device.management.JsonGenericResponseMessage;
 import org.eclipse.kapua.app.api.core.model.message.JsonKapuaPayload;
 import org.eclipse.kapua.app.api.resources.v1.resources.model.device.management.keystore.DeviceKeystoreCertificateInfo;
+import org.eclipse.kapua.commons.rest.model.CountResult;
 import org.eclipse.kapua.commons.rest.model.IsJobRunningMultipleResponse;
 import org.eclipse.kapua.commons.rest.model.IsJobRunningResponse;
 import org.eclipse.kapua.commons.rest.model.MultipleJobIdRequest;
+import org.eclipse.kapua.commons.rest.model.SetResult;
 import org.eclipse.kapua.commons.rest.model.errors.CleanJobDataExceptionInfo;
 import org.eclipse.kapua.commons.rest.model.errors.DeviceManagementRequestContentExceptionInfo;
 import org.eclipse.kapua.commons.rest.model.errors.DeviceManagementResponseCodeExceptionInfo;

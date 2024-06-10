@@ -13,7 +13,7 @@
 package org.eclipse.kapua.app.api.web;
 
 import org.eclipse.kapua.app.api.core.exception.SessionNotPopulatedException;
-import org.eclipse.kapua.app.api.core.model.ScopeId;
+import org.eclipse.kapua.commons.rest.model.ScopeId;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.security.KapuaSession;
 import org.eclipse.kapua.model.id.KapuaId;
@@ -76,6 +76,5 @@ public class ScopeIdParamConverterTest {
         scopeId.setId(null);
         scopeId.toString();
     }
-
 
 }

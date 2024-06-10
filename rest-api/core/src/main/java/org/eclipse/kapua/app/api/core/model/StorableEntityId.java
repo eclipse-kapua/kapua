@@ -29,7 +29,8 @@ public class StorableEntityId implements StorableId {
     /**
      * Builds the {@link Storable} from the given {@link String} representation.
      *
-     * @param id The string storable id to parse.
+     * @param id
+     *         The string storable id to parse.
      * @since 1.0.0
      */
     public StorableEntityId(String id) {

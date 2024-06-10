@@ -14,9 +14,10 @@ package org.eclipse.kapua.app.api.web;
 
 import javax.xml.bind.JAXBException;
 
-import org.eclipse.kapua.app.api.core.KapuaSerializableBodyWriter;
-import org.eclipse.kapua.app.api.core.ListBodyWriter;
-import org.eclipse.kapua.app.api.core.MoxyJsonConfigContextResolver;
+import org.eclipse.kapua.commons.rest.jersey.JaxbContextResolver;
+import org.eclipse.kapua.commons.rest.jersey.KapuaSerializableBodyWriter;
+import org.eclipse.kapua.commons.rest.jersey.ListBodyWriter;
+import org.eclipse.kapua.commons.rest.jersey.MoxyJsonConfigContextResolver;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.glassfish.jersey.server.filter.UriConnegFilter;
 import org.glassfish.jersey.server.spi.ContainerLifecycleListener;

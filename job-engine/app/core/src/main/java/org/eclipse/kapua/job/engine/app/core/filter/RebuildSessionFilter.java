@@ -16,7 +16,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.eclipse.kapua.app.api.core.auth.KapuaTokenAuthenticationFilter;
+import org.eclipse.kapua.commons.rest.filters.auth.KapuaTokenAuthenticationFilter;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.security.KapuaSession;
 import org.eclipse.kapua.job.engine.SessionInfoHttpHeaders;

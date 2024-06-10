@@ -23,8 +23,8 @@ import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBException;
 
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.app.api.core.model.EntityId;
-import org.eclipse.kapua.app.api.core.model.ScopeId;
+import org.eclipse.kapua.commons.rest.model.EntityId;
+import org.eclipse.kapua.commons.rest.model.ScopeId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
 import org.eclipse.kapua.commons.rest.model.IsJobRunningMultipleResponse;
 import org.eclipse.kapua.commons.rest.model.IsJobRunningResponse;
