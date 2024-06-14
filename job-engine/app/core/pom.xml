@@ -47,11 +47,11 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-commons-rest-jersey</artifactId>
+            <artifactId>kapua-commons-web-jersey</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-commons-rest-filters</artifactId>
+            <artifactId>kapua-commons-web-rest</artifactId>
         </dependency>
     </dependencies>
 </project>

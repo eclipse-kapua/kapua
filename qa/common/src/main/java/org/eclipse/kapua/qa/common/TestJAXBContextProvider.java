@@ -17,27 +17,30 @@ import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
 
+import org.eclipse.kapua.ExceptionInfo;
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.commons.rest.model.IsJobRunningMultipleResponse;
-import org.eclipse.kapua.commons.rest.model.IsJobRunningResponse;
-import org.eclipse.kapua.commons.rest.model.MultipleJobIdRequest;
-import org.eclipse.kapua.commons.rest.model.errors.ExceptionInfo;
-import org.eclipse.kapua.commons.rest.model.errors.JobAlreadyRunningExceptionInfo;
-import org.eclipse.kapua.commons.rest.model.errors.JobInvalidTargetExceptionInfo;
-import org.eclipse.kapua.commons.rest.model.errors.JobMissingStepExceptionInfo;
-import org.eclipse.kapua.commons.rest.model.errors.JobMissingTargetExceptionInfo;
-import org.eclipse.kapua.commons.rest.model.errors.JobNotRunningExceptionInfo;
-import org.eclipse.kapua.commons.rest.model.errors.JobResumingExceptionInfo;
-import org.eclipse.kapua.commons.rest.model.errors.JobRunningExceptionInfo;
-import org.eclipse.kapua.commons.rest.model.errors.JobStartingExceptionInfo;
-import org.eclipse.kapua.commons.rest.model.errors.JobStoppingExceptionInfo;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordCreator;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordListResult;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordQuery;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreXmlRegistry;
 import org.eclipse.kapua.commons.util.xml.JAXBContextProvider;
 import org.eclipse.kapua.event.ServiceEvent;
+import org.eclipse.kapua.job.engine.IsJobRunningMultipleResponse;
+import org.eclipse.kapua.job.engine.IsJobRunningResponse;
 import org.eclipse.kapua.job.engine.JobStartOptions;
+import org.eclipse.kapua.job.engine.MultipleJobIdRequest;
+import org.eclipse.kapua.job.engine.client.JobStartOptionsClient;
+import org.eclipse.kapua.job.engine.commons.model.JobStepPropertiesOverrides;
+import org.eclipse.kapua.job.engine.commons.model.JobTargetSublist;
+import org.eclipse.kapua.job.engine.exception.JobAlreadyRunningExceptionInfo;
+import org.eclipse.kapua.job.engine.exception.JobInvalidTargetExceptionInfo;
+import org.eclipse.kapua.job.engine.exception.JobMissingStepExceptionInfo;
+import org.eclipse.kapua.job.engine.exception.JobMissingTargetExceptionInfo;
+import org.eclipse.kapua.job.engine.exception.JobNotRunningExceptionInfo;
+import org.eclipse.kapua.job.engine.exception.JobResumingExceptionInfo;
+import org.eclipse.kapua.job.engine.exception.JobRunningExceptionInfo;
+import org.eclipse.kapua.job.engine.exception.JobStartingExceptionInfo;
+import org.eclipse.kapua.job.engine.exception.JobStoppingExceptionInfo;
 import org.eclipse.kapua.model.config.metatype.KapuaTad;
 import org.eclipse.kapua.model.config.metatype.KapuaTdesignate;
 import org.eclipse.kapua.model.config.metatype.KapuaTicon;
@@ -100,6 +103,8 @@ import org.eclipse.kapua.service.device.management.packages.model.DevicePackages
 import org.eclipse.kapua.service.device.management.packages.model.download.DevicePackageDownloadRequest;
 import org.eclipse.kapua.service.device.management.packages.model.uninstall.DevicePackageUninstallRequest;
 import org.eclipse.kapua.service.job.Job;
+import org.eclipse.kapua.service.job.JobListResult;
+import org.eclipse.kapua.service.job.JobXmlRegistry;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserListResult;
 import org.eclipse.persistence.jaxb.JAXBContextFactory;
@@ -108,8 +113,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * JAXB context provided for proper (un)marshalling of interface annotated classes.
- * This particular implementation is used only in unit and integration tests.
+ * JAXB context provided for proper (un)marshalling of interface annotated classes. This particular implementation is used only in unit and integration tests.
  * <p>
  * Application and interfaces have their own implementation of provider.
  */
@@ -141,9 +145,14 @@ public class TestJAXBContextProvider implements JAXBContextProvider {
 
                     // Jobs
                     Job.class,
+                    JobListResult.class,
+                    JobXmlRegistry.class,
 
                     // Job Engine
+                    JobStartOptionsClient.class,
                     JobStartOptions.class,
+                    JobStepPropertiesOverrides.class,
+                    JobTargetSublist.class,
                     IsJobRunningResponse.class,
                     IsJobRunningMultipleResponse.class,
                     MultipleJobIdRequest.class,

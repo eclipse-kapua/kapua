@@ -1007,22 +1007,12 @@
             </dependency>
             <dependency>
                 <groupId>org.eclipse.kapua</groupId>
-                <artifactId>kapua-commons-rest-errors</artifactId>
+                <artifactId>kapua-commons-web-rest</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.kapua</groupId>
-                <artifactId>kapua-commons-rest-model</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.kapua</groupId>
-                <artifactId>kapua-commons-rest-filters</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.kapua</groupId>
-                <artifactId>kapua-commons-rest-jersey</artifactId>
+                <artifactId>kapua-commons-web-jersey</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -2679,7 +2669,7 @@
 
         <!-- Core -->
         <module>commons</module>
-        <module>commons-rest</module>
+        <module>commons-web</module>
         <module>locator</module>
         <module>service</module>
         <module>message</module>

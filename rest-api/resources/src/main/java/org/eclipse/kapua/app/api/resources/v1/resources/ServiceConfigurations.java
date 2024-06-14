@@ -30,7 +30,7 @@ import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
 import org.eclipse.kapua.commons.configuration.ServiceConfigurationsFacade;
 import org.eclipse.kapua.service.config.ServiceComponentConfiguration;
 import org.eclipse.kapua.service.config.ServiceConfiguration;
-import org.eclipse.kapua.commons.rest.model.ScopeId;
+import org.eclipse.kapua.commons.web.rest.model.ScopeId;
 
 @Path("{scopeId}/serviceConfigurations")
 public class ServiceConfigurations extends AbstractKapuaResource {

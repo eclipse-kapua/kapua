@@ -16,8 +16,8 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
-import org.eclipse.kapua.commons.rest.jersey.KapuaCommonApiCoreSetting;
-import org.eclipse.kapua.commons.rest.jersey.KapuaCommonApiCoreSettingKeys;
+import org.eclipse.kapua.commons.web.rest.KapuaCommonApiCoreSetting;
+import org.eclipse.kapua.commons.web.rest.KapuaCommonApiCoreSettingKeys;
 
 import com.google.inject.Provides;
 

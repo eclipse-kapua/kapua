@@ -19,11 +19,12 @@ import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBException;
 
 import org.eclipse.kapua.app.api.core.MoxyJsonFeatureCustomJsonProvider;
-import org.eclipse.kapua.commons.rest.errors.ExceptionConfigurationProvider;
-import org.eclipse.kapua.commons.rest.jersey.JaxbContextResolver;
-import org.eclipse.kapua.commons.rest.jersey.KapuaSerializableBodyWriter;
-import org.eclipse.kapua.commons.rest.jersey.ListBodyWriter;
-import org.eclipse.kapua.commons.rest.jersey.MoxyJsonConfigContextResolver;
+import org.eclipse.kapua.commons.web.rest.ExceptionConfigurationProvider;
+import org.eclipse.kapua.commons.web.rest.ExceptionConfigurationProviderImpl;
+import org.eclipse.kapua.commons.web.rest.JaxbContextResolver;
+import org.eclipse.kapua.commons.web.rest.KapuaSerializableBodyWriter;
+import org.eclipse.kapua.commons.web.rest.ListBodyWriter;
+import org.eclipse.kapua.commons.web.rest.MoxyJsonConfigContextResolver;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.locator.guice.GuiceLocatorImpl;
 import org.glassfish.hk2.api.ServiceLocator;
@@ -49,7 +50,7 @@ public class RestApisApplication extends ResourceConfig {
             }
         });
 
-        packages("org.eclipse.kapua.commons.rest",
+        packages("org.eclipse.kapua.commons.web",
                 "org.eclipse.kapua.app.api",
                 "org.eclipse.kapua.service");
 

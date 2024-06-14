@@ -13,8 +13,8 @@
 package org.eclipse.kapua.app.api.resources.v1.resources;
 
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.commons.rest.model.EntityId;
-import org.eclipse.kapua.commons.rest.model.ScopeId;
+import org.eclipse.kapua.commons.web.rest.model.EntityId;
+import org.eclipse.kapua.commons.web.rest.model.ScopeId;
 import org.eclipse.kapua.app.api.core.model.device.management.JsonGenericRequestMessage;
 import org.eclipse.kapua.app.api.core.model.device.management.JsonGenericResponseMessage;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;

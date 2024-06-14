@@ -31,7 +31,7 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-commons-rest-model</artifactId>
+            <artifactId>kapua-commons-web-rest</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
@@ -81,12 +81,6 @@
             <groupId>org.eclipse.kapua</groupId>
             <artifactId>kapua-translator-api</artifactId>
         </dependency>
-
-        <!-- External dependencies -->
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
             <artifactId>kapua-job-engine-api</artifactId>
@@ -95,14 +89,16 @@
             <groupId>org.eclipse.kapua</groupId>
             <artifactId>kapua-system-api</artifactId>
         </dependency>
+
+        <!-- External dependencies -->
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.google.inject.extensions</groupId>
             <artifactId>guice-grapher</artifactId>
             <version>${guice.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-commons-rest-errors</artifactId>
         </dependency>
     </dependencies>
 </project>

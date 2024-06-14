@@ -12,8 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.resources.v1.resources.model.device.management.keystore;
 
-import org.eclipse.kapua.commons.rest.model.EntityId;
-import org.eclipse.kapua.commons.rest.model.ScopeId;
+import org.eclipse.kapua.commons.web.rest.model.EntityId;
+import org.eclipse.kapua.commons.web.rest.model.ScopeId;
 import org.eclipse.kapua.app.api.resources.v1.resources.DeviceManagementKeystores;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdAdapter;

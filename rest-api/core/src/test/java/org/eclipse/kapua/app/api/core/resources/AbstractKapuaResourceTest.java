@@ -16,7 +16,7 @@ import java.math.BigInteger;
 
 import javax.ws.rs.NotFoundException;
 
-import org.eclipse.kapua.commons.rest.model.ScopeId;
+import org.eclipse.kapua.commons.web.rest.model.ScopeId;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.junit.Assert;

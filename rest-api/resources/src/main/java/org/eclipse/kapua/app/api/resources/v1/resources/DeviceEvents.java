@@ -16,10 +16,10 @@ import com.google.common.base.Strings;
 
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.commons.rest.model.CountResult;
-import org.eclipse.kapua.commons.rest.model.DateParam;
-import org.eclipse.kapua.commons.rest.model.EntityId;
-import org.eclipse.kapua.commons.rest.model.ScopeId;
+import org.eclipse.kapua.commons.web.rest.model.CountResult;
+import org.eclipse.kapua.commons.web.rest.model.DateParam;
+import org.eclipse.kapua.commons.web.rest.model.EntityId;
+import org.eclipse.kapua.commons.web.rest.model.ScopeId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
 import org.eclipse.kapua.model.KapuaEntityAttributes;
 import org.eclipse.kapua.model.query.SortOrder;

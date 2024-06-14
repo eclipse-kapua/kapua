@@ -22,11 +22,6 @@ import org.eclipse.kapua.commons.setting.SettingKey;
 public enum KapuaApiCoreSettingKeys implements SettingKey {
 
     /**
-     * @since 1.0.0
-     */
-    API_PATH_PARAM_SCOPEID_WILDCARD("api.path.param.scopeId.wildcard"),
-
-    /**
      * Whether DeviceManagementPakages.download and DeviceManagementPakages.uninstall should return 200 with DeviceManagementOperation entity ({@code false}) or 204 without a content ({@code false})
      *
      * @since 2.0.0

@@ -50,7 +50,7 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-commons-rest-model</artifactId>
+            <artifactId>kapua-commons-web-rest</artifactId>
         </dependency>
 
         <dependency>
@@ -141,7 +141,7 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-commons-rest-jersey</artifactId>
+            <artifactId>kapua-commons-web-jersey</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
