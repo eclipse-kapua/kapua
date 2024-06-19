@@ -28,11 +28,12 @@
     </listener>
 
     <listener>
-        <listener-class>org.eclipse.kapua.commons.web.jersey.ServiceBundleContextListener</listener-class>
+        <listener-class>org.eclipse.kapua.commons.jersey.web.ServiceBundleContextListener</listener-class>
     </listener>
 
     <!-- -->
     <!-- Filters -->
+
     <filter>
         <filter-name>ShiroFilter</filter-name>
         <filter-class>org.apache.shiro.web.servlet.ShiroFilter</filter-class>
@@ -44,7 +45,7 @@
 
     <filter>
         <filter-name>CORSResponseFilter</filter-name>
-        <filter-class>org.eclipse.kapua.commons.web.rest.filters.CORSResponseFilter</filter-class>
+        <filter-class>org.eclipse.kapua.commons.jersey.rest.filters.CORSResponseFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>CORSResponseFilter</filter-name>
@@ -53,7 +54,7 @@
 
     <filter>
         <filter-name>KapuaSessionCleanUpFilter</filter-name>
-        <filter-class>org.eclipse.kapua.commons.web.rest.filters.KapuaSessionCleanupFilter</filter-class>
+        <filter-class>org.eclipse.kapua.commons.jersey.rest.filters.KapuaSessionCleanupFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>KapuaSessionCleanUpFilter</filter-name>

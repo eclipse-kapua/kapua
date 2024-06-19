@@ -13,7 +13,7 @@
 package org.eclipse.kapua.app.api.resources.v1.resources;
 
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.commons.web.rest.model.ScopeId;
+import org.eclipse.kapua.commons.jersey.rest.model.ScopeId;
 import org.eclipse.kapua.app.api.core.model.data.JsonKapuaDataMessage;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
 import org.eclipse.kapua.app.api.resources.v1.resources.marker.JsonSerializationFixed;

@@ -14,7 +14,7 @@ package org.eclipse.kapua.app.api.web;
 
 import javax.servlet.ServletContextEvent;
 
-import org.eclipse.kapua.commons.web.jersey.ServiceBundleContextListener;
+import org.eclipse.kapua.commons.jersey.web.ServiceBundleContextListener;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.junit.Assert;
 import org.junit.Before;

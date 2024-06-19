@@ -23,7 +23,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.mgt.SecurityManager;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.security.KapuaSession;
-import org.eclipse.kapua.commons.web.rest.filters.KapuaSessionCleanupFilter;
+import org.eclipse.kapua.commons.jersey.rest.filters.KapuaSessionCleanupFilter;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.security.SecurityUtil;
 import org.junit.Assert;

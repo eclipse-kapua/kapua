@@ -17,8 +17,8 @@ import java.util.HashMap;
 import javax.inject.Singleton;
 import javax.ws.rs.core.MediaType;
 
-import org.eclipse.kapua.commons.web.rest.ExceptionConfigurationProvider;
-import org.eclipse.kapua.commons.web.rest.ExceptionConfigurationProviderImpl;
+import org.eclipse.kapua.commons.jersey.rest.ExceptionConfigurationProvider;
+import org.eclipse.kapua.commons.jersey.rest.ExceptionConfigurationProviderImpl;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.locator.guice.GuiceLocatorImpl;
 import org.glassfish.hk2.api.ServiceLocator;
@@ -44,7 +44,7 @@ public class JobEngineApplication extends ResourceConfig {
                         .in(Singleton.class);
             }
         });
-        packages("org.eclipse.kapua.commons.web", "org.eclipse.kapua.job.engine.app");
+        packages("org.eclipse.kapua.commons.jersey", "org.eclipse.kapua.job.engine.app");
 
         // Bind media type to resource extension
         HashMap<String, MediaType> mappedMediaTypes = new HashMap<>();
