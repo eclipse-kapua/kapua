@@ -12,55 +12,32 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.server.util;
 
-import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.commons.core.ServiceModuleBundle;
-import org.eclipse.kapua.locator.KapuaLocator;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+
+import org.eclipse.kapua.commons.jersey.web.ServiceBundleContextListener;
 import org.eclipse.kapua.service.scheduler.quartz.SchedulerServiceInit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
 /**
  * @since 1.0.0
  */
-public class ConsoleListener implements ServletContextListener {
+public class ConsoleListener extends ServiceBundleContextListener implements ServletContextListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConsoleListener.class);
-
-    private ServiceModuleBundle moduleBundle;
 
     @Override
     public void contextInitialized(final ServletContextEvent event) {
 
         // Start service modules
-        try {
-            LOG.info("Starting service modules...");
-            if (moduleBundle == null) {
-                moduleBundle = KapuaLocator.getInstance().getComponent(ServiceModuleBundle.class);
-            }
-            moduleBundle.startup();
-            LOG.info("Starting service modules... DONE!");
-        } catch (Exception e) {
-            LOG.error("Starting service modules... ERROR! Error: {}", e.getMessage(), e);
-            throw new ExceptionInInitializerError(e);
-        }
+        initServiceModuleBundles();
     }
 
     @Override
     public void contextDestroyed(final ServletContextEvent event) {
         // Stop event modules
-        try {
-            LOG.info("Stopping service modules...");
-            if (moduleBundle != null) {
-                moduleBundle.shutdown();
-                moduleBundle = null;
-            }
-            LOG.info("Stopping service modules... DONE!");
-        } catch (KapuaException e) {
-            LOG.error("Stopping service modules... ERROR! Error: {}", e.getMessage(), e);
-        }
+        stopServiceModuleBundles();
 
         // Stop Quartz scheduler
         try {
