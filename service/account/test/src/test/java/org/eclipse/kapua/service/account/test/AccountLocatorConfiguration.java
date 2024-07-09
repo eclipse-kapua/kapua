@@ -18,7 +18,6 @@ import org.eclipse.kapua.commons.configuration.ResourceLimitedServiceConfigurati
 import org.eclipse.kapua.commons.configuration.RootUserTester;
 import org.eclipse.kapua.commons.configuration.ServiceConfigImplJpaRepository;
 import org.eclipse.kapua.commons.configuration.UsedEntitiesCounterImpl;
-import org.eclipse.kapua.commons.configuration.metatype.KapuaMetatypeFactoryImpl;
 import org.eclipse.kapua.commons.crypto.CryptoUtil;
 import org.eclipse.kapua.commons.crypto.CryptoUtilImpl;
 import org.eclipse.kapua.commons.crypto.setting.CryptoSettings;
@@ -34,7 +33,6 @@ import org.eclipse.kapua.commons.service.event.store.internal.EventStoreRecordIm
 import org.eclipse.kapua.commons.service.internal.cache.CacheManagerProvider;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.model.config.metatype.KapuaMetatypeFactory;
 import org.eclipse.kapua.model.query.QueryFactory;
 import org.eclipse.kapua.qa.common.MockedLocator;
 import org.eclipse.kapua.service.account.AccountFactory;
@@ -104,8 +102,6 @@ public class AccountLocatorConfiguration {
                 // Inject mocked Permission Factory
                 final PermissionFactory mockPermissionFactory = Mockito.mock(PermissionFactory.class);
                 bind(PermissionFactory.class).toInstance(mockPermissionFactory);
-                // Set KapuaMetatypeFactory for Metatype configuration
-                bind(KapuaMetatypeFactory.class).toInstance(new KapuaMetatypeFactoryImpl());
                 // Inject actual account related services
                 //                final AccountEntityManagerFactory entityManagerFactory = AccountEntityManagerFactory.getInstance();
                 //                bind(AccountEntityManagerFactory.class).toInstance(entityManagerFactory);

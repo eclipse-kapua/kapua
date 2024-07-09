@@ -10,7 +10,7 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.configuration.metatype;
+package org.eclipse.kapua.model.config.metatype;
 
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.junit.Assert;
@@ -18,16 +18,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-
 @Category(JUnitTests.class)
-public class TobjectImplTest {
+public class KapuaTobjectTest {
 
     @Before
     public void createInstanceOfClasses() {
-        tobjectImpl = new TobjectImpl();
+        tobjectImpl = new KapuaTobject();
     }
 
-    TobjectImpl tobjectImpl;
+    KapuaTobject tobjectImpl;
 
     @Test
     public void getAttributeTest() {
@@ -47,7 +46,8 @@ public class TobjectImplTest {
 
     @Test
     public void setAndGetOcdrefTest() {
-        String[] permittedValues = {"", "!@#$%^^&**(-()_)+/|", "regularOcdref", "regular Ocdref", "49", "regularOcdref49", "OCDREF", "246465494135646120009090049684646496468456468496846464968496844"};
+        String[] permittedValues = { "", "!@#$%^^&**(-()_)+/|", "regularOcdref", "regular Ocdref", "49", "regularOcdref49", "OCDREF",
+                "246465494135646120009090049684646496468456468496846464968496844" };
         for (String value : permittedValues) {
             tobjectImpl.setOcdref(value);
             Assert.assertTrue(tobjectImpl.getOcdref().contains(value));

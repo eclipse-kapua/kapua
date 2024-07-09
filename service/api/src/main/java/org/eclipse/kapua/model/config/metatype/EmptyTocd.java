@@ -10,18 +10,15 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.configuration.metatype;
+package org.eclipse.kapua.model.config.metatype;
 
-import org.eclipse.kapua.model.config.metatype.KapuaTad;
-import org.eclipse.kapua.model.config.metatype.KapuaTicon;
-import org.eclipse.kapua.model.config.metatype.KapuaTocd;
-
-import javax.xml.namespace.QName;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class EmptyTocd implements KapuaTocd {
+import javax.xml.namespace.QName;
+
+public class EmptyTocd extends KapuaTocd {
 
     private String id;
     private String name;

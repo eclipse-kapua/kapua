@@ -12,6 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.model.config.metatype;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
@@ -20,8 +25,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -50,16 +53,19 @@ import java.util.Map;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(name = "Toption", propOrder = {
         "any"
-}, factoryClass = MetatypeXmlRegistry.class, factoryMethod = "newKapuaToption")
-public interface KapuaToption {
+})
+public class KapuaToption {
+
+    protected List<Object> any;
+    protected String label;
+    protected String value;
+    private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
     /**
      * Gets the value of the any property.
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the any property.
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is
+     * not a <CODE>set</CODE> method for the any property.
      * <p>
      * For example, to add a new item, do as follows:
      *
@@ -68,7 +74,12 @@ public interface KapuaToption {
      * </pre>
      */
     @XmlAnyElement(lax = true)
-    List<Object> getAny();
+    public List<Object> getAny() {
+        if (any == null) {
+            any = new ArrayList<Object>();
+        }
+        return this.any;
+    }
 
     /**
      * Gets the value of the label property.
@@ -76,14 +87,19 @@ public interface KapuaToption {
      * @return possible object is {@link String }
      */
     @XmlAttribute(name = "label", required = true)
-    String getLabel();
+    public String getLabel() {
+        return label;
+    }
 
     /**
      * Sets the value of the label property.
      *
-     * @param value allowed object is {@link String }
+     * @param value
+     *         allowed object is {@link String }
      */
-    void setLabel(String value);
+    public void setLabel(String value) {
+        this.label = value;
+    }
 
     /**
      * Gets the value of the value property.
@@ -91,27 +107,32 @@ public interface KapuaToption {
      * @return possible object is {@link String }
      */
     @XmlAttribute(name = "value", required = true)
-    String getValue();
+    public String getValue() {
+        return value;
+    }
 
     /**
      * Sets the value of the value property.
      *
-     * @param value allowed object is {@link String }
+     * @param value
+     *         allowed object is {@link String }
      */
-    void setValue(String value);
+    public void setValue(String value) {
+        this.value = value;
+    }
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
      * <p>
-     * the map is keyed by the name of the attribute and
-     * the value is the string value of the attribute.
+     * the map is keyed by the name of the attribute and the value is the string value of the attribute.
      * <p>
-     * the map returned by this method is live, and you can add new attribute
-     * by updating the map directly. Because of this design, there's no setter.
+     * the map returned by this method is live, and you can add new attribute by updating the map directly. Because of this design, there's no setter.
      *
      * @return always non-null
      */
     @XmlAnyAttribute
-    Map<QName, String> getOtherAttributes();
+    public Map<QName, String> getOtherAttributes() {
+        return otherAttributes;
+    }
 
 }

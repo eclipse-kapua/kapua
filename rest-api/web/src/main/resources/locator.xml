@@ -18,6 +18,7 @@
     <packages>
         <package>org.eclipse.kapua.app.api.web</package>
         <package>org.eclipse.kapua.plugin</package>
+        <package>org.eclipse.kapua.model</package>
         <package>org.eclipse.kapua.commons</package>
         <package>org.eclipse.kapua.job.engine.client</package>
         <package>org.eclipse.kapua.message</package>

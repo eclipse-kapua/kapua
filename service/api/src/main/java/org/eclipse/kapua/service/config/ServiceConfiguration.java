@@ -12,12 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.List;
 
 import org.eclipse.kapua.KapuaSerializable;
 
@@ -28,8 +30,16 @@ import org.eclipse.kapua.KapuaSerializable;
  */
 @XmlRootElement(name = "serviceConfigurations")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = ServiceConfigurationXmlRegistry.class, factoryMethod = "newConfiguration")
-public interface ServiceConfiguration extends KapuaSerializable {
+@XmlType
+public class ServiceConfiguration implements KapuaSerializable {
+
+    private static final long serialVersionUID = -2167999497954676423L;
+
+    private List<ServiceComponentConfiguration> configurations;
+
+    public ServiceConfiguration() {
+        configurations = new ArrayList<>();
+    }
 
     /**
      * Get the service component configuration list
@@ -37,5 +47,7 @@ public interface ServiceConfiguration extends KapuaSerializable {
      * @return
      */
     @XmlElement(name = "configuration")
-    List<ServiceComponentConfiguration> getComponentConfigurations();
+    public List<ServiceComponentConfiguration> getComponentConfigurations() {
+        return configurations;
+    }
 }

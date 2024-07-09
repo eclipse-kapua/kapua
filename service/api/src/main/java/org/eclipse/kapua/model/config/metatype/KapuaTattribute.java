@@ -12,9 +12,20 @@
  *******************************************************************************/
 package org.eclipse.kapua.model.config.metatype;
 
-import javax.xml.namespace.QName;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyAttribute;
+import javax.xml.bind.annotation.XmlAnyElement;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.namespace.QName;
 
 /**
  * <p>
@@ -40,15 +51,30 @@ import java.util.Map;
  *
  * @since 1.0
  */
-public interface KapuaTattribute {
+@XmlRootElement(name = "Attribute", namespace = "http://www.osgi.org/xmlns/metatype/v1.2.0")
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "Tattribute", propOrder = {
+        "value",
+        "any"
+})
+public class KapuaTattribute {
+
+    @XmlElement(name = "Value", namespace = "http://www.osgi.org/xmlns/metatype/v1.2.0")
+    protected List<String> value;
+    @XmlAnyElement(lax = true)
+    protected List<Object> any;
+    @XmlAttribute(name = "adref", required = true)
+    protected String adref;
+    @XmlAttribute(name = "content")
+    protected String content;
+    @XmlAnyAttribute
+    private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
     /**
      * Gets the value of the value property.
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the value property.
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is
+     * not a <CODE>set</CODE> method for the value property.
      * <p>
      * For example, to add a new item, do as follows:
      *
@@ -57,15 +83,18 @@ public interface KapuaTattribute {
      * </pre>
      * <p>
      */
-    List<String> getValue();
+    public List<String> getValue() {
+        if (value == null) {
+            value = new ArrayList<String>();
+        }
+        return this.value;
+    }
 
     /**
      * Gets the value of the any property.
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the any property.
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is
+     * not a <CODE>set</CODE> method for the any property.
      * <p>
      * For example, to add a new item, do as follows:
      *
@@ -74,46 +103,61 @@ public interface KapuaTattribute {
      * </pre>
      * <p>
      */
-    List<Object> getAny();
+    public List<Object> getAny() {
+        if (any == null) {
+            any = new ArrayList<Object>();
+        }
+        return this.any;
+    }
 
     /**
      * Gets the value of the adref property.
      *
      * @return possible object is {@link String }
      */
-    String getAdref();
+    public String getAdref() {
+        return adref;
+    }
 
     /**
      * Sets the value of the adref property.
      *
-     * @param value allowed object is {@link String }
+     * @param value
+     *         allowed object is {@link String }
      */
-    void setAdref(String value);
+    public void setAdref(String value) {
+        this.adref = value;
+    }
 
     /**
      * Gets the value of the content property.
      *
      * @return possible object is {@link String }
      */
-    String getContent();
+    public String getContent() {
+        return content;
+    }
 
     /**
      * Sets the value of the content property.
      *
-     * @param value allowed object is {@link String }
+     * @param value
+     *         allowed object is {@link String }
      */
-    void setContent(String value);
+    public void setContent(String value) {
+        this.content = value;
+    }
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
      * <p>
-     * the map is keyed by the name of the attribute and
-     * the value is the string value of the attribute.
+     * the map is keyed by the name of the attribute and the value is the string value of the attribute.
      * <p>
-     * the map returned by this method is live, and you can add new attribute
-     * by updating the map directly. Because of this design, there's no setter.
+     * the map returned by this method is live, and you can add new attribute by updating the map directly. Because of this design, there's no setter.
      *
      * @return always non-null
      */
-    Map<QName, String> getOtherAttributes();
+    public Map<QName, String> getOtherAttributes() {
+        return otherAttributes;
+    }
 }

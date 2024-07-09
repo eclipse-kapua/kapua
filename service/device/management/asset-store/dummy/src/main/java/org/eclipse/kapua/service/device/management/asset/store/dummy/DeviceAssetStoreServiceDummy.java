@@ -12,17 +12,18 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.asset.store.dummy;
 
-import org.eclipse.kapua.commons.configuration.metatype.EmptyTocd;
+import java.util.Map;
+
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.commons.service.internal.KapuaServiceDisabledException;
 import org.eclipse.kapua.message.device.data.KapuaDataMessage;
+import org.eclipse.kapua.model.config.metatype.EmptyTocd;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssets;
 import org.eclipse.kapua.service.device.management.asset.store.DeviceAssetStoreService;
 import org.eclipse.kapua.service.device.management.asset.store.settings.DeviceAssetStoreSettings;
-
-import javax.inject.Singleton;
-import java.util.Map;
 
 /**
  * {@link DeviceAssetStoreService} implementation.

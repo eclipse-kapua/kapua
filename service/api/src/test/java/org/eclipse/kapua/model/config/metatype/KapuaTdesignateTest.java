@@ -10,7 +10,9 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.configuration.metatype;
+package org.eclipse.kapua.model.config.metatype;
+
+import java.util.ArrayList;
 
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.junit.Assert;
@@ -18,19 +20,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.util.ArrayList;
-
-
 @Category(JUnitTests.class)
-public class TdesignateImplTest {
+public class KapuaTdesignateTest {
 
     @Before
     public void createInstanceOfClass() {
 
-        tdesignate = new TdesignateImpl();
+        tdesignate = new KapuaTdesignate();
     }
 
-    TdesignateImpl tdesignate;
+    KapuaTdesignate tdesignate;
 
     @Test
     public void setAndGetObjectToNullTest() {
@@ -40,7 +39,7 @@ public class TdesignateImplTest {
 
     @Test
     public void setAndGetObjectTest() {
-        TobjectImpl tobject = new TobjectImpl();
+        KapuaTobject tobject = new KapuaTobject();
         tdesignate.setObject(tobject);
         Assert.assertEquals("tdesignate.object", tobject, tdesignate.getObject());
     }
@@ -65,7 +64,7 @@ public class TdesignateImplTest {
         objectArrayList.add(11122.33);
         objectArrayList.add(true);
         objectArrayList.add(false);
-        objectArrayList.add(new ToptionImpl());
+        objectArrayList.add(new KapuaToption());
 
         tdesignate.setAny(objectArrayList);
         Assert.assertEquals("tdesignate.any", objectArrayList, tdesignate.getAny());
@@ -79,7 +78,7 @@ public class TdesignateImplTest {
 
     @Test
     public void setAndGetPidTest() {
-        String[] permittedValues = {"", "!@#$%^^&**(-()_)+/|", "regularPid", "regular Pid", "49", "regularPid49", "PID", "2 46 465494 13564612 0009 09004 9684646496468456468496846464968496844"};
+        String[] permittedValues = { "", "!@#$%^^&**(-()_)+/|", "regularPid", "regular Pid", "49", "regularPid49", "PID", "2 46 465494 13564612 0009 09004 9684646496468456468496846464968496844" };
         for (String value : permittedValues) {
             tdesignate.setPid(value);
             Assert.assertTrue(tdesignate.getPid().contains(value));
@@ -94,7 +93,7 @@ public class TdesignateImplTest {
 
     @Test
     public void setAndGetFactoryPidTest() {
-        String[] permittedValues = {"", "!@#$%^^&**(-()_)+/|", "regularPid", "regular Pid", "49", "regularPid49", "PID", "2 46 465494 13564612 0009 09004 9684646496468456468496846464968496844"};
+        String[] permittedValues = { "", "!@#$%^^&**(-()_)+/|", "regularPid", "regular Pid", "49", "regularPid49", "PID", "2 46 465494 13564612 0009 09004 9684646496468456468496846464968496844" };
         for (String value : permittedValues) {
             tdesignate.setFactoryPid(value);
             Assert.assertTrue(tdesignate.getFactoryPid().contains(value));
@@ -109,7 +108,8 @@ public class TdesignateImplTest {
 
     @Test
     public void setAndGetBundleTest() {
-        String[] permittedValues = {"", "!@#$%^^&**(-()_)+/|", "regularBundle", "regular Bundle", "49", "regularBundle49", "BUNDLE", "2 46 465494 13564612 0009 09004 9684646496468456468496846464968496844"};
+        String[] permittedValues = { "", "!@#$%^^&**(-()_)+/|", "regularBundle", "regular Bundle", "49", "regularBundle49", "BUNDLE",
+                "2 46 465494 13564612 0009 09004 9684646496468456468496846464968496844" };
         for (String value : permittedValues) {
             tdesignate.setBundle(value);
             Assert.assertTrue(tdesignate.getBundle().contains(value));
@@ -124,7 +124,7 @@ public class TdesignateImplTest {
 
     @Test
     public void setAndIsOptionalTest() {
-        boolean[] permittedValues = {false, true};
+        boolean[] permittedValues = { false, true };
         for (boolean value : permittedValues) {
             tdesignate.setOptional(value);
             Assert.assertEquals("tdesignate.isOptional", value, tdesignate.isOptional());
@@ -139,7 +139,7 @@ public class TdesignateImplTest {
 
     @Test
     public void setAndIsMergeTest() {
-        boolean[] permittedValues = {false, true};
+        boolean[] permittedValues = { false, true };
         for (boolean value : permittedValues) {
             tdesignate.setMerge(value);
             Assert.assertEquals("tdesignate.isMerge", value, tdesignate.isMerge());

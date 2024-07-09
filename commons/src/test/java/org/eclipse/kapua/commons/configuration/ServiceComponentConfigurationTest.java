@@ -12,31 +12,30 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.configuration;
 
-import org.eclipse.kapua.commons.configuration.metatype.TocdImpl;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
+import org.eclipse.kapua.service.config.ServiceComponentConfiguration;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.util.HashMap;
-import java.util.Map;
-
-
 @Category(JUnitTests.class)
-public class ServiceComponentConfigurationImplTest {
+public class ServiceComponentConfigurationTest {
 
-    ServiceComponentConfigurationImpl serviceComponentConfiguration;
+    ServiceComponentConfiguration serviceComponentConfiguration;
 
     @Before
     public void createInstanceOfClass() {
-        serviceComponentConfiguration = new ServiceComponentConfigurationImpl();
+        serviceComponentConfiguration = new ServiceComponentConfiguration();
     }
 
     @Test
     public void createInstanceWithSecondConstructorTest() {
-        ServiceComponentConfigurationImpl componentConfiguration = new ServiceComponentConfigurationImpl("12");
+        ServiceComponentConfiguration componentConfiguration = new ServiceComponentConfiguration("12");
         Assert.assertEquals(componentConfiguration.getId(), "12");
     }
 
@@ -112,7 +111,7 @@ public class ServiceComponentConfigurationImplTest {
 
     @Test
     public void setDefinitionToRegularValueTest() {
-        KapuaTocd tocd = new TocdImpl();
+        KapuaTocd tocd = new KapuaTocd();
         serviceComponentConfiguration.setDefinition(tocd);
         Assert.assertEquals(serviceComponentConfiguration.getDefinition(), tocd);
     }
@@ -129,7 +128,7 @@ public class ServiceComponentConfigurationImplTest {
         properties.put("property1", 10);
         properties.put("property2", "string");
         properties.put("property3", 'c');
-        properties.put("property4", (double)10);
+        properties.put("property4", (double) 10);
         serviceComponentConfiguration.setProperties(properties);
         Assert.assertEquals(properties, serviceComponentConfiguration.getProperties());
     }

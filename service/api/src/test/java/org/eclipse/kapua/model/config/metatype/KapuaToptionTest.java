@@ -10,7 +10,7 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.configuration.metatype;
+package org.eclipse.kapua.model.config.metatype;
 
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.junit.Assert;
@@ -18,17 +18,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-
 @Category(JUnitTests.class)
-public class ToptionImplTest {
+public class KapuaToptionTest {
 
     @Before
     public void createInstanceOfClass() {
 
-        toption = new ToptionImpl();
+        toption = new KapuaToption();
     }
 
-    ToptionImpl toption;
+    KapuaToption toption;
 
     @Test
     public void getAnyWithNullTest() {
@@ -43,7 +42,7 @@ public class ToptionImplTest {
 
     @Test
     public void setAndGetLabelTest() {
-        String[] permittedValues = {"", "!@#$%^^&**(-()_)+/|", "regularLabel", "regular Label", "49", "regularLabel49", "LABEL", "246465494135646120009090049684646496468456468496846464968496844"};
+        String[] permittedValues = { "", "!@#$%^^&**(-()_)+/|", "regularLabel", "regular Label", "49", "regularLabel49", "LABEL", "246465494135646120009090049684646496468456468496846464968496844" };
         for (String value : permittedValues) {
             toption.setLabel(value);
             Assert.assertTrue(toption.getLabel().contains(value));
@@ -58,7 +57,7 @@ public class ToptionImplTest {
 
     @Test
     public void setAndGetValueTest() {
-        String[] permittedValues = {"", "!@#$%^^&**(-()_)+/|", "regularValue", "regular Value", "49", "regularValue49", "VALUE", "246465494135646120009090049684646496468456468496846464968496844"};
+        String[] permittedValues = { "", "!@#$%^^&**(-()_)+/|", "regularValue", "regular Value", "49", "regularValue49", "VALUE", "246465494135646120009090049684646496468456468496846464968496844" };
         for (String value : permittedValues) {
             toption.setValue(value);
             Assert.assertTrue(toption.getValue().contains(value));

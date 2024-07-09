@@ -10,38 +10,36 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.configuration.metatype;
+package org.eclipse.kapua.model.config.metatype;
 
-import org.eclipse.kapua.model.config.metatype.KapuaTdesignate;
-import org.eclipse.kapua.model.config.metatype.KapuaTocd;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
+
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import javax.xml.namespace.QName;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-
 @Category(JUnitTests.class)
-public class TmetadataImplTest {
+public class KapuaTmetadataTest {
 
     @Before
     public void createInstanceOfClasses() {
         emptyTocd = new EmptyTocd();
-        tocd = new TocdImpl();
-        tmetadata = new TmetadataImpl();
-        tdesignate = new TdesignateImpl();
+        tocd = new KapuaTocd();
+        tmetadata = new KapuaTmetadata();
+        tdesignate = new KapuaTdesignate();
     }
 
     EmptyTocd emptyTocd;
-    TocdImpl tocd;
-    TmetadataImpl tmetadata;
-    TdesignateImpl tdesignate;
+    KapuaTocd tocd;
+    KapuaTmetadata tmetadata;
+    KapuaTdesignate tdesignate;
 
     @Test
     public void getOCDTest() {
@@ -92,7 +90,8 @@ public class TmetadataImplTest {
 
     @Test
     public void setAndGetLocalizationTest() {
-        String[] permittedValues = {"", "!@#$%^^&**(-()_)+/|", "regularLocalization", "regular Localization", "49", "regularLocalization49", "LOCALIZATION", "246465494135646120009090049684646496468456468496846464968496844"};
+        String[] permittedValues = { "", "!@#$%^^&**(-()_)+/|", "regularLocalization", "regular Localization", "49", "regularLocalization49", "LOCALIZATION",
+                "246465494135646120009090049684646496468456468496846464968496844" };
         for (String value : permittedValues) {
             tmetadata.setLocalization(value);
             Assert.assertTrue(tmetadata.getLocalization().contains(value));

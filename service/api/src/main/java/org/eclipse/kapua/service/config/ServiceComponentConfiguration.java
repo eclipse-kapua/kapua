@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.config;
 
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -19,7 +21,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Map;
 
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 
@@ -35,8 +36,28 @@ import org.eclipse.kapua.model.config.metatype.KapuaTocd;
         "name",
         "definition",
         "properties"
-}, factoryClass = ServiceConfigurationXmlRegistry.class, factoryMethod = "newComponentConfiguration")
-public interface ServiceComponentConfiguration {
+})
+public class ServiceComponentConfiguration {
+
+    private String id;
+    private String name;
+    private KapuaTocd definition;
+    private Map<String, Object> properties;
+
+    /**
+     * Constructor
+     */
+    public ServiceComponentConfiguration() {
+    }
+
+    /**
+     * Constructor
+     *
+     * @param id
+     */
+    public ServiceComponentConfiguration(String id) {
+        this.id = id;
+    }
 
     /**
      * Get service configuration component identifier
@@ -44,14 +65,18 @@ public interface ServiceComponentConfiguration {
      * @return
      */
     @XmlElement(name = "id")
-    String getId();
+    public String getId() {
+        return id;
+    }
 
     /**
      * Set service configuration component identifier
      *
      * @param id
      */
-    void setId(String id);
+    public void setId(String id) {
+        this.id = id;
+    }
 
     /**
      * Get service configuration component name
@@ -59,14 +84,18 @@ public interface ServiceComponentConfiguration {
      * @return
      */
     @XmlAttribute(name = "name")
-    String getName();
+    public String getName() {
+        return name;
+    }
 
     /**
      * Set service configuration component name
      *
-     * @param unescapedComponentName
+     * @param name
      */
-    void setName(String unescapedComponentName);
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /**
      * Get service configuration component definition
@@ -74,14 +103,18 @@ public interface ServiceComponentConfiguration {
      * @return
      */
     @XmlElement(name = "definition")
-    KapuaTocd getDefinition();
+    public KapuaTocd getDefinition() {
+        return definition;
+    }
 
     /**
      * Set service configuration component definition
      *
      * @param definition
      */
-    void setDefinition(KapuaTocd definition);
+    public void setDefinition(KapuaTocd definition) {
+        this.definition = definition;
+    }
 
     /**
      * Get service configuration component properties
@@ -90,12 +123,16 @@ public interface ServiceComponentConfiguration {
      */
     @XmlElement(name = "properties")
     @XmlJavaTypeAdapter(ServiceXmlConfigPropertiesAdapter.class)
-    Map<String, Object> getProperties();
+    public Map<String, Object> getProperties() {
+        return properties;
+    }
 
     /**
      * Set service configuration component properties
      *
      * @param properties
      */
-    void setProperties(Map<String, Object> properties);
+    public void setProperties(Map<String, Object> properties) {
+        this.properties = properties;
+    }
 }

@@ -13,8 +13,8 @@
 package org.eclipse.kapua.commons.configuration;
 
 import org.assertj.core.api.Assertions;
-import org.eclipse.kapua.commons.configuration.metatype.Password;
 import org.eclipse.kapua.commons.util.StringUtil;
+import org.eclipse.kapua.model.config.metatype.Password;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -25,7 +25,7 @@ public class StringUtilTest {
     @Test
     public void shouldConvertPasswordsArrayToString() {
         // Given
-        Password[] passwords = new Password[]{new Password("foo")};
+        Password[] passwords = new Password[] { new Password("foo") };
 
         // When
         String passwordsString = StringUtil.valueToString(passwords);

@@ -10,17 +10,16 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.configuration.metatype;
+package org.eclipse.kapua.model.config.metatype;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.util.Arrays;
-import java.util.List;
-
 
 @Category(JUnitTests.class)
 public class EmptyTocdTest {
@@ -55,7 +54,7 @@ public class EmptyTocdTest {
 
     @Test
     public void setAndGetNameTest() {
-        String[] permittedValues = {"", "!@#$%^^&**(-()_)+/|", "regularName", "regular Name", "49", "regularName49", "REGULAR", "246465494135646120009090049684646496468456468496846464968496844"};
+        String[] permittedValues = { "", "!@#$%^^&**(-()_)+/|", "regularName", "regular Name", "49", "regularName49", "REGULAR", "246465494135646120009090049684646496468456468496846464968496844" };
         for (String value : permittedValues) {
             emptyTocd.setName(value);
             Assert.assertTrue(emptyTocd.getName().contains(value));
@@ -70,7 +69,7 @@ public class EmptyTocdTest {
 
     @Test
     public void setAndGetIdTest() {
-        String[] permittedValues = {"", "!@#$%^^&**(-()_)+/|", "regular Id", "49", "regularId49", "ID", "246465494135646120009090049684646496468456468496846464968496844"};
+        String[] permittedValues = { "", "!@#$%^^&**(-()_)+/|", "regular Id", "49", "regularId49", "ID", "246465494135646120009090049684646496468456468496846464968496844" };
         for (String value : permittedValues) {
             emptyTocd.setId(value);
             Assert.assertTrue(emptyTocd.getId().contains(value));
@@ -97,7 +96,7 @@ public class EmptyTocdTest {
 
     @Test
     public void setAndGetDescriptionTest() {
-        String[] permittedValues = {"", "!@#$%^^&**(-()_)+/|", "regular Description", "49", "regularDescription49", "DESCRIPTION", "246465494135646120009090049684646496468456468496846464968496844"};
+        String[] permittedValues = { "", "!@#$%^^&**(-()_)+/|", "regular Description", "49", "regularDescription49", "DESCRIPTION", "246465494135646120009090049684646496468456468496846464968496844" };
         for (String value : permittedValues) {
             emptyTocd.setDescription(value);
             Assert.assertNull(emptyTocd.getDescription());

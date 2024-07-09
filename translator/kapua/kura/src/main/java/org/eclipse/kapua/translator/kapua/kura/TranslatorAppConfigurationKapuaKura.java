@@ -13,14 +13,19 @@
  *******************************************************************************/
 package org.eclipse.kapua.translator.kapua.kura;
 
-import org.eclipse.kapua.commons.configuration.metatype.Password;
-import org.eclipse.kapua.commons.configuration.metatype.TadImpl;
-import org.eclipse.kapua.commons.configuration.metatype.TiconImpl;
-import org.eclipse.kapua.commons.configuration.metatype.TocdImpl;
-import org.eclipse.kapua.commons.configuration.metatype.ToptionImpl;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.eclipse.kapua.commons.util.xml.XmlUtil;
+import org.eclipse.kapua.model.config.metatype.KapuaTad;
 import org.eclipse.kapua.model.config.metatype.KapuaTicon;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
+import org.eclipse.kapua.model.config.metatype.KapuaToption;
+import org.eclipse.kapua.model.config.metatype.Password;
 import org.eclipse.kapua.service.device.call.kura.model.configuration.ConfigurationMetrics;
 import org.eclipse.kapua.service.device.call.kura.model.configuration.KuraDeviceComponentConfiguration;
 import org.eclipse.kapua.service.device.call.kura.model.configuration.KuraDeviceConfiguration;
@@ -36,12 +41,6 @@ import org.eclipse.kapua.service.device.management.configuration.message.interna
 import org.eclipse.kapua.service.device.management.configuration.message.internal.ConfigurationRequestPayload;
 import org.eclipse.kapua.translator.exception.InvalidChannelException;
 import org.eclipse.kapua.translator.exception.InvalidPayloadException;
-
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * {@link org.eclipse.kapua.translator.Translator} implementation from {@link ConfigurationRequestMessage} to {@link KuraRequestMessage}
@@ -133,14 +132,14 @@ public class TranslatorAppConfigurationKapuaKura extends AbstractTranslatorKapua
     }
 
     protected KapuaTocd translate(KapuaTocd kapuaDefinition) {
-        TocdImpl definition = new TocdImpl();
+        KapuaTocd definition = new KapuaTocd();
 
         definition.setId(kapuaDefinition.getId());
         definition.setName(kapuaDefinition.getName());
         definition.setDescription(kapuaDefinition.getDescription());
 
         kapuaDefinition.getAD().forEach(kapuaAd -> {
-            TadImpl ad = new TadImpl();
+            KapuaTad ad = new KapuaTad();
             ad.setCardinality(kapuaAd.getCardinality());
             ad.setDefault(ad.getDefault());
             ad.setDescription(kapuaAd.getDescription());
@@ -152,7 +151,7 @@ public class TranslatorAppConfigurationKapuaKura extends AbstractTranslatorKapua
             ad.setRequired(kapuaAd.isRequired());
 
             kapuaAd.getOption().forEach(kuraToption -> {
-                ToptionImpl kapuaToption = new ToptionImpl();
+                KapuaToption kapuaToption = new KapuaToption();
                 kapuaToption.setLabel(kuraToption.getLabel());
                 kapuaToption.setValue(kuraToption.getValue());
                 ad.addOption(kapuaToption);
@@ -164,7 +163,7 @@ public class TranslatorAppConfigurationKapuaKura extends AbstractTranslatorKapua
         });
 
         kapuaDefinition.getIcon().forEach(kapuaIcon -> {
-            KapuaTicon icon = new TiconImpl();
+            KapuaTicon icon = new KapuaTicon();
             icon.setResource(kapuaIcon.getResource());
             icon.setSize(kapuaIcon.getSize());
 

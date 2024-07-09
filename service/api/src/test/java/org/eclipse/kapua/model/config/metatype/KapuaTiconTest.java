@@ -10,7 +10,9 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.configuration.metatype;
+package org.eclipse.kapua.model.config.metatype;
+
+import java.math.BigInteger;
 
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.junit.Assert;
@@ -18,19 +20,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.math.BigInteger;
-
-
 @Category(JUnitTests.class)
-public class TiconImplTest {
+public class KapuaTiconTest {
 
     @Before
     public void createInstanceOfClass() {
 
-        ticonImpl = new TiconImpl();
+        ticonImpl = new KapuaTicon();
     }
 
-    TiconImpl ticonImpl;
+    KapuaTicon ticonImpl;
+
     @Test
     public void getAnyTest() {
         Assert.assertTrue(ticonImpl.getAny().isEmpty());
@@ -44,7 +44,7 @@ public class TiconImplTest {
 
     @Test
     public void setAndGetResourcesTest() {
-        String[] permittedValues = {"", "regularResources", "49", "regular Resources", "regular esources with spaces", "!@#$%&*()_+/->,<", "RESOURCES", "resources123"};
+        String[] permittedValues = { "", "regularResources", "49", "regular Resources", "regular esources with spaces", "!@#$%&*()_+/->,<", "RESOURCES", "resources123" };
         for (String value : permittedValues) {
             ticonImpl.setResource(value);
             Assert.assertTrue(ticonImpl.getResource().contains(value));

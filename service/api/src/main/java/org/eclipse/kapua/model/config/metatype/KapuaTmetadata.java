@@ -12,6 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.model.config.metatype;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
@@ -21,8 +26,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -54,16 +57,20 @@ import java.util.Map;
         "any",
         "localization",
         "otherAttributes"
-}, factoryClass = MetatypeXmlRegistry.class, factoryMethod = "newKapuaTmetadata")
-public interface KapuaTmetadata {
+})
+public class KapuaTmetadata {
+
+    protected List<KapuaTocd> ocd;
+    protected List<KapuaTdesignate> designate;
+    protected List<Object> any;
+    protected String localization;
+    private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
     /**
      * Gets the value of the ocd property.
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the ocd property.
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is
+     * not a <CODE>set</CODE> method for the ocd property.
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
@@ -71,17 +78,22 @@ public interface KapuaTmetadata {
      * </pre>
      */
     @XmlElement(name = "OCD", namespace = "http://www.osgi.org/xmlns/metatype/v1.2.0")
-    List<KapuaTocd> getOCD();
+    public List<KapuaTocd> getOCD() {
+        if (ocd == null) {
+            ocd = new ArrayList<>();
+        }
+        return new ArrayList<>(this.ocd);
+    }
 
-    void setOCD(List<KapuaTocd> ocd);
+    public void setOCD(List<KapuaTocd> ocd) {
+        this.ocd = ocd;
+    }
 
     /**
      * Gets the value of the designate property.
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the designate property.
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is
+     * not a <CODE>set</CODE> method for the designate property.
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
@@ -89,17 +101,22 @@ public interface KapuaTmetadata {
      * </pre>
      */
     @XmlElement(name = "Designate", namespace = "http://www.osgi.org/xmlns/metatype/v1.2.0")
-    List<KapuaTdesignate> getDesignate();
+    public List<KapuaTdesignate> getDesignate() {
+        if (designate == null) {
+            designate = new ArrayList<>();
+        }
+        return new ArrayList<>(this.designate);
+    }
 
-    void setDesignate(List<KapuaTdesignate> designate);
+    public void setDesignate(List<KapuaTdesignate> designate) {
+        this.designate = designate;
+    }
 
     /**
      * Gets the value of the any property.
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the any property.
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is
+     * not a <CODE>set</CODE> method for the any property.
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
@@ -107,9 +124,16 @@ public interface KapuaTmetadata {
      * </pre>
      */
     @XmlAnyElement(lax = true)
-    List<Object> getAny();
+    public List<Object> getAny() {
+        if (any == null) {
+            any = new ArrayList<Object>();
+        }
+        return this.any;
+    }
 
-    void setAny(List<Object> any);
+    public void setAny(List<Object> any) {
+        this.any = any;
+    }
 
     /**
      * Gets the value of the localization property.
@@ -117,28 +141,35 @@ public interface KapuaTmetadata {
      * @return possible object is {@link String }
      */
     @XmlAttribute(name = "localization")
-    String getLocalization();
+    public String getLocalization() {
+        return localization;
+    }
 
     /**
      * Sets the value of the localization property.
      *
-     * @param value allowed object is {@link String }
+     * @param value
+     *         allowed object is {@link String }
      */
-    void setLocalization(String value);
+    public void setLocalization(String value) {
+        this.localization = value;
+    }
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
      * <p>
-     * the map is keyed by the name of the attribute and
-     * the value is the string value of the attribute.
+     * the map is keyed by the name of the attribute and the value is the string value of the attribute.
      * <p>
-     * the map returned by this method is live, and you can add new attribute
-     * by updating the map directly. Because of this design, there's no setter.
+     * the map returned by this method is live, and you can add new attribute by updating the map directly. Because of this design, there's no setter.
      *
      * @return always non-null
      */
     @XmlAnyAttribute
-    Map<QName, String> getOtherAttributes();
+    public Map<QName, String> getOtherAttributes() {
+        return otherAttributes;
+    }
 
-    void setOtherAttributes(Map<QName, String> otherAttributes);
+    public void setOtherAttributes(Map<QName, String> otherAttributes) {
+        this.otherAttributes = otherAttributes;
+    }
 }

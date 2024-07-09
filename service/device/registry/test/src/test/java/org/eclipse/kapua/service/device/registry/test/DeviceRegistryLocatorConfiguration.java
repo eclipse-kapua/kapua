@@ -12,18 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.registry.test;
 
-import com.codahale.metrics.MetricRegistry;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Singleton;
-import com.google.inject.name.Names;
-import io.cucumber.java.Before;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.configuration.AccountRelativeFinder;
 import org.eclipse.kapua.commons.configuration.RootUserTester;
 import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
-import org.eclipse.kapua.commons.configuration.metatype.KapuaMetatypeFactoryImpl;
 import org.eclipse.kapua.commons.crypto.CryptoUtil;
 import org.eclipse.kapua.commons.crypto.CryptoUtilImpl;
 import org.eclipse.kapua.commons.crypto.setting.CryptoSettings;
@@ -41,7 +36,6 @@ import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.message.KapuaMessageFactory;
 import org.eclipse.kapua.message.internal.KapuaMessageFactoryImpl;
-import org.eclipse.kapua.model.config.metatype.KapuaMetatypeFactory;
 import org.eclipse.kapua.qa.common.MockedLocator;
 import org.eclipse.kapua.service.account.AccountFactory;
 import org.eclipse.kapua.service.account.AccountService;
@@ -87,8 +81,14 @@ import org.eclipse.kapua.storage.TxManager;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.codahale.metrics.MetricRegistry;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Singleton;
+import com.google.inject.name.Names;
+
+import io.cucumber.java.Before;
 
 @Singleton
 public class DeviceRegistryLocatorConfiguration {
@@ -133,8 +133,6 @@ public class DeviceRegistryLocatorConfiguration {
                 bind(AccountService.class).toInstance(Mockito.mock(AccountService.class));
 
                 bind(RootUserTester.class).toInstance(Mockito.mock(RootUserTester.class));
-                // Set KapuaMetatypeFactory for Metatype configuration
-                bind(KapuaMetatypeFactory.class).toInstance(new KapuaMetatypeFactoryImpl());
 
                 // Inject actual Device registry service related services
                 //TODO: FIXME: PRIORITY: build test instance
@@ -180,7 +178,8 @@ public class DeviceRegistryLocatorConfiguration {
                 bind(DeviceEventFactory.class).toInstance(new DeviceEventFactoryImpl());
                 bind(KapuaMessageFactory.class).toInstance(new KapuaMessageFactoryImpl());
 
-                final DeviceValidation deviceValidation = new DeviceValidationImpl(new KapuaDeviceRegistrySettings().getInt(KapuaDeviceRegistrySettingKeys.DEVICE_LIFECYCLE_BIRTH_VAR_FIELDS_LENGTH_MAX),
+                final DeviceValidation deviceValidation = new DeviceValidationImpl(
+                        new KapuaDeviceRegistrySettings().getInt(KapuaDeviceRegistrySettingKeys.DEVICE_LIFECYCLE_BIRTH_VAR_FIELDS_LENGTH_MAX),
                         new KapuaDeviceRegistrySettings().getInt(KapuaDeviceRegistrySettingKeys.DEVICE_LIFECYCLE_BIRTH_EXTENDED_PROPERTIES_LENGTH_MAX),
                         mockedAuthorization,
                         permissionFactory,

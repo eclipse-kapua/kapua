@@ -29,7 +29,6 @@ import org.eclipse.kapua.commons.configuration.AccountRelativeFinder;
 import org.eclipse.kapua.commons.configuration.RootUserTester;
 import org.eclipse.kapua.commons.configuration.ServiceConfigImplJpaRepository;
 import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
-import org.eclipse.kapua.commons.configuration.metatype.KapuaMetatypeFactoryImpl;
 import org.eclipse.kapua.commons.crypto.CryptoUtil;
 import org.eclipse.kapua.commons.crypto.CryptoUtilImpl;
 import org.eclipse.kapua.commons.crypto.setting.CryptoSettings;
@@ -44,7 +43,6 @@ import org.eclipse.kapua.commons.service.event.store.internal.EventStoreRecordIm
 import org.eclipse.kapua.commons.service.internal.cache.CacheManagerProvider;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.model.config.metatype.KapuaMetatypeFactory;
 import org.eclipse.kapua.model.query.QueryFactory;
 import org.eclipse.kapua.qa.common.MockedLocator;
 import org.eclipse.kapua.service.authentication.credential.handler.CredentialTypeHandler;
@@ -138,8 +136,6 @@ public class SecurityLocatorConfiguration {
                 // Inject mocked Permission Factory
                 PermissionFactory mockPermissionFactory = Mockito.mock(PermissionFactory.class);
                 bind(PermissionFactory.class).toInstance(mockPermissionFactory);
-                // Set KapuaMetatypeFactory for Metatype configuration
-                bind(KapuaMetatypeFactory.class).toInstance(new KapuaMetatypeFactoryImpl());
 
                 // Inject actual Role service related services
                 final KapuaJpaRepositoryConfiguration jpaRepoConfig = new KapuaJpaRepositoryConfiguration();

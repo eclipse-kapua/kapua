@@ -12,8 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.bind.JAXBContext;
+
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.commons.configuration.metatype.TscalarImpl;
 import org.eclipse.kapua.commons.rest.model.IsJobRunningResponse;
 import org.eclipse.kapua.commons.rest.model.errors.CleanJobDataExceptionInfo;
 import org.eclipse.kapua.commons.rest.model.errors.ExceptionInfo;
@@ -43,7 +47,6 @@ import org.eclipse.kapua.model.config.metatype.KapuaTicon;
 import org.eclipse.kapua.model.config.metatype.KapuaTmetadata;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 import org.eclipse.kapua.model.config.metatype.KapuaToption;
-import org.eclipse.kapua.model.config.metatype.MetatypeXmlRegistry;
 import org.eclipse.kapua.service.device.call.kura.model.bundle.KuraBundle;
 import org.eclipse.kapua.service.device.call.kura.model.bundle.KuraBundles;
 import org.eclipse.kapua.service.device.call.kura.model.configuration.KuraDeviceComponentConfiguration;
@@ -102,10 +105,6 @@ import org.eclipse.kapua.service.job.JobXmlRegistry;
 import org.eclipse.persistence.jaxb.JAXBContextFactory;
 import org.eclipse.persistence.jaxb.MarshallerProperties;
 
-import javax.xml.bind.JAXBContext;
-import java.util.HashMap;
-import java.util.Map;
-
 public class ConsoleJAXBContextProvider implements JAXBContextProvider {
 
     private JAXBContext context;
@@ -117,7 +116,7 @@ public class ConsoleJAXBContextProvider implements JAXBContextProvider {
                 Map<String, Object> properties = new HashMap<String, Object>(1);
                 properties.put(MarshallerProperties.JSON_WRAPPER_AS_ARRAY_NAME, true);
 
-                context = JAXBContextFactory.createContext(new Class<?>[]{
+                context = JAXBContextFactory.createContext(new Class<?>[] {
                         // REST API exception models
                         ThrowableInfo.class,
                         ExceptionInfo.class,
@@ -204,8 +203,6 @@ public class ConsoleJAXBContextProvider implements JAXBContextProvider {
                         KapuaTicon.class,
                         KapuaToption.class,
                         KapuaTmetadata.class,
-                        TscalarImpl.class,
-                        MetatypeXmlRegistry.class,
 
                         // Device Management Assets
                         DeviceAssets.class,

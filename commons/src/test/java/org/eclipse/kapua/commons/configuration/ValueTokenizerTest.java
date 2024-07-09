@@ -12,14 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.configuration;
 
-import org.eclipse.kapua.commons.configuration.metatype.TadImpl;
-import org.eclipse.kapua.commons.configuration.metatype.TscalarImpl;
+import org.eclipse.kapua.model.config.metatype.KapuaTad;
 import org.eclipse.kapua.model.config.metatype.KapuaToption;
+import org.eclipse.kapua.model.config.metatype.KapuaTscalar;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
 
 @Category(JUnitTests.class)
 public class ValueTokenizerTest {
@@ -37,7 +36,7 @@ public class ValueTokenizerTest {
     public void valueTokenizerNotNullTest() throws Exception {
         try {
             Assert.assertNotNull(new ValueTokenizer("valueTokenizerConstructor"));
-        } catch (Exception ex){
+        } catch (Exception ex) {
             Assert.fail("No exception expected");
         }
     }
@@ -48,7 +47,7 @@ public class ValueTokenizerTest {
         ValueTokenizer valueTokenizer = new ValueTokenizer("a123,aaa,rrr");
         try {
             Assert.assertEquals("a123,aaa,rrr", valueTokenizer.getValuesAsString());
-        } catch (Exception ex){
+        } catch (Exception ex) {
             Assert.fail("Failed to delimit input string");
         }
     }
@@ -58,7 +57,7 @@ public class ValueTokenizerTest {
         ValueTokenizer valueTokenizer = new ValueTokenizer("a123\\aaa\\rrr");
         try {
             Assert.assertEquals("a123aaarrr", valueTokenizer.getValuesAsString());
-        } catch (Exception ex){
+        } catch (Exception ex) {
             Assert.fail("Failed to load escape string");
         }
     }
@@ -68,7 +67,7 @@ public class ValueTokenizerTest {
         ValueTokenizer valueTokenizer = new ValueTokenizer("a123aaarrr\\");
         try {
             Assert.assertEquals("a123aaarrr", valueTokenizer.getValuesAsString());
-        } catch (Exception ex){
+        } catch (Exception ex) {
             Assert.fail("Failed to load escape string");
         }
     }
@@ -79,7 +78,7 @@ public class ValueTokenizerTest {
         try {
             valueTokenizer.getValuesAsString();
             Assert.assertEquals("a123aaarrr", valueTokenizer.getValuesAsString());
-        } catch (Exception ex){
+        } catch (Exception ex) {
             Assert.fail("Failed to load escape string");
         }
     }
@@ -89,7 +88,7 @@ public class ValueTokenizerTest {
         ValueTokenizer valueTokenizer = new ValueTokenizer(" a123aaarrr");
         try {
             Assert.assertEquals("a123aaarrr", valueTokenizer.getValuesAsString());
-        } catch (Exception ex){
+        } catch (Exception ex) {
             Assert.fail("Cannot load string whit white space at the beginning");
         }
     }
@@ -99,7 +98,7 @@ public class ValueTokenizerTest {
         ValueTokenizer valueTokenizer = new ValueTokenizer("a123aaarrr ");
         try {
             Assert.assertEquals("a123aaarrr", valueTokenizer.getValuesAsString());
-        } catch (Exception ex){
+        } catch (Exception ex) {
             Assert.fail("Cannot load string whit white space at the end");
         }
     }
@@ -128,7 +127,7 @@ public class ValueTokenizerTest {
     @Test
     public void valueTokenizerValuesAsArrayWithDelimeter() throws Exception {
         ValueTokenizer valueTokenizer = new ValueTokenizer("a,123,aaa,rrr");
-        String [] expectedValues = new String[]{"a", "123", "aaa", "rrr"};
+        String[] expectedValues = new String[] { "a", "123", "aaa", "rrr" };
         try {
             Assert.assertArrayEquals(expectedValues, valueTokenizer.getValuesAsArray());
         } catch (Exception ex) {
@@ -139,7 +138,7 @@ public class ValueTokenizerTest {
     @Test
     public void valueTokenizerValuesAsArrayWithEscape() throws Exception {
         ValueTokenizer valueTokenizer = new ValueTokenizer("a123\\aaarr\\r");
-        String [] expectedValues = new String[]{"a123aaarrr"};
+        String[] expectedValues = new String[] { "a123aaarrr" };
         try {
             Assert.assertArrayEquals(expectedValues, valueTokenizer.getValuesAsArray());
         } catch (Exception ex) {
@@ -160,9 +159,9 @@ public class ValueTokenizerTest {
     @Test
     public void valueTokenizerValueAsArrayDelimiterAndEscape() throws Exception {
         ValueTokenizer valueTokenizer = new ValueTokenizer("a12\\3,a\\,aa,r\\rr,");
-        String [] expectedValues = new String[] {"a123", "a,aa", "rrr", ""};
+        String[] expectedValues = new String[] { "a123", "a,aa", "rrr", "" };
         try {
-            Assert.assertArrayEquals(expectedValues,valueTokenizer.getValuesAsArray());
+            Assert.assertArrayEquals(expectedValues, valueTokenizer.getValuesAsArray());
         } catch (Exception ex) {
             Assert.fail("Arrays are not equal");
         }
@@ -171,19 +170,19 @@ public class ValueTokenizerTest {
     @Test
     public void valueTokenizerValueAsArray() throws Exception {
         ValueTokenizer valueTokenizer = new ValueTokenizer(" a123, aaa, rrr");
-        String [] expectedValues = new String[] {"a123", "aaa", "rrr"};
+        String[] expectedValues = new String[] { "a123", "aaa", "rrr" };
         try {
-            Assert.assertArrayEquals(expectedValues,valueTokenizer.getValuesAsArray());
+            Assert.assertArrayEquals(expectedValues, valueTokenizer.getValuesAsArray());
         } catch (Exception ex) {
             Assert.fail("Arrays are not equal");
         }
     }
 
-     //test for method ...getValues();
+    //test for method ...getValues();
     @Test
     public void valueTokenizerGetValuesWithDelimeter() throws Exception {
         ValueTokenizer valueTokenizer = new ValueTokenizer("a123,aaarrr");
-        String [] expectedValues = new String[] {"a123", "aaarrr"};
+        String[] expectedValues = new String[] { "a123", "aaarrr" };
         try {
             Assert.assertArrayEquals(expectedValues, valueTokenizer.getValues().toArray());
         } catch (Exception ex) {
@@ -207,7 +206,7 @@ public class ValueTokenizerTest {
     @Test
     public void validateZeroCardinalityTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("asdf, qwer");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(0);
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("Cardinality violation: \"asdf,qwer\" has 2 value(s) but must have between 1 and 1 value(s).", message);
@@ -216,7 +215,7 @@ public class ValueTokenizerTest {
     @Test
     public void validateOneCardinalityTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("asdf, qwer");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(1);
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("Cardinality violation: \"asdf,qwer\" has 2 value(s) but must have between 0 and 1 value(s).", message);
@@ -225,7 +224,7 @@ public class ValueTokenizerTest {
     @Test
     public void validateEmptyStringZeroCardinalityTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(0);
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("Internal error: null", message);
@@ -234,7 +233,7 @@ public class ValueTokenizerTest {
     @Test
     public void validateEmptyStringNonZeroCardinalityTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(2);
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("Internal error: null", message);
@@ -243,7 +242,7 @@ public class ValueTokenizerTest {
     @Test
     public void validateNegativeCardinalityTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("asdf, qwer");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(-1);
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("Cardinality violation: \"asdf,qwer\" has 2 value(s) but must have between 0 and 1 value(s).", message);
@@ -252,7 +251,7 @@ public class ValueTokenizerTest {
     @Test
     public void validateWithoutTypeTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("asdf, qwer");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("Internal error: null", message);
@@ -261,9 +260,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateWithBooleanTypeTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("asdf, qwer");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.BOOLEAN);
+        tad.setType(KapuaTscalar.BOOLEAN);
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("", message);
     }
@@ -271,9 +270,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateWithStringTypeWithoutRestrictionsTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("asdf, qwer");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.STRING);
+        tad.setType(KapuaTscalar.STRING);
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("", message);
     }
@@ -281,9 +280,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateWithStringTypeWithMaxRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("asdf, qwer");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.STRING);
+        tad.setType(KapuaTscalar.STRING);
         tad.setMax("2");
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("Value asdf is out of range", message);
@@ -293,9 +292,9 @@ public class ValueTokenizerTest {
 /*    @Test
     public void validateWithStringTypeWithMinRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("asdf, qwer");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.STRING);
+        tad.setType(KapuaTscalar.STRING);
         tad.setMin("10");
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("Value asdf is out of range", message);
@@ -304,9 +303,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateWithIntegerTypeWithoutRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("12, 99");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.INTEGER);
+        tad.setType(KapuaTscalar.INTEGER);
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("", message);
     }
@@ -314,9 +313,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateMinAndMaxIntegerRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("12, 99");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.INTEGER);
+        tad.setType(KapuaTscalar.INTEGER);
         tad.setMin("10");
         tad.setMax("100");
         String message = valueTokenizer.validate(tad);
@@ -326,9 +325,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateCornerCasesIntegerRestrictionsTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("10, 100");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.INTEGER);
+        tad.setType(KapuaTscalar.INTEGER);
         tad.setMin("10");
         tad.setMax("100");
         String message = valueTokenizer.validate(tad);
@@ -338,9 +337,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateEqualMinAndMaxIntegerRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("10, 10");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.INTEGER);
+        tad.setType(KapuaTscalar.INTEGER);
         tad.setMin("10");
         tad.setMax("10");
         String message = valueTokenizer.validate(tad);
@@ -350,9 +349,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateMixedMinAndMaxIntegerRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("21");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.INTEGER);
+        tad.setType(KapuaTscalar.INTEGER);
         tad.setMin("100");
         tad.setMax("10");
         String message = valueTokenizer.validate(tad);
@@ -362,9 +361,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateWithIntegerTypeWitMaxRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("12, 99");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.INTEGER);
+        tad.setType(KapuaTscalar.INTEGER);
         tad.setMax("50");
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("Value 99 is out of range", message);
@@ -373,9 +372,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateWithIntegerTypeWitMinRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("12, 99");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.INTEGER);
+        tad.setType(KapuaTscalar.INTEGER);
         tad.setMin("50");
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("Value 12 is out of range", message);
@@ -384,9 +383,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateWithLongTypeWithoutRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("12, 99");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.LONG);
+        tad.setType(KapuaTscalar.LONG);
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("", message);
     }
@@ -394,9 +393,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateWithLongTypeWitMaxRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("12, 99");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.LONG);
+        tad.setType(KapuaTscalar.LONG);
         tad.setMax("50");
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("Value 99 is out of range", message);
@@ -405,9 +404,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateWithLongTypeWitMinRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("12, 99");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.LONG);
+        tad.setType(KapuaTscalar.LONG);
         tad.setMin("50");
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("Value 12 is out of range", message);
@@ -416,9 +415,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateMinAndMaxLongRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("12, 99");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.LONG);
+        tad.setType(KapuaTscalar.LONG);
         tad.setMin("10");
         tad.setMax("100");
         String message = valueTokenizer.validate(tad);
@@ -428,9 +427,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateCornerCasesLongRestrictionsTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("10, 100");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.LONG);
+        tad.setType(KapuaTscalar.LONG);
         tad.setMin("10");
         tad.setMax("100");
         String message = valueTokenizer.validate(tad);
@@ -440,9 +439,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateEqualMinAndMaxLongRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("10, 10");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.LONG);
+        tad.setType(KapuaTscalar.LONG);
         tad.setMin("10");
         tad.setMax("10");
         String message = valueTokenizer.validate(tad);
@@ -452,9 +451,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateMixedMinAndMaxLongRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("21");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.LONG);
+        tad.setType(KapuaTscalar.LONG);
         tad.setMin("100");
         tad.setMax("10");
         String message = valueTokenizer.validate(tad);
@@ -464,9 +463,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateWithDoubleTypeWithoutRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("12, 99");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.DOUBLE);
+        tad.setType(KapuaTscalar.DOUBLE);
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("", message);
     }
@@ -474,9 +473,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateWithDoubleTypeWitMaxRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("12, 99");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.DOUBLE);
+        tad.setType(KapuaTscalar.DOUBLE);
         tad.setMax("50");
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("Value 99 is out of range", message);
@@ -485,9 +484,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateWithDoubleTypeWitMinRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("12, 99");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.DOUBLE);
+        tad.setType(KapuaTscalar.DOUBLE);
         tad.setMin("50");
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("Value 12 is out of range", message);
@@ -496,9 +495,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateMinAndMaxDoubleRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("12, 99");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.DOUBLE);
+        tad.setType(KapuaTscalar.DOUBLE);
         tad.setMin("10");
         tad.setMax("100");
         String message = valueTokenizer.validate(tad);
@@ -508,9 +507,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateCornerCasesDoubleRestrictionsTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("10, 100");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.DOUBLE);
+        tad.setType(KapuaTscalar.DOUBLE);
         tad.setMin("10");
         tad.setMax("100");
         String message = valueTokenizer.validate(tad);
@@ -520,9 +519,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateEqualMinAndMaxDoubleRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("10, 10");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.DOUBLE);
+        tad.setType(KapuaTscalar.DOUBLE);
         tad.setMin("10");
         tad.setMax("10");
         String message = valueTokenizer.validate(tad);
@@ -532,9 +531,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateMixedMinAndMaxDoubleRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("21");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.DOUBLE);
+        tad.setType(KapuaTscalar.DOUBLE);
         tad.setMin("100");
         tad.setMax("10");
         String message = valueTokenizer.validate(tad);
@@ -544,9 +543,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateWithCharTypeWithoutRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("a, z");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.CHAR);
+        tad.setType(KapuaTscalar.CHAR);
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("", message);
     }
@@ -554,9 +553,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateWithCharTypeWitMaxRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("a, z");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.CHAR);
+        tad.setType(KapuaTscalar.CHAR);
         tad.setMax("b");
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("Value z is out of range", message);
@@ -565,9 +564,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateWithCharTypeWitMinRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("a, z");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.CHAR);
+        tad.setType(KapuaTscalar.CHAR);
         tad.setMin("b");
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("Value a is out of range", message);
@@ -576,9 +575,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateWithFloatTypeWithoutRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("12, 99");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.FLOAT);
+        tad.setType(KapuaTscalar.FLOAT);
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("", message);
     }
@@ -586,9 +585,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateWithFloatTypeWitMaxRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("12, 99");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.FLOAT);
+        tad.setType(KapuaTscalar.FLOAT);
         tad.setMax("50");
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("Value 99 is out of range", message);
@@ -597,9 +596,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateWithFloatTypeWitMinRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("12, 99");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.FLOAT);
+        tad.setType(KapuaTscalar.FLOAT);
         tad.setMin("50");
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("Value 12 is out of range", message);
@@ -608,9 +607,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateMinAndMaxFloatRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("12, 99");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.FLOAT);
+        tad.setType(KapuaTscalar.FLOAT);
         tad.setMin("10");
         tad.setMax("100");
         String message = valueTokenizer.validate(tad);
@@ -620,9 +619,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateCornerCasesFloatRestrictionsTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("10, 100");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.FLOAT);
+        tad.setType(KapuaTscalar.FLOAT);
         tad.setMin("10");
         tad.setMax("100");
         String message = valueTokenizer.validate(tad);
@@ -632,9 +631,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateEqualMinAndMaxFloatRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("10, 10");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.FLOAT);
+        tad.setType(KapuaTscalar.FLOAT);
         tad.setMin("10");
         tad.setMax("10");
         String message = valueTokenizer.validate(tad);
@@ -644,9 +643,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateMixedMinAndMaxFloatRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("21");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.FLOAT);
+        tad.setType(KapuaTscalar.FLOAT);
         tad.setMin("100");
         tad.setMax("10");
         String message = valueTokenizer.validate(tad);
@@ -656,9 +655,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateWithShortTypeWithoutRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("12, 99");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.SHORT);
+        tad.setType(KapuaTscalar.SHORT);
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("", message);
     }
@@ -666,9 +665,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateWithShortTypeWitMaxRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("12, 99");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.SHORT);
+        tad.setType(KapuaTscalar.SHORT);
         tad.setMax("50");
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("Value 99 is out of range", message);
@@ -677,9 +676,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateWithShortTypeWitMinRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("12, 99");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.SHORT);
+        tad.setType(KapuaTscalar.SHORT);
         tad.setMin("50");
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("Value 12 is out of range", message);
@@ -688,9 +687,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateMinAndMaxShortRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("12, 99");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.SHORT);
+        tad.setType(KapuaTscalar.SHORT);
         tad.setMin("10");
         tad.setMax("100");
         String message = valueTokenizer.validate(tad);
@@ -700,9 +699,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateCornerCasesShortRestrictionsTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("10, 100");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.SHORT);
+        tad.setType(KapuaTscalar.SHORT);
         tad.setMin("10");
         tad.setMax("100");
         String message = valueTokenizer.validate(tad);
@@ -712,9 +711,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateEqualMinAndMaxShortRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("10, 10");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.SHORT);
+        tad.setType(KapuaTscalar.SHORT);
         tad.setMin("10");
         tad.setMax("10");
         String message = valueTokenizer.validate(tad);
@@ -724,9 +723,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateMixedMinAndMaxShortRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("21");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.SHORT);
+        tad.setType(KapuaTscalar.SHORT);
         tad.setMin("100");
         tad.setMax("10");
         String message = valueTokenizer.validate(tad);
@@ -736,9 +735,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateWithByteTypeWithoutRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("12, 99");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.BYTE);
+        tad.setType(KapuaTscalar.BYTE);
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("", message);
     }
@@ -746,9 +745,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateWithByteTypeWitMaxRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("12, 99");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.BYTE);
+        tad.setType(KapuaTscalar.BYTE);
         tad.setMax("50");
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("Value 99 is out of range", message);
@@ -757,9 +756,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateWithByteTypeWitMinRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("12, 99");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.BYTE);
+        tad.setType(KapuaTscalar.BYTE);
         tad.setMin("50");
         String message = valueTokenizer.validate(tad);
         Assert.assertEquals("Value 12 is out of range", message);
@@ -768,9 +767,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateMinAndMaxByteRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("12, 99");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.BYTE);
+        tad.setType(KapuaTscalar.BYTE);
         tad.setMin("10");
         tad.setMax("100");
         String message = valueTokenizer.validate(tad);
@@ -780,9 +779,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateCornerCasesByteRestrictionsTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("10, 100");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.BYTE);
+        tad.setType(KapuaTscalar.BYTE);
         tad.setMin("10");
         tad.setMax("100");
         String message = valueTokenizer.validate(tad);
@@ -792,9 +791,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateEqualMinAndMaxByteRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("10, 10");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.BYTE);
+        tad.setType(KapuaTscalar.BYTE);
         tad.setMin("10");
         tad.setMax("10");
         String message = valueTokenizer.validate(tad);
@@ -804,9 +803,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateMixedMinAndMaxByteRestrictionTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("21");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.BYTE);
+        tad.setType(KapuaTscalar.BYTE);
         tad.setMin("100");
         tad.setMax("10");
         String message = valueTokenizer.validate(tad);
@@ -816,9 +815,9 @@ public class ValueTokenizerTest {
     @Test
     public void validateTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("12, 99");
-        TadImpl tad = new TadImpl();
+        KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
-        tad.setType(TscalarImpl.FLOAT);
+        tad.setType(KapuaTscalar.FLOAT);
         KapuaToption option = null;
         tad.addOption(option);
         String message = valueTokenizer.validate(tad);

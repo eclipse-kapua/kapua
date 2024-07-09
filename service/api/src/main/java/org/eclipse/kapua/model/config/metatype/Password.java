@@ -10,7 +10,7 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.configuration.metatype;
+package org.eclipse.kapua.model.config.metatype;
 
 /**
  * Contains password used by devices connecting to Kapua.

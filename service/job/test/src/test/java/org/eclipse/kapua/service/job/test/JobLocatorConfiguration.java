@@ -22,7 +22,6 @@ import io.cucumber.java.Before;
 import org.eclipse.kapua.commons.configuration.AccountRelativeFinder;
 import org.eclipse.kapua.commons.configuration.RootUserTester;
 import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
-import org.eclipse.kapua.commons.configuration.metatype.KapuaMetatypeFactoryImpl;
 import org.eclipse.kapua.commons.crypto.CryptoUtil;
 import org.eclipse.kapua.commons.crypto.CryptoUtilImpl;
 import org.eclipse.kapua.commons.crypto.setting.CryptoSettings;
@@ -36,7 +35,6 @@ import org.eclipse.kapua.commons.service.internal.cache.CacheManagerProvider;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.job.engine.JobEngineService;
 import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.model.config.metatype.KapuaMetatypeFactory;
 import org.eclipse.kapua.model.query.QueryFactory;
 import org.eclipse.kapua.qa.common.MockedLocator;
 import org.eclipse.kapua.service.account.AccountFactory;
@@ -117,7 +115,6 @@ public class JobLocatorConfiguration {
                 bind(MetricsService.class).to(MetricsServiceImpl.class).in(Singleton.class);
 
                 // Commons
-                bind(KapuaMetatypeFactory.class).toInstance(new KapuaMetatypeFactoryImpl());
                 bind(QueryFactory.class).toInstance(new QueryFactoryImpl());
 
                 // Account

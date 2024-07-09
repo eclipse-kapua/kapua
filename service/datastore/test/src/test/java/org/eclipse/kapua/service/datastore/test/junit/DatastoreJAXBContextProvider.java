@@ -12,8 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.test.junit;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.commons.configuration.metatype.TscalarImpl;
 import org.eclipse.kapua.commons.util.xml.JAXBContextProvider;
 import org.eclipse.kapua.model.config.metatype.KapuaTad;
 import org.eclipse.kapua.model.config.metatype.KapuaTdesignate;
@@ -22,16 +27,11 @@ import org.eclipse.kapua.model.config.metatype.KapuaTmetadata;
 import org.eclipse.kapua.model.config.metatype.KapuaTobject;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 import org.eclipse.kapua.model.config.metatype.KapuaToption;
-import org.eclipse.kapua.model.config.metatype.MetatypeXmlRegistry;
+import org.eclipse.kapua.model.config.metatype.KapuaTscalar;
 import org.eclipse.persistence.jaxb.JAXBContextFactory;
 import org.eclipse.persistence.jaxb.MarshallerProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class DatastoreJAXBContextProvider implements JAXBContextProvider {
 
@@ -42,17 +42,16 @@ public class DatastoreJAXBContextProvider implements JAXBContextProvider {
     @Override
     public JAXBContext getJAXBContext() throws KapuaException {
         if (context == null) {
-            Class<?>[] classes = new Class<?>[]{
+            Class<?>[] classes = new Class<?>[] {
                     KapuaTmetadata.class,
                     KapuaTocd.class,
                     KapuaTad.class,
                     KapuaTicon.class,
-                    TscalarImpl.class,
+                    KapuaTscalar.class,
                     KapuaToption.class,
                     KapuaTmetadata.class,
                     KapuaTdesignate.class,
-                    KapuaTobject.class,
-                    MetatypeXmlRegistry.class
+                    KapuaTobject.class
             };
             try {
                 Map<String, Object> properties = new HashMap<>(1);
