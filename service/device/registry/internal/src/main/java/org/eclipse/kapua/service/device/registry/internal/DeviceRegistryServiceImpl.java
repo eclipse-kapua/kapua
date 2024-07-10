@@ -37,16 +37,11 @@ import org.eclipse.kapua.storage.TxManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
 /**
  * {@link DeviceRegistryService} implementation.
  *
  * @since 1.0.0
  */
-@Singleton
 public class DeviceRegistryServiceImpl
         extends KapuaConfigurableServiceBase
         implements DeviceRegistryService {
@@ -58,12 +53,11 @@ public class DeviceRegistryServiceImpl
     private final EventStorer eventStorer;
     private final DeviceValidation deviceValidation;
 
-    @Inject
     public DeviceRegistryServiceImpl(
-            @Named("DeviceRegistryServiceConfigurationManager") ServiceConfigurationManager serviceConfigurationManager,
+            ServiceConfigurationManager serviceConfigurationManager,
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
-            @Named("DeviceRegistryTransactionManager") TxManager txManager,
+            TxManager txManager,
             DeviceRepository deviceRepository,
             DeviceFactory entityFactory,
             GroupQueryHelper groupQueryHelper,

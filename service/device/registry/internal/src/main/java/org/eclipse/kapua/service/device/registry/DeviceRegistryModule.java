@@ -102,7 +102,27 @@ public class DeviceRegistryModule extends AbstractKapuaModule {
         bind(DeviceEventFactory.class).to(DeviceEventFactoryImpl.class).in(Singleton.class);
         bind(DeviceLifeCycleService.class).to(DeviceLifeCycleServiceImpl.class).in(Singleton.class);
         bind(KapuaDeviceRegistrySettings.class).in(Singleton.class);
-        bind(DeviceConnectionService.class).to(DeviceConnectionServiceImpl.class).in(Singleton.class);
+    }
+
+    @Provides
+    @Singleton
+    public DeviceConnectionService deviceConnectionService(
+            @Named("DeviceConnectionServiceConfigurationManager") ServiceConfigurationManager serviceConfigurationManager,
+            AuthorizationService authorizationService,
+            PermissionFactory permissionFactory,
+            DeviceConnectionFactory entityFactory,
+            @Named("DeviceRegistryTransactionManager") TxManager txManager,
+            DeviceConnectionRepository repository,
+            Map<String, DeviceConnectionCredentialAdapter> availableDeviceConnectionAdapters,
+            EventStorer eventStorer) {
+        return new DeviceConnectionServiceImpl(serviceConfigurationManager,
+                authorizationService,
+                permissionFactory,
+                entityFactory,
+                txManager,
+                repository,
+                availableDeviceConnectionAdapters,
+                eventStorer);
     }
 
     @ProvidesIntoSet
@@ -190,13 +210,13 @@ public class DeviceRegistryModule extends AbstractKapuaModule {
             DeviceFactory deviceFactory,
             GroupQueryHelper groupQueryHelper,
             EventStorer eventStorer,
-            KapuaJpaTxManagerFactory jpaTxManagerFactory,
+            @Named("DeviceRegistryTransactionManager") TxManager deviceRegistryTxManager,
             DeviceValidation deviceValidation) {
         return new DeviceRegistryServiceImpl(
                 serviceConfigurationManager,
                 authorizationService,
                 permissionFactory,
-                jpaTxManagerFactory.create("kapua-device"),
+                deviceRegistryTxManager,
                 deviceRepository,
                 deviceFactory,
                 groupQueryHelper,

@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.registry.connection.internal;
 
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.lang.NotImplementedException;
 import org.eclipse.kapua.KapuaDuplicateNameException;
 import org.eclipse.kapua.KapuaEntityNotFoundException;
@@ -43,18 +46,11 @@ import org.eclipse.kapua.storage.TxManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * {@link DeviceConnectionService} implementation.
  *
  * @since 1.0.0
  */
-@Singleton
 public class DeviceConnectionServiceImpl extends KapuaConfigurableServiceBase implements DeviceConnectionService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DeviceConnectionServiceImpl.class);
@@ -67,16 +63,16 @@ public class DeviceConnectionServiceImpl extends KapuaConfigurableServiceBase im
     /**
      * Constructor.
      *
-     * @param serviceConfigurationManager The {@link ServiceConfigurationManager} instance.
+     * @param serviceConfigurationManager
+     *         The {@link ServiceConfigurationManager} instance.
      * @since 2.0.0
      */
-    @Inject
     public DeviceConnectionServiceImpl(
-            @Named("DeviceConnectionServiceConfigurationManager") ServiceConfigurationManager serviceConfigurationManager,
+            ServiceConfigurationManager serviceConfigurationManager,
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
             DeviceConnectionFactory entityFactory,
-            @Named("DeviceRegistryTransactionManager") TxManager txManager,
+            TxManager txManager,
             DeviceConnectionRepository repository,
             Map<String, DeviceConnectionCredentialAdapter> availableDeviceConnectionAdapters,
             EventStorer eventStorer) {
