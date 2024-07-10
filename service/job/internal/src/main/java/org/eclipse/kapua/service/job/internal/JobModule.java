@@ -12,8 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job.internal;
 
-import com.google.inject.Provides;
-import com.google.inject.multibindings.ProvidesIntoSet;
+import java.util.Map;
+
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.commons.configuration.AccountRelativeFinder;
 import org.eclipse.kapua.commons.configuration.CachingServiceConfigRepository;
 import org.eclipse.kapua.commons.configuration.ResourceLimitedServiceConfigurationManagerImpl;
@@ -39,10 +42,13 @@ import org.eclipse.kapua.service.job.JobService;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerService;
 import org.eclipse.kapua.storage.TxManager;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import com.google.inject.Provides;
+import com.google.inject.multibindings.ClassMapKey;
+import com.google.inject.multibindings.ProvidesIntoMap;
+import com.google.inject.multibindings.ProvidesIntoSet;
 
 public class JobModule extends AbstractKapuaModule {
+
     @Override
     protected void configureModule() {
         bind(JobFactory.class).to(JobFactoryImpl.class);
@@ -65,7 +71,7 @@ public class JobModule extends AbstractKapuaModule {
     @Provides
     @Singleton
     JobService jobService(
-            @Named("JobServiceConfigurationManager") ServiceConfigurationManager serviceConfigurationManager,
+            Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
             JobEngineService jobEngineService,
             PermissionFactory permissionFactory,
             AuthorizationService authorizationService,
@@ -74,7 +80,7 @@ public class JobModule extends AbstractKapuaModule {
             TriggerService triggerService) {
 
         return new JobServiceImpl(
-                serviceConfigurationManager,
+                serviceConfigurationManagersByServiceClass.get(JobService.class),
                 jobEngineService,
                 permissionFactory,
                 authorizationService,
@@ -84,9 +90,9 @@ public class JobModule extends AbstractKapuaModule {
         );
     }
 
-    @Provides
+    @ProvidesIntoMap
+    @ClassMapKey(JobService.class)
     @Singleton
-    @Named("JobServiceConfigurationManager")
     public ServiceConfigurationManager jobServiceConfigurationManager(
             JobFactory factory,
             RootUserTester rootUserTester,

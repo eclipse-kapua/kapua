@@ -85,6 +85,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import com.google.inject.multibindings.MapBinder;
 import com.google.inject.name.Names;
 
 import io.cucumber.java.Before;
@@ -137,8 +138,9 @@ public class TagLocatorConfiguration {
                 bind(AccountFactory.class).toInstance(Mockito.spy(new AccountFactoryImpl()));
                 bind(RootUserTester.class).toInstance(Mockito.mock(RootUserTester.class));
 
-                bind(ServiceConfigurationManager.class)
-                        .annotatedWith(Names.named("DeviceConnectionServiceConfigurationManager"))
+                final MapBinder<Class, ServiceConfigurationManager> serviceConfigurationManagerMapBinder = MapBinder.newMapBinder(binder(), Class.class, ServiceConfigurationManager.class);
+
+                serviceConfigurationManagerMapBinder.addBinding(DeviceConnectionService.class)
                         .toInstance(Mockito.mock(ServiceConfigurationManager.class));
 
                 // Inject actual Device service related services

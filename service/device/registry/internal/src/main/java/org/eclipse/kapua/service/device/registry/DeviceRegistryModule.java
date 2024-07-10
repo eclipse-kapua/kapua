@@ -82,6 +82,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Provides;
+import com.google.inject.multibindings.ClassMapKey;
+import com.google.inject.multibindings.ProvidesIntoMap;
 import com.google.inject.multibindings.ProvidesIntoSet;
 
 /**
@@ -107,7 +109,7 @@ public class DeviceRegistryModule extends AbstractKapuaModule {
     @Provides
     @Singleton
     public DeviceConnectionService deviceConnectionService(
-            @Named("DeviceConnectionServiceConfigurationManager") ServiceConfigurationManager serviceConfigurationManager,
+            Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
             DeviceConnectionFactory entityFactory,
@@ -115,7 +117,7 @@ public class DeviceRegistryModule extends AbstractKapuaModule {
             DeviceConnectionRepository repository,
             Map<String, DeviceConnectionCredentialAdapter> availableDeviceConnectionAdapters,
             EventStorer eventStorer) {
-        return new DeviceConnectionServiceImpl(serviceConfigurationManager,
+        return new DeviceConnectionServiceImpl(serviceConfigurationManagersByServiceClass.get(DeviceConnectionService.class),
                 authorizationService,
                 permissionFactory,
                 entityFactory,
@@ -203,7 +205,7 @@ public class DeviceRegistryModule extends AbstractKapuaModule {
     @Provides
     @Singleton
     DeviceRegistryService deviceRegistryService(
-            @Named("DeviceRegistryServiceConfigurationManager") ServiceConfigurationManager serviceConfigurationManager,
+            Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
             DeviceRepository deviceRepository,
@@ -213,7 +215,7 @@ public class DeviceRegistryModule extends AbstractKapuaModule {
             @Named("DeviceRegistryTransactionManager") TxManager deviceRegistryTxManager,
             DeviceValidation deviceValidation) {
         return new DeviceRegistryServiceImpl(
-                serviceConfigurationManager,
+                serviceConfigurationManagersByServiceClass.get(DeviceRegistryService.class),
                 authorizationService,
                 permissionFactory,
                 deviceRegistryTxManager,
@@ -241,9 +243,9 @@ public class DeviceRegistryModule extends AbstractKapuaModule {
         return jpaTxManagerFactory.create("kapua-device");
     }
 
-    @Provides
+    @ProvidesIntoMap
+    @ClassMapKey(DeviceRegistryService.class)
     @Singleton
-    @Named("DeviceRegistryServiceConfigurationManager")
     protected ServiceConfigurationManager deviceRegistryServiceConfigurationManager(
             DeviceFactory factory,
             RootUserTester rootUserTester,
@@ -267,9 +269,9 @@ public class DeviceRegistryModule extends AbstractKapuaModule {
                 ));
     }
 
-    @Provides
+    @ProvidesIntoMap
+    @ClassMapKey(DeviceConnectionService.class)
     @Singleton
-    @Named("DeviceConnectionServiceConfigurationManager")
     ServiceConfigurationManager deviceConnectionServiceConfigurationManager(
             RootUserTester rootUserTester,
             KapuaJpaRepositoryConfiguration jpaRepoConfig,

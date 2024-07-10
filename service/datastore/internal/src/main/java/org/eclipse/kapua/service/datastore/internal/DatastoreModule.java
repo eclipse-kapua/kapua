@@ -12,8 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.internal;
 
-import com.google.inject.Provides;
-import com.google.inject.multibindings.ProvidesIntoSet;
+import java.util.Map;
+
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.commons.configuration.CachingServiceConfigRepository;
 import org.eclipse.kapua.commons.configuration.RootUserTester;
 import org.eclipse.kapua.commons.configuration.ServiceConfigImplJpaRepository;
@@ -53,10 +55,13 @@ import org.eclipse.kapua.service.elasticsearch.client.rest.RestElasticsearchClie
 import org.eclipse.kapua.service.storable.model.id.StorableIdFactory;
 import org.eclipse.kapua.storage.TxContext;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import com.google.inject.Provides;
+import com.google.inject.multibindings.ClassMapKey;
+import com.google.inject.multibindings.ProvidesIntoMap;
+import com.google.inject.multibindings.ProvidesIntoSet;
 
 public class DatastoreModule extends AbstractKapuaModule {
+
     @Override
     protected void configureModule() {
         bind(DatastoreSettings.class).in(Singleton.class);
@@ -101,11 +106,13 @@ public class DatastoreModule extends AbstractKapuaModule {
     @Provides
     @Singleton
     ConfigurationProvider configurationProvider(
-            @Named("MessageStoreServiceConfigurationManager") ServiceConfigurationManager serviceConfigurationManager,
+            Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
             KapuaJpaTxManagerFactory jpaTxManagerFactory,
             AccountService accountService
     ) {
-        final ConfigurationProviderImpl configurationProvider = new ConfigurationProviderImpl(jpaTxManagerFactory.create("kapua-datastore"), serviceConfigurationManager, accountService);
+        final ConfigurationProviderImpl configurationProvider = new ConfigurationProviderImpl(jpaTxManagerFactory.create("kapua-datastore"),
+                serviceConfigurationManagersByServiceClass.get(MessageStoreService.class),
+                accountService);
         return configurationProvider;
     }
 
@@ -114,7 +121,7 @@ public class DatastoreModule extends AbstractKapuaModule {
     MessageStoreService messageStoreService(
             PermissionFactory permissionFactory,
             AuthorizationService authorizationService,
-            @Named("MessageStoreServiceConfigurationManager") ServiceConfigurationManager serviceConfigurationManager,
+            Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
             KapuaJpaTxManagerFactory jpaTxManagerFactory,
             MessageStoreFacade messageStoreFacade,
             MetricsDatastore metricsDatastore,
@@ -123,15 +130,15 @@ public class DatastoreModule extends AbstractKapuaModule {
                 jpaTxManagerFactory.create("kapua-datastore"),
                 permissionFactory,
                 authorizationService,
-                serviceConfigurationManager,
+                serviceConfigurationManagersByServiceClass.get(MessageStoreService.class),
                 messageStoreFacade,
                 metricsDatastore,
                 datastoreSettings);
     }
 
-    @Provides
+    @ProvidesIntoMap
+    @ClassMapKey(MessageStoreService.class)
     @Singleton
-    @Named("MessageStoreServiceConfigurationManager")
     ServiceConfigurationManager messageStoreServiceConfigurationManager(
             RootUserTester rootUserTester,
             KapuaJpaRepositoryConfiguration jpaRepoConfig,
