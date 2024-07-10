@@ -17,14 +17,7 @@ import java.util.Map;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.eclipse.kapua.commons.configuration.AccountRelativeFinder;
-import org.eclipse.kapua.commons.configuration.CachingServiceConfigRepository;
-import org.eclipse.kapua.commons.configuration.ResourceLimitedServiceConfigurationManagerImpl;
-import org.eclipse.kapua.commons.configuration.RootUserTester;
-import org.eclipse.kapua.commons.configuration.ServiceConfigImplJpaRepository;
 import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
-import org.eclipse.kapua.commons.configuration.ServiceConfigurationManagerCachingWrapper;
-import org.eclipse.kapua.commons.configuration.UsedEntitiesCounterImpl;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.core.ServiceModule;
 import org.eclipse.kapua.commons.event.ServiceEventHouseKeeperFactoryImpl;
@@ -102,8 +95,6 @@ import org.eclipse.kapua.service.authorization.shiro.setting.KapuaAuthorizationS
 import org.eclipse.kapua.storage.TxManager;
 
 import com.google.inject.Provides;
-import com.google.inject.multibindings.ClassMapKey;
-import com.google.inject.multibindings.ProvidesIntoMap;
 import com.google.inject.multibindings.ProvidesIntoSet;
 
 public class AuthorizationModule extends AbstractKapuaModule {
@@ -264,32 +255,6 @@ public class AuthorizationModule extends AbstractKapuaModule {
         );
     }
 
-    @ProvidesIntoMap
-    @ClassMapKey(RoleService.class)
-    @Singleton
-    public ServiceConfigurationManager roleServiceConfigurationManager(
-            RoleFactory roleFactory,
-            RootUserTester rootUserTester,
-            AccountRelativeFinder accountRelativeFinder,
-            RoleRepository roleRepository,
-            KapuaJpaRepositoryConfiguration jpaRepoConfig,
-            EntityCacheFactory entityCacheFactory
-    ) {
-        return new ServiceConfigurationManagerCachingWrapper(
-                new ResourceLimitedServiceConfigurationManagerImpl(
-                        RoleService.class.getName(),
-                        new CachingServiceConfigRepository(
-                                new ServiceConfigImplJpaRepository(jpaRepoConfig),
-                                entityCacheFactory.createCache("AbstractKapuaConfigurableServiceCacheId")
-                        ),
-                        rootUserTester,
-                        accountRelativeFinder,
-                        new UsedEntitiesCounterImpl(
-                                roleFactory,
-                                roleRepository
-                        )));
-    }
-
     @Provides
     @Singleton
     RoleRepository roleRepository(NamedCacheFactory namedCacheFactory, KapuaJpaRepositoryConfiguration jpaRepoConfig) {
@@ -315,32 +280,6 @@ public class AuthorizationModule extends AbstractKapuaModule {
         return new GroupServiceImpl(permissionFactory, authorizationService, serviceConfigurationManagersByServiceClass.get(GroupService.class),
                 jpaTxManagerFactory.create("kapua-authorization"),
                 groupRepository);
-    }
-
-    @ProvidesIntoMap
-    @ClassMapKey(GroupService.class)
-    @Singleton
-    public ServiceConfigurationManager groupServiceConfigurationManager(
-            GroupFactory factory,
-            RootUserTester rootUserTester,
-            AccountRelativeFinder accountRelativeFinder,
-            GroupRepository groupRepository,
-            KapuaJpaRepositoryConfiguration jpaRepoConfig,
-            EntityCacheFactory entityCacheFactory
-    ) {
-        return new ServiceConfigurationManagerCachingWrapper(
-                new ResourceLimitedServiceConfigurationManagerImpl(
-                        GroupService.class.getName(),
-                        new CachingServiceConfigRepository(
-                                new ServiceConfigImplJpaRepository(jpaRepoConfig),
-                                entityCacheFactory.createCache("AbstractKapuaConfigurableServiceCacheId")
-                        ),
-                        rootUserTester,
-                        accountRelativeFinder,
-                        new UsedEntitiesCounterImpl(
-                                factory,
-                                groupRepository
-                        )));
     }
 
     @Provides
