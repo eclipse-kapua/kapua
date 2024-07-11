@@ -71,6 +71,11 @@ public enum DatastoreSettingsKey implements SettingKey {
      */
     CONFIG_CACHE_METADATA_LOCAL_SIZE_MAXIMUM("datastore.cache.metadata.local.size.maximum"),
     /**
+     * Metrics behaviour switch - when the cache does not know a specific metric, should the system ask ES about it (set to true, default) or just send an upsert for non-cached metrics (set to
+     * false)?
+     */
+    CONFIG_CACHE_METRICS_FETCH_FROM_SOURCE_BEFORE_UPSERT("datastore.cache.metrics.fetchBeforeUpsert"),
+    /**
      * Enable datastore timing profile
      */
     CONFIG_DATA_STORAGE_ENABLE_TIMING_PROFILE("datastore.enableTimingProfile"),

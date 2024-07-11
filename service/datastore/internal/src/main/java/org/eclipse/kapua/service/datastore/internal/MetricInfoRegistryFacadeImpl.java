@@ -25,6 +25,8 @@ import org.eclipse.kapua.service.datastore.internal.mediator.ConfigurationExcept
 import org.eclipse.kapua.service.datastore.internal.mediator.MetricInfoField;
 import org.eclipse.kapua.service.datastore.internal.model.MetricInfoListResultImpl;
 import org.eclipse.kapua.service.datastore.internal.model.query.MetricInfoQueryImpl;
+import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
+import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettingsKey;
 import org.eclipse.kapua.service.datastore.model.MetricInfo;
 import org.eclipse.kapua.service.datastore.model.MetricInfoListResult;
 import org.eclipse.kapua.service.datastore.model.query.MetricInfoQuery;
@@ -51,6 +53,10 @@ public class MetricInfoRegistryFacadeImpl extends AbstractDatastoreFacade implem
     private final MetricInfoRepository repository;
     private final DatastoreCacheManager datastoreCacheManager;
 
+    private final DatastoreSettings datastoreSettings;
+
+    private final Boolean metricCacheFetchFromSourceBeforeUpsertSetting;
+
     private static final String QUERY = "query";
     private static final String QUERY_SCOPE_ID = "query.scopeId";
     private static final String STORAGE_NOT_ENABLED = "Storage not enabled for account {}, returning empty result";
@@ -67,12 +73,17 @@ public class MetricInfoRegistryFacadeImpl extends AbstractDatastoreFacade implem
             StorableIdFactory storableIdFactory,
             StorablePredicateFactory storablePredicateFactory,
             MetricInfoRepository metricInfoRepository,
-            DatastoreCacheManager datastoreCacheManager) {
+            DatastoreCacheManager datastoreCacheManager,
+            DatastoreSettings datastoreSettings) {
         super(configProvider);
+
         this.storableIdFactory = storableIdFactory;
         this.storablePredicateFactory = storablePredicateFactory;
         this.repository = metricInfoRepository;
         this.datastoreCacheManager = datastoreCacheManager;
+
+        this.datastoreSettings = datastoreSettings;
+        this.metricCacheFetchFromSourceBeforeUpsertSetting = datastoreSettings.getBoolean(DatastoreSettingsKey.CONFIG_CACHE_METRICS_FETCH_FROM_SOURCE_BEFORE_UPSERT, true);
     }
 
     /**
@@ -129,12 +140,15 @@ public class MetricInfoRegistryFacadeImpl extends AbstractDatastoreFacade implem
             String metricInfoId = MetricInfoField.getOrDeriveId(metricInfo.getId(), metricInfo);
             // fix #REPLACE_ISSUE_NUMBER
             if (!datastoreCacheManager.getMetricsCache().get(metricInfoId)) {
-                StorableId storableId = storableIdFactory.newStorableId(metricInfoId);
-                MetricInfo storedField = doFind(metricInfo.getScopeId(), storableId);
-                if (storedField != null) {
-                    datastoreCacheManager.getMetricsCache().put(metricInfoId, true);
-                    continue;
+                if (metricCacheFetchFromSourceBeforeUpsertSetting) {
+                    StorableId storableId = storableIdFactory.newStorableId(metricInfoId);
+                    MetricInfo storedField = find(metricInfo.getScopeId(), storableId);
+                    if (storedField != null) {
+                        datastoreCacheManager.getMetricsCache().put(metricInfoId, true);
+                        continue;
+                    }
                 }
+
                 toUpsert.add(metricInfo);
             }
         }
