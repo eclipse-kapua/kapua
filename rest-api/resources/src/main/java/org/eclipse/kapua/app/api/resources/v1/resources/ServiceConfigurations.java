@@ -33,6 +33,7 @@ import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.app.api.core.model.ScopeId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
+import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.config.metatype.EmptyTocd;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
@@ -50,27 +51,29 @@ public class ServiceConfigurations extends AbstractKapuaResource {
     public final KapuaLocator locator = KapuaLocator.getInstance();
     @Inject
     public AccountService accountService;
+    @Inject
+    public Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass;
 
     @GET
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public ServiceConfiguration get(@PathParam("scopeId") ScopeId scopeId) throws KapuaException {
-        List<KapuaConfigurableService> configurableServices = locator.getServices().stream().filter(service -> service instanceof KapuaConfigurableService)
+        final List<KapuaConfigurableService> configurableServices = locator.getServices().stream().filter(service -> service instanceof KapuaConfigurableService)
                 .map(kapuaService -> (KapuaConfigurableService) kapuaService).collect(Collectors.toList());
-        ServiceConfiguration serviceConfiguration = new ServiceConfiguration();
+        final ServiceConfiguration res = new ServiceConfiguration();
         for (KapuaConfigurableService configurableService : configurableServices) {
             KapuaTocd metadata = configurableService.getConfigMetadata(scopeId);
-            Map<String, Object> values = configurableService.getConfigValues(scopeId);
             if (metadata != null && !(metadata instanceof EmptyTocd)) {
+                Map<String, Object> values = configurableService.getConfigValues(scopeId);
                 ServiceComponentConfiguration serviceComponentConfiguration = new ServiceComponentConfiguration(metadata.getId());
                 serviceComponentConfiguration.setDefinition(metadata);
                 serviceComponentConfiguration.setName(metadata.getName());
                 serviceComponentConfiguration.setProperties(values);
-                serviceConfiguration.getComponentConfigurations().add(serviceComponentConfiguration);
+                res.getComponentConfigurations().add(serviceComponentConfiguration);
             }
         }
-        Collections.sort(serviceConfiguration.getComponentConfigurations(), Comparator.comparing(ServiceComponentConfiguration::getName));
+        Collections.sort(res.getComponentConfigurations(), Comparator.comparing(ServiceComponentConfiguration::getName));
 
-        return serviceConfiguration;
+        return res;
     }
 
     @PUT

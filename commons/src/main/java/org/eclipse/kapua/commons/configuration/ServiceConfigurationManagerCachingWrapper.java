@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.configuration;
 
+import java.util.Map;
+import java.util.Optional;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.eclipse.kapua.KapuaException;
@@ -25,10 +28,8 @@ import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.config.KapuaConfigurableService;
 import org.eclipse.kapua.storage.TxContext;
 
-import java.util.Map;
-import java.util.Optional;
-
 public class ServiceConfigurationManagerCachingWrapper implements ServiceConfigurationManager {
+
     private final ServiceConfigurationManager wrapped;
 
     private static final int LOCAL_CACHE_SIZE_MAX = SystemSetting.getInstance().getInt(SystemSettingKey.TMETADATA_LOCAL_CACHE_SIZE_MAXIMUM, 100);
@@ -48,15 +49,12 @@ public class ServiceConfigurationManagerCachingWrapper implements ServiceConfigu
     private final LocalCache<Pair<KapuaId, Boolean>, KapuaTocd> kapuaTocdLocalCache = new LocalCache<>(LOCAL_CACHE_SIZE_MAX, null);
 
     /**
-     * This cache only holds the {@link Boolean} value {@literal True} if the {@link KapuaTocd} has been already read from the file
-     * at least once, regardless of the value. With this we can know when a read from {@code KAPUA_TOCD_LOCAL_CACHE}
-     * returns {@literal null} because of the requested key is not present, and when the key is present but its actual value
-     * is {@literal null}.
+     * This cache only holds the {@link Boolean} value {@literal True} if the {@link KapuaTocd} has been already read from the file at least once, regardless of the value. With this we can know when a
+     * read from {@code KAPUA_TOCD_LOCAL_CACHE} returns {@literal null} because of the requested key is not present, and when the key is present but its actual value is {@literal null}.
      *
      * @since 1.2.0
      */
     private final LocalCache<Pair<KapuaId, Boolean>, Boolean> kapuaTocdEmptyLocalCache = new LocalCache<>(LOCAL_CACHE_SIZE_MAX, false);
-
 
     public ServiceConfigurationManagerCachingWrapper(ServiceConfigurationManager wrapped) {
         this.wrapped = wrapped;

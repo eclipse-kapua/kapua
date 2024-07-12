@@ -12,6 +12,21 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.configuration;
 
+import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.stream.Collectors;
+
+import javax.validation.constraints.NotNull;
+import javax.xml.bind.JAXBException;
+import javax.xml.namespace.QName;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaIllegalArgumentException;
@@ -29,22 +44,9 @@ import org.eclipse.kapua.model.config.metatype.KapuaTmetadata;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.config.KapuaConfigurableService;
+import org.eclipse.kapua.service.config.ServiceComponentConfiguration;
 import org.eclipse.kapua.storage.TxContext;
 import org.xml.sax.SAXException;
-
-import javax.validation.constraints.NotNull;
-import javax.xml.bind.JAXBException;
-import javax.xml.namespace.QName;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.stream.Collectors;
 
 public class ServiceConfigurationManagerImpl implements ServiceConfigurationManager {
 
@@ -66,8 +68,10 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
      * <p>
      * By default it returns {@code true}. {@link KapuaConfigurableService}s can change this behaviour if needed.
      *
-     * @param ad      The {@link KapuaTad} to check.
-     * @param scopeId The scope {@link KapuaId} for which to check.
+     * @param ad
+     *         The {@link KapuaTad} to check.
+     * @param scopeId
+     *         The scope {@link KapuaId} for which to check.
      * @return {@code true} if enabled, {@code false} otherwise.
      * @since 1.3.0
      */
@@ -80,10 +84,14 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
      * <p>
      * By default returns true, but an extending {@link KapuaConfigurableService}s may have its own logic
      *
-     * @param ocd          The reference {@link KapuaTocd}.
-     * @param updatedProps The properties to validate.
-     * @param scopeId      The scope {@link KapuaId} which is going to be updated.
-     * @param parentId     The parent scope {@link KapuaId}.
+     * @param ocd
+     *         The reference {@link KapuaTocd}.
+     * @param updatedProps
+     *         The properties to validate.
+     * @param scopeId
+     *         The scope {@link KapuaId} which is going to be updated.
+     * @param parentId
+     *         The parent scope {@link KapuaId}.
      * @return {@literal true} if the configuration is valid, {@literal false} otherwise
      * @throws KapuaException
      * @since 1.0.0
@@ -95,8 +103,10 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
     /**
      * Checks if the given scope {@link KapuaId} can have more entities for this {@link KapuaConfigurableService}.
      *
-     * @param scopeId    The scope {@link KapuaId} to check.
-     * @param entityType The entity type of this {@link KapuaConfigurableService}
+     * @param scopeId
+     *         The scope {@link KapuaId} to check.
+     * @param entityType
+     *         The entity type of this {@link KapuaConfigurableService}
      * @throws KapuaException
      * @since 2.0.0
      */
@@ -163,7 +173,8 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
     /**
      * Persist the given {@link ServiceConfig}.
      *
-     * @param serviceConfig The {@link ServiceConfig} to persist.
+     * @param serviceConfig
+     *         The {@link ServiceConfig} to persist.
      * @return The persisted {@link ServiceConfig}.
      * @throws KapuaException
      * @since 1.0.0
@@ -175,7 +186,8 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
     /**
      * Updates the given {@link ServiceConfig}.
      *
-     * @param serviceConfig The {@link ServiceConfig} to update.
+     * @param serviceConfig
+     *         The {@link ServiceConfig} to update.
      * @return The updates {@link ServiceConfig}.
      * @throws KapuaException
      */
@@ -198,7 +210,8 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
     /**
      * Converts the given {@link Map} properties map to {@link Properties}.
      *
-     * @param values The {@link Map} properties to convert.
+     * @param values
+     *         The {@link Map} properties to convert.
      * @return The converted {@link Properties}
      * @since 1.0.0
      */
@@ -216,10 +229,14 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
     /**
      * Validates the given {@link Map} of properties against the given {@link KapuaTocd}.
      *
-     * @param ocd          The reference {@link KapuaTocd}.
-     * @param updatedProps The properties to validate.
-     * @param scopeId      The scope {@link KapuaId} which is going to be updated.
-     * @param parentId     The parent scope {@link KapuaId}.
+     * @param ocd
+     *         The reference {@link KapuaTocd}.
+     * @param updatedProps
+     *         The properties to validate.
+     * @param scopeId
+     *         The scope {@link KapuaId} which is going to be updated.
+     * @param parentId
+     *         The parent scope {@link KapuaId}.
      * @throws KapuaException
      * @since 1.0.0
      */
@@ -281,9 +298,12 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
     /**
      * Check the given {@link Map} of properties against the given {@link KapuaTocd} validating {@link KapuaTad#isRequired()}.
      *
-     * @param ocd          The reference {@link KapuaTocd}.
-     * @param updatedProps The properties to validate.
-     * @throws KapuaIllegalNullArgumentException if one of the required {@link KapuaTad} in {@link KapuaTocd} is missing in the given properties.
+     * @param ocd
+     *         The reference {@link KapuaTocd}.
+     * @param updatedProps
+     *         The properties to validate.
+     * @throws KapuaIllegalNullArgumentException
+     *         if one of the required {@link KapuaTad} in {@link KapuaTocd} is missing in the given properties.
      * @since 1.0.0
      */
     private void checkRequiredProperties(KapuaTocd ocd, Map<String, Object> updatedProps) throws KapuaIllegalNullArgumentException {
@@ -298,11 +318,12 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
     }
 
     /**
-     * Gets {@link Map} properties for the given scope {@link KapuaId} and the current {@link KapuaConfigurableService}
-     * excluding disabled {@link KapuaTad} if requested.
+     * Gets {@link Map} properties for the given scope {@link KapuaId} and the current {@link KapuaConfigurableService} excluding disabled {@link KapuaTad} if requested.
      *
-     * @param scopeId         The scope {@link KapuaId}.
-     * @param excludeDisabled Whether to exclude disabled {@link KapuaTocd}s and {@link KapuaTad}s.
+     * @param scopeId
+     *         The scope {@link KapuaId}.
+     * @param excludeDisabled
+     *         Whether to exclude disabled {@link KapuaTocd}s and {@link KapuaTad}s.
      * @return The {@link Map} properties of the current {@link KapuaConfigurableService}.
      * @throws KapuaException
      * @since 1.3.0
@@ -327,8 +348,10 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
     /**
      * Converts the given {@link Properties} to a properties {@link Map}.
      *
-     * @param ocd   The reference {@link KapuaTocd}.
-     * @param props The {@link Properties} to convert
+     * @param ocd
+     *         The reference {@link KapuaTocd}.
+     * @param props
+     *         The {@link Properties} to convert
      * @return The converted {@link Map} properties.
      * @throws KapuaException
      * @since 1.0.0
@@ -345,11 +368,12 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
     }
 
     /**
-     * Gets the {@link KapuaTocd} for the given scope {@link KapuaId} and the current {@link KapuaConfigurableService}
-     * excluding disabled {@link KapuaTad} if requested.
+     * Gets the {@link KapuaTocd} for the given scope {@link KapuaId} and the current {@link KapuaConfigurableService} excluding disabled {@link KapuaTad} if requested.
      *
-     * @param scopeId         The scope {@link KapuaId}.
-     * @param excludeDisabled Whether to exclude disabled {@link KapuaTocd}s and {@link KapuaTad}s.
+     * @param scopeId
+     *         The scope {@link KapuaId}.
+     * @param excludeDisabled
+     *         Whether to exclude disabled {@link KapuaTocd}s and {@link KapuaTad}s.
      * @return The {@link KapuaTocd} available for the current {@link KapuaConfigurableService}.
      * @throws KapuaException
      * @since 1.3.0
@@ -370,11 +394,24 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
         }
     }
 
+    @Override
+    public ServiceComponentConfiguration extractServiceComponentConfiguration(TxContext txContext, KapuaId scopeId) throws KapuaException {
+        final KapuaTocd metadata = this.getConfigMetadata(txContext, scopeId, true);
+        final Map<String, Object> values = this.getConfigValues(txContext, scopeId, true);
+        final ServiceComponentConfiguration res = new ServiceComponentConfiguration(metadata.getId());
+        res.setDefinition(metadata);
+        res.setName(metadata.getName());
+        res.setProperties(values);
+        return res;
+    }
+
     /**
      * Process {@link KapuaTmetadata} to exclude disabled {@link KapuaTocd}s and {@link KapuaTad}s if requested.
      *
-     * @param metadata        The {@link KapuaTmetadata} to process.
-     * @param excludeDisabled Whether to exclude disabled {@link KapuaTocd}s and {@link KapuaTad}s.
+     * @param metadata
+     *         The {@link KapuaTmetadata} to process.
+     * @param excludeDisabled
+     *         Whether to exclude disabled {@link KapuaTocd}s and {@link KapuaTad}s.
      * @return The processed {@link KapuaTocd}.
      * @since 1.3.0
      */
@@ -393,12 +430,14 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
     /**
      * Reads the {@link KapuaTmetadata} for the given {@link KapuaConfigurableService} pid.
      *
-     * @param pid The {@link KapuaConfigurableService} pid
+     * @param pid
+     *         The {@link KapuaConfigurableService} pid
      * @return The {@link KapuaTmetadata} for the given {@link KapuaConfigurableService} pid.
      * @throws Exception
      * @since 1.0.0
      */
-    private static KapuaTmetadata readMetadata(String pid) throws JAXBException, SAXException, IOException {
+    //TODO: this must be moved in its own provider, as the logic of "where the metadata comes from" does not belong here
+    private KapuaTmetadata readMetadata(String pid) throws JAXBException, SAXException, IOException {
         URL url = ResourceUtils.getResource(String.format("META-INF/metatypes/%s.xml", pid));
 
         if (url == null) {
