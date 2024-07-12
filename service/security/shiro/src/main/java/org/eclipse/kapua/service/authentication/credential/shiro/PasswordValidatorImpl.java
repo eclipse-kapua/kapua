@@ -17,11 +17,7 @@ import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.commons.util.CommonsValidationRegex;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authentication.exception.PasswordLengthException;
-import org.eclipse.kapua.service.authentication.shiro.CredentialServiceConfigurationManager;
-import org.eclipse.kapua.service.authentication.shiro.CredentialServiceConfigurationManagerImpl;
 import org.eclipse.kapua.storage.TxContext;
-
-import java.util.Map;
 
 /**
  * The {@link PasswordValidator} implementation.
@@ -30,10 +26,10 @@ import java.util.Map;
  */
 public class PasswordValidatorImpl implements PasswordValidator {
 
-    private final CredentialServiceConfigurationManager credentialServiceConfigurationManager;
+    private final AccountPasswordLengthProvider accountPasswordLengthProvider;
 
-    public PasswordValidatorImpl(CredentialServiceConfigurationManager credentialServiceConfigurationManager) {
-        this.credentialServiceConfigurationManager = credentialServiceConfigurationManager;
+    public PasswordValidatorImpl(AccountPasswordLengthProvider accountPasswordLengthProvider) {
+        this.accountPasswordLengthProvider = accountPasswordLengthProvider;
     }
 
     @Override
@@ -43,35 +39,13 @@ public class PasswordValidatorImpl implements PasswordValidator {
         ArgumentValidator.notEmptyOrNull(plainPassword, "plainPassword");
 
         // Validate Password length
-        int minPasswordLength = getMinimumPasswordLength(txContext, scopeId);
-        if (plainPassword.length() < minPasswordLength || plainPassword.length() > CredentialServiceConfigurationManagerImpl.SYSTEM_MAXIMUM_PASSWORD_LENGTH) {
-            throw new PasswordLengthException(minPasswordLength, CredentialServiceConfigurationManagerImpl.SYSTEM_MAXIMUM_PASSWORD_LENGTH);
+        int minPasswordLength = accountPasswordLengthProvider.getMinimumPasswordLength(txContext, scopeId);
+        int maxPasswordLenght = accountPasswordLengthProvider.getMaximumPasswordLength(txContext, scopeId);
+        if (plainPassword.length() < minPasswordLength || plainPassword.length() > maxPasswordLenght) {
+            throw new PasswordLengthException(minPasswordLength, maxPasswordLenght);
         }
         // Validate Password regex
         ArgumentValidator.match(plainPassword, CommonsValidationRegex.PASSWORD_REGEXP, "plainPassword");
     }
 
-    @Override
-    public int getMinimumPasswordLength(TxContext txContext, KapuaId scopeId) throws KapuaException {
-        // Argument Validation
-        ArgumentValidator.notNull(scopeId, "scopeId");
-
-        // Check access
-        // None
-
-        // Get system minimum password length
-        int minPasswordLength = credentialServiceConfigurationManager.getSystemMinimumPasswordLength();
-
-        if (!KapuaId.ANY.equals(scopeId)) {
-            Object minPasswordLengthAccountConfigValue = getConfigValues(txContext, scopeId).get(CredentialServiceConfigurationManagerImpl.PASSWORD_MIN_LENGTH_ACCOUNT_CONFIG_KEY);
-            if (minPasswordLengthAccountConfigValue != null) {
-                minPasswordLength = Integer.parseInt(minPasswordLengthAccountConfigValue.toString());
-            }
-        }
-        return minPasswordLength;
-    }
-
-    private Map<String, Object> getConfigValues(TxContext tx, KapuaId scopeId) throws KapuaException {
-        return credentialServiceConfigurationManager.getConfigValues(tx, scopeId, true);
-    }
 }

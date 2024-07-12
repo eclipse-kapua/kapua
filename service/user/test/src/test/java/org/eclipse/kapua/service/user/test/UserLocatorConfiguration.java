@@ -115,7 +115,8 @@ public class UserLocatorConfiguration {
                 bind(RootUserTester.class).toInstance(mockRootUserTester);
                 final UserRepository userRepository = Mockito.mock(UserRepository.class);
                 final KapuaJpaRepositoryConfiguration jpaRepoConfig = new KapuaJpaRepositoryConfiguration();
-                final ResourceLimitedServiceConfigurationManagerImpl userConfigurationManager = new ResourceLimitedServiceConfigurationManagerImpl(UserService.class.getName(),
+                final ResourceLimitedServiceConfigurationManagerImpl userConfigurationManager = new ResourceLimitedServiceConfigurationManagerImpl(
+                        UserService.class.getName(),
                         new ServiceConfigImplJpaRepository(jpaRepoConfig),
                         Mockito.mock(RootUserTester.class),
                         accountRelativeFinder,

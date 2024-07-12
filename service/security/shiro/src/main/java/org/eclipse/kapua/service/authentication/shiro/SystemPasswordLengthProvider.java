@@ -12,12 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.shiro;
 
-import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
+public interface SystemPasswordLengthProvider {
 
-public interface CredentialServiceConfigurationManager extends ServiceConfigurationManager {
-
-    /**
-     * The minimum password length specified for the whole system. If not defined, assume 12; if defined and less than 12, assume 12.
-     */
     int getSystemMinimumPasswordLength();
+
+    int getSystemMaximumPasswordLength();
 }

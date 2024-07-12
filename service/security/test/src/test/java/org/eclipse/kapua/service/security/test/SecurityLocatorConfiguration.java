@@ -16,13 +16,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.HashSet;
 
-import com.codahale.metrics.MetricRegistry;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Singleton;
-import com.google.inject.name.Names;
-import io.cucumber.java.Before;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaRuntimeException;
 import org.eclipse.kapua.commons.configuration.AccountRelativeFinder;
@@ -45,21 +38,24 @@ import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.query.QueryFactory;
 import org.eclipse.kapua.qa.common.MockedLocator;
-import org.eclipse.kapua.service.authentication.credential.handler.CredentialTypeHandler;
+import org.eclipse.kapua.qa.common.TestJAXBContextProvider;
 import org.eclipse.kapua.service.authentication.credential.CredentialFactory;
 import org.eclipse.kapua.service.authentication.credential.CredentialService;
+import org.eclipse.kapua.service.authentication.credential.handler.CredentialTypeHandler;
 import org.eclipse.kapua.service.authentication.credential.handler.shiro.ApiKeyCredentialTypeHandler;
+import org.eclipse.kapua.service.authentication.credential.handler.shiro.JwtCredentialTypeHandler;
+import org.eclipse.kapua.service.authentication.credential.handler.shiro.PasswordCredentialTypeHandler;
+import org.eclipse.kapua.service.authentication.credential.shiro.AccountPasswordLengthProviderImpl;
 import org.eclipse.kapua.service.authentication.credential.shiro.CredentialFactoryImpl;
 import org.eclipse.kapua.service.authentication.credential.shiro.CredentialImplJpaRepository;
 import org.eclipse.kapua.service.authentication.credential.shiro.CredentialServiceImpl;
-import org.eclipse.kapua.service.authentication.credential.handler.shiro.JwtCredentialTypeHandler;
-import org.eclipse.kapua.service.authentication.credential.handler.shiro.PasswordCredentialTypeHandler;
 import org.eclipse.kapua.service.authentication.credential.shiro.PasswordResetterImpl;
 import org.eclipse.kapua.service.authentication.credential.shiro.PasswordValidator;
 import org.eclipse.kapua.service.authentication.credential.shiro.PasswordValidatorImpl;
 import org.eclipse.kapua.service.authentication.exception.KapuaAuthenticationErrorCodes;
 import org.eclipse.kapua.service.authentication.mfa.MfaAuthenticator;
 import org.eclipse.kapua.service.authentication.shiro.CredentialServiceConfigurationManagerImpl;
+import org.eclipse.kapua.service.authentication.shiro.SystemPasswordLengthProviderImpl;
 import org.eclipse.kapua.service.authentication.shiro.mfa.MfaAuthenticatorImpl;
 import org.eclipse.kapua.service.authentication.shiro.setting.KapuaAuthenticationSetting;
 import org.eclipse.kapua.service.authentication.shiro.setting.KapuaCryptoSetting;
@@ -93,6 +89,15 @@ import org.eclipse.kapua.service.user.internal.UserImplJpaRepository;
 import org.eclipse.kapua.service.user.internal.UserServiceImpl;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
+
+import com.codahale.metrics.MetricRegistry;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Singleton;
+import com.google.inject.name.Names;
+
+import io.cucumber.java.Before;
 
 @Singleton
 public class SecurityLocatorConfiguration {
@@ -166,14 +171,18 @@ public class SecurityLocatorConfiguration {
                 bind(GroupFactory.class).toInstance(new GroupFactoryImpl());
                 final CredentialFactoryImpl credentialFactory = new CredentialFactoryImpl();
                 bind(CredentialFactory.class).toInstance(credentialFactory);
+                final SystemPasswordLengthProviderImpl systemMinimumPasswordLengthProvider = new SystemPasswordLengthProviderImpl(new KapuaAuthenticationSetting());
                 final CredentialServiceConfigurationManagerImpl credentialServiceConfigurationManager = new CredentialServiceConfigurationManagerImpl(
                         new ServiceConfigImplJpaRepository(jpaRepoConfig),
+                        systemMinimumPasswordLengthProvider,
                         Mockito.mock(RootUserTester.class),
                         new KapuaAuthenticationSetting());
 
                 final CredentialImplJpaRepository credentialRepository = new CredentialImplJpaRepository(jpaRepoConfig);
                 final AuthenticationUtils authenticationUtils = authenticationUtils(new KapuaCryptoSetting());
-                final PasswordValidator passwordValidator = new PasswordValidatorImpl(credentialServiceConfigurationManager);
+                final AccountPasswordLengthProviderImpl accountPasswordLengthProvider = new AccountPasswordLengthProviderImpl(systemMinimumPasswordLengthProvider,
+                        credentialServiceConfigurationManager);
+                final PasswordValidator passwordValidator = new PasswordValidatorImpl(accountPasswordLengthProvider);
 
                 bind(CredentialService.class).toInstance(new CredentialServiceImpl(
                         credentialServiceConfigurationManager,
@@ -182,7 +191,23 @@ public class SecurityLocatorConfiguration {
                         new KapuaJpaTxManagerFactory(maxInsertAttempts).create("kapua-authorization"),
                         credentialRepository,
                         credentialFactory,
-                        new PasswordValidatorImpl(credentialServiceConfigurationManager), new KapuaAuthenticationSetting(),
+                        passwordValidator, new KapuaAuthenticationSetting(),
+                        new HashSet<CredentialTypeHandler>() {{
+                            add(
+                                    new PasswordCredentialTypeHandler(
+                                            new KapuaJpaTxManagerFactory(maxInsertAttempts).create("kapua-authorization"),
+                                            credentialRepository,
+                                            authenticationUtils,
+                                            passwordValidator)
+                            );
+                            add(
+                                    new ApiKeyCredentialTypeHandler(
+                                            new KapuaAuthenticationSetting(),
+                                            authenticationUtils)
+                            );
+                            add(new JwtCredentialTypeHandler(authenticationUtils));
+                        }},
+                        accountPasswordLengthProvider,
                         new PasswordResetterImpl(
                                 credentialRepository,
                                 new PasswordCredentialTypeHandler(
@@ -190,23 +215,7 @@ public class SecurityLocatorConfiguration {
                                         credentialRepository,
                                         authenticationUtils,
                                         passwordValidator
-                                ),
-                                new PasswordValidatorImpl(credentialServiceConfigurationManager)),
-                        new HashSet<CredentialTypeHandler>() {{
-                            add(
-                                new PasswordCredentialTypeHandler(
-                                    new KapuaJpaTxManagerFactory(maxInsertAttempts).create("kapua-authorization"),
-                                    credentialRepository,
-                                    authenticationUtils,
-                                    passwordValidator)
-                            );
-                            add(
-                                new ApiKeyCredentialTypeHandler(
-                                    new KapuaAuthenticationSetting(),
-                                    authenticationUtils)
-                            );
-                            add(new JwtCredentialTypeHandler(authenticationUtils));
-                        }}
+                                ), passwordValidator)
                 ));
                 final UserFactoryImpl userFactory = new UserFactoryImpl();
                 bind(UserFactory.class).toInstance(userFactory);
