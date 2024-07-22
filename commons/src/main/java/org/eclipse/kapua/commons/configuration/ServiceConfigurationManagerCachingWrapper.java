@@ -26,6 +26,7 @@ import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.config.KapuaConfigurableService;
+import org.eclipse.kapua.service.config.ServiceComponentConfiguration;
 import org.eclipse.kapua.storage.TxContext;
 
 public class ServiceConfigurationManagerCachingWrapper implements ServiceConfigurationManager {
@@ -58,6 +59,11 @@ public class ServiceConfigurationManagerCachingWrapper implements ServiceConfigu
 
     public ServiceConfigurationManagerCachingWrapper(ServiceConfigurationManager wrapped) {
         this.wrapped = wrapped;
+    }
+
+    @Override
+    public String getDomain() {
+        return wrapped.getDomain();
     }
 
     @Override
@@ -105,5 +111,10 @@ public class ServiceConfigurationManagerCachingWrapper implements ServiceConfigu
         } catch (Exception e) {
             throw KapuaException.internalError(e);
         }
+    }
+
+    @Override
+    public ServiceComponentConfiguration extractServiceComponentConfiguration(TxContext txContext, KapuaId scopeId) throws KapuaException {
+        return wrapped.extractServiceComponentConfiguration(txContext, scopeId);
     }
 }

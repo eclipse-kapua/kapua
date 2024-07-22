@@ -21,6 +21,7 @@ import org.eclipse.kapua.commons.configuration.RootUserTester;
 import org.eclipse.kapua.commons.configuration.ServiceConfigRepository;
 import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
 import org.eclipse.kapua.commons.configuration.ServiceConfigurationManagerImpl;
+import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authentication.credential.CredentialService;
@@ -41,6 +42,7 @@ public class CredentialServiceConfigurationManagerImpl extends ServiceConfigurat
             RootUserTester rootUserTester,
             KapuaAuthenticationSetting kapuaAuthenticationSetting) {
         super(CredentialService.class.getName(),
+                Domains.CREDENTIAL,
                 serviceConfigRepository,
                 rootUserTester);
         this.systemPasswordLengthProvider = systemPasswordLengthProvider;

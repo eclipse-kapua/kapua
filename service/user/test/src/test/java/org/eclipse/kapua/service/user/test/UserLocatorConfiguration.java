@@ -34,6 +34,7 @@ import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.commons.metric.CommonsMetric;
 import org.eclipse.kapua.commons.metric.MetricsService;
 import org.eclipse.kapua.commons.metric.MetricsServiceImpl;
+import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.model.query.QueryFactoryImpl;
 import org.eclipse.kapua.commons.service.event.store.internal.EventStoreRecordImplJpaRepository;
 import org.eclipse.kapua.commons.service.internal.cache.CacheManagerProvider;
@@ -117,6 +118,7 @@ public class UserLocatorConfiguration {
                 final KapuaJpaRepositoryConfiguration jpaRepoConfig = new KapuaJpaRepositoryConfiguration();
                 final ResourceLimitedServiceConfigurationManagerImpl userConfigurationManager = new ResourceLimitedServiceConfigurationManagerImpl(
                         UserService.class.getName(),
+                        Domains.USER,
                         new ServiceConfigImplJpaRepository(jpaRepoConfig),
                         Mockito.mock(RootUserTester.class),
                         accountRelativeFinder,

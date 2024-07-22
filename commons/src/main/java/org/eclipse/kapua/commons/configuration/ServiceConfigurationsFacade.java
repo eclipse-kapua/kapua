@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.configuration;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -23,7 +21,6 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
-import org.eclipse.kapua.service.config.ServiceComponentConfiguration;
 import org.eclipse.kapua.service.config.ServiceConfiguration;
 import org.eclipse.kapua.storage.TxManager;
 
@@ -55,13 +52,11 @@ public interface ServiceConfigurationsFacade {
                 final ServiceConfiguration res = new ServiceConfiguration();
 
                 for (ServiceConfigurationManager configurableService : serviceConfigurationManagersByServiceClass.values()) {
-                    //TODO: check permissions or skip. Have the ServiceConfigurationManager expose its own domain
-                    if (!authorizationService.isPermitted(permissionFactory.newPermission("", Actions.read, scopeId))) {
+                    if (!authorizationService.isPermitted(permissionFactory.newPermission(configurableService.getDomain(), Actions.read, scopeId))) {
                         continue;
                     }
                     res.getComponentConfigurations().add(configurableService.extractServiceComponentConfiguration(tx, scopeId));
                 }
-                Collections.sort(res.getComponentConfigurations(), Comparator.comparing(ServiceComponentConfiguration::getName));
                 return res;
             });
         }

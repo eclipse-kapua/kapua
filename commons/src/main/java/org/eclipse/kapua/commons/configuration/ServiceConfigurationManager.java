@@ -36,6 +36,8 @@ public interface ServiceConfigurationManager {
         return true;
     }
 
+    String getDomain();
+
     void checkAllowedEntities(TxContext txContext, KapuaId scopeId, String entityType) throws KapuaException;
 
     void setConfigValues(TxContext txContext, KapuaId scopeId, Optional<KapuaId> parentId, Map<String, Object> values) throws KapuaException;

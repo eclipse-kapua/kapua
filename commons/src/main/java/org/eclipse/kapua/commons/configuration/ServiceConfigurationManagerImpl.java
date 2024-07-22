@@ -51,14 +51,17 @@ import org.xml.sax.SAXException;
 public class ServiceConfigurationManagerImpl implements ServiceConfigurationManager {
 
     protected final String pid;
+    private final String domain;
     private final ServiceConfigRepository serviceConfigRepository;
     private final RootUserTester rootUserTester;
 
     public ServiceConfigurationManagerImpl(
             String pid,
+            String domain,
             ServiceConfigRepository serviceConfigRepository,
             RootUserTester rootUserTester) {
         this.pid = pid;
+        this.domain = domain;
         this.serviceConfigRepository = serviceConfigRepository;
         this.rootUserTester = rootUserTester;
     }
@@ -98,6 +101,11 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
      */
     protected boolean validateNewConfigValuesCoherence(TxContext txContext, KapuaTocd ocd, Map<String, Object> updatedProps, KapuaId scopeId, Optional<KapuaId> parentId) throws KapuaException {
         return true;
+    }
+
+    @Override
+    public String getDomain() {
+        return domain;
     }
 
     /**
@@ -332,6 +340,14 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
     public Map<String, Object> getConfigValues(TxContext txContext, KapuaId scopeId, boolean excludeDisabled) throws KapuaException {
         // Argument validation
         ArgumentValidator.notNull(scopeId, "scopeId");
+
+        return doGetConfigValues(txContext, scopeId, getConfigMetadata(txContext, scopeId, excludeDisabled));
+    }
+
+    private Map<String, Object> doGetConfigValues(TxContext txContext, KapuaId scopeId, KapuaTocd metaData) throws KapuaException {
+        if (metaData == null) {
+            return null;
+        }
         // Get configuration values
         final ServiceConfigListResult result = serviceConfigRepository.findByScopeAndPid(txContext, scopeId, pid);
 
@@ -340,9 +356,7 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
             properties = result.getFirstItem().getConfigurations();
         }
 
-        KapuaTocd ocd = getConfigMetadata(txContext, scopeId, excludeDisabled);
-
-        return ocd == null ? null : toValues(ocd, properties);
+        return toValues(metaData, properties);
     }
 
     /**
@@ -397,7 +411,7 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
     @Override
     public ServiceComponentConfiguration extractServiceComponentConfiguration(TxContext txContext, KapuaId scopeId) throws KapuaException {
         final KapuaTocd metadata = this.getConfigMetadata(txContext, scopeId, true);
-        final Map<String, Object> values = this.getConfigValues(txContext, scopeId, true);
+        final Map<String, Object> values = this.doGetConfigValues(txContext, scopeId, metadata);
         final ServiceComponentConfiguration res = new ServiceComponentConfiguration(metadata.getId());
         res.setDefinition(metadata);
         res.setName(metadata.getName());

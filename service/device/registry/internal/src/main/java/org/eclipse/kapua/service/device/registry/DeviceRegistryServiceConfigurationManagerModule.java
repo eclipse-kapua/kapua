@@ -25,6 +25,7 @@ import org.eclipse.kapua.commons.configuration.UsedEntitiesCounterImpl;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.jpa.EntityCacheFactory;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
+import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.util.xml.XmlUtil;
 
 import com.google.inject.Module;
@@ -58,6 +59,7 @@ public class DeviceRegistryServiceConfigurationManagerModule extends AbstractKap
         return new ServiceConfigurationManagerCachingWrapper(
                 new ResourceLimitedServiceConfigurationManagerImpl(
                         DeviceRegistryService.class.getName(),
+                        Domains.DEVICE,
                         new CachingServiceConfigRepository(
                                 new ServiceConfigImplJpaRepository(jpaRepoConfig),
                                 entityCacheFactory.createCache("AbstractKapuaConfigurableServiceCacheId")

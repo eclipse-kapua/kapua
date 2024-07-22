@@ -23,6 +23,7 @@ import org.eclipse.kapua.commons.configuration.ServiceConfigurationManagerImpl;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.jpa.EntityCacheFactory;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
+import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.datastore.MessageStoreService;
@@ -58,6 +59,7 @@ public class MessageStoreServiceConfigurationManagerModule extends AbstractKapua
     ) {
         return new ServiceConfigurationManagerCachingWrapper(new ServiceConfigurationManagerImpl(
                 MessageStoreService.class.getName(),
+                Domains.DATASTORE,
                 new CachingServiceConfigRepository(
                         new ServiceConfigImplJpaRepository(jpaRepoConfig),
                         entityCacheFactory.createCache("AbstractKapuaConfigurableServiceCacheId")

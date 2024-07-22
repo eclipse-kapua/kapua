@@ -25,6 +25,7 @@ import org.eclipse.kapua.commons.configuration.UsedEntitiesCounterImpl;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.jpa.EntityCacheFactory;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
+import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import org.eclipse.kapua.service.tag.TagFactory;
 import org.eclipse.kapua.service.tag.TagRepository;
@@ -60,6 +61,7 @@ public class TagServiceConfigurationManagerModule extends AbstractKapuaModule im
         return new ServiceConfigurationManagerCachingWrapper(
                 new ResourceLimitedServiceConfigurationManagerImpl(
                         TagService.class.getName(),
+                        Domains.TAG,
                         new CachingServiceConfigRepository(
                                 new ServiceConfigImplJpaRepository(new KapuaJpaRepositoryConfiguration()),
                                 entityCacheFactory.createCache("AbstractKapuaConfigurableServiceCacheId")

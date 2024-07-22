@@ -14,9 +14,7 @@ package org.eclipse.kapua.app.api.resources.v1.resources;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -33,7 +31,7 @@ import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.app.api.core.model.ScopeId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
-import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
+import org.eclipse.kapua.commons.configuration.ServiceConfigurationsFacade;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.config.metatype.EmptyTocd;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
@@ -52,27 +50,13 @@ public class ServiceConfigurations extends AbstractKapuaResource {
     @Inject
     public AccountService accountService;
     @Inject
-    public Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass;
+    public ServiceConfigurationsFacade serviceConfigurationsFacade;
 
     @GET
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public ServiceConfiguration get(@PathParam("scopeId") ScopeId scopeId) throws KapuaException {
-        final List<KapuaConfigurableService> configurableServices = locator.getServices().stream().filter(service -> service instanceof KapuaConfigurableService)
-                .map(kapuaService -> (KapuaConfigurableService) kapuaService).collect(Collectors.toList());
-        final ServiceConfiguration res = new ServiceConfiguration();
-        for (KapuaConfigurableService configurableService : configurableServices) {
-            KapuaTocd metadata = configurableService.getConfigMetadata(scopeId);
-            if (metadata != null && !(metadata instanceof EmptyTocd)) {
-                Map<String, Object> values = configurableService.getConfigValues(scopeId);
-                ServiceComponentConfiguration serviceComponentConfiguration = new ServiceComponentConfiguration(metadata.getId());
-                serviceComponentConfiguration.setDefinition(metadata);
-                serviceComponentConfiguration.setName(metadata.getName());
-                serviceComponentConfiguration.setProperties(values);
-                res.getComponentConfigurations().add(serviceComponentConfiguration);
-            }
-        }
+        final ServiceConfiguration res = serviceConfigurationsFacade.fetchAllConfigurations(scopeId);
         Collections.sort(res.getComponentConfigurations(), Comparator.comparing(ServiceComponentConfiguration::getName));
-
         return res;
     }
 
