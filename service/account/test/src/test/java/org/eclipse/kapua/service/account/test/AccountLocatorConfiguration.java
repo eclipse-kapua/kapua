@@ -102,6 +102,11 @@ public class AccountLocatorConfiguration {
                 bind(AuthorizationService.class).toInstance(mockedAuthorization);
                 // Inject mocked Permission Factory
                 final PermissionFactory mockPermissionFactory = Mockito.mock(PermissionFactory.class);
+                try {
+                    Mockito.when(mockedAuthorization.isPermitted(Mockito.any(Permission.class))).thenReturn(true);
+                } catch (KapuaException e) {
+                    throw new RuntimeException(e);
+                }
                 bind(PermissionFactory.class).toInstance(mockPermissionFactory);
                 // Inject actual account related services
                 //                final AccountEntityManagerFactory entityManagerFactory = AccountEntityManagerFactory.getInstance();
