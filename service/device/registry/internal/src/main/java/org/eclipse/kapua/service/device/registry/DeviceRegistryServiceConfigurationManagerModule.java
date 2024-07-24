@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.registry;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.eclipse.kapua.commons.configuration.AccountRelativeFinder;
@@ -27,6 +28,7 @@ import org.eclipse.kapua.commons.jpa.EntityCacheFactory;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.util.xml.XmlUtil;
+import org.eclipse.kapua.storage.TxManager;
 
 import com.google.inject.Module;
 import com.google.inject.multibindings.ClassMapKey;
@@ -48,6 +50,7 @@ public class DeviceRegistryServiceConfigurationManagerModule extends AbstractKap
     @ClassMapKey(DeviceRegistryService.class)
     @Singleton
     protected ServiceConfigurationManager deviceRegistryServiceConfigurationManager(
+            @Named("DeviceRegistryTransactionManager") TxManager txManager,
             DeviceFactory factory,
             RootUserTester rootUserTester,
             AccountRelativeFinder accountRelativeFinder,
@@ -60,6 +63,7 @@ public class DeviceRegistryServiceConfigurationManagerModule extends AbstractKap
                 new ResourceLimitedServiceConfigurationManagerImpl(
                         DeviceRegistryService.class.getName(),
                         Domains.DEVICE,
+                        txManager,
                         new CachingServiceConfigRepository(
                                 new ServiceConfigImplJpaRepository(jpaRepoConfig),
                                 entityCacheFactory.createCache("AbstractKapuaConfigurableServiceCacheId")

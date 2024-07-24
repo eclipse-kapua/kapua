@@ -25,6 +25,7 @@ import org.eclipse.kapua.commons.configuration.UsedEntitiesCounterImpl;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.jpa.EntityCacheFactory;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
+import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import org.eclipse.kapua.service.account.AccountFactory;
@@ -51,6 +52,7 @@ public class AccountServiceConfigurationManagerModule extends AbstractKapuaModul
     @ClassMapKey(AccountService.class)
     @Singleton
     ServiceConfigurationManager accountServiceConfigurationManager(
+            KapuaJpaTxManagerFactory txManagerFactory,
             AccountFactory factory,
             RootUserTester rootUserTester,
             AccountRelativeFinder accountRelativeFinder,
@@ -63,6 +65,7 @@ public class AccountServiceConfigurationManagerModule extends AbstractKapuaModul
                 new ResourceLimitedServiceConfigurationManagerImpl(
                         AccountService.class.getName(),
                         Domains.ACCOUNT,
+                        txManagerFactory.create("kapua-account"),
                         new CachingServiceConfigRepository(
                                 new ServiceConfigImplJpaRepository(jpaRepoConfig),
                                 entityCacheFactory.createCache("AbstractKapuaConfigurableServiceCacheId")

@@ -21,7 +21,6 @@ import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.datastore.internal.mediator.ConfigurationException;
 import org.eclipse.kapua.service.datastore.internal.mediator.MessageInfo;
 import org.eclipse.kapua.service.datastore.internal.mediator.MessageStoreConfiguration;
-import org.eclipse.kapua.storage.TxManager;
 
 /**
  * Datastore configuration provider implementation.
@@ -30,7 +29,6 @@ import org.eclipse.kapua.storage.TxManager;
  */
 public class ConfigurationProviderImpl implements ConfigurationProvider {
 
-    private final TxManager txManager;
     private AccountService accountService;
     private ServiceConfigurationManager serviceConfigurationManager;
 
@@ -40,10 +38,8 @@ public class ConfigurationProviderImpl implements ConfigurationProvider {
      * @param serviceConfigurationManager
      * @param accountService
      */
-    public ConfigurationProviderImpl(TxManager txManager,
-                                     ServiceConfigurationManager serviceConfigurationManager,
-                                     AccountService accountService) {
-        this.txManager = txManager;
+    public ConfigurationProviderImpl(ServiceConfigurationManager serviceConfigurationManager,
+            AccountService accountService) {
         this.accountService = accountService;
         this.serviceConfigurationManager = serviceConfigurationManager;
     }
@@ -53,7 +49,7 @@ public class ConfigurationProviderImpl implements ConfigurationProvider {
             throws ConfigurationException {
         MessageStoreConfiguration messageStoreConfiguration = null;
         try {
-            messageStoreConfiguration = new MessageStoreConfiguration(txManager.execute(tx -> serviceConfigurationManager.getConfigValues(tx, scopeId, true)));
+            messageStoreConfiguration = new MessageStoreConfiguration(serviceConfigurationManager.getConfigValues(scopeId, true));
         } catch (KapuaException e) {
             throw new ConfigurationException("Cannot load configuration parameters", e);
         }

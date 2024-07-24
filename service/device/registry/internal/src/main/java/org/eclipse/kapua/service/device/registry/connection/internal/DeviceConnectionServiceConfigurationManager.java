@@ -33,6 +33,7 @@ import org.eclipse.kapua.service.device.registry.KapuaDeviceRegistrySettings;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnection;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionService;
 import org.eclipse.kapua.storage.TxContext;
+import org.eclipse.kapua.storage.TxManager;
 
 /**
  * {@link DeviceConnection} {@link ServiceConfigurationManager} implementation.
@@ -57,14 +58,16 @@ public class DeviceConnectionServiceConfigurationManager extends ServiceConfigur
      * @since 2.0.0
      */
     public DeviceConnectionServiceConfigurationManager(
+            TxManager txManager,
             ServiceConfigRepository serviceConfigRepository,
             RootUserTester rootUserTester,
             Map<String, DeviceConnectionCredentialAdapter> availableDeviceConnectionAdapters,
             KapuaDeviceRegistrySettings kapuaDeviceRegistrySettings) {
         super(DeviceConnectionService.class.getName(),
-                Domains.DEVICE_CONNECTION,
-                serviceConfigRepository,
-                rootUserTester);
+            Domains.DEVICE_CONNECTION,
+            txManager,
+            serviceConfigRepository,
+            rootUserTester);
 
         this.availableDeviceConnectionAdapters = availableDeviceConnectionAdapters;
         this.deviceRegistrySettings = kapuaDeviceRegistrySettings;
@@ -89,9 +92,9 @@ public class DeviceConnectionServiceConfigurationManager extends ServiceConfigur
      * @since 2.0.0
      */
     @Override
-    public KapuaTocd getConfigMetadata(TxContext txContext, KapuaId scopeId, boolean excludeDisabled) throws KapuaException {
+    public KapuaTocd doGetConfigMetadata(TxContext txContext, KapuaId scopeId, boolean excludeDisabled) throws KapuaException {
 
-        KapuaTocd deviceConnectionServiceConfigDefinition = super.getConfigMetadata(txContext, scopeId, excludeDisabled);
+        KapuaTocd deviceConnectionServiceConfigDefinition = super.doGetConfigMetadata(txContext, scopeId, excludeDisabled);
 
         // Find the 'deviceConnectionAuthenticationType' KapuaTad
         Optional<KapuaTad> authenticationTypeConfigDefinition = findAuthenticationTypeTad(deviceConnectionServiceConfigDefinition);

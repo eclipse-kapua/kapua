@@ -22,6 +22,7 @@ import org.eclipse.kapua.commons.configuration.ServiceConfigurationManagerCachin
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.jpa.EntityCacheFactory;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
+import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import org.eclipse.kapua.service.authentication.credential.CredentialService;
 import org.eclipse.kapua.service.authentication.shiro.setting.KapuaAuthenticationSetting;
@@ -46,6 +47,7 @@ public class CredentialServiceConfigurationManagerModule extends AbstractKapuaMo
     @ClassMapKey(CredentialService.class)
     @Singleton
     public ServiceConfigurationManager credentialServiceConfigurationManager(
+            KapuaJpaTxManagerFactory jpaTxManagerFactory,
             RootUserTester rootUserTester,
             SystemPasswordLengthProvider systemPasswordLengthProvider,
             KapuaJpaRepositoryConfiguration jpaRepoConfig,
@@ -54,6 +56,7 @@ public class CredentialServiceConfigurationManagerModule extends AbstractKapuaMo
             XmlUtil xmlUtil) {
         return new ServiceConfigurationManagerCachingWrapper(
                 new CredentialServiceConfigurationManagerImpl(
+                        jpaTxManagerFactory.create("kapua-authentication"),
                         new CachingServiceConfigRepository(
                                 new ServiceConfigImplJpaRepository(jpaRepoConfig),
                                 entityCacheFactory.createCache("AbstractKapuaConfigurableServiceCacheId")

@@ -25,6 +25,7 @@ import org.eclipse.kapua.commons.configuration.UsedEntitiesCounterImpl;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.jpa.EntityCacheFactory;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
+import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import org.eclipse.kapua.service.authorization.group.GroupFactory;
@@ -51,6 +52,7 @@ public class GroupServiceConfigurationManagerModule extends AbstractKapuaModule 
     @ClassMapKey(GroupService.class)
     @Singleton
     public ServiceConfigurationManager groupServiceConfigurationManager(
+            KapuaJpaTxManagerFactory jpaTxManagerFactory,
             GroupFactory factory,
             RootUserTester rootUserTester,
             AccountRelativeFinder accountRelativeFinder,
@@ -63,6 +65,7 @@ public class GroupServiceConfigurationManagerModule extends AbstractKapuaModule 
                 new ResourceLimitedServiceConfigurationManagerImpl(
                         GroupService.class.getName(),
                         Domains.GROUP,
+                        jpaTxManagerFactory.create("kapua-authorization"),
                         new CachingServiceConfigRepository(
                                 new ServiceConfigImplJpaRepository(jpaRepoConfig),
                                 entityCacheFactory.createCache("AbstractKapuaConfigurableServiceCacheId")

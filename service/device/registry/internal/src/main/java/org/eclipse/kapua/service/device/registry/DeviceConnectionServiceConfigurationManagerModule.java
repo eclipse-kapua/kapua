@@ -14,6 +14,7 @@ package org.eclipse.kapua.service.device.registry;
 
 import java.util.Map;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.eclipse.kapua.commons.configuration.CachingServiceConfigRepository;
@@ -28,6 +29,7 @@ import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import org.eclipse.kapua.service.device.authentication.api.DeviceConnectionCredentialAdapter;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionService;
 import org.eclipse.kapua.service.device.registry.connection.internal.DeviceConnectionServiceConfigurationManager;
+import org.eclipse.kapua.storage.TxManager;
 
 import com.google.inject.Module;
 import com.google.inject.multibindings.ClassMapKey;
@@ -51,12 +53,14 @@ public class DeviceConnectionServiceConfigurationManagerModule extends AbstractK
     ServiceConfigurationManager deviceConnectionServiceConfigurationManager(
             RootUserTester rootUserTester,
             KapuaJpaRepositoryConfiguration jpaRepoConfig,
+            @Named("DeviceRegistryTransactionManager") TxManager txManager,
             Map<String, DeviceConnectionCredentialAdapter> availableDeviceConnectionAdapters,
             EntityCacheFactory entityCacheFactory,
             KapuaDeviceRegistrySettings kapuaDeviceRegistrySettings,
             XmlUtil xmlUtil) {
         return new ServiceConfigurationManagerCachingWrapper(
                 new DeviceConnectionServiceConfigurationManager(
+                        txManager,
                         new CachingServiceConfigRepository(
                                 new ServiceConfigImplJpaRepository(jpaRepoConfig),
                                 entityCacheFactory.createCache("AbstractKapuaConfigurableServiceCacheId")

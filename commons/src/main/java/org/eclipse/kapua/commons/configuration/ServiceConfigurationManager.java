@@ -40,11 +40,13 @@ public interface ServiceConfigurationManager {
 
     void checkAllowedEntities(TxContext txContext, KapuaId scopeId, String entityType) throws KapuaException;
 
-    void setConfigValues(TxContext txContext, KapuaId scopeId, Optional<KapuaId> parentId, Map<String, Object> values) throws KapuaException;
+    void setConfigValues(KapuaId scopeId, Optional<KapuaId> parentId, Map<String, Object> values) throws KapuaException;
 
     Map<String, Object> getConfigValues(TxContext txContext, KapuaId scopeId, boolean excludeDisabled) throws KapuaException;
 
-    KapuaTocd getConfigMetadata(TxContext txContext, KapuaId scopeId, boolean excludeDisabled) throws KapuaException;
+    Map<String, Object> getConfigValues(KapuaId scopeId, boolean excludeDisabled) throws KapuaException;
 
-    ServiceComponentConfiguration extractServiceComponentConfiguration(TxContext txContext, KapuaId scopeId) throws KapuaException;
+    KapuaTocd getConfigMetadata(KapuaId scopeId, boolean excludeDisabled) throws KapuaException;
+
+    ServiceComponentConfiguration extractServiceComponentConfiguration(KapuaId scopeId) throws KapuaException;
 }

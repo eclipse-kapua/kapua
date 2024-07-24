@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job.internal;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.eclipse.kapua.commons.configuration.AccountRelativeFinder;
@@ -30,6 +31,7 @@ import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import org.eclipse.kapua.service.job.JobFactory;
 import org.eclipse.kapua.service.job.JobRepository;
 import org.eclipse.kapua.service.job.JobService;
+import org.eclipse.kapua.storage.TxManager;
 
 import com.google.inject.Module;
 import com.google.inject.multibindings.ClassMapKey;
@@ -51,6 +53,8 @@ public class JobServiceConfigurationManagerModule extends AbstractKapuaModule im
     @ClassMapKey(JobService.class)
     @Singleton
     public ServiceConfigurationManager jobServiceConfigurationManager(
+            @Named("jobTxManager") TxManager txManager,
+
             JobFactory factory,
             RootUserTester rootUserTester,
             AccountRelativeFinder accountRelativeFinder,
@@ -63,6 +67,7 @@ public class JobServiceConfigurationManagerModule extends AbstractKapuaModule im
                 new ResourceLimitedServiceConfigurationManagerImpl(
                         JobService.class.getName(),
                         Domains.JOB,
+                        txManager,
                         new CachingServiceConfigRepository(
                                 new ServiceConfigImplJpaRepository(jpaRepoConfig),
                                 entityCacheFactory.createCache("AbstractKapuaConfigurableServiceCacheId")

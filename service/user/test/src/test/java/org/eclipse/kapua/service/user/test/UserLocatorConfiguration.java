@@ -56,6 +56,7 @@ import org.eclipse.kapua.service.user.UserService;
 import org.eclipse.kapua.service.user.internal.UserFactoryImpl;
 import org.eclipse.kapua.service.user.internal.UserImplJpaRepository;
 import org.eclipse.kapua.service.user.internal.UserServiceImpl;
+import org.eclipse.kapua.storage.TxManager;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
@@ -116,9 +117,11 @@ public class UserLocatorConfiguration {
                 bind(RootUserTester.class).toInstance(mockRootUserTester);
                 final UserRepository userRepository = Mockito.mock(UserRepository.class);
                 final KapuaJpaRepositoryConfiguration jpaRepoConfig = new KapuaJpaRepositoryConfiguration();
+                final TxManager txManager = new KapuaJpaTxManagerFactory(maxInsertAttempts).create("kapua-user");
                 final ResourceLimitedServiceConfigurationManagerImpl userConfigurationManager = new ResourceLimitedServiceConfigurationManagerImpl(
                         UserService.class.getName(),
                         Domains.USER,
+                        txManager,
                         new ServiceConfigImplJpaRepository(jpaRepoConfig),
                         Mockito.mock(RootUserTester.class),
                         accountRelativeFinder,
@@ -131,7 +134,7 @@ public class UserLocatorConfiguration {
                                 userConfigurationManager,
                                 mockedAuthorization,
                                 mockPermissionFactory,
-                                new KapuaJpaTxManagerFactory(maxInsertAttempts).create("kapua-user"),
+                                txManager,
                                 new UserImplJpaRepository(jpaRepoConfig),
                                 userFactory,
                                 new EventStorerImpl(new EventStoreRecordImplJpaRepository(jpaRepoConfig)))

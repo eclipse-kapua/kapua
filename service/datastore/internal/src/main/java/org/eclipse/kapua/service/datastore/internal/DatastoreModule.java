@@ -98,7 +98,7 @@ public class DatastoreModule extends AbstractKapuaModule {
             KapuaJpaTxManagerFactory jpaTxManagerFactory,
             AccountService accountService
     ) {
-        final ConfigurationProviderImpl configurationProvider = new ConfigurationProviderImpl(jpaTxManagerFactory.create("kapua-datastore"),
+        final ConfigurationProviderImpl configurationProvider = new ConfigurationProviderImpl(
                 serviceConfigurationManagersByServiceClass.get(MessageStoreService.class),
                 accountService);
         return configurationProvider;

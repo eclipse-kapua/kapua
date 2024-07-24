@@ -50,6 +50,7 @@ import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.storage.TxManager;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
@@ -117,14 +118,16 @@ public class AccountLocatorConfiguration {
                 final KapuaJpaRepositoryConfiguration jpaRepoConfig = new KapuaJpaRepositoryConfiguration();
                 final AccountRepository accountRepository = new AccountImplJpaRepository(jpaRepoConfig);
                 final AccountMapperImpl accountMapper = new AccountMapperImpl(new KapuaBaseMapperImpl());
+                final TxManager txManager = new KapuaJpaTxManagerFactory(maxInsertAttempts).create("kapua-account");
                 bind(AccountService.class).toInstance(new AccountServiceImpl(
-                        new KapuaJpaTxManagerFactory(maxInsertAttempts).create("kapua-account"),
+                        txManager,
                         new AccountImplJpaRepository(jpaRepoConfig),
                         mockPermissionFactory,
                         mockedAuthorization,
                         new ResourceLimitedServiceConfigurationManagerImpl(
                                 AccountService.class.getName(),
                                 Domains.ACCOUNT,
+                                txManager,
                                 new ServiceConfigImplJpaRepository(jpaRepoConfig),
                                 Mockito.mock(RootUserTester.class),
                                 Mockito.mock(AccountRelativeFinder.class),

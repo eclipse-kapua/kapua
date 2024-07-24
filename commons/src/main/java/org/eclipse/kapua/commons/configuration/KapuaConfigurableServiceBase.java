@@ -79,7 +79,7 @@ public class KapuaConfigurableServiceBase
             //Temporary, use Optional instead
             return new EmptyTocd();
         }
-        return txManager.execute(tx -> serviceConfigurationManager.getConfigMetadata(tx, scopeId, true));
+        return serviceConfigurationManager.getConfigMetadata(scopeId, true);
     }
 
     @Override
@@ -91,7 +91,7 @@ public class KapuaConfigurableServiceBase
         if (!authorizationService.isPermitted(permissionFactory.newPermission(domain, Actions.read, scopeId))) {
             return Collections.emptyMap();
         }
-        return txManager.execute(tx -> serviceConfigurationManager.getConfigValues(tx, scopeId, true));
+        return serviceConfigurationManager.getConfigValues(scopeId, true);
     }
 
     @Override
@@ -102,9 +102,6 @@ public class KapuaConfigurableServiceBase
 
         authorizationService.checkPermission(permissionFactory.newPermission(domain, Actions.write, scopeId));
 
-        txManager.<Void>execute(tx -> {
-            serviceConfigurationManager.setConfigValues(tx, scopeId, Optional.ofNullable(parentId), values);
-            return null;
-        });
+        serviceConfigurationManager.setConfigValues(scopeId, Optional.ofNullable(parentId), values);
     }
 }
