@@ -13,6 +13,8 @@
 package org.eclipse.kapua.service.tag.test;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.configuration.AccountRelativeFinder;
@@ -147,9 +149,11 @@ public class TagLocatorConfiguration {
                 final KapuaJpaRepositoryConfiguration jpaRepoConfig = new KapuaJpaRepositoryConfiguration();
                 final EventStorer eventStorer = new EventStorerImpl(new EventStoreRecordImplJpaRepository(jpaRepoConfig));
                 bind(TagRepository.class).toInstance(new TagImplJpaRepository(jpaRepoConfig));
+                final Map<Class<?>, ServiceConfigurationManager> classServiceConfigurationManagerMap = new HashMap<>();
+                classServiceConfigurationManagerMap.put(DeviceConnectionService.class, Mockito.mock(ServiceConfigurationManager.class));
 
                 final DeviceConnectionServiceImpl deviceConnectionService = new DeviceConnectionServiceImpl(
-                        Mockito.mock(ServiceConfigurationManager.class),
+                        classServiceConfigurationManagerMap,
                         mockedAuthorization,
                         permissionFactory,
                         new DeviceConnectionFactoryImpl(),
@@ -198,16 +202,7 @@ public class TagLocatorConfiguration {
                                 deviceValidation)
                 );
                 bind(DeviceFactory.class).toInstance(new DeviceFactoryImpl());
-
-                bind(DeviceConnectionService.class).toInstance(new DeviceConnectionServiceImpl(
-                        Mockito.mock(ServiceConfigurationManager.class),
-                        mockedAuthorization,
-                        permissionFactory,
-                        new DeviceConnectionFactoryImpl(),
-                        new KapuaJpaTxManagerFactory(maxInsertAttempts).create("kapua-device"),
-                        new DeviceConnectionImplJpaRepository(jpaRepoConfig),
-                        Collections.emptyMap(),
-                        eventStorer));
+                bind(DeviceConnectionService.class).toInstance(deviceConnectionService);
                 bind(DeviceConnectionFactory.class).to(DeviceConnectionFactoryImpl.class);
 
                 bind(DeviceRepository.class).toInstance(new DeviceImplJpaRepository(jpaRepoConfig));

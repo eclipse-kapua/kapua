@@ -155,8 +155,11 @@ public class DeviceRegistryLocatorConfiguration {
                 final KapuaJpaRepositoryConfiguration jpaRepoConfig = new KapuaJpaRepositoryConfiguration();
                 final TxManager txManager = new KapuaJpaTxManagerFactory(maxInsertAttempts).create("kapua-device");
                 final EventStorer eventStorer = new EventStorerImpl(new EventStoreRecordImplJpaRepository(jpaRepoConfig));
+                final Map<Class<?>, ServiceConfigurationManager> classServiceConfigurationManagerMap = new HashMap<>();
+                classServiceConfigurationManagerMap.put(DeviceConnectionService.class, Mockito.mock(ServiceConfigurationManager.class));
+
                 final DeviceConnectionService deviceConnectionService = new DeviceConnectionServiceImpl(
-                        Mockito.mock(ServiceConfigurationManager.class),
+                        classServiceConfigurationManagerMap,
                         mockedAuthorization,
                         permissionFactory,
                         new DeviceConnectionFactoryImpl(),

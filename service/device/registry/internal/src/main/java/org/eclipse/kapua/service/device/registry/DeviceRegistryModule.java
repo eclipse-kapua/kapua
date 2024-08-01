@@ -93,27 +93,8 @@ public class DeviceRegistryModule extends AbstractKapuaModule {
         bind(DeviceEventFactory.class).to(DeviceEventFactoryImpl.class).in(Singleton.class);
         bind(DeviceLifeCycleService.class).to(DeviceLifeCycleServiceImpl.class).in(Singleton.class);
         bind(KapuaDeviceRegistrySettings.class).in(Singleton.class);
-    }
-
-    @Provides
-    @Singleton
-    public DeviceConnectionService deviceConnectionService(
-            Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
-            AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
-            DeviceConnectionFactory entityFactory,
-            @Named("DeviceRegistryTransactionManager") TxManager txManager,
-            DeviceConnectionRepository repository,
-            Map<String, DeviceConnectionCredentialAdapter> availableDeviceConnectionAdapters,
-            EventStorer eventStorer) {
-        return new DeviceConnectionServiceImpl(serviceConfigurationManagersByServiceClass.get(DeviceConnectionService.class),
-                authorizationService,
-                permissionFactory,
-                entityFactory,
-                txManager,
-                repository,
-                availableDeviceConnectionAdapters,
-                eventStorer);
+        //This needs to be auto-created by guice, otherwise the RaiseServiceEventInterceptor will not work (sic!)
+        bind(DeviceConnectionService.class).to(DeviceConnectionServiceImpl.class).in(Singleton.class);
     }
 
     @ProvidesIntoSet
