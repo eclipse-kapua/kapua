@@ -92,12 +92,12 @@ public class DeviceConnectionServiceConfigurationManager extends ServiceConfigur
      * @since 2.0.0
      */
     @Override
-    public KapuaTocd doGetConfigMetadata(TxContext txContext, KapuaId scopeId, boolean excludeDisabled) throws KapuaException {
+    protected Optional<KapuaTocd> doGetConfigMetadata(TxContext txContext, KapuaId scopeId, boolean excludeDisabled) throws KapuaException {
 
-        KapuaTocd deviceConnectionServiceConfigDefinition = super.doGetConfigMetadata(txContext, scopeId, excludeDisabled);
+        Optional<KapuaTocd> deviceConnectionServiceConfigDefinition = super.doGetConfigMetadata(txContext, scopeId, excludeDisabled);
 
         // Find the 'deviceConnectionAuthenticationType' KapuaTad
-        Optional<KapuaTad> authenticationTypeConfigDefinition = findAuthenticationTypeTad(deviceConnectionServiceConfigDefinition);
+        Optional<KapuaTad> authenticationTypeConfigDefinition = deviceConnectionServiceConfigDefinition.flatMap(this::findAuthenticationTypeTad);
 
         // Add the KapuaToption to the KapuaTad
         authenticationTypeConfigDefinition.ifPresent(tad -> {

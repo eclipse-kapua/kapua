@@ -88,24 +88,24 @@ public class ServiceConfigurationManagerCachingWrapper implements ServiceConfigu
     }
 
     @Override
-    public KapuaTocd getConfigMetadata(KapuaId scopeId, boolean excludeDisabled) throws KapuaException {
+    public Optional<KapuaTocd> getConfigMetadata(KapuaId scopeId, boolean excludeDisabled) throws KapuaException {
         // Argument validation
         ArgumentValidator.notNull(scopeId, "scopeId");
 
         // Get the Tocd
         // Keep distinct values for service PID, Scope ID and disabled properties included/excluded from AD
-        Pair<KapuaId, Boolean> cacheKey = Pair.of(scopeId, excludeDisabled);
+        final Pair<KapuaId, Boolean> cacheKey = Pair.of(scopeId, excludeDisabled);
         try {
             // Check if the OCD is already in cache, but not in the "empty" cache
-            KapuaTocd tocd;
-            tocd = kapuaTocdLocalCache.get(cacheKey);
-            if (tocd == null && !kapuaTocdEmptyLocalCache.get(cacheKey)) {
+            Optional<KapuaTocd> tocd;
+            tocd = Optional.ofNullable(kapuaTocdLocalCache.get(cacheKey));
+            if (!tocd.isPresent() && !kapuaTocdEmptyLocalCache.get(cacheKey)) {
                 // If not, read metadata and process it
                 tocd = wrapped.getConfigMetadata(scopeId, excludeDisabled);
                 // If null, put it in the "empty" ocd cache, else put it in the "standard" cache
-                if (tocd != null) {
+                if (tocd.isPresent()) {
                     // If the value is not null, put it in "standard" cache and remove the entry from the "empty" cache if present
-                    kapuaTocdLocalCache.put(cacheKey, tocd);
+                    kapuaTocdLocalCache.put(cacheKey, tocd.get());
                     kapuaTocdEmptyLocalCache.remove(cacheKey);
                 } else {
                     // If the value is null, just remember we already read it from file at least once
@@ -119,7 +119,7 @@ public class ServiceConfigurationManagerCachingWrapper implements ServiceConfigu
     }
 
     @Override
-    public ServiceComponentConfiguration extractServiceComponentConfiguration(KapuaId scopeId) throws KapuaException {
+    public Optional<ServiceComponentConfiguration> extractServiceComponentConfiguration(KapuaId scopeId) throws KapuaException {
         return wrapped.extractServiceComponentConfiguration(scopeId);
     }
 }

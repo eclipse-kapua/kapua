@@ -14,6 +14,7 @@ package org.eclipse.kapua.commons.configuration;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -31,6 +32,7 @@ import org.eclipse.kapua.service.config.ServiceConfiguration;
 public class ServiceConfigurationsFacadeImpl implements ServiceConfigurationsFacade {
 
     private final Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass;
+    private final Map<String, ServiceConfigurationManager> serviceConfigurationManagersByServiceClassName;
     protected final AuthorizationService authorizationService;
     protected final PermissionFactory permissionFactory;
     protected final AccountService accountService;
@@ -39,6 +41,8 @@ public class ServiceConfigurationsFacadeImpl implements ServiceConfigurationsFac
     public ServiceConfigurationsFacadeImpl(Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass, AuthorizationService authorizationService,
             PermissionFactory permissionFactory, AccountService accountService) {
         this.serviceConfigurationManagersByServiceClass = serviceConfigurationManagersByServiceClass;
+        this.serviceConfigurationManagersByServiceClassName =
+                serviceConfigurationManagersByServiceClass.entrySet().stream().collect(Collectors.toMap(kv -> kv.getKey().getName(), kv -> kv.getValue()));
         this.authorizationService = authorizationService;
         this.permissionFactory = permissionFactory;
         this.accountService = accountService;
@@ -52,19 +56,19 @@ public class ServiceConfigurationsFacadeImpl implements ServiceConfigurationsFac
             if (!authorizationService.isPermitted(permissionFactory.newPermission(configurableService.getDomain(), Actions.read, scopeId))) {
                 continue;
             }
-            res.getComponentConfigurations().add(configurableService.extractServiceComponentConfiguration(scopeId));
+            configurableService.extractServiceComponentConfiguration(scopeId).ifPresent(res.getComponentConfigurations()::add);
         }
         return res;
     }
 
     @Override
     public ServiceComponentConfiguration fetchConfiguration(KapuaId scopeId, String serviceId) throws KapuaException {
-        final ServiceConfigurationManager serviceConfigurationManager = serviceConfigurationManagersByServiceClass.get(serviceId);
+        final ServiceConfigurationManager serviceConfigurationManager = serviceConfigurationManagersByServiceClassName.get(serviceId);
         if (serviceConfigurationManager == null) {
             throw new KapuaIllegalArgumentException("service.pid", serviceId);
         }
         authorizationService.checkPermission(permissionFactory.newPermission(serviceConfigurationManager.getDomain(), Actions.read, scopeId));
-        return serviceConfigurationManager.extractServiceComponentConfiguration(scopeId);
+        return serviceConfigurationManager.extractServiceComponentConfiguration(scopeId).orElse(null);
     }
 
     @Override
@@ -72,18 +76,18 @@ public class ServiceConfigurationsFacadeImpl implements ServiceConfigurationsFac
         final Account account = accountService.find(scopeId);
 
         for (ServiceComponentConfiguration newServiceComponentConfiguration : newServiceConfiguration.getComponentConfigurations()) {
-            doUpdateServiceComponentConfiguration(account, scopeId, newServiceComponentConfiguration);
+            doUpdateServiceComponentConfiguration(account, scopeId, newServiceComponentConfiguration.getId(), newServiceComponentConfiguration);
         }
     }
 
     @Override
     public void update(KapuaId scopeId, String serviceId, ServiceComponentConfiguration newServiceComponentConfiguration) throws KapuaException {
         final Account account = accountService.find(scopeId);
-        doUpdateServiceComponentConfiguration(account, scopeId, newServiceComponentConfiguration);
+        doUpdateServiceComponentConfiguration(account, scopeId, serviceId, newServiceComponentConfiguration);
     }
 
-    private void doUpdateServiceComponentConfiguration(Account account, KapuaId scopeId, ServiceComponentConfiguration newServiceComponentConfiguration) throws KapuaException {
-        final ServiceConfigurationManager serviceConfigurationManager = serviceConfigurationManagersByServiceClass.get(newServiceComponentConfiguration.getId());
+    private void doUpdateServiceComponentConfiguration(Account account, KapuaId scopeId, String serviceId, ServiceComponentConfiguration newServiceComponentConfiguration) throws KapuaException {
+        final ServiceConfigurationManager serviceConfigurationManager = serviceConfigurationManagersByServiceClassName.get(serviceId);
         if (serviceConfigurationManager == null) {
             throw new KapuaIllegalArgumentException("serviceConfiguration.componentConfiguration.id", newServiceComponentConfiguration.getId());
         }

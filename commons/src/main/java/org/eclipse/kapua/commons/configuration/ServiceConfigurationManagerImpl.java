@@ -15,6 +15,7 @@ package org.eclipse.kapua.commons.configuration;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,6 @@ import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.KapuaIllegalNullArgumentException;
 import org.eclipse.kapua.commons.configuration.exception.ServiceConfigurationForbiddenException;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
-import org.eclipse.kapua.commons.service.internal.KapuaServiceDisabledException;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.commons.util.ResourceUtils;
 import org.eclipse.kapua.commons.util.StringUtil;
@@ -129,11 +129,21 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
     @Override
     public void setConfigValues(KapuaId scopeId, Optional<KapuaId> parentId, Map<String, Object> values) throws KapuaException {
         txManager.<Void>execute(tx -> {
-            KapuaTocd ocd = doGetConfigMetadata(tx, scopeId, false);
+            Optional<KapuaTocd> maybeOcd = doGetConfigMetadata(tx, scopeId, false);
+            if (!maybeOcd.isPresent()) {
+                return null;
+                //throw?
+            }
 
-            Map<String, Object> originalValues = doGetConfigValues(tx, scopeId, doGetConfigMetadata(tx, scopeId, true));
+            final Optional<KapuaTocd> maybeKapuaTocd = doGetConfigMetadata(tx, scopeId, true);
+            if (!maybeKapuaTocd.isPresent()) {
+                return null;
+                //throw?
+            }
 
-            for (KapuaTad ad : ocd.getAD()) {
+            Map<String, Object> originalValues = doGetConfigValues(tx, scopeId, maybeKapuaTocd.get());
+
+            for (KapuaTad ad : maybeOcd.get().getAD()) {
                 boolean allowSelfEdit = Boolean.parseBoolean(ad.getOtherAttributes().getOrDefault(new QName("allowSelfEdit"), "false"));
 
                 final KapuaId currentUserId = KapuaSecurityUtils.getSession().getUserId();
@@ -153,7 +163,7 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
                 }
             }
 
-            validateConfigurations(tx, ocd, values, scopeId, parentId);
+            validateConfigurations(tx, maybeOcd.get(), values, scopeId, parentId);
 
             ServiceConfigQueryImpl query = new ServiceConfigQueryImpl(scopeId);
             query.setPredicate(
@@ -359,8 +369,14 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
     }
 
     protected Map<String, Object> doGetConfigValues(TxContext txContext, KapuaId scopeId, boolean excludeDisabled) throws KapuaException {
-        final KapuaTocd metadata = doGetConfigMetadata(txContext, scopeId, excludeDisabled);
-        return doGetConfigValues(txContext, scopeId, metadata);
+        final Optional<KapuaTocd> metadata = doGetConfigMetadata(txContext, scopeId, excludeDisabled);
+        return metadata.map(m -> {
+            try {
+                return doGetConfigValues(txContext, scopeId, m);
+            } catch (KapuaException e) {
+                throw new RuntimeException(e);
+            }
+        }).orElse(Collections.emptyMap());
     }
 
     protected Map<String, Object> doGetConfigValues(TxContext txContext, KapuaId scopeId, KapuaTocd metadata) throws KapuaException {
@@ -412,16 +428,16 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
      * @since 1.3.0
      */
     @Override
-    public KapuaTocd getConfigMetadata(KapuaId scopeId, boolean excludeDisabled) throws KapuaException {
+    public Optional<KapuaTocd> getConfigMetadata(KapuaId scopeId, boolean excludeDisabled) throws KapuaException {
         return txManager.execute(txContext -> doGetConfigMetadata(txContext, scopeId, excludeDisabled));
     }
 
-    protected KapuaTocd doGetConfigMetadata(TxContext txContext, KapuaId scopeId, boolean excludeDisabled) throws KapuaException {
+    protected Optional<KapuaTocd> doGetConfigMetadata(TxContext txContext, KapuaId scopeId, boolean excludeDisabled) throws KapuaException {
         // Argument validation
         ArgumentValidator.notNull(scopeId, "scopeId");
         // Check disabled service
         if (!isServiceEnabled(txContext, scopeId)) {
-            throw new KapuaServiceDisabledException(pid);
+            return Optional.empty();
         }
         // Get the Tocd
         try {
@@ -432,15 +448,19 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
     }
 
     @Override
-    public ServiceComponentConfiguration extractServiceComponentConfiguration(KapuaId scopeId) throws KapuaException {
+    public Optional<ServiceComponentConfiguration> extractServiceComponentConfiguration(KapuaId scopeId) throws KapuaException {
         return txManager.execute(txContext -> {
-            final KapuaTocd metadata = this.doGetConfigMetadata(txContext, scopeId, true);
+            final Optional<KapuaTocd> maybeMetadata = this.doGetConfigMetadata(txContext, scopeId, true);
+            if (!maybeMetadata.isPresent()) {
+                return Optional.empty();
+            }
+            final KapuaTocd metadata = maybeMetadata.get();
             final Map<String, Object> values = this.doGetConfigValues(txContext, scopeId, metadata);
             final ServiceComponentConfiguration res = new ServiceComponentConfiguration(metadata.getId());
             res.setDefinition(metadata);
             res.setName(metadata.getName());
             res.setProperties(values);
-            return res;
+            return Optional.of(res);
         });
     }
 
@@ -454,16 +474,16 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
      * @return The processed {@link KapuaTocd}.
      * @since 1.3.0
      */
-    private KapuaTocd processMetadata(TxContext txContext, KapuaTmetadata metadata, KapuaId scopeId, boolean excludeDisabled) {
+    private Optional<KapuaTocd> processMetadata(TxContext txContext, KapuaTmetadata metadata, KapuaId scopeId, boolean excludeDisabled) {
         if (metadata != null && metadata.getOCD() != null && !metadata.getOCD().isEmpty()) {
             for (KapuaTocd ocd : metadata.getOCD()) {
                 if (ocd.getId() != null && ocd.getId().equals(pid) && isServiceEnabled(txContext, scopeId)) {
                     ocd.getAD().removeIf(ad -> excludeDisabled && !isPropertyEnabled(ad, scopeId));
-                    return ocd;
+                    return Optional.of(ocd);
                 }
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     /**

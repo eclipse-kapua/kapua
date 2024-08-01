@@ -79,7 +79,7 @@ public class KapuaConfigurableServiceBase
             //Temporary, use Optional instead
             return new EmptyTocd();
         }
-        return serviceConfigurationManager.getConfigMetadata(scopeId, true);
+        return serviceConfigurationManager.getConfigMetadata(scopeId, true).orElse(null);
     }
 
     @Override

@@ -46,7 +46,7 @@ public interface ServiceConfigurationManager {
 
     Map<String, Object> getConfigValues(KapuaId scopeId, boolean excludeDisabled) throws KapuaException;
 
-    KapuaTocd getConfigMetadata(KapuaId scopeId, boolean excludeDisabled) throws KapuaException;
+    Optional<KapuaTocd> getConfigMetadata(KapuaId scopeId, boolean excludeDisabled) throws KapuaException;
 
-    ServiceComponentConfiguration extractServiceComponentConfiguration(KapuaId scopeId) throws KapuaException;
+    Optional<ServiceComponentConfiguration> extractServiceComponentConfiguration(KapuaId scopeId) throws KapuaException;
 }
