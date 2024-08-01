@@ -18,6 +18,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.eclipse.kapua.commons.configuration.CachingServiceConfigRepository;
+import org.eclipse.kapua.commons.configuration.ResourceBasedServiceConfigurationMetadataProvider;
 import org.eclipse.kapua.commons.configuration.RootUserTester;
 import org.eclipse.kapua.commons.configuration.ServiceConfigImplJpaRepository;
 import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
@@ -25,7 +26,6 @@ import org.eclipse.kapua.commons.configuration.ServiceConfigurationManagerCachin
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.jpa.EntityCacheFactory;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
-import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import org.eclipse.kapua.service.device.authentication.api.DeviceConnectionCredentialAdapter;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionService;
 import org.eclipse.kapua.service.device.registry.connection.internal.DeviceConnectionServiceConfigurationManager;
@@ -56,8 +56,7 @@ public class DeviceConnectionServiceConfigurationManagerModule extends AbstractK
             @Named("DeviceRegistryTransactionManager") TxManager txManager,
             Map<String, DeviceConnectionCredentialAdapter> availableDeviceConnectionAdapters,
             EntityCacheFactory entityCacheFactory,
-            KapuaDeviceRegistrySettings kapuaDeviceRegistrySettings,
-            XmlUtil xmlUtil) {
+            KapuaDeviceRegistrySettings kapuaDeviceRegistrySettings) {
         return new ServiceConfigurationManagerCachingWrapper(
                 new DeviceConnectionServiceConfigurationManager(
                         txManager,
@@ -68,7 +67,7 @@ public class DeviceConnectionServiceConfigurationManagerModule extends AbstractK
                         rootUserTester,
                         availableDeviceConnectionAdapters,
                         kapuaDeviceRegistrySettings,
-                        xmlUtil)
+                        new ResourceBasedServiceConfigurationMetadataProvider())
         );
     }
 }

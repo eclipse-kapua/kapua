@@ -12,9 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.configuration;
 
-import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +22,6 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
-import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
 
 import org.eclipse.kapua.KapuaEntityNotFoundException;
@@ -35,9 +31,7 @@ import org.eclipse.kapua.KapuaIllegalNullArgumentException;
 import org.eclipse.kapua.commons.configuration.exception.ServiceConfigurationForbiddenException;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
-import org.eclipse.kapua.commons.util.ResourceUtils;
 import org.eclipse.kapua.commons.util.StringUtil;
-import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import org.eclipse.kapua.model.KapuaEntityAttributes;
 import org.eclipse.kapua.model.config.metatype.KapuaTad;
 import org.eclipse.kapua.model.config.metatype.KapuaTmetadata;
@@ -47,7 +41,6 @@ import org.eclipse.kapua.service.config.KapuaConfigurableService;
 import org.eclipse.kapua.service.config.ServiceComponentConfiguration;
 import org.eclipse.kapua.storage.TxContext;
 import org.eclipse.kapua.storage.TxManager;
-import org.xml.sax.SAXException;
 
 public class ServiceConfigurationManagerImpl implements ServiceConfigurationManager {
 
@@ -56,17 +49,20 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
     private final String domain;
     private final ServiceConfigRepository serviceConfigRepository;
     private final RootUserTester rootUserTester;
+    private final ServiceConfigurationMetadataProvider serviceConfigurationMetadataProvider;
 
     public ServiceConfigurationManagerImpl(
             String pid,
             String domain, TxManager txManager,
             ServiceConfigRepository serviceConfigRepository,
-            RootUserTester rootUserTester) {
+            RootUserTester rootUserTester,
+            ServiceConfigurationMetadataProvider serviceConfigurationMetadataProvider) {
         this.pid = pid;
         this.txManager = txManager;
         this.domain = domain;
         this.serviceConfigRepository = serviceConfigRepository;
         this.rootUserTester = rootUserTester;
+        this.serviceConfigurationMetadataProvider = serviceConfigurationMetadataProvider;
     }
 
     /**
@@ -441,7 +437,7 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
         }
         // Get the Tocd
         try {
-            return processMetadata(txContext, readMetadata(pid), scopeId, excludeDisabled);
+            return processMetadata(txContext, serviceConfigurationMetadataProvider.fetchMetadata(txContext, pid), scopeId, excludeDisabled);
         } catch (Exception e) {
             throw KapuaException.internalError(e);
         }
@@ -474,36 +470,15 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
      * @return The processed {@link KapuaTocd}.
      * @since 1.3.0
      */
-    private Optional<KapuaTocd> processMetadata(TxContext txContext, KapuaTmetadata metadata, KapuaId scopeId, boolean excludeDisabled) {
-        if (metadata != null && metadata.getOCD() != null && !metadata.getOCD().isEmpty()) {
-            for (KapuaTocd ocd : metadata.getOCD()) {
+    private Optional<KapuaTocd> processMetadata(TxContext txContext, Optional<KapuaTmetadata> metadata, KapuaId scopeId, boolean excludeDisabled) {
+        return metadata.flatMap(meta -> {
+            for (KapuaTocd ocd : meta.getOCD()) {
                 if (ocd.getId() != null && ocd.getId().equals(pid) && isServiceEnabled(txContext, scopeId)) {
                     ocd.getAD().removeIf(ad -> excludeDisabled && !isPropertyEnabled(ad, scopeId));
                     return Optional.of(ocd);
                 }
             }
-        }
-        return Optional.empty();
+            return Optional.empty();
+        });
     }
-
-    /**
-     * Reads the {@link KapuaTmetadata} for the given {@link KapuaConfigurableService} pid.
-     *
-     * @param pid
-     *         The {@link KapuaConfigurableService} pid
-     * @return The {@link KapuaTmetadata} for the given {@link KapuaConfigurableService} pid.
-     * @throws Exception
-     * @since 1.0.0
-     */
-    //TODO: this must be moved in its own provider, as the logic of "where the metadata comes from" does not belong here
-    private KapuaTmetadata readMetadata(String pid) throws JAXBException, SAXException, IOException {
-        URL url = ResourceUtils.getResource(String.format("META-INF/metatypes/%s.xml", pid));
-
-        if (url == null) {
-            return null;
-        }
-
-        return XmlUtil.unmarshal(ResourceUtils.openAsReader(url, StandardCharsets.UTF_8), KapuaTmetadata.class);
-    }
-
 }

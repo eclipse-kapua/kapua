@@ -12,15 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.user.test;
 
-import com.codahale.metrics.MetricRegistry;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Singleton;
-import com.google.inject.name.Names;
-import io.cucumber.java.Before;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.configuration.AccountRelativeFinder;
+import org.eclipse.kapua.commons.configuration.ResourceBasedServiceConfigurationMetadataProvider;
 import org.eclipse.kapua.commons.configuration.ResourceLimitedServiceConfigurationManagerImpl;
 import org.eclipse.kapua.commons.configuration.RootUserTester;
 import org.eclipse.kapua.commons.configuration.ServiceConfigImplJpaRepository;
@@ -59,6 +53,15 @@ import org.eclipse.kapua.service.user.internal.UserServiceImpl;
 import org.eclipse.kapua.storage.TxManager;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
+
+import com.codahale.metrics.MetricRegistry;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Singleton;
+import com.google.inject.name.Names;
+
+import io.cucumber.java.Before;
 
 @Singleton
 public class UserLocatorConfiguration {
@@ -127,7 +130,8 @@ public class UserLocatorConfiguration {
                         accountRelativeFinder,
                         new UsedEntitiesCounterImpl(
                                 userFactory,
-                                userRepository)
+                                userRepository),
+                        new ResourceBasedServiceConfigurationMetadataProvider()
                 );
                 bind(UserService.class).toInstance(
                         new UserServiceImpl(

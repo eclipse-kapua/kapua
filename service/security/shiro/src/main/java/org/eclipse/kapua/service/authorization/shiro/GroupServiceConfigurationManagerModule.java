@@ -16,6 +16,7 @@ import javax.inject.Singleton;
 
 import org.eclipse.kapua.commons.configuration.AccountRelativeFinder;
 import org.eclipse.kapua.commons.configuration.CachingServiceConfigRepository;
+import org.eclipse.kapua.commons.configuration.ResourceBasedServiceConfigurationMetadataProvider;
 import org.eclipse.kapua.commons.configuration.ResourceLimitedServiceConfigurationManagerImpl;
 import org.eclipse.kapua.commons.configuration.RootUserTester;
 import org.eclipse.kapua.commons.configuration.ServiceConfigImplJpaRepository;
@@ -27,7 +28,6 @@ import org.eclipse.kapua.commons.jpa.EntityCacheFactory;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.commons.model.domains.Domains;
-import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import org.eclipse.kapua.service.authorization.group.GroupFactory;
 import org.eclipse.kapua.service.authorization.group.GroupRepository;
 import org.eclipse.kapua.service.authorization.group.GroupService;
@@ -58,8 +58,7 @@ public class GroupServiceConfigurationManagerModule extends AbstractKapuaModule 
             AccountRelativeFinder accountRelativeFinder,
             GroupRepository groupRepository,
             KapuaJpaRepositoryConfiguration jpaRepoConfig,
-            EntityCacheFactory entityCacheFactory,
-            XmlUtil xmlUtil
+            EntityCacheFactory entityCacheFactory
     ) {
         return new ServiceConfigurationManagerCachingWrapper(
                 new ResourceLimitedServiceConfigurationManagerImpl(
@@ -75,6 +74,6 @@ public class GroupServiceConfigurationManagerModule extends AbstractKapuaModule 
                         new UsedEntitiesCounterImpl(
                                 factory,
                                 groupRepository
-                        ), xmlUtil));
+                        ), new ResourceBasedServiceConfigurationMetadataProvider()));
     }
 }

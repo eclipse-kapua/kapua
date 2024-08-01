@@ -43,12 +43,14 @@ public class ResourceLimitedServiceConfigurationManagerImpl
             ServiceConfigRepository serviceConfigRepository,
             RootUserTester rootUserTester,
             AccountRelativeFinder accountRelativeFinder,
-            UsedEntitiesCounter usedEntitiesCounter) {
+            UsedEntitiesCounter usedEntitiesCounter,
+            ServiceConfigurationMetadataProvider serviceConfigurationMetadataProvider) {
         super(pid,
                 domain,
                 txManager,
                 serviceConfigRepository,
-                rootUserTester);
+                rootUserTester,
+                serviceConfigurationMetadataProvider);
 
         this.accountRelativeFinder = accountRelativeFinder;
         this.usedEntitiesCounter = usedEntitiesCounter;

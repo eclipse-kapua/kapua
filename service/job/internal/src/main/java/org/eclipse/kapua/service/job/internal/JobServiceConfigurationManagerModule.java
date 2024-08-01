@@ -17,6 +17,7 @@ import javax.inject.Singleton;
 
 import org.eclipse.kapua.commons.configuration.AccountRelativeFinder;
 import org.eclipse.kapua.commons.configuration.CachingServiceConfigRepository;
+import org.eclipse.kapua.commons.configuration.ResourceBasedServiceConfigurationMetadataProvider;
 import org.eclipse.kapua.commons.configuration.ResourceLimitedServiceConfigurationManagerImpl;
 import org.eclipse.kapua.commons.configuration.RootUserTester;
 import org.eclipse.kapua.commons.configuration.ServiceConfigImplJpaRepository;
@@ -27,7 +28,6 @@ import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.jpa.EntityCacheFactory;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.model.domains.Domains;
-import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import org.eclipse.kapua.service.job.JobFactory;
 import org.eclipse.kapua.service.job.JobRepository;
 import org.eclipse.kapua.service.job.JobService;
@@ -60,8 +60,7 @@ public class JobServiceConfigurationManagerModule extends AbstractKapuaModule im
             AccountRelativeFinder accountRelativeFinder,
             JobRepository jobRepository,
             KapuaJpaRepositoryConfiguration jpaRepoConfig,
-            EntityCacheFactory entityCacheFactory,
-            XmlUtil xmlUtil
+            EntityCacheFactory entityCacheFactory
     ) {
         return new ServiceConfigurationManagerCachingWrapper(
                 new ResourceLimitedServiceConfigurationManagerImpl(
@@ -78,7 +77,7 @@ public class JobServiceConfigurationManagerModule extends AbstractKapuaModule im
                                 factory,
                                 jobRepository
                         ),
-                        xmlUtil));
+                        new ResourceBasedServiceConfigurationMetadataProvider()));
 
     }
 }
