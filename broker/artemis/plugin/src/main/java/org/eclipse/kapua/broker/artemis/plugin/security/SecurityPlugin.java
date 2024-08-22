@@ -131,6 +131,12 @@ public class SecurityPlugin implements ActiveMQSecurityManager5 {
 
     private String extractAndValidateClientId(RemotingConnection remotingConnection) {
         String clientId = remotingConnection.getClientID();
+        //set a random client id value if not set by the client
+        //from JMS 2 specs "Although setting client ID remains mandatory when creating an unshared durable subscription, it is optional when creating a shared durable subscription."
+        if (Strings.isNullOrEmpty(clientId)) {
+            clientId = clientIdPrefix + INDEX.getAndIncrement();
+            logger.info("Updated empty client id to: {}", clientId);
+        }
         //leave the clientId validation to the DeviceCreator. Here just check for / or ::
         //ArgumentValidator.match(clientId, DeviceValidationRegex.CLIENT_ID, "deviceCreator.clientId");
         if (clientId != null && (clientId.contains("/") || clientId.contains("::"))) {
