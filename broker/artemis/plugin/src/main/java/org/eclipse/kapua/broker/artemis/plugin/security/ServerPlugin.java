@@ -428,8 +428,15 @@ public class ServerPlugin implements ActiveMQServerPlugin {
         try {
             String connectionId = pluginUtility.getConnectionId(connection);
             serverContext.getSecurityContext().updateConnectionTokenOnDisconnection(connectionId);
-            logger.info("### cleanUpConnectionData connection: {} - reason: {} - Error: {}", connectionId, reason, exception != null ? exception.getMessage() : "N/A");
-            if (exception != null && logger.isDebugEnabled()) {
+            if (exception != null) {
+                //try to find something meaningful to log (otherwise skip it!)
+                String message = extractErorMessage(exception);
+                if (!StringUtils.isEmpty(message)) {
+                    logger.info("### cleanUpConnectionData connection: {} - reason: {} - Error: {}", connectionId, reason, message);
+                }
+                else {
+                    logger.debug("### cleanUpConnectionData connection: {} - reason: {} - Error: {}", connectionId, reason, message);
+                }
                 logger.debug("### cleanUpConnectionData error", exception);
             }
             SessionContext sessionContext = serverContext.getSecurityContext().getSessionContext(connectionId);
@@ -447,7 +454,7 @@ public class ServerPlugin implements ActiveMQServerPlugin {
                     serverContext.getAuthServiceClient().brokerDisconnect(authRequest);
                 }
             } else {
-                logger.warn("Cannot find any session context for connection id: {}", connectionId);
+                logger.debug("Cannot find any session context for connection id: {}", connectionId);
                 loginMetric.getCleanupNullSessionFailure().inc();
             }
         } catch (Exception e) {
@@ -455,6 +462,15 @@ public class ServerPlugin implements ActiveMQServerPlugin {
             logger.error("Cleanup connection data error: {}", e.getMessage(), e);
         } finally {
             timeTotal.stop();
+        }
+    }
+
+    private String extractErorMessage(Exception exception) {
+        if (StringUtils.isEmpty(exception.getMessage())) {
+            return exception.getCause() != null ? exception.getCause().getMessage() : null;
+        }
+        else {
+            return exception.getMessage();
         }
     }
 
