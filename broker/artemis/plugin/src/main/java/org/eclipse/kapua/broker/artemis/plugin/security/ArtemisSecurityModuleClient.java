@@ -43,6 +43,20 @@ public class ArtemisSecurityModuleClient extends AbstractKapuaModule {
     protected void configureModule() {
     }
 
+    @Provides
+    @Singleton
+    @Named("clusterName")
+    String clusterName(SystemSetting systemSetting) {
+        return systemSetting.getString(SystemSettingKey.CLUSTER_NAME);
+    }
+
+    @Provides
+    @Singleton
+    @Named("brokerHost")
+    String brokerHost(SystemSetting systemSetting) {
+        return systemSetting.getString(SystemSettingKey.BROKER_HOST);
+    }
+
     @Singleton
     @Provides
     @Named("serviceBusClient")
@@ -54,6 +68,7 @@ public class ArtemisSecurityModuleClient extends AbstractKapuaModule {
         logger.info("building serviceBusClient...");
         //TODO change configuration (use service broker for now)
         String clientId = "svc-ath-" + UUID.randomUUID().toString();
+<<<<<<< HEAD
 <<<<<<< HEAD
         String url = systemSetting.getString(SystemSettingKey.SERVICE_BUS_URL, "amqp://events-broker:5672");
 =======
@@ -67,12 +82,24 @@ public class ArtemisSecurityModuleClient extends AbstractKapuaModule {
                 REQUEST_ADDRESS,
                 String.format(RESPONSE_ADDRESS_PATTERN, clusterName, brokerHost),
                 DestinationType.queue,
+=======
+        String host = systemSetting.getString(SystemSettingKey.SERVICE_BUS_HOST, "events-broker");
+        int port = systemSetting.getInt(SystemSettingKey.SERVICE_BUS_PORT, 5672);
+        String username = systemSetting.getString(SystemSettingKey.SERVICE_BUS_USERNAME, "username");
+        String password = systemSetting.getString(SystemSettingKey.SERVICE_BUS_PASSWORD, "password");
+        logger.info("Connecting auth service client to: {}:{}", host, port);
+        try {
+            return new ClientAMQP(username, password, host, port, clientId,
+                REQUEST_ADDRESS,
+                String.format(RESPONSE_ADDRESS_PATTERN, clusterName, brokerHost),
+>>>>>>> 1a61212462 (:fix: introduce interface for service client)
                 messageListener);
         } catch (JMSException e) {
             throw new KapuaRuntimeException(KapuaErrorCodes.INTERNAL_ERROR, e, (Object[]) null);
         }
     }
 
+<<<<<<< HEAD
     @Singleton
     @Provides
     ServiceClient authServiceClient(
@@ -91,4 +118,6 @@ public class ArtemisSecurityModuleClient extends AbstractKapuaModule {
     public String authServiceRequestAddress() {
         return "$SYS/SVC/auth/request";
     }
+=======
+>>>>>>> 1a61212462 (:fix: introduce interface for service client)
 }

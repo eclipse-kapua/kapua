@@ -10,24 +10,18 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.client.security.client;
+package org.eclipse.kapua.client.security.amqpclient;
 
 import java.util.Map;
 
 public class Message {
 
-    private String destination;
     private Map<String, Object> properties;
     private String body;
 
-    public Message(String destination, String body, Map<String, Object> properties) {
-        this.destination = destination;
+    public Message(String body, Map<String, Object> properties) {
         this.body = body;
         this.properties = properties;
-    }
-
-    public String getDestination() {
-        return destination;
     }
 
     public String getBody() {

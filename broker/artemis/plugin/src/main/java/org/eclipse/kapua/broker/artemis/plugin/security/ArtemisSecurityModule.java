@@ -13,10 +13,7 @@
 package org.eclipse.kapua.broker.artemis.plugin.security;
 
 import javax.inject.Singleton;
-import javax.jms.JMSException;
 
-import org.eclipse.kapua.KapuaErrorCodes;
-import org.eclipse.kapua.KapuaRuntimeException;
 import org.eclipse.kapua.broker.artemis.plugin.security.context.SecurityContext;
 import org.eclipse.kapua.broker.artemis.plugin.security.metric.LoginMetric;
 import org.eclipse.kapua.broker.artemis.plugin.security.setting.BrokerSetting;

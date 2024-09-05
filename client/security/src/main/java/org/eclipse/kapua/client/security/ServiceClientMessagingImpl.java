@@ -12,6 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.client.security;
 
+<<<<<<< HEAD
+=======
+import org.eclipse.kapua.client.security.amqpclient.Client;
+>>>>>>> 1a61212462 (:fix: introduce interface for service client)
 import org.eclipse.kapua.client.security.bean.AuthRequest;
 import org.eclipse.kapua.client.security.bean.AuthResponse;
 import org.eclipse.kapua.client.security.bean.EntityRequest;
@@ -21,8 +25,6 @@ import org.eclipse.kapua.client.security.bean.ResponseContainer;
 import org.eclipse.kapua.client.security.client.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 /**
  * Security service. Implementation through AMQP messaging layer.
@@ -45,12 +47,20 @@ public class ServiceClientMessagingImpl implements ServiceClient {
 
     @Override
     public AuthResponse brokerConnect(AuthRequest authRequest) throws Exception {
+<<<<<<< HEAD
         String requestId = messageHelper.getNewRequestId();
+=======
+        String requestId = MessageHelper.getNewRequestId();
+>>>>>>> 1a61212462 (:fix: introduce interface for service client)
         authRequest.setRequestId(requestId);
         authRequest.setAction(SecurityAction.brokerConnect.name());
         ResponseContainer<AuthResponse> responseContainer = ResponseContainer.createAnRegisterNewMessageContainer(messageListener, authRequest);
         logRequest(authRequest);
+<<<<<<< HEAD
         client.sendMessage(messageHelper.getBrokerConnectMessage(authRequest));
+=======
+        client.sendMessage(MessageHelper.getBrokerConnectMessage(authRequest));
+>>>>>>> 1a61212462 (:fix: introduce interface for service client)
         synchronized (responseContainer) {
             responseContainer.wait(TIMEOUT);
         }
