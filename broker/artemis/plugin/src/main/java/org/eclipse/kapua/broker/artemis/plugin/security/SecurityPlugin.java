@@ -404,7 +404,7 @@ public class SecurityPlugin implements ActiveMQSecurityManager5 {
             if (accountResponse != null) {
                 return new AccountInfo(KapuaEid.parseCompactId(accountResponse.getId()), accountResponse.getName());
             }
-        } catch (JsonProcessingException | JMSException | InterruptedException e) {
+        } catch (Exception e) {
             logger.warn("Error getting scopeId for user admin", e);
         }
         throw new SecurityException("User not authorized! Cannot get Admin Account info!");
@@ -432,7 +432,7 @@ public class SecurityPlugin implements ActiveMQSecurityManager5 {
             if (userResponse != null && userResponse.getScopeId() != null) {
                 return KapuaEid.parseCompactId(userResponse.getScopeId());
             }
-        } catch (JsonProcessingException | JMSException | InterruptedException e) {
+        } catch (Exception e) {
             logger.warn("Error getting scopeId for username {}", username, e);
         }
         throw new SecurityException("User not authorized! Cannot get scopeId for username:" + username);

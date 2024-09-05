@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2021, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2019, 2022 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -12,14 +12,24 @@
  *******************************************************************************/
 package org.eclipse.kapua.client.security.amqpclient;
 
-/**
- * Client definition to handle request/reply through different messaging layers
- *
- */
-public interface Client {
+import java.util.Map;
 
-    public void sendMessage(Message message) throws Exception;
+public class Message {
 
-    public void stop() throws Exception;
+    private Map<String, Object> properties;
+    private String body;
+
+    public Message(String body, Map<String, Object> properties) {
+        this.body = body;
+        this.properties = properties;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public Map<String, Object> getProperties() {
+        return properties;
+    }
 
 }
