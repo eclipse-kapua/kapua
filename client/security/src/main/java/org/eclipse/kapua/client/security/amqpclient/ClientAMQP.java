@@ -49,13 +49,13 @@ public class ClientAMQP implements Client {
     private boolean active;
     private boolean connectionStatus;
 
-    public ClientAMQP(String username, String password, String host, int port, String clientId,
+    public ClientAMQP(String username, String password, String url, String clientId,
             String requestAddress, String responseAddress, ClientMessageListener clientMessageListener) throws JMSException {
         this.clientId = clientId;
         this.requestAddress = requestAddress;
         this.responseAddress = responseAddress;
         this.clientMessageListener = clientMessageListener;
-        connectionFactory = new JmsConnectionFactory(username, password, "amqp://" + host + ":" + port);
+        connectionFactory = new JmsConnectionFactory(username, password, "amqp://" + url);
         exceptionListener = new ExceptionListener() {
 
             @Override

@@ -33,9 +33,7 @@
     </bean>
 
     <bean id="connectionFactory" class="org.eclipse.kapua.service.client.amqp.ServiceConnectionFactoryImpl">
-        <constructor-arg name="schema" type="java.lang.String" value="amqp"/>
-        <constructor-arg name="host" type="java.lang.String" value="${SERVICE_BROKER_HOST}"/>
-        <constructor-arg name="port" type="int" value="${SERVICE_BROKER_PORT}"/>
+        <constructor-arg name="url" type="java.lang.String" value="${SERVICE_BROKER_HOST}:${SERVICE_BROKER_PORT}"/>
         <constructor-arg name="username" type="java.lang.String" value="${SERVICE_BROKER_USERNAME}"/>
         <constructor-arg name="password" type="java.lang.String" value="${SERVICE_BROKER_PASSWORD}"/>
         <constructor-arg name="clientId" type="java.lang.String" value="authService"/>

@@ -227,7 +227,7 @@ public class JMSServiceEventBus implements ServiceEventBus, ServiceEventBusDrive
 
         void start() throws JMSException, NamingException, ServiceEventBusException {
             stop();
-            String eventbusUrl = systemSetting.getString(SystemSettingKey.EVENT_BUS_URL);
+            String eventbusUrl = "failover:(amqp://" + systemSetting.getString(SystemSettingKey.EVENT_BUS_URL) + ")?jms.sendTimeout=1000";
             String eventbusUsername = systemSetting.getString(SystemSettingKey.EVENT_BUS_USERNAME);
             String eventbusPassword = systemSetting.getString(SystemSettingKey.EVENT_BUS_PASSWORD);
 
@@ -235,6 +235,7 @@ public class JMSServiceEventBus implements ServiceEventBus, ServiceEventBusDrive
             environment.put("connectionfactory.eventBusUrl", eventbusUrl);
             environment.put("transport.useEpoll", transportUseEpoll);
 
+            LOGGER.info("Connecting event bus to: {}", eventbusUrl);
             JmsInitialContextFactory initialContextFactory = new JmsInitialContextFactory();
             Context context = initialContextFactory.getInitialContext(environment);
             ConnectionFactory jmsConnectionFactory = (ConnectionFactory) context.lookup("eventBusUrl");
