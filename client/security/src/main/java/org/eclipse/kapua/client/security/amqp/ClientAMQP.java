@@ -65,7 +65,7 @@ public class ClientAMQP implements Client {
     private boolean connectionStatus;
 
     public ClientAMQP(String username, String password, String url, String clientId,
-            String requestAddress, String responseAddress, DestinationType destinationType, ClientMessageListener clientMessageListener) throws JMSException {
+            String requestAddress, String responseAddress, ClientMessageListener clientMessageListener) throws JMSException {
         this.clientId = clientId;
         this.requestAddress = requestAddress;
         this.responseAddress = responseAddress;

@@ -37,7 +37,6 @@ ENV JAVA_OPTS "-Dcommons.db.schema.update=true \
               -Dcommons.db.connection.host=\${SQL_DB_ADDR} \
               -Dcommons.db.connection.port=\${SQL_DB_PORT} \
               -Dlocator.guice.stage=PRODUCTION \
-              -Dcommons.eventbus.url=\${SERVICE_BROKER_ADDR} \
               -Dbroker.host=\${BROKER_HOST} \
               -Dbroker.port=\${BROKER_PORT} \
               -Dcommons.eventbus.url="${EVENT_BROKER_URL}" \
