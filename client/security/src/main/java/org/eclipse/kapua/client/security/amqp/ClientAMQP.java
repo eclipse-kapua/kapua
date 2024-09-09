@@ -58,20 +58,20 @@ public class ClientAMQP implements Client {
     private String requestAddress;
     private String responseAddress;
     private DestinationType destinationType;
-    private KapuaMessageListener kapuaMessageListener;
+    private ClientMessageListener clientMessageListener;
     private ExceptionListener exceptionListener;
 
     private boolean active;
     private boolean connectionStatus;
 
     public ClientAMQP(String username, String password, String url, String clientId,
-            String requestAddress, String responseAddress, DestinationType destinationType, KapuaMessageListener kapuaMessageListener) throws JMSException {
+            String requestAddress, String responseAddress, DestinationType destinationType, ClientMessageListener clientMessageListener) throws JMSException {
         this.clientId = clientId;
         this.requestAddress = requestAddress;
         this.responseAddress = responseAddress;
         this.destinationType = destinationType;
-        this.kapuaMessageListener = kapuaMessageListener;
-        connectionFactory = new JmsConnectionFactory(username, password, url);
+        this.clientMessageListener = clientMessageListener;
+        connectionFactory = new JmsConnectionFactory(username, password, "amqp://" + url);
         exceptionListener = new ExceptionListener() {
 
             @Override
@@ -149,17 +149,10 @@ public class ClientAMQP implements Client {
                 session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
                 logger.info("AMQP client binding message listener to: {}", responseAddress);
                 consumer = session.createConsumer(createDestination(responseAddress));
-                consumer.setMessageListener(message -> {
-                    try {
-                        kapuaMessageListener.onMessage(toMessage(message));
-                    } catch (JMSException e) {
-                        //nothing to do, just log
-                        //TODO add metric???
-                        logger.error("", e);
-                    }
-                });
+                consumer.setMessageListener(clientMessageListener);
                 logger.info("AMQP client binding request sender to: {}", requestAddress);
                 producer = session.createProducer(createDestination(requestAddress));
+                clientMessageListener.init(session, producer);
                 connectionStatus = true;
                 logger.info("Service client {} - restarting attempt... {} DONE (Connection restored)", this, connectAttempt);
             } catch (JMSException e) {
@@ -168,28 +161,6 @@ public class ClientAMQP implements Client {
                 waitBeforeRetry();
             }
             connectAttempt++;
-        }
-    }
-
-    private Message toMessage(javax.jms.Message message) throws JMSException {
-        return new Message(
-                message.getJMSDestination().toString(),
-                message.getBody(String.class),
-                convertToProperties(message));
-    }
-
-    private Map<String, Object> convertToProperties(javax.jms.Message message) throws JMSException {
-        Map<String, Object> map = new HashMap<String, Object>();
-        ((Iterator<String>)message.getPropertyNames().asIterator()).forEachRemaining(str -> putProperty(map, message, str));
-        return map;
-    }
-
-    private void putProperty(Map<String, Object> map, javax.jms.Message message, String key) {
-        try {
-            map.put((String)key, message.getObjectProperty((String)key));
-        } catch (JMSException e) {
-            //nothing to do
-            logger.warn("Cannot get property {} value. Error: {}", key, e.getMessage());
         }
     }
 

@@ -24,7 +24,6 @@ import org.eclipse.kapua.commons.event.jms.JMSServiceEventBus;
 import org.eclipse.kapua.commons.jpa.EventStorer;
 import org.eclipse.kapua.commons.jpa.EventStorerImpl;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
-import org.eclipse.kapua.commons.metric.CommonsMetric;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.model.mappers.KapuaBaseMapper;
 import org.eclipse.kapua.commons.model.mappers.KapuaBaseMapperImpl;
