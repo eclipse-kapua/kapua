@@ -23,6 +23,7 @@ import org.eclipse.kapua.KapuaRuntimeException;
 import org.eclipse.kapua.client.security.KapuaMessageListener;
 import org.eclipse.kapua.client.security.amqpclient.Client;
 import org.eclipse.kapua.client.security.amqpclient.ClientAMQP;
+import org.eclipse.kapua.client.security.amqpclient.ClientAMQP.DestinationType;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.commons.setting.system.SystemSettingKey;
@@ -61,6 +62,7 @@ public class ArtemisSecurityModuleClient extends AbstractKapuaModule {
             return new ClientAMQP(username, password, url, clientId,
                 REQUEST_ADDRESS,
                 String.format(RESPONSE_ADDRESS_PATTERN, clusterName, brokerHost),
+                DestinationType.queue,
                 messageListener);
         } catch (JMSException e) {
             throw new KapuaRuntimeException(KapuaErrorCodes.INTERNAL_ERROR, e, (Object[]) null);
