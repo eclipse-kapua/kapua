@@ -85,17 +85,7 @@ public class ServerPlugin implements ActiveMQServerPlugin {
     public static final String MESSAGE_TYPE_CONTROL = "CTR";
     public static final String MESSAGE_TYPE_TELEMETRY = "TEL";
     public static final String MESSAGE_TYPE_SYSTEM = "SYS";
-    public static final String MESSAGE_TYPE_DLQ = "DLQ";
-    public static final String MESSAGE_TYPE_NO_ADDRESS = "NAD";//shouldn't happen
-    public static final String MESSAGE_TYPE_UNKNOWN = "UNK";
-    public static final String MESSAGE_TYPE_NOTIFICATION = "NOT";
-
-    //standard address, if customized please change it
-    public static final String PREFIX_MESSAGE_TYPE_NOTIFICATION = "activemq.notifications";
-    //TODO get from configuration
-    public static final String PREFIX_MESSAGE_TYPE_DLQ = "$SYS/MSG/dlq/";
-    public static final String PREFIX_MESSAGE_TYPE_SYSTEM = "$SYS/";
-    public static final String PREFIX_MESSAGE_TYPE_CONTROL = "$EDC/";
+    public static final String NOTIFICATION_PREFIX = "activemq.notifications";//standard address, if customized please change it
 
     /**
      * publish message size threshold for printing message information
@@ -241,6 +231,7 @@ public class ServerPlugin implements ActiveMQServerPlugin {
     public void beforeSend(ServerSession session, Transaction tx, Message message, boolean direct,
                            boolean noAutoCreateQueue) throws ActiveMQException {
         Context sendContext = publishMetric.getTime().time();
+        logger.info("======> {}", message.getAddress());
         try {
             String address = message.getAddress();
             int messageSize = message.getEncodeSize();
@@ -253,34 +244,26 @@ public class ServerPlugin implements ActiveMQServerPlugin {
                 throw new ActiveMQSecurityException("Operation not allowed");
             }
             logger.debug("Publishing message on address {} from clientId: {} - clientIp: {}", address, sessionContext.getClientId(), sessionContext.getClientIp());
-            message.putStringProperty(MessageConstants.HEADER_KAPUA_CLIENT_ID, sessionContext.getClientId());
-            message.putStringProperty(MessageConstants.HEADER_KAPUA_CONNECTOR_NAME, sessionContext.getConnectorName());
-            message.putStringProperty(MessageConstants.HEADER_KAPUA_SESSION, Base64.getEncoder().encodeToString(SerializationUtils.serialize(sessionContext.getKapuaSession())));
-            message.putLongProperty(MessageConstants.HEADER_KAPUA_RECEIVED_TIMESTAMP, KapuaDateUtils.getKapuaSysDate().getEpochSecond());
-            message.putStringProperty(MessageConstants.HEADER_KAPUA_MESSAGE_TYPE, getMessgeType(address));
             if (!sessionContext.isInternal()) {
                 if (isLwt(address)) {
                     //handle the missing message case
                     logger.info("Detected missing message for client {}... Flag session to tell disconnector to avoid disconnect event sending", sessionContext.getClientId());
                     sessionContext.setMissing(true);
                 }
-                // FIX #164
-                message.putStringProperty(MessageConstants.HEADER_KAPUA_CONNECTION_ID, Base64.getEncoder().encodeToString(SerializationUtils.serialize(sessionContext.getKapuaConnectionId())));
-                message.putBooleanProperty(MessageConstants.HEADER_KAPUA_BROKER_CONTEXT, false);
                 if (publishInfoMessageSizeLimit < messageSize) {
                     logger.info("Published message size over threshold. size: {} - destination: {} - account id: {} - username: {} - clientId: {}",
                             messageSize, address, sessionContext.getAccountName(), sessionContext.getUsername(), sessionContext.getClientId());
                 }
+                fillAdditionalMessagePropertiesExternal(message, sessionContext, address);
                 publishMetric.getMessageSizeAllowed().update(messageSize);
             } else {
                 if (publishInfoMessageSizeLimit < messageSize) {
                     logger.info("Published message size over threshold. size: {} - destination: {}",
                             messageSize, address);
                 }
-                message.putBooleanProperty(MessageConstants.HEADER_KAPUA_BROKER_CONTEXT, true);
+                fillAdditionalMessagePropertiesInternal(message, sessionContext, address);
                 publishMetric.getMessageSizeAllowedInternal().update(messageSize);
             }
-            message.putStringProperty(MessageConstants.PROPERTY_ORIGINAL_TOPIC, address);
             serverContext.getAddressAccessTracker().update(address);
             logger.debug("Published message on address {} from clientId: {} - clientIp: {}", address, sessionContext.getClientId(), sessionContext.getClientIp());
             ActiveMQServerPlugin.super.beforeSend(session, tx, message, direct, noAutoCreateQueue);
@@ -315,33 +298,18 @@ public class ServerPlugin implements ActiveMQServerPlugin {
     }
 
     protected String getMessageType(String address) {
-        if (address != null) {
+        if (address != null && !address.startsWith(NOTIFICATION_PREFIX)) {//the plugin shouldn't receive notifications messages but to be safe
             if (address.startsWith("$")) {
-                if (address.startsWith(PREFIX_MESSAGE_TYPE_SYSTEM)) {
-                    if (address.startsWith(PREFIX_MESSAGE_TYPE_DLQ)) {
-                        return MESSAGE_TYPE_DLQ;
-                    }
-                    else {
-                        return MESSAGE_TYPE_SYSTEM;
-                    }
-                }
-                else if (address.startsWith(PREFIX_MESSAGE_TYPE_CONTROL)) {
+                if (address.startsWith("$SYS")) {
+                    return MESSAGE_TYPE_SYSTEM;
+                } else {
                     return MESSAGE_TYPE_CONTROL;
                 }
-                else {
-                    return MESSAGE_TYPE_UNKNOWN;
-                }
-            }
-            //the plugin shouldn't receive notifications messages but to be safe
-            else if (address.startsWith(PREFIX_MESSAGE_TYPE_NOTIFICATION)) {
-                return MESSAGE_TYPE_NOTIFICATION;
-            }
-            else {
+            } else {
                 return MESSAGE_TYPE_TELEMETRY;
             }
         }
-        //the plugin shouldn't receive messages without address but, in any case, return a proper type
-        return MESSAGE_TYPE_NO_ADDRESS;
+        return "UNK";
     }
 
     /**
