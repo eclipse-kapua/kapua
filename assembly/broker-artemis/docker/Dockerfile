@@ -24,7 +24,7 @@ ENV DATASTORE_CLIENT org.eclipse.kapua.service.elasticsearch.client.rest.RestEla
 ENV SQL_DB_ADDR db
 ENV SQL_DB_PORT 3306
 
-ENV SERVICE_BROKER_ADDR failover:(amqp://events-broker:5672)?jms.sendTimeout=1000
+ENV SERVICE_BROKER_ADDR failover:(amqp://events-broker:5672)
 
 USER 0
 

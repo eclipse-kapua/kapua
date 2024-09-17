@@ -230,7 +230,7 @@ public class JMSServiceEventBus implements ServiceEventBus, ServiceEventBusDrive
 
         void start() throws JMSException, NamingException, ServiceEventBusException {
             stop();
-            String eventbusUrl = "failover:(amqp://" + systemSetting.getString(SystemSettingKey.EVENT_BUS_URL) + ")?jms.sendTimeout=1000";
+            String eventbusUrl = systemSetting.getString(SystemSettingKey.EVENT_BUS_URL);
             String eventbusUsername = systemSetting.getString(SystemSettingKey.EVENT_BUS_USERNAME);
             String eventbusPassword = systemSetting.getString(SystemSettingKey.EVENT_BUS_PASSWORD);
 

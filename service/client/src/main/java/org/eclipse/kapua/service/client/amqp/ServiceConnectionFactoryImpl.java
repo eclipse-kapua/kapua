@@ -12,44 +12,30 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.client.amqp;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.jms.Connection;
 import javax.jms.JMSException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.qpid.jms.JmsConnectionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ServiceConnectionFactoryImpl extends JmsConnectionFactory {
 
-    protected static final Logger logger = LoggerFactory.getLogger(ServiceConnectionFactoryImpl.class);
-
-    private final static AtomicInteger INDEX = new AtomicInteger();
-
-    private String clientId;
-
-    public ServiceConnectionFactoryImpl(String url, String username, String password, String clientId) {
-        this("amqp", url, username, password, clientId);
+    //JMS specification 2.0 requires client id null to be able to share subscription between multiple consumers
+    //So remove any option to allow to set the client id since we use only shared durable subscriptions
+    public ServiceConnectionFactoryImpl(String url, String username, String password) {
+        this(url, username, password, null);
     }
 
-    public ServiceConnectionFactoryImpl(String schema, String url, String username, String password, String clientId) {
-        super(username, password, schema + "://" + url);
-        this.clientId = clientId;
-        logger.info("Created connection factory with client id: {}", this.clientId);
+    public ServiceConnectionFactoryImpl(String url, String username, String password, String clientId) {
+        super(username, password, url);
+        if (!StringUtils.isEmpty(clientId)) {
+            setClientID(clientId);
+        }
     }
 
     @Override
     public Connection createConnection(String username, String password) throws JMSException {
-        Connection connection = super.createConnection(username, password);
-        String generatedClient = generateClientId();
-        logger.info("Created connection for generated client id: {}", generatedClient);
-        connection.setClientID(generatedClient);
-        return connection;
-    }
-
-    protected String generateClientId() {
-        return clientId + "-" + INDEX.incrementAndGet();
+        return super.createConnection(username, password);
     }
 
 }

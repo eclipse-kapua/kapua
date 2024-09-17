@@ -64,7 +64,7 @@ public class ClientAMQP implements Client {
         this.responseAddress = responseAddress;
         this.destinationType = destinationType;
         this.clientMessageListener = clientMessageListener;
-        connectionFactory = new JmsConnectionFactory(username, password, "amqp://" + url);
+        connectionFactory = new JmsConnectionFactory(username, password, url);
         exceptionListener = new ExceptionListener() {
 
             @Override
