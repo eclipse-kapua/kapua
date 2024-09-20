@@ -22,10 +22,6 @@ import org.apache.camel.component.jms.JmsMessage;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.client.security.bean.AuthRequest;
 import org.eclipse.kapua.client.security.bean.EntityRequest;
-import org.eclipse.kapua.service.camel.application.MetricsCamel;
-import org.eclipse.kapua.service.camel.converter.AbstractKapuaConverter;
-import org.eclipse.kapua.service.client.protocol.ProtocolDescriptorProvider;
-import org.eclipse.kapua.translator.TranslatorHub;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +31,7 @@ import com.fasterxml.jackson.databind.ObjectReader;
 /**
  * Kapua message converter used to convert authentication messages.
  */
-public class AuthenticationServiceConverter extends AbstractKapuaConverter {
+public class AuthenticationServiceConverter {
 
     public static final Logger logger = LoggerFactory.getLogger(AuthenticationServiceConverter.class);
 
@@ -45,8 +41,7 @@ public class AuthenticationServiceConverter extends AbstractKapuaConverter {
     private final MetricsAuthentication metrics;
 
     @Inject
-    public AuthenticationServiceConverter(TranslatorHub translatorHub, MetricsCamel metricsCamel, MetricsAuthentication metricsAuthentication, ProtocolDescriptorProvider protocolDescriptorProvider) {
-        super(translatorHub, metricsCamel, protocolDescriptorProvider);
+    public AuthenticationServiceConverter(MetricsAuthentication metricsAuthentication) {
         this.metrics = metricsAuthentication;
     }
 

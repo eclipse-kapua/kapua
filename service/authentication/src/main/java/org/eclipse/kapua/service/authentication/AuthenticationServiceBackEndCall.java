@@ -36,7 +36,6 @@ import org.eclipse.kapua.client.security.metric.AuthMetric;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.KapuaEntity;
-import org.eclipse.kapua.model.id.KapuaIdFactory;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authentication.authentication.Authenticator;
@@ -67,8 +66,6 @@ public class AuthenticationServiceBackEndCall {
     private AuthenticationService authenticationService;
     private AccountService accountService;
     private DeviceConnectionService deviceConnectionService;
-    private CredentialsFactory credentialFactory;
-    private KapuaIdFactory kapuaIdFactory;
     private UserService userService;
 
     @Inject
@@ -79,8 +76,6 @@ public class AuthenticationServiceBackEndCall {
         authenticationService = locator.getService(AuthenticationService.class);
         accountService = locator.getService(AccountService.class);
         deviceConnectionService = locator.getService(DeviceConnectionService.class);
-        credentialFactory = locator.getFactory(CredentialsFactory.class);
-        kapuaIdFactory = locator.getFactory(KapuaIdFactory.class);
         userService = locator.getService(UserService.class);
         authenticationMetric = locator.getComponent(AuthMetric.class);
     }
