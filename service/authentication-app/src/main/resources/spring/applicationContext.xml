@@ -32,11 +32,10 @@
         <property name="routeCount" value="2"></property>
     </bean>
 
-    <bean id="connectionFactory" class="org.eclipse.kapua.service.client.amqp.ServiceConnectionFactoryImpl">
-        <constructor-arg name="url" type="java.lang.String" value="${SERVICE_BROKER_HOST}:${SERVICE_BROKER_PORT}"/>
+    <bean id="connectionFactory" class="org.apache.qpid.jms.JmsConnectionFactory">
         <constructor-arg name="username" type="java.lang.String" value="${SERVICE_BROKER_USERNAME}"/>
         <constructor-arg name="password" type="java.lang.String" value="${SERVICE_BROKER_PASSWORD}"/>
-        <constructor-arg name="clientId" type="java.lang.String" value="authService"/>
+        <constructor-arg name="remoteURI" type="java.lang.String" value="amqp://${SERVICE_BROKER_HOST}:${SERVICE_BROKER_PORT}"/>
     </bean>
 
     <bean id="cachingConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
