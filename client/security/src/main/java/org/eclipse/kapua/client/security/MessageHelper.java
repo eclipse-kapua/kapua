@@ -28,6 +28,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
+@Singleton
 public class MessageHelper {
 
     private ObjectMapper mapper = new ObjectMapper();
@@ -85,7 +86,7 @@ public class MessageHelper {
         message.setStringProperty(MessageConstants.HEADER_NAME, entityRequest.getName());
     }
 
-    static String getNewRequestId() {
+    public String getNewRequestId() {
         return UUID.randomUUID().toString();
     }
 }

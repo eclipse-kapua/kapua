@@ -21,6 +21,11 @@ import org.eclipse.kapua.broker.artemis.plugin.security.context.SecurityContext;
 import org.eclipse.kapua.broker.artemis.plugin.security.metric.LoginMetric;
 import org.eclipse.kapua.broker.artemis.plugin.security.setting.BrokerSetting;
 import org.eclipse.kapua.broker.artemis.plugin.security.setting.BrokerSettingKey;
+import org.eclipse.kapua.client.security.KapuaMessageListener;
+import org.eclipse.kapua.client.security.MessageHelper;
+import org.eclipse.kapua.client.security.ServiceClient;
+import org.eclipse.kapua.client.security.ServiceClientMessagingImpl;
+import org.eclipse.kapua.client.security.client.Client;
 import org.eclipse.kapua.commons.cache.LocalCache;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 
@@ -62,6 +67,18 @@ public class ArtemisSecurityModule extends AbstractKapuaModule {
                 pluginUtility,
                 runWithLock
         );
+    }
+
+    @Singleton
+    @Provides
+    ServiceClient authServiceClient(
+            KapuaMessageListener messageListener,
+            @Named("clusterName") String clusterName,
+            @Named("brokerHost") String brokerHost,
+            @Named("serviceBusClient") Client client,
+            SystemSetting systemSetting,
+            MessageHelper messageHelper) {
+        return new ServiceClientMessagingImpl(messageListener, client, messageHelper);
     }
 
 }

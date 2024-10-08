@@ -10,7 +10,7 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.client.security.amqpclient;
+package org.eclipse.kapua.client.security.client;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;

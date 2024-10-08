@@ -76,7 +76,8 @@ public class JMSServiceEventBus implements ServiceEventBus, ServiceEventBusDrive
     private final SystemSetting systemSetting;
     private final CommonsMetric commonsMetric;
     private final List<Subscription> subscriptionList = new ArrayList<>();
-    private final ServiceEventMarshaler eventBusMarshaler;
+    private final ServiceEventMarshaler serviceEventMarshaler;
+    private final String eventPattern;
 
     /**
      * Default constructor
@@ -84,10 +85,12 @@ public class JMSServiceEventBus implements ServiceEventBus, ServiceEventBusDrive
     @Inject
     public JMSServiceEventBus(SystemSetting systemSetting,
                               CommonsMetric commonsMetric,
-                              ServiceEventMarshaler eventBusMarshaler) {
+                              ServiceEventMarshaler serviceEventMarshaler,
+                              String eventPattern) {
         this.systemSetting = systemSetting;
         this.commonsMetric = commonsMetric;
-        this.eventBusMarshaler = eventBusMarshaler;
+        this.serviceEventMarshaler = serviceEventMarshaler;
+        this.eventPattern = eventPattern;
         this.eventBusJMSConnectionBridge = new EventBusJMSConnectionBridge();
         this.producerPoolMinSize = systemSetting.getInt(SystemSettingKey.EVENT_BUS_PRODUCER_POOL_MIN_SIZE);
         this.producerPoolMaxSize = systemSetting.getInt(SystemSettingKey.EVENT_BUS_PRODUCER_POOL_MAX_SIZE);
@@ -130,10 +133,6 @@ public class JMSServiceEventBus implements ServiceEventBus, ServiceEventBusDrive
         } catch (ServiceEventBusException e) {
             throw new ServiceEventBusException(e);
         }
-    }
-
-    private void setSession(ServiceEvent kapuaEvent) {
-        KapuaSession.createFrom(kapuaEvent.getScopeId(), kapuaEvent.getUserId());
     }
 
     public Boolean isConnected() {
@@ -322,7 +321,7 @@ public class JMSServiceEventBus implements ServiceEventBus, ServiceEventBusDrive
                         try {
                             if (message instanceof TextMessage) {
                                 TextMessage textMessage = (TextMessage) message;
-                                final ServiceEvent kapuaEvent = eventBusMarshaler.unmarshal(textMessage.getText());
+                                final ServiceEvent kapuaEvent = serviceEventMarshaler.unmarshal(textMessage.getText());
                                 setSession(kapuaEvent);
                                 KapuaSecurityUtils.doPrivileged(() -> {
                                     try {
@@ -333,7 +332,6 @@ public class JMSServiceEventBus implements ServiceEventBus, ServiceEventBusDrive
                                         ServiceEventScope.end();
                                     }
                                 });
-
                             } else {
                                 LOGGER.error("Discarding wrong event message type '{}'", message != null ? message.getClass() : "null");
                             }
@@ -348,6 +346,10 @@ public class JMSServiceEventBus implements ServiceEventBus, ServiceEventBusDrive
             } catch (JMSException e) {
                 throw new ServiceEventBusException(e);
             }
+        }
+
+        private void setSession(ServiceEvent kapuaEvent) {
+            KapuaSession.createFrom(kapuaEvent.getScopeId(), kapuaEvent.getUserId());
         }
 
         private class Sender {
@@ -367,8 +369,8 @@ public class JMSServiceEventBus implements ServiceEventBus, ServiceEventBusDrive
                 try {
                     TextMessage message = jmsSession.createTextMessage();
                     // Serialize outgoing kapua event based on platform configuration
-                    message.setText(eventBusMarshaler.marshal(kapuaEvent));
-                    message.setStringProperty(ServiceEventMarshaler.CONTENT_TYPE_KEY, eventBusMarshaler.getContentType());
+                    message.setText(serviceEventMarshaler.marshal(kapuaEvent));
+                    message.setStringProperty(ServiceEventMarshaler.CONTENT_TYPE_KEY, serviceEventMarshaler.getContentType());
                     jmsProducer.send(message);
                 } catch (JMSException | KapuaException e) {
                     LOGGER.error("Message publish interrupted: {}", e.getMessage());
@@ -471,32 +473,6 @@ public class JMSServiceEventBus implements ServiceEventBus, ServiceEventBusDrive
                 active = false;
             }
         }
-    }
-
-    private class Subscription {
-
-        String name;
-        String address;
-        ServiceEventBusListener kapuaEventListener;
-
-        public Subscription(String address, String name, ServiceEventBusListener kapuaEventListener) {
-            this.name = name;
-            this.address = address;
-            this.kapuaEventListener = kapuaEventListener;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getAddress() {
-            return address;
-        }
-
-        public ServiceEventBusListener getKapuaEventListener() {
-            return kapuaEventListener;
-        }
-
     }
 
 }
