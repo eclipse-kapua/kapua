@@ -10,16 +10,10 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.client.security.amqpclient;
+package org.eclipse.kapua.client.security.client;
 
-/**
- * Client definition to handle request/reply through different messaging layers
- *
- */
-public interface Client {
+public interface MessageListener {
 
-    public void sendMessage(Message message) throws Exception;
-
-    public void stop() throws Exception;
+    void onMessage(Message message) throws Exception;
 
 }

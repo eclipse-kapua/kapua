@@ -16,43 +16,45 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.inject.Singleton;
 import javax.jms.JMSException;
 
 import org.eclipse.kapua.client.security.bean.EntityRequest;
 import org.eclipse.kapua.client.security.bean.MessageConstants;
-import org.eclipse.kapua.client.security.amqpclient.Message;
+import org.eclipse.kapua.client.security.client.Message;
 import org.eclipse.kapua.client.security.bean.AuthRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
+@Singleton
 public class MessageHelper {
 
-    private static ObjectMapper mapper = new ObjectMapper();
-    private static ObjectWriter writer = mapper.writer();//check if it's thread safe
+    private ObjectMapper mapper = new ObjectMapper();
+    private ObjectWriter writer = mapper.writer();//check if it's thread safe
 
-    private MessageHelper() {
-    }
-
-    static Message getBrokerConnectMessage(AuthRequest authRequest) throws Exception {
+    public Message getBrokerConnectMessage(AuthRequest authRequest) throws Exception {
         return new Message(
+            "SYS.SVC.auth.request",
             authRequest!=null ? writer.writeValueAsString(authRequest) : "",
             buildBaseMessage(authRequest));
     }
 
-    static Message getBrokerDisconnectMessage(AuthRequest authRequest) throws Exception {
+    public Message getBrokerDisconnectMessage(AuthRequest authRequest) throws Exception {
         return new Message(
+            "SYS.SVC.auth.request",
             authRequest!=null ? writer.writeValueAsString(authRequest) : "",
             buildBaseMessage(authRequest));
     }
 
-    static Message getEntityMessage(EntityRequest entityRequest) throws Exception {
+    public Message getEntityMessage(EntityRequest entityRequest) throws Exception {
         return new Message(
+            "SYS.SVC.auth.request",
             entityRequest!=null ? writer.writeValueAsString(entityRequest) : "",
             buildBaseMessage(entityRequest));
     }
 
-    static Map<String, Object> buildBaseMessage(AuthRequest authRequest) throws JMSException {
+    private Map<String, Object> buildBaseMessage(AuthRequest authRequest) throws JMSException {
         Map<String, Object> properties = new HashMap<>();
         properties.put(MessageConstants.HEADER_REQUEST_ID, authRequest.getRequestId());
         properties.put(MessageConstants.HEADER_ACTION, authRequest.getAction());
@@ -63,7 +65,7 @@ public class MessageHelper {
         return properties;
     }
 
-    static Map<String, Object> buildBaseMessage(EntityRequest entityRequest) throws JMSException {
+    private Map<String, Object> buildBaseMessage(EntityRequest entityRequest) throws JMSException {
         Map<String, Object> properties = new HashMap<>();
         properties.put(MessageConstants.HEADER_REQUEST_ID, entityRequest.getRequestId());
         properties.put(MessageConstants.HEADER_ACTION, entityRequest.getAction());
@@ -71,7 +73,7 @@ public class MessageHelper {
         return properties;
     }
 
-    static String getNewRequestId() {
+    public String getNewRequestId() {
         return UUID.randomUUID().toString();
     }
 }

@@ -18,7 +18,7 @@ import javax.inject.Inject;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.jms.JmsMessage;
+import org.apache.camel.Message;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.client.security.bean.AuthRequest;
 import org.eclipse.kapua.client.security.bean.EntityRequest;
@@ -57,7 +57,7 @@ public class AuthenticationServiceConverter {
     @Converter
     public AuthRequest convertToAuthRequest(Exchange exchange, Object value) throws KapuaException {
         try {
-            String body = ((JmsMessage) exchange.getIn()).getBody(String.class);
+            String body = ((Message) exchange.getIn()).getBody(String.class);
             AuthRequest authRequest = reader.readValue(body, AuthRequest.class);
             metrics.getConverter().inc();
             return authRequest;
@@ -70,7 +70,7 @@ public class AuthenticationServiceConverter {
     @Converter
     public EntityRequest convertToGetEntity(Exchange exchange, Object value) throws KapuaException {
         try {
-            String body = ((JmsMessage) exchange.getIn()).getBody(String.class);
+            String body = ((Message) exchange.getIn()).getBody(String.class);
             EntityRequest entityRequest = reader.readValue(body, EntityRequest.class);
             metrics.getConverter().inc();
             return entityRequest;
@@ -79,4 +79,5 @@ public class AuthenticationServiceConverter {
             throw KapuaException.internalError(e, "Error while converting getEntity message");
         }
     }
+
 }

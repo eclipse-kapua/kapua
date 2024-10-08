@@ -19,19 +19,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Singleton;
-import javax.jms.JMSException;
-import javax.jms.Message;
 
-import org.apache.qpid.jms.message.JmsTextMessage;
 import org.eclipse.kapua.KapuaErrorCodes;
 import org.eclipse.kapua.KapuaRuntimeException;
 import org.eclipse.kapua.client.security.ServiceClient.SecurityAction;
-import org.eclipse.kapua.client.security.amqpclient.ClientMessageListener;
 import org.eclipse.kapua.client.security.bean.AuthResponse;
 import org.eclipse.kapua.client.security.bean.EntityResponse;
 import org.eclipse.kapua.client.security.bean.MessageConstants;
 import org.eclipse.kapua.client.security.bean.Response;
 import org.eclipse.kapua.client.security.bean.ResponseContainer;
+import org.eclipse.kapua.client.security.client.Message;
+import org.eclipse.kapua.client.security.client.MessageListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +40,7 @@ import com.fasterxml.jackson.databind.ObjectReader;
  * This class is responsible to correlate request/response messages. Only one instance of this must be present at any given time!
  */
 @Singleton
-public class KapuaMessageListener extends ClientMessageListener implements Closeable {
+public class KapuaMessageListener implements MessageListener, Closeable {
 
     protected static Logger logger = LoggerFactory.getLogger(KapuaMessageListener.class);
     //Should only be one
@@ -70,27 +68,27 @@ public class KapuaMessageListener extends ClientMessageListener implements Close
     public void onMessage(Message message) {
         logger.debug("KapuaMessageListener processing message, instance {} responding", currentInstanceNumber);
         try {
-            SecurityAction securityAction = SecurityAction.valueOf(message.getStringProperty(MessageConstants.HEADER_ACTION));
+            SecurityAction securityAction = SecurityAction.valueOf((String)message.getProperties().get(MessageConstants.HEADER_ACTION));
             switch (securityAction) {
             case brokerConnect:
-                updateResponseContainer(buildAuthResponseFromMessage((JmsTextMessage) message));
+                updateResponseContainer(buildAuthResponseFromMessage(message));
                 break;
             case brokerDisconnect:
-                updateResponseContainer(buildAuthResponseFromMessage((JmsTextMessage) message));
+                updateResponseContainer(buildAuthResponseFromMessage(message));
                 break;
             case getEntity:
-                updateResponseContainer(buildAccountResponseFromMessage((JmsTextMessage) message));
+                updateResponseContainer(buildAccountResponseFromMessage(message));
                 break;
             default:
                 throw new KapuaRuntimeException(KapuaErrorCodes.ILLEGAL_ARGUMENT, "action");
             }
-        } catch (JMSException | IOException e) {
+        } catch (IOException e) {
             metrics.getLoginCallbackError().inc();
             logger.error("Error while processing Authentication/Authorization message: {}", e.getMessage(), e);
         }
     }
 
-    private <R extends Response> void updateResponseContainer(R response) throws JMSException, IOException {
+    private <R extends Response> void updateResponseContainer(R response) throws IOException {
         logger.debug("update callback {} on instance {}, map size: {}", response.getRequestId(), this, CALLBACKS.size());
         ResponseContainer<R> responseContainer = (ResponseContainer<R>) CALLBACKS.get(response.getRequestId());
         if (responseContainer == null) {
@@ -105,14 +103,12 @@ public class KapuaMessageListener extends ClientMessageListener implements Close
         }
     }
 
-    private AuthResponse buildAuthResponseFromMessage(JmsTextMessage message) throws JMSException, IOException {
-        String body = message.getBody(String.class);
-        return reader.readValue(body, AuthResponse.class);
+    private AuthResponse buildAuthResponseFromMessage(Message message) throws IOException {
+        return reader.readValue(message.getBody(), AuthResponse.class);
     }
 
-    private EntityResponse buildAccountResponseFromMessage(JmsTextMessage message) throws JMSException, IOException {
-        String body = message.getBody(String.class);
-        return reader.readValue(body, EntityResponse.class);
+    private EntityResponse buildAccountResponseFromMessage(Message message) throws IOException {
+        return reader.readValue(message.getBody(), EntityResponse.class);
     }
 
     public void registerCallback(String requestId, ResponseContainer<?> responseContainer) {

@@ -12,13 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.client.security;
 
-import org.eclipse.kapua.client.security.amqpclient.Client;
 import org.eclipse.kapua.client.security.bean.AuthRequest;
 import org.eclipse.kapua.client.security.bean.AuthResponse;
 import org.eclipse.kapua.client.security.bean.EntityRequest;
 import org.eclipse.kapua.client.security.bean.EntityResponse;
 import org.eclipse.kapua.client.security.bean.Request;
 import org.eclipse.kapua.client.security.bean.ResponseContainer;
+import org.eclipse.kapua.client.security.client.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,22 +31,24 @@ public class ServiceClientMessagingImpl implements ServiceClient {
 
     private static final int TIMEOUT = 5000;
     private final KapuaMessageListener messageListener;
+    private MessageHelper messageHelper;
 
     private Client client;
 
-    public ServiceClientMessagingImpl(KapuaMessageListener messageListener, Client client) {
+    public ServiceClientMessagingImpl(KapuaMessageListener messageListener, Client client, MessageHelper messageHelper) {
         this.messageListener = messageListener;
         this.client = client;
+        this.messageHelper = messageHelper;
     }
 
     @Override
     public AuthResponse brokerConnect(AuthRequest authRequest) throws Exception {
-        String requestId = MessageHelper.getNewRequestId();
+        String requestId = messageHelper.getNewRequestId();
         authRequest.setRequestId(requestId);
         authRequest.setAction(SecurityAction.brokerConnect.name());
         ResponseContainer<AuthResponse> responseContainer = ResponseContainer.createAnRegisterNewMessageContainer(messageListener, authRequest);
         logRequest(authRequest);
-        client.sendMessage(MessageHelper.getBrokerConnectMessage(authRequest));
+        client.sendMessage(messageHelper.getBrokerConnectMessage(authRequest));
         synchronized (responseContainer) {
             responseContainer.wait(TIMEOUT);
         }
@@ -56,12 +58,12 @@ public class ServiceClientMessagingImpl implements ServiceClient {
 
     @Override
     public AuthResponse brokerDisconnect(AuthRequest authRequest) throws Exception {
-        String requestId = MessageHelper.getNewRequestId();
+        String requestId = messageHelper.getNewRequestId();
         authRequest.setRequestId(requestId);
         authRequest.setAction(SecurityAction.brokerDisconnect.name());
         ResponseContainer<AuthResponse> responseContainer = ResponseContainer.createAnRegisterNewMessageContainer(messageListener, authRequest);
         logRequest(authRequest);
-        client.sendMessage(MessageHelper.getBrokerDisconnectMessage(authRequest));
+        client.sendMessage(messageHelper.getBrokerDisconnectMessage(authRequest));
         synchronized (responseContainer) {
             responseContainer.wait(TIMEOUT);
         }
@@ -71,11 +73,11 @@ public class ServiceClientMessagingImpl implements ServiceClient {
 
     @Override
     public EntityResponse getEntity(EntityRequest entityRequest) throws Exception {
-        String requestId = MessageHelper.getNewRequestId();
+        String requestId = messageHelper.getNewRequestId();
         entityRequest.setRequestId(requestId);
         ResponseContainer<EntityResponse> responseContainer = ResponseContainer.createAnRegisterNewMessageContainer(messageListener, entityRequest);
         logRequest(entityRequest);
-        client.sendMessage(MessageHelper.getEntityMessage(entityRequest));
+        client.sendMessage(messageHelper.getEntityMessage(entityRequest));
         synchronized (responseContainer) {
             responseContainer.wait(TIMEOUT);
         }

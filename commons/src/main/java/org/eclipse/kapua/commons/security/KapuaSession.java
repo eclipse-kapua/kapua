@@ -38,7 +38,7 @@ public class KapuaSession implements Serializable {
     // TODO to be moved inside configuration service or something like that "fully.qualified.classname.methodname" (<init> for the constructor)
     static {
         TRUSTED_CLASSES.add("org.eclipse.kapua.commons.security.KapuaSecurityUtils.doPrivileged");
-        TRUSTED_CLASSES.add("org.eclipse.kapua.commons.event.jms.JMSServiceEventBus.setSession");
+        TRUSTED_CLASSES.add("org.eclipse.kapua.commons.event.jms.EventListener.onMessage");
         TRUSTED_CLASSES.add("org.eclipse.kapua.job.engine.app.core.filter.RebuildTrustedSessionFilter.isAccessAllowed");
     }
 
