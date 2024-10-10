@@ -56,7 +56,7 @@ public class KapuaMessageListener extends ClientMessageListener implements Close
 
     private MetricsClientSecurity metrics;
 
-    KapuaMessageListener(MetricsClientSecurity metricsClientSecurity) {
+    public KapuaMessageListener(MetricsClientSecurity metricsClientSecurity) {
         currentInstanceNumber = INSTANCES.incrementAndGet();
         if (currentInstanceNumber != 1) {
             logger.warn("Starting KapuaMessageListener, instance number {}! Is this right?!?!?", currentInstanceNumber);
