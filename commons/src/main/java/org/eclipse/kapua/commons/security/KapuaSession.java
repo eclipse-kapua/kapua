@@ -13,9 +13,6 @@
 package org.eclipse.kapua.commons.security;
 
 import java.io.Serializable;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authentication.KapuaPrincipal;
@@ -31,16 +28,6 @@ public class KapuaSession implements Serializable {
     private static final long serialVersionUID = -3831904230950408142L;
 
     public static final String KAPUA_SESSION_KEY = "KapuaSession";
-
-    private static final List<String> TRUSTED_CLASSES = new ArrayList<>();
-    private static final String TRUST_CLASS_METHOD_PATTERN = "{0}.{1}";
-
-    // TODO to be moved inside configuration service or something like that "fully.qualified.classname.methodname" (<init> for the constructor)
-    static {
-        TRUSTED_CLASSES.add("org.eclipse.kapua.commons.security.KapuaSecurityUtils.doPrivileged");
-        TRUSTED_CLASSES.add("org.eclipse.kapua.commons.event.jms.EventListener.onMessage");
-        TRUSTED_CLASSES.add("org.eclipse.kapua.job.engine.app.core.filter.RebuildTrustedSessionFilter.isAccessAllowed");
-    }
 
     /**
      * Access token that identify the logged in session.
@@ -91,17 +78,12 @@ public class KapuaSession implements Serializable {
      * @return
      */
     public static KapuaSession createFrom() {
-        if (isCallerClassTrusted()) {
-            KapuaSession kapuaSession = KapuaSecurityUtils.getSession();
-            KapuaSession kapuaSessionCopy = new KapuaSession(kapuaSession.getAccessToken(),
-                    kapuaSession.getScopeId(),
-                    kapuaSession.getUserId());
-            kapuaSessionCopy.trustedMode = true;
-            return kapuaSessionCopy;
-        } else {
-            // TODO to be replaced with a security exception
-            throw new RuntimeException("Method not allowed for the caller class");
-        }
+        KapuaSession kapuaSession = KapuaSecurityUtils.getSession();
+        KapuaSession kapuaSessionCopy = new KapuaSession(kapuaSession.getAccessToken(),
+                kapuaSession.getScopeId(),
+                kapuaSession.getUserId());
+        kapuaSessionCopy.trustedMode = true;
+        return kapuaSessionCopy;
     }
 
     /**
@@ -110,33 +92,9 @@ public class KapuaSession implements Serializable {
      * @return
      */
     public static KapuaSession createFrom(KapuaId scopeId, KapuaId userId) {
-        if (isCallerClassTrusted()) {
-            KapuaSession session = new KapuaSession(scopeId, userId, true);
-            KapuaSecurityUtils.setSession(session);
-            return session;
-        } else {
-            // TODO to be replaced with a security exception
-            throw new RuntimeException("Method not allowed for the caller class");
-        }
-    }
-
-    /**
-     * Check if the caller is included in the caller list allowed to change the trusted mode flag.
-     *
-     * @return
-     */
-    private static boolean isCallerClassTrusted() {
-        // the stack trace should be like
-        // 0 ---> Thread
-        // 1 ---> KapuaSession -> isCallerClassTrusted()
-        // 2 ---> KapuaSession -> createFrom()
-        // 3 ---> "outside" caller class that should be checked
-        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
-        if (stackTraceElements != null && stackTraceElements.length > 4) {
-            return TRUSTED_CLASSES.contains(MessageFormat.format(TRUST_CLASS_METHOD_PATTERN, stackTraceElements[3].getClassName(), stackTraceElements[3].getMethodName()));
-        } else {
-            return false;
-        }
+        KapuaSession session = new KapuaSession(scopeId, userId, true);
+        KapuaSecurityUtils.setSession(session);
+        return session;
     }
 
     /**
