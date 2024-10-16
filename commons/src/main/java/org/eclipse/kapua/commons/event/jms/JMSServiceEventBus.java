@@ -31,7 +31,7 @@ import org.eclipse.kapua.commons.setting.system.SystemSettingKey;
 import org.eclipse.kapua.event.ServiceEvent;
 import org.eclipse.kapua.event.ServiceEventBus;
 import org.eclipse.kapua.event.ServiceEventBusException;
-import org.eclipse.kapua.event.ServiceEventBusListener;
+import org.eclipse.kapua.event.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,10 +126,8 @@ public class JMSServiceEventBus implements ServiceEventBus, ServiceEventBusDrive
     }
 
     @Override
-    public synchronized void subscribe(String address, String name, final ServiceEventBusListener kapuaEventListener)
-            throws ServiceEventBusException {
+    public synchronized void subscribe(Subscription subscription) throws ServiceEventBusException {
         try {
-            Subscription subscription = new Subscription(address, name, kapuaEventListener);
             subscriptionList.add(subscription);
             eventBusJMSConnectionBridge.subscribe(subscription);
         } catch (ServiceEventBusException e) {

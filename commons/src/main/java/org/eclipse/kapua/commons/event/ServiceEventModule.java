@@ -20,6 +20,7 @@ import org.eclipse.kapua.commons.service.event.store.internal.EventStoreFactoryI
 import org.eclipse.kapua.commons.service.event.store.internal.EventStoreRecordImplJpaRepository;
 import org.eclipse.kapua.commons.service.event.store.internal.EventStoreServiceImpl;
 import org.eclipse.kapua.event.ServiceEventBus;
+import org.eclipse.kapua.event.Subscription;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
@@ -82,7 +83,7 @@ public abstract class ServiceEventModule implements ServiceModule {
                 }
                 // Listen to upstream service events
                 if (selc.getEventListener() != null) {
-                    eventbus.subscribe(address, getSubscriptionName(address, selc.getClientName()), selc.getEventListener());
+                    eventbus.subscribe(new Subscription(address, getSubscriptionName(address, selc.getClientName()), selc.getEventListener()));
                 }
                 servicesEntryList.add(new ServiceEntry(selc.getClientName(), address));
                 subscriberNames.add(selc.getClientName()); // Set because names must be unique

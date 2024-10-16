@@ -31,10 +31,8 @@ public interface ServiceEventBus {
     /**
      * Subscribe for a specific address event
      *
-     * @param address       address to listen for events
-     * @param name          subscriber name. It's used to share events between multiple instances of the same consumer.
-     * @param serviceEventBusListener listener to invoke when an event is received
+     * @param subscription
      * @throws ServiceEventBusException
      */
-    void subscribe(String address, String name, ServiceEventBusListener serviceEventBusListener) throws ServiceEventBusException;
+    void subscribe(Subscription subscription) throws ServiceEventBusException;
 }

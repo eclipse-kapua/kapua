@@ -26,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.core.ServiceModule;
 import org.eclipse.kapua.event.ServiceEventBus;
+import org.eclipse.kapua.event.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +81,7 @@ public abstract class ServiceEventTransactionalModule implements ServiceModule {
                 }
                 // Listen to upstream service events
                 if (selc.getEventListener() != null) {
-                    serviceEventBus.subscribe(address, getSubscriptionName(address, selc.getClientName()), selc.getEventListener());
+                    serviceEventBus.subscribe(new Subscription(address, getSubscriptionName(address, selc.getClientName()), selc.getEventListener()));
                 }
                 servicesEntryList.add(new ServiceEntry(selc.getClientName(), address));
                 subscriberNames.add(selc.getClientName()); // Set because names must be unique

@@ -10,9 +10,7 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.event.jms;
-
-import org.eclipse.kapua.event.ServiceEventBusListener;
+package org.eclipse.kapua.event;
 
 public class Subscription {
 
@@ -20,6 +18,12 @@ public class Subscription {
     private String address;
     private ServiceEventBusListener kapuaEventListener;
 
+    /**
+     * 
+     * @param address       address to listen for events
+     * @param name          subscriber name. It's used to share events between multiple instances of the same consumer.
+     * @param serviceEventBusListener listener to invoke when an event is received
+     */
     public Subscription(String address, String name, ServiceEventBusListener kapuaEventListener) {
         this.name = name;
         this.address = address;
@@ -38,4 +42,7 @@ public class Subscription {
         return kapuaEventListener;
     }
 
+    public void updateAddress(String pattern) {
+        address = String.format(pattern, address);
+    }
 }
