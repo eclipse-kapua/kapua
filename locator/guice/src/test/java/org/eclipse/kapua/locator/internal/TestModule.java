@@ -18,7 +18,7 @@ import org.eclipse.kapua.commons.event.ServiceEventBusDriver;
 import org.eclipse.kapua.event.ServiceEvent;
 import org.eclipse.kapua.event.ServiceEventBus;
 import org.eclipse.kapua.event.ServiceEventBusException;
-import org.eclipse.kapua.event.ServiceEventBusListener;
+import org.eclipse.kapua.event.Subscription;
 
 import javax.inject.Singleton;
 
@@ -59,7 +59,7 @@ public class TestModule extends AbstractKapuaModule {
                     }
 
                     @Override
-                    public void subscribe(String address, String name, ServiceEventBusListener eventListener) throws ServiceEventBusException {
+                    public void subscribe(Subscription subscription) throws ServiceEventBusException {
                         //Nothing to do!
                     }
                 };
