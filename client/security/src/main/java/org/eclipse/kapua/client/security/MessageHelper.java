@@ -14,6 +14,9 @@ package org.eclipse.kapua.client.security;
 
 import java.util.UUID;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 
@@ -27,30 +30,34 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 
 public class MessageHelper {
 
-    private static ObjectMapper mapper = new ObjectMapper();
-    private static ObjectWriter writer = mapper.writer();//check if it's thread safe
+    private ObjectMapper mapper = new ObjectMapper();
+    private ObjectWriter writer = mapper.writer();//check if it's thread safe
+    private String requestAddress;
 
-    private MessageHelper() {
+    @Inject
+    public MessageHelper(@Named("authServiceRequestAddress") String requestAddress) {
+        this.requestAddress = requestAddress;
     }
 
-    static TextMessage getBrokerConnectMessage(TextMessage message, AuthRequest authRequest) throws JMSException, JsonProcessingException {
-        buildBaseMessage(message, authRequest);
-        String textPayload = null;
-        if (authRequest!=null) {
-            textPayload = writer.writeValueAsString(authRequest);
-            message.setText(textPayload);
-        }
-        return message;
+    public Message getBrokerConnectMessage(AuthRequest authRequest) throws Exception {
+        return new Message(
+            requestAddress,
+            authRequest!=null ? writer.writeValueAsString(authRequest) : "",
+            buildBaseMessage(authRequest));
     }
 
-    static TextMessage getBrokerDisconnectMessage(TextMessage message, AuthRequest authRequest) throws JMSException, JsonProcessingException {
-        buildBaseMessage(message, authRequest);
-        String textPayload = null;
-        if (authRequest!=null) {
-            textPayload = writer.writeValueAsString(authRequest);
-            message.setText(textPayload);
-        }
-        return message;
+    public Message getBrokerDisconnectMessage(AuthRequest authRequest) throws Exception {
+        return new Message(
+            requestAddress,
+            authRequest!=null ? writer.writeValueAsString(authRequest) : "",
+            buildBaseMessage(authRequest));
+    }
+
+    public Message getEntityMessage(EntityRequest entityRequest) throws Exception {
+        return new Message(
+            requestAddress,
+            entityRequest!=null ? writer.writeValueAsString(entityRequest) : "",
+            buildBaseMessage(entityRequest));
     }
 
     static TextMessage getEntityMessage(TextMessage message, EntityRequest entityRequest) throws JMSException, JsonProcessingException {

@@ -90,5 +90,4 @@ public class ArtemisSecurityModuleClient extends AbstractKapuaModule {
     public String authServiceRequestAddress() {
         return "$SYS/SVC/auth/request";
     }
-
 }
