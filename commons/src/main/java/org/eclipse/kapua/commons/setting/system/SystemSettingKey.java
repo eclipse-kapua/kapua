@@ -22,6 +22,7 @@ import javax.persistence.EntityExistsException;
  * @since 1.0
  */
 public enum SystemSettingKey implements SettingKey {
+
     /**
      * Cluster name
      */

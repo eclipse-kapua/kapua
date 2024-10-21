@@ -134,7 +134,7 @@ public abstract class ServiceEventModule implements ServiceModule {
                     // do nothing
                 }
                 if (waitLoop++ > MAX_WAIT_LOOP_ON_SHUTDOWN) {
-                    LOGGER.warn("Cannot cancel the house keeper task afeter a while!");
+                    LOGGER.warn("Cannot cancel the house keeper task after a while!");
                     break;
                 }
             }

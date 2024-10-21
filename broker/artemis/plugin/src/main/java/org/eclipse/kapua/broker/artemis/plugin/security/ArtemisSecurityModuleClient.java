@@ -21,6 +21,9 @@ import javax.jms.JMSException;
 import org.eclipse.kapua.KapuaErrorCodes;
 import org.eclipse.kapua.KapuaRuntimeException;
 import org.eclipse.kapua.client.security.KapuaMessageListener;
+import org.eclipse.kapua.client.security.MessageHelper;
+import org.eclipse.kapua.client.security.ServiceClient;
+import org.eclipse.kapua.client.security.ServiceClientMessagingImpl;
 import org.eclipse.kapua.client.security.amqp.ClientAMQP;
 import org.eclipse.kapua.client.security.amqp.ClientAMQP.DestinationType;
 import org.eclipse.kapua.client.security.client.Client;
@@ -69,4 +72,22 @@ public class ArtemisSecurityModuleClient extends AbstractKapuaModule {
         }
     }
 
+    @Singleton
+    @Provides
+    ServiceClient authServiceClient(
+            KapuaMessageListener messageListener,
+            @Named("clusterName") String clusterName,
+            @Named("brokerHost") String brokerHost,
+            @Named("serviceBusClient") Client client,
+            SystemSetting systemSetting,
+            MessageHelper messageHelper) {
+        return new ServiceClientMessagingImpl(messageListener, client, messageHelper);
+    }
+
+    @Singleton
+    @Provides
+    @Named("authServiceRequestAddress")
+    public String authServiceRequestAddress() {
+        return "$SYS/SVC/auth/request";
+    }
 }

@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.jms.JMSException;
 
@@ -32,24 +34,30 @@ public class MessageHelper {
 
     private ObjectMapper mapper = new ObjectMapper();
     private ObjectWriter writer = mapper.writer();//check if it's thread safe
+    private String requestAddress;
+
+    @Inject
+    public MessageHelper(@Named("authServiceRequestAddress") String requestAddress) {
+        this.requestAddress = requestAddress;
+    }
 
     public Message getBrokerConnectMessage(AuthRequest authRequest) throws Exception {
         return new Message(
-            "SYS.SVC.auth.request",
+            requestAddress,
             authRequest!=null ? writer.writeValueAsString(authRequest) : "",
             buildBaseMessage(authRequest));
     }
 
     public Message getBrokerDisconnectMessage(AuthRequest authRequest) throws Exception {
         return new Message(
-            "SYS.SVC.auth.request",
+            requestAddress,
             authRequest!=null ? writer.writeValueAsString(authRequest) : "",
             buildBaseMessage(authRequest));
     }
 
     public Message getEntityMessage(EntityRequest entityRequest) throws Exception {
         return new Message(
-            "SYS.SVC.auth.request",
+            requestAddress,
             entityRequest!=null ? writer.writeValueAsString(entityRequest) : "",
             buildBaseMessage(entityRequest));
     }

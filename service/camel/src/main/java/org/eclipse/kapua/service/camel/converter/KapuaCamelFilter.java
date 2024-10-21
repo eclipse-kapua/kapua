@@ -40,6 +40,7 @@ public class KapuaCamelFilter {
      * @throws KapuaException
      */
     public void bindSession(Exchange exchange, Object value) throws KapuaException {
+        logger.info("message from: {}/ {}", exchange.getIn().getHeader(MessageConstants.PROPERTY_ORIGINAL_TOPIC, String.class), value);
         ThreadContext.unbindSubject();
         if (Boolean.FALSE.equals(exchange.getIn().getHeader(MessageConstants.HEADER_KAPUA_BROKER_CONTEXT, boolean.class))) {
             try {
