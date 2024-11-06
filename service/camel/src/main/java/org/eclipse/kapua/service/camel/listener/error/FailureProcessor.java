@@ -30,9 +30,11 @@ public class FailureProcessor implements Processor {
     private static final Logger logger = LoggerFactory.getLogger(FailureProcessor.class);
 
     private MetricsCamel metricsCamel;
+    private ObjectSerializer objectSerializer;
 
     @Inject
-    public FailureProcessor(MetricsCamel metricsCamel) {
+    public FailureProcessor(ObjectSerializer objectSerializer, MetricsCamel metricsCamel) {
+        this.objectSerializer = objectSerializer;
         this.metricsCamel = metricsCamel;
     }
 
@@ -46,6 +48,7 @@ public class FailureProcessor implements Processor {
         } else {
             metricsCamel.getGenericError().inc();
         }
+        exchange.getMessage().setBody(objectSerializer.convertToBytes(exchange.getMessage().getBody()));
     }
 
     private boolean isUnauthenticatedException(Exchange exchange) {

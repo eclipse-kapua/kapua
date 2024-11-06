@@ -73,6 +73,8 @@
         <constructor-arg name="metricsCamel" ref="metricsCamel"/>
     </bean>
 
+    <bean id="objectDeserializer" class="org.eclipse.kapua.service.camel.listener.error.ObjectDeserializer"/>
+
     <!-- starts event bus and other components with a lifecycle -->
     <bean id="application" class="org.eclipse.kapua.service.camel.application.KapuaApplication"
           init-method="init"

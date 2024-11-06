@@ -20,19 +20,24 @@
                     <simple>${header.action} == 'brokerConnect'</simple>
                     <bean ref="authenticationServiceConverter" method="convertToAuthRequest"/>
                     <bean ref="authenticationServiceListener" method="brokerConnect"/>
+                    <toD uri="amqp:queue:$SYS/SVC/auth/response/${header.cluster_name}_${header.requester}"/>
                 </when>
                 <when id="doLogout">
                     <simple>${header.action} == 'brokerDisconnect'</simple>
                     <bean ref="authenticationServiceConverter" method="convertToAuthRequest"/>
                     <bean ref="authenticationServiceListener" method="brokerDisconnect"/>
+                    <toD uri="amqp:queue:$SYS/SVC/auth/response/${header.cluster_name}_${header.requester}"/>
                 </when>
                 <when id="getEntity">
                     <simple>${header.action} == 'getEntity'</simple>
                     <bean ref="authenticationServiceConverter" method="convertToGetEntity"/>
                     <bean ref="authenticationServiceListener" method="getEntity"/>
+                    <toD uri="amqp:queue:$SYS/SVC/auth/response/${header.cluster_name}_${header.requester}"/>
                 </when>
+                <otherwise>
+                    <to uri="amqp:queue:$SYS/SVC/dlq/default" />
+                </otherwise>
             </choice>
-            <toD uri="amqp:queue:$SYS/SVC/auth/response/${header.cluster_name}_${header.requester}"/>
         </pipeline>
     </route>
     <route id="authDlq">
