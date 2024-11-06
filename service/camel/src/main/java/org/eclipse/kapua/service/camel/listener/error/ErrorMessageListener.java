@@ -17,7 +17,6 @@ import org.apache.camel.Message;
 import org.apache.camel.spi.UriEndpoint;
 import org.eclipse.kapua.commons.util.KapuaDateUtils;
 import org.eclipse.kapua.service.camel.application.MetricsCamel;
-import org.eclipse.kapua.service.camel.message.CamelKapuaMessage;
 import org.eclipse.kapua.service.client.message.MessageConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,15 +42,13 @@ public class ErrorMessageListener {
     private static final String EMPTY_FIELD = "N/A";
 
     private final MetricsCamel metrics;
-    private final ObjectSerializer objectSerializer;
+    private final ObjectDeserializer objectDeserializer;
 
     @Inject
-    public ErrorMessageListener(ObjectSerializer objectSerializer, MetricsCamel metricsCamel) {
+    public ErrorMessageListener(ObjectDeserializer objectDeserializer, MetricsCamel metricsCamel) {
         this.metrics = metricsCamel;
-        this.objectSerializer = objectSerializer;
+        this.objectDeserializer = objectDeserializer;
     }
-
-    private final MetricsCamel metrics;
 
     /**
      * Process an error condition for an elaboration of a generic message
@@ -60,10 +57,6 @@ public class ErrorMessageListener {
      * @param message
      */
     public void processMessage(Exchange exchange, Object message) {
-        logToFile(exchange, message);
-    }
-
-    public void logToFile(Exchange exchange, Object value) {
         try {
             String messageLine = getMessage(exchange);
             ERROR_MESSAGE_LOGGER.info(messageLine);
