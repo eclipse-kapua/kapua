@@ -83,7 +83,17 @@ public class ServerPlugin implements ActiveMQServerPlugin {
     public static final String MESSAGE_TYPE_CONTROL = "CTR";
     public static final String MESSAGE_TYPE_TELEMETRY = "TEL";
     public static final String MESSAGE_TYPE_SYSTEM = "SYS";
-    public static final String NOTIFICATION_PREFIX = "activemq.notifications";//standard address, if customized please change it
+    public static final String MESSAGE_TYPE_DLQ = "DLQ";
+    public static final String MESSAGE_TYPE_NO_ADDRESS = "NAD";//shouldn't happen
+    public static final String MESSAGE_TYPE_UNKNOWN = "UNK";
+    public static final String MESSAGE_TYPE_NOTIFICATION = "NOT";
+
+    //standard address, if customized please change it
+    public static final String PREFIX_MESSAGE_TYPE_NOTIFICATION = "activemq.notifications";
+    //TODO get from configuration
+    public static final String PREFIX_MESSAGE_TYPE_DLQ = "$SYS/MSG/dlq/";
+    public static final String PREFIX_MESSAGE_TYPE_SYSTEM = "$SYS/";
+    public static final String PREFIX_MESSAGE_TYPE_CONTROL = "$EDC/";
 
     /**
      * publish message size threshold for printing message information
@@ -291,18 +301,33 @@ public class ServerPlugin implements ActiveMQServerPlugin {
     }
 
     protected String getMessageType(String address) {
-        if (address != null && !address.startsWith(NOTIFICATION_PREFIX)) {//the plugin shouldn't receive notifications messages but to be safe
+        if (address != null) {
             if (address.startsWith("$")) {
-                if (address.startsWith("$SYS")) {
-                    return MESSAGE_TYPE_SYSTEM;
-                } else {
+                if (address.startsWith(PREFIX_MESSAGE_TYPE_SYSTEM)) {
+                    if (address.startsWith(PREFIX_MESSAGE_TYPE_DLQ)) {
+                        return MESSAGE_TYPE_DLQ;
+                    }
+                    else {
+                        return MESSAGE_TYPE_SYSTEM;
+                    }
+                }
+                else if (address.startsWith(PREFIX_MESSAGE_TYPE_CONTROL)) {
                     return MESSAGE_TYPE_CONTROL;
                 }
-            } else {
+                else {
+                    return MESSAGE_TYPE_UNKNOWN;
+                }
+            }
+            //the plugin shouldn't receive notifications messages but to be safe
+            else if (address.startsWith(PREFIX_MESSAGE_TYPE_NOTIFICATION)) {
+                return MESSAGE_TYPE_NOTIFICATION;
+            }
+            else {
                 return MESSAGE_TYPE_TELEMETRY;
             }
         }
-        return "UNK";
+        //the plugin shouldn't receive messages without address but, in any case, return a proper type
+        return MESSAGE_TYPE_NO_ADDRESS;
     }
 
     /**
