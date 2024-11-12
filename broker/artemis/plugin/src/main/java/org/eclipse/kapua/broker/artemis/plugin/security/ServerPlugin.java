@@ -88,23 +88,14 @@ public class ServerPlugin implements ActiveMQServerPlugin {
     public static final String MESSAGE_TYPE_DLQ = "DLQ";
     public static final String MESSAGE_TYPE_NO_ADDRESS = "NAD";//shouldn't happen
     public static final String MESSAGE_TYPE_UNKNOWN = "UNK";
-    public static final String MESSAGE_TYPE_NOTIFICATION = "NTF";
+    public static final String MESSAGE_TYPE_NOTIFICATION = "NOT";
 
-        Broker("BRK"),
-        Control("CTR"),
-        Telemetry("TEL"),
-        System("SYS");
-
-        private String asUrl;
-
-        MessageType(String asUrl) {
-            this.asUrl = asUrl;
-        }
-
-        public String getAsUrl() {
-            return asUrl;
-        }
-    }
+    //standard address, if customized please change it
+    public static final String PREFIX_MESSAGE_TYPE_NOTIFICATION = "activemq.notifications";
+    //TODO get from configuration
+    public static final String PREFIX_MESSAGE_TYPE_DLQ = "$SYS/MSG/dlq/";
+    public static final String PREFIX_MESSAGE_TYPE_SYSTEM = "$SYS/";
+    public static final String PREFIX_MESSAGE_TYPE_CONTROL = "$EDC/";
 
     /**
      * publish message size threshold for printing message information
@@ -303,21 +294,54 @@ public class ServerPlugin implements ActiveMQServerPlugin {
         return originalTopic != null && originalTopic.endsWith(MISSING_TOPIC_SUFFIX);
     }
 
-    private String getMessgeType(String address) {
+    protected void fillAdditionalMessagePropertiesInternal(Message message, SessionContext sessionContext, String address) {
+        fillAdditionalMessageProperties(message, sessionContext, address, true);
+    }
+
+    protected void fillAdditionalMessagePropertiesExternal(Message message, SessionContext sessionContext, String address) {
+        fillAdditionalMessageProperties(message, sessionContext, address, false);
+        // FIX #164
+        message.putStringProperty(MessageConstants.HEADER_KAPUA_CONNECTION_ID, Base64.getEncoder().encodeToString(SerializationUtils.serialize(sessionContext.getKapuaConnectionId())));
+    }
+
+    protected void fillAdditionalMessageProperties(Message message, SessionContext sessionContext, String address, boolean kapuaBrokerContext) {
+        message.putStringProperty(MessageConstants.HEADER_KAPUA_CLIENT_ID, sessionContext.getClientId());
+        message.putStringProperty(MessageConstants.HEADER_KAPUA_CONNECTOR_NAME, sessionContext.getConnectorName());
+        message.putStringProperty(MessageConstants.HEADER_KAPUA_SESSION, Base64.getEncoder().encodeToString(SerializationUtils.serialize(sessionContext.getKapuaSession())));
+        message.putLongProperty(MessageConstants.HEADER_KAPUA_RECEIVED_TIMESTAMP, KapuaDateUtils.getKapuaSysDate().getEpochSecond());
+        message.putStringProperty(MessageConstants.HEADER_KAPUA_MESSAGE_TYPE, getMessageType(address));
+        message.putStringProperty(MessageConstants.PROPERTY_ORIGINAL_TOPIC, address);
+        message.putBooleanProperty(MessageConstants.HEADER_KAPUA_BROKER_CONTEXT, kapuaBrokerContext);
+    }
+
+    protected String getMessageType(String address) {
         if (address != null) {
-            if (address.startsWith("active")) {
-                return MessageType.Broker.getAsUrl();
-            } else if (address.startsWith("$")) {
-                if (address.startsWith("$SYS")) {
-                    return MessageType.System.getAsUrl();
-                } else {
-                    return MessageType.Control.getAsUrl();
+            if (address.startsWith("$")) {
+                if (address.startsWith(PREFIX_MESSAGE_TYPE_SYSTEM)) {
+                    if (address.startsWith(PREFIX_MESSAGE_TYPE_DLQ)) {
+                        return MESSAGE_TYPE_DLQ;
+                    }
+                    else {
+                        return MESSAGE_TYPE_SYSTEM;
+                    }
                 }
-            } else {
-                return MessageType.Telemetry.getAsUrl();
+                else if (address.startsWith(PREFIX_MESSAGE_TYPE_CONTROL)) {
+                    return MESSAGE_TYPE_CONTROL;
+                }
+                else {
+                    return MESSAGE_TYPE_UNKNOWN;
+                }
+            }
+            //the plugin shouldn't receive notifications messages but to be safe
+            else if (address.startsWith(PREFIX_MESSAGE_TYPE_NOTIFICATION)) {
+                return MESSAGE_TYPE_NOTIFICATION;
+            }
+            else {
+                return MESSAGE_TYPE_TELEMETRY;
             }
         }
-        return "N/A";
+        //the plugin shouldn't receive messages without address but, in any case, return a proper type
+        return MESSAGE_TYPE_NO_ADDRESS;
     }
 
     /**
