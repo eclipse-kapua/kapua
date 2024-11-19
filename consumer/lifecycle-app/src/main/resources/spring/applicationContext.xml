@@ -33,10 +33,8 @@
         <property name="routeCount" value="2"></property>
     </bean>
 
-    <bean id="connectionFactory" class="org.eclipse.kapua.service.client.amqp.ServiceConnectionFactoryImpl">
-        <constructor-arg name="host" type="java.lang.String" value="${BROKER_HOST}"/>
-        <constructor-arg name="port" type="int" value="${BROKER_PORT}"/>
-        <constructor-arg name="username" type="java.lang.String" value="${BROKER_INTERNAL_USERNAME}"/>
+    <bean id="connectionFactory" class="org.apache.qpid.jms.JmsConnectionFactory">
+        <constructor-arg name="userName" type="java.lang.String" value="${BROKER_INTERNAL_USERNAME}"/>
         <constructor-arg name="password" type="java.lang.String" value="${BROKER_INTERNAL_PASSWORD}"/>
         <constructor-arg name="clientId" type="java.lang.String" value="${CONSUMER_HOST}"/>
     </bean>
