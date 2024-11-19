@@ -33,9 +33,9 @@
     </bean>
 
     <bean id="connectionFactory" class="org.apache.qpid.jms.JmsConnectionFactory">
-        <constructor-arg name="username" type="java.lang.String" value="${SERVICE_BROKER_USERNAME}"/>
+        <constructor-arg name="userName" type="java.lang.String" value="${SERVICE_BROKER_USERNAME}"/>
         <constructor-arg name="password" type="java.lang.String" value="${SERVICE_BROKER_PASSWORD}"/>
-        <constructor-arg name="remoteURI" type="java.lang.String" value="amqp://${SERVICE_BROKER_HOST}:${SERVICE_BROKER_PORT}"/>
+        <constructor-arg name="remoteURI" type="java.lang.String" value="${SERVICE_BROKER_URL}"/>
     </bean>
 
     <bean id="cachingConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
@@ -74,7 +74,9 @@
     <!-- session filers (to bind Kapua and Shiro thread context) -->
     <bean id="kapuaCamelFilter" class="org.eclipse.kapua.service.camel.converter.KapuaCamelFilter"/>
 
+    <bean id="objectDeserializer" class="org.eclipse.kapua.service.camel.listener.error.ObjectDeserializer"/>
     <bean id="errorMessageListener" class="org.eclipse.kapua.service.camel.listener.error.ErrorMessageListener">
+        <constructor-arg name="objectDeserializer" ref="objectDeserializer"/>
         <constructor-arg name="metricsCamel" ref="metricsCamel"/>
     </bean>
 
@@ -90,9 +92,6 @@
     <bean id="authenticationServiceBackEndCall" class="org.eclipse.kapua.service.authentication.AuthenticationServiceBackEndCall"/>
     <bean id="authenticationServiceConverter" class="org.eclipse.kapua.service.authentication.AuthenticationServiceConverter">
         <constructor-arg name="metricsAuthentication" ref="metricsAuthentication"/>
-        <constructor-arg name="metricsCamel" ref="metricsCamel"/>
-        <constructor-arg name="translatorHub" ref="translatorHub"/>
-        <constructor-arg name="protocolDescriptorProvider" ref="protocolDescriptorProvider"/>
     </bean>
     <bean id="authenticationServiceListener" class="org.eclipse.kapua.service.authentication.AuthenticationServiceListener">
         <constructor-arg name="authenticationServiceBackEndCall" ref="authenticationServiceBackEndCall"/>

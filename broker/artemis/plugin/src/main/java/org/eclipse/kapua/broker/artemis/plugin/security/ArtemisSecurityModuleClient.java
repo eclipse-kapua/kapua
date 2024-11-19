@@ -57,7 +57,7 @@ public class ArtemisSecurityModuleClient extends AbstractKapuaModule {
         logger.info("building serviceBusClient...");
         //TODO change configuration (use service broker for now)
         String clientId = "svc-ath-" + UUID.randomUUID().toString();
-        String url = systemSetting.getString(SystemSettingKey.SERVICE_BUS_URL, "events-broker:5672");
+        String url = systemSetting.getString(SystemSettingKey.SERVICE_BUS_URL, "amqp://events-broker:5672");
         String username = systemSetting.getString(SystemSettingKey.SERVICE_BUS_USERNAME, "username");
         String password = systemSetting.getString(SystemSettingKey.SERVICE_BUS_PASSWORD, "password");
         logger.info("Connecting auth service client to: {}", url);

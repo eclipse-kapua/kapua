@@ -34,7 +34,7 @@
     </bean>
 
     <bean id="connectionFactory" class="org.apache.qpid.jms.JmsConnectionFactory">
-        <constructor-arg name="username" type="java.lang.String" value="${BROKER_INTERNAL_USERNAME}"/>
+        <constructor-arg name="userName" type="java.lang.String" value="${BROKER_INTERNAL_USERNAME}"/>
         <constructor-arg name="password" type="java.lang.String" value="${BROKER_INTERNAL_PASSWORD}"/>
         <constructor-arg name="remoteURI" type="java.lang.String" value="amqp://${BROKER_HOST}:${BROKER_PORT}"/>
     </bean>
@@ -60,11 +60,11 @@
     <bean id="dataStorageMessageProcessor" class="org.eclipse.kapua.consumer.telemetry.listener.DataStorageMessageProcessor">
         <constructor-arg name="metricsDatastore" ref="metricsDatastore"/>
     </bean>
+    <bean id="objectDeserializer" class="org.eclipse.kapua.service.camel.listener.error.ObjectDeserializer"/>
     <bean id="errorMessageListener" class="org.eclipse.kapua.service.camel.listener.error.ErrorMessageListener">
+        <constructor-arg name="objectDeserializer" ref="objectDeserializer"/>
         <constructor-arg name="metricsCamel" ref="metricsCamel"/>
     </bean>
-
-    <bean id="objectDeserializer" class="org.eclipse.kapua.service.camel.listener.error.ObjectDeserializer"/>
 
     <!-- starts event bus and other components with a lifecycle -->
     <bean id="application" class="org.eclipse.kapua.service.camel.application.KapuaApplication"
