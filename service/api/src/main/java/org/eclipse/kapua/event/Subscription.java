@@ -22,7 +22,7 @@ public class Subscription {
      * 
      * @param address       address to listen for events
      * @param name          subscriber name. It's used to share events between multiple instances of the same consumer.
-     * @param serviceEventBusListener listener to invoke when an event is received
+     * @param kapuaEventListener listener to invoke when an event is received
      */
     public Subscription(String address, String name, ServiceEventBusListener kapuaEventListener) {
         this.name = name;
