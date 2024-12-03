@@ -10,22 +10,22 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.rest.errors;
-
-import org.eclipse.kapua.commons.rest.model.errors.ThrowableInfo;
-import org.eclipse.persistence.exceptions.ConversionException;
-import org.eclipse.persistence.exceptions.DescriptorException;
-import org.eclipse.persistence.exceptions.EclipseLinkException;
-import org.eclipse.persistence.exceptions.XMLConversionException;
-
-import org.eclipse.persistence.exceptions.XMLMarshalException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package org.eclipse.kapua.commons.jersey.rest.errors;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+
+import org.eclipse.kapua.ThrowableInfo;
+import org.eclipse.kapua.commons.jersey.rest.ExceptionConfigurationProvider;
+import org.eclipse.persistence.exceptions.ConversionException;
+import org.eclipse.persistence.exceptions.DescriptorException;
+import org.eclipse.persistence.exceptions.EclipseLinkException;
+import org.eclipse.persistence.exceptions.XMLConversionException;
+import org.eclipse.persistence.exceptions.XMLMarshalException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Provider
 public class EclipseLinkExceptionMapper implements ExceptionMapper<EclipseLinkException> {

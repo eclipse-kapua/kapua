@@ -10,17 +10,19 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.rest.model.errors;
+package org.eclipse.kapua.commons.jersey.rest.model.errors;
 
-import org.eclipse.kapua.model.xml.DateXmlAdapter;
-import org.eclipse.kapua.service.scheduler.exception.TriggerInvalidDatesException;
+import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
+
+import org.eclipse.kapua.ExceptionInfo;
+import org.eclipse.kapua.model.xml.DateXmlAdapter;
+import org.eclipse.kapua.service.scheduler.exception.TriggerInvalidDatesException;
 
 @XmlRootElement(name = "triggerInvalidDatesExceptionInfo")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -49,7 +51,8 @@ public class TriggerInvalidDatesExceptionInfo extends ExceptionInfo {
     /**
      * Constructor.
      *
-     * @param triggerInvalidDatesException The root exception.
+     * @param triggerInvalidDatesException
+     *         The root exception.
      * @since 2.1.0
      */
     public TriggerInvalidDatesExceptionInfo(TriggerInvalidDatesException triggerInvalidDatesException, boolean showStackTrace) {

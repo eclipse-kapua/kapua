@@ -10,13 +10,14 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.rest.model.errors;
+package org.eclipse.kapua.commons.jersey.rest.model.errors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.eclipse.kapua.ExceptionInfo;
 import org.eclipse.kapua.KapuaDuplicateNameException;
 
 @XmlRootElement(name = "duplicateNameExceptionInfo")
@@ -26,20 +27,18 @@ public class DuplicateNameExceptionInfo extends ExceptionInfo {
     @XmlElement(name = "duplicatedName")
     private String duplicatedName;
 
-
     public DuplicateNameExceptionInfo() {
         super();
     }
-
 
     public DuplicateNameExceptionInfo(KapuaDuplicateNameException kapuaDuplicateNameException, boolean showStackTrace) {
         super(409, kapuaDuplicateNameException, showStackTrace);
         this.duplicatedName = kapuaDuplicateNameException.getDuplicateName();
     }
 
-
     /**
      * Gets the {@link KapuaDuplicateNameException#getDuplicateName()}.
+     *
      * @return The {@link KapuaDuplicateNameException#getDuplicateName()}.
      */
     public String getName() {

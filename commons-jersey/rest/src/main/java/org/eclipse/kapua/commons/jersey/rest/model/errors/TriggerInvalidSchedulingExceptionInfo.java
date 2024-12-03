@@ -10,19 +10,21 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.rest.model.errors;
+package org.eclipse.kapua.commons.jersey.rest.model.errors;
 
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.model.xml.DateXmlAdapter;
-import org.eclipse.kapua.service.scheduler.exception.TriggerInvalidSchedulingException;
+import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
+
+import org.eclipse.kapua.ExceptionInfo;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import org.eclipse.kapua.model.xml.DateXmlAdapter;
+import org.eclipse.kapua.service.scheduler.exception.TriggerInvalidSchedulingException;
 
 @XmlRootElement(name = "triggerInvalidSchedulingExceptionInfo")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -54,7 +56,8 @@ public class TriggerInvalidSchedulingExceptionInfo extends ExceptionInfo {
     /**
      * Constructor.
      *
-     * @param triggerInvalidSchedulingException The root exception.
+     * @param triggerInvalidSchedulingException
+     *         The root exception.
      * @since 2.1.0
      */
     public TriggerInvalidSchedulingExceptionInfo(TriggerInvalidSchedulingException triggerInvalidSchedulingException, boolean showStackTrace) {
