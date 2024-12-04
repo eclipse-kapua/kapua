@@ -10,7 +10,7 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.jersey.rest.errors;
+package org.eclipse.kapua.job.engine.app.errors;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;

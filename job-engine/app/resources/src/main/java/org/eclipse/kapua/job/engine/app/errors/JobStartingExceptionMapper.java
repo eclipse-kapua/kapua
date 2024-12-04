@@ -10,7 +10,7 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.jersey.rest.errors;
+package org.eclipse.kapua.job.engine.app.errors;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
@@ -19,30 +19,30 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.eclipse.kapua.commons.jersey.rest.ExceptionConfigurationProvider;
-import org.eclipse.kapua.job.engine.exception.JobResumingException;
-import org.eclipse.kapua.job.engine.exception.JobResumingExceptionInfo;
+import org.eclipse.kapua.job.engine.exception.JobStartingException;
+import org.eclipse.kapua.job.engine.exception.JobStartingExceptionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Provider
-public class JobResumingExceptionMapper implements ExceptionMapper<JobResumingException> {
+public class JobStartingExceptionMapper implements ExceptionMapper<JobStartingException> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JobResumingExceptionMapper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JobStartingExceptionMapper.class);
 
     private final boolean showStackTrace;
 
     @Inject
-    public JobResumingExceptionMapper(ExceptionConfigurationProvider exceptionConfigurationProvider) {
+    public JobStartingExceptionMapper(ExceptionConfigurationProvider exceptionConfigurationProvider) {
         this.showStackTrace = exceptionConfigurationProvider.showStackTrace();
     }
 
     @Override
-    public Response toResponse(JobResumingException jobResumingException) {
-        LOG.error(jobResumingException.getMessage(), jobResumingException);
+    public Response toResponse(JobStartingException jobStartingException) {
+        LOG.error(jobStartingException.getMessage(), jobStartingException);
 
         return Response
                 .status(Status.INTERNAL_SERVER_ERROR)
-                .entity(new JobResumingExceptionInfo(jobResumingException, showStackTrace))
+                .entity(new JobStartingExceptionInfo(jobStartingException, showStackTrace))
                 .build();
     }
 

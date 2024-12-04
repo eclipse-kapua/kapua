@@ -10,7 +10,7 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.jersey.rest.errors;
+package org.eclipse.kapua.job.engine.app.errors;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
@@ -19,30 +19,30 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.eclipse.kapua.commons.jersey.rest.ExceptionConfigurationProvider;
-import org.eclipse.kapua.job.engine.exception.JobNotRunningException;
-import org.eclipse.kapua.job.engine.exception.JobNotRunningExceptionInfo;
+import org.eclipse.kapua.job.engine.exception.JobMissingTargetException;
+import org.eclipse.kapua.job.engine.exception.JobMissingTargetExceptionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Provider
-public class JobNotRunningExceptionMapper implements ExceptionMapper<JobNotRunningException> {
+public class JobMissingTargetExceptionMapper implements ExceptionMapper<JobMissingTargetException> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JobNotRunningExceptionMapper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JobMissingTargetExceptionMapper.class);
 
     private final boolean showStackTrace;
 
     @Inject
-    public JobNotRunningExceptionMapper(ExceptionConfigurationProvider exceptionConfigurationProvider) {
+    public JobMissingTargetExceptionMapper(ExceptionConfigurationProvider exceptionConfigurationProvider) {
         this.showStackTrace = exceptionConfigurationProvider.showStackTrace();
     }
 
     @Override
-    public Response toResponse(JobNotRunningException jobNotRunningException) {
-        LOG.error(jobNotRunningException.getMessage(), jobNotRunningException);
+    public Response toResponse(JobMissingTargetException jobMissingTargetException) {
+        LOG.error(jobMissingTargetException.getMessage(), jobMissingTargetException);
 
         return Response
                 .status(Status.INTERNAL_SERVER_ERROR)
-                .entity(new JobNotRunningExceptionInfo(jobNotRunningException, showStackTrace))
+                .entity(new JobMissingTargetExceptionInfo(jobMissingTargetException, showStackTrace))
                 .build();
     }
 

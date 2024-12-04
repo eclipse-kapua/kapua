@@ -10,7 +10,7 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.jersey.rest.errors;
+package org.eclipse.kapua.job.engine.app.errors;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
@@ -19,30 +19,30 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.eclipse.kapua.commons.jersey.rest.ExceptionConfigurationProvider;
-import org.eclipse.kapua.job.engine.exception.JobStartingException;
-import org.eclipse.kapua.job.engine.exception.JobStartingExceptionInfo;
+import org.eclipse.kapua.job.engine.exception.JobNotRunningException;
+import org.eclipse.kapua.job.engine.exception.JobNotRunningExceptionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Provider
-public class JobStartingExceptionMapper implements ExceptionMapper<JobStartingException> {
+public class JobNotRunningExceptionMapper implements ExceptionMapper<JobNotRunningException> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JobStartingExceptionMapper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JobNotRunningExceptionMapper.class);
 
     private final boolean showStackTrace;
 
     @Inject
-    public JobStartingExceptionMapper(ExceptionConfigurationProvider exceptionConfigurationProvider) {
+    public JobNotRunningExceptionMapper(ExceptionConfigurationProvider exceptionConfigurationProvider) {
         this.showStackTrace = exceptionConfigurationProvider.showStackTrace();
     }
 
     @Override
-    public Response toResponse(JobStartingException jobStartingException) {
-        LOG.error(jobStartingException.getMessage(), jobStartingException);
+    public Response toResponse(JobNotRunningException jobNotRunningException) {
+        LOG.error(jobNotRunningException.getMessage(), jobNotRunningException);
 
         return Response
                 .status(Status.INTERNAL_SERVER_ERROR)
-                .entity(new JobStartingExceptionInfo(jobStartingException, showStackTrace))
+                .entity(new JobNotRunningExceptionInfo(jobNotRunningException, showStackTrace))
                 .build();
     }
 

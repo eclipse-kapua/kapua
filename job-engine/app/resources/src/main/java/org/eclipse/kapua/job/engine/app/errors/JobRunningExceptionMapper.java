@@ -10,7 +10,7 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.jersey.rest.errors;
+package org.eclipse.kapua.job.engine.app.errors;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
@@ -19,30 +19,30 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.eclipse.kapua.commons.jersey.rest.ExceptionConfigurationProvider;
-import org.eclipse.kapua.job.engine.exception.CleanJobDataException;
-import org.eclipse.kapua.job.engine.exception.CleanJobDataExceptionInfo;
+import org.eclipse.kapua.job.engine.exception.JobRunningException;
+import org.eclipse.kapua.job.engine.exception.JobRunningExceptionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Provider
-public class CleanJobDataExceptionMapper implements ExceptionMapper<CleanJobDataException> {
+public class JobRunningExceptionMapper implements ExceptionMapper<JobRunningException> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CleanJobDataExceptionMapper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JobRunningExceptionMapper.class);
 
     private final boolean showStackTrace;
 
     @Inject
-    public CleanJobDataExceptionMapper(ExceptionConfigurationProvider exceptionConfigurationProvider) {
+    public JobRunningExceptionMapper(ExceptionConfigurationProvider exceptionConfigurationProvider) {
         this.showStackTrace = exceptionConfigurationProvider.showStackTrace();
     }
 
     @Override
-    public Response toResponse(CleanJobDataException cleanJobDataException) {
-        LOG.error(cleanJobDataException.getMessage(), cleanJobDataException);
+    public Response toResponse(JobRunningException jobRunningException) {
+        LOG.error(jobRunningException.getMessage(), jobRunningException);
 
-        return Response//
-                .status(Status.INTERNAL_SERVER_ERROR) //
-                .entity(new CleanJobDataExceptionInfo(cleanJobDataException, showStackTrace)) //
+        return Response
+                .status(Status.INTERNAL_SERVER_ERROR)
+                .entity(new JobRunningExceptionInfo(jobRunningException, showStackTrace))
                 .build();
     }
 

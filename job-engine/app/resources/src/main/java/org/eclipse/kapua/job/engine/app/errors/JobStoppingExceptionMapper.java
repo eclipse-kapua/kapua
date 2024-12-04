@@ -10,7 +10,7 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.jersey.rest.errors;
+package org.eclipse.kapua.job.engine.app.errors;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
@@ -19,30 +19,30 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.eclipse.kapua.commons.jersey.rest.ExceptionConfigurationProvider;
-import org.eclipse.kapua.job.engine.exception.JobAlreadyRunningException;
-import org.eclipse.kapua.job.engine.exception.JobAlreadyRunningExceptionInfo;
+import org.eclipse.kapua.job.engine.exception.JobStoppingException;
+import org.eclipse.kapua.job.engine.exception.JobStoppingExceptionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Provider
-public class JobAlreadyRunningExceptionMapper implements ExceptionMapper<JobAlreadyRunningException> {
+public class JobStoppingExceptionMapper implements ExceptionMapper<JobStoppingException> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JobAlreadyRunningExceptionMapper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JobStoppingExceptionMapper.class);
 
     private final boolean showStackTrace;
 
     @Inject
-    public JobAlreadyRunningExceptionMapper(ExceptionConfigurationProvider exceptionConfigurationProvider) {
+    public JobStoppingExceptionMapper(ExceptionConfigurationProvider exceptionConfigurationProvider) {
         this.showStackTrace = exceptionConfigurationProvider.showStackTrace();
     }
 
     @Override
-    public Response toResponse(JobAlreadyRunningException jobAlreadyRunningException) {
-        LOG.error(jobAlreadyRunningException.getMessage(), jobAlreadyRunningException);
+    public Response toResponse(JobStoppingException jobStoppingException) {
+        LOG.error(jobStoppingException.getMessage(), jobStoppingException);
 
         return Response
                 .status(Status.INTERNAL_SERVER_ERROR)
-                .entity(new JobAlreadyRunningExceptionInfo(jobAlreadyRunningException, showStackTrace))
+                .entity(new JobStoppingExceptionInfo(jobStoppingException, showStackTrace))
                 .build();
     }
 

@@ -10,7 +10,7 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.jersey.rest.errors;
+package org.eclipse.kapua.job.engine.app.errors;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
@@ -19,30 +19,30 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.eclipse.kapua.commons.jersey.rest.ExceptionConfigurationProvider;
-import org.eclipse.kapua.job.engine.exception.JobInvalidTargetException;
-import org.eclipse.kapua.job.engine.exception.JobInvalidTargetExceptionInfo;
+import org.eclipse.kapua.job.engine.exception.CleanJobDataException;
+import org.eclipse.kapua.job.engine.exception.CleanJobDataExceptionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Provider
-public class JobInvalidTargetExceptionMapper implements ExceptionMapper<JobInvalidTargetException> {
+public class CleanJobDataExceptionMapper implements ExceptionMapper<CleanJobDataException> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JobInvalidTargetExceptionMapper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CleanJobDataExceptionMapper.class);
 
     private final boolean showStackTrace;
 
     @Inject
-    public JobInvalidTargetExceptionMapper(ExceptionConfigurationProvider exceptionConfigurationProvider) {
+    public CleanJobDataExceptionMapper(ExceptionConfigurationProvider exceptionConfigurationProvider) {
         this.showStackTrace = exceptionConfigurationProvider.showStackTrace();
     }
 
     @Override
-    public Response toResponse(JobInvalidTargetException jobInvalidTargetException) {
-        LOG.error(jobInvalidTargetException.getMessage(), jobInvalidTargetException);
+    public Response toResponse(CleanJobDataException cleanJobDataException) {
+        LOG.error(cleanJobDataException.getMessage(), cleanJobDataException);
 
-        return Response
-                .status(Status.INTERNAL_SERVER_ERROR)
-                .entity(new JobInvalidTargetExceptionInfo(jobInvalidTargetException, false))
+        return Response//
+                .status(Status.INTERNAL_SERVER_ERROR) //
+                .entity(new CleanJobDataExceptionInfo(cleanJobDataException, showStackTrace)) //
                 .build();
     }
 
