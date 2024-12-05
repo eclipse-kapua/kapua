@@ -70,14 +70,14 @@ import java.util.stream.Collectors;
  * <pre>
  *     JobInstanceData (aka: JobInstace)
  *     |
- *     |-- as one --- JobStatus
- *     |-- as many -- ExecutionInstanceData (aka: JobExecution)
+ *     |-- has one --- JobStatus
+ *     |-- has many -- ExecutionInstanceData (aka: JobExecution)
  *                    |
- *                    |-- as many -- StepExecutionInstanceData (aka: JobStepExecution)
+ *                    |-- has many -- StepExecutionInstanceData (aka: JobStepExecution)
  *                    |              |
- *                    |              |-- as one --- StepStatus
+ *                    |              |-- has one --- StepStatus
  *                    |
- *                    |-- as many -- CheckpointData
+ *                    |-- has many -- CheckpointData
  * </pre>
  *
  * @since 1.2.0
@@ -198,6 +198,20 @@ public class JPAPersistenceManagerImpl extends AbstractKapuaService implements I
         //        }
 
         return "NOTSET";
+    }
+
+    /**
+     * Deletes {@link JpaJobInstanceData} by its {@link JpaJobInstanceData#getId()}.
+     *
+     * @param jobInstanceId The {@link JpaJobInstanceData#getId()} to delete.
+     * @since 2.1.0
+     */
+    public void deleteJobInstanceData(long jobInstanceId) {
+        try {
+            entityManagerSession.doTransactedAction(em -> JpaJobInstanceDataDAO.deleteById(em, jobInstanceId));
+        } catch (Exception e) {
+            throw new PersistenceException(e);
+        }
     }
 
     /**
