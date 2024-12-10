@@ -13,9 +13,9 @@
 package org.eclipse.kapua.commons;
 
 import com.google.inject.Inject;
-
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.kapua.KapuaErrorCodes;
+import org.eclipse.kapua.KapuaException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
