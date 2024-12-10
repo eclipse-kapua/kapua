@@ -96,7 +96,7 @@ public class UserModule extends AbstractKapuaModule {
             EventStoreRecordRepository eventStoreRecordRepository,
             ServiceEventBus serviceEventBus,
             KapuaUserSetting kapuaUserSetting,
-            @Named("eventsModuleName") String eventModuleName
+            @Named("userEvtSubscriptionGroupId") String subscriptionGroupId
     ) throws ServiceEventBusException {
         return new UserServiceModule(
                 userService,
@@ -112,7 +112,7 @@ public class UserModule extends AbstractKapuaModule {
                         txManagerFactory.create("kapua-user"),
                         serviceEventBus
                 ), serviceEventBus,
-                eventModuleName);
+                subscriptionGroupId);
     }
 
     @Provides

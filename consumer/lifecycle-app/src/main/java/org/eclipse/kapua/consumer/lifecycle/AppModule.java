@@ -15,9 +15,14 @@ package org.eclipse.kapua.consumer.lifecycle;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.commons.ContainerIdResolver;
+import org.eclipse.kapua.commons.DefaultContainerIdResolver;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.core.JaxbClassProvider;
 import org.eclipse.kapua.commons.liquibase.DatabaseCheckUpdate;
+import org.eclipse.kapua.commons.setting.system.SystemSetting;
+import org.eclipse.kapua.commons.setting.system.SystemSettingKey;
 import org.eclipse.kapua.commons.util.xml.JAXBContextProvider;
 import org.eclipse.kapua.commons.util.xml.JAXBContextProviderImpl;
 import org.eclipse.kapua.commons.util.xml.XmlRootAnnotatedJaxbClassesScanner;
@@ -48,9 +53,56 @@ public class AppModule extends AbstractKapuaModule {
         return MetricsLifecycle.CONSUMER_LIFECYCLE;
     }
 
+    @Singleton
     @Provides
-    @Named("eventsModuleName")
-    String eventModuleName() {
-        return "lifecycle";
+    ContainerIdResolver containerIdResolver(SystemSetting systemSetting) throws KapuaException {
+        return new DefaultContainerIdResolver(systemSetting.getString(SystemSettingKey.CONTAINER_ID));
+    }
+
+    @Provides
+    @Named("accountEvtSubscriptionGroupId")
+    String accountEvtSubscriptionGroupId(ContainerIdResolver containerIdResolver) {
+        return getSubscriptionId(containerIdResolver);
+    }
+
+    @Provides
+    @Named("authenticationEvtSubscriptionGroupId")
+    String authenticationEvtSubscriptionGroupId(ContainerIdResolver containerIdResolver) {
+        return getSubscriptionId(containerIdResolver);
+    }
+
+    @Provides
+    @Named("authorizationEvtSubscriptionGroupId")
+    String authorizationEvtSubscriptionGroupId(ContainerIdResolver containerIdResolver) {
+        return getSubscriptionId(containerIdResolver);
+    }
+
+    @Provides
+    @Named("deviceConnectionEvtSubscriptionGroupId")
+    String deviceConnectionEvtSubscriptionGroupId(ContainerIdResolver containerIdResolver) {
+        return getSubscriptionId(containerIdResolver);
+    }
+
+    @Provides
+    @Named("deviceRegistryEvtSubscriptionGroupId")
+    String deviceRegistryEvtSubscriptionGroupId(ContainerIdResolver containerIdResolver) {
+        return getSubscriptionId(containerIdResolver);
+    }
+
+    @Provides
+    @Named("userEvtSubscriptionGroupId")
+    String userEvtSubscriptionGroupId(ContainerIdResolver containerIdResolver) {
+        return getSubscriptionId(containerIdResolver);
+    }
+
+    @Provides
+    @Singleton
+    @Named("clusterName")
+    String clusterName(SystemSetting systemSetting) {
+        return systemSetting.getString(SystemSettingKey.CLUSTER_NAME);
+    }
+
+    private String getSubscriptionId(ContainerIdResolver containerIdResolver) {
+        return "con-lif-" + containerIdResolver.getContainerId();
     }
 }

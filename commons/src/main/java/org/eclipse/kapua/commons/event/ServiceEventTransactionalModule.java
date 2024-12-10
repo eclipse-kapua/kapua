@@ -56,11 +56,11 @@ public abstract class ServiceEventTransactionalModule implements ServiceModule {
     public ServiceEventTransactionalModule(
             ServiceEventClientConfiguration[] serviceEventClientConfigurations,
             String internalAddress,
-            String uniqueClientId,
+            String subscriptionGroupId,
             ServiceEventHouseKeeperFactory serviceEventTransactionalHousekeeperFactory,
             ServiceEventBus serviceEventBus) {
         this.serviceEventBus = serviceEventBus;
-        this.serviceEventClientConfigurations = appendClientId(uniqueClientId, serviceEventClientConfigurations);
+        this.serviceEventClientConfigurations = appendClientId(subscriptionGroupId, serviceEventClientConfigurations);
         this.internalAddress = internalAddress;
         this.houseKeeperFactory = serviceEventTransactionalHousekeeperFactory;
     }

@@ -25,10 +25,10 @@ public class UserServiceModule extends ServiceEventTransactionalModule {
 
     public UserServiceModule(UserService userService, KapuaUserSetting kapuaUserSetting, ServiceEventHouseKeeperFactory serviceEventTransactionalHousekeeperFactory,
             ServiceEventBus serviceEventBus,
-            String eventModuleName) {
+            String subscriptionGroupId) {
         super(ServiceInspector.getEventBusClients(userService, UserService.class).toArray(new ServiceEventClientConfiguration[0]),
                 kapuaUserSetting.getString(KapuaUserSettingKeys.USER_EVENT_ADDRESS),
-                eventModuleName,
+                subscriptionGroupId,
                 serviceEventTransactionalHousekeeperFactory, serviceEventBus);
     }
 }

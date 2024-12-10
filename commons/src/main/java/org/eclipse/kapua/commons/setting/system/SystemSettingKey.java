@@ -24,6 +24,10 @@ import javax.persistence.EntityExistsException;
 public enum SystemSettingKey implements SettingKey {
 
     /**
+     * Container id (used for example to set a unique identifier for event listeners so events could be received by all the instances of a certain type)
+    */
+    CONTAINER_ID("container.id"),
+    /**
      * Cluster name
      */
     CLUSTER_NAME("cluster.name"),

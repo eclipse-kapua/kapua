@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2023, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2023, 2024 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -52,7 +52,7 @@ public class DeviceConnectionEventListenerModule extends AbstractKapuaModule imp
                                                                        EventStoreFactory eventStoreFactory,
                                                                        EventStoreRecordRepository eventStoreRecordRepository,
                                                                        ServiceEventBus serviceEventBus,
-                                                                       @Named("eventsModuleName") String eventModuleName
+                                                                       @Named("deviceConnectionEvtSubscriptionGroupId") String subscriptionGroupId
     ) throws ServiceEventBusException {
 
         String address = kapuaDeviceRegistrySettings.getString(KapuaDeviceRegistrySettingKeys.DEVICE_EVENT_ADDRESS);
@@ -71,6 +71,6 @@ public class DeviceConnectionEventListenerModule extends AbstractKapuaModule imp
                         serviceEventBus
                 ),
                 serviceEventBus,
-                eventModuleName);
+                subscriptionGroupId);
     }
 }

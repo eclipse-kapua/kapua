@@ -29,7 +29,7 @@ public class DeviceServiceModule extends ServiceEventTransactionalModule {
             KapuaDeviceRegistrySettings deviceRegistrySettings,
             ServiceEventHouseKeeperFactory serviceEventTransactionalHousekeeperFactory,
             ServiceEventBus serviceEventBus,
-            String eventModuleName) {
+            String subscriptionGroupId) {
         super(Arrays.asList(ServiceInspector.getEventBusClients(deviceRegistryService, DeviceRegistryService.class),
                                 ServiceInspector.getEventBusClients(deviceConnectionService, DeviceConnectionService.class)
                         )
@@ -38,7 +38,7 @@ public class DeviceServiceModule extends ServiceEventTransactionalModule {
                         .collect(Collectors.toList())
                         .toArray(new ServiceEventClientConfiguration[0]),
                 deviceRegistrySettings.getString(KapuaDeviceRegistrySettingKeys.DEVICE_EVENT_ADDRESS),
-                eventModuleName,
+                subscriptionGroupId,
                 serviceEventTransactionalHousekeeperFactory,
                 serviceEventBus);
     }

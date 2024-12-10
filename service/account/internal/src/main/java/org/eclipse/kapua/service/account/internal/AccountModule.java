@@ -86,7 +86,7 @@ public class AccountModule extends AbstractKapuaModule implements Module {
             EventStoreRecordRepository eventStoreRecordRepository,
             ServiceEventBus serviceEventBus,
             KapuaAccountSetting kapuaAccountSetting,
-            @Named("eventsModuleName") String eventModuleName
+            @Named("accountEvtSubscriptionGroupId") String eventModuleName
     ) throws ServiceEventBusException {
         return new AccountServiceModule(
                 accountService,

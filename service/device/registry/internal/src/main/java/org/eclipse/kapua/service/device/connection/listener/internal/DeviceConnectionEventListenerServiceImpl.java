@@ -30,8 +30,6 @@ public class DeviceConnectionEventListenerServiceImpl implements DeviceConnectio
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeviceConnectionEventListenerServiceImpl.class);
 
-    protected static final String DISCONNECT = "disconnect";
-
     protected ArrayList<DeviceConnectionEventReceiver> receivers = new ArrayList<>();
 
     @Inject

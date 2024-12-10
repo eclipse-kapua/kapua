@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2024 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -17,12 +17,13 @@ import javax.inject.Singleton;
 
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.broker.artemis.plugin.security.setting.BrokerSetting;
-import org.eclipse.kapua.broker.artemis.plugin.security.setting.BrokerSettingKey;
 import org.eclipse.kapua.broker.artemis.plugin.utils.BrokerHostResolver;
 import org.eclipse.kapua.broker.artemis.plugin.utils.BrokerIdResolver;
 import org.eclipse.kapua.broker.artemis.plugin.utils.BrokerIdentity;
 import org.eclipse.kapua.broker.artemis.plugin.utils.DefaultBrokerHostResolver;
 import org.eclipse.kapua.broker.artemis.plugin.utils.DefaultBrokerIdResolver;
+import org.eclipse.kapua.commons.ContainerIdResolver;
+import org.eclipse.kapua.commons.DefaultContainerIdResolver;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.core.JaxbClassProvider;
 import org.eclipse.kapua.commons.liquibase.DatabaseCheckUpdate;
@@ -68,12 +69,6 @@ public class AppModule extends AbstractKapuaModule {
     }
 
     @Provides
-    @Named("eventsModuleName")
-    String eventModuleName() {
-        return "telemetry";
-    }
-
-    @Provides
     @Singleton
     @Named("brokerHost")
     String brokerHost(BrokerHostResolver brokerHostResolver) {
@@ -88,7 +83,53 @@ public class AppModule extends AbstractKapuaModule {
 
     @Singleton
     @Provides
-    BrokerHostResolver brokerHostResolver(BrokerSetting brokerSettings) throws KapuaException {
-        return new DefaultBrokerHostResolver(brokerSettings.getString(BrokerSettingKey.BROKER_HOST));
+    ContainerIdResolver containerIdResolver(SystemSetting systemSetting) throws KapuaException {
+        return new DefaultContainerIdResolver(systemSetting.getString(SystemSettingKey.CONTAINER_ID));
+    }
+
+    @Singleton
+    @Provides
+    BrokerHostResolver brokerHostResolver(SystemSetting systemSetting) throws KapuaException {
+        return new DefaultBrokerHostResolver(systemSetting.getString(SystemSettingKey.BROKER_HOST));
+    }
+
+    @Provides
+    @Named("accountEvtSubscriptionGroupId")
+    String accountEvtSubscriptionGroupId(ContainerIdResolver containerIdResolver) {
+        return getSubscriptionId(containerIdResolver);
+    }
+
+    @Provides
+    @Named("authenticationEvtSubscriptionGroupId")
+    String authenticationEvtSubscriptionGroupId(ContainerIdResolver containerIdResolver) {
+        return getSubscriptionId(containerIdResolver);
+    }
+
+    @Provides
+    @Named("authorizationEvtSubscriptionGroupId")
+    String authorizationEvtSubscriptionGroupId(ContainerIdResolver containerIdResolver) {
+        return getSubscriptionId(containerIdResolver);
+    }
+
+    @Provides
+    @Named("deviceConnectionEvtSubscriptionGroupId")
+    String deviceConnectionEvtSubscriptionGroupId(ContainerIdResolver containerIdResolver) {
+        return getSubscriptionId(containerIdResolver);
+    }
+
+    @Provides
+    @Named("deviceRegistryEvtSubscriptionGroupId")
+    String deviceRegistryEvtSubscriptionGroupId(ContainerIdResolver containerIdResolver) {
+        return getSubscriptionId(containerIdResolver);
+    }
+
+    @Provides
+    @Named("userEvtSubscriptionGroupId")
+    String userEvtSubscriptionGroupId(ContainerIdResolver containerIdResolver) {
+        return getSubscriptionId(containerIdResolver);
+    }
+
+    private String getSubscriptionId(ContainerIdResolver containerIdResolver) {
+        return "brk-tel-" + containerIdResolver.getContainerId();
     }
 }
