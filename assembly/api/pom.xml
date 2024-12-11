@@ -241,48 +241,44 @@
                             </artifactItems>
                         </configuration>
                     </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
                     <execution>
-                        <id>Unpack OpenAPI definitions</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
+                        <phase>compile</phase>
                         <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.eclipse.kapua</groupId>
-                                    <artifactId>kapua-rest-api-resources</artifactId>
-                                    <version>${project.version}</version>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${project.build.directory}/tmp</outputDirectory>
-                                    <includes>openapi/**/*</includes>
-                                </artifactItem>
-                            </artifactItems>
+                            <target>
+                                <copy file="../../rest-api/resources/target/tmp/openapi.yaml"
+                                      tofile="${project.build.directory}/tmp/openapi.yaml"/>
+                            </target>
                         </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
-                        <id>Bundle OpenAPI definitions</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
+                        <id>move-openapi-file</id>
+                        <phase>package</phase>
                         <configuration>
-                            <executable>${swagger-cli.executable}</executable>
-                            <arguments>
-                                <argument>bundle</argument>
-                                <argument>-t</argument>
-                                <argument>yaml</argument>
-                                <argument>-o</argument>
-                                <argument>${project.build.directory}/tmp/openapi.yaml</argument>
-                                <argument>${project.build.directory}/tmp/openapi/openapi.yaml</argument>
-                            </arguments>
+                            <target>
+                                <copy file="${project.build.directory}/tmp/openapi.yaml"
+                                      tofile="${project.build.directory}/tmp/swagger-ui/openapi.yaml"/>
+                            </target>
                         </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

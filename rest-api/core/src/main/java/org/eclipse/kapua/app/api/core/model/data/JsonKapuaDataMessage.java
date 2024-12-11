@@ -12,6 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.core.model.data;
 
+import java.util.Date;
+import java.util.UUID;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.eclipse.kapua.app.api.core.model.message.JsonKapuaPayload;
 import org.eclipse.kapua.message.KapuaPayload;
 import org.eclipse.kapua.message.KapuaPosition;
@@ -19,12 +25,7 @@ import org.eclipse.kapua.message.device.data.KapuaDataChannel;
 import org.eclipse.kapua.message.device.data.KapuaDataMessage;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdAdapter;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
-import java.util.UUID;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class JsonKapuaDataMessage {
 
@@ -154,6 +155,7 @@ public class JsonKapuaDataMessage {
     }
 
     @XmlTransient
+    @JsonIgnore
     public void setPayload(KapuaPayload payload) {
         setPayload(new JsonKapuaPayload(payload));
     }

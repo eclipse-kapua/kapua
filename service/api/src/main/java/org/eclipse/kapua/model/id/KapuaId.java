@@ -12,13 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.model.id;
 
-import org.eclipse.kapua.KapuaSerializable;
-import org.eclipse.kapua.model.KapuaEntity;
-
-import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlTransient;
 import java.math.BigInteger;
 import java.util.Base64;
+import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlTransient;
+
+import org.eclipse.kapua.KapuaSerializable;
+import org.eclipse.kapua.model.KapuaEntity;
 
 /**
  * {@link KapuaEntity} identifier definition.

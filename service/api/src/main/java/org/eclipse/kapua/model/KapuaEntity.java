@@ -12,16 +12,17 @@
  *******************************************************************************/
 package org.eclipse.kapua.model;
 
-import org.eclipse.kapua.KapuaSerializable;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.model.xml.DateXmlAdapter;
-
+import java.util.Date;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
+
+import org.eclipse.kapua.KapuaSerializable;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import org.eclipse.kapua.model.xml.DateXmlAdapter;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link KapuaEntity} definition.
@@ -38,6 +39,7 @@ import java.util.Date;
 public interface KapuaEntity extends KapuaSerializable {
 
     @XmlTransient
+    @Schema(hidden = true)
     String getType();
 
     /**
@@ -48,6 +50,7 @@ public interface KapuaEntity extends KapuaSerializable {
      */
     @XmlElement(name = "id")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(type = "string", example = "Syp62jl6Rdk=uzN77llX_X4Vr_")
     KapuaId getId();
 
     /**
@@ -66,6 +69,8 @@ public interface KapuaEntity extends KapuaSerializable {
      */
     @XmlElement(name = "scopeId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(type = "string",
+        example = "=FjSxm0Gsa47lGX4SUXyeF36mYjHoH8ucnHjSppqjOAidr6wwCeRHtA4U__7O-Hjtfj_8N63cYgZxt=VxFovMoHmYCz")
     KapuaId getScopeId();
 
     /**
@@ -94,5 +99,7 @@ public interface KapuaEntity extends KapuaSerializable {
      */
     @XmlElement(name = "createdBy")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(type = "string",
+        example = "5_77YiomzLRvcZIhaCDWrOCjeOBJ2DD4-i6pm")
     KapuaId getCreatedBy();
 }

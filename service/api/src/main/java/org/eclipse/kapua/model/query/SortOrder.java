@@ -13,6 +13,7 @@
 package org.eclipse.kapua.model.query;
 
 import org.eclipse.kapua.KapuaIllegalArgumentException;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Sort orderdefinition.
@@ -21,6 +22,7 @@ import org.eclipse.kapua.KapuaIllegalArgumentException;
  *
  * @since 1.0.0
  */
+@Schema(description = "The sort direction. Can be ASCENDING (default), DESCENDING. Case-insensitive (except for \"clientId\" parameter).")
 public enum SortOrder {
 
     /**

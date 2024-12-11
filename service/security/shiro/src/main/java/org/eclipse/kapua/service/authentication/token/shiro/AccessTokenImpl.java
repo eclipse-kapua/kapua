@@ -12,14 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.token.shiro;
 
-import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.commons.model.AbstractKapuaEntity;
-import org.eclipse.kapua.commons.model.AbstractKapuaUpdatableEntity;
-import org.eclipse.kapua.commons.model.id.IdGenerator;
-import org.eclipse.kapua.commons.model.id.KapuaEid;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.service.authentication.token.AccessToken;
-
+import java.util.Date;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.Basic;
@@ -30,7 +23,14 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import java.util.Date;
+
+import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.commons.model.AbstractKapuaEntity;
+import org.eclipse.kapua.commons.model.AbstractKapuaUpdatableEntity;
+import org.eclipse.kapua.commons.model.id.IdGenerator;
+import org.eclipse.kapua.commons.model.id.KapuaEid;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.service.authentication.token.AccessToken;
 
 /**
  * {@link AccessToken} implementation.
@@ -46,7 +46,7 @@ public class AccessTokenImpl extends AbstractKapuaUpdatableEntity implements Acc
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "eid", column = @Column(name = "user_id", updatable = false, nullable = false))
+        @AttributeOverride(name = "eid", column = @Column(name = "user_id", updatable = false, nullable = false))
     })
     private KapuaEid userId;
 
