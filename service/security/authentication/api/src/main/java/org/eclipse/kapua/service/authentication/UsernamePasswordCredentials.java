@@ -17,6 +17,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * Username and password {@link LoginCredentials} definition.
  *
@@ -33,6 +35,7 @@ public interface UsernamePasswordCredentials extends LoginCredentials {
      * @return The username.
      * @since 1.0.0
      */
+    @Schema(description = "The credential username.", example = "kapua-sys", defaultValue = "kapua-sys")
     String getUsername();
 
     /**
@@ -49,6 +52,7 @@ public interface UsernamePasswordCredentials extends LoginCredentials {
      * @return The password.
      * @since 1.0.0
      */
+    @Schema(description = "The credential password.", example = "kapua-password", defaultValue = "kapua-password")
     String getPassword();
 
     /**
@@ -65,6 +69,7 @@ public interface UsernamePasswordCredentials extends LoginCredentials {
      * @return The MFA authentication code.
      * @since 1.3.0
      */
+    @Schema(description = "Optional authentication code.", example = "123456", hidden = true)
     String getAuthenticationCode();
 
     /**
@@ -81,6 +86,7 @@ public interface UsernamePasswordCredentials extends LoginCredentials {
      * @return The trust key.
      * @since 1.3.0
      */
+    @Schema(description = "Optional trust key.", example = "trust-key-abc", hidden = true)
     String getTrustKey();
 
     /**
@@ -97,6 +103,7 @@ public interface UsernamePasswordCredentials extends LoginCredentials {
      * @return {@code true} if to be created, {@code false} otherwise
      * @since 2.0.0
      */
+    @Schema(description = "Indicates if the trust mechanism is enabled.", hidden = true, example = "false")
     boolean getTrustMe();
 
     /**

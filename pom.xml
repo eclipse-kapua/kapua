@@ -134,6 +134,7 @@
         <snakeyaml.version>2.2</snakeyaml.version>
         <spotify.version>8.15.1</spotify.version>
         <swagger-ui.version>5.3.1</swagger-ui.version>
+        <swagger.version>2.2.25</swagger.version>
         <zxing.version>3.4.1</zxing.version>
 
         <!-- Plugins versions -->
@@ -1814,7 +1815,21 @@
                 <artifactId>swagger-ui</artifactId>
                 <version>${swagger-ui.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-jaxrs2</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-jaxrs2-servlet-initializer-v2</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-annotations</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.hamcrest</groupId>
                 <artifactId>hamcrest-core</artifactId>

@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.core.model.device.management;
 
+import java.util.Date;
+import java.util.UUID;
+
 import org.eclipse.kapua.app.api.core.model.message.JsonKapuaPayload;
 import org.eclipse.kapua.message.KapuaPayload;
 import org.eclipse.kapua.message.KapuaPosition;
@@ -26,9 +29,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
-
-import java.util.Date;
-import java.util.UUID;
 
 
 @Category(JUnitTests.class)

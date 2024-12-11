@@ -12,17 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.resources.v1.resources;
 
-import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
-import org.eclipse.kapua.service.KapuaService;
-import org.eclipse.kapua.service.authentication.ApiKeyCredentials;
-import org.eclipse.kapua.service.authentication.AuthenticationService;
-import org.eclipse.kapua.service.authentication.JwtCredentials;
-import org.eclipse.kapua.service.authentication.RefreshTokenCredentials;
-import org.eclipse.kapua.service.authentication.UsernamePasswordCredentials;
-import org.eclipse.kapua.service.authentication.token.AccessToken;
-import org.eclipse.kapua.service.authentication.token.LoginInfo;
-
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -33,7 +22,30 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
+import org.eclipse.kapua.commons.rest.model.errors.ExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.IllegalArgumentExceptionInfo;
+import org.eclipse.kapua.service.KapuaService;
+import org.eclipse.kapua.service.authentication.ApiKeyCredentials;
+import org.eclipse.kapua.service.authentication.AuthenticationService;
+import org.eclipse.kapua.service.authentication.JwtCredentials;
+import org.eclipse.kapua.service.authentication.RefreshTokenCredentials;
+import org.eclipse.kapua.service.authentication.UsernamePasswordCredentials;
+import org.eclipse.kapua.service.authentication.token.AccessToken;
+import org.eclipse.kapua.service.authentication.token.LoginInfo;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @Path("/authentication")
+@Tag(name = "Authentication", description = "Endpoints for managing authentication processes.")
+@SecurityRequirements()
 public class Authentication extends AbstractKapuaResource {
 
     @Inject
@@ -51,6 +63,53 @@ public class Authentication extends AbstractKapuaResource {
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Path("user")
+    @RequestBody(
+        description = "Request body for user login",
+        required = true,
+        content = @Content(
+            schema = @Schema(implementation = UsernamePasswordCredentials.class),
+            examples = {
+                @ExampleObject(
+                    name = "Admin",
+                    summary = "Admin",
+                    value = "{ \"username\": \"kapua-sys\", \"password\": \"kapua-password\" }"
+                ),
+                @ExampleObject(
+                    name = "MFA With Authentication Code",
+                    description = "Example of login as a regular user",
+                    value = "{\"username\": \"ec-sys\", \"password\": \"ec-password\", \"authenticationCode\": 123456, \"trustMe\": true }"
+                ),
+                @ExampleObject(
+                    name = "MFA With TrustKey",
+                    description = "Example of login as a regular user",
+                    value = "{\"username\": \"ec-sys\", \"password\": \"ec-password\", \"trustKey\": \"1c34b3d4-ca23-11ec-9d64-0242ac120002\" }"
+                )
+            }
+        )
+    )
+    // below can be omitted, but if so no response code and description.
+    // if specified but without content then ok code and description but no generated response/example
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The new AccessToken",
+            content = @Content(schema = @Schema(implementation = AccessToken.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "\t\n" + "\n" + "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public AccessToken loginUsernamePassword(UsernamePasswordCredentials authenticationCredentials) throws KapuaException {
         return authenticationService.login(authenticationCredentials);
     }

@@ -30,6 +30,7 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.account.AccountUpdateRequest;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /*
 @deprecated
@@ -39,6 +40,7 @@ Where the scopeId has no meaning when dealing with a specific account
 Remove the match with /{scopeId}/... in the next release
  */
 @Path("{scopeId: ([\\w-]+)?}{path:|/}accounts/{accountId}")
+@Tag(name = "Account", description = "Foo bar...")
 public class Account extends AbstractKapuaResource {
 
     @Inject
