@@ -97,46 +97,34 @@ public class SecurityPlugin implements ActiveMQSecurityManager5 {
         String connectionId = pluginUtility.getConnectionId(remotingConnection);
         String clientIp = remotingConnection.getTransportConnection().getRemoteAddress();
         String clientId = extractAndValidateClientId(remotingConnection);
-        try {
-            SessionContext sessionContext = serverContext.getSecurityContext().getSessionContextWithCacheFallback(connectionId);
-            if (sessionContext != null && sessionContext.getPrincipal() != null) {
-                logger.debug("### authenticate user (cache found): {} - clientId: {} - remoteIP: {} - connectionId: {}", username, clientId, remotingConnection.getTransportConnection().getRemoteAddress(), connectionId);
-                loginMetric.getAuthenticateFromCache().inc();
-                return serverContext.getSecurityContext().buildFromPrincipal(sessionContext.getPrincipal());
-            } else {
-                logger.debug("### authenticate user (no cache): {} - clientId: {} - remoteIP: {} - connectionId: {}", username, clientId, remotingConnection.getTransportConnection().getRemoteAddress(), connectionId);
-                if (!remotingConnection.getTransportConnection().isOpen()) {
-                    logger.info("Connection (connectionId: {}) is closed (stealing link occurred?)", connectionId);
-                    loginMetric.getLoginClosedConnectionFailure().inc();
-                    return null;
-                }
-                ConnectionInfo connectionInfo = new ConnectionInfo(
-                        pluginUtility.getConnectionId(remotingConnection),//connectionId
-                        clientId,//clientId
-                        clientIp,//clientIp
-                        remotingConnection.getTransportConnection().getConnectorConfig().getName(),//connectorName
-                        remotingConnection.getProtocolName(),//transportProtocol
-                        (String) remotingConnection.getTransportConnection().getConnectorConfig().getCombinedParams().get("sslEnabled"),//sslEnabled
-                        getPeerCertificates(remotingConnection));//clientsCertificates
-                return pluginUtility.isInternal(remotingConnection) ?
-                        authenticateInternalConn(connectionInfo, connectionId, username, password, remotingConnection) :
-                        authenticateExternalConn(connectionInfo, connectionId, username, password, remotingConnection);
+        SessionContext sessionContext = serverContext.getSecurityContext().getSessionContextWithCacheFallback(connectionId);
+        if (sessionContext != null && sessionContext.getPrincipal() != null) {
+            logger.debug("### authenticate user (cache found): {} - clientId: {} - remoteIP: {} - connectionId: {}", username, clientId, remotingConnection.getTransportConnection().getRemoteAddress(), connectionId);
+            loginMetric.getAuthenticateFromCache().inc();
+            return serverContext.getSecurityContext().buildFromPrincipal(sessionContext.getPrincipal());
+        } else {
+            logger.debug("### authenticate user (no cache): {} - clientId: {} - remoteIP: {} - connectionId: {}", username, clientId, remotingConnection.getTransportConnection().getRemoteAddress(), connectionId);
+            if (!remotingConnection.getTransportConnection().isOpen()) {
+                logger.info("Connection (connectionId: {}) is closed (stealing link occurred?)", connectionId);
+                loginMetric.getLoginClosedConnectionFailure().inc();
+                return null;
             }
-        } catch (Exception e) {
-            //shouldn't happen but anyway, if happens, log it but return null so no disclosure
-            logger.warn("Internal error (deny login for security reason)", e);
-            return null;
+            ConnectionInfo connectionInfo = new ConnectionInfo(
+                    pluginUtility.getConnectionId(remotingConnection),//connectionId
+                    clientId,//clientId
+                    clientIp,//clientIp
+                    remotingConnection.getTransportConnection().getConnectorConfig().getName(),//connectorName
+                    remotingConnection.getProtocolName(),//transportProtocol
+                    (String) remotingConnection.getTransportConnection().getConnectorConfig().getCombinedParams().get("sslEnabled"),//sslEnabled
+                    getPeerCertificates(remotingConnection));//clientsCertificates
+            return pluginUtility.isInternal(remotingConnection) ?
+                    authenticateInternalConn(connectionInfo, connectionId, username, password, remotingConnection) :
+                    authenticateExternalConn(connectionInfo, connectionId, username, password, remotingConnection);
         }
     }
 
     private String extractAndValidateClientId(RemotingConnection remotingConnection) {
         String clientId = remotingConnection.getClientID();
-        //set a random client id value if not set by the client
-        //from JMS 2 specs "Although setting client ID remains mandatory when creating an unshared durable subscription, it is optional when creating a shared durable subscription."
-        if (Strings.isNullOrEmpty(clientId)) {
-            clientId = clientIdPrefix + INDEX.getAndIncrement();
-            logger.info("Updated empty client id to: {}", clientId);
-        }
         //leave the clientId validation to the DeviceCreator. Here just check for / or ::
         //ArgumentValidator.match(clientId, DeviceValidationRegex.CLIENT_ID, "deviceCreator.clientId");
         if (clientId != null && (clientId.contains("/") || clientId.contains("::"))) {
