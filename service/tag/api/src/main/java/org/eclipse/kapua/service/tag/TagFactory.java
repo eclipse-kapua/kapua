@@ -21,13 +21,15 @@ import org.eclipse.kapua.model.id.KapuaId;
  * @see org.eclipse.kapua.model.KapuaEntityFactory
  * @since 1.0.0
  */
-public interface TagFactory extends KapuaEntityFactory<Tag, TagCreator, TagQuery, TagListResult> {
+public interface TagFactory extends KapuaEntityFactory<Tag, TagCreator, TagQuery> {
 
     /**
      * Instantiates a new {@link TagCreator}.
      *
-     * @param scopeId The scope {@link KapuaId} to set into the {@link TagCreator}
-     * @param name    The name to set into the {@link TagCreator}.
+     * @param scopeId
+     *         The scope {@link KapuaId} to set into the {@link TagCreator}
+     * @param name
+     *         The name to set into the {@link TagCreator}.
      * @return The newly instantiated {@link TagCreator}
      * @since 1.0.0
      */

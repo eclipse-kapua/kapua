@@ -76,7 +76,7 @@ public class TranslatorAppAssetKuraKapua extends AbstractSimpleTranslatorRespons
 
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode jsonNode = mapper.readTree(kuraResponsePayload.getBody());
-                DeviceAssets deviceAssets = deviceAssetFactory.newAssetListResult();
+                DeviceAssets deviceAssets = new DeviceAssets();
                 KuraAssets kuraAssets = KuraAssets.readJsonNode(jsonNode);
 
                 kuraAssets.getAssets().forEach(kuraAsset -> {

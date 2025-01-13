@@ -12,16 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.model.query;
 
-import org.eclipse.kapua.commons.model.AbstractKapuaEntity;
-import org.eclipse.kapua.commons.model.id.KapuaEid;
-import org.eclipse.kapua.commons.util.RandomUtils;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.qa.markers.junit.JUnitTests;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.mockito.Mockito;
-
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -29,14 +19,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.eclipse.kapua.commons.model.AbstractKapuaEntity;
+import org.eclipse.kapua.commons.model.id.KapuaEid;
+import org.eclipse.kapua.commons.util.RandomUtils;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaListResult;
+import org.eclipse.kapua.qa.markers.junit.JUnitTests;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.mockito.Mockito;
+
 @Category(JUnitTests.class)
-public class KapuaListResultImplTest {
+public class KapuaListResultTest {
 
     private final static Random RANDOM = RandomUtils.getInstance();
 
     @Test
     public void kapuaListResultImplTest() {
-        KapuaListResultImpl<AbstractKapuaEntity> kapuaListResult = new KapuaListResultImpl<>();
+        KapuaListResult<AbstractKapuaEntity> kapuaListResult = new KapuaListResult<>();
 
         Assert.assertNotNull(kapuaListResult.getItems());
         Assert.assertTrue(kapuaListResult.getItems().isEmpty());
@@ -53,7 +54,7 @@ public class KapuaListResultImplTest {
         items.add(kapuaEntity1);
         items.add(kapuaEntity2);
 
-        KapuaListResultImpl<AbstractKapuaEntity> kapuaListResult = new KapuaListResultImpl<>();
+        KapuaListResult<AbstractKapuaEntity> kapuaListResult = new KapuaListResult<>();
         kapuaListResult.addItems(items);
 
         Assert.assertEquals(2, kapuaListResult.getItems().size());
@@ -67,7 +68,7 @@ public class KapuaListResultImplTest {
         AbstractKapuaEntity kapuaEntity1 = Mockito.mock(AbstractKapuaEntity.class);
         AbstractKapuaEntity kapuaEntity2 = Mockito.mock(AbstractKapuaEntity.class);
 
-        KapuaListResultImpl<AbstractKapuaEntity> kapuaListResult = new KapuaListResultImpl<>();
+        KapuaListResult<AbstractKapuaEntity> kapuaListResult = new KapuaListResult<>();
         kapuaListResult.addItem(kapuaEntity1);
         kapuaListResult.addItem(kapuaEntity2);
 
@@ -79,7 +80,7 @@ public class KapuaListResultImplTest {
     @Test
     public void clearItemsTest() {
         int testSize = 10;
-        KapuaListResultImpl<AbstractKapuaEntity> kapuaListResult = new KapuaListResultImpl<>();
+        KapuaListResult<AbstractKapuaEntity> kapuaListResult = new KapuaListResult<>();
 
         for (int i = 0; i < testSize; i++) {
             kapuaListResult.addItem(Mockito.mock(AbstractKapuaEntity.class));
@@ -94,7 +95,7 @@ public class KapuaListResultImplTest {
 
     @Test
     public void getFirstItemTest() {
-        KapuaListResultImpl<AbstractKapuaEntity> kapuaListResult = new KapuaListResultImpl<>();
+        KapuaListResult<AbstractKapuaEntity> kapuaListResult = new KapuaListResult<>();
 
         AbstractKapuaEntity kapuaEntity1 = Mockito.mock(AbstractKapuaEntity.class);
         kapuaListResult.addItem(kapuaEntity1);
@@ -108,7 +109,7 @@ public class KapuaListResultImplTest {
 
     @Test
     public void getItemsTest() {
-        KapuaListResultImpl<AbstractKapuaEntity> kapuaListResult = new KapuaListResultImpl<>();
+        KapuaListResult<AbstractKapuaEntity> kapuaListResult = new KapuaListResult<>();
 
         AbstractKapuaEntity kapuaEntity1 = Mockito.mock(AbstractKapuaEntity.class);
         kapuaListResult.addItem(kapuaEntity1);
@@ -124,7 +125,7 @@ public class KapuaListResultImplTest {
     @Test
     public void getItemsPredicateTest() {
         int testSize = 10;
-        KapuaListResultImpl<AbstractKapuaEntity> kapuaListResult = new KapuaListResultImpl<>();
+        KapuaListResult<AbstractKapuaEntity> kapuaListResult = new KapuaListResult<>();
 
         for (int i = 0; i < testSize; i++) {
             AbstractKapuaEntity kapuaEntity = Mockito.mock(AbstractKapuaEntity.class);
@@ -144,7 +145,7 @@ public class KapuaListResultImplTest {
     @Test
     public void getItemsAsMapKeyTest() {
         int testSize = 10;
-        KapuaListResultImpl<AbstractKapuaEntity> kapuaListResult = new KapuaListResultImpl<>();
+        KapuaListResult<AbstractKapuaEntity> kapuaListResult = new KapuaListResult<>();
 
         for (int i = 0; i < testSize; i++) {
             AbstractKapuaEntity kapuaEntity = Mockito.mock(AbstractKapuaEntity.class);
@@ -164,7 +165,7 @@ public class KapuaListResultImplTest {
     @Test
     public void getItemsAsMapKeyValueTest() {
         int testSize = 10;
-        KapuaListResultImpl<AbstractKapuaEntity> kapuaListResult = new KapuaListResultImpl<>();
+        KapuaListResult<AbstractKapuaEntity> kapuaListResult = new KapuaListResult<>();
 
         for (int i = 0; i < testSize; i++) {
             AbstractKapuaEntity kapuaEntity = Mockito.mock(AbstractKapuaEntity.class);
@@ -184,7 +185,7 @@ public class KapuaListResultImplTest {
 
     @Test
     public void getItemTest() {
-        KapuaListResultImpl<AbstractKapuaEntity> kapuaListResult = new KapuaListResultImpl<>();
+        KapuaListResult<AbstractKapuaEntity> kapuaListResult = new KapuaListResult<>();
 
         AbstractKapuaEntity kapuaEntity1 = Mockito.mock(AbstractKapuaEntity.class);
         kapuaListResult.addItem(kapuaEntity1);
@@ -199,7 +200,7 @@ public class KapuaListResultImplTest {
     @Test
     public void getSizeTest() {
         int testSize = 10;
-        KapuaListResultImpl<AbstractKapuaEntity> kapuaListResult = new KapuaListResultImpl<>();
+        KapuaListResult<AbstractKapuaEntity> kapuaListResult = new KapuaListResult<>();
 
         for (int i = 0; i < testSize; i++) {
             kapuaListResult.addItem(Mockito.mock(AbstractKapuaEntity.class));
@@ -210,7 +211,7 @@ public class KapuaListResultImplTest {
 
     @Test
     public void isEmptyTest() {
-        KapuaListResultImpl<AbstractKapuaEntity> kapuaListResult = new KapuaListResultImpl<>();
+        KapuaListResult<AbstractKapuaEntity> kapuaListResult = new KapuaListResult<>();
         Assert.assertTrue(kapuaListResult.isEmpty());
 
         kapuaListResult.addItem(Mockito.mock(AbstractKapuaEntity.class));
@@ -219,7 +220,7 @@ public class KapuaListResultImplTest {
 
     @Test
     public void setGetLimitExceededTrueTest() {
-        KapuaListResultImpl<AbstractKapuaEntity> kapuaListResult = new KapuaListResultImpl<>();
+        KapuaListResult<AbstractKapuaEntity> kapuaListResult = new KapuaListResult<>();
         kapuaListResult.setLimitExceeded(true);
 
         Assert.assertTrue(kapuaListResult.isLimitExceeded());
@@ -227,7 +228,7 @@ public class KapuaListResultImplTest {
 
     @Test
     public void setGetLimitExceededFalseTest() {
-        KapuaListResultImpl<AbstractKapuaEntity> kapuaListResult = new KapuaListResultImpl<>();
+        KapuaListResult<AbstractKapuaEntity> kapuaListResult = new KapuaListResult<>();
         kapuaListResult.setLimitExceeded(false);
 
         Assert.assertFalse(kapuaListResult.isLimitExceeded());
@@ -235,14 +236,14 @@ public class KapuaListResultImplTest {
 
     @Test
     public void setGetTotalCountDefaultTest() {
-        KapuaListResultImpl<AbstractKapuaEntity> kapuaListResult = new KapuaListResultImpl<>();
+        KapuaListResult<AbstractKapuaEntity> kapuaListResult = new KapuaListResult<>();
 
         Assert.assertNull(kapuaListResult.getTotalCount());
     }
 
     @Test
     public void setGetTotalCountValueTest() {
-        KapuaListResultImpl<AbstractKapuaEntity> kapuaListResult = new KapuaListResultImpl<>();
+        KapuaListResult<AbstractKapuaEntity> kapuaListResult = new KapuaListResult<>();
         kapuaListResult.setTotalCount(10L);
 
         Assert.assertEquals(new Long(10L), kapuaListResult.getTotalCount());
@@ -251,7 +252,7 @@ public class KapuaListResultImplTest {
     @Test
     public void sortComparatorTest() {
         int testSize = 10;
-        KapuaListResultImpl<AbstractKapuaEntity> kapuaListResult = new KapuaListResultImpl<>();
+        KapuaListResult<AbstractKapuaEntity> kapuaListResult = new KapuaListResult<>();
 
         // Add the max value
         AbstractKapuaEntity kapuaEntityMax = Mockito.mock(AbstractKapuaEntity.class);

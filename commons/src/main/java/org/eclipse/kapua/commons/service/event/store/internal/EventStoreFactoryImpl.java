@@ -12,15 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.service.event.store.internal;
 
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreFactory;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecord;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordCreator;
-import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordListResult;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordQuery;
 import org.eclipse.kapua.model.id.KapuaId;
-
-import javax.inject.Singleton;
 
 /**
  * {@link EventStoreFactory} implementation
@@ -43,11 +42,6 @@ public class EventStoreFactoryImpl implements EventStoreFactory {
     @Override
     public EventStoreRecordQuery newQuery(KapuaId scopeId) {
         return new EventStoreQueryImpl(scopeId);
-    }
-
-    @Override
-    public EventStoreRecordListResult newListResult() {
-        return new EventStoreRecordListResultImpl();
     }
 
     @Override

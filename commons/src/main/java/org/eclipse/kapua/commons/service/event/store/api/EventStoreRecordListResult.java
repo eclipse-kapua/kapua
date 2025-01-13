@@ -23,11 +23,12 @@ import org.eclipse.kapua.model.query.KapuaListResult;
  * KapuaEvent result list definition.
  *
  * @since 1.0
- *
  */
 @XmlRootElement(name = "eventStoreRecords")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = EventStoreXmlRegistry.class,factoryMethod = "newEventStoreRecordListResult")
-public interface EventStoreRecordListResult extends KapuaListResult<EventStoreRecord> {
+@XmlType
+public class EventStoreRecordListResult extends KapuaListResult<EventStoreRecord> {
+
+    private static final long serialVersionUID = -5118004898345748297L;
 
 }

@@ -12,23 +12,21 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.token.shiro;
 
+import java.util.Date;
+
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.authentication.token.AccessToken;
+import org.eclipse.kapua.service.authentication.token.AccessTokenCreator;
 import org.eclipse.kapua.service.authentication.token.AccessTokenQuery;
 import org.eclipse.kapua.service.authentication.token.LoginInfo;
-import org.eclipse.kapua.service.authentication.token.AccessTokenListResult;
-import org.eclipse.kapua.service.authentication.token.AccessTokenCreator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
-
-import java.util.Date;
-
 
 @Category(JUnitTests.class)
 public class AccessTokenFactoryImplTest {
@@ -44,17 +42,17 @@ public class AccessTokenFactoryImplTest {
     @Before
     public void initialize() {
         accessTokenFactoryImpl = new AccessTokenFactoryImpl();
-        scopeIds = new KapuaId[]{null, KapuaId.ONE};
-        userIds = new KapuaEid[]{null, new KapuaEid()};
-        tokenIds = new String[]{null, "", "!!token id-1", "#1(token.,/tokenID)9--99", "!$$ 1-2 id//", "to_ken_id(....)<00>"};
-        refreshTokens = new String[]{null, "", "!!token refresh token-1", "#1(REfreSF.,/token_refresh)9--99", "!$$ 1-2 id//", "to_ken_refRESH token(....)<00>"};
-        expiresOnDates = new Date[]{null, new Date()};
-        refreshExpiresOnDates = new Date[]{null, new Date()};
+        scopeIds = new KapuaId[] { null, KapuaId.ONE };
+        userIds = new KapuaEid[] { null, new KapuaEid() };
+        tokenIds = new String[] { null, "", "!!token id-1", "#1(token.,/tokenID)9--99", "!$$ 1-2 id//", "to_ken_id(....)<00>" };
+        refreshTokens = new String[] { null, "", "!!token refresh token-1", "#1(REfreSF.,/token_refresh)9--99", "!$$ 1-2 id//", "to_ken_refRESH token(....)<00>" };
+        expiresOnDates = new Date[] { null, new Date() };
+        refreshExpiresOnDates = new Date[] { null, new Date() };
         accessToken = Mockito.mock(AccessToken.class);
         modifiedOn = new Date();
         createdOn = new Date();
         invalidatedOn = new Date();
-        tokenIdentifiers = new String[]{"a2fe104f-5d03-4a09-a28d-817ebbc85901", "8e075aeb-be2a-49a7-8dec-346760375d19", "e71b2f52-e02e-4e24-9147-96674e3bf599"};
+        tokenIdentifiers = new String[] { "a2fe104f-5d03-4a09-a28d-817ebbc85901", "8e075aeb-be2a-49a7-8dec-346760375d19", "e71b2f52-e02e-4e24-9147-96674e3bf599" };
     }
 
     @Test
@@ -66,7 +64,8 @@ public class AccessTokenFactoryImplTest {
                         for (String refreshToken : refreshTokens) {
                             for (Date refreshExpiresOnDate : refreshExpiresOnDates) {
                                 for (String tokenIdenfier : tokenIdentifiers) {
-                                    AccessTokenCreatorImpl accessTokenCreatorImpl = accessTokenFactoryImpl.newCreator(scopeId, userId, tokenId, expiresOnDate, refreshToken, refreshExpiresOnDate, tokenIdenfier);
+                                    AccessTokenCreatorImpl accessTokenCreatorImpl = accessTokenFactoryImpl.newCreator(scopeId, userId, tokenId, expiresOnDate, refreshToken, refreshExpiresOnDate,
+                                            tokenIdenfier);
                                     Assert.assertEquals("Expected and actual values should be the same.", scopeId, accessTokenCreatorImpl.getScopeId());
                                     Assert.assertEquals("Expected and actual values should be the same.", userId, accessTokenCreatorImpl.getUserId());
                                     Assert.assertEquals("Expected and actual values should be the same.", tokenId, accessTokenCreatorImpl.getTokenId());
@@ -105,11 +104,6 @@ public class AccessTokenFactoryImplTest {
             AccessTokenQuery accessTokenQuery = accessTokenFactoryImpl.newQuery(scopeId);
             Assert.assertEquals("Expected and actual values should be the same.", scopeId, accessTokenQuery.getScopeId());
         }
-    }
-
-    @Test
-    public void newListResultTest() {
-        Assert.assertTrue("True expected.", accessTokenFactoryImpl.newListResult() instanceof AccessTokenListResult);
     }
 
     @Test

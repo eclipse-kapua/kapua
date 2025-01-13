@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.credential.mfa;
 
-import org.eclipse.kapua.locator.KapuaLocator;
-
 import javax.xml.bind.annotation.XmlRegistry;
+
+import org.eclipse.kapua.locator.KapuaLocator;
 
 @XmlRegistry
 public class ScratchCodeXmlRegistry {
@@ -29,15 +29,5 @@ public class ScratchCodeXmlRegistry {
      */
     public ScratchCode newScratchCode() {
         return scratchCodeFactory.newEntity(null);
-    }
-
-    /**
-     * Instantiates a new {@link ScratchCodeListResult} instance
-     *
-     * @return The newly instantiated {@link ScratchCodeListResult}
-     * @since 1.3.0
-     */
-    public ScratchCodeListResult newScratchCodeListResult() {
-        return scratchCodeFactory.newListResult();
     }
 }

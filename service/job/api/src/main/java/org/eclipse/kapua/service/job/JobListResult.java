@@ -23,11 +23,11 @@ import org.eclipse.kapua.model.query.KapuaListResult;
  * {@link JobListResult} definition.
  *
  * @since 1.0.0
- *
  */
 @XmlRootElement(name = "jobListResult")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = JobXmlRegistry.class, factoryMethod = "newJobListResult")
-public interface JobListResult extends KapuaListResult<Job> {
+@XmlType
+public class JobListResult extends KapuaListResult<Job> {
 
+    private static final long serialVersionUID = -7466853155307881848L;
 }

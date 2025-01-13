@@ -21,10 +21,11 @@ import org.eclipse.kapua.model.query.KapuaListResult;
  * Device list result definition.
  *
  * @since 1.0
- *
  */
 @XmlRootElement(name = "devices")
-@XmlType(factoryClass = DeviceXmlRegistry.class, factoryMethod = "newDeviceListResult")
-public interface DeviceListResult extends KapuaListResult<Device> {
+@XmlType
+public class DeviceListResult extends KapuaListResult<Device> {
+
+    private static final long serialVersionUID = -3870951363076544938L;
 
 }

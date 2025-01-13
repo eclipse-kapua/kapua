@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.credential.mfa;
 
-import org.eclipse.kapua.locator.KapuaLocator;
-
 import javax.xml.bind.annotation.XmlRegistry;
+
+import org.eclipse.kapua.locator.KapuaLocator;
 
 @XmlRegistry
 public class MfaOptionXmlRegistry {
@@ -39,16 +39,6 @@ public class MfaOptionXmlRegistry {
      */
     public MfaOption newMfaOption() {
         return mfaOptionFactory.newEntity(null);
-    }
-
-    /**
-     * Instantiates a new {@link MfaOptionListResult} instance
-     *
-     * @return The newly instantiated {@link MfaOptionListResult}
-     * @since 1.3.0
-     */
-    public MfaOptionListResult newMfaOptionListResult() {
-        return mfaOptionFactory.newListResult();
     }
 
     /**

@@ -12,9 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.transport.mqtt;
 
-import javax.validation.constraints.NotNull;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * The {@link Timer} to handle the timeout of {@link MqttResponseCallback}.
@@ -30,9 +31,12 @@ public class MqttResponseTimeoutTimer extends Timer {
     /**
      * Starts a {@link Timer} at the given timeout and runs {@link TimeoutTimerTask} when timeout expires.
      *
-     * @param clientId           The clientId of the {@link MqttClient}. Used to set the {@link Timer} name.
-     * @param mqttClientCallback The {@link MqttResponseCallback} on which to wait.
-     * @param timeout            The timeout of the waiting.
+     * @param clientId
+     *         The clientId of the {@link MqttClient}. Used to set the {@link Timer} name.
+     * @param mqttClientCallback
+     *         The {@link MqttResponseCallback} on which to wait.
+     * @param timeout
+     *         The timeout of the waiting.
      * @since 1.0.0
      */
     public MqttResponseTimeoutTimer(@NotNull String clientId, @NotNull MqttResponseCallback mqttClientCallback, long timeout) {
@@ -48,7 +52,8 @@ public class MqttResponseTimeoutTimer extends Timer {
      *
      * @since 1.0.0
      */
-    private class TimeoutTimerTask extends TimerTask {
+    public class TimeoutTimerTask extends TimerTask {
+
         @Override
         public void run() {
             synchronized (mqttResponseCallback) {

@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.account.internal;
 
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+
 import org.eclipse.kapua.commons.jpa.JpaAwareTxContext;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.jpa.KapuaNamedEntityJpaRepository;
@@ -20,15 +23,12 @@ import org.eclipse.kapua.service.account.AccountListResult;
 import org.eclipse.kapua.service.account.AccountRepository;
 import org.eclipse.kapua.storage.TxContext;
 
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-
 public class AccountImplJpaRepository
         extends KapuaNamedEntityJpaRepository<Account, AccountImpl, AccountListResult>
         implements AccountRepository {
 
     public AccountImplJpaRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig) {
-        super(AccountImpl.class, Account.TYPE, () -> new AccountListResultImpl(), jpaRepoConfig);
+        super(AccountImpl.class, Account.TYPE, () -> new AccountListResult(), jpaRepoConfig);
     }
 
     @Override

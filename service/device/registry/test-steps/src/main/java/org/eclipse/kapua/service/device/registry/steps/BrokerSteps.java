@@ -32,7 +32,6 @@ import org.eclipse.kapua.service.device.management.asset.DeviceAsset;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssetChannel;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssetManagementService;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssets;
-import org.eclipse.kapua.service.device.management.asset.internal.DeviceAssetsImpl;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundle;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundleManagementService;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundles;
@@ -72,9 +71,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
 /**
- * Steps used in integration scenarios with running MQTT broker and process of
- * registering mocked Kura device registering with Kapua and issuing basic administrative
- * commands on Mocked Kura.
+ * Steps used in integration scenarios with running MQTT broker and process of registering mocked Kura device registering with Kapua and issuing basic administrative commands on Mocked Kura.
  */
 @Singleton
 public class BrokerSteps extends TestBase {
@@ -275,8 +272,10 @@ public class BrokerSteps extends TestBase {
     /**
      * Checks that the {@link Device} with the given {@link Device#getClientId()} has {@link DeviceConnection#getStatus()} {@link DeviceConnectionStatus#CONNECTED} within the given time.
      *
-     * @param clientId The {@link Device#getClientId()} to check
-     * @param waitSeconds The max time of wait in seconds
+     * @param clientId
+     *         The {@link Device#getClientId()} to check
+     * @param waitSeconds
+     *         The max time of wait in seconds
      * @throws Exception
      * @since 1.2.0
      */
@@ -284,7 +283,7 @@ public class BrokerSteps extends TestBase {
     public void deviceConnected(String clientId, int waitSeconds) throws Exception {
 
         long now = System.currentTimeMillis();
-        while ((System.currentTimeMillis() - now) < (waitSeconds * 1000L)){
+        while ((System.currentTimeMillis() - now) < (waitSeconds * 1000L)) {
             Device kuraDevice = deviceRegistryService.findByClientId(getCurrentScopeId(), clientId);
 
             if (kuraDevice != null &&
@@ -516,7 +515,6 @@ public class BrokerSteps extends TestBase {
         Assert.assertEquals(serverIp, deviceConn.getServerIp());
     }
 
-
     @When("Client with name {string} with client id {string} user {string} password {string} is connected")
     public void clientConnect(String clientName, String clientId, String user, String password) throws Exception {
         MqttClient mqttClient = null;
@@ -616,7 +614,7 @@ public class BrokerSteps extends TestBase {
     @Then("Device(s) status is {string} within {int} second(s) for client id {string}")
     public void deviceStatusIs(String expectedStatus, int timeout, String clientId) throws Exception {
         String currentStatus = null;
-        while(!expectedStatus.equals(currentStatus) && timeout-->0) {
+        while (!expectedStatus.equals(currentStatus) && timeout-- > 0) {
             Thread.sleep(1000);
 
             logger.info("Device(s) status countdown check: {}", timeout);
@@ -665,7 +663,7 @@ public class BrokerSteps extends TestBase {
 
     @And("Device assets are requested")
     public void deviceAssetsAreRequested() throws Exception {
-        DeviceAssets deviceAssets = new DeviceAssetsImpl();
+        DeviceAssets deviceAssets = new DeviceAssets();
         for (KuraDevice kuraDevice : kuraDevices) {
             Device device = deviceRegistryService.findByClientId(SYS_SCOPE_ID, kuraDevice.getClientId());
             Assert.assertNotNull(device);

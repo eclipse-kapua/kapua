@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.registry.operation.notification;
 
-import org.eclipse.kapua.locator.KapuaLocator;
-
 import javax.xml.bind.annotation.XmlRegistry;
+
+import org.eclipse.kapua.locator.KapuaLocator;
 
 /**
  * {@link ManagementOperationNotification} xml MANAGEMENT_OPERATION_NOTIFICATION_REGISTRY_FACTORY class
@@ -32,11 +32,6 @@ public class ManagementOperationNotificationXmlRegistry {
 
     ManagementOperationNotificationCreator newManagementOperationNotificationCreator() {
         return managementOperationNotificationFactory.newCreator(null);
-    }
-
-
-    ManagementOperationNotificationListResult newManagementOperationNotificationListResult() {
-        return managementOperationNotificationFactory.newListResult();
     }
 
     ManagementOperationNotificationQuery newQuery() {

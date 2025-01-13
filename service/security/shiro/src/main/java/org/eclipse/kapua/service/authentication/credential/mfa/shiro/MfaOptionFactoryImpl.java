@@ -12,26 +12,20 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.credential.mfa.shiro;
 
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authentication.credential.mfa.MfaOption;
 import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionCreator;
 import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionFactory;
-import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionListResult;
 import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionQuery;
-
-import javax.inject.Singleton;
 
 /**
  * {@link MfaOptionFactory} implementation.
  */
 @Singleton
 public class MfaOptionFactoryImpl implements MfaOptionFactory {
-
-    @Override
-    public MfaOptionListResult newListResult() {
-        return new MfaOptionListResultImpl();
-    }
 
     @Override
     public MfaOption newEntity(KapuaId scopeId) {

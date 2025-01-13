@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.configuration;
 
+import java.util.Map;
+import java.util.Optional;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaMaxNumberOfItemsReachedException;
 import org.eclipse.kapua.commons.configuration.exception.ServiceConfigurationLimitExceededException;
@@ -36,9 +39,6 @@ import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.config.KapuaConfigurableService;
 
-import java.util.Map;
-import java.util.Optional;
-
 /**
  * Base {@code abstract} {@link KapuaConfigurableService} implementation for services that have a max number of entities allowed.
  * <p>
@@ -48,12 +48,16 @@ import java.util.Optional;
  *     <li>maxNumberChildEntities</li>
  * </ul>
  *
- * @param <E> The {@link KapuaEntity} type.
- * @param <C> The {@link KapuaEntityCreator} type.
- * @param <S> The {@link KapuaEntityService} type.
- * @param <L> The {@link KapuaListResult} type.
- * @param <Q> The {@link KapuaQuery} type.
- * @param <F> The {@link KapuaEntityFactory} type.
+ * @param <E>
+ *         The {@link KapuaEntity} type.
+ * @param <C>
+ *         The {@link KapuaEntityCreator} type.
+ * @param <S>
+ *         The {@link KapuaEntityService} type.
+ * @param <Q>
+ *         The {@link KapuaQuery} type.
+ * @param <F>
+ *         The {@link KapuaEntityFactory} type.
  * @since 1.0.0
  * @deprecated since 2.0.0, in favour of separate configuration component - see {@link ServiceConfigurationManager} and implementations for more details
  */
@@ -62,13 +66,11 @@ public abstract class AbstractKapuaConfigurableResourceLimitedService<
         E extends KapuaEntity,
         C extends KapuaEntityCreator<E>,
         S extends KapuaEntityService<E, C>,
-        L extends KapuaListResult<E>,
         Q extends KapuaQuery,
-        F extends KapuaEntityFactory<E, C, Q, L>
+        F extends KapuaEntityFactory<E, C, Q>
         >
         extends AbstractKapuaConfigurableService
         implements KapuaEntityService<E, C> {
-
 
     //TODO: make final as soon as deprecated constructors are removed
     private AccountRelativeFinder accountRelativeFinder;
@@ -79,11 +81,16 @@ public abstract class AbstractKapuaConfigurableResourceLimitedService<
     /**
      * Constructor.
      *
-     * @param pid                  The {@link KapuaConfigurableService} id.
-     * @param domain               The {@link Domain} on which check access.
-     * @param entityManagerFactory The {@link EntityManagerFactory} that handles persistence unit
-     * @param serviceClass         The {@link KapuaService} type.
-     * @param factoryClass         The {@link KapuaEntityFactory} type.
+     * @param pid
+     *         The {@link KapuaConfigurableService} id.
+     * @param domain
+     *         The {@link Domain} on which check access.
+     * @param entityManagerFactory
+     *         The {@link EntityManagerFactory} that handles persistence unit
+     * @param serviceClass
+     *         The {@link KapuaService} type.
+     * @param factoryClass
+     *         The {@link KapuaEntityFactory} type.
      * @deprecated Since 1.2.0. This constructor will be removed in a next release (may be)
      */
     @Deprecated
@@ -104,12 +111,18 @@ public abstract class AbstractKapuaConfigurableResourceLimitedService<
     /**
      * Constructor.
      *
-     * @param pid                  The {@link KapuaConfigurableService} id.
-     * @param domain               The {@link Domain} on which check access.
-     * @param entityManagerFactory The {@link EntityManagerFactory} that handles persistence unit
-     * @param abstractCacheFactory The {@link CacheFactory} that handles caching of the entities
+     * @param pid
+     *         The {@link KapuaConfigurableService} id.
+     * @param domain
+     *         The {@link Domain} on which check access.
+     * @param entityManagerFactory
+     *         The {@link EntityManagerFactory} that handles persistence unit
+     * @param abstractCacheFactory
+     *         The {@link CacheFactory} that handles caching of the entities
      * @since 1.2.0
-     * @deprecated Since 2.0.0. Please use {@link #AbstractKapuaConfigurableResourceLimitedService(String, Domain, EntityManagerFactory, EntityCacheFactory, KapuaEntityFactory, PermissionFactory, AuthorizationService, AccountRelativeFinder, RootUserTester)} This constructor may be removed in a next release
+     * @deprecated Since 2.0.0. Please use
+     *         {@link #AbstractKapuaConfigurableResourceLimitedService(String, Domain, EntityManagerFactory, EntityCacheFactory, KapuaEntityFactory, PermissionFactory, AuthorizationService,
+     *         AccountRelativeFinder, RootUserTester)} This constructor may be removed in a next release
      */
     @Deprecated
     protected AbstractKapuaConfigurableResourceLimitedService(
@@ -133,24 +146,32 @@ public abstract class AbstractKapuaConfigurableResourceLimitedService<
     /**
      * Constructor.
      *
-     * @param pid                  The {@link KapuaConfigurableService} id.
-     * @param domain               The {@link Domain} on which check access.
-     * @param entityManagerFactory The {@link EntityManagerFactory} that handles persistence unit
-     * @param abstractCacheFactory The {@link CacheFactory} that handles caching of the entities
-     * @param factory              The {@link KapuaEntityFactory} instance.
-     * @param permissionFactory    The {@link PermissionFactory} instance.
-     * @param authorizationService The {@link AuthorizationService} instance.
-     * @param rootUserTester       The {@link RootUserTester} instance.
+     * @param pid
+     *         The {@link KapuaConfigurableService} id.
+     * @param domain
+     *         The {@link Domain} on which check access.
+     * @param entityManagerFactory
+     *         The {@link EntityManagerFactory} that handles persistence unit
+     * @param abstractCacheFactory
+     *         The {@link CacheFactory} that handles caching of the entities
+     * @param factory
+     *         The {@link KapuaEntityFactory} instance.
+     * @param permissionFactory
+     *         The {@link PermissionFactory} instance.
+     * @param authorizationService
+     *         The {@link AuthorizationService} instance.
+     * @param rootUserTester
+     *         The {@link RootUserTester} instance.
      */
     protected AbstractKapuaConfigurableResourceLimitedService(String pid,
-                                                              Domain domain,
-                                                              EntityManagerFactory entityManagerFactory,
-                                                              EntityCacheFactory abstractCacheFactory,
-                                                              F factory,
-                                                              PermissionFactory permissionFactory,
-                                                              AuthorizationService authorizationService,
-                                                              AccountRelativeFinder accountRelativeFinder,
-                                                              RootUserTester rootUserTester) {
+            Domain domain,
+            EntityManagerFactory entityManagerFactory,
+            EntityCacheFactory abstractCacheFactory,
+            F factory,
+            PermissionFactory permissionFactory,
+            AuthorizationService authorizationService,
+            AccountRelativeFinder accountRelativeFinder,
+            RootUserTester rootUserTester) {
         super(pid, domain, entityManagerFactory, abstractCacheFactory, permissionFactory, authorizationService, rootUserTester);
         this.factory = factory;
         this.factoryClass = null; //TODO: not needed for this construction path, remove as soon as the deprecated constructor is removed
@@ -180,8 +201,10 @@ public abstract class AbstractKapuaConfigurableResourceLimitedService<
     /**
      * Checks if the given scope {@link KapuaId} can have more entities for this {@link KapuaConfigurableService}.
      *
-     * @param scopeId    The scope {@link KapuaId} to check.
-     * @param entityType The entity type of this {@link KapuaConfigurableService}
+     * @param scopeId
+     *         The scope {@link KapuaId} to check.
+     * @param entityType
+     *         The entity type of this {@link KapuaConfigurableService}
      * @throws KapuaException
      * @since 2.0.0
      */
@@ -194,7 +217,8 @@ public abstract class AbstractKapuaConfigurableResourceLimitedService<
     /**
      * Gets the number of remaining allowed entity for the given scope, according to the {@link KapuaConfigurableService#getConfigValues(KapuaId)}
      *
-     * @param scopeId The scope {@link KapuaId}.
+     * @param scopeId
+     *         The scope {@link KapuaId}.
      * @return The number of entities remaining for the given scope
      * @throws KapuaException
      * @since 1.0.0
@@ -204,13 +228,15 @@ public abstract class AbstractKapuaConfigurableResourceLimitedService<
     }
 
     /**
-     * Gets the number of remainisng allowed entity for the given scope, according to the {@link KapuaConfigurableService#getConfigValues(KapuaId)}
-     * excluding a specific scope when checking resources available.
+     * Gets the number of remainisng allowed entity for the given scope, according to the {@link KapuaConfigurableService#getConfigValues(KapuaId)} excluding a specific scope when checking resources
+     * available.
      * <p>
      * The exclusion of the scope is required when updating a limit for a target account.
      *
-     * @param scopeId       The scope {@link KapuaId}.
-     * @param targetScopeId The excluded scope {@link KapuaId}.
+     * @param scopeId
+     *         The scope {@link KapuaId}.
+     * @param targetScopeId
+     *         The excluded scope {@link KapuaId}.
      * @return The number of entities remaining for the given scope
      * @throws KapuaException
      * @since 1.0.0
@@ -220,14 +246,16 @@ public abstract class AbstractKapuaConfigurableResourceLimitedService<
     }
 
     /**
-     * Gets the number of remaining allowed entity for the given scope, according to the given {@link KapuaConfigurableService}
-     * excluding a specific scope when checking resources available.
+     * Gets the number of remaining allowed entity for the given scope, according to the given {@link KapuaConfigurableService} excluding a specific scope when checking resources available.
      * <p>
      * The exclusion of the scope is required when updating a limit for a target account.
      *
-     * @param scopeId       The scope {@link KapuaId}.
-     * @param targetScopeId The excluded scope {@link KapuaId}.
-     * @param configuration The configuration to be checked. If not provided will be read from the current service configuration
+     * @param scopeId
+     *         The scope {@link KapuaId}.
+     * @param targetScopeId
+     *         The excluded scope {@link KapuaId}.
+     * @param configuration
+     *         The configuration to be checked. If not provided will be read from the current service configuration
      * @return The number of entities remaining for the given scope
      * @throws KapuaException
      * @since 1.0.0
@@ -263,10 +291,9 @@ public abstract class AbstractKapuaConfigurableResourceLimitedService<
         });
     }
 
-
     /**
-     * KapuaEntityFactory instance should be provided by the Locator, but in most cases when this class is instantiated through the deprecated constructor the Locator is not yet ready,
-     * therefore fetching of the required instance is demanded to this artificial getter.
+     * KapuaEntityFactory instance should be provided by the Locator, but in most cases when this class is instantiated through the deprecated constructor the Locator is not yet ready, therefore
+     * fetching of the required instance is demanded to this artificial getter.
      *
      * @return The instantiated (hopefully) {@link KapuaEntityFactory} instance
      */
@@ -282,8 +309,8 @@ public abstract class AbstractKapuaConfigurableResourceLimitedService<
     }
 
     /**
-     * This instance should be provided by the Locator, but in most cases when this class is instantiated through the deprecated constructor the Locator is not yet ready,
-     * therefore fetching of the required instance is demanded to this artificial getter.
+     * This instance should be provided by the Locator, but in most cases when this class is instantiated through the deprecated constructor the Locator is not yet ready, therefore fetching of the
+     * required instance is demanded to this artificial getter.
      *
      * @return The instantiated (hopefully) {@link AccountRelativeFinder} instance
      */

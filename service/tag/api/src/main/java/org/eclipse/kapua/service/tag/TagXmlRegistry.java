@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.tag;
 
-import org.eclipse.kapua.locator.KapuaLocator;
-
 import javax.xml.bind.annotation.XmlRegistry;
+
+import org.eclipse.kapua.locator.KapuaLocator;
 
 @XmlRegistry
 public class TagXmlRegistry {
@@ -37,15 +37,6 @@ public class TagXmlRegistry {
      */
     public TagCreator newTagCreator() {
         return tagFactory.newCreator(null, null);
-    }
-
-    /**
-     * Creates a new tag creator instance
-     *
-     * @return
-     */
-    public TagListResult newTagListResult() {
-        return tagFactory.newListResult();
     }
 
     public TagQuery newQuery() {

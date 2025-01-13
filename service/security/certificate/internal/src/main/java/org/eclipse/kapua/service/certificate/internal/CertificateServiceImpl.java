@@ -121,7 +121,7 @@ public class CertificateServiceImpl implements CertificateService {
         kapuaCertificate.setCertificateUsages(certificateUsages);
         kapuaCertificate.setPassword(kapuaCertificateSetting.getString(KapuaCertificateSettingKeys.CERTIFICATE_JWT_PRIVATE_KEY_PASSWORD));
 
-        CertificateListResult result = certificateFactory.newListResult();
+        CertificateListResult result = new CertificateListResult();
         result.addItem(kapuaCertificate);
 
         return result;

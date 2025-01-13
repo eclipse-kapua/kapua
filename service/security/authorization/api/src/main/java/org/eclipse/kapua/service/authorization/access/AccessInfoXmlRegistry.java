@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.access;
 
-import org.eclipse.kapua.locator.KapuaLocator;
-
 import javax.xml.bind.annotation.XmlRegistry;
+
+import org.eclipse.kapua.locator.KapuaLocator;
 
 @XmlRegistry
 public class AccessInfoXmlRegistry {
@@ -37,15 +37,6 @@ public class AccessInfoXmlRegistry {
      */
     public AccessInfoCreator newAccessInfoCreator() {
         return accessInfoFactory.newCreator(null);
-    }
-
-    /**
-     * Creates a new {@link AccessInfoListResult} instance
-     *
-     * @return
-     */
-    public AccessInfoListResult newAccessInfoListResult() {
-        return accessInfoFactory.newListResult();
     }
 
     public AccessInfoQuery newQuery() {

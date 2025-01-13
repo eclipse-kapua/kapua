@@ -21,13 +21,15 @@ import org.eclipse.kapua.model.id.KapuaId;
  * @see KapuaEntityFactory
  * @since 1.0.0
  */
-public interface AccountFactory extends KapuaEntityFactory<Account, AccountCreator, AccountQuery, AccountListResult> {
+public interface AccountFactory extends KapuaEntityFactory<Account, AccountCreator, AccountQuery> {
 
     /**
      * Instantiates a new {@link AccountCreator} with the given name.
      *
-     * @param scopeId The scope {@link KapuaId} to set in the {@link AccountCreator}
-     * @param name    The name to set in the {@link AccountCreator}
+     * @param scopeId
+     *         The scope {@link KapuaId} to set in the {@link AccountCreator}
+     * @param name
+     *         The name to set in the {@link AccountCreator}
      * @return The newly instantiated {@link AccountCreator}
      * @since 1.0.0
      * @deprecated Since 1.6.0. Please make use of {@link #newCreator(KapuaId)} and then use {@link AccountCreator#setName(String)}.

@@ -26,8 +26,9 @@ import org.eclipse.kapua.storage.TxContext;
 public class JobStepImplJpaRepository
         extends KapuaNamedEntityJpaRepository<org.eclipse.kapua.service.job.step.JobStep, JobStepImpl, JobStepListResult>
         implements JobStepRepository {
+
     public JobStepImplJpaRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig) {
-        super(JobStepImpl.class, JobStep.TYPE, () -> new JobStepListResultImpl(), jpaRepoConfig);
+        super(JobStepImpl.class, JobStep.TYPE, () -> new JobStepListResult(), jpaRepoConfig);
     }
 
     @Override

@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.access.shiro;
 
+import java.util.Optional;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.jpa.KapuaUpdatableEntityJpaRepository;
@@ -22,13 +24,12 @@ import org.eclipse.kapua.service.authorization.access.AccessInfoListResult;
 import org.eclipse.kapua.service.authorization.access.AccessInfoRepository;
 import org.eclipse.kapua.storage.TxContext;
 
-import java.util.Optional;
-
 public class AccessInfoImplJpaRepository
         extends KapuaUpdatableEntityJpaRepository<AccessInfo, AccessInfoImpl, AccessInfoListResult>
         implements AccessInfoRepository {
+
     public AccessInfoImplJpaRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig) {
-        super(AccessInfoImpl.class, AccessInfo.TYPE, () -> new AccessInfoListResultImpl(), jpaRepoConfig);
+        super(AccessInfoImpl.class, AccessInfo.TYPE, () -> new AccessInfoListResult(), jpaRepoConfig);
     }
 
     @Override

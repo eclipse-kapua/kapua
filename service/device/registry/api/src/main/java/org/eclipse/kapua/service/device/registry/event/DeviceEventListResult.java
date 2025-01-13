@@ -23,11 +23,12 @@ import org.eclipse.kapua.model.query.KapuaListResult;
  * Device event list definition.
  *
  * @since 1.0
- *
  */
 @XmlRootElement(name = "deviceEventListResult")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DeviceEventXmlRegistry.class, factoryMethod = "newDeviceEventListResult")
-public interface DeviceEventListResult extends KapuaListResult<DeviceEvent> {
+@XmlType
+public class DeviceEventListResult extends KapuaListResult<DeviceEvent> {
+
+    private static final long serialVersionUID = 6537888946643944463L;
 
 }

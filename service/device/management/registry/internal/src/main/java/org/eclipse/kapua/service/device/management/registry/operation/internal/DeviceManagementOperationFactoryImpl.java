@@ -12,16 +12,15 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.registry.operation.internal;
 
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperation;
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationCreator;
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationFactory;
-import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationListResult;
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationProperty;
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationQuery;
-
-import javax.inject.Singleton;
 
 /**
  * {@link DeviceManagementOperationFactory} implementation
@@ -44,11 +43,6 @@ public class DeviceManagementOperationFactoryImpl implements DeviceManagementOpe
     @Override
     public DeviceManagementOperationQuery newQuery(KapuaId scopeId) {
         return new DeviceManagementOperationQueryImpl(scopeId);
-    }
-
-    @Override
-    public DeviceManagementOperationListResult newListResult() {
-        return new DeviceManagementOperationListResultImpl();
     }
 
     @Override

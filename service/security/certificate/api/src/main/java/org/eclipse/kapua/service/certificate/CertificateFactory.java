@@ -20,12 +20,13 @@ import org.eclipse.kapua.model.KapuaEntityFactory;
  * @see org.eclipse.kapua.model.KapuaEntityFactory
  * @since 1.0.0
  */
-public interface CertificateFactory extends KapuaEntityFactory<Certificate, CertificateCreator, CertificateQuery, CertificateListResult> {
+public interface CertificateFactory extends KapuaEntityFactory<Certificate, CertificateCreator, CertificateQuery> {
 
     /**
      * Instantiates a new {@link CertificateUsage}.
      *
-     * @param name The name to set into the {@link CertificateUsage}
+     * @param name
+     *         The name to set into the {@link CertificateUsage}
      * @return The newly instantiated {@link CertificateUsage}
      * @since 1.0.0
      */
@@ -34,9 +35,12 @@ public interface CertificateFactory extends KapuaEntityFactory<Certificate, Cert
     /**
      * Instantiates a new {@link KeyUsageSetting}.
      *
-     * @param usage        The {@link KeyUsage} to set into the {@link KeyUsageSetting}.
-     * @param allowed      The allowed to set into the {@link KeyUsageSetting}.
-     * @param kapuaAllowed The kapua allowed to set into the {@link KeyUsageSetting}.
+     * @param usage
+     *         The {@link KeyUsage} to set into the {@link KeyUsageSetting}.
+     * @param allowed
+     *         The allowed to set into the {@link KeyUsageSetting}.
+     * @param kapuaAllowed
+     *         The kapua allowed to set into the {@link KeyUsageSetting}.
      * @return The newly instantiated {@link KeyUsageSetting}
      * @since 1.0.0
      */

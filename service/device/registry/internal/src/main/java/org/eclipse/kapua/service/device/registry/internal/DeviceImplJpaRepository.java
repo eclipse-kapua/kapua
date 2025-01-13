@@ -12,7 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.registry.internal;
 
-import com.google.common.collect.Lists;
+import java.util.Optional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.jpa.JpaAwareTxContext;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
@@ -24,15 +28,14 @@ import org.eclipse.kapua.service.device.registry.DeviceListResult;
 import org.eclipse.kapua.service.device.registry.DeviceRepository;
 import org.eclipse.kapua.storage.TxContext;
 
-import javax.persistence.EntityManager;
-import javax.persistence.LockModeType;
-import java.util.Optional;
+import com.google.common.collect.Lists;
 
 public class DeviceImplJpaRepository
         extends KapuaUpdatableEntityJpaRepository<Device, DeviceImpl, DeviceListResult>
         implements DeviceRepository {
+
     public DeviceImplJpaRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig) {
-        super(DeviceImpl.class, Device.TYPE, () -> new DeviceListResultImpl(), jpaRepoConfig);
+        super(DeviceImpl.class, Device.TYPE, () -> new DeviceListResult(), jpaRepoConfig);
     }
 
     @Override

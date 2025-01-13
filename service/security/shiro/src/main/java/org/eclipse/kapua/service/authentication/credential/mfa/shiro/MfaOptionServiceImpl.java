@@ -178,9 +178,8 @@ public class MfaOptionServiceImpl implements MfaOptionService {
     }
 
     /**
-     * Generates all the scratch codes.
-     * The number of generated scratch codes is decided through the {@link org.eclipse.kapua.service.authentication.mfa.MfaAuthenticator} service.
-     * The scratch code provided within the scratchCodeCreator parameter is ignored.
+     * Generates all the scratch codes. The number of generated scratch codes is decided through the {@link org.eclipse.kapua.service.authentication.mfa.MfaAuthenticator} service. The scratch code
+     * provided within the scratchCodeCreator parameter is ignored.
      *
      * @return
      * @throws KapuaException
@@ -221,7 +220,7 @@ public class MfaOptionServiceImpl implements MfaOptionService {
     }
 
     private MfaOption clearSecuritySensibleFields(MfaOption mfaOption) {
-// Set the mfa secret key to null before returning the mfaOption, because they should never be seen again
+        // Set the mfa secret key to null before returning the mfaOption, because they should never be seen again
         mfaOption.setMfaSecretKey(null);
         mfaOption.setTrustKey(null);
         mfaOption.setScratchCodes(null);
@@ -238,7 +237,7 @@ public class MfaOptionServiceImpl implements MfaOptionService {
 
         final MfaOptionListResult res = txManager.execute(tx -> mfaOptionRepository.query(tx, query));
         if (res.isEmpty() == false) {
-            final MfaOptionListResultImpl cleanedRes = new MfaOptionListResultImpl();
+            final MfaOptionListResult cleanedRes = new MfaOptionListResult();
             cleanedRes.setLimitExceeded(res.isLimitExceeded());
             cleanedRes.setTotalCount(res.getTotalCount());
             cleanedRes.addItems(res.getItems()
@@ -471,7 +470,6 @@ public class MfaOptionServiceImpl implements MfaOptionService {
         return mfaOptionRepository.update(tx, mfaOption);
     }
 
-
     /**
      * Generate the trust key string.
      *
@@ -483,13 +481,17 @@ public class MfaOptionServiceImpl implements MfaOptionService {
     }
 
     /**
-     * Produce a QR code in base64 format for the authenticator app.
-     * This QR code generator follows the spec detailed here for the URI format: https://github.com/google/google-authenticator/wiki/Key-Uri-Format
+     * Produce a QR code in base64 format for the authenticator app. This QR code generator follows the spec detailed here for the URI format:
+     * https://github.com/google/google-authenticator/wiki/Key-Uri-Format
      *
-     * @param organizationName the organization name to be used as issuer in the QR code
-     * @param accountName      the account name of the account to which the user belongs
-     * @param username         the username
-     * @param key              the Mfa secret key in plain text
+     * @param organizationName
+     *         the organization name to be used as issuer in the QR code
+     * @param accountName
+     *         the account name of the account to which the user belongs
+     * @param username
+     *         the username
+     * @param key
+     *         the Mfa secret key in plain text
      * @return the QR code image in base64 format
      * @since 1.3.0
      */

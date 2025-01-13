@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.scheduler.trigger.definition;
 
-import org.eclipse.kapua.locator.KapuaLocator;
-
 import javax.xml.bind.annotation.XmlRegistry;
+
+import org.eclipse.kapua.locator.KapuaLocator;
 
 /**
  * {@link TriggerDefinition} xml factory class
@@ -32,10 +32,6 @@ public class TriggerDefinitionXmlRegistry {
 
     public TriggerDefinitionCreator newCreator() {
         return triggerDefinitionFactory.newCreator(null);
-    }
-
-    public TriggerDefinitionListResult newListResult() {
-        return triggerDefinitionFactory.newListResult();
     }
 
     public TriggerDefinitionQuery newQuery() {

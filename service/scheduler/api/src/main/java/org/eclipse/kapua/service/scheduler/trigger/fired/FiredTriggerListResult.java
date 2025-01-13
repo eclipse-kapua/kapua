@@ -12,12 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.scheduler.trigger.fired;
 
-import org.eclipse.kapua.model.query.KapuaListResult;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.model.query.KapuaListResult;
 
 /**
  * {@link FiredTrigger} {@link KapuaListResult} definition.
@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "firedTriggerListResult")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = FiredTriggerXmlRegistry.class, factoryMethod = "newListResult")
-public interface FiredTriggerListResult extends KapuaListResult<FiredTrigger> {
+@XmlType
+public class FiredTriggerListResult extends KapuaListResult<FiredTrigger> {
 
 }

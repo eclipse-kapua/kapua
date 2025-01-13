@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.registry.connection;
 
-import org.eclipse.kapua.locator.KapuaLocator;
-
 import javax.xml.bind.annotation.XmlRegistry;
+
+import org.eclipse.kapua.locator.KapuaLocator;
 
 /**
  * {@link DeviceConnection} xml factory class
@@ -33,15 +33,6 @@ public class DeviceConnectionXmlRegistry {
      */
     public DeviceConnection newDeviceConnection() {
         return deviceConnectionFactory.newEntity(null);
-    }
-
-    /**
-     * Creates a new device list result
-     *
-     * @return
-     */
-    public DeviceConnectionListResult newDeviceConnectionListResult() {
-        return deviceConnectionFactory.newListResult();
     }
 
     public DeviceConnectionQuery newQuery() {

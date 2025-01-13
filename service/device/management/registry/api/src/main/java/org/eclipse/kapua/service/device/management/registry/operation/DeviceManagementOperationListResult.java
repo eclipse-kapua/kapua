@@ -12,12 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.registry.operation;
 
-import org.eclipse.kapua.model.query.KapuaListResult;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.model.query.KapuaListResult;
 
 /**
  * {@link DeviceManagementOperationListResult} definition.
@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "deviceManagementOperationListResult")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DeviceManagementOperationXmlRegistry.class, factoryMethod = "newDeviceManagementOperationListResult")
-public interface DeviceManagementOperationListResult extends KapuaListResult<DeviceManagementOperation> {
+@XmlType
+public class DeviceManagementOperationListResult extends KapuaListResult<DeviceManagementOperation> {
 
 }

@@ -27,8 +27,9 @@ import org.eclipse.kapua.storage.TxContext;
 public class MfaOptionImplJpaRepository
         extends KapuaUpdatableEntityJpaRepository<MfaOption, MfaOptionImpl, MfaOptionListResult>
         implements MfaOptionRepository {
+
     public MfaOptionImplJpaRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig) {
-        super(MfaOptionImpl.class, MfaOption.TYPE, MfaOptionListResultImpl::new, jpaRepoConfig);
+        super(MfaOptionImpl.class, MfaOption.TYPE, MfaOptionListResult::new, jpaRepoConfig);
     }
 
     @Override

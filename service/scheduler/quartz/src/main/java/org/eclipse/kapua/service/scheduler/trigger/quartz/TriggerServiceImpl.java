@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 
@@ -122,7 +123,8 @@ public class TriggerServiceImpl implements TriggerService {
             TriggerDefinition triggerDefinition = triggerDefinitionRepository.find(tx, KapuaId.ANY, triggerCreator.getTriggerDefinitionId())
                     .orElseThrow(() -> new KapuaEntityNotFoundException(TriggerDefinition.TYPE, triggerCreator.getTriggerDefinitionId()));
 
-            final Map<String, TriggerProperty> triggerDefinitionPropertiesByName = triggerDefinition.getTriggerProperties().stream().collect(Collectors.toMap(jsdp -> jsdp.getName(), Function.identity()));
+            final Map<String, TriggerProperty> triggerDefinitionPropertiesByName = triggerDefinition.getTriggerProperties().stream()
+                    .collect(Collectors.toMap(jsdp -> jsdp.getName(), Function.identity()));
             for (TriggerProperty jsp : triggerCreator.getTriggerProperties()) {
                 final TriggerProperty jsdp = triggerDefinitionPropertiesByName.get(jsp.getName());
                 if (jsdp == null) {
@@ -312,7 +314,7 @@ public class TriggerServiceImpl implements TriggerService {
         return txManager.execute(tx -> {
             // Do query
             TriggerListResult triggers = triggerRepository.query(tx, query);
-            final TriggerListResult res = triggerFactory.newListResult();
+            final TriggerListResult res = new TriggerListResult();
             for (Trigger trigger : triggers.getItems()) {
                 res.addItem(adaptTrigger(tx, trigger));
             }
@@ -349,7 +351,8 @@ public class TriggerServiceImpl implements TriggerService {
      * Gets the {@link TriggerDefinition} named 'Interval Job'
      *
      * @return he {@link TriggerDefinition} named 'Interval Job'
-     * @throws KapuaException In case is not found.
+     * @throws KapuaException
+     *         In case is not found.
      * @since 1.1.0
      */
     private synchronized TriggerDefinition getIntervalJobTriggerDefinition() throws KapuaException {
@@ -364,7 +367,8 @@ public class TriggerServiceImpl implements TriggerService {
      * Gets the {@link TriggerDefinition} named 'Cron Job'
      *
      * @return he {@link TriggerDefinition} named 'Cron Job'
-     * @throws KapuaException In case is not found.
+     * @throws KapuaException
+     *         In case is not found.
      * @since 1.1.0
      */
     private synchronized TriggerDefinition getCronJobTriggerDefinition() throws KapuaException {
@@ -378,9 +382,11 @@ public class TriggerServiceImpl implements TriggerService {
     /**
      * Gets the {@link TriggerDefinition} by the given name.
      *
-     * @param triggerDefinitionName The {@link TriggerDefinition#getName()} to look for.
+     * @param triggerDefinitionName
+     *         The {@link TriggerDefinition#getName()} to look for.
      * @return The {@link TriggerDefinition} by the given name.
-     * @throws KapuaException In case nothing is found.
+     * @throws KapuaException
+     *         In case nothing is found.
      * @since 1.1.0
      */
     private synchronized TriggerDefinition getTriggerDefinition(String triggerDefinitionName) throws KapuaException {
@@ -390,11 +396,12 @@ public class TriggerServiceImpl implements TriggerService {
     }
 
     /**
-     * Adapts {@link TriggerCreator#getRetryInterval()} and {@link TriggerCreator#getCronScheduling()}  to the new model
-     * which make use of {@link TriggerDefinition}s
+     * Adapts {@link TriggerCreator#getRetryInterval()} and {@link TriggerCreator#getCronScheduling()}  to the new model which make use of {@link TriggerDefinition}s
      *
-     * @param triggerCreator The {@link TriggerCreator} to adapt.
-     * @throws KapuaException In case that {@link TriggerDefinition} is not found.
+     * @param triggerCreator
+     *         The {@link TriggerCreator} to adapt.
+     * @throws KapuaException
+     *         In case that {@link TriggerDefinition} is not found.
      * @since 1.1.0
      */
     private void adaptTriggerCreator(TriggerCreator triggerCreator) throws KapuaException {
@@ -408,12 +415,13 @@ public class TriggerServiceImpl implements TriggerService {
     }
 
     /**
-     * Adapts {@link Trigger#getRetryInterval()} and {@link Trigger#getCronScheduling()} to the new model
-     * which make use of {@link TriggerDefinition}s
+     * Adapts {@link Trigger#getRetryInterval()} and {@link Trigger#getCronScheduling()} to the new model which make use of {@link TriggerDefinition}s
      *
-     * @param trigger The {@link Trigger} to adapt.
+     * @param trigger
+     *         The {@link Trigger} to adapt.
      * @return
-     * @throws KapuaException In case that {@link TriggerDefinition} is not found.
+     * @throws KapuaException
+     *         In case that {@link TriggerDefinition} is not found.
      * @since 1.1.0
      */
     private @NotNull Trigger adaptTrigger(TxContext tx, @NotNull Trigger trigger) throws KapuaException {

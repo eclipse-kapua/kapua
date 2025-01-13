@@ -537,7 +537,7 @@ public abstract class AbstractKapuaConfigurableService extends AbstractKapuaServ
         );
 
         ServiceConfigListResult result = entityManagerSession.doAction(EntityManagerContainer.<ServiceConfigListResult>create()
-                .onResultHandler(em -> ServiceDAO.query(em, ServiceConfig.class, ServiceConfigImpl.class, new ServiceConfigListResultImpl(), query))
+                .onResultHandler(em -> ServiceDAO.query(em, ServiceConfig.class, ServiceConfigImpl.class, new ServiceConfigListResult(), query))
                 .onBeforeHandler(() -> (ServiceConfigListResult) PRIVATE_ENTITY_CACHE.getList(scopeId, pid))
                 .onAfterHandler(entity -> PRIVATE_ENTITY_CACHE.putList(scopeId, pid, entity)));
 
@@ -592,7 +592,7 @@ public abstract class AbstractKapuaConfigurableService extends AbstractKapuaServ
         );
 
         ServiceConfigListResult result = entityManagerSession.doAction(EntityManagerContainer.<ServiceConfigListResult>create().
-                onResultHandler(em -> ServiceDAO.query(em, ServiceConfig.class, ServiceConfigImpl.class, new ServiceConfigListResultImpl(), query))
+                onResultHandler(em -> ServiceDAO.query(em, ServiceConfig.class, ServiceConfigImpl.class, new ServiceConfigListResult(), query))
         );
 
         Properties props = toProperties(values);

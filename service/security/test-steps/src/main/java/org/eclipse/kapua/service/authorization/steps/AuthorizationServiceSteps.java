@@ -12,14 +12,15 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.steps;
 
-import com.google.inject.Singleton;
-import io.cucumber.java.After;
-import io.cucumber.java.Before;
-import io.cucumber.java.Scenario;
-import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.locator.KapuaLocator;
@@ -88,13 +89,15 @@ import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserService;
 import org.junit.Assert;
 
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.google.inject.Singleton;
+
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 
 // Implementation of Gherkin steps used to test miscellaneous Shiro
 // authorization functionality.
@@ -524,7 +527,6 @@ public class AuthorizationServiceSteps extends TestBase {
         Assert.assertNotNull(roleFactory.newEntity(SYS_SCOPE_ID));
         Assert.assertNotNull(roleFactory.newCreator(SYS_SCOPE_ID));
         Assert.assertNotNull(roleFactory.newQuery(SYS_SCOPE_ID));
-        Assert.assertNotNull(roleFactory.newListResult());
         Assert.assertNotNull(roleFactory.newRolePermission());
     }
 
@@ -533,7 +535,6 @@ public class AuthorizationServiceSteps extends TestBase {
         Assert.assertNotNull(rolePermissionFactory.newEntity(SYS_SCOPE_ID));
         Assert.assertNotNull(rolePermissionFactory.newCreator(SYS_SCOPE_ID));
         Assert.assertNotNull(rolePermissionFactory.newQuery(SYS_SCOPE_ID));
-        Assert.assertNotNull(rolePermissionFactory.newListResult());
     }
 
     @Then("The role comparator does its job")
@@ -1026,21 +1027,21 @@ public class AuthorizationServiceSteps extends TestBase {
         Domain curDomain = (Domain) stepData.get(DOMAIN);
         for (String perm : tmpList) {
             switch (perm.trim()) {
-                case "read":
-                    permissions.add(permissionFactory.newPermission(curDomain.getDomain().getName(), Actions.read, currId));
-                    break;
-                case "write":
-                    permissions.add(permissionFactory.newPermission(curDomain.getDomain().getName(), Actions.write, currId));
-                    break;
-                case "delete":
-                    permissions.add(permissionFactory.newPermission(curDomain.getDomain().getName(), Actions.delete, currId));
-                    break;
-                case "connect":
-                    permissions.add(permissionFactory.newPermission(curDomain.getDomain().getName(), Actions.connect, currId));
-                    break;
-                case "execute":
-                    permissions.add(permissionFactory.newPermission(curDomain.getDomain().getName(), Actions.execute, currId));
-                    break;
+            case "read":
+                permissions.add(permissionFactory.newPermission(curDomain.getDomain().getName(), Actions.read, currId));
+                break;
+            case "write":
+                permissions.add(permissionFactory.newPermission(curDomain.getDomain().getName(), Actions.write, currId));
+                break;
+            case "delete":
+                permissions.add(permissionFactory.newPermission(curDomain.getDomain().getName(), Actions.delete, currId));
+                break;
+            case "connect":
+                permissions.add(permissionFactory.newPermission(curDomain.getDomain().getName(), Actions.connect, currId));
+                break;
+            case "execute":
+                permissions.add(permissionFactory.newPermission(curDomain.getDomain().getName(), Actions.execute, currId));
+                break;
             }
         }
         // Make sure that there is at least one valid item
@@ -1324,7 +1325,6 @@ public class AuthorizationServiceSteps extends TestBase {
             Assert.assertNotNull(accessInfoFactory.newCreator(getKapuaId()));
             Assert.assertNotNull(accessInfoFactory.newEntity(null));
             Assert.assertNotNull(accessInfoFactory.newQuery(getKapuaId()));
-            Assert.assertNotNull(accessInfoFactory.newListResult());
             AccessInfoCreator tmpCreator = accessInfoFactory.newCreator(getKapuaId());
             Assert.assertNotNull(tmpCreator);
             AccessInfo tmpAccInfo = accessInfoFactory.newEntity(getKapuaId());
@@ -1342,7 +1342,6 @@ public class AuthorizationServiceSteps extends TestBase {
         Assert.assertNotNull(accessPermissionFactory.newEntity(null));
         Assert.assertNotNull(accessPermissionFactory.newEntity(getKapuaId()));
         Assert.assertNotNull(accessPermissionFactory.newQuery(getKapuaId()));
-        Assert.assertNotNull(accessPermissionFactory.newListResult());
         KapuaId tmpId = getKapuaId();
         AccessPermissionCreator tmpCreator = accessPermissionFactory.newCreator(tmpId);
         Assert.assertNotNull(tmpCreator);
@@ -1369,7 +1368,6 @@ public class AuthorizationServiceSteps extends TestBase {
             Assert.assertNotNull(accessRoleFactory.newCreator(getKapuaId()));
             Assert.assertNotNull(accessRoleFactory.newEntity(getKapuaId()));
             Assert.assertNotNull(accessRoleFactory.newQuery(getKapuaId()));
-            Assert.assertNotNull(accessRoleFactory.newListResult());
             KapuaId tmpId = getKapuaId();
             AccessRoleCreator tmpCreator = accessRoleFactory.newCreator(tmpId);
             Assert.assertNotNull(tmpCreator);

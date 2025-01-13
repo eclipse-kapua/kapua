@@ -20,12 +20,13 @@ import org.eclipse.kapua.model.KapuaEntityFactory;
  * @see org.eclipse.kapua.model.KapuaEntityFactory
  * @since 1.0.0
  */
-public interface DomainFactory extends KapuaEntityFactory<Domain, DomainCreator, DomainQuery, DomainListResult> {
+public interface DomainFactory extends KapuaEntityFactory<Domain, DomainCreator, DomainQuery> {
 
     /**
      * Instantiates a new {@link DomainCreator}
      *
-     * @param name The name to set into the {@link Domain}.
+     * @param name
+     *         The name to set into the {@link Domain}.
      * @return The newly instantiated {@link Domain}.
      * @since 1.0.0
      */

@@ -15,7 +15,6 @@ package org.eclipse.kapua.service.authentication.credential.mfa;
 import org.eclipse.kapua.model.KapuaEntityFactory;
 import org.eclipse.kapua.model.KapuaObjectFactory;
 import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.query.KapuaListResult;
 
 /**
  * {@link ScratchCode} {@link KapuaEntityFactory} definition.
@@ -27,26 +26,23 @@ public interface ScratchCodeFactory extends KapuaObjectFactory {
 
     /**
      * Instantiates a new {@link ScratchCode}.
-     * @param scopeId The {@link ScratchCode#getScopeId()}
+     *
+     * @param scopeId
+     *         The {@link ScratchCode#getScopeId()}
      * @return The newly instantiated {@link ScratchCode}
      * @since 1.3.0
      */
     ScratchCode newEntity(KapuaId scopeId);
 
     /**
-     * Instantiates a new {@link KapuaListResult}.
-     *
-     * @return The newly instantiated {@link KapuaListResult}
-     * @since 1.0.0
-     */
-    ScratchCodeListResult newListResult();
-
-    /**
      * Instantiates a new {@link ScratchCode}.
      *
-     * @param scopeId     The {@link ScratchCode#getScopeId()}
-     * @param mfaOptionId The {@link MfaOption#getId()}
-     * @param code        The {@link ScratchCode#getCode()}.
+     * @param scopeId
+     *         The {@link ScratchCode#getScopeId()}
+     * @param mfaOptionId
+     *         The {@link MfaOption#getId()}
+     * @param code
+     *         The {@link ScratchCode#getCode()}.
      * @return The newly instantiated {@link ScratchCode}
      * @since 1.3.0
      */

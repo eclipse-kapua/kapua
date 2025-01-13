@@ -26,7 +26,7 @@ import org.eclipse.kapua.model.query.KapuaListResult;
  */
 @XmlRootElement(name = "queuedJobListResult")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = QueuedJobExecutionXmlRegistry.class, factoryMethod = "newQueuedJobExecutionListResult")
-public interface QueuedJobExecutionListResult extends KapuaListResult<QueuedJobExecution> {
+@XmlType
+public class QueuedJobExecutionListResult extends KapuaListResult<QueuedJobExecution> {
 
 }

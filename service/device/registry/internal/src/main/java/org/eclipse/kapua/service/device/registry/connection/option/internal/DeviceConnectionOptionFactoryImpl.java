@@ -12,15 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.registry.connection.option.internal;
 
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.device.registry.connection.option.DeviceConnectionOption;
 import org.eclipse.kapua.service.device.registry.connection.option.DeviceConnectionOptionCreator;
 import org.eclipse.kapua.service.device.registry.connection.option.DeviceConnectionOptionFactory;
-import org.eclipse.kapua.service.device.registry.connection.option.DeviceConnectionOptionListResult;
 import org.eclipse.kapua.service.device.registry.connection.option.DeviceConnectionOptionQuery;
-
-import javax.inject.Singleton;
 
 /**
  * {@link DeviceConnectionOptionFactory} implementation.
@@ -43,11 +42,6 @@ public class DeviceConnectionOptionFactoryImpl implements DeviceConnectionOption
     @Override
     public DeviceConnectionOption newEntity(KapuaId scopeId) {
         return new DeviceConnectionOptionImpl(scopeId);
-    }
-
-    @Override
-    public DeviceConnectionOptionListResult newListResult() {
-        return new DeviceConnectionOptionListResultImpl();
     }
 
     @Override

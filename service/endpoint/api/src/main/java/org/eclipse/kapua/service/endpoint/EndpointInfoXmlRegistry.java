@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.endpoint;
 
-import org.eclipse.kapua.locator.KapuaLocator;
-
 import javax.xml.bind.annotation.XmlRegistry;
+
+import org.eclipse.kapua.locator.KapuaLocator;
 
 @XmlRegistry
 public class EndpointInfoXmlRegistry {
@@ -37,15 +37,6 @@ public class EndpointInfoXmlRegistry {
      */
     public EndpointInfoCreator newCreator() {
         return endpointInfoFactory.newCreator(null);
-    }
-
-    /**
-     * Creates a new {@link EndpointInfoListResult}
-     *
-     * @return
-     */
-    public EndpointInfoListResult newListResult() {
-        return endpointInfoFactory.newListResult();
     }
 
     /**

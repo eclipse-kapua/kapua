@@ -23,14 +23,6 @@ import org.eclipse.kapua.model.KapuaObjectFactory;
 public interface DeviceAssetFactory extends KapuaObjectFactory {
 
     /**
-     * Instantiates a new {@link DeviceAssets} instance.
-     *
-     * @return The newly instantiated {@link DeviceAssets}.
-     * @since 1.0.0
-     */
-    DeviceAssets newAssetListResult();
-
-    /**
      * Instantiates a new {@link DeviceAsset} instance.
      *
      * @return The newly instantiated {@link DeviceAsset}.

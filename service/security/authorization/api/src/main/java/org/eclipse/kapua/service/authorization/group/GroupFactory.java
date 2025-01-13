@@ -21,13 +21,15 @@ import org.eclipse.kapua.model.id.KapuaId;
  * @see org.eclipse.kapua.model.KapuaEntityFactory
  * @since 1.0.0
  */
-public interface GroupFactory extends KapuaEntityFactory<Group, GroupCreator, GroupQuery, GroupListResult> {
+public interface GroupFactory extends KapuaEntityFactory<Group, GroupCreator, GroupQuery> {
 
     /**
      * Instantiates a new {@link GroupCreator}.
      *
-     * @param scopeId The scope {@link KapuaId} to set into the {@link GroupCreator}
-     * @param name    The name to set into the {@link GroupCreator}
+     * @param scopeId
+     *         The scope {@link KapuaId} to set into the {@link GroupCreator}
+     * @param name
+     *         The name to set into the {@link GroupCreator}
      * @return The newly instantatied {@link GroupCreator}
      * @since 1.0.0
      */

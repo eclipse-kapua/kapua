@@ -12,12 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.integration.misc;
 
+import java.util.Date;
+
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.authorization.permission.shiro.PermissionImpl;
 import org.eclipse.kapua.service.authorization.role.RolePermission;
 import org.eclipse.kapua.service.authorization.role.RolePermissionCreator;
-import org.eclipse.kapua.service.authorization.role.RolePermissionListResult;
 import org.eclipse.kapua.service.authorization.role.RolePermissionQuery;
 import org.eclipse.kapua.service.authorization.role.shiro.RolePermissionFactoryImpl;
 import org.junit.Assert;
@@ -25,9 +26,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
-
-import java.util.Date;
-
 
 @Category(JUnitTests.class)
 public class RolePermissionFactoryTest {
@@ -89,12 +87,6 @@ public class RolePermissionFactoryTest {
     public void newQueryNullTest() {
         Assert.assertTrue("True expected.", rolePermissionFactoryImpl.newQuery(null) instanceof RolePermissionQuery);
         Assert.assertNull("Null expected.", rolePermissionFactoryImpl.newQuery(null).getScopeId());
-    }
-
-    @Test
-    public void newListResultTest() {
-        Assert.assertTrue("True expected.", rolePermissionFactoryImpl.newListResult() instanceof RolePermissionListResult);
-        Assert.assertTrue("True expected.", rolePermissionFactoryImpl.newListResult().isEmpty());
     }
 
     @Test

@@ -14,16 +14,9 @@ package org.eclipse.kapua.service.job.steps;
 
 import java.util.Calendar;
 import java.util.Date;
+
 import javax.inject.Inject;
 
-import com.google.inject.Singleton;
-import io.cucumber.java.After;
-import io.cucumber.java.Before;
-import io.cucumber.java.Scenario;
-import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
@@ -47,6 +40,16 @@ import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.inject.Singleton;
+
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 
 @Singleton
 public class JobExecutionServiceSteps extends JobServiceTestBase {
@@ -163,7 +166,8 @@ public class JobExecutionServiceSteps extends JobServiceTestBase {
     /**
      * Checks that the last {@link Job} in context has the given number of {@link JobExecution}s
      *
-     * @param expectedNumberOfExecution Expected number of {@link JobExecution}s
+     * @param expectedNumberOfExecution
+     *         Expected number of {@link JobExecution}s
      * @throws Exception
      * @since 2.1.0
      */
@@ -177,8 +181,10 @@ public class JobExecutionServiceSteps extends JobServiceTestBase {
     /**
      * Looks for a {@link Job} by its {@link Job#getName()} and checks that has the given number of {@link JobExecution}s
      *
-     * @param jobName The {@link Job#getName()} to look for
-     * @param expectedNumberOfExecution Expected number of {@link JobExecution}s
+     * @param jobName
+     *         The {@link Job#getName()} to look for
+     * @param expectedNumberOfExecution
+     *         Expected number of {@link JobExecution}s
      * @throws Exception
      * @since 2.1.0
      */
@@ -192,8 +198,10 @@ public class JobExecutionServiceSteps extends JobServiceTestBase {
     /**
      * Checks that the given {@link Job} has the given number of {@link JobExecution}s
      *
-     * @param job The {@link Job} to check
-     * @param expectedNumberOfExecution Expected number of {@link JobExecution}s
+     * @param job
+     *         The {@link Job} to check
+     * @param expectedNumberOfExecution
+     *         Expected number of {@link JobExecution}s
      * @throws Exception
      * @since 2.1.0
      */
@@ -227,20 +235,17 @@ public class JobExecutionServiceSteps extends JobServiceTestBase {
         }
     }
 
-
     @Then("I query for the execution items for the current job starting from date in the future")
     public void queryExecutionsForJobWithStartDateInFuture() throws Exception {
         final Date startDate = createDateInFuture();
         queryExecutionsForJobWithStartDate(startDate);
     }
 
-
     @Then("I query for the execution items for the current job starting from date in the past")
     public void queryExecutionsForJobWithStartDateInPast() throws Exception {
         final Date startDate = createDateInPast();
         queryExecutionsForJobWithStartDate(startDate);
     }
-
 
     private void queryExecutionsForJobWithStartDate(Date startDate) throws Exception {
         final Job job = (Job) stepData.get("Job");
@@ -259,13 +264,11 @@ public class JobExecutionServiceSteps extends JobServiceTestBase {
         }
     }
 
-
     private Date createDateInFuture() {
         final Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, 7);
         return calendar.getTime();
     }
-
 
     private Date createDateInPast() {
         final Calendar calendar = Calendar.getInstance();
@@ -467,7 +470,6 @@ public class JobExecutionServiceSteps extends JobServiceTestBase {
     public void testTheJobExecutionFactory() {
         Assert.assertNotNull(jobExecutionFactory.newCreator(SYS_SCOPE_ID));
         Assert.assertNotNull(jobExecutionFactory.newEntity(SYS_SCOPE_ID));
-        Assert.assertNotNull(jobExecutionFactory.newListResult());
         Assert.assertNotNull(jobExecutionFactory.newQuery(SYS_SCOPE_ID));
     }
     // Private methods

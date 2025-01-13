@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.access;
 
-import org.eclipse.kapua.locator.KapuaLocator;
-
 import javax.xml.bind.annotation.XmlRegistry;
+
+import org.eclipse.kapua.locator.KapuaLocator;
 
 @XmlRegistry
 public class AccessPermissionXmlRegistry {
@@ -37,15 +37,6 @@ public class AccessPermissionXmlRegistry {
      */
     public AccessPermissionCreator newCreator() {
         return accessPermissionFactory.newCreator(null);
-    }
-
-    /**
-     * Creates a new {@link AccessPermission} instance
-     *
-     * @return
-     */
-    public AccessPermissionListResult newAccessPermissionListResult() {
-        return accessPermissionFactory.newListResult();
     }
 
     public AccessPermissionQuery newQuery() {

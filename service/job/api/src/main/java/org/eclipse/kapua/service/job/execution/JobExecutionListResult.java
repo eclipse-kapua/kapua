@@ -23,11 +23,10 @@ import org.eclipse.kapua.model.query.KapuaListResult;
  * {@link JobExecutionListResult} definition.
  *
  * @since 1.0.0
- *
  */
 @XmlRootElement(name = "jobExecutionListResult")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = JobExecutionXmlRegistry.class, factoryMethod = "newJobExecutionListResult")
-public interface JobExecutionListResult extends KapuaListResult<JobExecution> {
+@XmlType
+public class JobExecutionListResult extends KapuaListResult<JobExecution> {
 
 }

@@ -12,6 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.job.servlet;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaIllegalAccessException;
 import org.eclipse.kapua.KapuaUnauthenticatedException;
@@ -21,16 +28,11 @@ import org.eclipse.kapua.model.query.KapuaListResult;
 import org.eclipse.kapua.service.job.targets.JobTarget;
 import org.eclipse.kapua.service.job.targets.JobTargetAttributes;
 import org.eclipse.kapua.service.job.targets.JobTargetFactory;
+import org.eclipse.kapua.service.job.targets.JobTargetListResult;
 import org.eclipse.kapua.service.job.targets.JobTargetQuery;
 import org.eclipse.kapua.service.job.targets.JobTargetService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 public class JobTargetExporterServlet extends HttpServlet {
 
@@ -87,7 +89,7 @@ public class JobTargetExporterServlet extends HttpServlet {
             // paginate through the matching message
             jobTargetQuery.setLimit(250);
 
-            KapuaListResult<JobTarget> totalJobTargets = jobTargetFactory.newListResult();
+            KapuaListResult<JobTarget> totalJobTargets = new JobTargetListResult();
             KapuaListResult<JobTarget> results;
             do {
                 jobTargetQuery.setOffset(offset);

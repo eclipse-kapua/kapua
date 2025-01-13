@@ -12,6 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.certificate.info.internal;
 
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.model.id.KapuaId;
@@ -25,10 +30,6 @@ import org.eclipse.kapua.service.certificate.info.CertificateInfoListResult;
 import org.eclipse.kapua.service.certificate.info.CertificateInfoQuery;
 import org.eclipse.kapua.service.certificate.info.CertificateInfoService;
 import org.eclipse.kapua.service.certificate.internal.CertificateQueryImpl;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.List;
 
 @Singleton
 public class CertificateInfoServiceImpl implements CertificateInfoService {
@@ -56,7 +57,7 @@ public class CertificateInfoServiceImpl implements CertificateInfoService {
 
         CertificateQuery certificateQuery = new CertificateQueryImpl(query);
 
-        CertificateInfoListResult publicCertificates = new CertificateInfoListResultImpl();
+        CertificateInfoListResult publicCertificates = new CertificateInfoListResult();
         publicCertificates.addItem(certificateService.query(certificateQuery).getFirstItem());
 
         return publicCertificates;

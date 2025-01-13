@@ -12,10 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.registry.event;
 
+import java.util.Date;
+
 import org.eclipse.kapua.model.KapuaEntityFactory;
 import org.eclipse.kapua.model.id.KapuaId;
-
-import java.util.Date;
 
 /**
  * {@link DeviceEventFactory} definition.
@@ -23,15 +23,19 @@ import java.util.Date;
  * @see org.eclipse.kapua.model.KapuaEntityFactory
  * @since 1.0.0
  */
-public interface DeviceEventFactory extends KapuaEntityFactory<DeviceEvent, DeviceEventCreator, DeviceEventQuery, DeviceEventListResult> {
+public interface DeviceEventFactory extends KapuaEntityFactory<DeviceEvent, DeviceEventCreator, DeviceEventQuery> {
 
     /**
      * Instantiates a new {@link DeviceEventCreator}
      *
-     * @param scopeId    The scope {@link KapuaId} to be set in the {@link DeviceEventCreator}
-     * @param deviceId   The {@link org.eclipse.kapua.service.device.registry.Device} {@link KapuaId} to be set in the {@link DeviceEventCreator}
-     * @param receivedOn The received on {@link KapuaId} to be set in the {@link DeviceEventCreator}
-     * @param resource   The resource {@link KapuaId} to be set in the {@link DeviceEventCreator}
+     * @param scopeId
+     *         The scope {@link KapuaId} to be set in the {@link DeviceEventCreator}
+     * @param deviceId
+     *         The {@link org.eclipse.kapua.service.device.registry.Device} {@link KapuaId} to be set in the {@link DeviceEventCreator}
+     * @param receivedOn
+     *         The received on {@link KapuaId} to be set in the {@link DeviceEventCreator}
+     * @param resource
+     *         The resource {@link KapuaId} to be set in the {@link DeviceEventCreator}
      * @return The newly instantiated {@link DeviceEventCreator}
      * @since 1.0.0
      */

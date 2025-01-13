@@ -18,8 +18,9 @@ import org.eclipse.kapua.model.query.KapuaListResult;
  * Access token list result definition.
  *
  * @since 1.0
- *
  */
-public interface AccessTokenListResult extends KapuaListResult<AccessToken> {
+public class AccessTokenListResult extends KapuaListResult<AccessToken> {
+
+    private static final long serialVersionUID = -2596004122285166444L;
 
 }

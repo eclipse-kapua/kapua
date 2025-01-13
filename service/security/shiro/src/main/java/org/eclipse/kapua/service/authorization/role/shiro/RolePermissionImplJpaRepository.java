@@ -12,6 +12,15 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.role.shiro;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.jpa.JpaAwareTxContext;
 import org.eclipse.kapua.commons.jpa.KapuaEntityJpaRepository;
@@ -25,20 +34,12 @@ import org.eclipse.kapua.service.authorization.role.RolePermissionListResult;
 import org.eclipse.kapua.service.authorization.role.RolePermissionRepository;
 import org.eclipse.kapua.storage.TxContext;
 
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaDelete;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import java.util.List;
-import java.util.stream.Collectors;
-
 public class RolePermissionImplJpaRepository
         extends KapuaEntityJpaRepository<RolePermission, RolePermissionImpl, RolePermissionListResult>
         implements RolePermissionRepository {
 
     public RolePermissionImplJpaRepository(KapuaJpaRepositoryConfiguration configuration) {
-        super(RolePermissionImpl.class, RolePermission.TYPE, () -> new RolePermissionListResultImpl(), configuration);
+        super(RolePermissionImpl.class, RolePermission.TYPE, () -> new RolePermissionListResult(), configuration);
     }
 
     @Override
@@ -70,7 +71,7 @@ public class RolePermissionImplJpaRepository
             deleteQuery.where(deleteRoot.get(RolePermissionImpl_.id).in(resultList.stream().map(r -> r.getId()).map(KapuaEid::parseKapuaId).collect(Collectors.toList())));
             em.createQuery(deleteQuery).executeUpdate();
         }
-        final RolePermissionListResultImpl res = new RolePermissionListResultImpl();
+        final RolePermissionListResult res = new RolePermissionListResult();
         res.addItems(resultList);
         return res;
     }

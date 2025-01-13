@@ -12,6 +12,15 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.access.shiro;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.jpa.JpaAwareTxContext;
 import org.eclipse.kapua.commons.jpa.KapuaEntityJpaRepository;
@@ -27,20 +36,12 @@ import org.eclipse.kapua.service.authorization.access.AccessPermissionRepository
 import org.eclipse.kapua.service.authorization.permission.shiro.PermissionImpl_;
 import org.eclipse.kapua.storage.TxContext;
 
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaDelete;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import java.util.List;
-import java.util.stream.Collectors;
-
 public class AccessPermissionImplJpaRepository
         extends KapuaEntityJpaRepository<AccessPermission, AccessPermissionImpl, AccessPermissionListResult>
         implements AccessPermissionRepository {
 
     public AccessPermissionImplJpaRepository(KapuaJpaRepositoryConfiguration configuration) {
-        super(AccessPermissionImpl.class, AccessPermission.TYPE, () -> new AccessPermissionListResultImpl(), configuration);
+        super(AccessPermissionImpl.class, AccessPermission.TYPE, () -> new AccessPermissionListResult(), configuration);
     }
 
     @Override
@@ -72,7 +73,7 @@ public class AccessPermissionImplJpaRepository
             deleteQuery.where(deleteRoot.get(AccessPermissionImpl_.id).in(resultList.stream().map(r -> r.getId()).map(KapuaEid::parseKapuaId).collect(Collectors.toList())));
             em.createQuery(deleteQuery).executeUpdate();
         }
-        final AccessPermissionListResultImpl res = new AccessPermissionListResultImpl();
+        final AccessPermissionListResult res = new AccessPermissionListResult();
         res.addItems(resultList);
         return res;
     }

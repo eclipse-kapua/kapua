@@ -21,14 +21,17 @@ import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerProperty;
  * @see KapuaEntityFactory
  * @since 1.0.0
  */
-public interface TriggerFactory extends KapuaEntityFactory<Trigger, TriggerCreator, TriggerQuery, TriggerListResult> {
+public interface TriggerFactory extends KapuaEntityFactory<Trigger, TriggerCreator, TriggerQuery> {
 
     /**
      * Instantiates a new {@link TriggerProperty}
      *
-     * @param name  The name to set into the {@link TriggerProperty}.
-     * @param type  The type to set into the {@link TriggerProperty}.
-     * @param value The value to set into the {@link TriggerProperty}.
+     * @param name
+     *         The name to set into the {@link TriggerProperty}.
+     * @param type
+     *         The type to set into the {@link TriggerProperty}.
+     * @param value
+     *         The value to set into the {@link TriggerProperty}.
      * @return The newly instatiated {@link TriggerProperty}.
      * @since 1.0.0
      */

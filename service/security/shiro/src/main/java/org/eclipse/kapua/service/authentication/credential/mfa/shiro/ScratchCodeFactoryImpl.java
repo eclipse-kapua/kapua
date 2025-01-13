@@ -12,12 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.credential.mfa.shiro;
 
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authentication.credential.mfa.ScratchCode;
 import org.eclipse.kapua.service.authentication.credential.mfa.ScratchCodeFactory;
-import org.eclipse.kapua.service.authentication.credential.mfa.ScratchCodeListResult;
-
-import javax.inject.Singleton;
 
 /**
  * {@link ScratchCodeFactory} implementation.
@@ -28,11 +27,6 @@ public class ScratchCodeFactoryImpl implements ScratchCodeFactory {
     @Override
     public ScratchCode newEntity(KapuaId scopeId) {
         return new ScratchCodeImpl(scopeId);
-    }
-
-    @Override
-    public ScratchCodeListResult newListResult() {
-        return new ScratchCodeListResultImpl();
     }
 
     @Override

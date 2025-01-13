@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.registry.operation;
 
-import org.eclipse.kapua.locator.KapuaLocator;
-
 import javax.xml.bind.annotation.XmlRegistry;
+
+import org.eclipse.kapua.locator.KapuaLocator;
 
 /**
  * {@link DeviceManagementOperation} xml factory class
@@ -33,10 +33,6 @@ public class DeviceManagementOperationXmlRegistry {
 
     DeviceManagementOperationCreator newDeviceManagementOperationCreator() {
         return factory.newCreator(null);
-    }
-
-    DeviceManagementOperationListResult newDeviceManagementOperationListResult() {
-        return factory.newListResult();
     }
 
     DeviceManagementOperationQuery newQuery() {

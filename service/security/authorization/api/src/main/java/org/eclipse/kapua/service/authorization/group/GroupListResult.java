@@ -23,7 +23,9 @@ import org.eclipse.kapua.model.query.KapuaListResult;
  * @since 1.0.0
  */
 @XmlRootElement(name = "groups")
-@XmlType(factoryClass = GroupXmlRegistry.class, factoryMethod = "newGroupListResult")
-public interface GroupListResult extends KapuaListResult<Group> {
+@XmlType
+public class GroupListResult extends KapuaListResult<Group> {
+
+    private static final long serialVersionUID = 791258978210911362L;
 
 }

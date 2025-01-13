@@ -22,6 +22,8 @@ import org.eclipse.kapua.model.query.KapuaListResult;
  * @since 1.0.0
  */
 @XmlRootElement(name = "domains")
-public interface DomainListResult extends KapuaListResult<Domain> {
+public class DomainListResult extends KapuaListResult<Domain> {
+
+    private static final long serialVersionUID = -5086830452591857912L;
 
 }

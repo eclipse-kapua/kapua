@@ -21,9 +21,9 @@ import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordReposit
 public class EventStoreRecordImplJpaRepository
         extends KapuaUpdatableEntityJpaRepository<EventStoreRecord, EventStoreRecordImpl, EventStoreRecordListResult>
         implements EventStoreRecordRepository {
-    public EventStoreRecordImplJpaRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig) {
-        super(EventStoreRecordImpl.class, EventStoreRecord.TYPE, () -> new EventStoreRecordListResultImpl(), jpaRepoConfig);
-    }
 
+    public EventStoreRecordImplJpaRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig) {
+        super(EventStoreRecordImpl.class, EventStoreRecord.TYPE, () -> new EventStoreRecordListResult(), jpaRepoConfig);
+    }
 
 }

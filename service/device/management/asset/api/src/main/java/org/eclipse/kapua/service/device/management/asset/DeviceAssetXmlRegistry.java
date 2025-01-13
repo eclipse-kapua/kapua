@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.asset;
 
-import org.eclipse.kapua.locator.KapuaLocator;
-
 import javax.xml.bind.annotation.XmlRegistry;
+
+import org.eclipse.kapua.locator.KapuaLocator;
 
 /**
  * {@link DeviceAsset} XML factory class
@@ -25,16 +25,6 @@ import javax.xml.bind.annotation.XmlRegistry;
 public class DeviceAssetXmlRegistry {
 
     private final DeviceAssetFactory deviceAssetFactory = KapuaLocator.getInstance().getFactory(DeviceAssetFactory.class);
-
-    /**
-     * Instantiate a new {@link DeviceAssets}.
-     *
-     * @return The newly instantiate {@link DeviceAssets}.
-     * @since 1.0.0
-     */
-    public DeviceAssets newAssetListResult() {
-        return deviceAssetFactory.newAssetListResult();
-    }
 
     /**
      * Instantiate a new {@link DeviceAsset}.

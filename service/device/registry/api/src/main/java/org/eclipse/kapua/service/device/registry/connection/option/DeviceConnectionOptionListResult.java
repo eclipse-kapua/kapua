@@ -23,6 +23,8 @@ import org.eclipse.kapua.model.query.KapuaListResult;
  * @since 1.0.0
  */
 @XmlRootElement(name = "deviceConnectionOptions")
-@XmlType(factoryClass = DeviceConnectionOptionXmlRegistry.class, factoryMethod = "newDeviceConnectionOptionListResult")
-public interface DeviceConnectionOptionListResult extends KapuaListResult<DeviceConnectionOption> {
+@XmlType
+public class DeviceConnectionOptionListResult extends KapuaListResult<DeviceConnectionOption> {
+
+    private static final long serialVersionUID = -4450707993798807403L;
 }

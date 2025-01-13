@@ -28,7 +28,7 @@ public class DeviceConnectionImplJpaRepository
         implements DeviceConnectionRepository {
 
     public DeviceConnectionImplJpaRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig) {
-        super(DeviceConnectionImpl.class, DeviceConnection.TYPE, () -> new DeviceConnectionListResultImpl(), jpaRepoConfig);
+        super(DeviceConnectionImpl.class, DeviceConnection.TYPE, () -> new DeviceConnectionListResult(), jpaRepoConfig);
     }
 
     @Override

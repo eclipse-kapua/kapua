@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.user.internal;
 
+import java.util.Optional;
+
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.jpa.KapuaNamedEntityJpaRepository;
 import org.eclipse.kapua.model.id.KapuaId;
@@ -21,13 +23,12 @@ import org.eclipse.kapua.service.user.UserListResult;
 import org.eclipse.kapua.service.user.UserRepository;
 import org.eclipse.kapua.storage.TxContext;
 
-import java.util.Optional;
-
 public class UserImplJpaRepository
         extends KapuaNamedEntityJpaRepository<User, UserImpl, UserListResult>
         implements UserRepository {
+
     public UserImplJpaRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig) {
-        super(UserImpl.class, User.TYPE, () -> new UserListResultImpl(), jpaRepoConfig);
+        super(UserImpl.class, User.TYPE, () -> new UserListResult(), jpaRepoConfig);
     }
 
     @Override

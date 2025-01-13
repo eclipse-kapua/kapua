@@ -84,7 +84,7 @@ public class TagServiceImplTest {
                 txManager,
                 tagRepository,
                 tagFactory
-        );
+        );job
     }
 
     @Test

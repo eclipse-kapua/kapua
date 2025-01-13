@@ -12,15 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.access.shiro;
 
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.access.AccessRole;
 import org.eclipse.kapua.service.authorization.access.AccessRoleCreator;
 import org.eclipse.kapua.service.authorization.access.AccessRoleFactory;
-import org.eclipse.kapua.service.authorization.access.AccessRoleListResult;
 import org.eclipse.kapua.service.authorization.access.AccessRoleQuery;
-
-import javax.inject.Singleton;
 
 /**
  * {@link AccessRoleFactory} implementation.
@@ -43,11 +42,6 @@ public class AccessRoleFactoryImpl implements AccessRoleFactory {
     @Override
     public AccessRoleQuery newQuery(KapuaId scopeId) {
         return new AccessRoleQueryImpl(scopeId);
-    }
-
-    @Override
-    public AccessRoleListResult newListResult() {
-        return new AccessRoleListResultImpl();
     }
 
     @Override

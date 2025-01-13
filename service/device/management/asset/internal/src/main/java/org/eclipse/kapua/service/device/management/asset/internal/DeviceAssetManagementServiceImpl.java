@@ -12,6 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.asset.internal;
 
+import java.util.Date;
+
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
@@ -38,9 +42,6 @@ import org.eclipse.kapua.service.device.registry.event.DeviceEventService;
 import org.eclipse.kapua.storage.TxManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Singleton;
-import java.util.Date;
 
 /**
  * {@link DeviceAssetManagementService} implementation.
@@ -126,7 +127,7 @@ public class DeviceAssetManagementServiceImpl extends AbstractDeviceManagementTr
             // Create event
             createDeviceEvent(scopeId, deviceId, assetRequestMessage, responseMessage);
             // Check response
-            DeviceAssets onlineDeviceAssets = checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getDeviceAssets().orElse(deviceAssetFactory.newAssetListResult()));
+            DeviceAssets onlineDeviceAssets = checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getDeviceAssets().orElse(new DeviceAssets()));
             // Store value and return
             if (deviceAssetStoreService.isServiceEnabled(scopeId) &&
                     deviceAssetStoreService.isApplicationEnabled(scopeId, deviceId)) {
@@ -192,7 +193,7 @@ public class DeviceAssetManagementServiceImpl extends AbstractDeviceManagementTr
             // Create event
             createDeviceEvent(scopeId, deviceId, assetRequestMessage, responseMessage);
             // Check response
-            DeviceAssets onlineDeviceAssets = checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getDeviceAssets().orElse(deviceAssetFactory.newAssetListResult()));
+            DeviceAssets onlineDeviceAssets = checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getDeviceAssets().orElse(new DeviceAssets()));
             // Store value and return
             if (deviceAssetStoreService.isServiceEnabled(scopeId) &&
                     deviceAssetStoreService.isApplicationEnabled(scopeId, deviceId)) {
@@ -258,6 +259,6 @@ public class DeviceAssetManagementServiceImpl extends AbstractDeviceManagementTr
         // Create event
         createDeviceEvent(scopeId, deviceId, assetRequestMessage, responseMessage);
         // Check response
-        return checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getDeviceAssets().orElse(deviceAssetFactory.newAssetListResult()));
+        return checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getDeviceAssets().orElse(new DeviceAssets()));
     }
 }

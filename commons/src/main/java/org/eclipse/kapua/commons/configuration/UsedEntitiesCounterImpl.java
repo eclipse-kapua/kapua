@@ -28,14 +28,14 @@ public class UsedEntitiesCounterImpl<
         C extends KapuaEntityCreator<E>,
         L extends KapuaListResult<E>,
         Q extends KapuaQuery,
-        F extends KapuaEntityFactory<E, C, Q, L>
+        F extends KapuaEntityFactory<E, C, Q>
         > implements UsedEntitiesCounter {
 
     private final F factory;
     private final KapuaEntityRepository<E, L> entityRepository;
 
     public UsedEntitiesCounterImpl(F factory,
-                                   KapuaEntityRepository<E, L> entityRepository) {
+            KapuaEntityRepository<E, L> entityRepository) {
         this.factory = factory;
         this.entityRepository = entityRepository;
     }

@@ -23,18 +23,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.Vector;
+
 import javax.inject.Inject;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.inject.Singleton;
-import io.cucumber.java.After;
-import io.cucumber.java.Before;
-import io.cucumber.java.Scenario;
-import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.id.KapuaEid;
@@ -115,12 +106,22 @@ import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.inject.Singleton;
+
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+
 /**
  * Implementation of Gherkin steps used in DeviceRegistry.feature scenarios.
  * <p>
- * MockedLocator is used for Location Service. Mockito is used to mock other
- * services that the Device Registry services dependent on. Dependent services are: -
- * Authorization Service -
+ * MockedLocator is used for Location Service. Mockito is used to mock other services that the Device Registry services dependent on. Dependent services are: - Authorization Service -
  */
 @Singleton
 public class DeviceRegistrySteps extends TestBase {
@@ -177,7 +178,6 @@ public class DeviceRegistrySteps extends TestBase {
     // Various device event service related references
     private DeviceEventService eventService;
     private DeviceEventFactory eventFactory;
-
 
     // Additional service references for integration testing
     private DeviceLifeCycleService deviceLifeCycleService;
@@ -390,7 +390,6 @@ public class DeviceRegistrySteps extends TestBase {
 
         createDevicesAsSpecifiedInternal(devLst, deviceConnection);
     }
-
 
     private void createDevicesAsSpecifiedInternal(List<CucDevice> cucDevices, DeviceConnection deviceConnection) throws Exception {
         primeException();
@@ -1004,7 +1003,7 @@ public class DeviceRegistrySteps extends TestBase {
         tmpDevice = deviceFactory.newEntity(SYS_SCOPE_ID);
         tmpCreator = deviceFactory.newCreator(SYS_SCOPE_ID);
         tmpQuery = deviceFactory.newQuery(SYS_SCOPE_ID);
-        tmpListRes = deviceFactory.newListResult();
+        tmpListRes = new DeviceListResult();
         Assert.assertNotNull(tmpDevice);
         Assert.assertNotNull(tmpCreator);
         Assert.assertNotNull(tmpQuery);
@@ -1071,7 +1070,7 @@ public class DeviceRegistrySteps extends TestBase {
 
             DeviceConnectionCreator connectionCreator = null;
             DeviceConnection deviceConnection = null;
-            DeviceConnectionListResult deviceConnections = deviceConnectionFactory.newListResult();
+            DeviceConnectionListResult deviceConnections = new DeviceConnectionListResult();
 
             for (CucConnection cucConnection : cucConnections) {
                 connectionCreator = deviceConnectionFactory.newCreator(scopeId);
@@ -1083,7 +1082,8 @@ public class DeviceRegistrySteps extends TestBase {
                 connectionCreator.setServerIp(cucConnection.getServerIp());
                 connectionCreator.setProtocol(cucConnection.getProtocol());
                 connectionCreator.setAllowUserChange(false);
-                connectionCreator.setAuthenticationType(deviceConnectionService.getAvailableAuthTypes().stream().findFirst().orElseThrow(() -> new IllegalStateException("No DeviceConnection authenticationTypes are available for testing")));
+                connectionCreator.setAuthenticationType(deviceConnectionService.getAvailableAuthTypes().stream().findFirst()
+                        .orElseThrow(() -> new IllegalStateException("No DeviceConnection authenticationTypes are available for testing")));
                 deviceConnection = deviceConnectionService.create(connectionCreator);
                 deviceConnections.addItem(deviceConnection);
             }
@@ -1613,14 +1613,14 @@ public class DeviceRegistrySteps extends TestBase {
     private void printEvents(DeviceEventListResult eventList, int count) throws Exception {
         logger.info("Events size: {}", eventList.getSize());
         eventList.getItems().forEach((event) -> logger.info("\ttype: {} - id: {} - date: {} - {}", event.getType(), event.getDeviceId(), event.getCreatedOn(), event.getEventMessage()));
-//        if (count > eventList.getSize()) {
-//            logger.info("++++++++++++++++++++++++++++++++++++++++++++++++\n===========================================================\n\n");
-//            Thread.sleep(30000);
-//            searchForEventsFromDeviceWithClientID("rpione3", "kapua-sys" );
-//            eventList = (DeviceEventListResult) stepData.get(DEVICE_EVENT_LIST);
-//            eventList.getItems().forEach((event) -> logger.info("\ttype: {} - id: {} - date: {} - {}", event.getType(), event.getDeviceId(), event.getCreatedOn(), event.getEventMessage()));
-//            logger.info("++++++++++++++++++++++++++++++++++++++++++++++++\n===========================================================\n\n");
-//        }
+        //        if (count > eventList.getSize()) {
+        //            logger.info("++++++++++++++++++++++++++++++++++++++++++++++++\n===========================================================\n\n");
+        //            Thread.sleep(30000);
+        //            searchForEventsFromDeviceWithClientID("rpione3", "kapua-sys" );
+        //            eventList = (DeviceEventListResult) stepData.get(DEVICE_EVENT_LIST);
+        //            eventList.getItems().forEach((event) -> logger.info("\ttype: {} - id: {} - date: {} - {}", event.getType(), event.getDeviceId(), event.getCreatedOn(), event.getEventMessage()));
+        //            logger.info("++++++++++++++++++++++++++++++++++++++++++++++++\n===========================================================\n\n");
+        //        }
     }
 
     @Then("There is no such event")
@@ -1637,7 +1637,7 @@ public class DeviceRegistrySteps extends TestBase {
         tmpEvent = eventFactory.newEntity(SYS_SCOPE_ID);
         tmpCreator = eventFactory.newCreator(SYS_SCOPE_ID, getKapuaId(), new Date(), "");
         tmpQuery = eventFactory.newQuery(SYS_SCOPE_ID);
-        tmpList = eventFactory.newListResult();
+        tmpList = new DeviceEventListResult();
         Assert.assertNotNull(tmpEvent);
         Assert.assertNotNull(tmpCreator);
         Assert.assertNotNull(tmpQuery);
@@ -1661,7 +1661,7 @@ public class DeviceRegistrySteps extends TestBase {
 
     @When("I search for the device {string} in account {string}")
     public void searchForDeviceWithClientID(String clientId, String account) throws Exception {
-        DeviceListResult tmpList = deviceFactory.newListResult();
+        DeviceListResult tmpList = new DeviceListResult();
         primeException();
         try {
             stepData.remove(DEVICE);
@@ -1886,7 +1886,6 @@ public class DeviceRegistrySteps extends TestBase {
         }
     }
 
-
     @Given("Such a set of privileged users for account {string}")
     public void createPrivilegedUsers(String accName, List<CucUser> users) throws Throwable {
         KapuaSecurityUtils.doPrivileged(() -> {
@@ -1935,7 +1934,8 @@ public class DeviceRegistrySteps extends TestBase {
                 tmpCreator.setReservedUserId(tmpConn.getReservedUserId());
                 tmpCreator.setAllowUserChange(tmpConn.getAllowUserChange());
                 tmpCreator.setUserCouplingMode(tmpConn.getUserCouplingMode());
-                tmpCreator.setAuthenticationType(deviceConnectionService.getAvailableAuthTypes().stream().findFirst().orElseThrow(() -> new IllegalStateException("No DeviceConnection authenticationTypes are available for testing")));
+                tmpCreator.setAuthenticationType(deviceConnectionService.getAvailableAuthTypes().stream().findFirst()
+                        .orElseThrow(() -> new IllegalStateException("No DeviceConnection authenticationTypes are available for testing")));
                 DeviceConnection tmpDevConn = deviceConnectionService.create(tmpCreator);
                 tmpDevConn.setStatus(DeviceConnectionStatus.DISCONNECTED);
                 deviceConnectionService.update(tmpDevConn);
@@ -1953,7 +1953,7 @@ public class DeviceRegistrySteps extends TestBase {
         KapuaSecurityUtils.doPrivileged(() -> {
             Account tmpAcc;
             DeviceConnection tmpConn;
-            DeviceConnectionListResult tmpConnLst = deviceConnectionFactory.newListResult();
+            DeviceConnectionListResult tmpConnLst = new DeviceConnectionListResult();
             tmpAcc = accountService.findByName(account);
             Assert.assertNotNull(tmpAcc);
             Assert.assertNotNull(tmpAcc.getId());
@@ -1999,7 +1999,8 @@ public class DeviceRegistrySteps extends TestBase {
         searchForConnectionFromDeviceWithClientIDStatusAndUser(clientId, account.getId(), status, connectionUserId.getId(), true);
     }
 
-    private boolean searchForConnectionFromDeviceWithClientIDStatusAndUser(String clientId, KapuaId accountId, String connectionStatus, KapuaId connectionUserId, boolean timeoutOccurred) throws Exception {
+    private boolean searchForConnectionFromDeviceWithClientIDStatusAndUser(String clientId, KapuaId accountId, String connectionStatus, KapuaId connectionUserId, boolean timeoutOccurred)
+            throws Exception {
         boolean retValue = true;
         try {
             Device device = deviceRegistryService.findByClientId(accountId, clientId);
@@ -2023,7 +2024,7 @@ public class DeviceRegistrySteps extends TestBase {
                 }
             }
             stepData.put(DEVICE_CONNECTION, deviceConnection);
-            DeviceConnectionListResult tmpConnLst = deviceConnectionFactory.newListResult();
+            DeviceConnectionListResult tmpConnLst = new DeviceConnectionListResult();
             Vector<DeviceConnection> dcv = new Vector<>();
             dcv.add(deviceConnection);
             tmpConnLst.addItems(dcv);
@@ -2194,7 +2195,8 @@ public class DeviceRegistrySteps extends TestBase {
         creator.setServerIp(SERVER_IP);
         creator.setProtocol("tcp");
         creator.setAllowUserChange(false);
-        creator.setAuthenticationType(deviceConnectionService.getAvailableAuthTypes().stream().findFirst().orElseThrow(() -> new IllegalStateException("No DeviceConnection authenticationTypes are available for testing")));
+        creator.setAuthenticationType(
+                deviceConnectionService.getAvailableAuthTypes().stream().findFirst().orElseThrow(() -> new IllegalStateException("No DeviceConnection authenticationTypes are available for testing")));
         return creator;
     }
 
@@ -2227,24 +2229,24 @@ public class DeviceRegistrySteps extends TestBase {
     private KapuaMethod getMethodFromString(String name) {
         KapuaMethod tmpMeth = null;
         switch (name.trim().toUpperCase()) {
-            case "READ":
-                tmpMeth = KapuaMethod.READ;
-                break;
-            case "CREATE":
-                tmpMeth = KapuaMethod.CREATE;
-                break;
-            case "WRITE":
-                tmpMeth = KapuaMethod.WRITE;
-                break;
-            case "DELETE":
-                tmpMeth = KapuaMethod.DELETE;
-                break;
-            case "OPTIONS":
-                tmpMeth = KapuaMethod.OPTIONS;
-                break;
-            case "EXECUTE":
-                tmpMeth = KapuaMethod.EXECUTE;
-                break;
+        case "READ":
+            tmpMeth = KapuaMethod.READ;
+            break;
+        case "CREATE":
+            tmpMeth = KapuaMethod.CREATE;
+            break;
+        case "WRITE":
+            tmpMeth = KapuaMethod.WRITE;
+            break;
+        case "DELETE":
+            tmpMeth = KapuaMethod.DELETE;
+            break;
+        case "OPTIONS":
+            tmpMeth = KapuaMethod.OPTIONS;
+            break;
+        case "EXECUTE":
+            tmpMeth = KapuaMethod.EXECUTE;
+            break;
         }
         Assert.assertNotNull(tmpMeth);
         return tmpMeth;
@@ -2455,34 +2457,34 @@ public class DeviceRegistrySteps extends TestBase {
 
     DeviceConnectionStatus parseConnectionStatusString(String stat) {
         switch (stat.trim().toUpperCase()) {
-            case "CONNECTED":
-                return DeviceConnectionStatus.CONNECTED;
-            case "DISCONNECTED":
-                return DeviceConnectionStatus.DISCONNECTED;
-            case "MISSING":
-                return DeviceConnectionStatus.MISSING;
+        case "CONNECTED":
+            return DeviceConnectionStatus.CONNECTED;
+        case "DISCONNECTED":
+            return DeviceConnectionStatus.DISCONNECTED;
+        case "MISSING":
+            return DeviceConnectionStatus.MISSING;
         }
         return null;
     }
 
     ConnectionUserCouplingMode parseConnectionCouplingString(String mode) {
         switch (mode.trim().toUpperCase()) {
-            case "INHERITED":
-                return ConnectionUserCouplingMode.INHERITED;
-            case "LOOSE":
-                return ConnectionUserCouplingMode.LOOSE;
-            case "STRICT":
-                return ConnectionUserCouplingMode.STRICT;
+        case "INHERITED":
+            return ConnectionUserCouplingMode.INHERITED;
+        case "LOOSE":
+            return ConnectionUserCouplingMode.LOOSE;
+        case "STRICT":
+            return ConnectionUserCouplingMode.STRICT;
         }
         return null;
     }
 
     boolean parseBooleanFromString(String value) {
         switch (value.trim().toLowerCase()) {
-            case "true":
-                return true;
-            case "false":
-                return false;
+        case "true":
+            return true;
+        case "false":
+            return false;
         }
         return false;
     }
@@ -2501,7 +2503,6 @@ public class DeviceRegistrySteps extends TestBase {
             verifyException(ex);
         }
     }
-
 
     @Then("I create a device with name {string} and tags")
     public void iCreateADeviceWithName(String clientId, List<String> tags) throws Exception {
@@ -2813,7 +2814,6 @@ public class DeviceRegistrySteps extends TestBase {
             verifyException(e);
         }
     }
-
 
     @And("The devices display name is {string}")
     public void theDevicesDisplayNameIs(String displayName) throws Throwable {

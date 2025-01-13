@@ -12,16 +12,15 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.registry.internal;
 
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceCreator;
 import org.eclipse.kapua.service.device.registry.DeviceExtendedProperty;
 import org.eclipse.kapua.service.device.registry.DeviceFactory;
-import org.eclipse.kapua.service.device.registry.DeviceListResult;
 import org.eclipse.kapua.service.device.registry.DeviceQuery;
-
-import javax.inject.Singleton;
 
 /**
  * {@link DeviceFactory} implementation.
@@ -41,11 +40,6 @@ public class DeviceFactoryImpl implements DeviceFactory {
     @Override
     public DeviceQuery newQuery(KapuaId scopeId) {
         return new DeviceQueryImpl(scopeId);
-    }
-
-    @Override
-    public DeviceListResult newListResult() {
-        return new DeviceListResultImpl();
     }
 
     @Override

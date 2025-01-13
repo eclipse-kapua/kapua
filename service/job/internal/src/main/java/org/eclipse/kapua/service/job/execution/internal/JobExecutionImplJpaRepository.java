@@ -25,8 +25,9 @@ import org.eclipse.kapua.storage.TxContext;
 public class JobExecutionImplJpaRepository
         extends KapuaUpdatableEntityJpaRepository<JobExecution, JobExecutionImpl, JobExecutionListResult>
         implements JobExecutionRepository {
+
     public JobExecutionImplJpaRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig) {
-        super(JobExecutionImpl.class, JobExecution.TYPE, () -> new JobExecutionListResultImpl(), jpaRepoConfig);
+        super(JobExecutionImpl.class, JobExecution.TYPE, () -> new JobExecutionListResult(), jpaRepoConfig);
     }
 
     @Override

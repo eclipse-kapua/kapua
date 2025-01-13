@@ -12,17 +12,17 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.token.shiro;
 
+import java.util.Date;
+
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authentication.token.AccessToken;
 import org.eclipse.kapua.service.authentication.token.AccessTokenCreator;
 import org.eclipse.kapua.service.authentication.token.AccessTokenFactory;
-import org.eclipse.kapua.service.authentication.token.AccessTokenListResult;
 import org.eclipse.kapua.service.authentication.token.AccessTokenQuery;
 import org.eclipse.kapua.service.authentication.token.LoginInfo;
-
-import javax.inject.Singleton;
-import java.util.Date;
 
 /**
  * {@link AccessTokenFactory} implementation.
@@ -59,11 +59,6 @@ public class AccessTokenFactoryImpl implements AccessTokenFactory {
     @Override
     public AccessTokenQuery newQuery(KapuaId scopeId) {
         return new AccessTokenQueryImpl(scopeId);
-    }
-
-    @Override
-    public AccessTokenListResult newListResult() {
-        return new AccessTokenListResultImpl();
     }
 
     @Override

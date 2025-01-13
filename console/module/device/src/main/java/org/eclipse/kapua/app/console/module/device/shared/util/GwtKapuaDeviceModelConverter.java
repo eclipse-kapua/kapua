@@ -12,8 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.device.shared.util;
 
-import com.extjs.gxt.ui.client.Style.SortDir;
-import com.extjs.gxt.ui.client.data.PagingLoadConfig;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.kapua.app.console.module.api.shared.util.GwtKapuaCommonsModelConverter;
 import org.eclipse.kapua.app.console.module.device.shared.model.GwtDeviceQuery;
@@ -51,8 +52,8 @@ import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionFact
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionQuery;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionStatus;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.extjs.gxt.ui.client.Style.SortDir;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 
 public class GwtKapuaDeviceModelConverter {
 
@@ -63,7 +64,6 @@ public class GwtKapuaDeviceModelConverter {
     private static final DeviceManagementOperationFactory DEVICE_MANAGEMENT_OPERATION_FACTORY = LOCATOR.getFactory(DeviceManagementOperationFactory.class);
 
     private static final DeviceAssetFactory ASSET_FACTORY = LOCATOR.getFactory(DeviceAssetFactory.class);
-
 
     private GwtKapuaDeviceModelConverter() {
     }
@@ -89,11 +89,11 @@ public class GwtKapuaDeviceModelConverter {
         }
         if (gwtDeviceConnectionQuery.getGwtDeviceConnectionReservedUser() != null) {
             switch (gwtDeviceConnectionQuery.getGwtDeviceConnectionReservedUser()) {
-                case NONE:
-                    predicate = predicate.and(query.attributePredicate(DeviceConnectionAttributes.RESERVED_USER_ID, null, Operator.IS_NULL));
-                    break;
-                default:
-                    predicate = predicate.and(query.attributePredicate(DeviceConnectionAttributes.RESERVED_USER_ID, KapuaEid.parseCompactId(gwtDeviceConnectionQuery.getReservedUserId())));
+            case NONE:
+                predicate = predicate.and(query.attributePredicate(DeviceConnectionAttributes.RESERVED_USER_ID, null, Operator.IS_NULL));
+                break;
+            default:
+                predicate = predicate.and(query.attributePredicate(DeviceConnectionAttributes.RESERVED_USER_ID, KapuaEid.parseCompactId(gwtDeviceConnectionQuery.getReservedUserId())));
             }
         }
 
@@ -122,7 +122,7 @@ public class GwtKapuaDeviceModelConverter {
     }
 
     public static DeviceAssets convertDeviceAssets(GwtDeviceAssets deviceAssets) {
-        DeviceAssets assets = ASSET_FACTORY.newAssetListResult();
+        DeviceAssets assets = new DeviceAssets();
         List<DeviceAsset> assetList = new ArrayList<DeviceAsset>();
         for (GwtDeviceAsset gwtDeviceAsset : deviceAssets.getAssets()) {
             assetList.add(convertDeviceAsset(gwtDeviceAsset));
@@ -199,22 +199,22 @@ public class GwtKapuaDeviceModelConverter {
         }
         if (predicates.getDeviceConnectionStatus() != null) {
             switch (predicates.getDeviceConnectionStatusEnum()) {
-                case UNKNOWN:
-                    andPred = andPred.and(query.attributePredicate(DeviceAttributes.CONNECTION_ID, DeviceConnectionStatus.NULL, Operator.IS_NULL));
-                    break;
-                default:
-                    andPred = andPred.and(query.attributePredicate(DeviceAttributes.CONNECTION_STATUS, DeviceConnectionStatus.valueOf(predicates.getDeviceConnectionStatus())));
+            case UNKNOWN:
+                andPred = andPred.and(query.attributePredicate(DeviceAttributes.CONNECTION_ID, DeviceConnectionStatus.NULL, Operator.IS_NULL));
+                break;
+            default:
+                andPred = andPred.and(query.attributePredicate(DeviceAttributes.CONNECTION_STATUS, DeviceConnectionStatus.valueOf(predicates.getDeviceConnectionStatus())));
             }
         }
         if (predicates.getGroupDevice() != null) {
             switch (predicates.getGroupDeviceEnum()) {
-                case NO_GROUP:
-                    andPred = andPred.and(query.attributePredicate(DeviceAttributes.GROUP_ID, null, Operator.IS_NULL));
-                    break;
-                default:
-                    if (predicates.getGroupId() != null) {
-                        andPred = andPred.and(query.attributePredicate(DeviceAttributes.GROUP_ID, KapuaEid.parseCompactId(predicates.getGroupId())));
-                    }
+            case NO_GROUP:
+                andPred = andPred.and(query.attributePredicate(DeviceAttributes.GROUP_ID, null, Operator.IS_NULL));
+                break;
+            default:
+                if (predicates.getGroupId() != null) {
+                    andPred = andPred.and(query.attributePredicate(DeviceAttributes.GROUP_ID, KapuaEid.parseCompactId(predicates.getGroupId())));
+                }
             }
         }
         if (predicates.getTagIds() != null) {
@@ -240,7 +240,6 @@ public class GwtKapuaDeviceModelConverter {
         query.setAskTotalCount(gwtDeviceQuery.getAskTotalCount());
         return query;
     }
-
 
     public static DeviceManagementOperationQuery convertDeviceManagementOperationQuery(PagingLoadConfig loadConfig, GwtDeviceManagementOperationQuery gwtQuery) {
 

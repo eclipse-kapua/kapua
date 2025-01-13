@@ -12,16 +12,15 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.scheduler.trigger.definition.quartz;
 
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinition;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionCreator;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionFactory;
-import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionListResult;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionQuery;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerProperty;
-
-import javax.inject.Singleton;
 
 /**
  * {@link TriggerDefinitionFactory} implementation.
@@ -44,11 +43,6 @@ public class TriggerDefinitionFactoryImpl implements TriggerDefinitionFactory {
     @Override
     public TriggerDefinitionQuery newQuery(KapuaId scopeId) {
         return new TriggerDefinitionQueryImpl(scopeId);
-    }
-
-    @Override
-    public TriggerDefinitionListResult newListResult() {
-        return new TriggerDefinitionListResultImpl();
     }
 
     @Override

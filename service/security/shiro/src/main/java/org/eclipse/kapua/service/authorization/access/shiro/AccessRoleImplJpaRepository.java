@@ -25,8 +25,9 @@ import org.eclipse.kapua.storage.TxContext;
 public class AccessRoleImplJpaRepository
         extends KapuaEntityJpaRepository<AccessRole, AccessRoleImpl, AccessRoleListResult>
         implements AccessRoleRepository {
+
     public AccessRoleImplJpaRepository(KapuaJpaRepositoryConfiguration configuration) {
-        super(AccessRoleImpl.class, AccessRole.TYPE, () -> new AccessRoleListResultImpl(), configuration);
+        super(AccessRoleImpl.class, AccessRole.TYPE, () -> new AccessRoleListResult(), configuration);
     }
 
     @Override

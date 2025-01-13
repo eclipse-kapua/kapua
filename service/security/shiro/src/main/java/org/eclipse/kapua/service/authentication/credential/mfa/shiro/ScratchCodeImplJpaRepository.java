@@ -26,7 +26,7 @@ public class ScratchCodeImplJpaRepository
         implements ScratchCodeRepository {
 
     public ScratchCodeImplJpaRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig) {
-        super(ScratchCodeImpl.class, ScratchCode.TYPE, () -> new ScratchCodeListResultImpl(), jpaRepoConfig);
+        super(ScratchCodeImpl.class, ScratchCode.TYPE, () -> new ScratchCodeListResult(), jpaRepoConfig);
     }
 
     @Override

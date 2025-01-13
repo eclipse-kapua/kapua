@@ -12,21 +12,19 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.role.shiro;
 
+import java.util.Date;
+
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.authorization.role.Role;
 import org.eclipse.kapua.service.authorization.role.RoleCreator;
-import org.eclipse.kapua.service.authorization.role.RoleQuery;
-import org.eclipse.kapua.service.authorization.role.RoleListResult;
 import org.eclipse.kapua.service.authorization.role.RolePermission;
+import org.eclipse.kapua.service.authorization.role.RoleQuery;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
-
-import java.util.Date;
-
 
 @Category(JUnitTests.class)
 public class RoleFactoryImplTest {
@@ -89,12 +87,6 @@ public class RoleFactoryImplTest {
     public void newQueryNullTest() {
         Assert.assertTrue("True expected.", roleFactoryImpl.newQuery(null) instanceof RoleQuery);
         Assert.assertNull("Null expected.", roleFactoryImpl.newQuery(null).getScopeId());
-    }
-
-    @Test
-    public void newListResultTest() {
-        Assert.assertTrue("True expected.", roleFactoryImpl.newListResult() instanceof RoleListResult);
-        Assert.assertTrue("True expected.", roleFactoryImpl.newListResult().isEmpty());
     }
 
     @Test

@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.user;
 
-import org.eclipse.kapua.locator.KapuaLocator;
-
 import javax.xml.bind.annotation.XmlRegistry;
+
+import org.eclipse.kapua.locator.KapuaLocator;
 
 /**
  * {@link User} xml factory class
@@ -42,15 +42,6 @@ public class UserXmlRegistry {
      */
     public UserCreator newUserCreator() {
         return userFactory.newCreator(null, null);
-    }
-
-    /**
-     * Creates new user list result
-     *
-     * @return
-     */
-    public UserListResult newUserListResult() {
-        return userFactory.newListResult();
     }
 
     public UserQuery newQuery() {

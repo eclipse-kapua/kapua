@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.registry.event;
 
-import org.eclipse.kapua.locator.KapuaLocator;
-
 import javax.xml.bind.annotation.XmlRegistry;
+
+import org.eclipse.kapua.locator.KapuaLocator;
 
 /**
  * {@link DeviceEvent} xml factory class.
@@ -33,15 +33,6 @@ public class DeviceEventXmlRegistry {
      */
     public DeviceEvent newDeviceEvent() {
         return deviceEventFactory.newEntity(null);
-    }
-
-    /**
-     * Creates a new device event list result
-     *
-     * @return
-     */
-    public DeviceEventListResult newDeviceEventListResult() {
-        return deviceEventFactory.newListResult();
     }
 
     public DeviceEventQuery newQuery() {

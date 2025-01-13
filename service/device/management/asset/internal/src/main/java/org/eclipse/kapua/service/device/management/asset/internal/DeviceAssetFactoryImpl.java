@@ -12,12 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.asset.internal;
 
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.service.device.management.asset.DeviceAsset;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssetChannel;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssetFactory;
-import org.eclipse.kapua.service.device.management.asset.DeviceAssets;
-
-import javax.inject.Singleton;
 
 /**
  * {@link DeviceAssetFactory} implementation.
@@ -26,11 +25,6 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class DeviceAssetFactoryImpl implements DeviceAssetFactory {
-
-    @Override
-    public DeviceAssets newAssetListResult() {
-        return new DeviceAssetsImpl();
-    }
 
     @Override
     public DeviceAsset newDeviceAsset() {

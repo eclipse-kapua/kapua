@@ -12,23 +12,21 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.credential.shiro;
 
+import java.util.Date;
+
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
-import org.eclipse.kapua.service.authentication.credential.CredentialStatus;
 import org.eclipse.kapua.service.authentication.credential.Credential;
-import org.eclipse.kapua.service.authentication.credential.CredentialQuery;
 import org.eclipse.kapua.service.authentication.credential.CredentialCreator;
-import org.eclipse.kapua.service.authentication.credential.CredentialListResult;
+import org.eclipse.kapua.service.authentication.credential.CredentialQuery;
+import org.eclipse.kapua.service.authentication.credential.CredentialStatus;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
-
-import java.util.Date;
-
 
 @Category(JUnitTests.class)
 public class CredentialFactoryImplTest {
@@ -46,12 +44,12 @@ public class CredentialFactoryImplTest {
     @Before
     public void initialize() {
         credentialFactoryImpl = new CredentialFactoryImpl();
-        scopeIds = new KapuaId[]{null, KapuaId.ONE};
-        userIds = new KapuaEid[]{null, new KapuaEid()};
-        credentialKeys = new String[]{null, "", "!!credentialKey-1", "#1(credentialKey.,/Key)9--99", "!$$ 1-2 key//", "credential_K_ey(....)<00>"};
-        credentialTypes = new String[] {null, "PASSWORD", "API_KEY", "JWT"};
-        credentialStatuses = new CredentialStatus[]{null, CredentialStatus.ENABLED, CredentialStatus.DISABLED};
-        dates = new Date[]{null, new Date()};
+        scopeIds = new KapuaId[] { null, KapuaId.ONE };
+        userIds = new KapuaEid[] { null, new KapuaEid() };
+        credentialKeys = new String[] { null, "", "!!credentialKey-1", "#1(credentialKey.,/Key)9--99", "!$$ 1-2 key//", "credential_K_ey(....)<00>" };
+        credentialTypes = new String[] { null, "PASSWORD", "API_KEY", "JWT" };
+        credentialStatuses = new CredentialStatus[] { null, CredentialStatus.ENABLED, CredentialStatus.DISABLED };
+        dates = new Date[] { null, new Date() };
         credential = Mockito.mock(Credential.class);
         expirationDate = new Date();
         modifiedOn = new Date();
@@ -78,11 +76,6 @@ public class CredentialFactoryImplTest {
                 }
             }
         }
-    }
-
-    @Test
-    public void newListResultTest() {
-        Assert.assertTrue("True expected.", credentialFactoryImpl.newListResult() instanceof CredentialListResult);
     }
 
     @Test

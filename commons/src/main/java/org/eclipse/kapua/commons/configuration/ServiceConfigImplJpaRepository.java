@@ -22,7 +22,7 @@ public class ServiceConfigImplJpaRepository
         extends KapuaUpdatableEntityJpaRepository<ServiceConfig, ServiceConfigImpl, ServiceConfigListResult> implements ServiceConfigRepository {
 
     public ServiceConfigImplJpaRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig) {
-        super(ServiceConfigImpl.class, ServiceConfig.TYPE, () -> new ServiceConfigListResultImpl(), jpaRepoConfig);
+        super(ServiceConfigImpl.class, ServiceConfig.TYPE, () -> new ServiceConfigListResult(), jpaRepoConfig);
     }
 
     @Override

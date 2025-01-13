@@ -12,6 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.scheduler.trigger.quartz;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.ListJoin;
+import javax.persistence.criteria.Root;
+
 import org.eclipse.kapua.commons.jpa.JpaAwareTxContext;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.jpa.KapuaNamedEntityJpaRepository;
@@ -24,18 +30,12 @@ import org.eclipse.kapua.service.scheduler.trigger.definition.quartz.TriggerProp
 import org.eclipse.kapua.service.scheduler.trigger.definition.quartz.TriggerPropertyImpl_;
 import org.eclipse.kapua.storage.TxContext;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaDelete;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.ListJoin;
-import javax.persistence.criteria.Root;
-
 public class TriggerImplJpaRepository
         extends KapuaNamedEntityJpaRepository<Trigger, TriggerImpl, TriggerListResult>
         implements TriggerRepository {
 
     public TriggerImplJpaRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig) {
-        super(TriggerImpl.class, Trigger.TYPE, () -> new TriggerListResultImpl(), jpaRepoConfig);
+        super(TriggerImpl.class, Trigger.TYPE, () -> new TriggerListResult(), jpaRepoConfig);
     }
 
     @Override

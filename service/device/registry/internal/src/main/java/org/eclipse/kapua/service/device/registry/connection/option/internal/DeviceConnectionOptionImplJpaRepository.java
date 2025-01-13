@@ -21,7 +21,8 @@ import org.eclipse.kapua.service.device.registry.connection.option.DeviceConnect
 public class DeviceConnectionOptionImplJpaRepository
         extends KapuaUpdatableEntityJpaRepository<DeviceConnectionOption, DeviceConnectionOptionImpl, DeviceConnectionOptionListResult>
         implements DeviceConnectionOptionRepository {
+
     public DeviceConnectionOptionImplJpaRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig) {
-        super(DeviceConnectionOptionImpl.class, DeviceConnectionOption.TYPE, () -> new DeviceConnectionOptionListResultImpl(), jpaRepoConfig);
+        super(DeviceConnectionOptionImpl.class, DeviceConnectionOption.TYPE, () -> new DeviceConnectionOptionListResult(), jpaRepoConfig);
     }
 }

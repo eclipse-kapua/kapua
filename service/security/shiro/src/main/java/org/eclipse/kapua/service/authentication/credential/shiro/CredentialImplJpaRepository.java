@@ -33,11 +33,12 @@ public class CredentialImplJpaRepository
     /**
      * Constructor.
      *
-     * @param jpaRepoConfig The {@link KapuaJpaRepositoryConfiguration}.
+     * @param jpaRepoConfig
+     *         The {@link KapuaJpaRepositoryConfiguration}.
      * @since 2.0.0
      */
     public CredentialImplJpaRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig) {
-        super(CredentialImpl.class, Credential.TYPE, CredentialListResultImpl::new, jpaRepoConfig);
+        super(CredentialImpl.class, Credential.TYPE, CredentialListResult::new, jpaRepoConfig);
     }
 
     @Override
