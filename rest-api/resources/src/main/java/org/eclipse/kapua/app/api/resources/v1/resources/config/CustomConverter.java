@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.resources.v1.resources.config;
 
+import java.lang.annotation.Annotation;
 import java.util.Iterator;
 
 import org.eclipse.kapua.app.api.core.model.ScopeId;
@@ -32,6 +33,13 @@ public class CustomConverter implements ModelConverter {
                 Schema schema = new StringSchema();
                 if (simpleType.isTypeOrSubTypeOf(ScopeId.class)) {
                     schema = schema.example("_");
+                } else {
+                    for (Annotation annotation : type.getCtxAnnotations()) {
+                        if (annotation instanceof io.swagger.v3.oas.annotations.media.Schema) {
+                            schema = schema.example(((io.swagger.v3.oas.annotations.media.Schema) annotation).example());
+                            break;
+                        }
+                    }
                 }
                 return schema;
             }
