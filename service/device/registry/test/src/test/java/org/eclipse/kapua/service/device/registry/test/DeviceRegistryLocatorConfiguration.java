@@ -194,7 +194,6 @@ public class DeviceRegistryLocatorConfiguration {
                         deviceConnectionService,
                         deviceEventService,
                         new DeviceImplJpaRepository(jpaRepoConfig),
-                        new DeviceFactoryImpl(),
                         new TagServiceImpl(
                                 permissionFactory,
                                 mockedAuthorization,

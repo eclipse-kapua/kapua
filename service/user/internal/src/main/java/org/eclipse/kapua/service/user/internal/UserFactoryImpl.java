@@ -19,7 +19,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserCreator;
 import org.eclipse.kapua.service.user.UserFactory;
-import org.eclipse.kapua.service.user.UserQuery;
 
 /**
  * {@link UserFactory} implementation.
@@ -36,11 +35,6 @@ public class UserFactoryImpl implements UserFactory {
         creator.setName(name);
 
         return creator;
-    }
-
-    @Override
-    public UserQuery newQuery(KapuaId scopeId) {
-        return new UserQueryImpl(scopeId);
     }
 
     @Override

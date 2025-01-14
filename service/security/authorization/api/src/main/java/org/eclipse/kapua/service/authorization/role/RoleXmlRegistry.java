@@ -40,14 +40,4 @@ public class RoleXmlRegistry {
     public RoleCreator newRoleCreator() {
         return roleFactory.newCreator(null);
     }
-
-    /**
-     * Creates a new {@link RoleQuery} instance.
-     *
-     * @return The newly created {@link RoleQuery} instance.
-     * @since 1.0.0
-     */
-    public RoleQuery newQuery() {
-        return roleFactory.newQuery(null);
-    }
 }

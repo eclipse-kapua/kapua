@@ -16,10 +16,10 @@ import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.extras.migrator.encryption.api.AbstractEntityAttributeMigrator;
 import org.eclipse.kapua.extras.migrator.encryption.api.EntitySecretAttributeMigrator;
-import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authentication.credential.mfa.MfaOption;
 
 public class MfaOptionAttributeMigrator extends AbstractEntityAttributeMigrator<MfaOption> implements EntitySecretAttributeMigrator<MfaOption> {
+
     public MfaOptionAttributeMigrator(String persistenceUnitName, KapuaJpaTxManagerFactory jpaTxManagerFactory) {
         super(new MfaOptionMigratorServiceImpl(
                 jpaTxManagerFactory.create(persistenceUnitName),
@@ -30,10 +30,5 @@ public class MfaOptionAttributeMigrator extends AbstractEntityAttributeMigrator<
     @Override
     public String getEntityName() {
         return MfaOption.TYPE;
-    }
-
-    @Override
-    protected KapuaQuery newEntityQuery() {
-        return new MfaOptionMigratorQueryImpl();
     }
 }

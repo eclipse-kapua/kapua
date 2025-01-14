@@ -12,6 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.registry.connection.option.internal;
 
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaIllegalArgumentException;
@@ -29,7 +34,6 @@ import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.device.authentication.api.DeviceConnectionCredentialAdapter;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionAttributes;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionFactory;
-import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionQuery;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionRepository;
 import org.eclipse.kapua.service.device.registry.connection.option.DeviceConnectionOption;
 import org.eclipse.kapua.service.device.registry.connection.option.DeviceConnectionOptionCreator;
@@ -39,13 +43,8 @@ import org.eclipse.kapua.service.device.registry.connection.option.DeviceConnect
 import org.eclipse.kapua.service.device.registry.connection.option.UserAlreadyReservedException;
 import org.eclipse.kapua.storage.TxManager;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.Map;
-
 /**
- * DeviceConnectionService exposes APIs to retrieve Device connections under a scope.
- * It includes APIs to find, list, and update devices connections associated with a scope.
+ * DeviceConnectionService exposes APIs to retrieve Device connections under a scope. It includes APIs to find, list, and update devices connections associated with a scope.
  *
  * @since 1.0
  */
@@ -98,7 +97,7 @@ public class DeviceConnectionOptionServiceImpl implements DeviceConnectionOption
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_CONNECTION, Actions.write, deviceConnectionOptions.getScopeId()));
         return txManager.execute(tx -> {
             if (deviceConnectionOptions.getReservedUserId() != null) {
-                DeviceConnectionQuery query = entityFactory.newQuery(deviceConnectionOptions.getScopeId());
+                final KapuaQuery query = new KapuaQuery(deviceConnectionOptions.getScopeId());
 
                 AndPredicate deviceAndPredicate = query.andPredicate(
                         query.attributePredicate(DeviceConnectionAttributes.RESERVED_USER_ID, deviceConnectionOptions.getReservedUserId()),

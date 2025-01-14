@@ -19,7 +19,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.authorization.group.Group;
 import org.eclipse.kapua.service.authorization.group.GroupCreator;
-import org.eclipse.kapua.service.authorization.group.GroupQuery;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -91,18 +90,6 @@ public class GroupFactoryImplTest {
     public void newEntityNullTest() {
         Group group = groupFactoryImpl.newEntity(null);
         Assert.assertNull("Null expected.", group.getScopeId());
-    }
-
-    @Test
-    public void newQueryTest() {
-        GroupQuery groupQuery = groupFactoryImpl.newQuery(scopeId);
-        Assert.assertEquals("Expected and actual values should be the same.", scopeId, groupQuery.getScopeId());
-    }
-
-    @Test
-    public void newQueryNullTest() {
-        GroupQuery groupQuery = groupFactoryImpl.newQuery(null);
-        Assert.assertNull("Null expected.", groupQuery.getScopeId());
     }
 
     @Test

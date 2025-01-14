@@ -67,7 +67,7 @@ public class JobServiceTestBase extends TestBase {
     }
 
     public Job findJob(String jobName) throws Exception {
-        JobQuery jobQuery = jobFactory.newQuery(getCurrentScopeId());
+        JobQuery jobQuery = new JobQuery(getCurrentScopeId());
         jobQuery.setPredicate(
                 jobQuery.attributePredicate(JobAttributes.NAME, jobName)
         );

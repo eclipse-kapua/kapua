@@ -18,7 +18,6 @@ import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreFactory;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecord;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordCreator;
-import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordQuery;
 import org.eclipse.kapua.model.id.KapuaId;
 
 /**
@@ -37,11 +36,6 @@ public class EventStoreFactoryImpl implements EventStoreFactory {
     @Override
     public EventStoreRecordCreator newCreator(KapuaId scopeId) {
         return new EventStoreRecordCreatorImpl(scopeId);
-    }
-
-    @Override
-    public EventStoreRecordQuery newQuery(KapuaId scopeId) {
-        return new EventStoreQueryImpl(scopeId);
     }
 
     @Override

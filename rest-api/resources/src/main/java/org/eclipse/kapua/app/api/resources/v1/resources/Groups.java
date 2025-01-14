@@ -26,7 +26,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.google.common.base.Strings;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.app.api.core.model.CountResult;
 import org.eclipse.kapua.app.api.core.model.EntityId;
@@ -43,6 +42,8 @@ import org.eclipse.kapua.service.authorization.group.GroupListResult;
 import org.eclipse.kapua.service.authorization.group.GroupQuery;
 import org.eclipse.kapua.service.authorization.group.GroupService;
 
+import com.google.common.base.Strings;
+
 @Path("{scopeId}/groups")
 public class Groups extends AbstractKapuaResource {
 
@@ -54,16 +55,21 @@ public class Groups extends AbstractKapuaResource {
     /**
      * Gets the {@link Group} list in the scope.
      *
-     * @param scopeId The {@link ScopeId} in which to search results.
-     * @param name    The {@link Group} name to filter results
-     * @param offset  The result set offset.
-     * @param limit   The result set limit.
+     * @param scopeId
+     *         The {@link ScopeId} in which to search results.
+     * @param name
+     *         The {@link Group} name to filter results
+     * @param offset
+     *         The result set offset.
+     * @param limit
+     *         The result set limit.
      * @return The {@link GroupListResult} of all the groups associated to the current selected scope.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @GET
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public GroupListResult simpleQuery(
             @PathParam("scopeId") ScopeId scopeId,
             @QueryParam("name") String name,
@@ -73,7 +79,7 @@ public class Groups extends AbstractKapuaResource {
             @QueryParam("sortDir") @DefaultValue("ASCENDING") SortOrder sortDir,
             @QueryParam("offset") @DefaultValue("0") int offset,
             @QueryParam("limit") @DefaultValue("50") int limit) throws KapuaException {
-        GroupQuery query = groupFactory.newQuery(scopeId);
+        final GroupQuery query = new GroupQuery(scopeId);
 
         AndPredicate andPredicate = query.andPredicate();
         if (!Strings.isNullOrEmpty(name)) {
@@ -97,16 +103,19 @@ public class Groups extends AbstractKapuaResource {
     /**
      * Queries the results with the given {@link GroupQuery} parameter.
      *
-     * @param scopeId The {@link ScopeId} in which to search results.
-     * @param query   The {@link GroupQuery} to use to filter results.
+     * @param scopeId
+     *         The {@link ScopeId} in which to search results.
+     * @param query
+     *         The {@link GroupQuery} to use to filter results.
      * @return The {@link GroupListResult} of all the result matching the given {@link GroupQuery} parameter.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @POST
     @Path("_query")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public GroupListResult query(
             @PathParam("scopeId") ScopeId scopeId,
             GroupQuery query) throws KapuaException {
@@ -118,16 +127,19 @@ public class Groups extends AbstractKapuaResource {
     /**
      * Counts the results with the given {@link GroupQuery} parameter.
      *
-     * @param scopeId The {@link ScopeId} in which to search results.
-     * @param query   The {@link GroupQuery} to use to filter results.
+     * @param scopeId
+     *         The {@link ScopeId} in which to search results.
+     * @param query
+     *         The {@link GroupQuery} to use to filter results.
      * @return The count of all the result matching the given {@link GroupQuery} parameter.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @POST
     @Path("_count")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public CountResult count(
             @PathParam("scopeId") ScopeId scopeId,
             GroupQuery query) throws KapuaException {
@@ -137,16 +149,17 @@ public class Groups extends AbstractKapuaResource {
     }
 
     /**
-     * Creates a new Group based on the information provided in GroupCreator
-     * parameter.
+     * Creates a new Group based on the information provided in GroupCreator parameter.
      *
-     * @param scopeId      The {@link ScopeId} in which to create the {@link Group}
-     * @param groupCreator Provides the information for the new {@link Group} to be created.
+     * @param scopeId
+     *         The {@link ScopeId} in which to create the {@link Group}
+     * @param groupCreator
+     *         Provides the information for the new {@link Group} to be created.
      * @return The newly created {@link Group} object.
      */
     @POST
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public Response create(
             @PathParam("scopeId") ScopeId scopeId,
             GroupCreator groupCreator) throws KapuaException {
@@ -158,15 +171,18 @@ public class Groups extends AbstractKapuaResource {
     /**
      * Returns the Group specified by the "groupId" path parameter.
      *
-     * @param scopeId The {@link ScopeId} of the requested {@link Group}.
-     * @param groupId The id of the requested Group.
+     * @param scopeId
+     *         The {@link ScopeId} of the requested {@link Group}.
+     * @param groupId
+     *         The id of the requested Group.
      * @return The requested Group object.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @GET
     @Path("{groupId}")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public Group find(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("groupId") EntityId groupId) throws KapuaException {
@@ -178,17 +194,21 @@ public class Groups extends AbstractKapuaResource {
     /**
      * Updates the Group based on the information provided in the Group parameter.
      *
-     * @param scopeId The ScopeId of the requested {@link Group}.
-     * @param groupId The id of the requested {@link Group}
-     * @param group   The modified Group whose attributed need to be updated.
+     * @param scopeId
+     *         The ScopeId of the requested {@link Group}.
+     * @param groupId
+     *         The id of the requested {@link Group}
+     * @param group
+     *         The modified Group whose attributed need to be updated.
      * @return The updated group.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @PUT
     @Path("{groupId}")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public Group update(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("groupId") EntityId groupId,
@@ -202,10 +222,13 @@ public class Groups extends AbstractKapuaResource {
     /**
      * Deletes the Group specified by the "groupId" path parameter.
      *
-     * @param scopeId The ScopeId of the requested {@link Group}.
-     * @param groupId The id of the Group to be deleted.
+     * @param scopeId
+     *         The ScopeId of the requested {@link Group}.
+     * @param groupId
+     *         The id of the Group to be deleted.
      * @return HTTP 200 if operation has completed successfully.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @DELETE

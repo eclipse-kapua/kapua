@@ -12,6 +12,16 @@
  *******************************************************************************/
 package org.eclipse.kapua.integration.service.datastoreJunit;
 
+import java.text.ParseException;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.id.KapuaEid;
@@ -52,16 +62,6 @@ import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.ParseException;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 @Category(JUnitTests.class)
 public class MessageStoreServiceSslTest extends AbstractMessageStoreServiceTest {
 
@@ -82,11 +82,11 @@ public class MessageStoreServiceSslTest extends AbstractMessageStoreServiceTest 
     /**
      * This method deletes all indices of the current ES instance
      * <p>
-     * The method deletes all indices and resets the Kapua internal singleton state.
-     * This is required to ensure that each unit test, as it currently expects, starts with an empty ES setup
+     * The method deletes all indices and resets the Kapua internal singleton state. This is required to ensure that each unit test, as it currently expects, starts with an empty ES setup
      * </p>
      *
-     * @throws Exception any case anything goes wrong
+     * @throws Exception
+     *         any case anything goes wrong
      */
     // @Before
     // public void deleteAllIndices() throws Exception {

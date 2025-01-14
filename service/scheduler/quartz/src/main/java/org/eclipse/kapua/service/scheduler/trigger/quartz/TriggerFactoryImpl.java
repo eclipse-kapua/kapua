@@ -19,7 +19,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.scheduler.trigger.Trigger;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerCreator;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerFactory;
-import org.eclipse.kapua.service.scheduler.trigger.TriggerQuery;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerProperty;
 import org.eclipse.kapua.service.scheduler.trigger.definition.quartz.TriggerPropertyImpl;
 
@@ -39,11 +38,6 @@ public class TriggerFactoryImpl implements TriggerFactory {
     @Override
     public Trigger newEntity(KapuaId scopeId) {
         return new TriggerImpl(scopeId);
-    }
-
-    @Override
-    public TriggerQuery newQuery(KapuaId scopeId) {
-        return new TriggerQueryImpl(scopeId);
     }
 
     @Override

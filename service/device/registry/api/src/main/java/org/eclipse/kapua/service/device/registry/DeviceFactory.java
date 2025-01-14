@@ -21,7 +21,7 @@ import org.eclipse.kapua.model.id.KapuaId;
  * @see org.eclipse.kapua.model.KapuaEntityFactory
  * @since 1.0.0
  */
-public interface DeviceFactory extends KapuaEntityFactory<Device, DeviceCreator, DeviceQuery> {
+public interface DeviceFactory extends KapuaEntityFactory<Device, DeviceCreator> {
 
     /**
      * Instantiates a new {@link DeviceCreator}

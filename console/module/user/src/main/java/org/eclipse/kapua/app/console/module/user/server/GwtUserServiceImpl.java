@@ -12,11 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.user.server;
 
-import com.extjs.gxt.ui.client.data.BaseListLoadResult;
-import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
-import com.extjs.gxt.ui.client.data.ListLoadResult;
-import com.extjs.gxt.ui.client.data.PagingLoadConfig;
-import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.server.KapuaRemoteServiceServlet;
@@ -59,11 +60,11 @@ import org.eclipse.kapua.service.user.UserQuery;
 import org.eclipse.kapua.service.user.UserService;
 import org.eclipse.kapua.service.user.UserType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
+import com.extjs.gxt.ui.client.data.BaseListLoadResult;
+import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
+import com.extjs.gxt.ui.client.data.ListLoadResult;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
+import com.extjs.gxt.ui.client.data.PagingLoadResult;
 
 /**
  * The server side implementation of the RPC service.
@@ -210,7 +211,7 @@ public class GwtUserServiceImpl extends KapuaRemoteServiceServlet implements Gwt
         KapuaId scopeId = KapuaEid.parseCompactId(scopeIdString);
         List<GwtUser> gwtUserList = new ArrayList<GwtUser>();
         try {
-            UserQuery query = USER_FACTORY.newQuery(scopeId);
+            UserQuery query = new UserQuery(scopeId);
             UserListResult list = USER_SERVICE.query(query);
 
             for (User user : list.getItems()) {
@@ -244,7 +245,7 @@ public class GwtUserServiceImpl extends KapuaRemoteServiceServlet implements Gwt
 
                     @Override
                     public UserListResult call() throws Exception {
-                        return USER_SERVICE.query(USER_FACTORY.newQuery(null));
+                        return USER_SERVICE.query(new UserQuery(null));
                     }
                 });
 
@@ -271,7 +272,7 @@ public class GwtUserServiceImpl extends KapuaRemoteServiceServlet implements Gwt
 
     @Override
     public ListLoadResult<GwtGroupedNVPair> getUserDescription(boolean isSsoEnabled, String shortScopeId,
-                                                               String shortUserId) throws GwtKapuaException {
+            String shortUserId) throws GwtKapuaException {
         List<GwtGroupedNVPair> gwtUserDescription = new ArrayList<GwtGroupedNVPair>();
         try {
             final KapuaId scopeId = KapuaEid.parseCompactId(shortScopeId);
@@ -286,7 +287,7 @@ public class GwtUserServiceImpl extends KapuaRemoteServiceServlet implements Gwt
 
                     @Override
                     public UserListResult call() throws Exception {
-                        return USER_SERVICE.query(USER_FACTORY.newQuery(null));
+                        return USER_SERVICE.query(new UserQuery(null));
                     }
                 });
 
@@ -337,7 +338,7 @@ public class GwtUserServiceImpl extends KapuaRemoteServiceServlet implements Gwt
 
     @Override
     public PagingLoadResult<GwtUser> getUsersForRole(PagingLoadConfig pagingLoadConfig,
-                                                     GwtAccessRoleQuery query) throws GwtKapuaException {
+            GwtAccessRoleQuery query) throws GwtKapuaException {
         int totalLength = 0;
         List<GwtUser> list = new ArrayList<GwtUser>();
         try {
@@ -361,7 +362,7 @@ public class GwtUserServiceImpl extends KapuaRemoteServiceServlet implements Gwt
 
     @Override
     public PagingLoadResult<GwtUser> getUsersForAccount(PagingLoadConfig loadConfig, GwtUserQuery gwtUserQuery,
-                                                        String accountId) throws GwtKapuaException {
+            String accountId) throws GwtKapuaException {
 
         int totalLength = 0;
         List<GwtUser> gwtUsers = new ArrayList<GwtUser>();
@@ -373,7 +374,7 @@ public class GwtUserServiceImpl extends KapuaRemoteServiceServlet implements Gwt
             if (!users.isEmpty()) {
                 //TODO: #LAYER_VIOLATION - user lookup should not be done here (horribly inefficient)
 
-                final UserQuery allUsersQuery = USER_FACTORY.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(accountId));
+                final UserQuery allUsersQuery = new UserQuery(GwtKapuaCommonsModelConverter.convertKapuaId(accountId));
                 UserListResult allUsers = KapuaSecurityUtils.doPrivileged(new Callable<UserListResult>() {
 
                     @Override
@@ -407,7 +408,7 @@ public class GwtUserServiceImpl extends KapuaRemoteServiceServlet implements Gwt
     private DeviceListResult deviceListQuery(KapuaId scopeId) throws KapuaException {
         DeviceListResult devicesList = null;
         if (AUTHORIZATION_SERVICE.isPermitted(PERMISSION_FACTORY.newPermission(Domains.DEVICE, Actions.read, scopeId))) {
-            DeviceQuery deviceQuery = DEVICE_FACTORY.newQuery(scopeId);
+            DeviceQuery deviceQuery = new DeviceQuery(scopeId);
             devicesList = DEVICE_SERVICE.query(deviceQuery);
         }
         return devicesList;

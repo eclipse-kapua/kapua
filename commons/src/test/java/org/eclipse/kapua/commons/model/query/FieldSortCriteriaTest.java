@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.model.query;
 
+import java.util.Arrays;
+
+import org.eclipse.kapua.model.query.FieldSortCriteria;
 import org.eclipse.kapua.model.query.SortOrder;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.junit.Assert;
@@ -21,40 +24,38 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import java.util.Arrays;
-
-
 @Category(JUnitTests.class)
 @RunWith(value = Parameterized.class)
-public class FieldSortCriteriaImplTest {
+public class FieldSortCriteriaTest {
 
     private final String attributeName;
     private SortOrder sortOrder;
 
-    public FieldSortCriteriaImplTest(String attributeName) {
+    public FieldSortCriteriaTest(String attributeName) {
         this.attributeName = attributeName;
     }
 
     @Parameters
     public static Iterable<Object[]> attributeNames() {
         return Arrays.asList(
-                new Object[]{""},
-                new Object[]{"NAME"},
-                new Object[]{"attributeName"},
-                new Object[]{"attribute name"},
-                new Object[]{"0123456789"},
-                new Object[]{"!#$%&'()=?⁄@‹›€°·‚,.-;:_Èˇ¿<>«‘”’ÉØ∏{}|ÆæÒuF8FFÔÓÌÏÎÅ«»Ç◊Ñˆ¯Èˇ"},
-                new Object[]{"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefg"});
+                new Object[] { "" },
+                new Object[] { "NAME" },
+                new Object[] { "attributeName" },
+                new Object[] { "attribute name" },
+                new Object[] { "0123456789" },
+                new Object[] { "!#$%&'()=?⁄@‹›€°·‚,.-;:_Èˇ¿<>«‘”’ÉØ∏{}|ÆæÒuF8FFÔÓÌÏÎÅ«»Ç◊Ñˆ¯Èˇ" },
+                new Object[] {
+                        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefg" });
     }
 
     @Test
     public void fieldSortCriteriaImplTest() {
         SortOrder sortOrderAscending = SortOrder.ASCENDING;
-        FieldSortCriteriaImpl fieldSortCriteriaAscending = new FieldSortCriteriaImpl(attributeName, sortOrderAscending);
+        FieldSortCriteria fieldSortCriteriaAscending = new FieldSortCriteria(attributeName, sortOrderAscending);
         Assert.assertEquals("Actual and expected values are not the same!", attributeName, fieldSortCriteriaAscending.getAttributeName());
         Assert.assertEquals("Actual and expected values are not the same!", sortOrderAscending, fieldSortCriteriaAscending.getSortOrder());
         SortOrder sortOrderDescending = SortOrder.DESCENDING;
-        FieldSortCriteriaImpl fieldSortCriteriaDescending = new FieldSortCriteriaImpl(attributeName, sortOrderDescending);
+        FieldSortCriteria fieldSortCriteriaDescending = new FieldSortCriteria(attributeName, sortOrderDescending);
         Assert.assertEquals("Actual and expected values are not the same!", attributeName, fieldSortCriteriaDescending.getAttributeName());
         Assert.assertEquals("Actual and expected values are not the same!", sortOrderDescending, fieldSortCriteriaDescending.getSortOrder());
     }

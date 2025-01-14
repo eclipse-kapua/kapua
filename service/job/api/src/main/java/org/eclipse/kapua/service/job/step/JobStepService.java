@@ -19,9 +19,8 @@ import org.eclipse.kapua.service.KapuaUpdatableEntityService;
 import org.eclipse.kapua.service.job.step.definition.JobStepProperty;
 
 /**
- * {@link JobStepService} exposes APIs to manage JobStep objects.<br>
- * It includes APIs to create, update, find, list and delete Jobs.<br>
- * Instances of the JobStepService can be acquired through the ServiceLocator object.
+ * {@link JobStepService} exposes APIs to manage JobStep objects.<br> It includes APIs to create, update, find, list and delete Jobs.<br> Instances of the JobStepService can be acquired through the
+ * ServiceLocator object.
  *
  * @since 1.0
  */
@@ -31,7 +30,8 @@ public interface JobStepService extends KapuaEntityService<JobStep, JobStepCreat
     /**
      * Returns the {@link JobStepListResult} with elements matching the provided query.
      *
-     * @param query The {@link JobStepQuery} used to filter results.
+     * @param query
+     *         The {@link KapuaQuery} used to filter results.
      * @return The {@link JobStepListResult} with elements matching the query parameter.
      * @throws KapuaException
      * @since 1.0.0

@@ -37,6 +37,7 @@ import org.eclipse.kapua.model.config.metatype.KapuaTad;
 import org.eclipse.kapua.model.config.metatype.KapuaTmetadata;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.config.KapuaConfigurableService;
 import org.eclipse.kapua.service.config.ServiceComponentConfiguration;
 import org.eclipse.kapua.storage.TxContext;
@@ -166,7 +167,7 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
 
             validateConfigurations(tx, maybeOcd.get(), values, scopeId, parentId);
 
-            ServiceConfigQueryImpl query = new ServiceConfigQueryImpl(scopeId);
+            KapuaQuery query = new KapuaQuery(scopeId);
             query.setPredicate(
                     query.andPredicate(
                             query.attributePredicate(ServiceConfigAttributes.SERVICE_ID, pid),

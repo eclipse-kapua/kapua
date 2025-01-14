@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.model.query.predicate.AttributePredicate;
 import org.eclipse.kapua.qa.common.StepData;
 import org.eclipse.kapua.qa.common.cucumber.CucJobStepProperty;
@@ -32,7 +33,6 @@ import org.eclipse.kapua.service.job.step.JobStepAttributes;
 import org.eclipse.kapua.service.job.step.JobStepCreator;
 import org.eclipse.kapua.service.job.step.JobStepFactory;
 import org.eclipse.kapua.service.job.step.JobStepListResult;
-import org.eclipse.kapua.service.job.step.JobStepQuery;
 import org.eclipse.kapua.service.job.step.JobStepService;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinition;
 import org.eclipse.kapua.service.job.step.definition.JobStepProperty;
@@ -271,7 +271,7 @@ public class JobStepServiceSteps extends JobServiceTestBase {
 
     @When("I look for the JobStep with name {string}")
     public void iLookForJobStepWithName(String name) throws Exception {
-        JobStepQuery tmpQuery = jobStepFactory.newQuery(getCurrentScopeId());
+        KapuaQuery tmpQuery = new KapuaQuery(getCurrentScopeId());
         tmpQuery.setPredicate(tmpQuery.attributePredicate(JobStepAttributes.NAME, name));
 
         primeException();
@@ -286,7 +286,7 @@ public class JobStepServiceSteps extends JobServiceTestBase {
 
     @When("I query for a JobStep with the name {string}")
     public void iQueryForJobStepWithName(String name) throws Exception {
-        JobStepQuery tmpQuery = jobStepFactory.newQuery(getCurrentScopeId());
+        KapuaQuery tmpQuery = new KapuaQuery(getCurrentScopeId());
         tmpQuery.setPredicate(tmpQuery.attributePredicate(JobStepAttributes.NAME, name));
 
         primeException();
@@ -325,7 +325,7 @@ public class JobStepServiceSteps extends JobServiceTestBase {
     }
 
     private JobStepListResult getJobStepListResult(KapuaId currentJobId) throws KapuaException {
-        JobStepQuery jobStepQuery = jobStepFactory.newQuery(getCurrentScopeId());
+        KapuaQuery jobStepQuery = new KapuaQuery(getCurrentScopeId());
         jobStepQuery.setPredicate(jobStepQuery.attributePredicate(JobStepAttributes.JOB_ID, currentJobId, AttributePredicate.Operator.EQUAL));
 
         return jobStepService.query(jobStepQuery);
@@ -333,7 +333,7 @@ public class JobStepServiceSteps extends JobServiceTestBase {
 
     @When("I count the JobSteps in the current scope")
     public void iCountJobStepInCurrentScope() throws Exception {
-        updateCount(() -> (int) jobStepService.count(jobStepFactory.newQuery(getCurrentScopeId())));
+        updateCount(() -> (int) jobStepService.count(new KapuaQuery(getCurrentScopeId())));
     }
     // Delete
 
@@ -380,7 +380,7 @@ public class JobStepServiceSteps extends JobServiceTestBase {
     public void testTheStepFactory() {
         Assert.assertNotNull(jobStepFactory.newCreator(SYS_SCOPE_ID));
         Assert.assertNotNull(jobStepFactory.newEntity(SYS_SCOPE_ID));
-        Assert.assertNotNull(jobStepFactory.newQuery(SYS_SCOPE_ID));
+        Assert.assertNotNull(new KapuaQuery(SYS_SCOPE_ID));
         Assert.assertNotNull(jobStepFactory.newStepProperty("TestName", "TestType", "TestValue"));
     }
     // Private methods

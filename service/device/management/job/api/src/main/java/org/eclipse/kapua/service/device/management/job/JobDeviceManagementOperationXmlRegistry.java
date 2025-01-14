@@ -34,7 +34,4 @@ public class JobDeviceManagementOperationXmlRegistry {
         return jobDeviceManagementOperationFactory.newCreator(null);
     }
 
-    public JobDeviceManagementOperationQuery newQuery() {
-        return jobDeviceManagementOperationFactory.newQuery(null);
-    }
 }

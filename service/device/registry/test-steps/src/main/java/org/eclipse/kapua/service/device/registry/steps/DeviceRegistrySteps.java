@@ -467,13 +467,13 @@ public class DeviceRegistrySteps extends TestBase {
 
     @Given("A regular query")
     public void createRegularQuery() {
-        DeviceQuery query = deviceFactory.newQuery(getCurrentScopeId());
+        DeviceQuery query = new DeviceQuery(getCurrentScopeId());
         stepData.put(DEVICE_QUERY, query);
     }
 
     @Given("A query with a null Scope ID")
     public void createQueryWithNullScopeId() {
-        DeviceQuery query = deviceFactory.newQuery(null);
+        DeviceQuery query = new DeviceQuery(null);
         stepData.put(DEVICE_QUERY, query);
     }
 
@@ -638,7 +638,7 @@ public class DeviceRegistrySteps extends TestBase {
 
     @When("I query for devices with BIOS version {string}")
     public void queryForDevicesBasedOnBiosVersion(String version) throws Exception {
-        DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+        DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
         // Search for the known bios version string
         tmpQuery.setPredicate(tmpQuery.attributePredicate(DeviceAttributes.BIOS_VERSION, version, AttributePredicate.Operator.EQUAL));
         primeException();
@@ -653,7 +653,7 @@ public class DeviceRegistrySteps extends TestBase {
 
     @When("I query for devices with BIOS different from {string}")
     public void queryForDevicesWithDifferentBiosVersion(String version) throws Exception {
-        DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+        DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
         // Search for the known bios version string
         tmpQuery.setPredicate(tmpQuery.attributePredicate(DeviceAttributes.BIOS_VERSION, version, AttributePredicate.Operator.EQUAL));
         primeException();
@@ -668,7 +668,7 @@ public class DeviceRegistrySteps extends TestBase {
 
     @When("I query for devices with Client Id {string}")
     public void queryForDevicesBasedOnClientId(String id) throws Exception {
-        DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+        DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
         // Search for the known bios version string
         tmpQuery.setPredicate(tmpQuery.attributePredicate(DeviceAttributes.CLIENT_ID, id, AttributePredicate.Operator.EQUAL));
         primeException();
@@ -696,12 +696,12 @@ public class DeviceRegistrySteps extends TestBase {
 
     @When("I count the devices in scope {int}")
     public void countDevicesInScope(int scope) throws Exception {
-        updateCount(() -> (int) deviceRegistryService.count(deviceFactory.newQuery(getKapuaId(scope))));
+        updateCount(() -> (int) deviceRegistryService.count(new DeviceQuery(getKapuaId(scope))));
     }
 
     @When("I count devices with BIOS version {string}")
     public void countDevicesWithBIOSVersion(String version) throws Exception {
-        DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+        DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
         tmpQuery.setPredicate(tmpQuery.attributePredicate(DeviceAttributes.BIOS_VERSION, version, AttributePredicate.Operator.EQUAL));
         updateCount(() -> (int) deviceRegistryService.count(tmpQuery));
     }
@@ -761,7 +761,7 @@ public class DeviceRegistrySteps extends TestBase {
     public void deleteDeviceWithClientId(String clientId) throws Exception {
         try {
             primeException();
-            DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+            DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
             tmpQuery.setPredicate(tmpQuery.attributePredicate(DeviceAttributes.CLIENT_ID, clientId, AttributePredicate.Operator.EQUAL));
             DeviceListResult deviceList = deviceRegistryService.query(tmpQuery);
             Device device = deviceList.getFirstItem();
@@ -1002,7 +1002,7 @@ public class DeviceRegistrySteps extends TestBase {
         DeviceListResult tmpListRes;
         tmpDevice = deviceFactory.newEntity(SYS_SCOPE_ID);
         tmpCreator = deviceFactory.newCreator(SYS_SCOPE_ID);
-        tmpQuery = deviceFactory.newQuery(SYS_SCOPE_ID);
+        tmpQuery = new DeviceQuery(SYS_SCOPE_ID);
         tmpListRes = new DeviceListResult();
         Assert.assertNotNull(tmpDevice);
         Assert.assertNotNull(tmpCreator);
@@ -1216,7 +1216,7 @@ public class DeviceRegistrySteps extends TestBase {
 
     @Then("I count {int} connections in scope {int}")
     public void countConnectioncInScope(int target, int scope) throws Exception {
-        updateCountAndCheck(() -> (int) deviceConnectionService.count(deviceConnectionFactory.newQuery(getKapuaId(scope))), target);
+        updateCountAndCheck(() -> (int) deviceConnectionService.count(new DeviceConnectionQuery(getKapuaId(scope))), target);
     }
 
     @When("I search for a connection by scope and connection IDs")
@@ -1282,7 +1282,7 @@ public class DeviceRegistrySteps extends TestBase {
 
     @When("I query for all connections with the parameter {string} set to {string}")
     public void queryForConnections(String parameter, String value) throws Exception {
-        DeviceConnectionQuery query = deviceConnectionFactory.newQuery(getCurrentScopeId());
+        DeviceConnectionQuery query = new DeviceConnectionQuery(getCurrentScopeId());
         query.setPredicate(query.attributePredicate(parameter, value, AttributePredicate.Operator.EQUAL));
         primeException();
         try {
@@ -1341,7 +1341,7 @@ public class DeviceRegistrySteps extends TestBase {
         DeviceConnectionCreator tmpCreator = null;
         DeviceConnectionQuery tmpQuery = null;
         tmpCreator = deviceConnectionFactory.newCreator(SYS_SCOPE_ID);
-        tmpQuery = deviceConnectionFactory.newQuery(SYS_SCOPE_ID);
+        tmpQuery = new DeviceConnectionQuery(SYS_SCOPE_ID);
         Assert.assertNotNull(tmpCreator);
         Assert.assertNotNull(tmpQuery);
     }
@@ -1463,12 +1463,12 @@ public class DeviceRegistrySteps extends TestBase {
 
     @When("I count events for scope {int}")
     public void countEventsInScope(int scpId) throws Exception {
-        updateCount(() -> (int) eventService.count(eventFactory.newQuery(getKapuaId(scpId))));
+        updateCount(() -> (int) eventService.count(new DeviceEventQuery(getKapuaId(scpId))));
     }
 
     @When("I query for {string} events")
     public void queryForSpecificEvents(String eventType) throws Exception {
-        DeviceEventQuery tmpQuery = eventFactory.newQuery(getCurrentScopeId());
+        DeviceEventQuery tmpQuery = new DeviceEventQuery(getCurrentScopeId());
         Assert.assertNotNull(tmpQuery);
         KapuaMethod tmpMeth = getMethodFromString(eventType);
         Assert.assertNotNull(tmpMeth);
@@ -1510,7 +1510,7 @@ public class DeviceRegistrySteps extends TestBase {
             Assert.assertNotNull(account);
             Device device = deviceRegistryService.findByClientId(account.getId(), clientId);
             Assert.assertNotNull(device);
-            DeviceEventQuery eventQuery = eventFactory.newQuery(account.getId());
+            DeviceEventQuery eventQuery = new DeviceEventQuery(account.getId());
             eventQuery.setPredicate(eventQuery.attributePredicate(DeviceEventAttributes.DEVICE_ID, device.getId(), AttributePredicate.Operator.EQUAL));
             eventQuery.setSortCriteria(eventQuery.fieldSortCriteria(DeviceEventAttributes.RECEIVED_ON, SortOrder.ASCENDING));
             DeviceEventListResult deviceEventList = eventService.query(eventQuery);
@@ -1550,7 +1550,7 @@ public class DeviceRegistrySteps extends TestBase {
     private boolean searchForEventsFromDeviceWithClientID(Account account, Device device, int events, boolean timeoutOccurred, boolean greater) throws Exception {
         DeviceEventListResult deviceEventList = null;
         try {
-            DeviceEventQuery eventQuery = eventFactory.newQuery(account.getId());
+            DeviceEventQuery eventQuery = new DeviceEventQuery(account.getId());
             eventQuery.setPredicate(eventQuery.attributePredicate(DeviceEventAttributes.DEVICE_ID, device.getId(), AttributePredicate.Operator.EQUAL));
             eventQuery.setSortCriteria(eventQuery.fieldSortCriteria(DeviceEventAttributes.RECEIVED_ON, SortOrder.ASCENDING));
             deviceEventList = eventService.query(eventQuery);
@@ -1636,7 +1636,7 @@ public class DeviceRegistrySteps extends TestBase {
         DeviceEventListResult tmpList = null;
         tmpEvent = eventFactory.newEntity(SYS_SCOPE_ID);
         tmpCreator = eventFactory.newCreator(SYS_SCOPE_ID, getKapuaId(), new Date(), "");
-        tmpQuery = eventFactory.newQuery(SYS_SCOPE_ID);
+        tmpQuery = new DeviceEventQuery(SYS_SCOPE_ID);
         tmpList = new DeviceEventListResult();
         Assert.assertNotNull(tmpEvent);
         Assert.assertNotNull(tmpCreator);
@@ -1704,8 +1704,8 @@ public class DeviceRegistrySteps extends TestBase {
     @When("I search for device with tag {string}")
     public void iSearchForDeviceWithTag(String deviceTagName) throws Exception {
         Account lastAcc = (Account) stepData.get(LAST_ACCOUNT);
-        DeviceQuery deviceQuery = deviceFactory.newQuery(lastAcc.getId());
-        TagQuery tagQuery = tagFactory.newQuery(lastAcc.getId());
+        DeviceQuery deviceQuery = new DeviceQuery(lastAcc.getId());
+        TagQuery tagQuery = new TagQuery(lastAcc.getId());
         tagQuery.setPredicate(tagQuery.attributePredicate(TagAttributes.NAME, deviceTagName, AttributePredicate.Operator.EQUAL));
         primeException();
         try {
@@ -2253,7 +2253,7 @@ public class DeviceRegistrySteps extends TestBase {
     }
 
     private Device getDeviceWithClientId(String clientId) throws KapuaException {
-        DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+        DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
         tmpQuery.setPredicate(tmpQuery.attributePredicate(DeviceAttributes.CLIENT_ID, clientId));
 
         DeviceListResult deviceList = deviceRegistryService.query(tmpQuery);
@@ -2563,7 +2563,7 @@ public class DeviceRegistrySteps extends TestBase {
                 tmpDev = deviceRegistryService.findByClientId(tmpAcc.getId(), device.getClientId());
                 Assert.assertNotNull(tmpDev);
                 Assert.assertNotNull(tmpDev.getId());
-                tmpQuery = eventFactory.newQuery(tmpAcc.getId());
+                tmpQuery = new DeviceEventQuery(tmpAcc.getId());
                 tmpQuery.setPredicate(tmpQuery.attributePredicate(DeviceEventAttributes.DEVICE_ID, tmpDev.getId(), AttributePredicate.Operator.EQUAL));
                 tmpQuery.setSortCriteria(tmpQuery.fieldSortCriteria(DeviceEventAttributes.RECEIVED_ON, SortOrder.ASCENDING));
                 tmpList = eventService.query(tmpQuery);
@@ -2595,11 +2595,11 @@ public class DeviceRegistrySteps extends TestBase {
     @And("I assign tag {string} to device {string}")
     public void iAssignTagNamedToDevice(String tagName, String deviceName) throws Exception {
         try {
-            DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+            DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
             tmpQuery.setPredicate(tmpQuery.attributePredicate(DeviceAttributes.CLIENT_ID, deviceName, AttributePredicate.Operator.EQUAL));
             DeviceListResult deviceList = deviceRegistryService.query(tmpQuery);
             Device device = deviceList.getFirstItem();
-            TagQuery tagQuery = tagFactory.newQuery(getCurrentScopeId());
+            TagQuery tagQuery = new TagQuery(getCurrentScopeId());
             tagQuery.setPredicate(tagQuery.attributePredicate(TagAttributes.NAME, tagName, AttributePredicate.Operator.EQUAL));
             TagListResult tagList = tagService.query(tagQuery);
             Tag tag = tagList.getFirstItem();
@@ -2616,10 +2616,10 @@ public class DeviceRegistrySteps extends TestBase {
     @And("I add device {string} to group {string}")
     public void iAddDeviceToGroup(String deviceName, String groupName) throws Exception {
         try {
-            GroupQuery query = groupFactory.newQuery(getCurrentScopeId());
+            GroupQuery query = new GroupQuery(getCurrentScopeId());
             query.setPredicate(query.attributePredicate(GroupAttributes.NAME, groupName, AttributePredicate.Operator.EQUAL));
             Group foundGroup = groupService.query(query).getFirstItem();
-            DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+            DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
             tmpQuery.setPredicate(tmpQuery.attributePredicate(DeviceAttributes.CLIENT_ID, deviceName, AttributePredicate.Operator.EQUAL));
             Device device = deviceRegistryService.query(tmpQuery).getFirstItem();
             KapuaId groupId = foundGroup.getId();
@@ -2646,11 +2646,11 @@ public class DeviceRegistrySteps extends TestBase {
     @Given("Tag {string} is assigned to device {string}")
     public void tagIsAssignedToDevice(String tagName, String deviceName) throws Throwable {
         try {
-            DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+            DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
             tmpQuery.setPredicate(tmpQuery.attributePredicate(DeviceAttributes.CLIENT_ID, deviceName, AttributePredicate.Operator.EQUAL));
             DeviceListResult deviceList = deviceRegistryService.query(tmpQuery);
             Device device = deviceList.getFirstItem();
-            TagQuery tagQuery = tagFactory.newQuery(getCurrentScopeId());
+            TagQuery tagQuery = new TagQuery(getCurrentScopeId());
             tagQuery.setPredicate(tagQuery.attributePredicate(TagAttributes.NAME, tagName, AttributePredicate.Operator.EQUAL));
             TagListResult tagList = tagService.query(tagQuery);
             Tag tag = tagList.getFirstItem();
@@ -2664,7 +2664,7 @@ public class DeviceRegistrySteps extends TestBase {
     @When("I remove device {string} from all groups")
     public void iChangeDevicesGroupToNoGroup(String deviceName) throws Exception {
         try {
-            DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+            DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
             tmpQuery.setPredicate(tmpQuery.attributePredicate(DeviceAttributes.CLIENT_ID, deviceName, AttributePredicate.Operator.EQUAL));
             Device device = deviceRegistryService.query(tmpQuery).getFirstItem();
             device.setGroupId(null);
@@ -2707,11 +2707,11 @@ public class DeviceRegistrySteps extends TestBase {
     @Given("I unassign tag {string} from device {string}")
     public void iUnassignTagNamedFromDevice(String tagName, String deviceName) throws Exception {
         try {
-            DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+            DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
             tmpQuery.setPredicate(tmpQuery.attributePredicate(DeviceAttributes.CLIENT_ID, deviceName, AttributePredicate.Operator.EQUAL));
             DeviceListResult deviceList = deviceRegistryService.query(tmpQuery);
             Device device = deviceList.getFirstItem();
-            TagQuery tagQuery = tagFactory.newQuery(getCurrentScopeId());
+            TagQuery tagQuery = new TagQuery(getCurrentScopeId());
             tagQuery.setPredicate(tagQuery.attributePredicate(TagAttributes.NAME, tagName, AttributePredicate.Operator.EQUAL));
             TagListResult tagList = tagService.query(tagQuery);
             Tag tag = tagList.getFirstItem();
@@ -2728,10 +2728,10 @@ public class DeviceRegistrySteps extends TestBase {
     @Then("Device {string} is in Assigned Devices of group {string}")
     public void deviceIsInGroupsAssignedDevices(String deviceName, String groupName) throws Exception {
         try {
-            GroupQuery query = groupFactory.newQuery(getCurrentScopeId());
+            GroupQuery query = new GroupQuery(getCurrentScopeId());
             query.setPredicate(query.attributePredicate(GroupAttributes.NAME, groupName, AttributePredicate.Operator.EQUAL));
             Group foundGroup = groupService.query(query).getFirstItem();
-            DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+            DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
             tmpQuery.setPredicate(tmpQuery.attributePredicate(DeviceAttributes.CLIENT_ID, deviceName, AttributePredicate.Operator.EQUAL));
             Device device = deviceRegistryService.query(tmpQuery).getFirstItem();
             KapuaId expectedGroupId = foundGroup.getId();
@@ -3182,11 +3182,11 @@ public class DeviceRegistrySteps extends TestBase {
     @Given("Tag {string} is not assigned to device {string}")
     public void tagWithNameIsNotAssignedToDevice(String tagName, String deviceName) throws Throwable {
         try {
-            DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+            DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
             tmpQuery.setPredicate(tmpQuery.attributePredicate(DeviceAttributes.CLIENT_ID, deviceName, AttributePredicate.Operator.EQUAL));
             DeviceListResult deviceList = deviceRegistryService.query(tmpQuery);
             Device device = deviceList.getFirstItem();
-            TagQuery tagQuery = tagFactory.newQuery(getCurrentScopeId());
+            TagQuery tagQuery = new TagQuery(getCurrentScopeId());
             tagQuery.setPredicate(tagQuery.attributePredicate(TagAttributes.NAME, tagName, AttributePredicate.Operator.EQUAL));
             TagListResult tagList = tagService.query(tagQuery);
             Tag tag = tagList.getFirstItem();
@@ -3200,10 +3200,10 @@ public class DeviceRegistrySteps extends TestBase {
     @Then("Device {string} is not in Assigned Devices of group {string}")
     public void deviceIsNotInGroupsAssignedDevices(String deviceName, String groupName) throws Exception {
         try {
-            GroupQuery query = groupFactory.newQuery(getCurrentScopeId());
+            GroupQuery query = new GroupQuery(getCurrentScopeId());
             query.setPredicate(query.attributePredicate(GroupAttributes.NAME, groupName, AttributePredicate.Operator.EQUAL));
             Group foundGroup = groupService.query(query).getFirstItem();
-            DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+            DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
             tmpQuery.setPredicate(tmpQuery.attributePredicate(DeviceAttributes.CLIENT_ID, deviceName, AttributePredicate.Operator.EQUAL));
             Device device = deviceRegistryService.query(tmpQuery).getFirstItem();
             KapuaId expectedGroupId = foundGroup.getId();
@@ -3219,91 +3219,91 @@ public class DeviceRegistrySteps extends TestBase {
         DeviceListResult devices;
         stepData.remove("DeviceList");
         if (deviceParams.getClientId() != null && deviceParams.getDisplayName() == null && deviceParams.getSerialNumber() == null && deviceParams.getStatus() == null) {
-            DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+            DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
             tmpQuery.setPredicate(tmpQuery.attributePredicate(DeviceAttributes.CLIENT_ID, deviceParams.getClientId(), AttributePredicate.Operator.LIKE));
             devices = deviceRegistryService.query(tmpQuery);
             stepData.put("DeviceList", devices);
         } else if (deviceParams.getClientId() == null && deviceParams.getDisplayName() != null && deviceParams.getSerialNumber() == null && deviceParams.getStatus() == null) {
-            DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+            DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
             tmpQuery.setPredicate(tmpQuery.attributePredicate(DeviceAttributes.DISPLAY_NAME, deviceParams.getDisplayName(), AttributePredicate.Operator.LIKE));
             devices = deviceRegistryService.query(tmpQuery);
             stepData.put("DeviceList", devices);
         } else if (deviceParams.getClientId() == null && deviceParams.getDisplayName() == null && deviceParams.getSerialNumber() != null && deviceParams.getStatus() == null) {
-            DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+            DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
             tmpQuery.setPredicate(tmpQuery.attributePredicate(DeviceAttributes.SERIAL_NUMBER, deviceParams.getSerialNumber(), AttributePredicate.Operator.LIKE));
             devices = deviceRegistryService.query(tmpQuery);
             stepData.put("DeviceList", devices);
         } else if (deviceParams.getClientId() == null && deviceParams.getDisplayName() == null && deviceParams.getSerialNumber() == null && deviceParams.getStatus() != null) {
-            DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+            DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
             tmpQuery.setPredicate(tmpQuery.attributePredicate(DeviceAttributes.STATUS, deviceParams.getStatus(), AttributePredicate.Operator.LIKE));
             devices = deviceRegistryService.query(tmpQuery);
             stepData.put("DeviceList", devices);
         } else if (deviceParams.getClientId() != null && deviceParams.getDisplayName() != null && deviceParams.getSerialNumber() == null && deviceParams.getStatus() == null) {
-            DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+            DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
             tmpQuery.setPredicate(tmpQuery.andPredicate(tmpQuery.attributePredicate(DeviceAttributes.CLIENT_ID, deviceParams.getClientId(), AttributePredicate.Operator.LIKE),
                     tmpQuery.attributePredicate(DeviceAttributes.DISPLAY_NAME, deviceParams.getDisplayName(), AttributePredicate.Operator.LIKE)));
             devices = deviceRegistryService.query(tmpQuery);
             stepData.put("DeviceList", devices);
         } else if (deviceParams.getClientId() != null && deviceParams.getDisplayName() == null && deviceParams.getSerialNumber() != null && deviceParams.getStatus() == null) {
-            DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+            DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
             tmpQuery.setPredicate(tmpQuery.andPredicate(tmpQuery.attributePredicate(DeviceAttributes.CLIENT_ID, deviceParams.getClientId(), AttributePredicate.Operator.LIKE),
                     tmpQuery.attributePredicate(DeviceAttributes.SERIAL_NUMBER, deviceParams.getSerialNumber(), AttributePredicate.Operator.LIKE)));
             devices = deviceRegistryService.query(tmpQuery);
             stepData.put("DeviceList", devices);
         } else if (deviceParams.getClientId() != null && deviceParams.getDisplayName() == null && deviceParams.getSerialNumber() == null && deviceParams.getStatus() != null) {
-            DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+            DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
             tmpQuery.setPredicate(tmpQuery.andPredicate(tmpQuery.attributePredicate(DeviceAttributes.CLIENT_ID, deviceParams.getClientId(), AttributePredicate.Operator.LIKE),
                     tmpQuery.attributePredicate(DeviceAttributes.STATUS, deviceParams.getStatus(), AttributePredicate.Operator.LIKE)));
             devices = deviceRegistryService.query(tmpQuery);
             stepData.put("DeviceList", devices);
         } else if (deviceParams.getClientId() == null && deviceParams.getDisplayName() != null && deviceParams.getSerialNumber() != null && deviceParams.getStatus() == null) {
-            DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+            DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
             tmpQuery.setPredicate(tmpQuery.andPredicate(tmpQuery.attributePredicate(DeviceAttributes.SERIAL_NUMBER, deviceParams.getSerialNumber(), AttributePredicate.Operator.LIKE),
                     tmpQuery.attributePredicate(DeviceAttributes.DISPLAY_NAME, deviceParams.getDisplayName(), AttributePredicate.Operator.LIKE)));
             devices = deviceRegistryService.query(tmpQuery);
             stepData.put("DeviceList", devices);
         } else if (deviceParams.getClientId() == null && deviceParams.getDisplayName() != null && deviceParams.getSerialNumber() == null && deviceParams.getStatus() != null) {
-            DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+            DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
             tmpQuery.setPredicate(tmpQuery.andPredicate(tmpQuery.attributePredicate(DeviceAttributes.STATUS, deviceParams.getStatus(), AttributePredicate.Operator.LIKE),
                     tmpQuery.attributePredicate(DeviceAttributes.DISPLAY_NAME, deviceParams.getDisplayName(), AttributePredicate.Operator.LIKE)));
             devices = deviceRegistryService.query(tmpQuery);
             stepData.put("DeviceList", devices);
         } else if (deviceParams.getClientId() == null && deviceParams.getDisplayName() == null && deviceParams.getSerialNumber() != null && deviceParams.getStatus() != null) {
-            DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+            DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
             tmpQuery.setPredicate(tmpQuery.andPredicate(tmpQuery.attributePredicate(DeviceAttributes.SERIAL_NUMBER, deviceParams.getSerialNumber(), AttributePredicate.Operator.LIKE),
                     tmpQuery.attributePredicate(DeviceAttributes.STATUS, deviceParams.getStatus(), AttributePredicate.Operator.LIKE)));
             devices = deviceRegistryService.query(tmpQuery);
             stepData.put("DeviceList", devices);
         } else if (deviceParams.getClientId() != null && deviceParams.getDisplayName() != null && deviceParams.getSerialNumber() != null && deviceParams.getStatus() == null) {
-            DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+            DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
             tmpQuery.setPredicate(tmpQuery.andPredicate(tmpQuery.attributePredicate(DeviceAttributes.CLIENT_ID, deviceParams.getClientId(), AttributePredicate.Operator.LIKE),
                     tmpQuery.attributePredicate(DeviceAttributes.DISPLAY_NAME, deviceParams.getDisplayName(), AttributePredicate.Operator.LIKE),
                     tmpQuery.attributePredicate(DeviceAttributes.SERIAL_NUMBER, deviceParams.getSerialNumber(), AttributePredicate.Operator.LIKE)));
             devices = deviceRegistryService.query(tmpQuery);
             stepData.put("DeviceList", devices);
         } else if (deviceParams.getClientId() != null && deviceParams.getDisplayName() != null && deviceParams.getSerialNumber() == null && deviceParams.getStatus() != null) {
-            DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+            DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
             tmpQuery.setPredicate(tmpQuery.andPredicate(tmpQuery.attributePredicate(DeviceAttributes.CLIENT_ID, deviceParams.getClientId(), AttributePredicate.Operator.LIKE),
                     tmpQuery.attributePredicate(DeviceAttributes.DISPLAY_NAME, deviceParams.getDisplayName(), AttributePredicate.Operator.LIKE),
                     tmpQuery.attributePredicate(DeviceAttributes.STATUS, deviceParams.getStatus(), AttributePredicate.Operator.LIKE)));
             devices = deviceRegistryService.query(tmpQuery);
             stepData.put("DeviceList", devices);
         } else if (deviceParams.getClientId() != null && deviceParams.getDisplayName() == null && deviceParams.getSerialNumber() != null && deviceParams.getStatus() != null) {
-            DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+            DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
             tmpQuery.setPredicate(tmpQuery.andPredicate(tmpQuery.attributePredicate(DeviceAttributes.CLIENT_ID, deviceParams.getClientId(), AttributePredicate.Operator.LIKE),
                     tmpQuery.attributePredicate(DeviceAttributes.SERIAL_NUMBER, deviceParams.getSerialNumber(), AttributePredicate.Operator.LIKE),
                     tmpQuery.attributePredicate(DeviceAttributes.STATUS, deviceParams.getStatus(), AttributePredicate.Operator.LIKE)));
             devices = deviceRegistryService.query(tmpQuery);
             stepData.put("DeviceList", devices);
         } else if (deviceParams.getClientId() == null && deviceParams.getDisplayName() != null && deviceParams.getSerialNumber() != null && deviceParams.getStatus() != null) {
-            DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+            DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
             tmpQuery.setPredicate(tmpQuery.andPredicate(tmpQuery.attributePredicate(DeviceAttributes.SERIAL_NUMBER, deviceParams.getSerialNumber(), AttributePredicate.Operator.LIKE),
                     tmpQuery.attributePredicate(DeviceAttributes.DISPLAY_NAME, deviceParams.getDisplayName(), AttributePredicate.Operator.LIKE),
                     tmpQuery.attributePredicate(DeviceAttributes.STATUS, deviceParams.getStatus(), AttributePredicate.Operator.LIKE)));
             devices = deviceRegistryService.query(tmpQuery);
             stepData.put("DeviceList", devices);
         } else if (deviceParams.getClientId() != null && deviceParams.getDisplayName() != null && deviceParams.getSerialNumber() != null && deviceParams.getStatus() != null) {
-            DeviceQuery tmpQuery = deviceFactory.newQuery(getCurrentScopeId());
+            DeviceQuery tmpQuery = new DeviceQuery(getCurrentScopeId());
             tmpQuery.setPredicate(tmpQuery.andPredicate(tmpQuery.attributePredicate(DeviceAttributes.SERIAL_NUMBER, deviceParams.getSerialNumber(), AttributePredicate.Operator.LIKE),
                     tmpQuery.attributePredicate(DeviceAttributes.DISPLAY_NAME, deviceParams.getDisplayName(), AttributePredicate.Operator.LIKE),
                     tmpQuery.attributePredicate(DeviceAttributes.CLIENT_ID, deviceParams.getClientId(), AttributePredicate.Operator.LIKE),
@@ -3318,7 +3318,7 @@ public class DeviceRegistrySteps extends TestBase {
         try {
             stepData.remove(DEVICE);
             primeException();
-            DeviceQuery query = deviceFactory.newQuery(SYS_SCOPE_ID);
+            DeviceQuery query = new DeviceQuery(SYS_SCOPE_ID);
             query.setPredicate(query.attributePredicate(DeviceAttributes.CLIENT_ID, clientID, AttributePredicate.Operator.EQUAL));
             DeviceListResult queryResult = deviceRegistryService.query(query);
             Device foundDevice = queryResult.getFirstItem();

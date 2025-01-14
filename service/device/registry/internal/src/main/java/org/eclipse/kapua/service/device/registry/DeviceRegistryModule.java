@@ -158,7 +158,6 @@ public class DeviceRegistryModule extends AbstractKapuaModule {
             DeviceConnectionService deviceConnectionService,
             DeviceEventService deviceEventService,
             DeviceRepository deviceRepository,
-            DeviceFactory deviceFactory,
             TagService tagService) {
         return new DeviceValidationImpl(deviceRegistrySettings.getInt(KapuaDeviceRegistrySettingKeys.DEVICE_LIFECYCLE_BIRTH_VAR_FIELDS_LENGTH_MAX),
                 deviceRegistrySettings.getInt(KapuaDeviceRegistrySettingKeys.DEVICE_LIFECYCLE_BIRTH_EXTENDED_PROPERTIES_LENGTH_MAX),
@@ -168,7 +167,6 @@ public class DeviceRegistryModule extends AbstractKapuaModule {
                 deviceConnectionService,
                 deviceEventService,
                 deviceRepository,
-                deviceFactory,
                 tagService);
     }
 

@@ -23,7 +23,7 @@ import org.eclipse.kapua.model.id.KapuaId;
  * @see org.eclipse.kapua.model.KapuaEntityFactory
  * @since 1.0.0
  */
-public interface DeviceEventFactory extends KapuaEntityFactory<DeviceEvent, DeviceEventCreator, DeviceEventQuery> {
+public interface DeviceEventFactory extends KapuaEntityFactory<DeviceEvent, DeviceEventCreator> {
 
     /**
      * Instantiates a new {@link DeviceEventCreator}

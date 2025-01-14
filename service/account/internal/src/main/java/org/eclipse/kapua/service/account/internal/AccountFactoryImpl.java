@@ -19,7 +19,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountCreator;
 import org.eclipse.kapua.service.account.AccountFactory;
-import org.eclipse.kapua.service.account.AccountQuery;
 import org.eclipse.kapua.service.account.Organization;
 
 /**
@@ -50,11 +49,6 @@ public class AccountFactoryImpl implements AccountFactory {
     @Override
     public Organization newOrganization() {
         return new OrganizationImpl();
-    }
-
-    @Override
-    public AccountQuery newQuery(KapuaId scopeId) {
-        return new AccountQueryImpl(scopeId);
     }
 
     @Override

@@ -35,7 +35,4 @@ public class DeviceEventXmlRegistry {
         return deviceEventFactory.newEntity(null);
     }
 
-    public DeviceEventQuery newQuery() {
-        return deviceEventFactory.newQuery(null);
-    }
 }

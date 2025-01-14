@@ -40,14 +40,4 @@ public class MfaOptionXmlRegistry {
     public MfaOption newMfaOption() {
         return mfaOptionFactory.newEntity(null);
     }
-
-    /**
-     * Instantiates a new {@link MfaOptionQuery} instance.
-     *
-     * @return The newly instantiated {@link MfaOptionQuery}
-     * @since 1.3.0
-     */
-    public MfaOptionQuery newQuery() {
-        return mfaOptionFactory.newQuery(null);
-    }
 }

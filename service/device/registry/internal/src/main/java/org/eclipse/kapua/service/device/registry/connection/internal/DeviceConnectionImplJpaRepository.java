@@ -16,6 +16,7 @@ import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.jpa.KapuaUpdatableEntityJpaRepository;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnection;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionAttributes;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionListResult;
@@ -33,7 +34,7 @@ public class DeviceConnectionImplJpaRepository
 
     @Override
     public long countByClientId(TxContext tx, KapuaId scopeId, String clientId) throws KapuaException {
-        final DeviceConnectionQuery query = new DeviceConnectionQueryImpl(scopeId);
+        final KapuaQuery query = new DeviceConnectionQuery(scopeId);
         query.setPredicate(query.attributePredicate(DeviceConnectionAttributes.CLIENT_ID, clientId));
         return this.count(tx, query);
     }

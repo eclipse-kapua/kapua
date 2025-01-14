@@ -38,8 +38,4 @@ public class AccessPermissionXmlRegistry {
     public AccessPermissionCreator newCreator() {
         return accessPermissionFactory.newCreator(null);
     }
-
-    public AccessPermissionQuery newQuery() {
-        return accessPermissionFactory.newQuery(null);
-    }
 }

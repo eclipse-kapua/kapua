@@ -12,6 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.domain.shiro;
 
+import java.util.Optional;
+
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
@@ -24,16 +28,12 @@ import org.eclipse.kapua.service.authorization.domain.Domain;
 import org.eclipse.kapua.service.authorization.domain.DomainCreator;
 import org.eclipse.kapua.service.authorization.domain.DomainFactory;
 import org.eclipse.kapua.service.authorization.domain.DomainListResult;
-import org.eclipse.kapua.service.authorization.domain.DomainQuery;
 import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
 import org.eclipse.kapua.service.authorization.domain.DomainRepository;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.storage.TxManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Singleton;
-import java.util.Optional;
 
 /**
  * {@link DomainRegistryService} implementation.
@@ -152,7 +152,7 @@ public class DomainRegistryServiceImpl implements DomainRegistryService {
     }
 
     private void deleteDomainByAccountId(KapuaId accountId) throws KapuaException {
-        DomainQuery query = domainFactory.newQuery(accountId);
+        KapuaQuery query = new KapuaQuery(accountId);
 
         DomainListResult domainsToDelete = query(query);
 

@@ -18,7 +18,6 @@ import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.job.engine.queue.QueuedJobExecution;
 import org.eclipse.kapua.job.engine.queue.QueuedJobExecutionCreator;
 import org.eclipse.kapua.job.engine.queue.QueuedJobExecutionFactory;
-import org.eclipse.kapua.job.engine.queue.QueuedJobExecutionQuery;
 import org.eclipse.kapua.model.id.KapuaId;
 
 /**
@@ -37,11 +36,6 @@ public class QueuedJobExecutionFactoryImpl implements QueuedJobExecutionFactory 
     @Override
     public QueuedJobExecutionCreator newCreator(KapuaId scopeId) {
         return new QueuedJobExecutionCreatorImpl(scopeId);
-    }
-
-    @Override
-    public QueuedJobExecutionQuery newQuery(KapuaId scopeId) {
-        return new QueuedJobExecutionQueryImpl(scopeId);
     }
 
     @Override

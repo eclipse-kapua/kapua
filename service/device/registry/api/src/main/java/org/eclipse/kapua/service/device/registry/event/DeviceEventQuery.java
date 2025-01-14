@@ -12,12 +12,15 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.registry.event;
 
-import org.eclipse.kapua.model.query.KapuaQuery;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
+import org.eclipse.kapua.model.query.KapuaSortCriteria;
+import org.eclipse.kapua.model.query.SortOrder;
 
 /**
  * {@link DeviceEvent} {@link KapuaQuery} definition.
@@ -27,6 +30,32 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "query")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DeviceEventXmlRegistry.class, factoryMethod = "newQuery")
-public interface DeviceEventQuery extends KapuaQuery {
+@XmlType
+public class DeviceEventQuery extends KapuaQuery {
+
+    /**
+     * Constructor.
+     *
+     * @since 1.0.0
+     */
+    private DeviceEventQuery() {
+        super();
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param scopeId
+     *         The {@link #getScopeId()}.
+     * @since 1.0.0
+     */
+    public DeviceEventQuery(KapuaId scopeId) {
+        this();
+        setScopeId(scopeId);
+    }
+
+    @Override
+    public KapuaSortCriteria getDefaultSortCriteria() {
+        return fieldSortCriteria(DeviceEventAttributes.RECEIVED_ON, SortOrder.DESCENDING);
+    }
 }

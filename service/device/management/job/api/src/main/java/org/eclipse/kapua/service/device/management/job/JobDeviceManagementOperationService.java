@@ -26,7 +26,8 @@ public interface JobDeviceManagementOperationService extends KapuaEntityService<
     /**
      * Returns the {@link JobDeviceManagementOperationListResult} with elements matching the provided query.
      *
-     * @param query The {@link JobDeviceManagementOperationQuery} used to filter results.
+     * @param query
+     *         The {@link KapuaQuery} used to filter results.
      * @return The {@link JobDeviceManagementOperationListResult} with elements matching the query parameter.
      * @throws KapuaException
      * @since 1.1.0

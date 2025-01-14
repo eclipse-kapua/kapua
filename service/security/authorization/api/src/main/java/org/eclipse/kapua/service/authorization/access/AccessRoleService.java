@@ -25,10 +25,10 @@ import org.eclipse.kapua.service.KapuaEntityService;
 public interface AccessRoleService extends KapuaEntityService<AccessRole, AccessRoleCreator> {
 
     /**
-     * Creates a new {@link AccessRole} based on the parameters provided in the {@link AccessRoleCreator}.<br>
-     * {@link AccessRole} must have a unique name within the scope.
+     * Creates a new {@link AccessRole} based on the parameters provided in the {@link AccessRoleCreator}.<br> {@link AccessRole} must have a unique name within the scope.
      *
-     * @param accessRoleCreator The creator object from which to create the {@link AccessRole}.
+     * @param accessRoleCreator
+     *         The creator object from which to create the {@link AccessRole}.
      * @throws KapuaException
      * @since 1.0.0
      */
@@ -38,8 +38,10 @@ public interface AccessRoleService extends KapuaEntityService<AccessRole, Access
     /**
      * Finds the {@link AccessRole} by scope identifier and {@link AccessRole} id.
      *
-     * @param scopeId      The scope id in which to search.
-     * @param accessRoleId The {@link AccessRole} id to search.
+     * @param scopeId
+     *         The scope id in which to search.
+     * @param accessRoleId
+     *         The {@link AccessRole} id to search.
      * @return The {@link AccessRole} found or {@code null} if no entity was found.
      * @throws KapuaException
      * @since 1.0.0
@@ -50,8 +52,10 @@ public interface AccessRoleService extends KapuaEntityService<AccessRole, Access
     /**
      * Finds the {@link AccessRole}s by scope identifier and {@link AccessInfo} id.
      *
-     * @param scopeId      The scope id in which to search.
-     * @param accessInfoId The {@link AccessInfo} id to search.
+     * @param scopeId
+     *         The scope id in which to search.
+     * @param accessInfoId
+     *         The {@link AccessInfo} id to search.
      * @return The {@link AccessRole}s related to the {@link AccessInfo} id.
      * @throws KapuaException
      * @since 1.0.0
@@ -61,7 +65,8 @@ public interface AccessRoleService extends KapuaEntityService<AccessRole, Access
     /**
      * Returns the {@link AccessRoleListResult} with elements matching the provided query.
      *
-     * @param query The {@link AccessRoleQuery} used to filter results.
+     * @param query
+     *         The {@link KapuaQuery} used to filter results.
      * @return The {@link AccessRoleListResult} with elements matching the query parameter.
      * @throws KapuaException
      * @since 1.0.0
@@ -72,7 +77,8 @@ public interface AccessRoleService extends KapuaEntityService<AccessRole, Access
     /**
      * Returns the count of the {@link AccessRole} elements matching the provided query.
      *
-     * @param query The {@link AccessRoleQuery} used to filter results.
+     * @param query
+     *         The {@link KapuaQuery} used to filter results.
      * @return The count of the {@link AccessRole} elements matching the provided query.
      * @throws KapuaException
      * @since 1.0.0
@@ -83,8 +89,10 @@ public interface AccessRoleService extends KapuaEntityService<AccessRole, Access
     /**
      * Delete the {@link AccessRole} by scope id and {@link AccessRole} id.
      *
-     * @param scopeId      The scope id in which to delete.
-     * @param accessRoleId The {@link AccessRole} id to delete.
+     * @param scopeId
+     *         The scope id in which to delete.
+     * @param accessRoleId
+     *         The {@link AccessRole} id to delete.
      * @throws KapuaException
      * @since 1.0.0
      */

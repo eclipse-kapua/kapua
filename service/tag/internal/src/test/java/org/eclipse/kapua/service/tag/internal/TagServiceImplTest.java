@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.tag.internal;
 
+import java.math.BigInteger;
+import java.util.function.BiConsumer;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaIllegalNullArgumentException;
 import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
@@ -31,9 +34,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockSettings;
 import org.mockito.Mockito;
-
-import java.math.BigInteger;
-import java.util.function.BiConsumer;
 
 @org.junit.jupiter.api.Tag("org.eclipse.kapua.qa.markers.junit.JUnitTests")
 public class TagServiceImplTest {
@@ -62,6 +62,7 @@ public class TagServiceImplTest {
                 .thenAnswer(invocation -> invocation.getArgumentAt(0, Tag.class));
         tagFactory = Mockito.mock(TagFactory.class);
         final TxManager txManager = new TxManager() {
+
             @Override
             public <R> R execute(TxConsumer<R> transactionConsumer, BiConsumer<TxContext, R>... afterCommitConsumers) throws KapuaException {
                 return null;
@@ -84,7 +85,7 @@ public class TagServiceImplTest {
                 txManager,
                 tagRepository,
                 tagFactory
-        );job
+        );
     }
 
     @Test

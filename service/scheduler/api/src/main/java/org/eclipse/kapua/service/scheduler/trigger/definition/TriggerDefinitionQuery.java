@@ -12,12 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.scheduler.trigger.definition;
 
-import org.eclipse.kapua.model.query.KapuaQuery;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.AbstractKapuaNamedQuery;
+import org.eclipse.kapua.model.query.KapuaQuery;
 
 /**
  * {@link TriggerDefinition} {@link KapuaQuery} definition.
@@ -27,6 +29,17 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "query")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = TriggerDefinitionXmlRegistry.class, factoryMethod = "newQuery")
-public interface TriggerDefinitionQuery extends KapuaQuery {
+@XmlType
+public class TriggerDefinitionQuery extends AbstractKapuaNamedQuery {
+
+    public TriggerDefinitionQuery() {
+    }
+
+    public TriggerDefinitionQuery(KapuaId scopeId) {
+        super(scopeId);
+    }
+
+    public TriggerDefinitionQuery(KapuaQuery query) {
+        super(query);
+    }
 }

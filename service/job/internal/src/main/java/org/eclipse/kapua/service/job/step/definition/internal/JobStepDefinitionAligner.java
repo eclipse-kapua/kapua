@@ -30,6 +30,7 @@ import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.locator.initializers.KapuaInitializingMethod;
 import org.eclipse.kapua.model.KapuaNamedEntity;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinition;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionRepository;
 import org.eclipse.kapua.service.job.step.definition.JobStepProperty;
@@ -100,7 +101,7 @@ public class JobStepDefinitionAligner {
             KapuaSecurityUtils.doPrivileged(() -> {
                 txManager.execute(tx -> {
                     // Retrieve all JobStepDefinition from the database
-                    List<JobStepDefinitionImpl> dbJobStepDefinitions = jobStepDefinitionRepository.query(tx, new JobStepDefinitionQueryImpl(null)).getItems()
+                    List<JobStepDefinitionImpl> dbJobStepDefinitions = jobStepDefinitionRepository.query(tx, new KapuaQuery((KapuaId) null)).getItems()
                             .stream()
                             .map(dbJobStepDefinition -> (JobStepDefinitionImpl) dbJobStepDefinition)
                             .collect(Collectors.toList());

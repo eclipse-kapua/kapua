@@ -18,7 +18,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.role.RolePermission;
 import org.eclipse.kapua.service.authorization.role.RolePermissionCreator;
 import org.eclipse.kapua.service.authorization.role.RolePermissionFactory;
-import org.eclipse.kapua.service.authorization.role.RolePermissionQuery;
 
 /**
  * {@link RolePermissionFactory} implementation.
@@ -36,11 +35,6 @@ public class RolePermissionFactoryImpl implements RolePermissionFactory {
     @Override
     public RolePermissionCreator newCreator(KapuaId scopeId) {
         return new RolePermissionCreatorImpl(scopeId);
-    }
-
-    @Override
-    public RolePermissionQuery newQuery(KapuaId scopeId) {
-        return new RolePermissionQueryImpl(scopeId);
     }
 
     @Override

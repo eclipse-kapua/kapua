@@ -12,6 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.token.shiro;
 
+import java.util.Date;
+import java.util.Optional;
+
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.domains.Domains;
@@ -26,7 +31,6 @@ import org.eclipse.kapua.service.authentication.token.AccessTokenAttributes;
 import org.eclipse.kapua.service.authentication.token.AccessTokenCreator;
 import org.eclipse.kapua.service.authentication.token.AccessTokenFactory;
 import org.eclipse.kapua.service.authentication.token.AccessTokenListResult;
-import org.eclipse.kapua.service.authentication.token.AccessTokenQuery;
 import org.eclipse.kapua.service.authentication.token.AccessTokenRepository;
 import org.eclipse.kapua.service.authentication.token.AccessTokenService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
@@ -34,10 +38,6 @@ import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.storage.TxManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Singleton;
-import java.util.Date;
-import java.util.Optional;
 
 /**
  * {@link AccessTokenService} implementation.
@@ -168,7 +168,7 @@ public class AccessTokenServiceImpl implements AccessTokenService {
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.ACCESS_TOKEN, Actions.read, scopeId));
         // Build query
-        AccessTokenQuery query = new AccessTokenQueryImpl(scopeId);
+        final KapuaQuery query = new KapuaQuery(scopeId);
         query.setPredicate(query.attributePredicate(AccessTokenAttributes.USER_ID, userId));
         // Do query
         return query(query);
@@ -223,7 +223,7 @@ public class AccessTokenServiceImpl implements AccessTokenService {
 
     private void deleteAccessTokenByUserId(KapuaId scopeId, KapuaId userId) throws KapuaException {
 
-        AccessTokenQuery query = new AccessTokenQueryImpl(scopeId);
+        final KapuaQuery query = new KapuaQuery(scopeId);
         query.setPredicate(query.attributePredicate(AccessTokenAttributes.USER_ID, userId));
 
         AccessTokenListResult accessTokensToDelete = query(query);
@@ -235,7 +235,7 @@ public class AccessTokenServiceImpl implements AccessTokenService {
 
     private void deleteAccessTokenByAccountId(KapuaId scopeId, KapuaId accountId) throws KapuaException {
 
-        AccessTokenQuery query = new AccessTokenQueryImpl(accountId);
+        final KapuaQuery query = new KapuaQuery(scopeId);
 
         AccessTokenListResult accessTokensToDelete = query(query);
 

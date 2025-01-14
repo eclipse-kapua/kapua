@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.job.server;
 
-import com.extjs.gxt.ui.client.data.BaseListLoadResult;
-import com.extjs.gxt.ui.client.data.ListLoadResult;
-import com.google.common.base.Strings;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.server.KapuaRemoteServiceServlet;
 import org.eclipse.kapua.app.console.module.api.server.util.KapuaExceptionHandler;
@@ -31,10 +31,12 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinition;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionFactory;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionListResult;
+import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionQuery;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionService;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.extjs.gxt.ui.client.data.BaseListLoadResult;
+import com.extjs.gxt.ui.client.data.ListLoadResult;
+import com.google.common.base.Strings;
 
 public class GwtJobStepDefinitionServiceImpl extends KapuaRemoteServiceServlet implements GwtJobStepDefinitionService {
 
@@ -54,7 +56,7 @@ public class GwtJobStepDefinitionServiceImpl extends KapuaRemoteServiceServlet i
         try {
             KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(scopeIdString);
 
-            JobStepDefinitionListResult result = JOB_STEP_DEFINITION_SERVICE.query(JOB_STEP_DEFINITION_FACTORY.newQuery(scopeId));
+            JobStepDefinitionListResult result = JOB_STEP_DEFINITION_SERVICE.query(new JobStepDefinitionQuery(scopeId));
             for (JobStepDefinition jsd : result.getItems()) {
 
                 if (!Strings.isNullOrEmpty(JOB_STEP_DEFINITION_EXCLUDE_REGEX) && jsd.getName().matches(JOB_STEP_DEFINITION_EXCLUDE_REGEX)) {
@@ -100,8 +102,8 @@ public class GwtJobStepDefinitionServiceImpl extends KapuaRemoteServiceServlet i
     }
 
     /**
-     * Set the {@link GwtJobStepProperty#isEnum()} property.
-     * This cannot be performed in *.shared.* packages (entity converters are in that package), since `Class.forName` is not present in the JRE Emulation library.
+     * Set the {@link GwtJobStepProperty#isEnum()} property. This cannot be performed in *.shared.* packages (entity converters are in that package), since `Class.forName` is not present in the JRE
+     * Emulation library.
      *
      * @param jobStepProperties
      * @throws ClassNotFoundException

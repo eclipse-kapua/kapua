@@ -34,7 +34,4 @@ public class ManagementOperationNotificationXmlRegistry {
         return managementOperationNotificationFactory.newCreator(null);
     }
 
-    ManagementOperationNotificationQuery newQuery() {
-        return managementOperationNotificationFactory.newQuery(null);
-    }
 }

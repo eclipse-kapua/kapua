@@ -12,11 +12,22 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.domain.shiro;
 
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.locator.initializers.KapuaInitializingMethod;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.domain.Domain;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionRepository;
 import org.eclipse.kapua.service.authorization.domain.DomainRepository;
 import org.eclipse.kapua.service.authorization.role.RolePermissionRepository;
@@ -25,16 +36,8 @@ import org.eclipse.kapua.storage.TxManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 public class DomainsAligner {
+
     private final TxManager txManager;
     private final DomainRepository domainRepository;
     private final AccessPermissionRepository accessPermissionRepository;
@@ -44,10 +47,10 @@ public class DomainsAligner {
 
     @Inject
     public DomainsAligner(@Named("authorizationTxManager")
-                          TxManager txManager,
-                          DomainRepository domainRepository,
-                          AccessPermissionRepository accessPermissionRepository, RolePermissionRepository rolePermissionRepository,
-                          Set<Domain> knownDomains) {
+    TxManager txManager,
+            DomainRepository domainRepository,
+            AccessPermissionRepository accessPermissionRepository, RolePermissionRepository rolePermissionRepository,
+            Set<Domain> knownDomains) {
         this.txManager = txManager;
         this.domainRepository = domainRepository;
         this.accessPermissionRepository = accessPermissionRepository;
@@ -65,7 +68,7 @@ public class DomainsAligner {
         try {
             KapuaSecurityUtils.doPrivileged(() -> {
                 txManager.execute(tx -> {
-                    final List<org.eclipse.kapua.service.authorization.domain.Domain> dbDomainEntries = domainRepository.query(tx, new DomainQueryImpl()).getItems();
+                    final List<org.eclipse.kapua.service.authorization.domain.Domain> dbDomainEntries = domainRepository.query(tx, new KapuaQuery()).getItems();
                     logger.info("Found {} domain declarations in database", dbDomainEntries.size());
 
                     for (final org.eclipse.kapua.service.authorization.domain.Domain dbDomainEntry : dbDomainEntries) {
@@ -87,7 +90,7 @@ public class DomainsAligner {
                         //Align them!
                         alignDomains(tx, dbDomainEntry, wiredDomain);
                     }
-//                    createMissingDomains(tx, declaredDomainsNotInDb, knownDomainsByName);
+                    //                    createMissingDomains(tx, declaredDomainsNotInDb, knownDomainsByName);
                     logger.info("Domain alignment complete!");
                     return null;
                 });

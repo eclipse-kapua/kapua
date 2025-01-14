@@ -22,7 +22,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.authorization.domain.Domain;
 import org.eclipse.kapua.service.authorization.domain.DomainCreator;
-import org.eclipse.kapua.service.authorization.domain.DomainQuery;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,22 +55,6 @@ public class DomainFactoryImplTest {
         DomainCreator domainCreator = domainFactoryImpl.newCreator((String) null);
         Assert.assertNull("Null expected.", domainCreator.getName());
         Assert.assertNull("Null expected.", domainCreator.getScopeId());
-    }
-
-    @Test
-    public void newQueryTest() {
-        DomainQuery domainQuery = domainFactoryImpl.newQuery(KapuaId.ONE);
-        Assert.assertEquals("Expected and actual values should be the same.", KapuaId.ONE, domainQuery.getScopeId());
-        Assert.assertNull("domainQuery.sortCriteria", domainQuery.getSortCriteria());
-        Assert.assertNotNull("domainQuery.defaultSortCriteria", domainQuery.getDefaultSortCriteria());
-    }
-
-    @Test
-    public void newQueryNullTest() {
-        DomainQuery domainQuery = domainFactoryImpl.newQuery(null);
-        Assert.assertNull("Null expected.", domainQuery.getScopeId());
-        Assert.assertNull("domainQuery.sortCriteria", domainQuery.getSortCriteria());
-        Assert.assertNotNull("domainQuery.defaultSortCriteria", domainQuery.getDefaultSortCriteria());
     }
 
     @Test

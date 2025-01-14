@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.access.shiro;
 
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.domains.Domains;
@@ -26,7 +28,6 @@ import org.eclipse.kapua.service.authorization.access.AccessInfoAttributes;
 import org.eclipse.kapua.service.authorization.access.AccessInfoCreator;
 import org.eclipse.kapua.service.authorization.access.AccessInfoFactory;
 import org.eclipse.kapua.service.authorization.access.AccessInfoListResult;
-import org.eclipse.kapua.service.authorization.access.AccessInfoQuery;
 import org.eclipse.kapua.service.authorization.access.AccessInfoRepository;
 import org.eclipse.kapua.service.authorization.access.AccessInfoService;
 import org.eclipse.kapua.service.authorization.access.AccessPermission;
@@ -45,8 +46,6 @@ import org.eclipse.kapua.service.authorization.role.RoleRepository;
 import org.eclipse.kapua.storage.TxManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Singleton;
 
 /**
  * {@link AccessInfoService} implementation based on JPA.
@@ -70,16 +69,16 @@ public class AccessInfoServiceImpl implements AccessInfoService {
     private final PermissionValidator permissionValidator;
 
     public AccessInfoServiceImpl(AuthorizationService authorizationService,
-                                 PermissionFactory permissionFactory,
-                                 TxManager txManager,
-                                 RoleRepository roleRepository,
-                                 AccessRoleFactory accessRoleFactory,
-                                 AccessRoleRepository accessRoleRepository,
-                                 AccessInfoRepository accessInfoRepository,
-                                 AccessInfoFactory accessInfoFactory,
-                                 AccessPermissionRepository accessPermissionRepository,
-                                 AccessPermissionFactory accessPermissionFactory,
-                                 PermissionValidator permissionValidator) {
+            PermissionFactory permissionFactory,
+            TxManager txManager,
+            RoleRepository roleRepository,
+            AccessRoleFactory accessRoleFactory,
+            AccessRoleRepository accessRoleRepository,
+            AccessInfoRepository accessInfoRepository,
+            AccessInfoFactory accessInfoFactory,
+            AccessPermissionRepository accessPermissionRepository,
+            AccessPermissionFactory accessPermissionFactory,
+            PermissionValidator permissionValidator) {
         this.authorizationService = authorizationService;
         this.permissionFactory = permissionFactory;
         this.txManager = txManager;
@@ -223,7 +222,7 @@ public class AccessInfoServiceImpl implements AccessInfoService {
     }
 
     private void deleteAccessInfoByUserId(KapuaId scopeId, KapuaId userId) throws KapuaException {
-        AccessInfoQuery query = accessInfoFactory.newQuery(scopeId);
+        final KapuaQuery query = new KapuaQuery(scopeId);
         query.setPredicate(query.attributePredicate(AccessInfoAttributes.USER_ID, userId));
 
         AccessInfoListResult accessInfosToDelete = query(query);
@@ -234,7 +233,7 @@ public class AccessInfoServiceImpl implements AccessInfoService {
     }
 
     private void deleteAccessInfoByAccountId(KapuaId scopeId, KapuaId accountId) throws KapuaException {
-        AccessInfoQuery query = accessInfoFactory.newQuery(accountId);
+        final KapuaQuery query = new KapuaQuery(scopeId);
 
         AccessInfoListResult accessInfosToDelete = query(query);
 

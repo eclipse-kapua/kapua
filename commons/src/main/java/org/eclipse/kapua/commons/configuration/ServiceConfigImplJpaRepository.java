@@ -16,6 +16,7 @@ import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.jpa.KapuaUpdatableEntityJpaRepository;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.storage.TxContext;
 
 public class ServiceConfigImplJpaRepository
@@ -27,7 +28,7 @@ public class ServiceConfigImplJpaRepository
 
     @Override
     public ServiceConfigListResult findByScopeAndPid(TxContext txContext, KapuaId scopeId, String pid) throws KapuaException {
-        final ServiceConfigQueryImpl query = new ServiceConfigQueryImpl(scopeId);
+        final KapuaQuery query = new KapuaQuery(scopeId);
 
         query.setPredicate(
                 query.andPredicate(

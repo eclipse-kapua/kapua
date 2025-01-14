@@ -12,12 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job;
 
-import org.eclipse.kapua.model.query.KapuaQuery;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.AbstractKapuaNamedQuery;
+import org.eclipse.kapua.model.query.KapuaQuery;
 
 /**
  * {@link Job} {@link KapuaQuery} definition.
@@ -27,17 +29,35 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "query")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = JobXmlRegistry.class, factoryMethod = "newQuery")
-public interface JobQuery extends KapuaQuery {
+@XmlType
+public class JobQuery extends AbstractKapuaNamedQuery {
+
+    public JobQuery() {
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param scopeId
+     *         The {@link #getScopeId()}.
+     * @since 1.0.0
+     */
+    public JobQuery(KapuaId scopeId) {
+        super(scopeId);
+    }
 
     /**
      * Instantiates a new {@link JobMatchPredicate}.
      *
-     * @param matchTerm The term to use to match.
-     * @param <T>       The type of the term
+     * @param matchTerm
+     *         The term to use to match.
+     * @param <T>
+     *         The type of the term
      * @return The newly instantiated {@link JobMatchPredicate}.
      * @since 2.0.0
      */
-    <T> JobMatchPredicate<T> matchPredicate(T matchTerm);
+    public <T> JobMatchPredicate<T> matchPredicate(T matchTerm) {
+        return new JobMatchPredicate<>(matchTerm);
+    }
 
 }

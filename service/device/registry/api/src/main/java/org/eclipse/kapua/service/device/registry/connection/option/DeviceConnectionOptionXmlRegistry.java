@@ -34,8 +34,4 @@ public class DeviceConnectionOptionXmlRegistry {
     public DeviceConnectionOption newDeviceConnectionOption() {
         return deviceConnectionOptionFactory.newEntity(null);
     }
-
-    public DeviceConnectionOptionQuery newQuery() {
-        return deviceConnectionOptionFactory.newQuery(null);
-    }
 }

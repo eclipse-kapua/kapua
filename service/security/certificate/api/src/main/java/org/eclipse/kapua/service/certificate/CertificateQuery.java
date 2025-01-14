@@ -18,9 +18,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaForwardableEntityQuery;
 import org.eclipse.kapua.model.query.KapuaQuery;
-import org.eclipse.kapua.service.certificate.xml.CertificateXmlRegistry;
 
 /**
  * {@link Certificate} {@link KapuaQuery} definition.
@@ -30,8 +30,19 @@ import org.eclipse.kapua.service.certificate.xml.CertificateXmlRegistry;
  */
 @XmlRootElement(name = "query")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = CertificateXmlRegistry.class, factoryMethod = "newQuery")
-public interface CertificateQuery extends KapuaForwardableEntityQuery {
+@XmlType
+public class CertificateQuery extends KapuaForwardableEntityQuery {
+
+    public CertificateQuery() {
+    }
+
+    public CertificateQuery(KapuaId scopeId) {
+        super(scopeId);
+    }
+
+    public CertificateQuery(KapuaQuery query) {
+        super(query);
+    }
 
     @Override
     /**
@@ -41,14 +52,18 @@ public interface CertificateQuery extends KapuaForwardableEntityQuery {
      * @since 1.0.0
      */
     @XmlElement(name = "includeInherited")
-    Boolean getIncludeInherited();
+    public Boolean getIncludeInherited() {
+        return includeInherited;
+    }
 
     @Override
     /**
      * Sets whether or not to get also inherited {@link Certificate}s
      *
-     * @param includeInherited {@code true} to get inherited {@link CertCertificateificateInfo}s, {@code false} otherwise.
+     * @param includeInherited {@code true} to get inherited {@link Certificate}s, {@code false} otherwise.
      * @since 1.0.0
      */
-    void setIncludeInherited(Boolean includeInherited);
+    public void setIncludeInherited(Boolean includeInherited) {
+        this.includeInherited = includeInherited;
+    }
 }

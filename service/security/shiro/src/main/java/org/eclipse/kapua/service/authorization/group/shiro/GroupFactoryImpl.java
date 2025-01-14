@@ -19,7 +19,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.group.Group;
 import org.eclipse.kapua.service.authorization.group.GroupCreator;
 import org.eclipse.kapua.service.authorization.group.GroupFactory;
-import org.eclipse.kapua.service.authorization.group.GroupQuery;
 
 /**
  * {@link GroupFactory} implementation.
@@ -41,11 +40,6 @@ public class GroupFactoryImpl implements GroupFactory {
     @Override
     public Group newEntity(KapuaId scopeId) {
         return new GroupImpl(scopeId);
-    }
-
-    @Override
-    public GroupQuery newQuery(KapuaId scopeId) {
-        return new GroupQueryImpl(scopeId);
     }
 
     @Override

@@ -20,7 +20,6 @@ import org.eclipse.kapua.service.certificate.Certificate;
 import org.eclipse.kapua.service.certificate.CertificateCreator;
 import org.eclipse.kapua.service.certificate.CertificateFactory;
 import org.eclipse.kapua.service.certificate.CertificateGenerator;
-import org.eclipse.kapua.service.certificate.CertificateQuery;
 import org.eclipse.kapua.service.certificate.CertificateUsage;
 import org.eclipse.kapua.service.certificate.KeyUsage;
 import org.eclipse.kapua.service.certificate.KeyUsageSetting;
@@ -41,11 +40,6 @@ public class CertificateFactoryImpl implements CertificateFactory {
     @Override
     public CertificateCreator newCreator(KapuaId scopeId) {
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public CertificateQuery newQuery(KapuaId scopeId) {
-        return new CertificateQueryImpl(scopeId);
     }
 
     @Override

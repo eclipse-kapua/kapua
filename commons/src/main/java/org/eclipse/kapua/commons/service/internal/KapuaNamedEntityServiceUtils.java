@@ -12,6 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.service.internal;
 
+import java.util.Collections;
+import java.util.List;
+
+import javax.validation.constraints.NotNull;
+
 import org.eclipse.kapua.KapuaDuplicateNameException;
 import org.eclipse.kapua.KapuaDuplicateNameInAnotherAccountError;
 import org.eclipse.kapua.KapuaException;
@@ -21,15 +26,10 @@ import org.eclipse.kapua.model.KapuaNamedEntity;
 import org.eclipse.kapua.model.KapuaNamedEntityAttributes;
 import org.eclipse.kapua.model.KapuaNamedEntityCreator;
 import org.eclipse.kapua.model.query.KapuaQuery;
-import org.eclipse.kapua.model.query.QueryFactory;
 import org.eclipse.kapua.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.model.query.predicate.AttributePredicate;
 import org.eclipse.kapua.model.query.predicate.QueryPredicate;
 import org.eclipse.kapua.service.KapuaEntityService;
-
-import javax.validation.constraints.NotNull;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Util class that offers checks on the {@link KapuaNamedEntity#getName()} uniqueness in different flavors.
@@ -41,7 +41,6 @@ import java.util.List;
 public class KapuaNamedEntityServiceUtils {
 
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
-    private static final QueryFactory QUERY_FACTORY = LOCATOR.getFactory(QueryFactory.class);
 
     /**
      * Constructor.
@@ -56,36 +55,52 @@ public class KapuaNamedEntityServiceUtils {
     /**
      * Checks that the given {@link KapuaNamedEntityCreator#getName()} is unique within the {@link KapuaNamedEntityCreator#getScopeId()}.
      *
-     * @param kapuaNamedEntityService The {@link KapuaEntityService} to use. Usually it is the same service that is using this utility.
-     * @param creator                 The {@link KapuaNamedEntityCreator} to check.
-     * @param <E>                     The {@link KapuaNamedEntity} type.
-     * @param <C>                     The {@link KapuaNamedEntityCreator} type.
-     * @throws KapuaDuplicateNameException if the {@link KapuaNamedEntityCreator#getName()} is duplicated within the {@link KapuaNamedEntityCreator#getScopeId()}.
-     * @throws KapuaException              if any other error occurs.
+     * @param kapuaNamedEntityService
+     *         The {@link KapuaEntityService} to use. Usually it is the same service that is using this utility.
+     * @param creator
+     *         The {@link KapuaNamedEntityCreator} to check.
+     * @param <E>
+     *         The {@link KapuaNamedEntity} type.
+     * @param <C>
+     *         The {@link KapuaNamedEntityCreator} type.
+     * @throws KapuaDuplicateNameException
+     *         if the {@link KapuaNamedEntityCreator#getName()} is duplicated within the {@link KapuaNamedEntityCreator#getScopeId()}.
+     * @throws KapuaException
+     *         if any other error occurs.
      * @since 2.0.0
      * @deprecated since 2.0.0 - use {@link org.eclipse.kapua.storage.KapuaNamedEntityRepository} instead
      */
     @Deprecated
-    public static <E extends KapuaNamedEntity, C extends KapuaNamedEntityCreator<E>> void checkEntityNameUniqueness(@NotNull KapuaEntityService<E, C> kapuaNamedEntityService, @NotNull C creator) throws KapuaException {
+    public static <E extends KapuaNamedEntity, C extends KapuaNamedEntityCreator<E>> void checkEntityNameUniqueness(@NotNull KapuaEntityService<E, C> kapuaNamedEntityService, @NotNull C creator)
+            throws KapuaException {
         checkEntityNameUniqueness(kapuaNamedEntityService, creator, Collections.emptyList());
     }
 
     /**
-     * Checks that the given {@link KapuaNamedEntityCreator#getName()} is unique within the {@link KapuaNamedEntityCreator#getScopeId()} with additional {@link QueryPredicate}s to customize the check.
+     * Checks that the given {@link KapuaNamedEntityCreator#getName()} is unique within the {@link KapuaNamedEntityCreator#getScopeId()} with additional {@link QueryPredicate}s to customize the
+     * check.
      *
-     * @param kapuaNamedEntityService The {@link KapuaEntityService} to use. Usually it is the same service that is using this utility.
-     * @param creator                 The {@link KapuaNamedEntityCreator} to check.
-     * @param additionalPredicates    The additional {@link QueryPredicate}s to customize the check
-     * @param <E>                     The {@link KapuaNamedEntity} type.
-     * @param <C>                     The {@link KapuaNamedEntityCreator} type.
-     * @throws KapuaDuplicateNameException if the {@link KapuaNamedEntityCreator#getName()} is duplicated within the {@link KapuaNamedEntityCreator#getScopeId()}.
-     * @throws KapuaException              if any other error occurs.
+     * @param kapuaNamedEntityService
+     *         The {@link KapuaEntityService} to use. Usually it is the same service that is using this utility.
+     * @param creator
+     *         The {@link KapuaNamedEntityCreator} to check.
+     * @param additionalPredicates
+     *         The additional {@link QueryPredicate}s to customize the check
+     * @param <E>
+     *         The {@link KapuaNamedEntity} type.
+     * @param <C>
+     *         The {@link KapuaNamedEntityCreator} type.
+     * @throws KapuaDuplicateNameException
+     *         if the {@link KapuaNamedEntityCreator#getName()} is duplicated within the {@link KapuaNamedEntityCreator#getScopeId()}.
+     * @throws KapuaException
+     *         if any other error occurs.
      * @since 2.0.0
      * @deprecated since 2.0.0 - use {@link org.eclipse.kapua.storage.KapuaNamedEntityRepository} instead
      */
     @Deprecated
-    public static <E extends KapuaNamedEntity, C extends KapuaNamedEntityCreator<E>> void checkEntityNameUniqueness(@NotNull KapuaEntityService<E, C> kapuaNamedEntityService, @NotNull C creator, @NotNull List<QueryPredicate> additionalPredicates) throws KapuaException {
-        KapuaQuery query = QUERY_FACTORY.newQuery();
+    public static <E extends KapuaNamedEntity, C extends KapuaNamedEntityCreator<E>> void checkEntityNameUniqueness(@NotNull KapuaEntityService<E, C> kapuaNamedEntityService, @NotNull C creator,
+            @NotNull List<QueryPredicate> additionalPredicates) throws KapuaException {
+        KapuaQuery query = new KapuaQuery();
         query.setScopeId(creator.getScopeId());
 
         AndPredicate andPredicate = query.andPredicate();
@@ -105,11 +120,16 @@ public class KapuaNamedEntityServiceUtils {
     /**
      * Checks that the given {@link KapuaNamedEntity#getName()} is unique within the {@link KapuaNamedEntity#getScopeId()}.
      *
-     * @param kapuaNamedEntityService The {@link KapuaEntityService} to use. Usually it is the same service that is using this utility.
-     * @param entity                  The {@link KapuaNamedEntity} to check.
-     * @param <E>                     The {@link KapuaNamedEntity} type.
-     * @throws KapuaDuplicateNameException if the {@link KapuaNamedEntity#getName()} is duplicated within the {@link KapuaNamedEntity#getScopeId()}.
-     * @throws KapuaException              if any other error occurs.
+     * @param kapuaNamedEntityService
+     *         The {@link KapuaEntityService} to use. Usually it is the same service that is using this utility.
+     * @param entity
+     *         The {@link KapuaNamedEntity} to check.
+     * @param <E>
+     *         The {@link KapuaNamedEntity} type.
+     * @throws KapuaDuplicateNameException
+     *         if the {@link KapuaNamedEntity#getName()} is duplicated within the {@link KapuaNamedEntity#getScopeId()}.
+     * @throws KapuaException
+     *         if any other error occurs.
      * @since 2.0.0
      * @deprecated since 2.0.0 - use {@link org.eclipse.kapua.storage.KapuaNamedEntityRepository} instead
      */
@@ -121,18 +141,25 @@ public class KapuaNamedEntityServiceUtils {
     /**
      * Checks that the given {@link KapuaNamedEntity#getName()} is unique within the {@link KapuaNamedEntity#getScopeId()} with additional {@link QueryPredicate}s to customize the check.
      *
-     * @param kapuaNamedEntityService The {@link KapuaEntityService} to use. Usually it is the same service that is using this utility.
-     * @param entity                  The {@link KapuaNamedEntity} to check.
-     * @param additionalPredicates    The additional {@link QueryPredicate}s to customize the check
-     * @param <E>                     The {@link KapuaNamedEntity} type.
-     * @throws KapuaDuplicateNameException if the {@link KapuaNamedEntity#getName()} is duplicated within the {@link KapuaNamedEntity#getScopeId()}.
-     * @throws KapuaException              if any other error occurs.
+     * @param kapuaNamedEntityService
+     *         The {@link KapuaEntityService} to use. Usually it is the same service that is using this utility.
+     * @param entity
+     *         The {@link KapuaNamedEntity} to check.
+     * @param additionalPredicates
+     *         The additional {@link QueryPredicate}s to customize the check
+     * @param <E>
+     *         The {@link KapuaNamedEntity} type.
+     * @throws KapuaDuplicateNameException
+     *         if the {@link KapuaNamedEntity#getName()} is duplicated within the {@link KapuaNamedEntity#getScopeId()}.
+     * @throws KapuaException
+     *         if any other error occurs.
      * @since 2.0.0
      * @deprecated since 2.0.0 - use {@link org.eclipse.kapua.storage.KapuaNamedEntityRepository} instead
      */
     @Deprecated
-    public static <E extends KapuaNamedEntity> void checkEntityNameUniqueness(@NotNull KapuaEntityService<E, ?> kapuaNamedEntityService, @NotNull E entity, @NotNull List<QueryPredicate> additionalPredicates) throws KapuaException {
-        KapuaQuery query = QUERY_FACTORY.newQuery();
+    public static <E extends KapuaNamedEntity> void checkEntityNameUniqueness(@NotNull KapuaEntityService<E, ?> kapuaNamedEntityService, @NotNull E entity,
+            @NotNull List<QueryPredicate> additionalPredicates) throws KapuaException {
+        KapuaQuery query = new KapuaQuery();
         query.setScopeId(entity.getScopeId());
 
         AndPredicate andPredicate = query.andPredicate();
@@ -153,18 +180,25 @@ public class KapuaNamedEntityServiceUtils {
     /**
      * Checks that the given {@link KapuaNamedEntityCreator#getName()} is unique within all the scopes.
      *
-     * @param kapuaNamedEntityService The {@link KapuaEntityService} to use. Usually it is the same service that is using this utility.
-     * @param creator                 The {@link KapuaNamedEntityCreator} to check.
-     * @param <E>                     The {@link KapuaNamedEntity} type.
-     * @param <C>                     The {@link KapuaNamedEntityCreator} type.
-     * @throws KapuaDuplicateNameException if the {@link KapuaNamedEntityCreator#getName()} is duplicated within all the scopes
-     * @throws KapuaException              if any other error occurs.
+     * @param kapuaNamedEntityService
+     *         The {@link KapuaEntityService} to use. Usually it is the same service that is using this utility.
+     * @param creator
+     *         The {@link KapuaNamedEntityCreator} to check.
+     * @param <E>
+     *         The {@link KapuaNamedEntity} type.
+     * @param <C>
+     *         The {@link KapuaNamedEntityCreator} type.
+     * @throws KapuaDuplicateNameException
+     *         if the {@link KapuaNamedEntityCreator#getName()} is duplicated within all the scopes
+     * @throws KapuaException
+     *         if any other error occurs.
      * @since 2.0.0
      * @deprecated since 2.0.0 - use {@link org.eclipse.kapua.storage.KapuaNamedEntityRepository} instead
      */
     @Deprecated
-    public static <E extends KapuaNamedEntity, C extends KapuaNamedEntityCreator<E>> void checkEntityNameUniquenessInAllScopes(@NotNull KapuaEntityService<E, C> kapuaNamedEntityService, @NotNull C creator) throws KapuaException {
-        KapuaQuery query = QUERY_FACTORY.newQuery();
+    public static <E extends KapuaNamedEntity, C extends KapuaNamedEntityCreator<E>> void checkEntityNameUniquenessInAllScopes(@NotNull KapuaEntityService<E, C> kapuaNamedEntityService,
+            @NotNull C creator) throws KapuaException {
+        KapuaQuery query = new KapuaQuery();
         query.setPredicate(query.attributePredicate(KapuaNamedEntityAttributes.NAME, creator.getName()));
 
         if (KapuaSecurityUtils.doPrivileged(() -> kapuaNamedEntityService.count(query) > 0)) {
@@ -175,17 +209,22 @@ public class KapuaNamedEntityServiceUtils {
     /**
      * Checks that the given {@link KapuaNamedEntity#getName()} is unique within all the scopes.
      *
-     * @param kapuaNamedEntityService The {@link KapuaEntityService} to use. Usually it is the same service that is using this utility.
-     * @param entity                  The {@link KapuaNamedEntity} to check.
-     * @param <E>                     The {@link KapuaNamedEntity} type.
-     * @throws KapuaDuplicateNameException if the {@link KapuaNamedEntity#getName()} is duplicated within all the scopes
-     * @throws KapuaException              if any other error occurs.
+     * @param kapuaNamedEntityService
+     *         The {@link KapuaEntityService} to use. Usually it is the same service that is using this utility.
+     * @param entity
+     *         The {@link KapuaNamedEntity} to check.
+     * @param <E>
+     *         The {@link KapuaNamedEntity} type.
+     * @throws KapuaDuplicateNameException
+     *         if the {@link KapuaNamedEntity#getName()} is duplicated within all the scopes
+     * @throws KapuaException
+     *         if any other error occurs.
      * @since 2.0.0
      * @deprecated since 2.0.0 - use {@link org.eclipse.kapua.storage.KapuaNamedEntityRepository} instead
      */
     @Deprecated
     public static <E extends KapuaNamedEntity> void checkEntityNameUniquenessInAllScopes(@NotNull KapuaEntityService<E, ?> kapuaNamedEntityService, @NotNull E entity) throws KapuaException {
-        KapuaQuery query = QUERY_FACTORY.newQuery();
+        KapuaQuery query = new KapuaQuery();
         query.setPredicate(
                 query.andPredicate(
                         query.attributePredicate(KapuaNamedEntityAttributes.NAME, entity.getName()),

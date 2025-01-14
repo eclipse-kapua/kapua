@@ -46,10 +46,6 @@ public class DeviceXmlRegistry {
         return deviceFactory.newCreator(null, null);
     }
 
-    public DeviceQuery newQuery() {
-        return deviceFactory.newQuery(null);
-    }
-
     /**
      * Instantiates a new {@link DeviceExtendedProperty}.
      *

@@ -39,7 +39,4 @@ public class AccessRoleXmlRegistry {
         return accessRoleFactory.newCreator(null);
     }
 
-    public AccessRoleQuery newQuery() {
-        return accessRoleFactory.newQuery(null);
-    }
 }

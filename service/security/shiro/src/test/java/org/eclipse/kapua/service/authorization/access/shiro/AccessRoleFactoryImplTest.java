@@ -19,7 +19,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.authorization.access.AccessRole;
 import org.eclipse.kapua.service.authorization.access.AccessRoleCreator;
-import org.eclipse.kapua.service.authorization.access.AccessRoleQuery;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -69,18 +68,6 @@ public class AccessRoleFactoryImplTest {
     public void newCreatorNullTest() {
         AccessRoleCreator accessRoleCreator = accessRoleFactoryImpl.newCreator(null);
         Assert.assertNull("Null expected.", accessRoleCreator.getScopeId());
-    }
-
-    @Test
-    public void newQueryTest() {
-        AccessRoleQuery accessRoleQuery = accessRoleFactoryImpl.newQuery(KapuaId.ONE);
-        Assert.assertEquals("Expected and actual values should be the same.", KapuaId.ONE, accessRoleQuery.getScopeId());
-    }
-
-    @Test
-    public void newQueryNullTest() {
-        AccessRoleQuery accessRoleQuery = accessRoleFactoryImpl.newQuery(null);
-        Assert.assertNull("Null expected.", accessRoleQuery.getScopeId());
     }
 
     @Test

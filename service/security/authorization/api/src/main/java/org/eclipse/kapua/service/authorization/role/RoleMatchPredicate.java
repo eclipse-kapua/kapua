@@ -12,8 +12,23 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.role;
 
-import org.eclipse.kapua.model.query.predicate.MatchPredicate;
+import java.util.Arrays;
 
-public interface RoleMatchPredicate<T> extends MatchPredicate<T> {
+import org.eclipse.kapua.model.query.predicate.AbstractMatchPredicate;
 
+public class RoleMatchPredicate<T> extends AbstractMatchPredicate<T> {
+
+    /**
+     * Constructor.
+     *
+     * @param matchTerm
+     * @since 2.1.0
+     */
+    public RoleMatchPredicate(T matchTerm) {
+        this.attributeNames = Arrays.asList(
+                RoleAttributes.DESCRIPTION,
+                RoleAttributes.NAME
+        );
+        this.matchTerm = matchTerm;
+    }
 }

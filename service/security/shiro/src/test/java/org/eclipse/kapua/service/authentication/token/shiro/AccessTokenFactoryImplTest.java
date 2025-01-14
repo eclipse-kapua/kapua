@@ -20,7 +20,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.authentication.token.AccessToken;
 import org.eclipse.kapua.service.authentication.token.AccessTokenCreator;
-import org.eclipse.kapua.service.authentication.token.AccessTokenQuery;
 import org.eclipse.kapua.service.authentication.token.LoginInfo;
 import org.junit.Assert;
 import org.junit.Before;
@@ -95,14 +94,6 @@ public class AccessTokenFactoryImplTest {
         for (KapuaId scopeId : scopeIds) {
             AccessTokenCreator accessTokenCreator = accessTokenFactoryImpl.newCreator(scopeId);
             Assert.assertEquals("Expected and actual values should be the same.", scopeId, accessTokenCreator.getScopeId());
-        }
-    }
-
-    @Test
-    public void newQueryTest() {
-        for (KapuaId scopeId : scopeIds) {
-            AccessTokenQuery accessTokenQuery = accessTokenFactoryImpl.newQuery(scopeId);
-            Assert.assertEquals("Expected and actual values should be the same.", scopeId, accessTokenQuery.getScopeId());
         }
     }
 

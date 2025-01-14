@@ -34,7 +34,4 @@ public class TriggerDefinitionXmlRegistry {
         return triggerDefinitionFactory.newCreator(null);
     }
 
-    public TriggerDefinitionQuery newQuery() {
-        return triggerDefinitionFactory.newQuery(null);
-    }
 }

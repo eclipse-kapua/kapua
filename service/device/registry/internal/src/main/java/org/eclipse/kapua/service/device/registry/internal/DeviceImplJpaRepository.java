@@ -25,6 +25,7 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceAttributes;
 import org.eclipse.kapua.service.device.registry.DeviceListResult;
+import org.eclipse.kapua.service.device.registry.DeviceQuery;
 import org.eclipse.kapua.service.device.registry.DeviceRepository;
 import org.eclipse.kapua.storage.TxContext;
 
@@ -40,7 +41,7 @@ public class DeviceImplJpaRepository
 
     @Override
     public Optional<Device> findByClientId(TxContext tx, KapuaId scopeId, String clientId) throws KapuaException {
-        DeviceQueryImpl query = new DeviceQueryImpl(scopeId);
+        DeviceQuery query = new DeviceQuery(scopeId);
         query.setPredicate(query.attributePredicate(DeviceAttributes.CLIENT_ID, clientId));
         query.setFetchAttributes(Lists.newArrayList(DeviceAttributes.CONNECTION, DeviceAttributes.LAST_EVENT));
         return Optional.ofNullable(this.query(tx, query).getFirstItem());

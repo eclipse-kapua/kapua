@@ -35,7 +35,4 @@ public class DeviceManagementOperationXmlRegistry {
         return factory.newCreator(null);
     }
 
-    DeviceManagementOperationQuery newQuery() {
-        return factory.newQuery(null);
-    }
 }

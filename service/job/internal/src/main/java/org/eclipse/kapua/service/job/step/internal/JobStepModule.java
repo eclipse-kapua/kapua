@@ -17,9 +17,7 @@ import javax.inject.Singleton;
 
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
-import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.commons.util.xml.XmlUtil;
-import org.eclipse.kapua.model.query.QueryFactory;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.job.execution.JobExecutionFactory;
@@ -55,8 +53,6 @@ public class JobStepModule extends AbstractKapuaModule {
             JobExecutionService jobExecutionService,
             JobExecutionFactory jobExecutionFactory,
             JobStepDefinitionRepository jobStepDefinitionRepository,
-            QueryFactory queryFactory,
-            KapuaJpaTxManagerFactory jpaTxManagerFactory,
             XmlUtil xmlUtil) {
         return new JobStepServiceImpl(authorizationService,
                 permissionFactory,

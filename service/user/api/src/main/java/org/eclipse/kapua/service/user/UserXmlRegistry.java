@@ -45,6 +45,6 @@ public class UserXmlRegistry {
     }
 
     public UserQuery newQuery() {
-        return userFactory.newQuery(null);
+        return new UserQuery(null);
     }
 }

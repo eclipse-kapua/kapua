@@ -12,12 +12,15 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job.execution;
 
-import org.eclipse.kapua.model.query.KapuaQuery;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
+import org.eclipse.kapua.model.query.KapuaSortCriteria;
+import org.eclipse.kapua.model.query.SortOrder;
 
 /**
  * {@link JobExecution} {@link KapuaQuery} definition.
@@ -27,6 +30,25 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "query")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = JobExecutionXmlRegistry.class, factoryMethod = "newQuery")
-public interface JobExecutionQuery extends KapuaQuery {
+@XmlType
+public class JobExecutionQuery extends KapuaQuery {
+
+    public JobExecutionQuery() {
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param scopeId
+     *         The {@link #getScopeId()}.
+     * @since 1.0.0
+     */
+    public JobExecutionQuery(KapuaId scopeId) {
+        super(scopeId);
+    }
+
+    @Override
+    public KapuaSortCriteria getDefaultSortCriteria() {
+        return fieldSortCriteria(JobExecutionAttributes.STARTED_ON, SortOrder.DESCENDING);
+    }
 }

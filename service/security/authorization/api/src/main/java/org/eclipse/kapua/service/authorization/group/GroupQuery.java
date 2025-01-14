@@ -12,12 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.group;
 
-import org.eclipse.kapua.model.query.KapuaQuery;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
 
 /**
  * {@link Group} {@link KapuaQuery} definition.
@@ -27,15 +28,34 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "query")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = GroupXmlRegistry.class, factoryMethod = "newQuery")
-public interface GroupQuery extends KapuaQuery {
+@XmlType
+public class GroupQuery extends KapuaQuery {
+
+    public GroupQuery() {
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param scopeId
+     *         The {@link #getScopeId()}.
+     * @since 1.0.0
+     */
+    public GroupQuery(KapuaId scopeId) {
+        super(scopeId);
+    }
+
     /**
      * Instantiates a new {@link GroupMatchPredicate}.
      *
-     * @param matchTerm The term to use to match.
-     * @param <T>       The type of the term
+     * @param matchTerm
+     *         The term to use to match.
+     * @param <T>
+     *         The type of the term
      * @return The newly instantiated {@link GroupMatchPredicate}.
      * @since 2.1.0
      */
-    <T> GroupMatchPredicate<T> matchPredicate(T matchTerm);
+    public <T> GroupMatchPredicate<T> matchPredicate(T matchTerm) {
+        return new GroupMatchPredicate<>(matchTerm);
+    }
 }

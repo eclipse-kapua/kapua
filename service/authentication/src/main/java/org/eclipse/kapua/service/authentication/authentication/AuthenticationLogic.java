@@ -12,6 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.authentication;
 
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.shiro.ShiroException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.client.security.bean.AclUtils;
@@ -22,6 +26,7 @@ import org.eclipse.kapua.client.security.metric.AuthMetric;
 import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.device.registry.ConnectionUserCouplingMode;
@@ -32,14 +37,9 @@ import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionServ
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionStatus;
 import org.eclipse.kapua.service.device.registry.connection.option.DeviceConnectionOptionAttributes;
 import org.eclipse.kapua.service.device.registry.connection.option.DeviceConnectionOptionFactory;
-import org.eclipse.kapua.service.device.registry.connection.option.DeviceConnectionOptionQuery;
 import org.eclipse.kapua.service.device.registry.connection.option.DeviceConnectionOptionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.text.MessageFormat;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Authentication logic definition
@@ -98,8 +98,8 @@ public abstract class AuthenticationLogic {
      * Execute the disconnection logic
      *
      * @param authContext
-     * @return true send disconnect message (if the disconnection is a clean disconnection)
-     * false don't send disconnect message (the disconnection is caused by a stealing link or the device is currently connected to another node)
+     * @return true send disconnect message (if the disconnection is a clean disconnection) false don't send disconnect message (the disconnection is caused by a stealing link or the device is
+     *         currently connected to another node)
      */
     public abstract boolean disconnect(AuthContext authContext);
 
@@ -229,7 +229,7 @@ public abstract class AuthenticationLogic {
      */
     protected void checkConnectionCountByReservedUserId(KapuaId scopeId, KapuaId userId, long count) throws KapuaException {
         // check that no devices have this user as strict user
-        DeviceConnectionOptionQuery query = deviceConnectionOptionFactory.newQuery(scopeId);
+        final KapuaQuery query = new KapuaQuery(scopeId);
         query.setPredicate(query.attributePredicate(DeviceConnectionOptionAttributes.RESERVED_USER_ID, userId));
         query.setLimit(1);
 
@@ -291,7 +291,8 @@ public abstract class AuthenticationLogic {
      * Updates a {@link DeviceConnection} using the info provided.
      *
      * @param authContext
-     * @param deviceConnection The {@link DeviceConnection} to update, or null if it needs to be created
+     * @param deviceConnection
+     *         The {@link DeviceConnection} to update, or null if it needs to be created
      * @return The updated {@link DeviceConnection}
      * @throws KapuaException
      */

@@ -19,7 +19,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.job.execution.JobExecution;
 import org.eclipse.kapua.service.job.execution.JobExecutionCreator;
 import org.eclipse.kapua.service.job.execution.JobExecutionFactory;
-import org.eclipse.kapua.service.job.execution.JobExecutionQuery;
 
 /**
  * {@link JobExecutionFactory} implementation.
@@ -37,11 +36,6 @@ public class JobExecutionFactoryImpl implements JobExecutionFactory {
     @Override
     public JobExecutionCreator newCreator(KapuaId scopeId) {
         return new JobExecutionCreatorImpl(scopeId);
-    }
-
-    @Override
-    public JobExecutionQuery newQuery(KapuaId scopeId) {
-        return new JobExecutionQueryImpl(scopeId);
     }
 
     @Override

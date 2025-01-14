@@ -54,7 +54,7 @@ public abstract class AbstractEntityAttributeMigrator<E extends KapuaUpdatableEn
 
     @Override
     public List<E> getChunk(int offset, int limit) throws KapuaException {
-        KapuaQuery query = newEntityQuery();
+        KapuaQuery query = new KapuaQuery();
 
         // This is the most stable sorting even if it is not always indexed
         query.setSortCriteria(query.fieldSortCriteria(KapuaEntityAttributes.CREATED_ON, SortOrder.ASCENDING));
@@ -67,9 +67,8 @@ public abstract class AbstractEntityAttributeMigrator<E extends KapuaUpdatableEn
 
     @Override
     public long getTotalCount() throws KapuaException {
-        KapuaQuery query = newEntityQuery();
+        KapuaQuery query = new KapuaQuery();
         return entityService.count(query);
     }
 
-    protected abstract KapuaQuery newEntityQuery();
 }

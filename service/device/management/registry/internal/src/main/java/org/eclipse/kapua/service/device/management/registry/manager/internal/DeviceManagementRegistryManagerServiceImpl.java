@@ -12,7 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.registry.manager.internal;
 
-import com.google.common.base.Strings;
+import java.util.Date;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.model.id.KapuaId;
@@ -34,9 +38,7 @@ import org.eclipse.kapua.service.device.management.registry.operation.notificati
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.Date;
+import com.google.common.base.Strings;
 
 @Singleton
 public class DeviceManagementRegistryManagerServiceImpl implements DeviceManagementRegistryManagerService {
@@ -60,7 +62,8 @@ public class DeviceManagementRegistryManagerServiceImpl implements DeviceManagem
     }
 
     @Override
-    public void processOperationNotification(KapuaId scopeId, KapuaId operationId, Date updateOn, String resource, NotifyStatus status, Integer progress, String message) throws ManagementOperationNotificationProcessingException {
+    public void processOperationNotification(KapuaId scopeId, KapuaId operationId, Date updateOn, String resource, NotifyStatus status, Integer progress, String message)
+            throws ManagementOperationNotificationProcessingException {
 
         try {
             storeManagementNotification(scopeId, operationId, updateOn, status, resource, progress, message);
@@ -75,7 +78,6 @@ public class DeviceManagementRegistryManagerServiceImpl implements DeviceManagem
             throw new ManagementOperationNotificationProcessingException(ke, scopeId, operationId, status, updateOn, progress);
         }
     }
-
 
     public void processFailedNotification(KapuaId scopeId, KapuaId operationId, Date updateOn, String resource, String message) throws KapuaException {
         closeDeviceManagementOperation(scopeId, operationId, updateOn, NotifyStatus.FAILED, message);
@@ -148,7 +150,7 @@ public class DeviceManagementRegistryManagerServiceImpl implements DeviceManagem
         } while (failed);
 
         {
-            ManagementOperationNotificationQuery query = managementOperationNotificationFactory.newQuery(scopeId);
+            ManagementOperationNotificationQuery query = new ManagementOperationNotificationQuery(scopeId);
             query.setPredicate(query.attributePredicate(ManagementOperationNotificationAttributes.OPERATION_ID, deviceManagementOperation.getId()));
             query.setSortCriteria(query.fieldSortCriteria(ManagementOperationNotificationAttributes.SENT_ON, SortOrder.ASCENDING));
 

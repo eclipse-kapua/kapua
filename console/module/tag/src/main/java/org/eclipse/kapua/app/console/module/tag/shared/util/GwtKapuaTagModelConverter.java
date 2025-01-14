@@ -12,20 +12,21 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.tag.shared.util;
 
-import com.extjs.gxt.ui.client.Style.SortDir;
-import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.kapua.app.console.module.api.shared.util.GwtKapuaCommonsModelConverter;
 import org.eclipse.kapua.app.console.module.tag.shared.model.GwtTagQuery;
-import org.eclipse.kapua.model.query.FieldSortCriteria;
-import org.eclipse.kapua.model.query.SortOrder;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.FieldSortCriteria;
+import org.eclipse.kapua.model.query.SortOrder;
 import org.eclipse.kapua.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.model.query.predicate.AttributePredicate.Operator;
 import org.eclipse.kapua.service.tag.TagAttributes;
 import org.eclipse.kapua.service.tag.TagFactory;
 import org.eclipse.kapua.service.tag.TagQuery;
+
+import com.extjs.gxt.ui.client.Style.SortDir;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 
 public class GwtKapuaTagModelConverter {
 
@@ -38,13 +39,15 @@ public class GwtKapuaTagModelConverter {
     /**
      * Converts a {@link GwtTagQuery} into a {@link TagQuery} object for backend usage
      *
-     * @param loadConfig  the load configuration
-     * @param gwtTagQuery the {@link GwtTagQuery} to convertKapuaId
+     * @param loadConfig
+     *         the load configuration
+     * @param gwtTagQuery
+     *         the {@link GwtTagQuery} to convertKapuaId
      * @return the converted {@link TagQuery}
      */
     public static TagQuery convertTagQuery(PagingLoadConfig loadConfig, GwtTagQuery gwtTagQuery) {
 
-        TagQuery query = TAG_FACTORY.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(gwtTagQuery.getScopeId()));
+        TagQuery query = new TagQuery(GwtKapuaCommonsModelConverter.convertKapuaId(gwtTagQuery.getScopeId()));
 
         // Predicates conversion
         AndPredicate andPredicate = query.andPredicate();

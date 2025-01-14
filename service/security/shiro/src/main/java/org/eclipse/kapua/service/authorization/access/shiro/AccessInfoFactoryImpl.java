@@ -19,7 +19,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.access.AccessInfo;
 import org.eclipse.kapua.service.authorization.access.AccessInfoCreator;
 import org.eclipse.kapua.service.authorization.access.AccessInfoFactory;
-import org.eclipse.kapua.service.authorization.access.AccessInfoQuery;
 
 /**
  * {@link AccessInfoFactory} implementation.
@@ -37,11 +36,6 @@ public class AccessInfoFactoryImpl implements AccessInfoFactory {
     @Override
     public AccessInfoCreator newCreator(KapuaId scopeId) {
         return new AccessInfoCreatorImpl(scopeId);
-    }
-
-    @Override
-    public AccessInfoQuery newQuery(KapuaId scopeId) {
-        return new AccessInfoQueryImpl(scopeId);
     }
 
     @Override

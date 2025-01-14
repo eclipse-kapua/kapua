@@ -12,10 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.device.server;
 
-import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
-import com.extjs.gxt.ui.client.data.PagingLoadConfig;
-import com.extjs.gxt.ui.client.data.PagingLoadResult;
-import com.google.common.base.Strings;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.server.KapuaRemoteServiceServlet;
 import org.eclipse.kapua.app.console.module.api.server.util.KapuaExceptionHandler;
@@ -37,8 +36,10 @@ import org.eclipse.kapua.service.device.management.registry.operation.notificati
 import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotificationQuery;
 import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotificationService;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
+import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.google.common.base.Strings;
 
 /**
  * The server side implementation of the RPC service.
@@ -69,7 +70,7 @@ public class GwtDeviceManagementOperationServiceImpl extends KapuaRemoteServiceS
 
                 if (dmo.getEndedOn() == null) {
                     //TODO: #LAYER_VIOLATION - entity lookup should be done elsewhere
-                    ManagementOperationNotificationQuery notificationQuery = MANAGEMENT_OPERATION_NOTIFICATION_FACTORY.newQuery(dmo.getScopeId());
+                    ManagementOperationNotificationQuery notificationQuery = new ManagementOperationNotificationQuery(dmo.getScopeId());
                     notificationQuery.setPredicate(notificationQuery.attributePredicate(ManagementOperationNotificationAttributes.OPERATION_ID, dmo.getId()));
                     notificationQuery.setSortCriteria(notificationQuery.fieldSortCriteria(ManagementOperationNotificationAttributes.SENT_ON, SortOrder.ASCENDING));
 

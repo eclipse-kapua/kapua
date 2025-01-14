@@ -12,12 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job.step.definition;
 
-import org.eclipse.kapua.model.query.KapuaQuery;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.AbstractKapuaNamedQuery;
+import org.eclipse.kapua.model.query.KapuaQuery;
 
 /**
  * {@link JobStepDefinition} {@link KapuaQuery} definition.
@@ -27,6 +29,31 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "query")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = JobStepDefinitionXmlRegistry.class, factoryMethod = "newQuery")
-public interface JobStepDefinitionQuery extends KapuaQuery {
+@XmlType
+public class JobStepDefinitionQuery extends AbstractKapuaNamedQuery {
+
+    public JobStepDefinitionQuery() {
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param scopeId
+     *         The {@link #getScopeId()}.
+     * @since 1.0.0
+     */
+    public JobStepDefinitionQuery(KapuaId scopeId) {
+        super(scopeId);
+    }
+
+    /**
+     * This enables {@link JobStepDefinitionQuery} to retrieve also not scoped {@link JobStepDefinition}s since they are public.
+     *
+     * @return {@code true}
+     * @since 2.0.0
+     */
+    @Override
+    public boolean getNotScopedEntities() {
+        return true;
+    }
 }

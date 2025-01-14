@@ -32,7 +32,7 @@ public class JobExecutionImplJpaRepository
 
     @Override
     public long countByJobId(TxContext tx, KapuaId scopeId, KapuaId jobId) throws KapuaException {
-        final JobExecutionQuery jobExecutionQuery = new JobExecutionQueryImpl(scopeId);
+        final JobExecutionQuery jobExecutionQuery = new JobExecutionQuery(scopeId);
         jobExecutionQuery.setPredicate(
                 jobExecutionQuery.attributePredicate(JobExecutionImpl_.JOB_ID, jobId)
         );

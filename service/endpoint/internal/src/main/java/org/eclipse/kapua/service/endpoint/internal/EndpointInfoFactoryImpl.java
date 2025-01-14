@@ -37,7 +37,7 @@ public class EndpointInfoFactoryImpl implements EndpointInfoFactory {
 
     @Override
     public EndpointInfoQuery newQuery(KapuaId scopeId) {
-        return new EndpointInfoQueryImpl(scopeId);
+        return new EndpointInfoQuery(scopeId);
     }
 
     @Override

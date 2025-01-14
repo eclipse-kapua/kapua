@@ -172,7 +172,7 @@ public class DeviceConnectionServiceImpl extends KapuaConfigurableServiceBase im
         ArgumentValidator.notEmptyOrNull(clientId, "clientId");
 
         // Build query
-        DeviceConnectionQueryImpl query = new DeviceConnectionQueryImpl(scopeId);
+        DeviceConnectionQuery query = new DeviceConnectionQuery(scopeId);
         query.setPredicate(query.attributePredicate(DeviceConnectionAttributes.CLIENT_ID, clientId));
 
         // Do find
@@ -267,7 +267,7 @@ public class DeviceConnectionServiceImpl extends KapuaConfigurableServiceBase im
     // Private methods
 
     private void deleteConnectionByAccountId(KapuaId scopeId, KapuaId accountId) throws KapuaException {
-        DeviceConnectionQuery query = entityFactory.newQuery(accountId);
+        DeviceConnectionQuery query = new DeviceConnectionQuery(accountId);
 
         txManager.execute(tx -> {
             final DeviceConnectionListResult deviceConnectionsToDelete = repository.query(tx, query);

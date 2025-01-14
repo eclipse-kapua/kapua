@@ -13,6 +13,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.internal;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.service.internal.KapuaServiceDisabledException;
@@ -45,13 +53,6 @@ import org.eclipse.kapua.service.storable.model.query.predicate.RangePredicate;
 import org.eclipse.kapua.service.storable.model.query.predicate.TermPredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Channel info registry implementation
@@ -217,8 +218,7 @@ public class ChannelInfoRegistryServiceImpl implements ChannelInfoRegistryServic
 
     /**
      * Update the last published date and last published message identifier for the specified channel info, so it gets the timestamp and the message id of the last published message for the
-     * account/clientId in the
-     * channel info
+     * account/clientId in the channel info
      *
      * @param channelInfo
      * @throws KapuaException

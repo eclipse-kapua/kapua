@@ -19,7 +19,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperation;
 import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationCreator;
 import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationFactory;
-import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationQuery;
 
 /**
  * {@link JobDeviceManagementOperationFactory} implementation.
@@ -37,11 +36,6 @@ public class JobDeviceManagementOperationFactoryImpl implements JobDeviceManagem
     @Override
     public JobDeviceManagementOperationCreator newCreator(KapuaId scopeId) {
         return new JobDeviceManagementOperationCreatorImpl(scopeId);
-    }
-
-    @Override
-    public JobDeviceManagementOperationQuery newQuery(KapuaId scopeId) {
-        return new JobDeviceManagementOperationQueryImpl(scopeId);
     }
 
     @Override

@@ -21,7 +21,7 @@ import org.eclipse.kapua.model.id.KapuaId;
  * @see org.eclipse.kapua.model.KapuaEntityFactory
  * @since 1.0.0
  */
-public interface GroupFactory extends KapuaEntityFactory<Group, GroupCreator, GroupQuery> {
+public interface GroupFactory extends KapuaEntityFactory<Group, GroupCreator> {
 
     /**
      * Instantiates a new {@link GroupCreator}.

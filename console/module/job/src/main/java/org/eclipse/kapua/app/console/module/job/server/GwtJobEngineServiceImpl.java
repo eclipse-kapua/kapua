@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.job.server;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaErrorCode;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
@@ -32,9 +35,6 @@ import org.eclipse.kapua.service.job.execution.JobExecutionFactory;
 import org.eclipse.kapua.service.job.execution.JobExecutionListResult;
 import org.eclipse.kapua.service.job.execution.JobExecutionQuery;
 import org.eclipse.kapua.service.job.execution.JobExecutionService;
-
-import java.util.ArrayList;
-import java.util.Collections;
 
 public class GwtJobEngineServiceImpl extends KapuaRemoteServiceServlet implements GwtJobEngineService {
 
@@ -88,7 +88,7 @@ public class GwtJobEngineServiceImpl extends KapuaRemoteServiceServlet implement
         try {
             if (jobExecutionId == null) {
                 //TODO: #LAYER_VIOLATION - job execution lookup should not be done here (horribly inefficient)
-                JobExecutionQuery query = JOB_EXECUTION_FACTORY.newQuery(scopeId);
+                JobExecutionQuery query = new JobExecutionQuery(scopeId);
 
                 query.setPredicate(
                         query.andPredicate(

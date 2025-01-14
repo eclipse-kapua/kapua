@@ -81,7 +81,6 @@ import org.eclipse.kapua.model.config.metatype.KapuaToption;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountCreator;
 import org.eclipse.kapua.service.account.AccountListResult;
-import org.eclipse.kapua.service.account.AccountQuery;
 import org.eclipse.kapua.service.account.AccountUpdateRequest;
 import org.eclipse.kapua.service.account.CurrentAccountUpdateRequest;
 import org.eclipse.kapua.service.account.xml.AccountParentPathXmlAdapter;
@@ -95,13 +94,11 @@ import org.eclipse.kapua.service.authentication.UsernamePasswordCredentials;
 import org.eclipse.kapua.service.authentication.credential.Credential;
 import org.eclipse.kapua.service.authentication.credential.CredentialCreator;
 import org.eclipse.kapua.service.authentication.credential.CredentialListResult;
-import org.eclipse.kapua.service.authentication.credential.CredentialQuery;
 import org.eclipse.kapua.service.authentication.credential.CredentialType;
 import org.eclipse.kapua.service.authentication.credential.CredentialXmlRegistry;
 import org.eclipse.kapua.service.authentication.credential.mfa.MfaOption;
 import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionCreator;
 import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionListResult;
-import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionQuery;
 import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionXmlRegistry;
 import org.eclipse.kapua.service.authentication.credential.mfa.ScratchCode;
 import org.eclipse.kapua.service.authentication.credential.mfa.ScratchCodeListResult;
@@ -114,22 +111,17 @@ import org.eclipse.kapua.service.authentication.user.UserCredentialsXmlRegistry;
 import org.eclipse.kapua.service.authorization.access.AccessInfo;
 import org.eclipse.kapua.service.authorization.access.AccessInfoCreator;
 import org.eclipse.kapua.service.authorization.access.AccessInfoListResult;
-import org.eclipse.kapua.service.authorization.access.AccessInfoQuery;
 import org.eclipse.kapua.service.authorization.access.AccessInfoXmlRegistry;
 import org.eclipse.kapua.service.authorization.access.AccessPermission;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionCreator;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionListResult;
-import org.eclipse.kapua.service.authorization.access.AccessPermissionQuery;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionXmlRegistry;
 import org.eclipse.kapua.service.authorization.access.AccessRole;
 import org.eclipse.kapua.service.authorization.access.AccessRoleCreator;
 import org.eclipse.kapua.service.authorization.access.AccessRoleListResult;
-import org.eclipse.kapua.service.authorization.access.AccessRoleQuery;
 import org.eclipse.kapua.service.authorization.access.AccessRoleXmlRegistry;
 import org.eclipse.kapua.service.authorization.domain.Domain;
 import org.eclipse.kapua.service.authorization.domain.DomainListResult;
-import org.eclipse.kapua.service.authorization.domain.DomainQuery;
-import org.eclipse.kapua.service.authorization.domain.DomainXmlRegistry;
 import org.eclipse.kapua.service.authorization.group.Group;
 import org.eclipse.kapua.service.authorization.group.GroupCreator;
 import org.eclipse.kapua.service.authorization.group.GroupListResult;
@@ -142,7 +134,6 @@ import org.eclipse.kapua.service.authorization.role.RoleListResult;
 import org.eclipse.kapua.service.authorization.role.RolePermission;
 import org.eclipse.kapua.service.authorization.role.RolePermissionCreator;
 import org.eclipse.kapua.service.authorization.role.RolePermissionListResult;
-import org.eclipse.kapua.service.authorization.role.RolePermissionQuery;
 import org.eclipse.kapua.service.authorization.role.RolePermissionXmlRegistry;
 import org.eclipse.kapua.service.authorization.role.RoleQuery;
 import org.eclipse.kapua.service.authorization.role.RoleXmlRegistry;
@@ -284,7 +275,6 @@ import org.eclipse.kapua.service.job.execution.JobExecutionXmlRegistry;
 import org.eclipse.kapua.service.job.step.JobStep;
 import org.eclipse.kapua.service.job.step.JobStepCreator;
 import org.eclipse.kapua.service.job.step.JobStepListResult;
-import org.eclipse.kapua.service.job.step.JobStepQuery;
 import org.eclipse.kapua.service.job.step.JobStepXmlRegistry;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinition;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionListResult;
@@ -294,11 +284,9 @@ import org.eclipse.kapua.service.job.step.definition.JobStepProperty;
 import org.eclipse.kapua.service.job.targets.JobTarget;
 import org.eclipse.kapua.service.job.targets.JobTargetCreator;
 import org.eclipse.kapua.service.job.targets.JobTargetListResult;
-import org.eclipse.kapua.service.job.targets.JobTargetQuery;
 import org.eclipse.kapua.service.scheduler.trigger.Trigger;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerCreator;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerListResult;
-import org.eclipse.kapua.service.scheduler.trigger.TriggerQuery;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerXmlRegistry;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinition;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionListResult;
@@ -307,7 +295,6 @@ import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionX
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerProperty;
 import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTrigger;
 import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTriggerListResult;
-import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTriggerQuery;
 import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTriggerXmlRegistry;
 import org.eclipse.kapua.service.storable.model.id.StorableId;
 import org.eclipse.kapua.service.storable.model.query.SortField;
@@ -409,7 +396,6 @@ public class RestApiJAXBContextProvider implements JAXBContextProvider {
                     Account.class,
                     AccountCreator.class,
                     AccountListResult.class,
-                    AccountQuery.class,
                     AccountParentPathXmlAdapter.class,
                     AccountXmlRegistry.class,
 
@@ -607,14 +593,12 @@ public class RestApiJAXBContextProvider implements JAXBContextProvider {
                     CredentialListResult.class,
                     CredentialCreator.class,
                     CredentialType.class,
-                    CredentialQuery.class,
                     CredentialXmlRegistry.class,
 
                     // Multi Factor Authentication
                     MfaOption.class,
                     MfaOptionListResult.class,
                     MfaOptionCreator.class,
-                    MfaOptionQuery.class,
                     MfaOptionXmlRegistry.class,
                     ScratchCode.class,
                     ScratchCodeListResult.class,
@@ -642,14 +626,11 @@ public class RestApiJAXBContextProvider implements JAXBContextProvider {
                     RolePermission.class,
                     RolePermissionListResult.class,
                     RolePermissionCreator.class,
-                    RolePermissionQuery.class,
                     RolePermissionXmlRegistry.class,
 
                     // Domains
                     Domain.class,
                     DomainListResult.class,
-                    DomainQuery.class,
-                    DomainXmlRegistry.class,
 
                     // Groups
                     Group.class,
@@ -662,21 +643,18 @@ public class RestApiJAXBContextProvider implements JAXBContextProvider {
                     AccessInfo.class,
                     AccessInfoListResult.class,
                     AccessInfoCreator.class,
-                    AccessInfoQuery.class,
                     AccessInfoXmlRegistry.class,
 
                     // Access Permissions
                     AccessPermission.class,
                     AccessPermissionListResult.class,
                     AccessPermissionCreator.class,
-                    AccessPermissionQuery.class,
                     AccessPermissionXmlRegistry.class,
 
                     // Access Roles
                     AccessRole.class,
                     AccessRoleListResult.class,
                     AccessRoleCreator.class,
-                    AccessRoleQuery.class,
                     AccessRoleXmlRegistry.class,
 
                     // System Info
@@ -732,7 +710,6 @@ public class RestApiJAXBContextProvider implements JAXBContextProvider {
                     JobStep.class,
                     JobStepCreator.class,
                     JobStepListResult.class,
-                    JobStepQuery.class,
                     JobStepXmlRegistry.class,
                     JobStepProperty.class,
 
@@ -744,14 +721,12 @@ public class RestApiJAXBContextProvider implements JAXBContextProvider {
                     JobTarget.class,
                     JobTargetCreator.class,
                     JobTargetListResult.class,
-                    JobTargetQuery.class,
                     JobExecutionXmlRegistry.class,
 
                     // Trigger
                     Trigger.class,
                     TriggerCreator.class,
                     TriggerListResult.class,
-                    TriggerQuery.class,
                     TriggerProperty.class,
                     TriggerXmlRegistry.class,
 
@@ -762,7 +737,6 @@ public class RestApiJAXBContextProvider implements JAXBContextProvider {
 
                     FiredTrigger.class,
                     FiredTriggerListResult.class,
-                    FiredTriggerQuery.class,
                     FiredTriggerXmlRegistry.class,
 
                     JobStepDefinition.class,

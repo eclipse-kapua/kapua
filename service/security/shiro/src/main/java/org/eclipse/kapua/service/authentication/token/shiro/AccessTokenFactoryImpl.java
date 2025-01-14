@@ -21,7 +21,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authentication.token.AccessToken;
 import org.eclipse.kapua.service.authentication.token.AccessTokenCreator;
 import org.eclipse.kapua.service.authentication.token.AccessTokenFactory;
-import org.eclipse.kapua.service.authentication.token.AccessTokenQuery;
 import org.eclipse.kapua.service.authentication.token.LoginInfo;
 
 /**
@@ -54,11 +53,6 @@ public class AccessTokenFactoryImpl implements AccessTokenFactory {
     @Override
     public AccessTokenCreator newCreator(KapuaId scopeId) {
         return new AccessTokenCreatorImpl(scopeId);
-    }
-
-    @Override
-    public AccessTokenQuery newQuery(KapuaId scopeId) {
-        return new AccessTokenQueryImpl(scopeId);
     }
 
     @Override

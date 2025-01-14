@@ -51,17 +51,6 @@ public class EventStoreFactoryImplTest {
     }
 
     @Test
-    public void newQueryTest() {
-        EventStoreFactoryImpl eventStoreFactoryImpl = new EventStoreFactoryImpl();
-        KapuaId[] scopeIdList = { null, new KapuaEid(BigInteger.ONE) };
-
-        for (KapuaId scopeId : scopeIdList) {
-            Assert.assertNotNull("Null not expected.", eventStoreFactoryImpl.newQuery(scopeId));
-            Assert.assertThat("EventStoreQueryImpl object expected.", eventStoreFactoryImpl.newQuery(scopeId), IsInstanceOf.instanceOf(EventStoreQueryImpl.class));
-        }
-    }
-
-    @Test
     public void cloneTest() {
         EventStoreFactoryImpl eventStoreFactoryImpl = new EventStoreFactoryImpl();
         EventStoreRecord eventStoreRecord = Mockito.mock(EventStoreRecord.class);

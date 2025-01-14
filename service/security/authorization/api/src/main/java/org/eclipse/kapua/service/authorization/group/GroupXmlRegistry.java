@@ -40,14 +40,4 @@ public class GroupXmlRegistry {
     public GroupCreator newGroupCreator() {
         return groupFactory.newCreator(null, null);
     }
-
-    /**
-     * Creates a new {@link GroupQuery} instance.
-     *
-     * @return The newly created {@link GroupQuery} instance.
-     * @since 1.0.0
-     */
-    public GroupQuery newQuery() {
-        return groupFactory.newQuery(null);
-    }
 }

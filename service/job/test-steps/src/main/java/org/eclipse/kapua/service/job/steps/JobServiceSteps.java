@@ -263,24 +263,24 @@ public class JobServiceSteps extends JobServiceTestBase {
 
     @When("I count the jobs in the database")
     public void countJobsInDatabase() throws Exception {
-        updateCount(() -> (int) jobService.count(jobFactory.newQuery(getCurrentScopeId())));
+        updateCount(() -> (int) jobService.count(new JobQuery(getCurrentScopeId())));
     }
 
     @When("I query for jobs in scope {int}")
     public void countJobsInScope(int id) throws Exception {
-        updateCount(() -> jobService.query(jobFactory.newQuery(getKapuaId(id))).getSize());
+        updateCount(() -> jobService.query(new JobQuery(getKapuaId(id))).getSize());
     }
 
     @When("I count the jobs with the name starting with {string}")
     public void countJobsWithName(String name) throws Exception {
-        JobQuery tmpQuery = jobFactory.newQuery(getCurrentScopeId());
+        JobQuery tmpQuery = new JobQuery(getCurrentScopeId());
         tmpQuery.setPredicate(tmpQuery.attributePredicate(JobAttributes.NAME, name, Operator.STARTS_WITH));
         updateCount(() -> jobService.query(tmpQuery).getSize());
     }
 
     @When("I query for the job with the name {string}")
     public void queryForJobWithName(String name) throws Exception {
-        JobQuery tmpQuery = jobFactory.newQuery(getCurrentScopeId());
+        JobQuery tmpQuery = new JobQuery(getCurrentScopeId());
         tmpQuery.setPredicate(tmpQuery.attributePredicate(JobAttributes.NAME, name));
         primeException();
         try {
@@ -341,7 +341,7 @@ public class JobServiceSteps extends JobServiceTestBase {
         primeException();
         Assert.assertNotNull("The job factory returned a null creator!", jobFactory.newCreator(SYS_SCOPE_ID));
         Assert.assertNotNull("The job factory returned a null job object!", jobFactory.newEntity(SYS_SCOPE_ID));
-        Assert.assertNotNull("The job factory returned a null job query!", jobFactory.newQuery(SYS_SCOPE_ID));
+        Assert.assertNotNull("The job factory returned a null job query!", new JobQuery(SYS_SCOPE_ID));
     }
 
     @Then("I find a job with name {string}")
@@ -378,7 +378,7 @@ public class JobServiceSteps extends JobServiceTestBase {
 
     @When("I query for the job with the name {string} and I find it")
     public void iQueryForTheJobWithTheNameAndIFoundIt(String jobName) throws Exception {
-        JobQuery tmpQuery = jobFactory.newQuery(getCurrentScopeId());
+        JobQuery tmpQuery = new JobQuery(getCurrentScopeId());
         tmpQuery.setPredicate(tmpQuery.attributePredicate(JobAttributes.NAME, jobName));
         primeException();
         try {
@@ -393,7 +393,7 @@ public class JobServiceSteps extends JobServiceTestBase {
 
     @When("I query for the job with term match {string}")
     public void iQueryForTheJobMatchTerm(String matchTerm) throws Exception {
-        JobQuery tmpQuery = jobFactory.newQuery(getCurrentScopeId());
+        JobQuery tmpQuery = new JobQuery(getCurrentScopeId());
 
         tmpQuery.setPredicate(tmpQuery.matchPredicate(matchTerm));
 
@@ -437,7 +437,7 @@ public class JobServiceSteps extends JobServiceTestBase {
     @Then("I change name of job from {string} to {string}")
     public void iChangeNameOfJobFromTo(String oldName, String newName) throws Throwable {
         try {
-            JobQuery query = jobFactory.newQuery(getCurrentScopeId());
+            JobQuery query = new JobQuery(getCurrentScopeId());
             query.setPredicate(query.attributePredicate(JobAttributes.NAME, oldName, Operator.EQUAL));
             JobListResult queryResult = jobService.query(query);
             Job job = queryResult.getFirstItem();
@@ -458,7 +458,7 @@ public class JobServiceSteps extends JobServiceTestBase {
     @When("I change the job description from {string} to {string}")
     public void iChangeTheJobDescriptionFromTo(String oldDescription, String newDescription) throws Throwable {
         try {
-            JobQuery query = jobFactory.newQuery(getCurrentScopeId());
+            JobQuery query = new JobQuery(getCurrentScopeId());
             query.setPredicate(query.attributePredicate(JobAttributes.DESCRIPTION, oldDescription, Operator.EQUAL));
             JobListResult queryResult = jobService.query(query);
             Job job = queryResult.getFirstItem();

@@ -44,7 +44,4 @@ public class JobTargetXmlRegistry {
         return jobTargetFactory.newCreator(null);
     }
 
-    public JobTargetQuery newQuery() {
-        return jobTargetFactory.newQuery(null);
-    }
 }

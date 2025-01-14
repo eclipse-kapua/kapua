@@ -26,13 +26,13 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.google.common.base.Strings;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.app.api.core.model.CountResult;
 import org.eclipse.kapua.app.api.core.model.EntityId;
 import org.eclipse.kapua.app.api.core.model.ScopeId;
 import org.eclipse.kapua.app.api.core.model.SetResult;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.model.query.SortOrder;
 import org.eclipse.kapua.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.service.KapuaService;
@@ -41,8 +41,9 @@ import org.eclipse.kapua.service.authentication.credential.CredentialAttributes;
 import org.eclipse.kapua.service.authentication.credential.CredentialCreator;
 import org.eclipse.kapua.service.authentication.credential.CredentialFactory;
 import org.eclipse.kapua.service.authentication.credential.CredentialListResult;
-import org.eclipse.kapua.service.authentication.credential.CredentialQuery;
 import org.eclipse.kapua.service.authentication.credential.CredentialService;
+
+import com.google.common.base.Strings;
 
 @Path("{scopeId}/credentials")
 public class Credentials extends AbstractKapuaResource {
@@ -53,19 +54,22 @@ public class Credentials extends AbstractKapuaResource {
     @Inject
     public CredentialFactory credentialFactory;
 
-
     /**
      * Gets the {@link Credential} list in the scope.
      *
-     * @param scopeId The {@link ScopeId} in which to search results.
-     * @param offset  The result set offset.
-     * @param limit   The result set limit.
+     * @param scopeId
+     *         The {@link ScopeId} in which to search results.
+     * @param offset
+     *         The result set offset.
+     * @param limit
+     *         The result set limit.
      * @return The {@link CredentialListResult} of all the credentials associated to the current selected scope.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @GET
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public CredentialListResult simpleQuery(
             @PathParam("scopeId") ScopeId scopeId,
             @QueryParam("userId") EntityId userId,
@@ -74,7 +78,7 @@ public class Credentials extends AbstractKapuaResource {
             @QueryParam("sortDir") @DefaultValue("ASCENDING") SortOrder sortDir,
             @QueryParam("offset") @DefaultValue("0") int offset,
             @QueryParam("limit") @DefaultValue("50") int limit) throws KapuaException {
-        CredentialQuery query = credentialFactory.newQuery(scopeId);
+        final KapuaQuery query = new KapuaQuery(scopeId);
 
         AndPredicate andPredicate = query.andPredicate();
         if (userId != null) {
@@ -93,60 +97,68 @@ public class Credentials extends AbstractKapuaResource {
     }
 
     /**
-     * Queries the results with the given {@link CredentialQuery} parameter.
+     * Queries the results with the given {@link KapuaQuery} parameter.
      *
-     * @param scopeId The {@link ScopeId} in which to search results.
-     * @param query   The {@link CredentialQuery} to use to filter results.
-     * @return The {@link CredentialListResult} of all the result matching the given {@link CredentialQuery} parameter.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @param scopeId
+     *         The {@link ScopeId} in which to search results.
+     * @param query
+     *         The {@link KapuaQuery} to use to filter results.
+     * @return The {@link CredentialListResult} of all the result matching the given {@link KapuaQuery} parameter.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @POST
     @Path("_query")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public CredentialListResult query(
             @PathParam("scopeId") ScopeId scopeId,
-            CredentialQuery query) throws KapuaException {
+            KapuaQuery query) throws KapuaException {
         query.setScopeId(scopeId);
 
         return credentialService.query(query);
     }
 
     /**
-     * Counts the results with the given {@link CredentialQuery} parameter.
+     * Counts the results with the given {@link KapuaQuery} parameter.
      *
-     * @param scopeId The {@link ScopeId} in which to search results.
-     * @param query   The {@link CredentialQuery} to use to filter results.
-     * @return The count of all the result matching the given {@link CredentialQuery} parameter.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @param scopeId
+     *         The {@link ScopeId} in which to search results.
+     * @param query
+     *         The {@link KapuaQuery} to use to filter results.
+     * @return The count of all the result matching the given {@link KapuaQuery} parameter.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @POST
     @Path("_count")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public CountResult count(
             @PathParam("scopeId") ScopeId scopeId,
-            CredentialQuery query) throws KapuaException {
+            KapuaQuery query) throws KapuaException {
         query.setScopeId(scopeId);
 
         return new CountResult(credentialService.count(query));
     }
 
     /**
-     * Creates a new Credential based on the information provided in CredentialCreator
-     * parameter.
+     * Creates a new Credential based on the information provided in CredentialCreator parameter.
      *
-     * @param scopeId           The {@link ScopeId} in which to create the {@link Credential}
-     * @param credentialCreator Provides the information for the new Credential to be created.
+     * @param scopeId
+     *         The {@link ScopeId} in which to create the {@link Credential}
+     * @param credentialCreator
+     *         Provides the information for the new Credential to be created.
      * @return The newly created Credential object.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @POST
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public Response create(
             @PathParam("scopeId") ScopeId scopeId,
             CredentialCreator credentialCreator) throws KapuaException {
@@ -158,15 +170,18 @@ public class Credentials extends AbstractKapuaResource {
     /**
      * Returns the Credential specified by the "credentialId" path parameter.
      *
-     * @param scopeId      The {@link ScopeId} of the requested {@link Credential}.
-     * @param credentialId The id of the requested Credential.
+     * @param scopeId
+     *         The {@link ScopeId} of the requested {@link Credential}.
+     * @param credentialId
+     *         The id of the requested Credential.
      * @return The requested Credential object.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @GET
     @Path("{credentialId}")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public Credential find(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("credentialId") EntityId credentialId) throws KapuaException {
@@ -178,15 +193,17 @@ public class Credentials extends AbstractKapuaResource {
     /**
      * Updates the Credential based on the information provided in the Credential parameter.
      *
-     * @param credential The modified Credential whose attributed need to be updated.
+     * @param credential
+     *         The modified Credential whose attributed need to be updated.
      * @return The updated credential.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @PUT
     @Path("{credentialId}")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public Credential update(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("credentialId") EntityId credentialId,
@@ -200,9 +217,11 @@ public class Credentials extends AbstractKapuaResource {
     /**
      * Deletes the Credential specified by the "credentialId" path parameter.
      *
-     * @param credentialId The id of the Credential to be deleted.
+     * @param credentialId
+     *         The id of the Credential to be deleted.
      * @return HTTP 200 if operation has completed successfully.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @DELETE
@@ -215,14 +234,16 @@ public class Credentials extends AbstractKapuaResource {
         return returnNoContent();
     }
 
-
     /**
      * Unlocks a {@link Credential} that has been locked due to a lockout policy.
      *
-     * @param scopeId      The {@link ScopeId} of {@link Credential} to unlock.
-     * @param credentialId The id of the Credential to be unlocked.
+     * @param scopeId
+     *         The {@link ScopeId} of {@link Credential} to unlock.
+     * @param credentialId
+     *         The id of the Credential to be unlocked.
      * @return HTTP 200 if operation has completed successfully.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      * @deprecated Since 2.0.0. Please make use of {@link #unlock(ScopeId, EntityId)}
      */
@@ -237,14 +258,16 @@ public class Credentials extends AbstractKapuaResource {
         return returnNoContent();
     }
 
-
     /**
      * Unlocks a {@link Credential} that has been locked due to a lockout policy.
      *
-     * @param scopeId      The {@link ScopeId} of {@link Credential} to unlock.
-     * @param credentialId The id of the Credential to be unlocked.
+     * @param scopeId
+     *         The {@link ScopeId} of {@link Credential} to unlock.
+     * @param credentialId
+     *         The id of the Credential to be unlocked.
      * @return HTTP 200 if operation has completed successfully.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 2.0.0
      */
     @POST
@@ -257,10 +280,9 @@ public class Credentials extends AbstractKapuaResource {
         return returnNoContent();
     }
 
-
     @GET
     @Path("_availableCredentials")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public SetResult getAvailableAuthAdapter() throws KapuaException {
         return new SetResult(credentialService.getAvailableCredentialTypes());
     }

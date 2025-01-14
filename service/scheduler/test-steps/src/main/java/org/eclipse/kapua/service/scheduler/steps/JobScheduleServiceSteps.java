@@ -12,9 +12,19 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.scheduler.steps;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.model.query.predicate.AttributePredicate;
 import org.eclipse.kapua.qa.common.StepData;
 import org.eclipse.kapua.qa.common.TestBase;
@@ -24,9 +34,14 @@ import org.eclipse.kapua.service.scheduler.trigger.TriggerAttributes;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerCreator;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerFactory;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerListResult;
-import org.eclipse.kapua.service.scheduler.trigger.TriggerQuery;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerService;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinition;
+import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionAttributes;
+import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionFactory;
+import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionQuery;
+import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionService;
+import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerProperty;
+import org.junit.Assert;
 
 import com.google.inject.Singleton;
 
@@ -35,21 +50,6 @@ import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
-
-import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionAttributes;
-import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionFactory;
-import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionQuery;
-import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionService;
-import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerProperty;
-import org.junit.Assert;
-
-import javax.inject.Inject;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 @Singleton
 public class JobScheduleServiceSteps extends TestBase {
@@ -67,13 +67,13 @@ public class JobScheduleServiceSteps extends TestBase {
     private static final String TRIGGER_START_DATE = "TriggerStartDate";
     private static final String TRIGGER_END_DATE = "TriggerEndDate";
 
-// ****************************************************************************************
-// * Implementation of Gherkin steps used in JobService.feature scenarios.                *
-// *                                                                                      *
-// * MockedLocator is used for Location Service. Mockito is used to mock other            *
-// * services that the Account services dependent on. Dependent services are:             *
-// * - Authorization Service                                                              *
-// ****************************************************************************************
+    // ****************************************************************************************
+    // * Implementation of Gherkin steps used in JobService.feature scenarios.                *
+    // *                                                                                      *
+    // * MockedLocator is used for Location Service. Mockito is used to mock other            *
+    // * services that the Account services dependent on. Dependent services are:             *
+    // * - Authorization Service                                                              *
+    // ****************************************************************************************
 
     private static final String KAPUA_ID_CLASS_NAME = "org.eclipse.kapua.model.id.KapuaId";
 
@@ -83,7 +83,7 @@ public class JobScheduleServiceSteps extends TestBase {
         super(stepData);
     }
 
-    @After(value="@setup")
+    @After(value = "@setup")
     public void setServices() {
         KapuaLocator locator = KapuaLocator.getInstance();
         triggerFactory = locator.getFactory(TriggerFactory.class);
@@ -134,7 +134,7 @@ public class JobScheduleServiceSteps extends TestBase {
     public void iFindTriggerPropertiesWithName(String triggerDefinitionName) throws Exception {
         primeException();
         try {
-            TriggerDefinitionQuery triggerDefinitionQuery = triggerDefinitionFactory.newQuery(getCurrentScopeId());
+            TriggerDefinitionQuery triggerDefinitionQuery = new TriggerDefinitionQuery(getCurrentScopeId());
             triggerDefinitionQuery.setPredicate(triggerDefinitionQuery.attributePredicate(TriggerDefinitionAttributes.NAME, triggerDefinitionName, AttributePredicate.Operator.EQUAL));
             TriggerDefinition triggerDefinition = triggerDefinitionService.query(triggerDefinitionQuery).getFirstItem();
             stepData.put("TriggerDefinition", triggerDefinition);
@@ -412,7 +412,7 @@ public class JobScheduleServiceSteps extends TestBase {
 
     @And("I search for the trigger with name {string} in the database")
     public void iSearchForTheTriggerWithNameInTheDatabase(String triggerName) throws Throwable {
-        TriggerQuery triggerQuery = triggerFactory.newQuery(getCurrentScopeId());
+        KapuaQuery triggerQuery = new KapuaQuery(getCurrentScopeId());
         triggerQuery.setPredicate(triggerQuery.attributePredicate(TriggerAttributes.NAME, triggerName, AttributePredicate.Operator.EQUAL));
         primeException();
         try {
@@ -435,7 +435,7 @@ public class JobScheduleServiceSteps extends TestBase {
         Trigger trigger = (Trigger) stepData.get(TRIGGER);
         primeException();
         try {
-            TriggerDefinitionQuery triggerDefinitionQuery = triggerDefinitionFactory.newQuery(getCurrentScopeId());
+            TriggerDefinitionQuery triggerDefinitionQuery = new TriggerDefinitionQuery(getCurrentScopeId());
             triggerDefinitionQuery.setPredicate(triggerDefinitionQuery.attributePredicate(TriggerDefinitionAttributes.NAME, trigerDefinition, AttributePredicate.Operator.EQUAL));
             TriggerDefinition triggerDefinition = triggerDefinitionService.query(triggerDefinitionQuery).getFirstItem();
             trigger.setTriggerDefinitionId(triggerDefinition.getId());

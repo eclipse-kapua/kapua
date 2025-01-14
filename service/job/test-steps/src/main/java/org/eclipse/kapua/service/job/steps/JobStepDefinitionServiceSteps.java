@@ -25,6 +25,7 @@ import org.eclipse.kapua.qa.common.cucumber.CucJobStepProperty;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinition;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionCreator;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionFactory;
+import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionQuery;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionService;
 import org.eclipse.kapua.service.job.step.definition.JobStepProperty;
 import org.eclipse.kapua.service.job.step.definition.JobStepType;
@@ -218,12 +219,12 @@ public class JobStepDefinitionServiceSteps extends JobServiceTestBase {
 
     @When("I count the step definition in the database")
     public void countStepDefinitionInDatabase() throws Exception {
-        updateCount(() -> (int) jobStepDefinitionService.count(jobStepDefinitionFactory.newQuery(KapuaId.ANY)));
+        updateCount(() -> (int) jobStepDefinitionService.count(new JobStepDefinitionQuery(KapuaId.ANY)));
     }
 
     @When("I query for step definitions in scope {int}")
     public void countStepDefinitijonsInScope(Integer id) throws Exception {
-        updateCount(() -> jobStepDefinitionService.query(jobStepDefinitionFactory.newQuery(KapuaId.ANY)).getSize());
+        updateCount(() -> jobStepDefinitionService.query(new JobStepDefinitionQuery(KapuaId.ANY)).getSize());
     }
 
     @When("I delete the step definition")
@@ -327,7 +328,6 @@ public class JobStepDefinitionServiceSteps extends JobServiceTestBase {
     public void testTheStepDefinitionFactory() {
         Assert.assertNotNull(jobStepDefinitionFactory.newCreator(SYS_SCOPE_ID));
         Assert.assertNotNull(jobStepDefinitionFactory.newEntity(SYS_SCOPE_ID));
-        Assert.assertNotNull(jobStepDefinitionFactory.newQuery(SYS_SCOPE_ID));
         Assert.assertNotNull(jobStepDefinitionFactory.newStepProperty("TestName", "TestType", "TestValue", "TestExampleValue"));
     }
 

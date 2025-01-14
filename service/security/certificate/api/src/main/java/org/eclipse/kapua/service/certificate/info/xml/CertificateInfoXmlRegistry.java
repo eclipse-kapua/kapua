@@ -18,7 +18,6 @@ import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.service.certificate.info.CertificateInfo;
 import org.eclipse.kapua.service.certificate.info.CertificateInfoCreator;
 import org.eclipse.kapua.service.certificate.info.CertificateInfoFactory;
-import org.eclipse.kapua.service.certificate.info.CertificateInfoQuery;
 
 @XmlRegistry
 public class CertificateInfoXmlRegistry {
@@ -33,7 +32,4 @@ public class CertificateInfoXmlRegistry {
         return certificateInfoFactory.newCreator(null);
     }
 
-    public CertificateInfoQuery newQuery() {
-        return certificateInfoFactory.newQuery(null);
-    }
 }

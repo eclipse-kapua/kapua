@@ -22,7 +22,7 @@ import org.eclipse.kapua.model.id.KapuaId;
  *
  * @since 1.0.0
  */
-public interface CredentialFactory extends KapuaEntityFactory<Credential, CredentialCreator, CredentialQuery> {
+public interface CredentialFactory extends KapuaEntityFactory<Credential, CredentialCreator> {
 
     /**
      * Instantiates a new {@link Credential}.

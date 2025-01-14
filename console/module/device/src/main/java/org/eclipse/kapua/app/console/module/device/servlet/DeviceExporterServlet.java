@@ -12,6 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.device.servlet;
 
+import java.io.IOException;
+import java.util.concurrent.Callable;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaIllegalAccessException;
 import org.eclipse.kapua.KapuaUnauthenticatedException;
@@ -35,13 +43,6 @@ import org.eclipse.kapua.service.device.registry.DeviceStatus;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.concurrent.Callable;
 
 public class DeviceExporterServlet extends HttpServlet {
 
@@ -96,7 +97,7 @@ public class DeviceExporterServlet extends HttpServlet {
             int offset = 0;
 
             // paginate through the matching message
-            DeviceQuery query = drf.newQuery(KapuaEid.parseCompactId(scopeIdString));
+            DeviceQuery query = new DeviceQuery(KapuaEid.parseCompactId(scopeIdString));
             query.setLimit(250);
 
             // Inserting filter parameter if specified
@@ -154,7 +155,7 @@ public class DeviceExporterServlet extends HttpServlet {
 
             String tagId = request.getParameter("tag");
             if (tagId != null && !tagId.isEmpty()) {
-                andPred = andPred.and(query.attributePredicate(DeviceAttributes.TAG_IDS, new KapuaId[]{KapuaEid.parseCompactId(tagId)}));
+                andPred = andPred.and(query.attributePredicate(DeviceAttributes.TAG_IDS, new KapuaId[] { KapuaEid.parseCompactId(tagId) }));
             }
 
             String sortAttribute = request.getParameter("sortAttribute");

@@ -20,7 +20,6 @@ import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceCreator;
 import org.eclipse.kapua.service.device.registry.DeviceExtendedProperty;
 import org.eclipse.kapua.service.device.registry.DeviceFactory;
-import org.eclipse.kapua.service.device.registry.DeviceQuery;
 
 /**
  * {@link DeviceFactory} implementation.
@@ -35,11 +34,6 @@ public class DeviceFactoryImpl implements DeviceFactory {
         DeviceCreator deviceCreator = newCreator(scopeId);
         deviceCreator.setClientId(clientId);
         return deviceCreator;
-    }
-
-    @Override
-    public DeviceQuery newQuery(KapuaId scopeId) {
-        return new DeviceQueryImpl(scopeId);
     }
 
     @Override

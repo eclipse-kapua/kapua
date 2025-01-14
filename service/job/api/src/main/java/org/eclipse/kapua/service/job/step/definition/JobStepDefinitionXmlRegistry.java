@@ -43,8 +43,4 @@ public class JobStepDefinitionXmlRegistry {
     public JobStepDefinitionCreator newJobStepDefinitionCreator() {
         return jobStepDefinitionFactory.newCreator(null);
     }
-
-    public JobStepDefinitionQuery newQuery() {
-        return jobStepDefinitionFactory.newQuery(null);
-    }
 }

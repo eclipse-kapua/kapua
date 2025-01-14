@@ -12,12 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.endpoint;
 
-import org.eclipse.kapua.model.query.KapuaQuery;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
 
 /**
  * {@link EndpointInfo} {@link KapuaQuery} definition.
@@ -28,14 +29,33 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "query")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(factoryClass = EndpointInfoXmlRegistry.class, factoryMethod = "newQuery")
-public interface EndpointInfoQuery extends KapuaQuery {
+public class EndpointInfoQuery extends KapuaQuery {
+
+    public EndpointInfoQuery() {
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param scopeId
+     *         The {@link #getScopeId()}.
+     * @since 1.0.0
+     */
+    public EndpointInfoQuery(KapuaId scopeId) {
+        super(scopeId);
+    }
+
     /**
      * Instantiates a new {@link EndpointInfoMatchPredicate}.
      *
-     * @param matchTerm The term to use to match.
-     * @param <T>       The type of the term
+     * @param matchTerm
+     *         The term to use to match.
+     * @param <T>
+     *         The type of the term
      * @return The newly instantiated {@link EndpointInfoMatchPredicate}.
      * @since 2.1.0
      */
-    <T> EndpointInfoMatchPredicate<T> matchPredicate(T matchTerm);
+    public <T> EndpointInfoMatchPredicate<T> matchPredicate(T matchTerm) {
+        return new EndpointInfoMatchPredicate<>(matchTerm);
+    }
 }

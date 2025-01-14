@@ -17,6 +17,6 @@ import org.eclipse.kapua.model.KapuaEntityFactory;
 /**
  * @since 1.1.0
  */
-public interface CertificateInfoFactory extends KapuaEntityFactory<CertificateInfo, CertificateInfoCreator, CertificateInfoQuery> {
+public interface CertificateInfoFactory extends KapuaEntityFactory<CertificateInfo, CertificateInfoCreator> {
 
 }

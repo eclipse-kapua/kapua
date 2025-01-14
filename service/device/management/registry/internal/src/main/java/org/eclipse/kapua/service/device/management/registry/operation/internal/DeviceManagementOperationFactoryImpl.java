@@ -20,7 +20,6 @@ import org.eclipse.kapua.service.device.management.registry.operation.DeviceMana
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationCreator;
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationFactory;
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationProperty;
-import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationQuery;
 
 /**
  * {@link DeviceManagementOperationFactory} implementation
@@ -38,11 +37,6 @@ public class DeviceManagementOperationFactoryImpl implements DeviceManagementOpe
     @Override
     public DeviceManagementOperationCreator newCreator(KapuaId scopeId) {
         return new DeviceManagementOperationCreatorImpl(scopeId);
-    }
-
-    @Override
-    public DeviceManagementOperationQuery newQuery(KapuaId scopeId) {
-        return new DeviceManagementOperationQueryImpl(scopeId);
     }
 
     @Override

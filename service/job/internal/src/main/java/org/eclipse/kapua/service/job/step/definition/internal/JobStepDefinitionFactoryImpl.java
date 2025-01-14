@@ -19,7 +19,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinition;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionCreator;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionFactory;
-import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionQuery;
 import org.eclipse.kapua.service.job.step.definition.JobStepProperty;
 
 /**
@@ -38,11 +37,6 @@ public class JobStepDefinitionFactoryImpl implements JobStepDefinitionFactory {
     @Override
     public JobStepDefinitionCreator newCreator(KapuaId scopeId) {
         return new JobStepDefinitionCreatorImpl(scopeId);
-    }
-
-    @Override
-    public JobStepDefinitionQuery newQuery(KapuaId scopeId) {
-        return new JobStepDefinitionQueryImpl(scopeId);
     }
 
     @Override

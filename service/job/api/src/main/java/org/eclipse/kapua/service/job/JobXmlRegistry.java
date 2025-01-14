@@ -45,6 +45,6 @@ public class JobXmlRegistry {
     }
 
     public JobQuery newQuery() {
-        return jobFactory.newQuery(null);
+        return new JobQuery(null);
     }
 }

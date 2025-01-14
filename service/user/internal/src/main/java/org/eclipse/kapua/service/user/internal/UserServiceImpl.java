@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.user.internal;
 
+import java.util.Objects;
+import java.util.Optional;
+
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaDuplicateExternalIdException;
 import org.eclipse.kapua.KapuaDuplicateExternalUsernameException;
 import org.eclipse.kapua.KapuaDuplicateNameException;
@@ -47,10 +52,6 @@ import org.eclipse.kapua.service.user.UserType;
 import org.eclipse.kapua.storage.TxManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Singleton;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * {@link UserService} implementation.
@@ -366,7 +367,7 @@ public class UserServiceImpl extends KapuaConfigurableServiceBase implements Use
     }
 
     private void deleteUserByAccountId(KapuaId scopeId, KapuaId accountId) throws KapuaException {
-        UserQuery query = new UserQueryImpl(accountId);
+        UserQuery query = new UserQuery(accountId);
         UserListResult usersToDelete = query(query);
 
         for (User u : usersToDelete.getItems()) {

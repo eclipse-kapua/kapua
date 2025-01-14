@@ -21,7 +21,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authentication.credential.Credential;
 import org.eclipse.kapua.service.authentication.credential.CredentialCreator;
 import org.eclipse.kapua.service.authentication.credential.CredentialFactory;
-import org.eclipse.kapua.service.authentication.credential.CredentialQuery;
 import org.eclipse.kapua.service.authentication.credential.CredentialStatus;
 
 /**
@@ -45,11 +44,6 @@ public class CredentialFactoryImpl implements CredentialFactory {
     @Override
     public Credential newCredential(KapuaId scopeId, KapuaId userId, String credentialType, String credentialKey, CredentialStatus credentialStatus, Date expirationDate) {
         return new CredentialImpl(scopeId, userId, credentialType, credentialKey, credentialStatus, expirationDate);
-    }
-
-    @Override
-    public CredentialQuery newQuery(KapuaId scopeId) {
-        return new CredentialQueryImpl(scopeId);
     }
 
     @Override

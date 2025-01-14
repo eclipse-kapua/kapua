@@ -12,16 +12,17 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.storable.model.query.predicate;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.collect.Lists;
-import org.eclipse.kapua.service.storable.exception.MappingException;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.kapua.service.storable.exception.MappingException;
+
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.collect.Lists;
+
 /**
- * {@link AndPredicate} implementation.
+ * {@link AndPredicateImpl} implementation.
  *
  * @since 1.0.0
  */
@@ -40,7 +41,8 @@ public class AndPredicateImpl extends StorablePredicateImpl implements AndPredic
     /**
      * Constructor.
      *
-     * @param storablePredicates The {@link StorablePredicate}s to add.
+     * @param storablePredicates
+     *         The {@link StorablePredicate}s to add.
      * @since 1.0.0
      */
     public AndPredicateImpl(StorablePredicate... storablePredicates) {
@@ -49,7 +51,6 @@ public class AndPredicateImpl extends StorablePredicateImpl implements AndPredic
         setPredicates(Lists.newArrayList(storablePredicates));
     }
 
-    @Override
     public List<StorablePredicate> getPredicates() {
         if (predicates == null) {
             predicates = new ArrayList<>();
@@ -58,13 +59,11 @@ public class AndPredicateImpl extends StorablePredicateImpl implements AndPredic
         return this.predicates;
     }
 
-    @Override
-    public AndPredicate addPredicate(StorablePredicate storablePredicate) {
+    public AndPredicateImpl addPredicate(StorablePredicate storablePredicate) {
         getPredicates().add(storablePredicate);
         return this;
     }
 
-    @Override
     public void setPredicates(List<StorablePredicate> predicates) {
         this.predicates = predicates;
     }

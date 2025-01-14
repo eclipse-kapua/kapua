@@ -28,7 +28,7 @@ public class UsedEntitiesCounterImpl<
         C extends KapuaEntityCreator<E>,
         L extends KapuaListResult<E>,
         Q extends KapuaQuery,
-        F extends KapuaEntityFactory<E, C, Q>
+        F extends KapuaEntityFactory<E, C>
         > implements UsedEntitiesCounter {
 
     private final F factory;
@@ -42,7 +42,7 @@ public class UsedEntitiesCounterImpl<
 
     @Override
     public long countEntitiesInScope(TxContext tx, KapuaId scopeId) throws KapuaException {
-        final Q query = factory.newQuery(scopeId);
+        final KapuaQuery query = new KapuaQuery(scopeId);
         // Do count
         return entityRepository.count(tx, query);
     }

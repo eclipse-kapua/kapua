@@ -38,9 +38,4 @@ public class EventStoreXmlRegistry {
     public EventStoreRecordCreator newEventStoreRecordCreator() {
         return kapuaEventFactory.newCreator(null);
     }
-
-    public EventStoreRecordQuery newQuery() {
-        return kapuaEventFactory.newQuery(null);
-    }
-
 }

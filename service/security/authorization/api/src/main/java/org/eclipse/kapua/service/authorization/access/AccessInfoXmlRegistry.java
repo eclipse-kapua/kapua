@@ -39,7 +39,4 @@ public class AccessInfoXmlRegistry {
         return accessInfoFactory.newCreator(null);
     }
 
-    public AccessInfoQuery newQuery() {
-        return accessInfoFactory.newQuery(null);
-    }
 }

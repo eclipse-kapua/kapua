@@ -17,10 +17,10 @@ import java.util.Date;
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.authentication.credential.Credential;
 import org.eclipse.kapua.service.authentication.credential.CredentialCreator;
-import org.eclipse.kapua.service.authentication.credential.CredentialQuery;
 import org.eclipse.kapua.service.authentication.credential.CredentialStatus;
 import org.junit.Assert;
 import org.junit.Before;
@@ -113,7 +113,7 @@ public class CredentialFactoryImplTest {
     @Test
     public void newQueryTest() {
         for (KapuaId scopeId : scopeIds) {
-            CredentialQuery credentialQuery = credentialFactoryImpl.newQuery(scopeId);
+            final KapuaQuery credentialQuery = new KapuaQuery(scopeId);
             Assert.assertEquals("Expected and actual values should be the same.", scopeId, credentialQuery.getScopeId());
         }
     }

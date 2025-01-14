@@ -12,8 +12,24 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.group;
 
-import org.eclipse.kapua.model.query.predicate.MatchPredicate;
+import java.util.Arrays;
 
-public interface GroupMatchPredicate<T> extends MatchPredicate<T> {
+import org.eclipse.kapua.model.query.predicate.AbstractMatchPredicate;
+
+public class GroupMatchPredicate<T> extends AbstractMatchPredicate<T> {
+
+    /**
+     * Constructor.
+     *
+     * @param matchTerm
+     * @since 2.1.0
+     */
+    public GroupMatchPredicate(T matchTerm) {
+        this.attributeNames = Arrays.asList(
+                GroupAttributes.DESCRIPTION,
+                GroupAttributes.NAME
+        );
+        this.matchTerm = matchTerm;
+    }
 
 }

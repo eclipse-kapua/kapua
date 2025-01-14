@@ -19,7 +19,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.access.AccessRole;
 import org.eclipse.kapua.service.authorization.access.AccessRoleCreator;
 import org.eclipse.kapua.service.authorization.access.AccessRoleFactory;
-import org.eclipse.kapua.service.authorization.access.AccessRoleQuery;
 
 /**
  * {@link AccessRoleFactory} implementation.
@@ -37,11 +36,6 @@ public class AccessRoleFactoryImpl implements AccessRoleFactory {
     @Override
     public AccessRoleCreator newCreator(KapuaId scopeId) {
         return new AccessRoleCreatorImpl(scopeId);
-    }
-
-    @Override
-    public AccessRoleQuery newQuery(KapuaId scopeId) {
-        return new AccessRoleQueryImpl(scopeId);
     }
 
     @Override

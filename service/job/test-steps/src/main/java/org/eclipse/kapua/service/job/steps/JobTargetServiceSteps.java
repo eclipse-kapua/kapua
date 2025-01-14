@@ -24,6 +24,7 @@ import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.KapuaEntity;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.model.query.predicate.AttributePredicate;
 import org.eclipse.kapua.qa.common.StepData;
 import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotification;
@@ -39,7 +40,6 @@ import org.eclipse.kapua.service.job.targets.JobTargetAttributes;
 import org.eclipse.kapua.service.job.targets.JobTargetCreator;
 import org.eclipse.kapua.service.job.targets.JobTargetFactory;
 import org.eclipse.kapua.service.job.targets.JobTargetListResult;
-import org.eclipse.kapua.service.job.targets.JobTargetQuery;
 import org.eclipse.kapua.service.job.targets.JobTargetService;
 import org.eclipse.kapua.service.job.targets.JobTargetStatus;
 import org.junit.Assert;
@@ -155,7 +155,7 @@ public class JobTargetServiceSteps extends JobServiceTestBase {
      */
     @And("I add device target(s) to job")
     public void addDeviceTargetsToJob(List<String> clientIds) throws Exception {
-        DeviceQuery deviceQuery = deviceFactory.newQuery(getCurrentScopeId());
+        DeviceQuery deviceQuery = new DeviceQuery(getCurrentScopeId());
         deviceQuery.setPredicate(
                 deviceQuery.attributePredicate(DeviceAttributes.CLIENT_ID, clientIds)
         );
@@ -294,13 +294,13 @@ public class JobTargetServiceSteps extends JobServiceTestBase {
 
     @When("I count the targets in the current scope")
     public void countTargetsForJob() throws Exception {
-        updateCount(() -> (int) jobTargetService.count(jobTargetFactory.newQuery(getCurrentScopeId())));
+        updateCount(() -> (int) jobTargetService.count(new KapuaQuery(getCurrentScopeId())));
     }
 
     @When("I query the targets for the current job")
     public void queryTargetsForJob() throws Exception {
         Job job = (Job) stepData.get("Job");
-        JobTargetQuery tmpQuery = jobTargetFactory.newQuery(getCurrentScopeId());
+        KapuaQuery tmpQuery = new KapuaQuery(getCurrentScopeId());
         tmpQuery.setPredicate(tmpQuery.attributePredicate(JobTargetAttributes.JOB_ID, job.getId(), AttributePredicate.Operator.EQUAL));
         primeException();
         try {
@@ -338,7 +338,7 @@ public class JobTargetServiceSteps extends JobServiceTestBase {
 
     @When("I count the targets in the current scope and I count {int}")
     public void iCountTheTargetsInTheCurrentScopeAndICount(int targetNum) throws Exception {
-        updateCountAndCheck(() -> (int) jobTargetService.count(jobTargetFactory.newQuery(getCurrentScopeId())), targetNum);
+        updateCountAndCheck(() -> (int) jobTargetService.count(new KapuaQuery(getCurrentScopeId())), targetNum);
     }
 
     @Then("The target step index is indeed {int}")
@@ -377,7 +377,6 @@ public class JobTargetServiceSteps extends JobServiceTestBase {
     public void testTheJobTargetFactory() {
         Assert.assertNotNull(jobTargetFactory.newCreator(SYS_SCOPE_ID));
         Assert.assertNotNull(jobTargetFactory.newEntity(SYS_SCOPE_ID));
-        Assert.assertNotNull(jobTargetFactory.newQuery(SYS_SCOPE_ID));
     }
 
     // Check Job Targets
@@ -423,7 +422,7 @@ public class JobTargetServiceSteps extends JobServiceTestBase {
 
         Job job = (Job) stepData.get(JOB);
 
-        JobTargetQuery jobTargetQuery = jobTargetFactory.newQuery(job.getScopeId());
+        KapuaQuery jobTargetQuery = new KapuaQuery(job.getScopeId());
         jobTargetQuery.setPredicate(
                 jobTargetQuery.andPredicate(
                         jobTargetQuery.attributePredicate(JobTargetAttributes.JOB_ID, job.getId()),

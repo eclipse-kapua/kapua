@@ -40,6 +40,6 @@ public class TagXmlRegistry {
     }
 
     public TagQuery newQuery() {
-        return tagFactory.newQuery(null);
+        return new TagQuery(null);
     }
 }

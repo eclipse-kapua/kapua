@@ -20,7 +20,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.authentication.credential.mfa.MfaOption;
 import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionCreator;
-import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionQuery;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,14 +62,6 @@ public class MfaOptionFactoryImplTest {
         for (KapuaId scopeId : scopeIds) {
             MfaOption mfaOption = mfaOptionFactoryImpl.newEntity(scopeId);
             Assert.assertEquals("Expected and actual values should be the same.", scopeId, mfaOption.getScopeId());
-        }
-    }
-
-    @Test
-    public void newQueryTest() {
-        for (KapuaId scopeId : scopeIds) {
-            MfaOptionQuery mfaOptionQuery = mfaOptionFactoryImpl.newQuery(scopeId);
-            Assert.assertEquals("Expected and actual values should be the same.", scopeId, mfaOptionQuery.getScopeId());
         }
     }
 

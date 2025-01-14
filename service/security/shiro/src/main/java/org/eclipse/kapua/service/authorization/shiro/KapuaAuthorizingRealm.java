@@ -27,10 +27,10 @@ import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaListResult;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.access.AccessInfo;
 import org.eclipse.kapua.service.authorization.access.AccessInfoAttributes;
 import org.eclipse.kapua.service.authorization.access.AccessInfoFactory;
-import org.eclipse.kapua.service.authorization.access.AccessInfoQuery;
 import org.eclipse.kapua.service.authorization.access.AccessInfoService;
 import org.eclipse.kapua.service.authorization.access.AccessPermission;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionListResult;
@@ -97,7 +97,7 @@ public class KapuaAuthorizingRealm extends AuthorizingRealm {
             throw new AuthenticationException();
         }
         // Get user access infos
-        AccessInfoQuery accessInfoQuery = accessInfoFactory.newQuery(user.getScopeId());
+        KapuaQuery accessInfoQuery = new KapuaQuery(user.getScopeId());
         accessInfoQuery.setPredicate(accessInfoQuery.attributePredicate(AccessInfoAttributes.USER_ID, user.getId()));
 
         final KapuaListResult<AccessInfo> accessInfos;

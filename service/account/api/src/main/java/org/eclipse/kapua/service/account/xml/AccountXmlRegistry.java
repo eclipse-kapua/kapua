@@ -18,7 +18,6 @@ import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountCreator;
 import org.eclipse.kapua.service.account.AccountFactory;
-import org.eclipse.kapua.service.account.AccountQuery;
 import org.eclipse.kapua.service.account.Organization;
 
 /**
@@ -50,16 +49,6 @@ public class AccountXmlRegistry {
      */
     public AccountCreator newAccountCreator() {
         return factory.newCreator(null);
-    }
-
-    /**
-     * Instantiates a new {@link AccountQuery}.
-     *
-     * @return The newly instantiated {@link AccountQuery}.
-     * @since 1.0.0
-     */
-    public AccountQuery newQuery() {
-        return factory.newQuery(null);
     }
 
     /**

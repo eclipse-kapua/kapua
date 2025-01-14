@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.storable.model.query.predicate;
 
-import org.eclipse.kapua.service.storable.model.query.StorableField;
-
 import javax.inject.Singleton;
+
+import org.eclipse.kapua.service.storable.model.query.StorableField;
 
 @Singleton
 public class StorablePredicateFactoryImpl implements StorablePredicateFactory {

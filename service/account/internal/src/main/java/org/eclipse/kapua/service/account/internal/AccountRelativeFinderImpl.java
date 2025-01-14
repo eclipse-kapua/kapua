@@ -27,12 +27,12 @@ import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.model.KapuaEntityAttributes;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.model.query.predicate.AttributePredicate;
 import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountFactory;
 import org.eclipse.kapua.service.account.AccountListResult;
-import org.eclipse.kapua.service.account.AccountQuery;
 import org.eclipse.kapua.service.account.AccountService;
 
 public class AccountRelativeFinderImpl implements AccountRelativeFinder, KapuaService {
@@ -48,7 +48,7 @@ public class AccountRelativeFinderImpl implements AccountRelativeFinder, KapuaSe
 
     @Override
     public AccountListResult findChildren(KapuaId scopeId, Optional<KapuaId> excludeTargetScopeId) throws KapuaException {
-        final AccountQuery childAccountsQuery = accountFactory.newQuery(scopeId);
+        final KapuaQuery childAccountsQuery = new KapuaQuery(scopeId);
         // Exclude the scope that is under config update
         if (excludeTargetScopeId.isPresent()) {
             childAccountsQuery.setPredicate(
@@ -66,7 +66,7 @@ public class AccountRelativeFinderImpl implements AccountRelativeFinder, KapuaSe
     public List<KapuaId> findParentIds(KapuaId accountId) throws KapuaException {
         Account account = KapuaSecurityUtils.doPrivileged(() -> accountService.find(accountId));
 
-        if(account == null || account.getParentAccountPath() == null) {
+        if (account == null || account.getParentAccountPath() == null) {
             return Collections.emptyList();
         }
 
@@ -76,10 +76,10 @@ public class AccountRelativeFinderImpl implements AccountRelativeFinder, KapuaSe
         String accountIdStr = accountId.getId().toString();
 
         // Iterate in reverse order to get parent first, then grandparent, etc
-        for(int i = splitIds.length - 1; i >= 0; i--) {
+        for (int i = splitIds.length - 1; i >= 0; i--) {
             String id = splitIds[i];
 
-            if(id != null && !id.isEmpty() && !id.equals(accountIdStr)) {
+            if (id != null && !id.isEmpty() && !id.equals(accountIdStr)) {
                 parentAccountIds.add(new KapuaEid(new BigInteger(id)));
             }
         }

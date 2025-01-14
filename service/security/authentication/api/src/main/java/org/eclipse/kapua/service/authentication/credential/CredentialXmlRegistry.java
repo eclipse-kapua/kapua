@@ -45,14 +45,4 @@ public class CredentialXmlRegistry {
     public CredentialCreator newCredentialCreator() {
         return credentialFactory.newCreator(null, null, null, null, null, null);
     }
-
-    /**
-     * Instantiates a new {@link CredentialQuery}.
-     *
-     * @return The newly instantiated {@link CredentialQuery}
-     * @since 1.0.0
-     */
-    public CredentialQuery newCredentialQuery() {
-        return credentialFactory.newQuery(null);
-    }
 }

@@ -47,7 +47,6 @@ import org.eclipse.kapua.service.account.AccountAttributes;
 import org.eclipse.kapua.service.account.AccountCreator;
 import org.eclipse.kapua.service.account.AccountFactory;
 import org.eclipse.kapua.service.account.AccountListResult;
-import org.eclipse.kapua.service.account.AccountQuery;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.account.Organization;
 import org.junit.Assert;
@@ -523,7 +522,7 @@ public class AccountServiceSteps extends TestBase {
 
     @When("I query for all accounts that have the system account as parent")
     public void queryForNumberOfTopLevelAccounts() throws Exception {
-        AccountQuery query = accountFactory.newQuery(SYS_SCOPE_ID);
+        KapuaQuery query = new KapuaQuery(SYS_SCOPE_ID);
         stepData.remove(INT_VALUE);
         try {
             primeException();
@@ -593,7 +592,7 @@ public class AccountServiceSteps extends TestBase {
 
     @Then("The account with name {string} has {int} subaccount(s)")
     public void checkNumberOfAccounts(String accountName, int num) throws KapuaException {
-        KapuaQuery query = accountFactory.newQuery(getCurrentScopeId());
+        final KapuaQuery query = new KapuaQuery(getCurrentScopeId());
         Account account = accountService.find(getCurrentScopeId());
         Assert.assertEquals(accountName, account.getName());
 
@@ -606,7 +605,7 @@ public class AccountServiceSteps extends TestBase {
         try {
             primeException();
             Account tmpAcc = accountService.findByName(name);
-            KapuaQuery query = accountFactory.newQuery(tmpAcc.getId());
+            final KapuaQuery query = new KapuaQuery(tmpAcc.getId());
             long accountCnt = accountService.count(query);
 
             Assert.assertEquals(num, accountCnt);
@@ -783,7 +782,7 @@ public class AccountServiceSteps extends TestBase {
 
     @And("I find account with name {string}")
     public void iFindAccountWithName(String accountName) throws Exception {
-        AccountQuery accountQuery = accountFactory.newQuery(getCurrentScopeId());
+        final KapuaQuery accountQuery = new KapuaQuery(getCurrentScopeId());
         accountQuery.setPredicate(accountQuery.attributePredicate(AccountAttributes.NAME, accountName));
         AccountListResult accountListResult = accountService.query(accountQuery);
         Assert.assertTrue(accountListResult.getSize() > 0);
@@ -869,7 +868,7 @@ public class AccountServiceSteps extends TestBase {
     @When("I query for all sub-accounts in {string}")
     public void queryForAllAccountsInCurrentScopeId(String accountName) throws Exception {
         Account tmpAccount = accountService.findByName(accountName);
-        AccountQuery query = accountFactory.newQuery(tmpAccount.getId());
+        final KapuaQuery query = new KapuaQuery(tmpAccount.getId());
         try {
             primeException();
             AccountListResult accList = accountService.query(query);

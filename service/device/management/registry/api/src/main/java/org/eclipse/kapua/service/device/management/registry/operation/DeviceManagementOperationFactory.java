@@ -20,7 +20,7 @@ import org.eclipse.kapua.model.KapuaEntityFactory;
  * @see org.eclipse.kapua.model.KapuaEntityFactory
  * @since 1.0.0
  */
-public interface DeviceManagementOperationFactory extends KapuaEntityFactory<DeviceManagementOperation, DeviceManagementOperationCreator, DeviceManagementOperationQuery> {
+public interface DeviceManagementOperationFactory extends KapuaEntityFactory<DeviceManagementOperation, DeviceManagementOperationCreator> {
 
     /**
      * Instantiates a new {@link DeviceManagementOperationProperty}.

@@ -44,7 +44,4 @@ public class QueuedJobExecutionXmlRegistry {
         return queuedJobExecutionFactory.newCreator(null);
     }
 
-    public QueuedJobExecutionQuery newQuery() {
-        return queuedJobExecutionFactory.newQuery(null);
-    }
 }

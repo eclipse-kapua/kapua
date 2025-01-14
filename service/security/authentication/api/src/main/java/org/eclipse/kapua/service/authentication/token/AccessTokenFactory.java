@@ -23,7 +23,7 @@ import org.eclipse.kapua.model.id.KapuaId;
  * @see org.eclipse.kapua.model.KapuaEntityFactory
  * @since 1.0.0
  */
-public interface AccessTokenFactory extends KapuaEntityFactory<AccessToken, AccessTokenCreator, AccessTokenQuery> {
+public interface AccessTokenFactory extends KapuaEntityFactory<AccessToken, AccessTokenCreator> {
 
     /**
      * Instantiates a new {@link AccessTokenCreator}.

@@ -45,10 +45,6 @@ public class JobStepXmlRegistry {
         return jobStepFactory.newCreator(null);
     }
 
-    public JobStepQuery newQuery() {
-        return jobStepFactory.newQuery(null);
-    }
-
     public JobStepProperty newJobStepProperty() {
         return jobStepFactory.newStepProperty(null, null, null);
     }

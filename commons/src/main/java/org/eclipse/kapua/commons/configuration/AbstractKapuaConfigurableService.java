@@ -59,6 +59,7 @@ import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.domain.Domain;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
@@ -527,7 +528,7 @@ public abstract class AbstractKapuaConfigurableService extends AbstractKapuaServ
         // Check access
         getAuthorizationService().checkPermission(getPermissionFactory().newPermission(Optional.ofNullable(domain).map(d -> d.getName()).orElse(null), Actions.read, scopeId));
         // Get configuration values
-        ServiceConfigQueryImpl query = new ServiceConfigQueryImpl(scopeId);
+        KapuaQuery query = new KapuaQuery(scopeId);
 
         query.setPredicate(
                 query.andPredicate(
@@ -583,7 +584,7 @@ public abstract class AbstractKapuaConfigurableService extends AbstractKapuaServ
 
         validateConfigurations(ocd, values, scopeId, parentId);
 
-        ServiceConfigQueryImpl query = new ServiceConfigQueryImpl(scopeId);
+        KapuaQuery query = new KapuaQuery(scopeId);
         query.setPredicate(
                 query.andPredicate(
                         query.attributePredicate(ServiceConfigAttributes.SERVICE_ID, pid),

@@ -412,7 +412,7 @@ public class AccountServiceImpl
         ArgumentValidator.notNull(accountId, KapuaEntityAttributes.ENTITY_ID);
         ArgumentValidator.notNull(accountId.getId(), "accountId.id");
         // Do find
-        return txManager.execute(tx -> accountRepository.query(tx, new AccountQueryImpl(accountId)));
+        return txManager.execute(tx -> accountRepository.query(tx, new KapuaQuery(accountId)));
     }
 
     private void checkAccountPermission(KapuaId scopeId, KapuaId accountId, Actions action) throws KapuaException {

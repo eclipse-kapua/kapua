@@ -42,7 +42,6 @@ import org.eclipse.kapua.service.authentication.credential.CredentialAttributes;
 import org.eclipse.kapua.service.authentication.credential.CredentialCreator;
 import org.eclipse.kapua.service.authentication.credential.CredentialFactory;
 import org.eclipse.kapua.service.authentication.credential.CredentialListResult;
-import org.eclipse.kapua.service.authentication.credential.CredentialQuery;
 import org.eclipse.kapua.service.authentication.credential.CredentialRepository;
 import org.eclipse.kapua.service.authentication.credential.CredentialService;
 import org.eclipse.kapua.service.authentication.credential.handler.CredentialTypeHandler;
@@ -274,7 +273,7 @@ public class CredentialServiceImpl extends KapuaConfigurableServiceBase implemen
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.CREDENTIAL, Actions.read, scopeId));
 
         // Do find
-        CredentialQuery credentialQuery = new CredentialQueryImpl(scopeId);
+        KapuaQuery credentialQuery = new KapuaQuery(scopeId);
 
         credentialQuery.setPredicate(
                 credentialQuery.andPredicate(
@@ -301,7 +300,7 @@ public class CredentialServiceImpl extends KapuaConfigurableServiceBase implemen
             String apiKeyPreValue = apiKey.substring(0, preLength).concat(preSeparator);
 
             // Build query
-            KapuaQuery query = new CredentialQueryImpl();
+            KapuaQuery query = new KapuaQuery();
 
             query.setPredicate(
                     query.andPredicate(
@@ -368,7 +367,7 @@ public class CredentialServiceImpl extends KapuaConfigurableServiceBase implemen
         KapuaLocator locator = KapuaLocator.getInstance();
         CredentialFactory credentialFactory = locator.getFactory(CredentialFactory.class);
 
-        CredentialQuery query = credentialFactory.newQuery(scopeId);
+        KapuaQuery query = new KapuaQuery(scopeId);
         query.setPredicate(query.attributePredicate(CredentialAttributes.USER_ID, userId));
 
         CredentialListResult credentialsToDelete = query(query);
@@ -382,7 +381,7 @@ public class CredentialServiceImpl extends KapuaConfigurableServiceBase implemen
         KapuaLocator locator = KapuaLocator.getInstance();
         CredentialFactory credentialFactory = locator.getFactory(CredentialFactory.class);
 
-        CredentialQuery query = credentialFactory.newQuery(accountId);
+        final KapuaQuery query = new KapuaQuery(accountId);
 
         CredentialListResult credentialsToDelete = query(query);
 

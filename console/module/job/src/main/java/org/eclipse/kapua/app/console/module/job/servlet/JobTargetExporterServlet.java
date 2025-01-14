@@ -25,11 +25,11 @@ import org.eclipse.kapua.KapuaUnauthenticatedException;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaIdFactory;
 import org.eclipse.kapua.model.query.KapuaListResult;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.job.targets.JobTarget;
 import org.eclipse.kapua.service.job.targets.JobTargetAttributes;
 import org.eclipse.kapua.service.job.targets.JobTargetFactory;
 import org.eclipse.kapua.service.job.targets.JobTargetListResult;
-import org.eclipse.kapua.service.job.targets.JobTargetQuery;
 import org.eclipse.kapua.service.job.targets.JobTargetService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,7 +84,7 @@ public class JobTargetExporterServlet extends HttpServlet {
 
             int offset = 0;
 
-            JobTargetQuery jobTargetQuery = jobTargetFactory.newQuery(kapuaIdFactory.newKapuaId(scopeId));
+            KapuaQuery jobTargetQuery = new KapuaQuery(kapuaIdFactory.newKapuaId(scopeId));
             jobTargetQuery.setPredicate(jobTargetQuery.attributePredicate(JobTargetAttributes.JOB_ID, kapuaIdFactory.newKapuaId(jobId)));
             // paginate through the matching message
             jobTargetQuery.setLimit(250);

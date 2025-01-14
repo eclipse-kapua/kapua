@@ -54,8 +54,6 @@ import org.eclipse.kapua.service.config.KapuaConfigurableService;
  *         The {@link KapuaEntityCreator} type.
  * @param <S>
  *         The {@link KapuaEntityService} type.
- * @param <Q>
- *         The {@link KapuaQuery} type.
  * @param <F>
  *         The {@link KapuaEntityFactory} type.
  * @since 1.0.0
@@ -66,8 +64,7 @@ public abstract class AbstractKapuaConfigurableResourceLimitedService<
         E extends KapuaEntity,
         C extends KapuaEntityCreator<E>,
         S extends KapuaEntityService<E, C>,
-        Q extends KapuaQuery,
-        F extends KapuaEntityFactory<E, C, Q>
+        F extends KapuaEntityFactory<E, C>
         >
         extends AbstractKapuaConfigurableService
         implements KapuaEntityService<E, C> {
@@ -82,7 +79,7 @@ public abstract class AbstractKapuaConfigurableResourceLimitedService<
      * Constructor.
      *
      * @param pid
-     *         The {@link KapuaConfigurableService} id.
+     *         The {@link KapuaConfigurableService} id.KapuaEntit
      * @param domain
      *         The {@link Domain} on which check access.
      * @param entityManagerFactory
@@ -267,7 +264,7 @@ public abstract class AbstractKapuaConfigurableResourceLimitedService<
             return Integer.MAX_VALUE;
         }
         return KapuaSecurityUtils.doPrivileged(() -> {
-            Q countQuery = getFactory().newQuery(scopeId);
+            KapuaQuery countQuery = new KapuaQuery(scopeId);
 
             // Current used entities
             long currentUsedEntities = this.count(countQuery);

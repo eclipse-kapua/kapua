@@ -10,11 +10,9 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.model.query.predicate;
+package org.eclipse.kapua.model.query.predicate;
 
 import java.util.List;
-
-import org.eclipse.kapua.model.query.predicate.MatchPredicate;
 
 /**
  * {@link MatchPredicate} implementation.

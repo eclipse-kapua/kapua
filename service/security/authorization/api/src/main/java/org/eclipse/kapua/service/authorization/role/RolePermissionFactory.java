@@ -20,6 +20,6 @@ import org.eclipse.kapua.model.KapuaEntityFactory;
  * @see org.eclipse.kapua.model.KapuaEntityFactory
  * @since 1.0.0
  */
-public interface RolePermissionFactory extends KapuaEntityFactory<RolePermission, RolePermissionCreator, RolePermissionQuery> {
+public interface RolePermissionFactory extends KapuaEntityFactory<RolePermission, RolePermissionCreator> {
 
 }

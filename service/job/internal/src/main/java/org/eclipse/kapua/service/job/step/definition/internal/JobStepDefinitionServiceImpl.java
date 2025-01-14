@@ -13,6 +13,7 @@
 package org.eclipse.kapua.service.job.step.definition.internal;
 
 import java.util.Optional;
+
 import javax.inject.Singleton;
 
 import org.eclipse.kapua.KapuaDuplicateNameInAnotherAccountError;
@@ -120,7 +121,7 @@ public class JobStepDefinitionServiceImpl implements JobStepDefinitionService {
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.read, scopeId));
 
-        final JobStepDefinitionQuery query = new JobStepDefinitionQueryImpl(scopeId);
+        final JobStepDefinitionQuery query = new JobStepDefinitionQuery(scopeId);
         query.setPredicate(query.attributePredicate(JobStepDefinitionAttributes.ENTITY_ID, stepDefinitionId));
 
         // Do find

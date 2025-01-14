@@ -19,7 +19,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.device.registry.connection.option.DeviceConnectionOption;
 import org.eclipse.kapua.service.device.registry.connection.option.DeviceConnectionOptionCreator;
 import org.eclipse.kapua.service.device.registry.connection.option.DeviceConnectionOptionFactory;
-import org.eclipse.kapua.service.device.registry.connection.option.DeviceConnectionOptionQuery;
 
 /**
  * {@link DeviceConnectionOptionFactory} implementation.
@@ -32,11 +31,6 @@ public class DeviceConnectionOptionFactoryImpl implements DeviceConnectionOption
     @Override
     public DeviceConnectionOptionCreator newCreator(KapuaId scopeId) {
         return new DeviceConnectionOptionCreatorImpl(scopeId);
-    }
-
-    @Override
-    public DeviceConnectionOptionQuery newQuery(KapuaId scopeId) {
-        return new DeviceConnectionOptionQueryImpl(scopeId);
     }
 
     @Override

@@ -79,7 +79,7 @@ public class DeviceRegistryServiceImpl
                     // Check entity limit
                     serviceConfigurationManager.checkAllowedEntities(tx, deviceCreator.getScopeId(), "Devices");
                     // Check duplicate clientId
-                    DeviceQuery query = entityFactory.newQuery(deviceCreator.getScopeId());
+                    DeviceQuery query = new DeviceQuery(deviceCreator.getScopeId());
                     query.setPredicate(query.attributePredicate(DeviceAttributes.CLIENT_ID, deviceCreator.getClientId()));
                     //TODO: check whether this is anywhere efficient
                     if (deviceRepository.count(tx, query) > 0) {
@@ -204,7 +204,7 @@ public class DeviceRegistryServiceImpl
     // Private methods
 
     private void deleteDeviceByGroupId(KapuaId scopeId, KapuaId groupId) throws KapuaException {
-        DeviceQuery query = entityFactory.newQuery(scopeId);
+        DeviceQuery query = new DeviceQuery(scopeId);
         query.setPredicate(query.attributePredicate(DeviceAttributes.GROUP_ID, groupId));
 
         txManager.<Void>execute(tx -> {
@@ -219,7 +219,7 @@ public class DeviceRegistryServiceImpl
     }
 
     private void deleteDeviceByAccountId(KapuaId scopeId, KapuaId accountId) throws KapuaException {
-        DeviceQuery query = entityFactory.newQuery(accountId);
+        DeviceQuery query = new DeviceQuery(accountId);
 
         txManager.<Void>execute(tx -> {
             DeviceListResult devicesToDelete = deviceRepository.query(tx, query);

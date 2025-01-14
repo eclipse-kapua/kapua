@@ -21,7 +21,7 @@ import org.eclipse.kapua.model.id.KapuaId;
  * @see org.eclipse.kapua.model.KapuaEntityFactory
  * @since 1.0.0
  */
-public interface TagFactory extends KapuaEntityFactory<Tag, TagCreator, TagQuery> {
+public interface TagFactory extends KapuaEntityFactory<Tag, TagCreator> {
 
     /**
      * Instantiates a new {@link TagCreator}.

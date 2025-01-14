@@ -21,7 +21,6 @@ import org.eclipse.kapua.service.device.management.message.KapuaMethod;
 import org.eclipse.kapua.service.device.registry.event.DeviceEvent;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventCreator;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventFactory;
-import org.eclipse.kapua.service.device.registry.event.DeviceEventQuery;
 
 /**
  * {@link DeviceEventFactory} implementation.
@@ -41,11 +40,6 @@ public class DeviceEventFactoryImpl implements DeviceEventFactory {
         creator.setResource(resource);
 
         return creator;
-    }
-
-    @Override
-    public DeviceEventQuery newQuery(KapuaId scopeId) {
-        return new DeviceEventQueryImpl(scopeId);
     }
 
     @Override

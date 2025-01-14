@@ -39,7 +39,4 @@ public class RolePermissionXmlRegistry {
         return rolePermissionFactory.newCreator(null);
     }
 
-    public RolePermissionQuery newQuery() {
-        return rolePermissionFactory.newQuery(null);
-    }
 }

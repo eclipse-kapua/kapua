@@ -48,8 +48,6 @@ import org.eclipse.kapua.KapuaErrorCodes;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.AbstractKapuaEntity_;
 import org.eclipse.kapua.commons.model.id.KapuaEid;
-import org.eclipse.kapua.commons.model.query.predicate.AttributePredicateImpl;
-import org.eclipse.kapua.commons.model.query.predicate.OrPredicateImpl;
 import org.eclipse.kapua.model.KapuaEntity;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.FieldSortCriteria;
@@ -373,9 +371,9 @@ public class KapuaEntityJpaRepository<E extends KapuaEntity, C extends E, L exte
             predicate = handleOrPredicate(orPredicate, binds, cb, userPermissionRoot, entityType);
         } else if (queryPredicate instanceof MatchPredicate) {
             MatchPredicate<?> matchPredicate = (MatchPredicate<?>) queryPredicate;
-            OrPredicate orPredicate = new OrPredicateImpl();
+            OrPredicate orPredicate = new OrPredicate();
             for (String attributeName : matchPredicate.getAttributeNames()) {
-                orPredicate.getPredicates().add(new AttributePredicateImpl<>(attributeName, matchPredicate.getMatchTerm(), AttributePredicate.Operator.STARTS_WITH_IGNORE_CASE));
+                orPredicate.getPredicates().add(new AttributePredicate<>(attributeName, matchPredicate.getMatchTerm(), AttributePredicate.Operator.STARTS_WITH_IGNORE_CASE));
             }
             predicate = handleOrPredicate(orPredicate, binds, cb, userPermissionRoot, entityType);
         }

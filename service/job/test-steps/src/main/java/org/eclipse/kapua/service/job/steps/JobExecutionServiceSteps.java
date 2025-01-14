@@ -214,7 +214,7 @@ public class JobExecutionServiceSteps extends JobServiceTestBase {
     @When("I count the execution items for the current job")
     public void countExecutionsForJob() throws Exception {
         Job job = (Job) stepData.get("Job");
-        JobExecutionQuery tmpQuery = jobExecutionFactory.newQuery(getCurrentScopeId());
+        JobExecutionQuery tmpQuery = new JobExecutionQuery(getCurrentScopeId());
         tmpQuery.setPredicate(tmpQuery.attributePredicate(JobExecutionAttributes.JOB_ID, job.getId(), AttributePredicate.Operator.EQUAL));
         updateCount(() -> (int) jobExecutionService.count(tmpQuery));
     }
@@ -222,7 +222,7 @@ public class JobExecutionServiceSteps extends JobServiceTestBase {
     @Then("I query for the execution items for the current job")
     public void queryExecutionsForJobWithPackages() throws Exception {
         Job job = (Job) stepData.get("Job");
-        JobExecutionQuery tmpQuery = jobExecutionFactory.newQuery(getCurrentScopeId());
+        JobExecutionQuery tmpQuery = new JobExecutionQuery(getCurrentScopeId());
         tmpQuery.setPredicate(tmpQuery.attributePredicate(JobExecutionAttributes.JOB_ID, job.getId(), AttributePredicate.Operator.EQUAL));
         primeException();
         try {
@@ -249,7 +249,7 @@ public class JobExecutionServiceSteps extends JobServiceTestBase {
 
     private void queryExecutionsForJobWithStartDate(Date startDate) throws Exception {
         final Job job = (Job) stepData.get("Job");
-        final JobExecutionQuery tmpQuery = jobExecutionFactory.newQuery(getCurrentScopeId());
+        final JobExecutionQuery tmpQuery = new JobExecutionQuery(getCurrentScopeId());
         final AndPredicate andPredicate = tmpQuery.andPredicate(tmpQuery.attributePredicate(JobExecutionAttributes.JOB_ID, job.getId()));
         andPredicate.and(tmpQuery.attributePredicate(JobExecutionAttributes.STARTED_ON, startDate, AttributePredicate.Operator.GREATER_THAN_OR_EQUAL));
         tmpQuery.setPredicate(andPredicate);
@@ -319,7 +319,7 @@ public class JobExecutionServiceSteps extends JobServiceTestBase {
     }
 
     private JobExecutionListResult getExecutionsForJob(Job job) throws Exception {
-        JobExecutionQuery tmpQuery = jobExecutionFactory.newQuery(getCurrentScopeId());
+        JobExecutionQuery tmpQuery = new JobExecutionQuery(getCurrentScopeId());
         tmpQuery.setPredicate(tmpQuery.attributePredicate(JobExecutionAttributes.JOB_ID, job.getId(), AttributePredicate.Operator.EQUAL));
         return jobExecutionService.query(tmpQuery);
     }
@@ -384,7 +384,7 @@ public class JobExecutionServiceSteps extends JobServiceTestBase {
     }
 
     private Job getJobAndUpdateStepData(String jobName) throws Exception {
-        JobQuery tmpQuery = jobFactory.newQuery(getCurrentScopeId());
+        JobQuery tmpQuery = new JobQuery(getCurrentScopeId());
         tmpQuery.setPredicate(tmpQuery.attributePredicate(JobAttributes.NAME, jobName));
 
         stepData.remove("Job");
@@ -470,7 +470,6 @@ public class JobExecutionServiceSteps extends JobServiceTestBase {
     public void testTheJobExecutionFactory() {
         Assert.assertNotNull(jobExecutionFactory.newCreator(SYS_SCOPE_ID));
         Assert.assertNotNull(jobExecutionFactory.newEntity(SYS_SCOPE_ID));
-        Assert.assertNotNull(jobExecutionFactory.newQuery(SYS_SCOPE_ID));
     }
     // Private methods
 

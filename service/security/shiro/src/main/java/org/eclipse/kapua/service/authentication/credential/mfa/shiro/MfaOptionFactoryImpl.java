@@ -19,7 +19,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authentication.credential.mfa.MfaOption;
 import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionCreator;
 import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionFactory;
-import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionQuery;
 
 /**
  * {@link MfaOptionFactory} implementation.
@@ -30,11 +29,6 @@ public class MfaOptionFactoryImpl implements MfaOptionFactory {
     @Override
     public MfaOption newEntity(KapuaId scopeId) {
         return new MfaOptionImpl(scopeId);
-    }
-
-    @Override
-    public MfaOptionQuery newQuery(KapuaId scopeId) {
-        return new MfaOptionQueryImpl(scopeId);
     }
 
     @Override

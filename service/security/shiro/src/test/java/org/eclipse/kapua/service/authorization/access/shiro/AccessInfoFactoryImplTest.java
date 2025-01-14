@@ -16,10 +16,10 @@ import java.util.Date;
 
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.authorization.access.AccessInfo;
 import org.eclipse.kapua.service.authorization.access.AccessInfoCreator;
-import org.eclipse.kapua.service.authorization.access.AccessInfoQuery;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -82,14 +82,14 @@ public class AccessInfoFactoryImplTest {
 
     @Test
     public void newQueryTest() {
-        AccessInfoQuery accessInfoQuery = accessInfoFactoryImpl.newQuery(scopeId);
+        KapuaQuery accessInfoQuery = new KapuaQuery(scopeId);
 
         Assert.assertEquals("Expected and actual values should be the same.", scopeId, accessInfoQuery.getScopeId());
     }
 
     @Test
     public void newQueryNullTest() {
-        AccessInfoQuery accessInfoQuery = accessInfoFactoryImpl.newQuery(null);
+        KapuaQuery accessInfoQuery = new KapuaQuery((KapuaId) null);
 
         Assert.assertNull("Null expected.", accessInfoQuery.getScopeId());
     }

@@ -69,7 +69,7 @@ public class GwtKapuaDeviceModelConverter {
     }
 
     public static DeviceConnectionQuery convertConnectionQuery(PagingLoadConfig loadConfig, GwtDeviceConnectionQuery gwtDeviceConnectionQuery) {
-        DeviceConnectionQuery query = DEVICE_CONNECTION_FACTORY.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(gwtDeviceConnectionQuery.getScopeId()));
+        DeviceConnectionQuery query = new DeviceConnectionQuery(GwtKapuaCommonsModelConverter.convertKapuaId(gwtDeviceConnectionQuery.getScopeId()));
         AndPredicate predicate = query.andPredicate();
 
         if (gwtDeviceConnectionQuery.getClientId() != null && !gwtDeviceConnectionQuery.getClientId().trim().isEmpty()) {
@@ -163,7 +163,7 @@ public class GwtKapuaDeviceModelConverter {
     }
 
     public static DeviceQuery convertDeviceQuery(PagingLoadConfig loadConfig, GwtDeviceQuery gwtDeviceQuery) {
-        DeviceQuery query = DEVICE_FACTORY.newQuery(KapuaEid.parseCompactId(gwtDeviceQuery.getScopeId()));
+        DeviceQuery query = new DeviceQuery(KapuaEid.parseCompactId(gwtDeviceQuery.getScopeId()));
 
         if (loadConfig != null) {
             query.setLimit(loadConfig.getLimit());
@@ -243,7 +243,7 @@ public class GwtKapuaDeviceModelConverter {
 
     public static DeviceManagementOperationQuery convertDeviceManagementOperationQuery(PagingLoadConfig loadConfig, GwtDeviceManagementOperationQuery gwtQuery) {
 
-        DeviceManagementOperationQuery query = DEVICE_MANAGEMENT_OPERATION_FACTORY.newQuery(KapuaEid.parseCompactId(gwtQuery.getScopeId()));
+        DeviceManagementOperationQuery query = new DeviceManagementOperationQuery(KapuaEid.parseCompactId(gwtQuery.getScopeId()));
 
         String deviceId = gwtQuery.getDeviceId();
         AndPredicate andPredicate = query.andPredicate();

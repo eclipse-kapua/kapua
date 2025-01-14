@@ -19,7 +19,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTrigger;
 import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTriggerCreator;
 import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTriggerFactory;
-import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTriggerQuery;
 
 /**
  * {@link FiredTriggerFactory} implementation.
@@ -37,11 +36,6 @@ public class FiredTriggerFactoryImpl implements FiredTriggerFactory {
     @Override
     public FiredTriggerCreator newCreator(KapuaId scopeId) {
         return new FiredTriggerCreatorImpl(scopeId);
-    }
-
-    @Override
-    public FiredTriggerQuery newQuery(KapuaId scopeId) {
-        return new FiredTriggerQueryImpl(scopeId);
     }
 
     @Override

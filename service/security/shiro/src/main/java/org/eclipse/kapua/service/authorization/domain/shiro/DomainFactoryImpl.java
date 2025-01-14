@@ -19,7 +19,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.domain.Domain;
 import org.eclipse.kapua.service.authorization.domain.DomainCreator;
 import org.eclipse.kapua.service.authorization.domain.DomainFactory;
-import org.eclipse.kapua.service.authorization.domain.DomainQuery;
 
 /**
  * {@link DomainFactory} implementation.
@@ -32,11 +31,6 @@ public class DomainFactoryImpl implements DomainFactory {
     @Override
     public DomainCreator newCreator(String name) {
         return new DomainCreatorImpl(name);
-    }
-
-    @Override
-    public DomainQuery newQuery(KapuaId scopeId) {
-        return new DomainQueryImpl(scopeId);
     }
 
     @Override

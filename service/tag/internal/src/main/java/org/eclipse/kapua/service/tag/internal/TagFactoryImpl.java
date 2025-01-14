@@ -19,7 +19,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.tag.Tag;
 import org.eclipse.kapua.service.tag.TagCreator;
 import org.eclipse.kapua.service.tag.TagFactory;
-import org.eclipse.kapua.service.tag.TagQuery;
 
 /**
  * {@link TagFactory} implementation.
@@ -41,11 +40,6 @@ public class TagFactoryImpl implements TagFactory {
     @Override
     public Tag newEntity(KapuaId scopeId) {
         return new TagImpl(scopeId);
-    }
-
-    @Override
-    public TagQuery newQuery(KapuaId scopeId) {
-        return new TagQueryImpl(scopeId);
     }
 
     @Override

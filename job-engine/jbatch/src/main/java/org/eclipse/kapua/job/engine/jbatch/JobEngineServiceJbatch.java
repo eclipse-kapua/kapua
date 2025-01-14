@@ -12,6 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.job.engine.jbatch;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaIllegalArgumentException;
@@ -33,6 +40,7 @@ import org.eclipse.kapua.job.engine.jbatch.driver.JbatchDriver;
 import org.eclipse.kapua.model.KapuaEntityAttributes;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.job.Job;
@@ -41,18 +49,10 @@ import org.eclipse.kapua.service.job.execution.JobExecution;
 import org.eclipse.kapua.service.job.execution.JobExecutionService;
 import org.eclipse.kapua.service.job.step.JobStepAttributes;
 import org.eclipse.kapua.service.job.step.JobStepFactory;
-import org.eclipse.kapua.service.job.step.JobStepQuery;
 import org.eclipse.kapua.service.job.step.JobStepService;
 import org.eclipse.kapua.service.job.targets.JobTargetAttributes;
 import org.eclipse.kapua.service.job.targets.JobTargetFactory;
-import org.eclipse.kapua.service.job.targets.JobTargetQuery;
 import org.eclipse.kapua.service.job.targets.JobTargetService;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 @Singleton
 public class JobEngineServiceJbatch implements JobEngineService {
@@ -96,7 +96,7 @@ public class JobEngineServiceJbatch implements JobEngineService {
             throw new KapuaEntityNotFoundException(Job.TYPE, jobId);
         }
         // Check job targets
-        JobTargetQuery jobTargetQuery = jobTargetFactory.newQuery(scopeId);
+        KapuaQuery jobTargetQuery = new KapuaQuery(scopeId);
         jobTargetQuery.setPredicate(jobTargetQuery.attributePredicate(JobTargetAttributes.JOB_ID, jobId));
         if (jobTargetService.count(jobTargetQuery) <= 0) {
             throw new JobMissingTargetException(scopeId, jobId);
@@ -115,7 +115,7 @@ public class JobEngineServiceJbatch implements JobEngineService {
             }
         }
         // Check job steps
-        JobStepQuery jobStepQuery = jobStepFactory.newQuery(scopeId);
+        KapuaQuery jobStepQuery = new KapuaQuery(scopeId);
         jobStepQuery.setPredicate(jobStepQuery.attributePredicate(JobStepAttributes.JOB_ID, jobId));
         if (jobStepService.count(jobStepQuery) <= 0) {
             throw new JobMissingStepException(scopeId, jobId);
@@ -273,12 +273,17 @@ public class JobEngineServiceJbatch implements JobEngineService {
     /**
      * Using the {@link JbatchDriver} checks whether the {@link Job} is running.
      *
-     * @param scopeId The {@link Job#getScopeId()}.
-     * @param jobId   The {@link Job#getId()}.
+     * @param scopeId
+     *         The {@link Job#getScopeId()}.
+     * @param jobId
+     *         The {@link Job#getId()}.
      * @return {@code true} if {@link JbatchDriver} reports that is running, {@code false} otherwise.
-     * @throws JobCheckRunningException     if {@link Job} running status cannot be checked.
-     * @throws KapuaEntityNotFoundException if {@link Job} does not exists.
-     * @throws KapuaException               if any other error occurs.
+     * @throws JobCheckRunningException
+     *         if {@link Job} running status cannot be checked.
+     * @throws KapuaEntityNotFoundException
+     *         if {@link Job} does not exists.
+     * @throws KapuaException
+     *         if any other error occurs.
      * @since 1.5.0
      */
     private boolean internalIsRunning(KapuaId scopeId, KapuaId jobId) throws KapuaException {

@@ -22,7 +22,7 @@ import org.eclipse.kapua.service.authentication.token.AccessToken;
  * @see KapuaEntityFactory
  * @since 1.3.0
  */
-public interface MfaOptionFactory extends KapuaEntityFactory<MfaOption, MfaOptionCreator, MfaOptionQuery> {
+public interface MfaOptionFactory extends KapuaEntityFactory<MfaOption, MfaOptionCreator> {
 
     /**
      * Instantiates a new {@link MfaOptionCreator}.

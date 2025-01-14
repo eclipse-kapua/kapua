@@ -26,7 +26,6 @@ import org.eclipse.kapua.service.authentication.shiro.setting.KapuaAuthenticatio
 import org.eclipse.kapua.service.certificate.CertificateAttributes;
 import org.eclipse.kapua.service.certificate.CertificateStatus;
 import org.eclipse.kapua.service.certificate.info.CertificateInfo;
-import org.eclipse.kapua.service.certificate.info.CertificateInfoFactory;
 import org.eclipse.kapua.service.certificate.info.CertificateInfoQuery;
 import org.eclipse.kapua.service.certificate.info.CertificateInfoService;
 import org.eclipse.kapua.service.certificate.util.CertificateUtils;
@@ -46,7 +45,6 @@ public class AccessTokenCredentialsMatcher implements CredentialsMatcher {
     private static final Logger LOG = LoggerFactory.getLogger(AccessTokenCredentialsMatcher.class);
 
     private final CertificateInfoService certificateInfoService = KapuaLocator.getInstance().getService(CertificateInfoService.class);
-    private final CertificateInfoFactory certificateInfoFactory = KapuaLocator.getInstance().getFactory(CertificateInfoFactory.class);
     private final KapuaAuthenticationSetting kapuaAuthenticationSetting = KapuaLocator.getInstance().getComponent(KapuaAuthenticationSetting.class);
 
     @Override
@@ -57,7 +55,7 @@ public class AccessTokenCredentialsMatcher implements CredentialsMatcher {
         try {
             String issuer = kapuaAuthenticationSetting.getString(KapuaAuthenticationSettingKeys.AUTHENTICATION_SESSION_JWT_ISSUER);
 
-            CertificateInfoQuery certificateInfoQuery = certificateInfoFactory.newQuery(null);
+            CertificateInfoQuery certificateInfoQuery = new CertificateInfoQuery();
             certificateInfoQuery.setPredicate(
                     certificateInfoQuery.andPredicate(
                             certificateInfoQuery.attributePredicate(CertificateAttributes.USAGE_NAME, "JWT"),

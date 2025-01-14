@@ -21,7 +21,7 @@ import org.eclipse.kapua.model.id.KapuaId;
  * @see KapuaEntityFactory
  * @since 1.0.0
  */
-public interface AccountFactory extends KapuaEntityFactory<Account, AccountCreator, AccountQuery> {
+public interface AccountFactory extends KapuaEntityFactory<Account, AccountCreator> {
 
     /**
      * Instantiates a new {@link AccountCreator} with the given name.

@@ -27,7 +27,8 @@ public interface FiredTriggerService extends KapuaEntityService<FiredTrigger, Fi
     /**
      * Returns the {@link FiredTriggerListResult} with elements matching the provided query.
      *
-     * @param query The {@link FiredTriggerQuery} used to filter results.
+     * @param query
+     *         The {@link KapuaQuery} used to filter results.
      * @return The {@link FiredTriggerListResult} with elements matching the query parameter.
      * @throws KapuaException
      * @since 1.5.0

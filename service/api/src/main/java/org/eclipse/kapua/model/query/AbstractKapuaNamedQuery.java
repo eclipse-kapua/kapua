@@ -10,14 +10,11 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.model.query;
+package org.eclipse.kapua.model.query;
 
 import org.eclipse.kapua.model.KapuaNamedEntity;
 import org.eclipse.kapua.model.KapuaNamedEntityAttributes;
 import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.query.KapuaQuery;
-import org.eclipse.kapua.model.query.KapuaSortCriteria;
-import org.eclipse.kapua.model.query.SortOrder;
 
 /**
  * {@link KapuaQuery} {@code abstract} implementation for {@link KapuaNamedEntity}.
@@ -26,7 +23,7 @@ import org.eclipse.kapua.model.query.SortOrder;
  *
  * @since 1.5.0
  */
-public abstract class AbstractKapuaNamedQuery extends AbstractKapuaQuery implements KapuaQuery {
+public abstract class AbstractKapuaNamedQuery extends KapuaQuery {
 
     /**
      * Constructor.
@@ -40,7 +37,8 @@ public abstract class AbstractKapuaNamedQuery extends AbstractKapuaQuery impleme
     /**
      * Constructor.
      *
-     * @param scopeId The {@link #getScopeId()}.
+     * @param scopeId
+     *         The {@link #getScopeId()}.
      * @since 1.5.0
      */
     public AbstractKapuaNamedQuery(KapuaId scopeId) {
@@ -50,7 +48,8 @@ public abstract class AbstractKapuaNamedQuery extends AbstractKapuaQuery impleme
     /**
      * Clone constructor.
      *
-     * @param query The {@link KapuaQuery} to clone.
+     * @param query
+     *         The {@link KapuaQuery} to clone.
      * @since 1.5.0
      */
     public AbstractKapuaNamedQuery(KapuaQuery query) {

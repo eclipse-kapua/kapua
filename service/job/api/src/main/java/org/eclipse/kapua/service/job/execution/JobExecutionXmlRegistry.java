@@ -44,7 +44,4 @@ public class JobExecutionXmlRegistry {
         return jobExecutionFactory.newCreator(null);
     }
 
-    public JobExecutionQuery newQuery() {
-        return jobExecutionFactory.newQuery(null);
-    }
 }

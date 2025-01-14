@@ -34,7 +34,4 @@ public class FiredTriggerXmlRegistry {
         return firedTriggerFactory.newCreator(null);
     }
 
-    public FiredTriggerQuery newQuery() {
-        return firedTriggerFactory.newQuery(null);
-    }
 }

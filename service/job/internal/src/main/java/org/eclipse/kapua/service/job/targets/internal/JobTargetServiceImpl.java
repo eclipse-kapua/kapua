@@ -12,6 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job.targets.internal;
 
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaEntityUniquenessException;
 import org.eclipse.kapua.KapuaException;
@@ -29,17 +36,10 @@ import org.eclipse.kapua.service.job.targets.JobTargetAttributes;
 import org.eclipse.kapua.service.job.targets.JobTargetCreator;
 import org.eclipse.kapua.service.job.targets.JobTargetFactory;
 import org.eclipse.kapua.service.job.targets.JobTargetListResult;
-import org.eclipse.kapua.service.job.targets.JobTargetQuery;
 import org.eclipse.kapua.service.job.targets.JobTargetRepository;
 import org.eclipse.kapua.service.job.targets.JobTargetService;
 import org.eclipse.kapua.service.job.targets.JobTargetStatus;
 import org.eclipse.kapua.storage.TxManager;
-
-import javax.inject.Singleton;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * {@link JobTargetService} implementation.
@@ -84,7 +84,7 @@ public class JobTargetServiceImpl implements JobTargetService {
             final Job job = jobRepository.find(tx, jobTargetCreator.getScopeId(), jobTargetCreator.getJobId())
                     .orElseThrow(() -> new KapuaEntityNotFoundException(Job.TYPE, jobTargetCreator.getJobId()));
             // Check duplicate
-            JobTargetQuery jobTargetQuery = new JobTargetQueryImpl(jobTargetCreator.getScopeId());
+            KapuaQuery jobTargetQuery = new KapuaQuery(jobTargetCreator.getScopeId());
             jobTargetQuery.setPredicate(
                     jobTargetQuery.andPredicate(
                             jobTargetQuery.attributePredicate(JobTargetAttributes.JOB_ID, jobTargetCreator.getJobId()),

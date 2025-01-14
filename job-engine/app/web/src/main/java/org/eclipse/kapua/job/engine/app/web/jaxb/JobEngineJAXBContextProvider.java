@@ -71,15 +71,12 @@ import org.eclipse.kapua.service.job.execution.JobExecutionQuery;
 import org.eclipse.kapua.service.job.execution.JobExecutionXmlRegistry;
 import org.eclipse.kapua.service.job.step.JobStep;
 import org.eclipse.kapua.service.job.step.JobStepListResult;
-import org.eclipse.kapua.service.job.step.JobStepQuery;
 import org.eclipse.kapua.service.job.step.JobStepXmlRegistry;
 import org.eclipse.kapua.service.job.step.definition.JobStepProperty;
 import org.eclipse.kapua.service.job.targets.JobTarget;
 import org.eclipse.kapua.service.job.targets.JobTargetListResult;
-import org.eclipse.kapua.service.job.targets.JobTargetQuery;
 import org.eclipse.kapua.service.scheduler.trigger.Trigger;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerListResult;
-import org.eclipse.kapua.service.scheduler.trigger.TriggerQuery;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerXmlRegistry;
 import org.eclipse.persistence.jaxb.JAXBContextFactory;
 import org.eclipse.persistence.jaxb.MarshallerProperties;
@@ -154,7 +151,6 @@ public class JobEngineJAXBContextProvider implements JAXBContextProvider {
 
                     JobStep.class,
                     JobStepListResult.class,
-                    JobStepQuery.class,
                     JobStepXmlRegistry.class,
                     JobStepProperty.class,
 
@@ -165,7 +161,6 @@ public class JobEngineJAXBContextProvider implements JAXBContextProvider {
 
                     JobTarget.class,
                     JobTargetListResult.class,
-                    JobTargetQuery.class,
                     JobExecutionXmlRegistry.class,
 
                     JobTargetSublist.class,
@@ -182,7 +177,6 @@ public class JobEngineJAXBContextProvider implements JAXBContextProvider {
 
                     Trigger.class,
                     TriggerListResult.class,
-                    TriggerQuery.class,
                     TriggerXmlRegistry.class,
 
                     KuraDeviceConfiguration.class

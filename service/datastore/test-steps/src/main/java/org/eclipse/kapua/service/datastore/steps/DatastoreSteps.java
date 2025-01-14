@@ -12,15 +12,27 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.steps;
 
-import com.google.inject.Singleton;
-import io.cucumber.java.After;
-import io.cucumber.java.Before;
-import io.cucumber.java.DataTableType;
-import io.cucumber.java.Scenario;
-import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TimeZone;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.util.KapuaDateUtils;
@@ -108,25 +120,16 @@ import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TimeZone;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import com.google.inject.Singleton;
+
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.DataTableType;
+import io.cucumber.java.Scenario;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 
 @Singleton
 public class DatastoreSteps extends TestBase {
@@ -167,26 +170,26 @@ public class DatastoreSteps extends TestBase {
             tmpMsg.setPayload(dataMessageFactory.newKapuaDataPayload());
 
             switch (tmpMet.getType().trim().toLowerCase()) {
-                case "string": {
-                    tmpMsg.getPayload().getMetrics().put(tmpMet.getMetric(), tmpMet.getValue());
-                    break;
-                }
-                case "int": {
-                    tmpMsg.getPayload().getMetrics().put(tmpMet.getMetric(), Integer.valueOf(tmpMet.getValue()));
-                    break;
-                }
-                case DOUBLE: {
-                    tmpMsg.getPayload().getMetrics().put(tmpMet.getMetric(), Double.valueOf(tmpMet.getValue()));
-                    break;
-                }
-                case "bool": {
-                    tmpMsg.getPayload().getMetrics().put(tmpMet.getMetric(), Boolean.valueOf(tmpMet.getValue().trim().toUpperCase()));
-                    break;
-                }
-                default: {
-                    Assert.fail(String.format("Unknown metric type [%s]", tmpMet.getType()));
-                    break;
-                }
+            case "string": {
+                tmpMsg.getPayload().getMetrics().put(tmpMet.getMetric(), tmpMet.getValue());
+                break;
+            }
+            case "int": {
+                tmpMsg.getPayload().getMetrics().put(tmpMet.getMetric(), Integer.valueOf(tmpMet.getValue()));
+                break;
+            }
+            case DOUBLE: {
+                tmpMsg.getPayload().getMetrics().put(tmpMet.getMetric(), Double.valueOf(tmpMet.getValue()));
+                break;
+            }
+            case "bool": {
+                tmpMsg.getPayload().getMetrics().put(tmpMet.getMetric(), Boolean.valueOf(tmpMet.getValue().trim().toUpperCase()));
+                break;
+            }
+            default: {
+                Assert.fail(String.format("Unknown metric type [%s]", tmpMet.getType()));
+                break;
+            }
             }
         }
     }
@@ -518,26 +521,26 @@ public class DatastoreSteps extends TestBase {
         tmpMsg.setPayload(dataMessageFactory.newKapuaDataPayload());
         for (CucMetric tmpMet : metLst) {
             switch (tmpMet.getType().trim().toLowerCase()) {
-                case "string": {
-                    tmpMsg.getPayload().getMetrics().put(tmpMet.getMetric(), tmpMet.getValue());
-                    break;
-                }
-                case "int": {
-                    tmpMsg.getPayload().getMetrics().put(tmpMet.getMetric(), Integer.valueOf(tmpMet.getValue()));
-                    break;
-                }
-                case DOUBLE: {
-                    tmpMsg.getPayload().getMetrics().put(tmpMet.getMetric(), Double.valueOf(tmpMet.getValue()));
-                    break;
-                }
-                case "bool": {
-                    tmpMsg.getPayload().getMetrics().put(tmpMet.getMetric(), Boolean.valueOf(tmpMet.getValue().trim().toUpperCase()));
-                    break;
-                }
-                default: {
-                    Assert.fail(String.format("Unknown metric type [%s]", tmpMet.getType()));
-                    break;
-                }
+            case "string": {
+                tmpMsg.getPayload().getMetrics().put(tmpMet.getMetric(), tmpMet.getValue());
+                break;
+            }
+            case "int": {
+                tmpMsg.getPayload().getMetrics().put(tmpMet.getMetric(), Integer.valueOf(tmpMet.getValue()));
+                break;
+            }
+            case DOUBLE: {
+                tmpMsg.getPayload().getMetrics().put(tmpMet.getMetric(), Double.valueOf(tmpMet.getValue()));
+                break;
+            }
+            case "bool": {
+                tmpMsg.getPayload().getMetrics().put(tmpMet.getMetric(), Boolean.valueOf(tmpMet.getValue().trim().toUpperCase()));
+                break;
+            }
+            default: {
+                Assert.fail(String.format("Unknown metric type [%s]", tmpMet.getType()));
+                break;
+            }
             }
         }
     }
@@ -575,31 +578,31 @@ public class DatastoreSteps extends TestBase {
         Date sentOn;
         Date capturedOn;
 
-        String[] metrics = new String[]{
+        String[] metrics = new String[] {
                 "m_order_metric1",
                 "m_order_metric2",
                 "m_order_metric3",
                 "m_order_metric4",
                 "m_order_metric5",
-                "m_order_metric6"};
-        String[] metricsValuesString = new String[]{
+                "m_order_metric6" };
+        String[] metricsValuesString = new String[] {
                 "string_metric_1",
                 "string_metric_2",
                 "string_metric_3",
                 "string_metric_4",
                 "string_metric_5",
-                "string_metric_6"};
-        Date[] metricsValuesDate = new Date[]{
+                "string_metric_6" };
+        Date[] metricsValuesDate = new Date[] {
                 new Date(new SimpleDateFormat(DATE_FORMAT_HH_MM_SS).parse("10:10:01 01/01/2017").getTime()),
                 new Date(new SimpleDateFormat(DATE_FORMAT_HH_MM_SS).parse("10:10:02 01/01/2017").getTime()),
                 new Date(new SimpleDateFormat(DATE_FORMAT_HH_MM_SS).parse("10:10:03 01/01/2017").getTime()),
                 new Date(new SimpleDateFormat(DATE_FORMAT_HH_MM_SS).parse("10:10:04 01/01/2017").getTime()),
                 new Date(new SimpleDateFormat(DATE_FORMAT_HH_MM_SS).parse("10:10:05 01/01/2017").getTime()),
-                new Date(new SimpleDateFormat(DATE_FORMAT_HH_MM_SS).parse("10:10:06 01/01/2017").getTime())};
-        int[] metricsValuesInt = new int[]{10, 20, 30, 40, 50, 60};
-        float[] metricsValuesFloat = new float[]{0.002f, 10.12f, 20.22f, 33.33f, 44.44f, 55.66f};
-        double[] metricsValuesDouble = new double[]{1.002d, 11.12d, 21.22d, 34.33d, 45.44d, 56.66d};
-        boolean[] metricsValuesBoolean = new boolean[]{true, true, false, true, false, false};
+                new Date(new SimpleDateFormat(DATE_FORMAT_HH_MM_SS).parse("10:10:06 01/01/2017").getTime()) };
+        int[] metricsValuesInt = new int[] { 10, 20, 30, 40, 50, 60 };
+        float[] metricsValuesFloat = new float[] { 0.002f, 10.12f, 20.22f, 33.33f, 44.44f, 55.66f };
+        double[] metricsValuesDouble = new double[] { 1.002d, 11.12d, 21.22d, 34.33d, 45.44d, 56.66d };
+        boolean[] metricsValuesBoolean = new boolean[] { true, true, false, true, false, false };
 
         for (int i = 0; i < number; i++) {
             if (i < number / 4) {
@@ -682,16 +685,16 @@ public class DatastoreSteps extends TestBase {
     @When("I store {int} messages in bulk mode to the index {string}")
     public void bulkInsert(int nMessages, String index) throws IOException {
         StringBuilder body = new StringBuilder();
-        for (int i=0; i<nMessages; i++) {
+        for (int i = 0; i < nMessages; i++) {
             body.append("{ \"index\":{}}\n");
-            body.append("{\"device_id\":\"6782593496741240747\",\"channel_parts\":[\"genericMetric\"],\"scope_id\":\"1\",\"channel\":\"genericMetric\",\"received_on\":\"2018-10-01T16:43:04.115Z\",\"ip_address\":\"127.0.0.1\",\"metrics\":{\"metric\":{\"int\":2}},\"sent_on\":null,\"body\":null,\"captured_on\":null,\"client_id\":\"samSulekBulkingHeavy\",\"timestamp\":\"2018-10-01T13:48:36.946Z\",\"sort\":[1701784116946]}\n");
+            body.append(
+                    "{\"device_id\":\"6782593496741240747\",\"channel_parts\":[\"genericMetric\"],\"scope_id\":\"1\",\"channel\":\"genericMetric\",\"received_on\":\"2018-10-01T16:43:04.115Z\",\"ip_address\":\"127.0.0.1\",\"metrics\":{\"metric\":{\"int\":2}},\"sent_on\":null,\"body\":null,\"captured_on\":null,\"client_id\":\"samSulekBulkingHeavy\",\"timestamp\":\"2018-10-01T13:48:36.946Z\",\"sort\":[1701784116946]}\n");
         }
         Request request = new Request("POST", index + ElasticsearchResourcePaths.getBulkPath());
         request.setJsonEntity(body.toString());
-        RestClient cl = (RestClient)elasticsearchClient.getClient();
+        RestClient cl = (RestClient) elasticsearchClient.getClient();
         cl.performRequest(request);
     }
-
 
     @Given("I set the database to device timestamp indexing")
     public void setDatabaseToDeviceTimestampIndexing() throws KapuaException {
@@ -1592,8 +1595,9 @@ public class DatastoreSteps extends TestBase {
     public void deleteIndexesBetweenDates(String fromDate, String toDate) throws Exception {
         primeException();
         try {
-            String[] indexes = KapuaLocator.getInstance().getComponent(DatastoreUtils.class).filterIndexesTemporalWindow(getDataIndexesByAccount(getCurrentScopeId()), KapuaDateUtils.parseDate(fromDate).toInstant(),
-                    KapuaDateUtils.parseDate(toDate).toInstant(), null);
+            String[] indexes = KapuaLocator.getInstance().getComponent(DatastoreUtils.class)
+                    .filterIndexesTemporalWindow(getDataIndexesByAccount(getCurrentScopeId()), KapuaDateUtils.parseDate(fromDate).toInstant(),
+                            KapuaDateUtils.parseDate(toDate).toInstant(), null);
             elasticsearchClient.deleteIndexes(indexes);
         } catch (Exception ex) {
             verifyException(ex);
@@ -1614,23 +1618,23 @@ public class DatastoreSteps extends TestBase {
             final String type = entry.getType();
 
             switch (type.toUpperCase()) {
-                case "STRING":
-                    data.put(key, stringValue);
-                    break;
-                case "INT32":
-                    data.put(key, Integer.valueOf(stringValue));
-                    break;
-                case "INT64":
-                    data.put(key, Long.valueOf(stringValue));
-                    break;
-                case "DOUBLE":
-                    data.put(key, Double.parseDouble(stringValue));
-                    break;
-                case "BOOLEAN":
-                    data.put(key, Boolean.valueOf(stringValue));
-                    break;
-                default:
-                    throw new IllegalArgumentException(String.format("Unknown type: %s", type));
+            case "STRING":
+                data.put(key, stringValue);
+                break;
+            case "INT32":
+                data.put(key, Integer.valueOf(stringValue));
+                break;
+            case "INT64":
+                data.put(key, Long.valueOf(stringValue));
+                break;
+            case "DOUBLE":
+                data.put(key, Double.parseDouble(stringValue));
+                break;
+            case "BOOLEAN":
+                data.put(key, Boolean.valueOf(stringValue));
+                break;
+            default:
+                throw new IllegalArgumentException(String.format("Unknown type: %s", type));
             }
         }
         return data;
@@ -2156,8 +2160,7 @@ public class DatastoreSteps extends TestBase {
     }
 
     /**
-     * Return the suffix field name to compose (in a different method) the getter name.
-     * It removes the _ and append the remaining part capitalizing the first letter (if capitalizeFirstLetter = true)
+     * Return the suffix field name to compose (in a different method) the getter name. It removes the _ and append the remaining part capitalizing the first letter (if capitalizeFirstLetter = true)
      *
      * @param field
      * @return
@@ -2251,7 +2254,8 @@ public class DatastoreSteps extends TestBase {
      * @param storageEnabled
      * @throws KapuaException
      */
-    private void updateConfiguration(MessageStoreService messageStoreService, KapuaId scopeId, KapuaId parentId, DataIndexBy dataIndexBy, MetricsIndexBy metricsIndexBy, int dataTTL, boolean storageEnabled)
+    private void updateConfiguration(MessageStoreService messageStoreService, KapuaId scopeId, KapuaId parentId, DataIndexBy dataIndexBy, MetricsIndexBy metricsIndexBy, int dataTTL,
+            boolean storageEnabled)
             throws KapuaException {
 
         Map<String, Object> config = messageStoreService.getConfigValues(scopeId);
@@ -2285,8 +2289,10 @@ public class DatastoreSteps extends TestBase {
     /**
      * Creating query for data messages with reasonable defaults.
      *
-     * @param scopeId scope
-     * @param limit   limit results
+     * @param scopeId
+     *         scope
+     * @param limit
+     *         limit results
      * @return query
      */
     public MessageQuery createBaseMessageQuery(KapuaId scopeId, int limit) {
@@ -2307,9 +2313,12 @@ public class DatastoreSteps extends TestBase {
     /**
      * Creating query for data messages with reasonable defaults and user specified ordering.
      *
-     * @param scopeId scope
-     * @param limit   limit results
-     * @param order   the required result ordering
+     * @param scopeId
+     *         scope
+     * @param limit
+     *         limit results
+     * @param order
+     *         the required result ordering
      * @return query
      */
     public MessageQuery createBaseMessageQuery(KapuaId scopeId, int limit, List<SortField> order) {
@@ -2327,8 +2336,10 @@ public class DatastoreSteps extends TestBase {
     /**
      * Creating query for channel info with reasonable defaults.
      *
-     * @param scopeId scope
-     * @param limit   limit results
+     * @param scopeId
+     *         scope
+     * @param limit
+     *         limit results
      * @return query
      */
     public ChannelInfoQuery createBaseChannelInfoQuery(KapuaId scopeId, int limit) {
@@ -2349,8 +2360,10 @@ public class DatastoreSteps extends TestBase {
     /**
      * Creating query for metric info with reasonable defaults.
      *
-     * @param scopeId scope
-     * @param limit   limit results
+     * @param scopeId
+     *         scope
+     * @param limit
+     *         limit results
      * @return query
      */
     public MetricInfoQuery createBaseMetricInfoQuery(KapuaId scopeId, int limit) {
@@ -2371,8 +2384,10 @@ public class DatastoreSteps extends TestBase {
     /**
      * Creating query for client info with reasonable defaults.
      *
-     * @param scopeId scope
-     * @param limit   limit results
+     * @param scopeId
+     *         scope
+     * @param limit
+     *         limit results
      * @return query
      */
     public ClientInfoQuery createBaseClientInfoQuery(KapuaId scopeId, int limit) {

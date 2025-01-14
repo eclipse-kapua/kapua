@@ -12,15 +12,15 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.certificate.info;
 
-import org.eclipse.kapua.model.query.KapuaForwardableEntityQuery;
-import org.eclipse.kapua.model.query.KapuaQuery;
-import org.eclipse.kapua.service.certificate.info.xml.CertificateInfoXmlRegistry;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaForwardableEntityQuery;
+import org.eclipse.kapua.model.query.KapuaQuery;
 
 /**
  * {@link CertificateInfo} {@link KapuaQuery} definition.
@@ -30,8 +30,19 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "query")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = CertificateInfoXmlRegistry.class, factoryMethod = "newQuery")
-public interface CertificateInfoQuery extends KapuaForwardableEntityQuery {
+@XmlType
+public class CertificateInfoQuery extends KapuaForwardableEntityQuery {
+
+    public CertificateInfoQuery() {
+    }
+
+    public CertificateInfoQuery(KapuaId scopeId) {
+        super(scopeId);
+    }
+
+    public CertificateInfoQuery(KapuaQuery query) {
+        super(query);
+    }
 
     @Override
     /**
@@ -41,7 +52,9 @@ public interface CertificateInfoQuery extends KapuaForwardableEntityQuery {
      * @since 1.1.0
      */
     @XmlElement(name = "includeInherited")
-    Boolean getIncludeInherited();
+    public Boolean getIncludeInherited() {
+        return includeInherited;
+    }
 
     @Override
     /**
@@ -50,15 +63,21 @@ public interface CertificateInfoQuery extends KapuaForwardableEntityQuery {
      * @param includeInherited {@code true} to get inherited {@link CertificateInfo}s, {@code false} otherwise.
      * @since 1.1.0
      */
-    void setIncludeInherited(Boolean includeInherited);
+    public void setIncludeInherited(Boolean includeInherited) {
+        this.includeInherited = includeInherited;
+    }
 
     /**
      * Instantiates a new {@link CertificateInfoMatchPredicate}.
      *
-     * @param matchTerm The term to use to match.
-     * @param <T>       The type of the term
+     * @param matchTerm
+     *         The term to use to match.
+     * @param <T>
+     *         The type of the term
      * @return The newly instantiated {@link CertificateInfoMatchPredicate}.
      * @since 2.1.0
      */
-    <T> CertificateInfoMatchPredicate<T> matchPredicate(T matchTerm);
+    public <T> CertificateInfoMatchPredicate<T> matchPredicate(T matchTerm) {
+        return new CertificateInfoMatchPredicate<>(matchTerm);
+    }
 }

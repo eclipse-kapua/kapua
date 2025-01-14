@@ -12,37 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.rest.filters;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.net.HttpHeaders;
-import org.apache.shiro.web.util.WebUtils;
-import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.commons.rest.filters.settings.KapuaRestFiltersSetting;
-import org.eclipse.kapua.commons.rest.filters.settings.KapuaRestFiltersSettingKeys;
-import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
-import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.service.account.AccountFactory;
-import org.eclipse.kapua.service.account.AccountListResult;
-import org.eclipse.kapua.service.account.AccountQuery;
-import org.eclipse.kapua.service.account.AccountService;
-import org.eclipse.kapua.service.endpoint.EndpointInfo;
-import org.eclipse.kapua.service.endpoint.EndpointInfoFactory;
-import org.eclipse.kapua.service.endpoint.EndpointInfoListResult;
-import org.eclipse.kapua.service.endpoint.EndpointInfoQuery;
-import org.eclipse.kapua.service.endpoint.EndpointInfoService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -52,6 +21,39 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.shiro.web.util.WebUtils;
+import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.commons.rest.filters.settings.KapuaRestFiltersSetting;
+import org.eclipse.kapua.commons.rest.filters.settings.KapuaRestFiltersSettingKeys;
+import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
+import org.eclipse.kapua.locator.KapuaLocator;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
+import org.eclipse.kapua.service.account.AccountFactory;
+import org.eclipse.kapua.service.account.AccountListResult;
+import org.eclipse.kapua.service.account.AccountService;
+import org.eclipse.kapua.service.endpoint.EndpointInfo;
+import org.eclipse.kapua.service.endpoint.EndpointInfoFactory;
+import org.eclipse.kapua.service.endpoint.EndpointInfoListResult;
+import org.eclipse.kapua.service.endpoint.EndpointInfoQuery;
+import org.eclipse.kapua.service.endpoint.EndpointInfoService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.net.HttpHeaders;
 
 /**
  * CORS {@link Filter} implementation.
@@ -107,7 +109,8 @@ public class CORSResponseFilter implements Filter {
         String errorMessage = null;
 
         if (Strings.isNullOrEmpty(fetchSite)) {
-            logger.warn("Sec-Fetch-Site' header not present in request: {} {}. CORSResponseFilter may produce false positives for this request. User-Agent is: {}", httpRequest.getMethod(), httpRequest.getPathInfo(), httpRequest.getHeader(HttpHeaders.USER_AGENT));
+            logger.warn("Sec-Fetch-Site' header not present in request: {} {}. CORSResponseFilter may produce false positives for this request. User-Agent is: {}", httpRequest.getMethod(),
+                    httpRequest.getPathInfo(), httpRequest.getHeader(HttpHeaders.USER_AGENT));
         }
         if (Strings.isNullOrEmpty(origin)) {
             logger.warn("'Origin' header not present in request: {} {}. User-Agent is: {}", httpRequest.getMethod(), httpRequest.getPathInfo(), httpRequest.getHeader(HttpHeaders.USER_AGENT));
@@ -130,7 +133,8 @@ public class CORSResponseFilter implements Filter {
                     logger.error(errorMessage);
                 }
             } else {
-                logger.debug("HTTP sec-fetch-site same-origin detected and allowed. Request: {} {}. User-Agent is: {}", httpRequest.getMethod(), httpRequest.getPathInfo(), httpRequest.getHeader(HttpHeaders.USER_AGENT));
+                logger.debug("HTTP sec-fetch-site same-origin detected and allowed. Request: {} {}. User-Agent is: {}", httpRequest.getMethod(), httpRequest.getPathInfo(),
+                        httpRequest.getHeader(HttpHeaders.USER_AGENT));
             }
         }
         int errorCode = httpResponse.getStatus();
@@ -152,12 +156,12 @@ public class CORSResponseFilter implements Filter {
         }
 
         switch (originUrl.getProtocol()) {
-            case "http":
-                return origin + ":80";
-            case "https":
-                return origin + ":443";
-            default:
-                return origin;
+        case "http":
+            return origin + ":80";
+        case "https":
+            return origin + ":443";
+        default:
+            return origin;
         }
     }
 
@@ -191,7 +195,7 @@ public class CORSResponseFilter implements Filter {
             logger.info("Refreshing list of origins...");
 
             Multimap<String, KapuaId> newAllowedOrigins = HashMultimap.create();
-            AccountQuery accounts = accountFactory.newQuery(null);
+            final KapuaQuery accounts = new KapuaQuery((KapuaId) null);
             AccountListResult accountListResult = KapuaSecurityUtils.doPrivileged(() -> accountService.query(accounts));
             accountListResult.getItems().forEach(account -> {
                 EndpointInfoQuery endpointInfoQuery = endpointInfoFactory.newQuery(account.getId());

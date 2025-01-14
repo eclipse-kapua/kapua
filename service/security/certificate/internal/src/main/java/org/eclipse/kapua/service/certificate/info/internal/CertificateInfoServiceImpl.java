@@ -29,7 +29,6 @@ import org.eclipse.kapua.service.certificate.info.CertificateInfoCreator;
 import org.eclipse.kapua.service.certificate.info.CertificateInfoListResult;
 import org.eclipse.kapua.service.certificate.info.CertificateInfoQuery;
 import org.eclipse.kapua.service.certificate.info.CertificateInfoService;
-import org.eclipse.kapua.service.certificate.internal.CertificateQueryImpl;
 
 @Singleton
 public class CertificateInfoServiceImpl implements CertificateInfoService {
@@ -55,7 +54,7 @@ public class CertificateInfoServiceImpl implements CertificateInfoService {
     public CertificateInfoListResult query(KapuaQuery query) throws KapuaException {
         ArgumentValidator.notNull(query, "query");
 
-        CertificateQuery certificateQuery = new CertificateQueryImpl(query);
+        CertificateQuery certificateQuery = new CertificateQuery(query);
 
         CertificateInfoListResult publicCertificates = new CertificateInfoListResult();
         publicCertificates.addItem(certificateService.query(certificateQuery).getFirstItem());
@@ -67,7 +66,7 @@ public class CertificateInfoServiceImpl implements CertificateInfoService {
     public long count(KapuaQuery query) throws KapuaException {
         ArgumentValidator.notNull(query, "query");
 
-        CertificateQuery privateQuery = new CertificateQueryImpl(query);
+        CertificateQuery privateQuery = new CertificateQuery(query);
         privateQuery.setIncludeInherited(((CertificateInfoQuery) query).getIncludeInherited());
 
         return certificateService.count(privateQuery);
