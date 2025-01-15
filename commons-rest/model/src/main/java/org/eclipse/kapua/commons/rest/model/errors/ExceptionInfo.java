@@ -12,15 +12,17 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.rest.model.errors;
 
-import org.eclipse.kapua.KapuaException;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.eclipse.kapua.KapuaException;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @XmlRootElement(name = "exceptionInfo")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Schema(description = "The base object to represent an Error. Every '*exceptionInfo' object in the codebase extends this, adding some fields if needed")
 public class ExceptionInfo extends ThrowableInfo {
 
     @XmlElement(name = "kapuaErrorCode")
@@ -54,6 +56,10 @@ public class ExceptionInfo extends ThrowableInfo {
      * @return The {@link KapuaException#getCode()}.
      * @since 1.0.0
      */
+    @Schema(
+        description = "An human readable error code used in the platform",
+        example = "ILLEGAL_ARGUMENT"
+    )
     public String getKapuaErrorCode() {
         return kapuaErrorCode;
     }

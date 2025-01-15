@@ -1,6 +1,6 @@
 prettyPrint: true
 cacheTTL: 0
-sortOutput: false
+sortOutput: true
 # Restrict to specific classes for scanning
 resourceClasses:
   - org.eclipse.kapua.app.api.resources.v1.resources.Authentication

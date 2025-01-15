@@ -18,6 +18,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * JWT {@link LoginCredentials} definition.
  *
@@ -35,6 +37,7 @@ public interface JwtCredentials extends LoginCredentials {
      * @since 1.3.0
      */
     @XmlElement(name = "accessToken")
+    @Schema(example = "PbELV=yG2BojfVhYeIwK=BtQfntpiugmr2u59ujuA5V-zSeONfER7azgXq4Te_mAoz8Pyn.RrJBC97UOSjS=hIRlr2iJ=DQ2MvIrl80cGSo1n48n8THmjqrHuVSdtlYYZUMFRIEZC4fvEYOe9=r9N0iKzJ+/sTFuqg.7mPs1/Z9lPi4QL3_HStkh/Nvp2XNE4LH1p=ABFEg1H.0U3GJ8.0Xejl")
     String getAccessToken();
 
     /**
