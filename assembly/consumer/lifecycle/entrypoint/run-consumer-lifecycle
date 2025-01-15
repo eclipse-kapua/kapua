@@ -13,4 +13,4 @@
 
 JAVA_OPTS="${JAVA_OPTS} --add-opens java.base/java.lang=ALL-UNNAMED"
 
-java ${JAVA_OPTS} ${DEBUG_OPTS} ${JMX_OPTS} -jar kapua-consumer-lifecycle-2.1.0-SNAPSHOT-app.jar
+java ${JAVA_OPTS} ${DEBUG_OPTS} ${JMX_OPTS} -jar kapua-consumer-lifecycle-2.1.0-FALSE_EXTENSIONS-SNAPSHOT-app.jar

@@ -3,20 +3,28 @@ Kapua Encryption Migrator
 
 ## Introduction
 
-This module contains a Java Application that leverages the Kapua APIs to update the encryption key used to perform symmetric encryption of entity attributes on DB persistence and any other usage of
+This module contains a Java Application that leverages the Kapua APIs to update the
+encryption key used to perform symmetric encryption of entity attributes on DB persistence
+and any other usage of
 CryptoUtil class.
 
 ## Background
 
-To improve security against unauthorized access to DB some fields that contain sensible data needs to be encrypted. This encryption makes difficult for an attacker to easily read data from the
+To improve security against unauthorized access to DB some fields that contain sensible
+data needs to be encrypted. This encryption makes difficult for an attacker to easily read
+data from the
 database that may contain sensible data.
 
-Kapua had already in place one-way encryption for Credentials and other resources while fields that required symmetric encryption didn't have a uniform and simple way to manage the encryption of the
+Kapua had already in place one-way encryption for Credentials and other resources while
+fields that required symmetric encryption didn't have a uniform and simple way to manage
+the encryption of the
 fields.
 
 ## Changes in Kapua 2.0
 
-With Kapua 2.0.0 entity attributes can be symmetric encrypted by simply adding an annotation to the rest of the JPA mappings for an entity attribute which instructs JPA to crypt and decrypt fields
+With Kapua 2.0.0 entity attributes can be symmetric encrypted by simply adding an
+annotation to the rest of the JPA mappings for an entity attribute which instructs JPA to
+crypt and decrypt fields
 values.
 
 Before Kapua 2.0.0 fields that were symmetric-encrypted are:
@@ -28,16 +36,21 @@ After Kapua 2.0.0 fields that are symmetric-encrypted are:
 - MfaOption.mfaSecretKey
 - JobStepProperty.propertyValue
 
-Every field share the same key and lets the developer abstract from the specific task of encrypting fields which gets delegated to JPA. While this can affect performances (we lose the on-demand
+Every field share the same key and lets the developer abstract from the specific task of
+encrypting fields which gets delegated to JPA. While this can affect performances (we lose
+the on-demand
 encryption/decryption), we gain the ease of using this security feature.
 
 ## The ES indices Migration tool
 
 The encryption migration tool has been implemented with two goals:
 
-- Do the first migration: to allow every field listed before to be unified under a single encryption key and mechanism.
-- Update the encryption secret key: it might happen that a secret key needs to be replaced (e.g.: the secret key disclosure)
-  and this tools migrate every attribute from a given old encryption secret key to the newly given.
+- Do the first migration: to allow every field listed before to be unified under a single
+  encryption key and mechanism.
+- Update the encryption secret key: it might happen that a secret key needs to be
+  replaced (e.g.: the secret key disclosure)
+  and this tools migrate every attribute from a given old encryption secret key to the
+  newly given.
 
 ### Settings
 
@@ -63,5 +76,5 @@ Other useful properties from Kapua
 #### Example usage
 
 ```bash
-java -Dcommons.db.connection.host=somehost -Dmigrator.encryption.key.old=changeMePlease\!\! -Dmigrator.encryption.key.new=changedMeThanks\! -jar kapua-encryption-migrator-2.1.0-SNAPSHOT-app.jar
+java -Dcommons.db.connection.host=somehost -Dmigrator.encryption.key.old=changeMePlease\!\! -Dmigrator.encryption.key.new=changedMeThanks\! -jar kapua-encryption-migrator-2.1.0-FALSE_EXTENSIONS-SNAPSHOT-app.jar
 ```

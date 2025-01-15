@@ -14,7 +14,7 @@
 
 echo "Building Kapua Keycloak Docker image..."
 
-docker build -f ./docker/Dockerfile -t kapua/kapua-keycloak:"${IMAGE_VERSION:=2.1.0-SNAPSHOT}" . ||
+docker build -f ./docker/Dockerfile -t kapua/kapua-keycloak:"${IMAGE_VERSION:=2.1.0-FALSE_EXTENSIONS-SNAPSHOT}" . ||
 {
     echo "Building Kapua Keycloak docker image... ERROR!"
     exit 1

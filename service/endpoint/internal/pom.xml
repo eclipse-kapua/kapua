@@ -19,7 +19,7 @@
     <parent>
         <artifactId>kapua-endpoint</artifactId>
         <groupId>org.eclipse.kapua</groupId>
-        <version>2.1.0-SNAPSHOT</version>
+        <version>2.1.0-FALSE_EXTENSIONS-SNAPSHOT</version>
     </parent>
 
     <artifactId>kapua-endpoint-internal</artifactId>
