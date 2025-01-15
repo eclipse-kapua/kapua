@@ -36,6 +36,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
         "scopeId",
         "createdOn",
         "createdBy"})
+@Schema(
+    name = "KapuaEntity",
+    description = "Represents an entity inside Kapua"
+)
 public interface KapuaEntity extends KapuaSerializable {
 
     @XmlTransient
@@ -50,7 +54,7 @@ public interface KapuaEntity extends KapuaSerializable {
      */
     @XmlElement(name = "id")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
-    @Schema(type = "string", example = "Syp62jl6Rdk=uzN77llX_X4Vr_")
+    @Schema(type = "string", example = "AJOgM70X35Sle3eZ1OVPMwLHEOk1A=jeQq7kVSfu5==apsDfLoRPC44hz8gBlN6YQVzox0w")
     KapuaId getId();
 
     /**
@@ -69,8 +73,7 @@ public interface KapuaEntity extends KapuaSerializable {
      */
     @XmlElement(name = "scopeId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
-    @Schema(type = "string",
-        example = "=FjSxm0Gsa47lGX4SUXyeF36mYjHoH8ucnHjSppqjOAidr6wwCeRHtA4U__7O-Hjtfj_8N63cYgZxt=VxFovMoHmYCz")
+    @Schema(type = "string", example = "AS5sTGPCGQEKqgQMyyOOG3AIKep09=Lw6bN")
     KapuaId getScopeId();
 
     /**

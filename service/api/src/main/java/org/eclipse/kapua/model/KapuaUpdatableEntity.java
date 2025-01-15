@@ -36,6 +36,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
         "modifiedBy",
         "optlock"
 })
+@Schema(
+    name = "KapuaEntity",
+    description = "Represents an entity inside Kapua that can be updated"
+)
 public interface KapuaUpdatableEntity extends KapuaEntity {
 
     /**

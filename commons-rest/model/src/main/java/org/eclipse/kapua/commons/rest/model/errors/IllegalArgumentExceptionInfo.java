@@ -12,12 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.rest.model.errors;
 
-import org.eclipse.kapua.KapuaIllegalArgumentException;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.eclipse.kapua.KapuaIllegalArgumentException;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "illegalArgumentExceptionInfo")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -58,6 +59,10 @@ public class IllegalArgumentExceptionInfo extends ExceptionInfo {
      * @return The {@link KapuaIllegalArgumentException#getArgumentName()}.
      * @since 1.0.0
      */
+    @Schema(
+        description = "The illegal argument name found",
+        example = "user.email"
+    )
     public String getArgumenName() {
         return argumentName;
     }
@@ -68,6 +73,10 @@ public class IllegalArgumentExceptionInfo extends ExceptionInfo {
      * @return The {@link KapuaIllegalArgumentException#getArgumentValue()}.
      * @since 1.0.0
      */
+    @Schema(
+        description = "The illegal argument value found",
+        example = "thisIsNotAnEmailAtAll"
+    )
     public String getArgumentValue() {
         return argumentValue;
     }

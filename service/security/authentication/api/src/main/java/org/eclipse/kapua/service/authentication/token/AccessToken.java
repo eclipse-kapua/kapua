@@ -69,7 +69,7 @@ public interface AccessToken extends KapuaUpdatableEntity, Serializable {
      */
     @XmlElement(name = "tokenId")
     @Schema(description = "Unique identifier of the user associated with this token.",
-        example = "wkEATICkYTf=pOL8Rv16qOIZqDrYv7YygB9oJ4eyPJxOqkT")
+        example = "S6=enLL9P1OcwJNFDjme.FhOsKfDxOxxfb87c_RLkChyTpesYTLfnRWXfZlXmu=yN7EDT3LGxQiZ1KeztF2F8.bYPI_grbdsES8wkzki4T52d0-")
     String getTokenId();
 
     /**
@@ -89,7 +89,7 @@ public interface AccessToken extends KapuaUpdatableEntity, Serializable {
     @XmlElement(name = "userId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
     @Schema(description = "Unique identifier of the user associated with this token.", type = "string",
-        example = "PSw45U3lS=1FtjJVux4XjG-8sYekK")
+        example = "QwrHirFy3OMS849giOq7fglzI-aHneW_NFoBgiUChO_csBO927AeP6q1ZC5bD0HcgVH8OcvhY")
     KapuaId getUserId();
 
     /**
@@ -191,7 +191,7 @@ public interface AccessToken extends KapuaUpdatableEntity, Serializable {
      */
     @XmlElement(name = "trustKey")
     @Schema(description = "The trust key associated with this token, used for additional security.",
-        example = "MnxMOyCXfwW1SU17sqbfFpFPtwNu9EDm=zavB406.zt=WcGlwnuXd-LjKgoh12iS17syc3gYOwi-cX0Wqe=R4vy._eswej5f0zdGldwoizOU")
+        example = "wnMaCRrbFBGOA9mibCNd=.5jHQ4igCusVIXbsJsNUO7kii2jidtg0L-0jt7ElE2A3OKq1t3=qW5.2KQyKXoYSgkC+eU3mPFnKr.fMMNa6fY+bt6=FJWmF.=29r5kk9hqKXlAKAy")
     String getTrustKey();
 
     /**

@@ -34,6 +34,7 @@ import org.eclipse.kapua.service.authentication.RefreshTokenCredentials;
 import org.eclipse.kapua.service.authentication.UsernamePasswordCredentials;
 import org.eclipse.kapua.service.authentication.token.AccessToken;
 import org.eclipse.kapua.service.authentication.token.LoginInfo;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -71,17 +72,14 @@ public class Authentication extends AbstractKapuaResource {
             examples = {
                 @ExampleObject(
                     name = "Admin",
-                    summary = "Admin",
                     value = "{ \"username\": \"kapua-sys\", \"password\": \"kapua-password\" }"
                 ),
                 @ExampleObject(
                     name = "MFA With Authentication Code",
-                    description = "Example of login as a regular user",
                     value = "{\"username\": \"ec-sys\", \"password\": \"ec-password\", \"authenticationCode\": 123456, \"trustMe\": true }"
                 ),
                 @ExampleObject(
                     name = "MFA With TrustKey",
-                    description = "Example of login as a regular user",
                     value = "{\"username\": \"ec-sys\", \"password\": \"ec-password\", \"trustKey\": \"1c34b3d4-ca23-11ec-9d64-0242ac120002\" }"
                 )
             }
@@ -106,7 +104,7 @@ public class Authentication extends AbstractKapuaResource {
         ),
         @ApiResponse(
             responseCode = "500",
-            description = "\t\n" + "\n" + "An internal error occurred while performing the request",
+            description = "An internal error occurred while performing the request",
             content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
         )
     })
@@ -131,8 +129,44 @@ public class Authentication extends AbstractKapuaResource {
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Path("mfa")
     @Deprecated
+    @RequestBody(
+        required = true,
+        content = @Content(
+            schema = @Schema(implementation = UsernamePasswordCredentials.class),
+            examples = {
+                @ExampleObject(
+                    name = "kapua-sys",
+                    description = "Default kapua-sys login credentials (with dummy MFA)",
+                    value = "{\"username\": \"kapua-sys\", \"password\": \"kapua-password\", \"authenticationCode\": \"123456\" }"
+                )
+            }
+        )
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The new AccessToken",
+            content = @Content(schema = @Schema(implementation = AccessToken.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public AccessToken loginUsernamePasswordCode(
-            @QueryParam("enableTrust") boolean enableTrust,
+        @Parameter(description = "If true, the machine trust key is enabled for the MfaOption")
+        @QueryParam("enableTrust")
+        boolean enableTrust,
             UsernamePasswordCredentials authenticationCredentials) throws KapuaException {
         authenticationCredentials.setTrustMe(enableTrust);
 
@@ -140,7 +174,7 @@ public class Authentication extends AbstractKapuaResource {
     }
 
     /**
-     * Authenticates an user with a api key and returns
+     * Authenticates a user with an api key and returns
      * the authentication token to be used in subsequent REST API calls.
      *
      * @param authenticationCredentials The API KEY authentication credential of a user.
@@ -152,12 +186,33 @@ public class Authentication extends AbstractKapuaResource {
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Path("apikey")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The new AccessToken",
+            content = @Content(schema = @Schema(implementation = AccessToken.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public AccessToken loginApiKey(ApiKeyCredentials authenticationCredentials) throws KapuaException {
         return authenticationService.login(authenticationCredentials);
     }
 
     /**
-     * Authenticates an user with JWT and returns
+     * Authenticates a user with JWT and returns
      * the authentication token to be used in subsequent REST API calls.
      *
      * @param authenticationCredentials The JWT authentication credential of a user.
@@ -169,6 +224,27 @@ public class Authentication extends AbstractKapuaResource {
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Path("jwt")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The new AccessToken",
+            content = @Content(schema = @Schema(implementation = AccessToken.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public AccessToken loginJwt(JwtCredentials authenticationCredentials) throws KapuaException {
         return authenticationService.login(authenticationCredentials);
     }
@@ -185,7 +261,26 @@ public class Authentication extends AbstractKapuaResource {
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Path("logout")
-
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "204",
+            description = "Logout Successful"
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public Response logout() throws KapuaException {
         authenticationService.logout();
 
@@ -203,6 +298,30 @@ public class Authentication extends AbstractKapuaResource {
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Path("refresh")
+    @Schema(
+        description = "Creates a new AccessToken from an existing (even if expired) AccessToken and a Refresh Token that must be still valid. Regardless of the expiration date, the AccessToken provided to the refresh operation WILL be invalidated"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The new AccessToken",
+            content = @Content(schema = @Schema(implementation = AccessToken.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public AccessToken refresh(RefreshTokenCredentials refreshTokenCredentials) throws KapuaException {
         return authenticationService.refreshAccessToken(refreshTokenCredentials.getTokenId(), refreshTokenCredentials.getRefreshToken());
     }
@@ -217,6 +336,30 @@ public class Authentication extends AbstractKapuaResource {
     @GET
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Path("info")
+    @Schema(
+        description = "Returns all the Authentication and Authorization information about the current session"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "An object conatining all the Authentication and Authorization information about the current session",
+            content = @Content(schema = @Schema(implementation = LoginInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public LoginInfo loginInfo() throws KapuaException {
         return authenticationService.getLoginInfo();
     }
