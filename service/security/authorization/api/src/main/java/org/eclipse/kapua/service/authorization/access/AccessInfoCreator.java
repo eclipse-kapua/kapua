@@ -12,13 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.access;
 
-import org.eclipse.kapua.model.KapuaEntityCreator;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.service.authorization.domain.Domain;
-import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.user.User;
-
+import java.security.Permissions;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -26,8 +21,14 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.security.Permissions;
-import java.util.Set;
+
+import org.eclipse.kapua.model.KapuaEntityCreator;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import org.eclipse.kapua.service.authorization.domain.Domain;
+import org.eclipse.kapua.service.authorization.permission.Permission;
+import org.eclipse.kapua.service.user.User;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link AccessInfo} creator definition.<br>
@@ -42,6 +43,7 @@ import java.util.Set;
         "permissions"},
         factoryClass = AccessInfoXmlRegistry.class,
         factoryMethod = "newAccessInfoCreator")
+@Schema(description = "An object that contains the information needed to create an AccessInfo")
 public interface AccessInfoCreator extends KapuaEntityCreator<AccessInfo> {
 
     /**
@@ -60,6 +62,7 @@ public interface AccessInfoCreator extends KapuaEntityCreator<AccessInfo> {
      */
     @XmlElement(name = "userId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(description = "The ID of the User to which the AccessInfo will be assigned")
     KapuaId getUserId();
 
     /**
@@ -81,6 +84,7 @@ public interface AccessInfoCreator extends KapuaEntityCreator<AccessInfo> {
     @XmlElementWrapper(name = "roleIds")
     @XmlElement(name = "roleId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(description = "An Array of IDs whose Roles will be attached to the new AccessInfo")
     Set<KapuaId> getRoleIds();
 
     /**
@@ -101,6 +105,7 @@ public interface AccessInfoCreator extends KapuaEntityCreator<AccessInfo> {
      */
     @XmlElementWrapper(name = "permissions")
     @XmlElement(name = "permission")
+    @Schema(description = "An Array of Permission objects to attach to the new AccessInfo")
     <P extends Permission> Set<P> getPermissions();
 
 }

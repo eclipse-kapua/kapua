@@ -12,16 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.resources.v1.resources;
 
-import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.app.api.core.model.EntityId;
-import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
-import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
-import org.eclipse.kapua.service.KapuaService;
-import org.eclipse.kapua.service.authentication.credential.Credential;
-import org.eclipse.kapua.service.authentication.user.PasswordChangeRequest;
-import org.eclipse.kapua.service.authentication.user.PasswordResetRequest;
-import org.eclipse.kapua.service.authentication.user.UserCredentialsService;
-
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -29,6 +19,26 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+
+import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.app.api.core.model.EntityId;
+import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
+import org.eclipse.kapua.commons.rest.model.errors.ExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.IllegalArgumentExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.SubjectUnauthorizedExceptionInfo;
+import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
+import org.eclipse.kapua.service.KapuaService;
+import org.eclipse.kapua.service.authentication.credential.Credential;
+import org.eclipse.kapua.service.authentication.user.PasswordChangeRequest;
+import org.eclipse.kapua.service.authentication.user.PasswordResetRequest;
+import org.eclipse.kapua.service.authentication.user.UserCredentialsService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /*
  @deprecated
@@ -38,6 +48,7 @@ import javax.ws.rs.core.MediaType;
  Remove the match with /{scopeId}/... in the next release
  */
 @Path("{scopeId: ([\\w-]+)?}{path:|/}user/credentials")
+@Tag(name = "User Credentials")
 public class UserCredentials extends AbstractKapuaResource {
 
     @Inject
@@ -54,6 +65,33 @@ public class UserCredentials extends AbstractKapuaResource {
     @POST
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Operation(summary = "Change the current user password", description = "Change logged user password")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The details of the updated Credential",
+            content = @Content(schema = @Schema(implementation = Credential.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public Credential newPassword(
             PasswordChangeRequest passwordChangeRequest) throws KapuaException {
         return userCredentialsService.changePassword(KapuaSecurityUtils.getSession().getScopeId(), KapuaSecurityUtils.getSession().getUserId(), passwordChangeRequest);
@@ -74,7 +112,40 @@ public class UserCredentials extends AbstractKapuaResource {
     @POST
     @Path("{credentialId}/_reset")
     @Deprecated
+    @Operation(
+        summary = "Reset the password of a Credential",
+        description = "This resource is deprecated and will be removed in future releases. Please make use of:" +
+                          "POST /{scopeId}/users/{userId}/credentials/password/_reset (for admins resetting a user's" +
+                          "password) or POST /user/credentials/password (for the user changing its own password) instead"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The details of the updated Credential",
+            content = @Content(schema = @Schema(implementation = Credential.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public Credential unlockCredential(
+            @Parameter(description = "The ID of the Credential on which to perform the operation")
             @PathParam("credentialId") EntityId credentialId,
             PasswordResetRequest passwordResetRequest) throws KapuaException {
         return userCredentialsService.resetPassword(KapuaSecurityUtils.getSession().getScopeId(), credentialId, passwordResetRequest);

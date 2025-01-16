@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.eclipse.kapua.service.scheduler.trigger.TriggerXmlRegistry;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link TriggerProperty} definition.
@@ -35,6 +36,7 @@ public interface TriggerProperty {
      * @return The name.
      * @since 1.0.0
      */
+    @Schema(example = "cronExpression")
     String getName();
 
     /**
@@ -51,6 +53,7 @@ public interface TriggerProperty {
      * @return The description
      * @since 2.1.0
      */
+    @Schema(description = "The cron expression that defines the schedule of executions. Check documentation for CRON syntax.")
     String getDescription();
 
     /**
@@ -67,6 +70,7 @@ public interface TriggerProperty {
      * @return The property type.
      * @since 1.0.0
      */
+    @Schema(example = "java.lang.String")
     String getPropertyType();
 
     /**

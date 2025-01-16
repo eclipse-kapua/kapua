@@ -18,6 +18,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * {@link DeviceInventoryItem} definition.
  * <p>
@@ -37,6 +39,7 @@ public interface DeviceInventoryItem {
      * @since 1.5.0
      */
     @XmlElement(name = "name")
+    @Schema(example = "adduser")
     String getName();
 
     /**
@@ -54,6 +57,7 @@ public interface DeviceInventoryItem {
      * @since 1.5.0
      */
     @XmlElement(name = "version")
+    @Schema(example = "3.118")
     String getVersion();
 
     /**
@@ -71,6 +75,7 @@ public interface DeviceInventoryItem {
      * @since 1.5.0
      */
     @XmlElement(name = "itemType")
+    @Schema(example = "DEB")
     String getItemType();
 
     /**

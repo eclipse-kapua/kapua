@@ -12,17 +12,19 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.rest.model.errors;
 
-import org.eclipse.kapua.KapuaEntityUniquenessException;
-
+import java.util.List;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.List;
-import java.util.Map;
+
+import org.eclipse.kapua.KapuaEntityUniquenessException;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "entityUniquenessExceptionInfo")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Schema(description = "The object to represent the fact that an Entity with the same unique fields is already present in the system")
 public class EntityUniquenessExceptionInfo extends ExceptionInfo {
 
     @XmlElement(name = "entityType")

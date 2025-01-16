@@ -12,16 +12,18 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job;
 
-import org.eclipse.kapua.model.KapuaEntity;
-import org.eclipse.kapua.model.KapuaNamedEntity;
-import org.eclipse.kapua.service.job.step.JobStep;
-
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import java.util.List;
+
+import org.eclipse.kapua.model.KapuaEntity;
+import org.eclipse.kapua.model.KapuaNamedEntity;
+import org.eclipse.kapua.service.job.step.JobStep;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link Job} {@link KapuaEntity} definition.
@@ -36,6 +38,7 @@ public interface Job extends KapuaNamedEntity {
     String TYPE = "job";
 
     @Override
+    @Schema(example = "job")
     default String getType() {
         return TYPE;
     }
@@ -49,6 +52,7 @@ public interface Job extends KapuaNamedEntity {
      */
     @Deprecated
     @XmlTransient
+    @JsonIgnore
     List<JobStep> getJobSteps();
 
     /**

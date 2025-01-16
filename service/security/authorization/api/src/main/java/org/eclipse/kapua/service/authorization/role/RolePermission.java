@@ -12,11 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.role;
 
-import org.eclipse.kapua.model.KapuaEntity;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.service.authorization.permission.Permission;
-
 import javax.management.relation.RoleInfo;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -24,6 +19,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import org.eclipse.kapua.model.KapuaEntity;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import org.eclipse.kapua.service.authorization.permission.Permission;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Role permission entity.<br>
@@ -47,6 +48,7 @@ public interface RolePermission extends KapuaEntity {
     String TYPE = "rolePermission";
 
     @Override
+    @Schema(example = "rolePermission")
     default String getType() {
         return TYPE;
     }
@@ -67,6 +69,7 @@ public interface RolePermission extends KapuaEntity {
      */
     @XmlElement(name = "roleId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(example = "OYLRT30Z9sA")
     KapuaId getRoleId();
 
     /**

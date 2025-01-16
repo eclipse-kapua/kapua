@@ -12,6 +12,17 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.resources.v1.resources;
 
+import javax.inject.Inject;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.app.api.core.model.CountResult;
 import org.eclipse.kapua.app.api.core.model.EntityId;
@@ -28,17 +39,6 @@ import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTriggerListResult;
 import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTriggerQuery;
 import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTriggerService;
 import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTriggerStatus;
-
-import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 
 @Path("{scopeId}/jobs/{jobId}/triggers/{triggerId}/fired")
 public class JobTriggersFired extends AbstractKapuaResource {

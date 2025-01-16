@@ -12,23 +12,25 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.storable.model.query;
 
+import java.util.List;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.eclipse.kapua.model.KapuaEntity;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdAdapter;
 import org.eclipse.kapua.service.storable.model.StorableListResult;
 import org.eclipse.kapua.service.storable.model.query.predicate.StorablePredicate;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link StorableQuery} definition.
  *
  * @since 1.0.0
  */
+@Schema(description = "An object to specify Query options")
 public interface StorableQuery {
 
     /**

@@ -12,18 +12,19 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.scheduler.trigger;
 
-import org.eclipse.kapua.model.KapuaNamedEntityCreator;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerProperty;
-
+import java.util.Date;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
-import java.util.List;
+
+import org.eclipse.kapua.model.KapuaNamedEntityCreator;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link Trigger} {@link KapuaNamedEntityCreator} definition.
@@ -34,6 +35,7 @@ import java.util.List;
 @XmlRootElement(name = "triggerCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(factoryClass = TriggerXmlRegistry.class, factoryMethod = "newCreator")
+@Schema(description = "An object containing the properties for the new Job Trigger to be created")
 public interface TriggerCreator extends KapuaNamedEntityCreator<Trigger> {
 
     /**
@@ -127,6 +129,7 @@ public interface TriggerCreator extends KapuaNamedEntityCreator<Trigger> {
      * @since 1.1.0
      */
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(example = "AQ")
     KapuaId getTriggerDefinitionId();
 
     /**

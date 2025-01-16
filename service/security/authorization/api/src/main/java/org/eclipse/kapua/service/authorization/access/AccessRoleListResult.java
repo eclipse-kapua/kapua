@@ -16,6 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.eclipse.kapua.model.query.KapuaListResult;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link AccessRole} list result definition.
@@ -24,6 +25,7 @@ import org.eclipse.kapua.model.query.KapuaListResult;
  */
 @XmlRootElement(name = "accessPermissions")
 @XmlType(factoryClass = AccessRoleXmlRegistry.class, factoryMethod = "newAccessRoleListResult")
+@Schema(description = "A container for a list of AccessRole objects")
 public interface AccessRoleListResult extends KapuaListResult<AccessRole> {
 
 }

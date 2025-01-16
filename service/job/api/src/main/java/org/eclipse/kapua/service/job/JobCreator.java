@@ -12,16 +12,17 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job;
 
-import org.eclipse.kapua.model.KapuaEntityCreator;
-import org.eclipse.kapua.model.KapuaNamedEntityCreator;
-import org.eclipse.kapua.service.job.step.JobStep;
-
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import java.util.List;
+
+import org.eclipse.kapua.model.KapuaEntityCreator;
+import org.eclipse.kapua.model.KapuaNamedEntityCreator;
+import org.eclipse.kapua.service.job.step.JobStep;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link Job} {@link KapuaEntityCreator} definition.
@@ -31,6 +32,8 @@ import java.util.List;
 @XmlRootElement(name = "jobCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(factoryClass = JobXmlRegistry.class, factoryMethod = "newJobCreator")
+@Schema(description = "An object containing the properties for the new Job to be created",
+    example = "{\"type\": \"jobCreator\", \"name\": \"newJob\", \"description\": \"A new Job with a fancy description\"}")
 public interface JobCreator extends KapuaNamedEntityCreator<Job> {
 
     /**

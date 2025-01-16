@@ -14,7 +14,6 @@ package org.eclipse.kapua.commons.rest.model;
 
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -22,6 +21,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "multipleJobIdRequest")
 public class MultipleJobIdRequest {
@@ -31,6 +31,7 @@ public class MultipleJobIdRequest {
     @XmlElementWrapper(name = "jobIds")
     @XmlElement(name = "jobId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(example = "[\"dX63xIXNstA\",\"TqcLqDS4Wj4\",\"AQ\"]")
     public Set<KapuaId> getJobIds() {
         return jobIds;
     }

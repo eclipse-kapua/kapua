@@ -18,6 +18,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * {@link DeviceInventoryBundle} definition.
  * <p>
@@ -54,6 +56,7 @@ public interface DeviceInventoryBundle {
      * @since 1.5.0
      */
     @XmlElement(name = "name")
+    @Schema(example = "org.eclipse.osgi")
     String getName();
 
     /**
@@ -71,6 +74,7 @@ public interface DeviceInventoryBundle {
      * @since 1.5.0
      */
     @XmlElement(name = "version")
+    @Schema(example = "3.16.0.v20200828-0759")
     String getVersion();
 
     /**
@@ -88,6 +92,7 @@ public interface DeviceInventoryBundle {
      * @since 1.5.0
      */
     @XmlElement(name = "status")
+    @Schema(example = "ACTIVE")
     String getStatus();
 
     /**

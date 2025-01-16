@@ -12,11 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job.step;
 
-import org.eclipse.kapua.model.KapuaNamedEntityCreator;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.service.job.step.definition.JobStepProperty;
-
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -24,7 +20,12 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.List;
+
+import org.eclipse.kapua.model.KapuaNamedEntityCreator;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import org.eclipse.kapua.service.job.step.definition.JobStepProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link JobStepCreator} {@link org.eclipse.kapua.model.KapuaEntityCreator} definition
@@ -34,6 +35,7 @@ import java.util.List;
 @XmlRootElement(name = "jobStepCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(factoryClass = JobStepXmlRegistry.class, factoryMethod = "newJobStepCreator")
+@Schema(description = "An object containing the properties for the new Job Step to be created")
 public interface JobStepCreator extends KapuaNamedEntityCreator<JobStep> {
 
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
@@ -46,6 +48,7 @@ public interface JobStepCreator extends KapuaNamedEntityCreator<JobStep> {
     void setStepIndex(Integer stepIndex);
 
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(example = "Aw")
     KapuaId getJobStepDefinitionId();
 
     void setJobStepDefinitionId(KapuaId jobStepDefinitionId);

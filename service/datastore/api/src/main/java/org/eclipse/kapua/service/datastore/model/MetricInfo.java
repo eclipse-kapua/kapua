@@ -12,18 +12,19 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.model;
 
-import org.eclipse.kapua.model.xml.DateXmlAdapter;
-import org.eclipse.kapua.service.storable.model.Storable;
-import org.eclipse.kapua.service.storable.model.id.StorableId;
-import org.eclipse.kapua.service.storable.model.id.StorableIdXmlAdapter;
-
+import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
+
+import org.eclipse.kapua.model.xml.DateXmlAdapter;
+import org.eclipse.kapua.service.storable.model.Storable;
+import org.eclipse.kapua.service.storable.model.id.StorableId;
+import org.eclipse.kapua.service.storable.model.id.StorableIdXmlAdapter;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Information about device metric value. Metric is an arbitrary named value. We usually
@@ -54,6 +55,7 @@ public interface MetricInfo extends Storable {
      */
     @XmlElement(name = "id")
     @XmlJavaTypeAdapter(StorableIdXmlAdapter.class)
+    @Schema(example = "oLVtE7wK67wO5Lxx4nZGsTEwbVjeo0xcFcnTvmhCxLU=")
     StorableId getId();
 
     /**
@@ -73,6 +75,7 @@ public interface MetricInfo extends Storable {
      * @since 1.0.0
      */
     @XmlElement(name = "clientId")
+    @Schema(example = "Client-Id-1")
     String getClientId();
 
     /**
@@ -90,6 +93,7 @@ public interface MetricInfo extends Storable {
      * @since 1.0.0
      */
     @XmlElement(name = "channel")
+    @Schema(example = "ALERT")
     String getChannel();
 
     /**
@@ -107,6 +111,7 @@ public interface MetricInfo extends Storable {
      * @since 1.0.0
      */
     @XmlElement(name = "name")
+    @Schema(example = "alert_category")
     String getName();
 
     /**
@@ -125,6 +130,7 @@ public interface MetricInfo extends Storable {
      */
     @XmlElement(name = "metricType")
     @XmlJavaTypeAdapter(MetricInfoTypeAdapter.class)
+    @Schema(example = "string")
     Class<?> getMetricType();
 
     /**
@@ -142,6 +148,7 @@ public interface MetricInfo extends Storable {
      */
     @XmlElement(name = "firstMessageId")
     @XmlJavaTypeAdapter(StorableIdXmlAdapter.class)
+    @Schema(example = "c623d131-6f47-49af-9ba0-1474a90dd9ed", type = "string")
     StorableId getFirstMessageId();
 
     /**
@@ -179,6 +186,7 @@ public interface MetricInfo extends Storable {
      */
     @XmlElement(name = "lastMessageId")
     @XmlJavaTypeAdapter(StorableIdXmlAdapter.class)
+    @Schema(example = "653b4aee-e0d5-4af6-b120-ffc7c26057b9", type = "string")
     StorableId getLastMessageId();
 
     /**

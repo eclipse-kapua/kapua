@@ -14,7 +14,6 @@ package org.eclipse.kapua.app.api.resources.v1.resources;
 
 import java.util.Arrays;
 import java.util.List;
-
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -43,10 +42,11 @@ import org.eclipse.kapua.service.account.AccountFactory;
 import org.eclipse.kapua.service.account.AccountListResult;
 import org.eclipse.kapua.service.account.AccountQuery;
 import org.eclipse.kapua.service.account.AccountService;
-
 import com.google.common.base.Strings;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Path("{scopeId}/accounts")
+@Tag(name = "Accounts")
 public class Accounts extends AbstractKapuaResource {
 
     @Inject

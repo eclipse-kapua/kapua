@@ -12,8 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.configuration;
 
-import org.eclipse.kapua.model.config.metatype.KapuaTocd;
-
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -21,7 +20,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Map;
+
+import org.eclipse.kapua.model.config.metatype.KapuaTocd;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Device component configuration entity definition.
@@ -39,6 +40,7 @@ public interface DeviceComponentConfiguration {
      * @return
      */
     @XmlElement(name = "id")
+    @Schema(example = "org.eclipse.kura.wire.graph.WireGraphService")
     String getId();
 
     /**
@@ -61,6 +63,7 @@ public interface DeviceComponentConfiguration {
      *
      * @param name
      */
+    @Schema(example = "kura.service.pid")
     void setName(String name);
 
     /**

@@ -13,15 +13,18 @@
 package org.eclipse.kapua.service.account;
 
 import java.util.Date;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.eclipse.kapua.model.KapuaNamedEntityUpdateRequest;
 import org.eclipse.kapua.model.xml.DateXmlAdapter;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "account")
+@Schema(description = "An object that holds all the information necessary to update an Account, including the details about the Contacts of that account.\n" +
+                          "In Kapua an Account is the container of all other resources (Users, Devices, etc.), and is the equivalent of the concept of Tenant.\n" +
+                          "Every entity in Kapua will have a `scopeId` property, that holds the ID of the Account who holds that entity.")
 public class AccountUpdateRequest extends KapuaNamedEntityUpdateRequest {
 
     /**
@@ -31,6 +34,7 @@ public class AccountUpdateRequest extends KapuaNamedEntityUpdateRequest {
      */
     @XmlElement(name = "expirationDate")
     @XmlJavaTypeAdapter(DateXmlAdapter.class)
+    @Schema(description = "The Expiration date and time for the Account. If empty, the Account has no expiration")
     public Date expirationDate;
 
     /**

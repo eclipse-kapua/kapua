@@ -12,6 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.model.query;
 
+import java.util.List;
+import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.eclipse.kapua.model.KapuaEntity;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdAdapter;
@@ -19,17 +26,15 @@ import org.eclipse.kapua.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.model.query.predicate.AttributePredicate;
 import org.eclipse.kapua.model.query.predicate.OrPredicate;
 import org.eclipse.kapua.model.query.predicate.QueryPredicate;
-
-import javax.validation.constraints.NotNull;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link KapuaQuery} definition.
  */
+@Schema(
+    description = "An object to specify Query options",
+    example = "{\"offset\": 0, \"limit\": 50 }"
+)
 public interface KapuaQuery {
 
     /**

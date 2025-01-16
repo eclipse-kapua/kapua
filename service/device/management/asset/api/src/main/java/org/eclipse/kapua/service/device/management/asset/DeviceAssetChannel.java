@@ -14,6 +14,8 @@ package org.eclipse.kapua.service.device.management.asset;
 
 import java.util.Date;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * {@link DeviceAssetChannel} definition.
  * <p>
@@ -21,6 +23,7 @@ import java.util.Date;
  *
  * @since 1.0.0
  */
+@Schema(description = "The definition of an Asset Channel describing its name, value type and mode.")
 public interface DeviceAssetChannel {
 
     /**
@@ -29,6 +32,7 @@ public interface DeviceAssetChannel {
      * @return The name.
      * @since 1.0.0
      */
+    @Schema(description = "The name of the AssetChannel")
     String getName();
 
     /**
@@ -65,6 +69,7 @@ public interface DeviceAssetChannel {
      * @return The {@link DeviceAssetChannelMode}.
      * @since 1.0.0
      */
+    @Schema(description = "The AssetChannel mode, which determines which operation you can execute on it")
     DeviceAssetChannelMode getMode();
 
     /**

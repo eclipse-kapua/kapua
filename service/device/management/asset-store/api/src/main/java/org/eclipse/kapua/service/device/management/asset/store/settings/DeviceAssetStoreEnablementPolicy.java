@@ -14,12 +14,14 @@ package org.eclipse.kapua.service.device.management.asset.store.settings;
 
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.device.management.asset.store.DeviceAssetStoreService;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link DeviceAssetStoreEnablementPolicy} definition.
  *
  * @since 2.0.0
  */
+@Schema(description = "The policy for which the Device Asset Store Application is enabled or not for this device. 'INHERITED' means that it inherits the setting from the Account-wide Asset Store Service Configuration")
 public enum DeviceAssetStoreEnablementPolicy {
 
     /**

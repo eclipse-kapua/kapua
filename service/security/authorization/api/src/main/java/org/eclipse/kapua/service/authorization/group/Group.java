@@ -12,16 +12,17 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.group;
 
-import org.eclipse.kapua.model.KapuaNamedEntity;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.service.authorization.access.AccessPermission;
-import org.eclipse.kapua.service.authorization.role.RolePermission;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.model.KapuaNamedEntity;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.service.authorization.access.AccessPermission;
+import org.eclipse.kapua.service.authorization.role.RolePermission;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link Group} {@link org.eclipse.kapua.model.KapuaEntity} definition.<br>
@@ -42,6 +43,7 @@ public interface Group extends KapuaNamedEntity {
     String TYPE = "group";
 
     @Override
+    @Schema(example = "group")
     default String getType() {
         return TYPE;
     }

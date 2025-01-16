@@ -24,6 +24,7 @@ import org.eclipse.kapua.entity.EntityPropertiesWriteException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdAdapter;
 import org.eclipse.kapua.model.xml.DateXmlAdapter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
@@ -90,7 +91,8 @@ public interface KapuaUpdatableEntity extends KapuaEntity {
      * @throws EntityPropertiesReadException If there are error while reading {@link Properties}
      */
     @XmlTransient
-    @Schema(hidden = true)
+    //@Schema(hidden = true)
+    @JsonIgnore
     Properties getEntityAttributes() throws EntityPropertiesReadException;
 
     /**

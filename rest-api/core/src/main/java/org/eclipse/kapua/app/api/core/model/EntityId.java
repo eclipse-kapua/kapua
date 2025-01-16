@@ -24,6 +24,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  *
  * @since 1.0.0
  */
+@Schema(type = "string")
 public class EntityId implements KapuaId {
 
     private static final long serialVersionUID = 6893262093856905182L;

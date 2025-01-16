@@ -18,23 +18,29 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(factoryClass = UserProfileXmlRegistry.class, factoryMethod = "newUserProfile")
+@Schema(description = "The user profile")
 public interface UserProfile {
     String TYPE = "userProfile";
 
     @XmlElement(name = "displayName")
+    @Schema(example = "Foo42")
     String getDisplayName();
 
     void setDisplayName(String displayName);
 
     @XmlElement(name = "phoneNumber")
+    @Schema(example = "424202424")
     String getPhoneNumber();
 
     void setPhoneNumber(String phoneNumber);
 
     @XmlElement(name = "email")
+    @Schema(example = "foo@bar.com")
     String getEmail();
 
     void setEmail(String email);

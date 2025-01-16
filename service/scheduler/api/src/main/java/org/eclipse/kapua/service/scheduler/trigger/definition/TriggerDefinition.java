@@ -12,13 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.scheduler.trigger.definition;
 
-import org.eclipse.kapua.model.KapuaNamedEntity;
-
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.List;
+
+import org.eclipse.kapua.model.KapuaNamedEntity;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link TriggerDefinition} {@link KapuaNamedEntity} definition.
@@ -33,6 +34,7 @@ public interface TriggerDefinition extends KapuaNamedEntity {
     String TYPE = "triggerDefinition";
 
     @Override
+    @Schema(example = "triggerDefinition")
     default String getType() {
         return TYPE;
     }
@@ -59,6 +61,7 @@ public interface TriggerDefinition extends KapuaNamedEntity {
      * @return The processor name.
      * @since 1.1.0
      */
+    @Schema(example = "org.eclipse.kapua.service.scheduler.trigger.quartz.job.KapuaJobLauncer")
     String getProcessorName();
 
     /**

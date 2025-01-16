@@ -12,14 +12,15 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.asset;
 
-import org.eclipse.kapua.KapuaSerializable;
-
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.List;
+
+import org.eclipse.kapua.KapuaSerializable;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link DeviceAssets} definition.
@@ -29,6 +30,7 @@ import java.util.List;
 @XmlRootElement(name = "deviceAssets")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(factoryClass = DeviceAssetXmlRegistry.class, factoryMethod = "newAssetListResult")
+@Schema(description = "A list of the DeviceAssetDefinitions")
 public interface DeviceAssets extends KapuaSerializable {
 
     /**

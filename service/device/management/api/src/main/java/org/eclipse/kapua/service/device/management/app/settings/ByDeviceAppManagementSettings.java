@@ -12,18 +12,20 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.app.settings;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdAdapter;
 import org.eclipse.kapua.service.device.registry.Device;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link ByDeviceAppManagementSettings} definition.
  *
  * @since 2.0.0
  */
+@Schema(description = "Base class for Device Management Applications that have per-device settings")
 public interface ByDeviceAppManagementSettings {
 
     /**
@@ -34,6 +36,7 @@ public interface ByDeviceAppManagementSettings {
      */
     @XmlElement(name = "scopeId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(example = "AQ")
     KapuaId getScopeId();
 
     /**
@@ -52,6 +55,7 @@ public interface ByDeviceAppManagementSettings {
      */
     @XmlElement(name = "deviceId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(example = "dIVxI5QpFUI")
     KapuaId getDeviceId();
 
     /**

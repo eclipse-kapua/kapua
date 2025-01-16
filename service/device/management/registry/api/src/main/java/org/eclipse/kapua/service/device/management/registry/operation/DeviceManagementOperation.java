@@ -12,13 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.registry.operation;
 
-import org.eclipse.kapua.model.KapuaUpdatableEntity;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.model.xml.DateXmlAdapter;
-import org.eclipse.kapua.service.device.management.message.KapuaMethod;
-import org.eclipse.kapua.service.device.management.message.notification.NotifyStatus;
-
+import java.util.Date;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -26,8 +21,14 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
-import java.util.List;
+
+import org.eclipse.kapua.model.KapuaUpdatableEntity;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import org.eclipse.kapua.model.xml.DateXmlAdapter;
+import org.eclipse.kapua.service.device.management.message.KapuaMethod;
+import org.eclipse.kapua.service.device.management.message.notification.NotifyStatus;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * @since 1.0.0
@@ -40,6 +41,7 @@ public interface DeviceManagementOperation extends KapuaUpdatableEntity {
     static final String TYPE = "deviceManagementOperation";
 
     @Override
+    @Schema(example = "deviceManagementOperation")
     default String getType() {
         return TYPE;
     }
@@ -78,6 +80,7 @@ public interface DeviceManagementOperation extends KapuaUpdatableEntity {
      */
     @XmlElement(name = "deviceId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(example = "UVjeGkGVT3A")
     KapuaId getDeviceId();
 
     /**
@@ -92,6 +95,7 @@ public interface DeviceManagementOperation extends KapuaUpdatableEntity {
      */
     @XmlElement(name = "operationId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(example = "I-1DnL467js\"")
     KapuaId getOperationId();
 
     /**
@@ -104,6 +108,7 @@ public interface DeviceManagementOperation extends KapuaUpdatableEntity {
      * @return
      */
     @XmlElement(name = "appId")
+    @Schema(example = "DEPLOY")
     String getAppId();
 
     /**
@@ -130,6 +135,7 @@ public interface DeviceManagementOperation extends KapuaUpdatableEntity {
      * @since 1.0.0
      */
     @XmlElement(name = "resource")
+    @Schema(example = "DOWNLOAD")
     String getResource();
 
     /**
@@ -170,6 +176,7 @@ public interface DeviceManagementOperation extends KapuaUpdatableEntity {
      * @return
      * @since 1.2.0
      */
+    @Schema(example = "")
     String getLog();
 
     /**

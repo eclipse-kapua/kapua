@@ -12,11 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.model;
 
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link KapuaEntityCreator} definition
@@ -26,6 +27,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * @param <E> entity type
  * @since 1.0.0
  */
+@Schema(description = "An object that contains the information needed to create an Updatable Entity")
 public interface KapuaEntityCreator<E extends KapuaEntity> {
 
     /**

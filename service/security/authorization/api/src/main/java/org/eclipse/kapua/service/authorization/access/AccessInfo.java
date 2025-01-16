@@ -12,16 +12,17 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.access;
 
-import org.eclipse.kapua.model.KapuaUpdatableEntity;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import org.eclipse.kapua.model.KapuaUpdatableEntity;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Access info entity definition.<br>
@@ -37,11 +38,13 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlType(propOrder = { "userId" }, //
         factoryClass = AccessInfoXmlRegistry.class, //
         factoryMethod = "newAccessInfo")
+@Schema(description = "An AccessInfo represents all the security objects (Roles and Permissions) that can be attached to a User. There will be exactly one AccessInfo object for every User")
 public interface AccessInfo extends KapuaUpdatableEntity {
 
     String TYPE = "accessInfo";
 
     @Override
+    @Schema(example = "accessInfo")
     default String getType() {
         return TYPE;
     }

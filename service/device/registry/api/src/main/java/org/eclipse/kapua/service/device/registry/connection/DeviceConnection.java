@@ -12,18 +12,19 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.registry.connection;
 
-import org.eclipse.kapua.model.KapuaEntity;
-import org.eclipse.kapua.model.KapuaUpdatableEntity;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.service.device.registry.ConnectionUserCouplingMode;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import org.eclipse.kapua.model.KapuaEntity;
+import org.eclipse.kapua.model.KapuaUpdatableEntity;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import org.eclipse.kapua.service.device.registry.ConnectionUserCouplingMode;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link DeviceConnection} {@link KapuaEntity} definition.
@@ -38,6 +39,7 @@ public interface DeviceConnection extends KapuaUpdatableEntity {
     String TYPE = "deviceConnection";
 
     @Override
+    @Schema(example = "deviceConnection")
     default String getType() {
         return TYPE;
     }
@@ -63,6 +65,7 @@ public interface DeviceConnection extends KapuaUpdatableEntity {
      * @return
      */
     @XmlElement(name = "clientId")
+    @Schema(example = "Client-Id-1")
     String getClientId();
 
     /**
@@ -140,6 +143,7 @@ public interface DeviceConnection extends KapuaUpdatableEntity {
      * @return The allowed authentication type.
      * @since 2.0.0
      */
+    @Schema(description = "The authentication type that must be used when connection")
     String getAuthenticationType();
 
     /**
@@ -156,6 +160,7 @@ public interface DeviceConnection extends KapuaUpdatableEntity {
      * @return The last used authentication type.
      * @since 2.0.0
      */
+    @Schema(description = "The authentication type used when connecting last time")
     String getLastAuthenticationType();
 
     /**
@@ -172,6 +177,7 @@ public interface DeviceConnection extends KapuaUpdatableEntity {
      * @return
      */
     @XmlElement(name = "protocol")
+    @Schema(example = "MQTT")
     String getProtocol();
 
     /**
@@ -187,6 +193,7 @@ public interface DeviceConnection extends KapuaUpdatableEntity {
      * @return
      */
     @XmlElement(name = "clientIp")
+    @Schema(description = "tcp://172.21.0.1:44400")
     String getClientIp();
 
     /**
@@ -202,6 +209,7 @@ public interface DeviceConnection extends KapuaUpdatableEntity {
      * @return
      */
     @XmlElement(name = "serverIp")
+    @Schema(description = "broker")
     String getServerIp();
 
     /**
