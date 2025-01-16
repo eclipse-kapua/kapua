@@ -47,9 +47,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Path("{scopeId}/credentials")
-@Tag(name = "Credentials", description = "Endpoints for managing credential entities.")
+@Tag(name = "Credentials")
 public class Credentials extends AbstractKapuaResource {
-
     @Inject
     public
     CredentialService credentialService;
@@ -125,6 +124,7 @@ public class Credentials extends AbstractKapuaResource {
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public CredentialListResult query(
+            @Parameter(description = "The scope ID to filter credentials.")
             @PathParam("scopeId") ScopeId scopeId,
             CredentialQuery query) throws KapuaException {
         query.setScopeId(scopeId);
@@ -146,6 +146,7 @@ public class Credentials extends AbstractKapuaResource {
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public CountResult count(
+            @Parameter(description = "The scope ID to filter credentials.")
             @PathParam("scopeId") ScopeId scopeId,
             CredentialQuery query) throws KapuaException {
         query.setScopeId(scopeId);
@@ -167,6 +168,7 @@ public class Credentials extends AbstractKapuaResource {
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response create(
+            @Parameter(description = "The scope ID to filter credentials.")
             @PathParam("scopeId") ScopeId scopeId,
             CredentialCreator credentialCreator) throws KapuaException {
         credentialCreator.setScopeId(scopeId);
@@ -187,6 +189,7 @@ public class Credentials extends AbstractKapuaResource {
     @Path("{credentialId}")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Credential find(
+            @Parameter(description = "The scope ID to filter credentials.")
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("credentialId") EntityId credentialId) throws KapuaException {
         Credential credential = credentialService.find(scopeId, credentialId);
@@ -207,6 +210,7 @@ public class Credentials extends AbstractKapuaResource {
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Credential update(
+            @Parameter(description = "The scope ID to filter credentials.")
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("credentialId") EntityId credentialId,
             Credential credential) throws KapuaException {
@@ -227,6 +231,7 @@ public class Credentials extends AbstractKapuaResource {
     @DELETE
     @Path("{credentialId}")
     public Response deleteCredential(
+            @Parameter(description = "The scope ID to filter credentials.")
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("credentialId") EntityId credentialId) throws KapuaException {
         credentialService.delete(scopeId, credentialId);
@@ -249,6 +254,7 @@ public class Credentials extends AbstractKapuaResource {
     @Path("{credentialId}/unlock")
     @Deprecated
     public Response unlockCredential(
+            @Parameter(description = "The scope ID to filter credentials.")
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("credentialId") EntityId credentialId) throws KapuaException {
         credentialService.unlock(scopeId, credentialId);
@@ -269,6 +275,7 @@ public class Credentials extends AbstractKapuaResource {
     @POST
     @Path("{credentialId}/_unlock")
     public Response unlock(
+            @Parameter(description = "The scope ID to filter credentials.")
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("credentialId") EntityId credentialId) throws KapuaException {
         credentialService.unlock(scopeId, credentialId);

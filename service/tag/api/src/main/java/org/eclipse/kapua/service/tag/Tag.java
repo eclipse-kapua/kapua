@@ -12,14 +12,16 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.tag;
 
-import org.eclipse.kapua.model.KapuaNamedEntity;
-import org.eclipse.kapua.model.id.KapuaId;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.model.KapuaNamedEntity;
+import org.eclipse.kapua.model.id.KapuaId;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link Tag} {@link org.eclipse.kapua.model.KapuaEntity} definition
@@ -35,11 +37,13 @@ import javax.xml.bind.annotation.XmlType;
 public interface Tag extends KapuaNamedEntity {
 
     @XmlTransient
+    @JsonIgnore
     KapuaId ANY = KapuaId.ANY;
 
     String TYPE = "tag";
 
     @Override
+    @Schema(example = "tag")
     default String getType() {
         return TYPE;
     }

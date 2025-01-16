@@ -12,12 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job.step.definition;
 
-import org.eclipse.kapua.service.job.step.JobStepXmlRegistry;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.service.job.step.JobStepXmlRegistry;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link JobStepProperty} definition.
@@ -33,6 +34,7 @@ public interface JobStepProperty {
      * @return
      * @since 1.0.0
      */
+    @Schema(example = "assets")
     String getName();
 
     /**
@@ -47,6 +49,7 @@ public interface JobStepProperty {
      * @return The description
      * @since 2.1.0
      */
+    @Schema(description = "Execute request to write values on a specified set of channels and assets to the target devices of the Job")
     String getDescription();
 
     /**
@@ -61,6 +64,7 @@ public interface JobStepProperty {
      * @return
      * @since 1.0.0
      */
+    @Schema(example = "org.eclipse.kapua.service.device.management.asset.DeviceAssets")
     String getPropertyType();
 
     /**
@@ -85,6 +89,7 @@ public interface JobStepProperty {
      * @return
      * @since 1.1.0
      */
+    @Schema(example = "<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n<deviceAssets>\\n    <deviceAsset>\\n        <name>assetName</name>\\n        <channels>\\n            <channel>\\n                <valueType>binary</valueType>\\n                <value>EGVzdCBzdHJpbmcgdmFsdWU=</value>\\n                <name>binaryTest</name>\\n            </channel>\\n        </channels>\\n    </deviceAsset>\\n</deviceAssets>")
     String getExampleValue();
 
     /**

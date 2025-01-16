@@ -12,11 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.access;
 
-import org.eclipse.kapua.model.KapuaEntity;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.service.authorization.permission.Permission;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -24,11 +19,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.eclipse.kapua.model.KapuaEntity;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import org.eclipse.kapua.service.authorization.permission.Permission;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * Access permission entity.<br>
  * Describes a {@link Permission} associated to the access info.<br>
- * Wrapping of the {@link Permission} into this class is intended to adds auditing
- * informations like {@link AccessPermission#getCreatedBy()} and{@link AccessPermission#getCreatedOn()}.<br>
+ * Wrapping of the {@link Permission} into this class is intended to add auditing
+ * information like {@link AccessPermission#getCreatedBy()} and{@link AccessPermission#getCreatedOn()}.<br>
  * <br>
  * This is a not editable entity so it can be only removed or created and therefore any change to
  * {@link AccessPermission#getAccessInfoId()} and {@link AccessPermission#getPermission()} property is forbidden.
@@ -40,6 +41,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlType(propOrder = {"accessInfoId", "permission"}, //
         factoryClass = AccessPermissionXmlRegistry.class, //
         factoryMethod = "newAccessPermission")
+@Schema(description = "An object that represents the link between an AccessInfo and a Permission")
 public interface AccessPermission extends KapuaEntity {
 
     String TYPE = "accessPermission";
@@ -65,6 +67,7 @@ public interface AccessPermission extends KapuaEntity {
      */
     @XmlElement(name = "accessInfoId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(description = "The ID of the AccessInfo", example = "Ag")
     KapuaId getAccessInfoId();
 
     /**

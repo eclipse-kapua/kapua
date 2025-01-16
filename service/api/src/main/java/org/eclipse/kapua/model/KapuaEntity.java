@@ -22,6 +22,7 @@ import org.eclipse.kapua.KapuaSerializable;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdAdapter;
 import org.eclipse.kapua.model.xml.DateXmlAdapter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
@@ -43,7 +44,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public interface KapuaEntity extends KapuaSerializable {
 
     @XmlTransient
-    @Schema(hidden = true)
+    @JsonIgnore
     String getType();
 
     /**

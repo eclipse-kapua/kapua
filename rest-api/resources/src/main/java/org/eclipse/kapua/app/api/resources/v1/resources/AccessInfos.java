@@ -30,6 +30,10 @@ import org.eclipse.kapua.app.api.core.model.CountResult;
 import org.eclipse.kapua.app.api.core.model.EntityId;
 import org.eclipse.kapua.app.api.core.model.ScopeId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
+import org.eclipse.kapua.commons.rest.model.errors.EntityNotFoundExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.ExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.IllegalArgumentExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.SubjectUnauthorizedExceptionInfo;
 import org.eclipse.kapua.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.authorization.access.AccessInfo;
@@ -40,6 +44,15 @@ import org.eclipse.kapua.service.authorization.access.AccessInfoListResult;
 import org.eclipse.kapua.service.authorization.access.AccessInfoQuery;
 import org.eclipse.kapua.service.authorization.access.AccessInfoService;
 import org.eclipse.kapua.service.user.User;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * {@link AccessInfo} REST API resource.
@@ -48,6 +61,7 @@ import org.eclipse.kapua.service.user.User;
  */
 @Path("{scopeId}/accessinfos")
 @Produces({"application/json", "application/xml"})
+@Tag(name = "Access Info")
 public class AccessInfos extends AbstractKapuaResource {
 
     @Inject
@@ -68,10 +82,41 @@ public class AccessInfos extends AbstractKapuaResource {
      */
     @GET
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Operation(summary = "Get all the AccessInfo")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The list of the AccessInfo objects available in the Scope",
+            content = @Content(schema = @Schema(implementation = AccessInfoListResult.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public AccessInfoListResult simpleQuery(
+            @Parameter(description = "The ID of the Scope where to perform the operation.")
             @PathParam("scopeId") ScopeId scopeId,
+            @Parameter(description = "The ID of the User to use as a filter in the query")
             @QueryParam("userId") EntityId userId,
+            @Parameter(description = "An Offset on the result size. Used to skip the first `n` items of a result set, with `n` equal to the value of `offset`")
             @QueryParam("offset") @DefaultValue("0") int offset,
+            @Parameter(description = "A Limit on the result size. The result set will not contain more items than this number")
             @QueryParam("limit") @DefaultValue("50") int limit) throws KapuaException {
 
         AccessInfoQuery query = accessInfoFactory.newQuery(scopeId);
@@ -101,7 +146,46 @@ public class AccessInfos extends AbstractKapuaResource {
     @Path("_query")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Operation(summary = "Query the AccessInfos")
+    @RequestBody(
+        required = true,
+        content = @Content(
+            schema = @Schema(implementation = AccessInfoQuery.class),
+            examples = {
+                @ExampleObject(
+                    value = "{\"offset\": 0, \"limit\": 50 }"
+                )
+            }
+        )
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The result of the query",
+            content = @Content(schema = @Schema(implementation = AccessInfoListResult.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public AccessInfoListResult query(
+            @Parameter(description = "The ID of the Scope where to perform the operation.")
             @PathParam("scopeId") ScopeId scopeId,
             AccessInfoQuery query) throws KapuaException {
         query.setScopeId(scopeId);
@@ -122,7 +206,46 @@ public class AccessInfos extends AbstractKapuaResource {
     @Path("_count")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Operation(summary = "Count the AccessInfos")
+    @RequestBody(
+        required = true,
+        content = @Content(
+            schema = @Schema(implementation = AccessInfoQuery.class),
+            examples = {
+                @ExampleObject(
+                    value = "{\"offset\": 0, \"limit\": 50 }"
+                )
+            }
+        )
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The count of the available Entities",
+            content = @Content(schema = @Schema(implementation = CountResult.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public CountResult count(
+            @Parameter(description = "The ID of the Scope where to perform the operation.")
             @PathParam("scopeId") ScopeId scopeId,
             AccessInfoQuery query) throws KapuaException {
         query.setScopeId(scopeId);
@@ -143,8 +266,36 @@ public class AccessInfos extends AbstractKapuaResource {
     @POST
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Operation(summary = "Create an AccessInfo")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The AccessInfo that has just been created",
+            content = @Content(schema = @Schema(implementation = AccessInfoListResult.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public Response create(
-            @PathParam("scopeId") ScopeId scopeId, //
+            @Parameter(description = "The ID of the Scope where to perform the operation.")
+            @PathParam("scopeId") ScopeId scopeId,
             AccessInfoCreator accessInfoCreator) throws KapuaException {
         accessInfoCreator.setScopeId(scopeId);
 
@@ -163,8 +314,37 @@ public class AccessInfos extends AbstractKapuaResource {
     @GET
     @Path("{accessInfoId}")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Operation(summary = "Get a single AccessInfo")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The details of the desired AccessInfo",
+            content = @Content(schema = @Schema(implementation = AccessInfoListResult.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public AccessInfo find(
+            @Parameter(description = "The ID of the Scope where to perform the operation.")
             @PathParam("scopeId") ScopeId scopeId,
+            @Parameter(description = "The ID of the AccessInfo on which to perform the operation")
             @PathParam("accessInfoId") EntityId accessInfoId) throws KapuaException {
         AccessInfo accessInfo = accessInfoService.find(scopeId, accessInfoId);
 
@@ -182,8 +362,41 @@ public class AccessInfos extends AbstractKapuaResource {
      */
     @DELETE
     @Path("{accessInfoId}")
+    @Operation(summary = "Delete a single AccessInfo")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "204",
+            description = "The AccessInfo has been deleted"
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "The desired entity could not be found",
+            content = @Content(schema = @Schema(implementation = EntityNotFoundExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public Response deleteAccessInfo(
+            @Parameter(description = "The ID of the Scope where to perform the operation.")
             @PathParam("scopeId") ScopeId scopeId,
+            @Parameter(description = "The ID of the AccessInfo on which to perform the operation")
             @PathParam("accessInfoId") EntityId accessInfoId) throws KapuaException {
         accessInfoService.delete(scopeId, accessInfoId);
 

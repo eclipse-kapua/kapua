@@ -12,20 +12,21 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.account;
 
-import org.eclipse.kapua.model.KapuaEntity;
-import org.eclipse.kapua.model.KapuaNamedEntity;
-import org.eclipse.kapua.model.xml.DateXmlAdapter;
-import org.eclipse.kapua.service.account.xml.AccountParentPathXmlAdapter;
-import org.eclipse.kapua.service.account.xml.AccountXmlRegistry;
-
+import java.util.Date;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
-import java.util.List;
+
+import org.eclipse.kapua.model.KapuaEntity;
+import org.eclipse.kapua.model.KapuaNamedEntity;
+import org.eclipse.kapua.model.xml.DateXmlAdapter;
+import org.eclipse.kapua.service.account.xml.AccountParentPathXmlAdapter;
+import org.eclipse.kapua.service.account.xml.AccountXmlRegistry;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link Account} {@link KapuaEntity} definition.
@@ -35,11 +36,15 @@ import java.util.List;
 @XmlRootElement(name = "account")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(factoryClass = AccountXmlRegistry.class, factoryMethod = "newAccount")
+@Schema(description = "An object that holds all the information pertaining an Account, including the details about the Contacts of that account." +
+                          "In Kapua an Account is the container of all other resources (Users, Devices, etc.), and is the equivalent of the concept of Tenant." +
+                          "Every entity in Kapua will have a `scopeId` property, that holds the ID of the Account who holds that entity.")
 public interface Account extends KapuaNamedEntity {
 
     String TYPE = "account";
 
     @Override
+    @Schema(example = "account")
     default String getType() {
         return TYPE;
     }
@@ -51,6 +56,7 @@ public interface Account extends KapuaNamedEntity {
      * @since 1.0.0
      */
     @XmlElement(name = "organization")
+    @Schema(description = "An object with all the information needed to create a new Account")
     Organization getOrganization();
 
     /**
@@ -73,6 +79,7 @@ public interface Account extends KapuaNamedEntity {
      */
     @XmlElement(name = "parentAccountPath")
     @XmlJavaTypeAdapter(AccountParentPathXmlAdapter.class)
+    @Schema(description = "The full Scope ID Hierarchy for the Account")
     String getParentAccountPath();
 
     /**
@@ -95,6 +102,7 @@ public interface Account extends KapuaNamedEntity {
      */
     @XmlElement(name = "expirationDate")
     @XmlJavaTypeAdapter(DateXmlAdapter.class)
+    @Schema(description = "The Expiration date and time for the Account. If empty, the Account has no expiration")
     Date getExpirationDate();
 
     /**

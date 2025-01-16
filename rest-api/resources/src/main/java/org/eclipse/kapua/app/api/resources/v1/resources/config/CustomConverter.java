@@ -33,10 +33,19 @@ public class CustomConverter implements ModelConverter {
                 Schema schema = new StringSchema();
                 if (simpleType.isTypeOrSubTypeOf(ScopeId.class)) {
                     schema = schema.example("_");
+                    schema.setDescription("The ID of the Scope where to perform the operation.");
+                    schema.setDefault("_");
+                } else if (simpleType.isTypeOrSubTypeOf(String.class)) {
+                    schema = new StringSchema();
+                    if (simpleType.getTypeName().equals("limit")) {
+                        schema = schema.example("42");
+                    }
                 } else {
                     for (Annotation annotation : type.getCtxAnnotations()) {
                         if (annotation instanceof io.swagger.v3.oas.annotations.media.Schema) {
-                            schema = schema.example(((io.swagger.v3.oas.annotations.media.Schema) annotation).example());
+                            schema = schema
+                                         .example(((io.swagger.v3.oas.annotations.media.Schema) annotation).example())
+                                         .description(((io.swagger.v3.oas.annotations.media.Schema) annotation).description());
                             break;
                         }
                     }

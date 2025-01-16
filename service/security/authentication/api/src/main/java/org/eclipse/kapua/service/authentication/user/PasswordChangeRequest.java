@@ -18,11 +18,14 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(factoryClass = UserCredentialsXmlRegistry.class, factoryMethod = "newPasswordChangeRequest")
 public interface PasswordChangeRequest {
     @XmlElement(name = "currentPassword")
+    @Schema(example = "Welcome1234!")
     String getCurrentPassword();
 
 
@@ -30,6 +33,7 @@ public interface PasswordChangeRequest {
 
 
     @XmlElement(name = "newPassword")
+    @Schema(example = "NewWelcome1234!")
     String getNewPassword();
 
 

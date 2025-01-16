@@ -12,13 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.permission;
 
-import org.eclipse.kapua.model.domain.Actions;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.service.authorization.access.AccessInfo;
-import org.eclipse.kapua.service.authorization.domain.Domain;
-import org.eclipse.kapua.service.authorization.group.Group;
-
 import javax.security.auth.Subject;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -26,6 +19,14 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import org.eclipse.kapua.model.domain.Actions;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import org.eclipse.kapua.service.authorization.access.AccessInfo;
+import org.eclipse.kapua.service.authorization.domain.Domain;
+import org.eclipse.kapua.service.authorization.group.Group;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link Permission} definition.<br>
@@ -45,6 +46,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 }, //
         factoryClass = PermissionXmlRegistry.class, //
         factoryMethod = "newPermission")
+@Schema(description = "The representation of a Permission")
 public interface Permission {
 
     String WILDCARD = "*";
@@ -65,6 +67,10 @@ public interface Permission {
      * @since 1.0.0
      */
     @XmlElement(name = "domain")
+    @Schema(
+        description = "The domain name in which the Permission acts. `*` means \"Any Domains\"",
+        example = "user"
+    )
     String getDomain();
 
     /**
@@ -82,6 +88,7 @@ public interface Permission {
      * @since 1.0.0
      */
     @XmlElement(name = "action")
+    @Schema(description = "The action that is permitted. `*` means \"Any Action in the given Domain\"")
     Actions getAction();
 
     /**
@@ -100,6 +107,10 @@ public interface Permission {
      */
     @XmlElement(name = "targetScopeId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(
+        description = "The Scope ID to which the Permission applies. A `null` value means \"Any scope in the system\"",
+        example = "AQ"
+    )
     KapuaId getTargetScopeId();
 
     /**
@@ -118,6 +129,7 @@ public interface Permission {
      */
     @XmlElement(name = "groupId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(description = "The ID of the Group to which the Permission applies. A `null` value means \"Any group in the Scope\"")
     KapuaId getGroupId();
 
     /**
@@ -137,5 +149,6 @@ public interface Permission {
      * @since 1.0.0
      */
     @XmlElement(name = "forwardable")
+    @Schema(description = "When `true`, this permission is also active descending the entire Accounts hierarchy")
     boolean getForwardable();
 }

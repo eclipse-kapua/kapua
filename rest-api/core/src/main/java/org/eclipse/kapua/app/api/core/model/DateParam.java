@@ -16,14 +16,15 @@ import java.util.Date;
 
 import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.model.xml.DateXmlAdapter;
-
 import com.google.common.base.Strings;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Adapted for query parameters of type {@link Date}.
  *
  * @since 1.0.0
  */
+@Schema(type = "string")
 public class DateParam extends DateXmlAdapter {
 
     private Date date;

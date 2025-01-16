@@ -15,20 +15,25 @@ package org.eclipse.kapua.service.device.management.registry.operation;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @XmlRootElement(name = "deviceManagementOperationProperty")
 public interface DeviceManagementOperationProperty {
 
     @XmlElement(name = "name")
+    @Schema(example = "kapua.package.download.file.type")
     String getName();
 
     void setName(String name);
 
     @XmlElement(name = "propertyType")
+    @Schema(example = "string")
     String getPropertyType();
 
     void setPropertyType(String propertyType);
 
     @XmlElement(name = "propertyValue")
+    @Schema(example = "DEPLOYMENT_PACKAGE")
     String getPropertyValue();
 
     void setPropertyValue(String propertyValue);

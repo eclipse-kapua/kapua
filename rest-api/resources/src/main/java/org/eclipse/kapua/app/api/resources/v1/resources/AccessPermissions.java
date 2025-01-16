@@ -12,25 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.resources.v1.resources;
 
-import com.google.common.base.Strings;
-import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.app.api.core.model.CountResult;
-import org.eclipse.kapua.app.api.core.model.EntityId;
-import org.eclipse.kapua.app.api.core.model.ScopeId;
-import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
-import org.eclipse.kapua.model.KapuaEntityAttributes;
-import org.eclipse.kapua.model.query.SortOrder;
-import org.eclipse.kapua.model.query.predicate.AndPredicate;
-import org.eclipse.kapua.service.KapuaService;
-import org.eclipse.kapua.service.authorization.access.AccessInfo;
-import org.eclipse.kapua.service.authorization.access.AccessPermission;
-import org.eclipse.kapua.service.authorization.access.AccessPermissionAttributes;
-import org.eclipse.kapua.service.authorization.access.AccessPermissionCreator;
-import org.eclipse.kapua.service.authorization.access.AccessPermissionFactory;
-import org.eclipse.kapua.service.authorization.access.AccessPermissionListResult;
-import org.eclipse.kapua.service.authorization.access.AccessPermissionQuery;
-import org.eclipse.kapua.service.authorization.access.AccessPermissionService;
-
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -44,12 +25,44 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.app.api.core.model.CountResult;
+import org.eclipse.kapua.app.api.core.model.EntityId;
+import org.eclipse.kapua.app.api.core.model.ScopeId;
+import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
+import org.eclipse.kapua.commons.rest.model.errors.EntityNotFoundExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.EntityUniquenessExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.ExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.IllegalArgumentExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.SubjectUnauthorizedExceptionInfo;
+import org.eclipse.kapua.model.KapuaEntityAttributes;
+import org.eclipse.kapua.model.query.SortOrder;
+import org.eclipse.kapua.model.query.predicate.AndPredicate;
+import org.eclipse.kapua.service.KapuaService;
+import org.eclipse.kapua.service.authorization.access.AccessInfo;
+import org.eclipse.kapua.service.authorization.access.AccessPermission;
+import org.eclipse.kapua.service.authorization.access.AccessPermissionAttributes;
+import org.eclipse.kapua.service.authorization.access.AccessPermissionCreator;
+import org.eclipse.kapua.service.authorization.access.AccessPermissionFactory;
+import org.eclipse.kapua.service.authorization.access.AccessPermissionListResult;
+import org.eclipse.kapua.service.authorization.access.AccessPermissionQuery;
+import org.eclipse.kapua.service.authorization.access.AccessPermissionService;
+import com.google.common.base.Strings;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 /**
  * {@link AccessPermission} REST API resource.
  *
  * @since 1.0.0
  */
 @Path("{scopeId}/accessinfos/{accessInfoId}/permissions")
+@Tag(name = "Access Permissions")
 public class AccessPermissions extends AbstractKapuaResource {
 
     @Inject
@@ -72,13 +85,42 @@ public class AccessPermissions extends AbstractKapuaResource {
      */
     @GET
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Operation(summary = "Get all the AccessPermissions")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The list of the AccessPermission objects available in the Scope",
+            content = @Content(schema = @Schema(implementation = AccessPermissionListResult.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public AccessPermissionListResult simpleQuery(
+            @Parameter(description = "The ID of the Scope where to perform the operation.")
             @PathParam("scopeId") ScopeId scopeId,
+            @Parameter(description = "The ID of the AccessInfo on which to perform the operation")
             @PathParam("accessInfoId") EntityId accessInfoId,
+            @Parameter(description = "The name of the parameter that will be used as a sorting key")
             @QueryParam("sortParam") String sortParam,
+            @Parameter(description = "If `true`, the total count of the entities matching the query will be included in the result set")
             @QueryParam("askTotalCount") boolean askTotalCount,
+            @Parameter(description = "The sort direction")
             @QueryParam("sortDir") @DefaultValue("ASCENDING") SortOrder sortDir,
+            @Parameter(description = "An Offset on the result size. Used to skip the first `n` items of a result set, with `n` equal to the value of `offset`")
             @QueryParam("offset") @DefaultValue("0") int offset,
+            @Parameter(description = "A Limit on the result size. The result set will not contain more items than this number")
             @QueryParam("limit") @DefaultValue("50") int limit) throws KapuaException {
         AccessPermissionQuery query = accessPermissionFactory.newQuery(scopeId);
 
@@ -108,8 +150,32 @@ public class AccessPermissions extends AbstractKapuaResource {
     @Path("_query")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Operation(summary = "Query the AccessPermissions")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The result of the query",
+            content = @Content(schema = @Schema(implementation = AccessPermissionListResult.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public AccessPermissionListResult query(
+            @Parameter(description = "The ID of the Scope where to perform the operation.")
             @PathParam("scopeId") ScopeId scopeId,
+            @Parameter(description = "The ID of the AccessInfo on which to perform the operation")
             @PathParam("accessInfoId") EntityId accessInfoId,
             AccessPermissionQuery query) throws KapuaException {
 
@@ -134,8 +200,32 @@ public class AccessPermissions extends AbstractKapuaResource {
     @Path("_count")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Operation(summary = "Count the AccessPermissions")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The count of the available Entities",
+            content = @Content(schema = @Schema(implementation = CountResult.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public CountResult count(
+            @Parameter(description = "The ID of the Scope where to perform the operation.")
             @PathParam("scopeId") ScopeId scopeId,
+            @Parameter(description = "The ID of the AccessInfo on which to perform the operation")
             @PathParam("accessInfoId") EntityId accessInfoId,
             AccessPermissionQuery query) throws KapuaException {
         query.setScopeId(scopeId);
@@ -159,8 +249,37 @@ public class AccessPermissions extends AbstractKapuaResource {
     @POST
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Operation(summary = "Create an AccessPermission")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "201",
+            description = "The AccessPermission that has just been created",
+            content = @Content(schema = @Schema(implementation = AccessPermissionListResult.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "409",
+            description = "An Entity with the same unique fields is already present in the system",
+            content = @Content(schema = @Schema(implementation = EntityUniquenessExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public Response create(
+            @Parameter(description = "The ID of the Scope where to perform the operation.")
             @PathParam("scopeId") ScopeId scopeId,
+            @Parameter(description = "The ID of the AccessInfo on which to perform the operation")
             @PathParam("accessInfoId") EntityId accessInfoId,
             AccessPermissionCreator accessPermissionCreator) throws KapuaException {
         accessPermissionCreator.setScopeId(scopeId);
@@ -182,9 +301,44 @@ public class AccessPermissions extends AbstractKapuaResource {
     @GET
     @Path("{accessPermissionId}")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Operation(summary = "Get a single AccessPermission")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The details of the desired AccessPermission",
+            content = @Content(schema = @Schema(implementation = AccessPermission.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "The desired entity could not be found",
+            content = @Content(schema = @Schema(implementation = EntityNotFoundExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public AccessPermission find(
+            @Parameter(description = "The ID of the Scope where to perform the operation.")
             @PathParam("scopeId") ScopeId scopeId,
+            @Parameter(description = "The ID of the AccessInfo on which to perform the operation")
             @PathParam("accessInfoId") EntityId accessInfoId,
+            @Parameter(description = "The ID of the AccessPermission on which to perform the operation")
             @PathParam("accessPermissionId") EntityId accessPermissionId) throws KapuaException {
         AccessPermissionQuery query = accessPermissionFactory.newQuery(scopeId);
 
@@ -214,9 +368,43 @@ public class AccessPermissions extends AbstractKapuaResource {
      */
     @DELETE
     @Path("{accessPermissionId}")
+    @Operation(summary = "Delete a single AccessPermission")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "204",
+            description = "The AccessPermission has been deleted"
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "The desired entity could not be found",
+            content = @Content(schema = @Schema(implementation = EntityNotFoundExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public Response deleteAccessPermission(
+            @Parameter(description = "The ID of the Scope where to perform the operation.")
             @PathParam("scopeId") ScopeId scopeId,
+            @Parameter(description = "The ID of the AccessInfo on which to perform the operation")
             @PathParam("accessInfoId") EntityId accessInfoId,
+            @Parameter(description = "The ID of the AccessPermission on which to perform the operation")
             @PathParam("accessPermissionId") EntityId accessPermissionId) throws KapuaException {
         accessPermissionService.delete(scopeId, accessPermissionId);
 

@@ -12,11 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.account;
 
-import org.eclipse.kapua.service.account.xml.AccountXmlRegistry;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.service.account.xml.AccountXmlRegistry;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link Organization} definition.
@@ -25,6 +26,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(factoryClass = AccountXmlRegistry.class, factoryMethod = "newOrganization")
+@Schema(description = "An object with all the information needed to create a new Account")
 public interface Organization {
 
     /**
@@ -33,6 +35,11 @@ public interface Organization {
      * @return The name.
      * @since 1.0.0
      */
+    @Schema(
+        description = "The Name of the Organization",
+        requiredMode = Schema.RequiredMode.REQUIRED,
+        example = "ACME Inc."
+    )
     String getName();
 
     /**
@@ -49,6 +56,10 @@ public interface Organization {
      * @return The referent name.
      * @since 1.0.0
      */
+    @Schema(
+        description = "The Name of the Person listed as a Contact for the Organization",
+        example = "Wile Ethelbert Coyote"
+    )
     String getPersonName();
 
     /**
@@ -65,6 +76,11 @@ public interface Organization {
      * @return The email.
      * @since 1.0.0
      */
+    @Schema(
+        description = "The Email Address of the Person listed as a Contact for the Organization",
+        requiredMode = Schema.RequiredMode.REQUIRED,
+        example = "wile.coyote@acme.inc"
+    )
     String getEmail();
 
     /**
@@ -81,6 +97,10 @@ public interface Organization {
      * @return The phone number.
      * @since 1.0.0
      */
+    @Schema(
+        description = "The Phone Number of the Person listed as a Contact for the Organization",
+        example = "+1 (555) 123 4567"
+    )
     String getPhoneNumber();
 
     /**
@@ -97,6 +117,10 @@ public interface Organization {
      * @return The address first line.
      * @since 1.0.0
      */
+    @Schema(
+        description = "First line of the Address for the Organization",
+        example = "wile.coyote@acme.inc"
+    )
     String getAddressLine1();
 
     /**
@@ -113,6 +137,10 @@ public interface Organization {
      * @return The address second line.
      * @since 1.0.0
      */
+    @Schema(
+        description = "Second line of the Address for the Organization",
+        example = "123 Looney Tunes Drive"
+    )
     String getAddressLine2();
 
     /**
@@ -130,6 +158,10 @@ public interface Organization {
      * @return The address third line.
      * @since 1.1.0
      */
+    @Schema(
+        description = "Third line of the Address for the Organization",
+        example = "Block 1"
+    )
     String getAddressLine3();
 
     /**
@@ -146,6 +178,10 @@ public interface Organization {
      * @return The postal ZIP code.
      * @since 1.0.0
      */
+    @Schema(
+        description = "The Zip / Postcode for the Organization",
+        example = "00100"
+    )
     String getZipPostCode();
 
     /**
@@ -162,6 +198,10 @@ public interface Organization {
      * @return The city.
      * @since 1.0.0
      */
+    @Schema(
+        description = "The City of the Organization",
+        example = "Apartment 25"
+    )
     String getCity();
 
     /**
@@ -178,6 +218,10 @@ public interface Organization {
      * @return The province or state (if it is a federal state) within a country.
      * @since 1.0.0
      */
+    @Schema(
+        description = "The State / Province / County of the Organization",
+        example = "Green County, GC"
+    )
     String getStateProvinceCounty();
 
     /**
@@ -194,6 +238,10 @@ public interface Organization {
      * @return The country.
      * @since 1.0.0
      */
+    @Schema(
+        description = "The Country of the Organization",
+        example = "United States"
+    )
     String getCountry();
 
     /**

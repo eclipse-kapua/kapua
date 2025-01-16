@@ -12,10 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.storable.model;
 
-import org.eclipse.kapua.KapuaSerializable;
-import org.eclipse.kapua.model.query.KapuaQuery;
-import org.eclipse.kapua.service.storable.model.query.StorableQuery;
-
+import java.util.Collection;
+import java.util.List;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -23,8 +21,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.Collection;
-import java.util.List;
+
+import org.eclipse.kapua.KapuaSerializable;
+import org.eclipse.kapua.model.query.KapuaQuery;
+import org.eclipse.kapua.service.storable.model.query.StorableQuery;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link StorableListResult} definition.
@@ -37,6 +38,7 @@ import java.util.List;
 @XmlRootElement(name = "result")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(propOrder = {"limitExceeded", "size", "items", "nextKey", "totalCount"})
+@Schema(description = "A container for all the Entities List")
 public interface StorableListResult<E extends Storable> extends KapuaSerializable {
 
     /**
@@ -48,6 +50,7 @@ public interface StorableListResult<E extends Storable> extends KapuaSerializabl
      * @since 1.0.0
      */
     @XmlElement(name = "limitExceeded")
+    @Schema(description = "A flag indicating if more results are available but were not returned because of the limit imposed in the query")
     boolean isLimitExceeded();
 
     /**
@@ -97,6 +100,7 @@ public interface StorableListResult<E extends Storable> extends KapuaSerializabl
      * @since 1.0.0
      */
     @XmlElement(name = "size")
+    @Schema(description = "The size of the list containing the items")
     int getSize();
 
     /**
@@ -151,6 +155,7 @@ public interface StorableListResult<E extends Storable> extends KapuaSerializabl
      * @return The total count
      * @since 1.0.0
      */
+    @Schema(description = "The total count of the elements that matched the query. Available only if `askTotalCount` was `true` in the query object.")
     Long getTotalCount();
 
     /**

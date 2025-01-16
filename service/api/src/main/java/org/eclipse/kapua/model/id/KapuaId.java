@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.eclipse.kapua.KapuaSerializable;
 import org.eclipse.kapua.model.KapuaEntity;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link KapuaEntity} identifier definition.
@@ -28,6 +29,7 @@ import org.eclipse.kapua.model.KapuaEntity;
  *
  * @since 1.0.0
  */
+@Schema(example = "Ag", type = "string")
 public interface KapuaId extends KapuaSerializable {
 
 

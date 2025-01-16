@@ -18,6 +18,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * {@link SystemInfo} {@link org.eclipse.kapua.model.KapuaEntity} definition
  * <p>
@@ -30,11 +32,13 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(factoryClass = SystemInfoXmlRegistry.class, factoryMethod = "newSystemInfo")
 public interface SystemInfo {
     @XmlElement(name = "version")
+    @Schema(example = "2.0.0")
     String getVersion();
 
     void setVersion(String version);
 
     @XmlElement(name = "revision")
+    @Schema(example = "e53c7b7d4208204a0791ec296fa3d4dbe2344585")
     String getRevision();
 
     void setRevision(String revision);
@@ -45,11 +49,13 @@ public interface SystemInfo {
     void setBuildTimestamp(String buildDate);
 
     @XmlElement(name = "buildBranch")
+    @Schema(example = "release/2.0.0")
     String getBuildBranch();
 
     void setBuildBranch(String buildBranch);
 
     @XmlElement(name = "buildNumber")
+    @Schema(example = "142")
     String getBuildNumber();
 
     void setBuildNumber(String buildNumber);

@@ -12,19 +12,20 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.credential;
 
-import org.eclipse.kapua.model.KapuaUpdatableEntity;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.model.xml.DateXmlAdapter;
-import org.eclipse.kapua.service.user.User;
-
+import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
+
+import org.eclipse.kapua.model.KapuaUpdatableEntity;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import org.eclipse.kapua.model.xml.DateXmlAdapter;
+import org.eclipse.kapua.service.user.User;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Credential {@link KapuaUpdatableEntity} definition
@@ -39,6 +40,7 @@ public interface Credential extends KapuaUpdatableEntity {
     String TYPE = "credential";
 
     @Override
+    @Schema(example = "credential")
     default String getType() {
         return TYPE;
     }
@@ -51,6 +53,7 @@ public interface Credential extends KapuaUpdatableEntity {
      */
     @XmlElement(name = "userId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(example = "Y_RtAXKnbb_-sm6Ax38AX5xwnJd-vqkPhFE=0")
     KapuaId getUserId();
 
     /**
@@ -68,6 +71,7 @@ public interface Credential extends KapuaUpdatableEntity {
      * @since 1.0.0
      */
     @XmlElement(name = "credentialType")
+    @Schema(example = "PASSWORD")
     String getCredentialType();
 
     /**

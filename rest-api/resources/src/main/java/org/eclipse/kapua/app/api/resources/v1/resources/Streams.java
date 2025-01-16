@@ -12,12 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.resources.v1.resources;
 
-import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.app.api.core.model.ScopeId;
-import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
-import org.eclipse.kapua.message.device.data.KapuaDataMessage;
-import org.eclipse.kapua.service.stream.StreamService;
-
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -28,7 +22,25 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.app.api.core.model.ScopeId;
+import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
+import org.eclipse.kapua.commons.rest.model.errors.ExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.IllegalArgumentExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.SubjectUnauthorizedExceptionInfo;
+import org.eclipse.kapua.message.device.data.KapuaDataMessage;
+import org.eclipse.kapua.service.device.registry.Device;
+import org.eclipse.kapua.service.stream.StreamService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @Path("{scopeId}/streams")
+@Tag(name = "Stream", description = "Publishes a fire-and-forget message to a topic composed of [account-name] / [client-id] / [semtantic-parts]")
 public class Streams extends AbstractKapuaResource {
 
     @Inject
@@ -84,8 +96,37 @@ public class Streams extends AbstractKapuaResource {
     @POST
     @Path("messages")
     @Consumes({MediaType.APPLICATION_XML})
+    @Operation(summary = "Update a single Device")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "204",
+            description = "The message has been sent successfully",
+            content = @Content(schema = @Schema(implementation = Device.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public Response publish(
+            @Parameter(description = "The ID of the Scope where to perform the operation.")
             @PathParam("scopeId") ScopeId scopeId,
+            @Parameter(description = "The timeout for the request in milliseconds")
             @QueryParam("timeout") @DefaultValue("30000") Long timeout,
             KapuaDataMessage requestMessage) throws KapuaException {
         requestMessage.setScopeId(scopeId);

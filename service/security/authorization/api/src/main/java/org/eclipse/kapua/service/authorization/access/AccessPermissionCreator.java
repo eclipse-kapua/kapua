@@ -12,17 +12,18 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.access;
 
-import org.eclipse.kapua.model.KapuaEntityCreator;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.service.authorization.permission.Permission;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import org.eclipse.kapua.model.KapuaEntityCreator;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import org.eclipse.kapua.service.authorization.permission.Permission;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link AccessPermission} creator definition.<br>
@@ -34,6 +35,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(propOrder = {"accessInfoId", "permission"},//
         factoryClass = AccessPermissionXmlRegistry.class, factoryMethod = "newCreator")
+@Schema(description = "An object that contains the information needed to create an AccessPermission")
 public interface AccessPermissionCreator extends KapuaEntityCreator<AccessPermission> {
 
     /**
@@ -52,6 +54,10 @@ public interface AccessPermissionCreator extends KapuaEntityCreator<AccessPermis
      */
     @XmlElement(name = "accessInfoId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(
+        description = "The ID of the AccessInfo to which attach the Permission",
+        example = "Wqj1IHt4LUP-Q9N5ix1-0DFPo88IasTYMRutb"
+    )
     KapuaId getAccessInfoId();
 
     /**

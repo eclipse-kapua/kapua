@@ -34,6 +34,7 @@ import org.eclipse.kapua.service.authentication.RefreshTokenCredentials;
 import org.eclipse.kapua.service.authentication.UsernamePasswordCredentials;
 import org.eclipse.kapua.service.authentication.token.AccessToken;
 import org.eclipse.kapua.service.authentication.token.LoginInfo;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -45,7 +46,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Path("/authentication")
-@Tag(name = "Authentication", description = "Endpoints for managing authentication processes.")
+@Tag(name = "Authentication")
 @SecurityRequirements()
 public class Authentication extends AbstractKapuaResource {
 
@@ -64,6 +65,7 @@ public class Authentication extends AbstractKapuaResource {
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Path("user")
+    @Operation(summary = "Login - User and Password")
     @RequestBody(
         description = "Request body for user login",
         required = true,
@@ -85,8 +87,6 @@ public class Authentication extends AbstractKapuaResource {
             }
         )
     )
-    // below can be omitted, but if so no response code and description.
-    // if specified but without content then ok code and description but no generated response/example
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "200",
@@ -129,6 +129,7 @@ public class Authentication extends AbstractKapuaResource {
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Path("mfa")
     @Deprecated
+    @Operation(summary = "MFA Login - User, Password and authenticationCode/trustKey")
     @RequestBody(
         required = true,
         content = @Content(
@@ -186,6 +187,7 @@ public class Authentication extends AbstractKapuaResource {
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Path("apikey")
+    @Operation(summary = "Login - API Key")
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "200",
@@ -224,6 +226,7 @@ public class Authentication extends AbstractKapuaResource {
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Path("jwt")
+    @Operation(summary = "Login - JWT")
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "200",
@@ -261,6 +264,7 @@ public class Authentication extends AbstractKapuaResource {
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Path("logout")
+    @Operation(summary = "Logout")
     @ApiResponses(value = {
         @ApiResponse(
             responseCode = "204",
@@ -298,7 +302,8 @@ public class Authentication extends AbstractKapuaResource {
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Path("refresh")
-    @Schema(
+    @Operation(
+        summary = "Refresh an AccessToken",
         description = "Creates a new AccessToken from an existing (even if expired) AccessToken and a Refresh Token that must be still valid. Regardless of the expiration date, the AccessToken provided to the refresh operation WILL be invalidated"
     )
     @ApiResponses(value = {
@@ -336,7 +341,8 @@ public class Authentication extends AbstractKapuaResource {
     @GET
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Path("info")
-    @Schema(
+    @Operation(
+        summary = "Login Info",
         description = "Returns all the Authentication and Authorization information about the current session"
     )
     @ApiResponses(value = {

@@ -12,6 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.resources.v1.resources.model.device.management.keystore;
 
+import javax.ws.rs.HttpMethod;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.eclipse.kapua.app.api.core.model.EntityId;
 import org.eclipse.kapua.app.api.core.model.ScopeId;
 import org.eclipse.kapua.app.api.resources.v1.resources.DeviceManagementKeystores;
@@ -21,12 +27,7 @@ import org.eclipse.kapua.service.certificate.info.CertificateInfo;
 import org.eclipse.kapua.service.device.management.keystore.DeviceKeystoreManagementService;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystore;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreCertificate;
-
-import javax.ws.rs.HttpMethod;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link DeviceKeystoreCertificateInfo} definition.
@@ -58,6 +59,7 @@ public class DeviceKeystoreCertificateInfo {
      * @return The target {@link DeviceKeystore#getId()}.
      * @since 1.5.0
      */
+    @Schema(example = "SSLKeystore")
     public String getKeystoreId() {
         return keystoreId;
     }
@@ -78,6 +80,7 @@ public class DeviceKeystoreCertificateInfo {
      * @return The target {@link DeviceKeystoreCertificate#getAlias()}
      * @since 1.5.0
      */
+    @Schema(example = "ssl-eclipse")
     public String getAlias() {
         return alias;
     }
@@ -99,6 +102,7 @@ public class DeviceKeystoreCertificateInfo {
      * @since 1.5.0
      */
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(example = "IaIA6xbNR7C")
     public KapuaId getCertificateInfoId() {
         return certificateInfoId;
     }

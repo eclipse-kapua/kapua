@@ -27,6 +27,7 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdAdapter;
 import org.eclipse.kapua.model.xml.DateXmlAdapter;
 import org.eclipse.kapua.service.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
@@ -56,6 +57,7 @@ public interface AccessToken extends KapuaUpdatableEntity, Serializable {
     String TYPE = "accessToken";
 
     @Override
+    @Schema(example = "accessToken")
     default String getType() {
         return TYPE;
     }
@@ -210,8 +212,7 @@ public interface AccessToken extends KapuaUpdatableEntity, Serializable {
      * @since 2.0
      */
     @XmlTransient
-    @Schema(description = "A unique identifier for the token.",
-        example = "4YlC3tt_R3")
+    @JsonIgnore
     String getTokenIdentifier();
 
     /**

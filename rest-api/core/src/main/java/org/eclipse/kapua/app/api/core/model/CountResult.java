@@ -17,6 +17,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * @since 1.0.0
  */
@@ -34,6 +36,7 @@ public class CountResult {
     }
 
     @XmlElement(name = "count")
+    @Schema(description = "The total count of the Entities available in the Scope")
     public long getCount() {
         return count;
     }

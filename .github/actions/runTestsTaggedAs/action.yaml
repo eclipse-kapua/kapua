@@ -33,7 +33,7 @@ runs:
 
     - name: Docker rest-api image creation
       if: ${{ inputs.needs-api-docker-image == 'true' }}
-      run: mvn clean install -Pdocker -pl :kapua-assembly-api
+      run: mvn clean install -Pdocker -pl :kapua-rest-api-resources && mvn install -Pdocker -pl :kapua-assembly-api
       shell: bash
 
     - name: Cucumber tests execution step

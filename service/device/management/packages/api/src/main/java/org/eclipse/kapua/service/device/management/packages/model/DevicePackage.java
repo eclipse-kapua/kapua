@@ -12,12 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.packages.model;
 
+import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.Date;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link DevicePackage} definition.
@@ -27,6 +29,7 @@ import java.util.Date;
 @XmlRootElement(name = "devicePackage")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(factoryClass = DevicePackageXmlRegistry.class, factoryMethod = "newDevicePackage")
+@Schema(description = "A Device Package")
 public interface DevicePackage {
 
     /**
@@ -36,6 +39,10 @@ public interface DevicePackage {
      * @since 1.0.0
      */
     @XmlElement(name = "name")
+    @Schema(
+        description = "The name of the package",
+        example = "org.eclipse.kura.demo.heater"
+    )
     String getName();
 
     /**
@@ -53,6 +60,10 @@ public interface DevicePackage {
      * @since 1.0.0
      */
     @XmlElement(name = "version")
+    @Schema(
+        description = "The version of the package",
+        example = "1.0.300"
+    )
     String getVersion();
 
     /**
@@ -70,6 +81,7 @@ public interface DevicePackage {
      * @since 1.0.0
      */
     @XmlElement(name = "bundleInfos")
+    @Schema(description = "The bundles of this package")
     DevicePackageBundleInfos getBundleInfos();
 
     /**

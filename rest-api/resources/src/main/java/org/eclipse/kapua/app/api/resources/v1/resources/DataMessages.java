@@ -17,7 +17,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -38,6 +37,9 @@ import org.eclipse.kapua.app.api.core.model.MetricType;
 import org.eclipse.kapua.app.api.core.model.ScopeId;
 import org.eclipse.kapua.app.api.core.model.StorableEntityId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
+import org.eclipse.kapua.commons.rest.model.errors.ExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.IllegalArgumentExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.SubjectUnauthorizedExceptionInfo;
 import org.eclipse.kapua.message.device.data.KapuaDataMessage;
 import org.eclipse.kapua.model.type.ObjectValueConverter;
 import org.eclipse.kapua.service.KapuaService;
@@ -58,10 +60,17 @@ import org.eclipse.kapua.service.storable.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.service.storable.model.query.predicate.OrPredicate;
 import org.eclipse.kapua.service.storable.model.query.predicate.RangePredicate;
 import org.eclipse.kapua.service.storable.model.query.predicate.StorablePredicate;
-
 import com.google.common.base.Strings;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Path("{scopeId}/data/messages")
+@Tag(name = "Data Message")
 public class DataMessages extends AbstractKapuaResource {
 
     @Inject
@@ -97,19 +106,59 @@ public class DataMessages extends AbstractKapuaResource {
      */
     @GET
     @Produces({ MediaType.APPLICATION_XML })
+    @Operation(summary = "Query the Data Messages")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The result of the query",
+            content = @Content(schema = @Schema(implementation = MessageListResult.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public <V extends Comparable<V>> MessageListResult simpleQuery(@PathParam("scopeId") ScopeId scopeId,
-            @QueryParam("clientId") List<String> clientIds,
-            @QueryParam("channel") String channel,
-            @QueryParam("strictChannel") boolean strictChannel,
-            @QueryParam("startDate") DateParam startDateParam,
-            @QueryParam("endDate") DateParam endDateParam,
-            @QueryParam("metricName") String metricName,
-            @QueryParam("metricType") String metricType,
-            @QueryParam("metricMin") String metricMinValue,
-            @QueryParam("metricMax") String metricMaxValue,
-            @QueryParam("sortDir") @DefaultValue("DESC") SortDirection sortDir,
-            @QueryParam("offset") @DefaultValue("0") int offset,
-            @QueryParam("limit") @DefaultValue("50") int limit)
+       @Parameter(description = "The ClientID to use as a filter for messages")
+       @QueryParam("clientId") List<String> clientIds,
+       @Parameter(description = "The Channel to use as a filter for messages")
+       @QueryParam("channel") String channel,
+       @Parameter(description = "Restrict the search only to this channel ignoring its children. Only meaningful if channel is set")
+       @QueryParam("strictChannel") boolean strictChannel,
+       @Parameter(description = "The start date to filter the results. Must come before endDate parameter")
+       @QueryParam("startDate") DateParam startDateParam,
+       @Parameter(description = "The end date to filter the results. Must come after startDate parameter")
+       @QueryParam("endDate") DateParam endDateParam,
+       @Parameter(description = "The metric name to filter results. If filled, `metricType`, `metricMinValue` and `metricMaxValue` are also required")
+       @QueryParam("metricName") String metricName,
+       @Parameter(description = "The metric type to filter results")
+       @QueryParam("metricType") String metricType,
+       @Parameter(description = "The minimum metric value to filter results")
+       @QueryParam("metricMin") String metricMinValue,
+       @Parameter(description = "The maximum metric value to filter results")
+       @QueryParam("metricMax") String metricMaxValue,
+       @Parameter(description = "The sort direction. Can be ascending or descending (default)." + "\n" +
+                                    "Available values : ASC, DESC")
+       @QueryParam("sortDir") @DefaultValue("DESC") SortDirection sortDir,
+       @Parameter(description = "An Offset on the result size. Used to skip the first `n` items of a result set, with `n` equal to the value of `offset`")
+       @QueryParam("offset") @DefaultValue("0") int offset,
+       @Parameter(description = "A Limit on the result size. The result set will not contain more items than this number")
+       @QueryParam("limit") @DefaultValue("50") int limit)
             throws KapuaException {
         MetricType<V> internalMetricType = new MetricType<>(metricType);
         MessageQuery query = parametersToQuery(datastorePredicateFactory, messageStoreFactory, scopeId, clientIds, channel, strictChannel, startDateParam, endDateParam, metricName, internalMetricType,
@@ -131,6 +180,36 @@ public class DataMessages extends AbstractKapuaResource {
     @POST
     @Consumes({ MediaType.APPLICATION_XML })
     @Produces({ MediaType.APPLICATION_XML })
+    @Operation(summary = "Store a new Message")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The ID of the new DataMessage",
+            content = @Content(schema = @Schema(
+                name = "dataMessageInsertResponse",
+                example = "{\"id\": \"3fa85f64-5717-4562-b3fc-2c963f66afa6\"}"
+            ))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public Response storeMessage(@PathParam("scopeId") ScopeId scopeId,
             KapuaDataMessage message)
             throws KapuaException {
@@ -178,6 +257,7 @@ public class DataMessages extends AbstractKapuaResource {
     @Path("_count")
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Operation(summary = "Query the Data Messages")
     public CountResult count(@PathParam("scopeId") ScopeId scopeId,
             MessageQuery query)
             throws KapuaException {

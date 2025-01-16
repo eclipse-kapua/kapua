@@ -12,19 +12,20 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.access;
 
-import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.model.KapuaEntity;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.service.authorization.role.Role;
-import org.eclipse.kapua.service.authorization.role.RoleService;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.model.KapuaEntity;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import org.eclipse.kapua.service.authorization.role.Role;
+import org.eclipse.kapua.service.authorization.role.RoleService;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Access role entity.<br>
@@ -44,6 +45,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlType(propOrder = { "accessInfoId", "roleId" }, //
         factoryClass = AccessRoleXmlRegistry.class, //
         factoryMethod = "newAccessRole")
+@Schema(description = "An object that represents the link between an AccessInfo and a Role")
 public interface AccessRole extends KapuaEntity {
 
     String TYPE = "accessRole";
@@ -69,6 +71,10 @@ public interface AccessRole extends KapuaEntity {
      */
     @XmlElement(name = "accessInfoId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(
+        description = "The ID of the AccessInfo",
+        example = "7dX=F5d8PUeDa2tVOmW9ZoHs-YlevaS"
+    )
     KapuaId getAccessInfoId();
 
     /**
@@ -87,5 +93,9 @@ public interface AccessRole extends KapuaEntity {
      */
     @XmlElement(name = "roleId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(
+        description = "The ID of the Role attached to the AccessInfo",
+        example = "dQpxKufp_KmOgbv8DekWP"
+    )
     KapuaId getRoleId();
 }

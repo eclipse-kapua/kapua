@@ -12,13 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job.step.definition;
 
-import org.eclipse.kapua.model.KapuaNamedEntity;
-
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.List;
+
+import org.eclipse.kapua.model.KapuaNamedEntity;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link JobStepDefinition} {@link org.eclipse.kapua.model.KapuaEntity} definition.
@@ -33,6 +34,7 @@ public interface JobStepDefinition extends KapuaNamedEntity {
     String TYPE = "stepDefinition";
 
     @Override
+    @Schema(example = "stepDefinition")
     default String getType() {
         return TYPE;
     }
@@ -45,6 +47,7 @@ public interface JobStepDefinition extends KapuaNamedEntity {
 
     void setReaderName(String readerName);
 
+    @Schema(example = "org.eclipse.kapua.service.device.management.asset.job.DeviceAssetWriteTargetProcessor")
     String getProcessorName();
 
     void setProcessorName(String processorName);

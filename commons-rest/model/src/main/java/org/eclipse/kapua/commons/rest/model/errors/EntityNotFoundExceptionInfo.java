@@ -12,18 +12,20 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.rest.model.errors;
 
-import org.eclipse.kapua.KapuaEntityNotFoundException;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.eclipse.kapua.KapuaEntityNotFoundException;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @XmlRootElement(name = "entityNotFoundExceptionInfo")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Schema(description = "The object to represent the fact that an entity has not been found")
 public class EntityNotFoundExceptionInfo extends ExceptionInfo {
 
     @XmlElement(name = "entityType")
@@ -62,6 +64,7 @@ public class EntityNotFoundExceptionInfo extends ExceptionInfo {
      * @return The {@link KapuaEntityNotFoundException#getEntityType()}.
      * @since 1.0.0
      */
+    @Schema(description = "the exact type of exceptionInfo object")
     public String getEntityType() {
         return entityType;
     }
@@ -72,6 +75,7 @@ public class EntityNotFoundExceptionInfo extends ExceptionInfo {
      * @return The {@link KapuaEntityNotFoundException#getEntityId()}.
      * @since 1.0.0
      */
+    @Schema(description = "The ID of the entity that could not be found")
     public KapuaId getEntityId() {
         return entityId;
     }

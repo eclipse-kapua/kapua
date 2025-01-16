@@ -18,6 +18,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * Device command output entity definition.
  *
@@ -33,6 +35,7 @@ import javax.xml.bind.annotation.XmlType;
         "exitCode",
         "hasTimedout"
 }, factoryClass = DeviceCommandXmlRegistry.class, factoryMethod = "newCommandOutput")
+@Schema(description = "The output of a Command executed on a Device")
 public interface DeviceCommandOutput extends DeviceCommand {
 
     /**
@@ -41,6 +44,7 @@ public interface DeviceCommandOutput extends DeviceCommand {
      * @return
      */
     @XmlElement(name = "stderr")
+    @Schema(example = "")
     String getStderr();
 
     /**
@@ -56,6 +60,7 @@ public interface DeviceCommandOutput extends DeviceCommand {
      * @return
      */
     @XmlElement(name = "stdout")
+    @Schema(example = "total 40\n12503707 4 drwxrwxrwt 1 root root 4096 Sep 13 07:44 .\n12507178 4 drwxr-xr-x 1 root root 4096 Sep 12 08:03 ..\n61409843 4 drwxrwxrwt 2 root root 4096 Feb 28  2018 .ICE-unix\n61409845 4 drwxrwxrwt 2 root root 4096 Feb 28  2018 .Test-unix\n61409838 4 drwxrwxrwt 2 root root 4096 Feb 28  2018 .X11-unix\n61409844 4 drwxrwxrwt 2 root root 4096 Feb 28  2018 .XIM-unix\n61409846 4 drwxrwxrwt 2 root root 4096 Feb 28  2018 .font-unix\n12503708 4 drwxr-xr-x 3 root root 4096 Sep 12 08:03 .kura\n12507353 4 drwxr-xr-x 2 root root 4096 Sep 12 08:03 hsperfdata_root\n12507385 4 drwxr-xr-x 3 root root 4096 Sep 12 08:03 kura\n")
     String getStdout();
 
     /**

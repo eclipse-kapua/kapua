@@ -12,14 +12,15 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.keystore.model;
 
-import org.eclipse.kapua.KapuaSerializable;
-import org.eclipse.kapua.service.device.registry.Device;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.KapuaSerializable;
+import org.eclipse.kapua.service.device.registry.Device;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 
 /**
@@ -41,6 +42,7 @@ public interface DeviceKeystoreKeypair extends KapuaSerializable {
      * @since 1.5.0
      */
     @XmlElement(name = "keystoreId")
+    @Schema(example = "SSLKeystore")
     String getKeystoreId();
 
     /**
@@ -58,6 +60,7 @@ public interface DeviceKeystoreKeypair extends KapuaSerializable {
      * @since 1.5.0
      */
     @XmlElement(name = "alias")
+    @Schema(example = "ssl-eclipse")
     String getAlias();
 
     /**
@@ -75,6 +78,7 @@ public interface DeviceKeystoreKeypair extends KapuaSerializable {
      * @since 1.5.0
      */
     @XmlElement(name = "algorithm")
+    @Schema(example = "RSA")
     String getAlgorithm();
 
     /**
@@ -92,6 +96,7 @@ public interface DeviceKeystoreKeypair extends KapuaSerializable {
      * @since 1.5.0
      */
     @XmlElement(name = "size")
+    @Schema(example = "2048")
     Integer getSize();
 
     /**
@@ -109,6 +114,7 @@ public interface DeviceKeystoreKeypair extends KapuaSerializable {
      * @since 1.5.0
      */
     @XmlElement(name = "signatureAlgorithm")
+    @Schema(example = "SHA256withRSA")
     String getSignatureAlgorithm();
 
     /**
@@ -126,6 +132,7 @@ public interface DeviceKeystoreKeypair extends KapuaSerializable {
      * @since 1.5.0
      */
     @XmlElement(name = "attributes")
+    @Schema(example = "CN=Let's Encrypt Authority X3,O=Let's Encrypt,C=US")
     String getAttributes();
 
     /**

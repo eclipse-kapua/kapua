@@ -12,9 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.model.query;
 
-import org.eclipse.kapua.KapuaSerializable;
-import org.eclipse.kapua.model.KapuaEntity;
-
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -22,12 +25,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Predicate;
+
+import org.eclipse.kapua.KapuaSerializable;
+import org.eclipse.kapua.model.KapuaEntity;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link KapuaListResult} definition.
@@ -38,6 +39,7 @@ import java.util.function.Predicate;
 @XmlRootElement(name = "result")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(propOrder = {"limitExceeded", "size", "items", "totalCount"})
+@Schema(description = "A container for a list of objects")
 public interface KapuaListResult<E extends KapuaEntity> extends KapuaSerializable {
 
     /**
@@ -50,6 +52,7 @@ public interface KapuaListResult<E extends KapuaEntity> extends KapuaSerializabl
      * @since 1.0.0
      */
     @XmlElement(name = "limitExceeded")
+    @Schema(description = "A flag indicating if more results are available but were not returned because of the limit imposed in the query")
     boolean isLimitExceeded();
 
     /**
@@ -140,6 +143,7 @@ public interface KapuaListResult<E extends KapuaEntity> extends KapuaSerializabl
      * @since 1.0.0
      */
     @XmlElement(name = "size")
+    @Schema(description = "The size of the list containing the items")
     int getSize();
 
     /**
@@ -191,6 +195,7 @@ public interface KapuaListResult<E extends KapuaEntity> extends KapuaSerializabl
      * @return The total count
      * @since 1.2.0
      */
+    @Schema(description = "The total count of the elements that matched the query. Available only if `askTotalCount` was `true` in the query object.")
     Long getTotalCount();
 
     /**

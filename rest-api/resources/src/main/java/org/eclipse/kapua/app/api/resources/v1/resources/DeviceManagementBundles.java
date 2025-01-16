@@ -12,18 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.resources.v1.resources;
 
-import com.google.common.base.Strings;
-import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.app.api.core.model.EntityId;
-import org.eclipse.kapua.app.api.core.model.ScopeId;
-import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
-import org.eclipse.kapua.model.query.SortOrder;
-import org.eclipse.kapua.service.KapuaService;
-import org.eclipse.kapua.service.device.management.bundle.DeviceBundle;
-import org.eclipse.kapua.service.device.management.bundle.DeviceBundleManagementService;
-import org.eclipse.kapua.service.device.management.bundle.DeviceBundles;
-import org.eclipse.kapua.service.device.registry.Device;
-
 import javax.inject.Inject;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -35,7 +23,32 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.app.api.core.model.EntityId;
+import org.eclipse.kapua.app.api.core.model.ScopeId;
+import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
+import org.eclipse.kapua.commons.rest.model.errors.DeviceNotConnectedExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.EntityNotFoundExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.ExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.IllegalArgumentExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.SubjectUnauthorizedExceptionInfo;
+import org.eclipse.kapua.model.query.SortOrder;
+import org.eclipse.kapua.service.KapuaService;
+import org.eclipse.kapua.service.device.management.bundle.DeviceBundle;
+import org.eclipse.kapua.service.device.management.bundle.DeviceBundleManagementService;
+import org.eclipse.kapua.service.device.management.bundle.DeviceBundles;
+import org.eclipse.kapua.service.device.registry.Device;
+import com.google.common.base.Strings;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @Path("{scopeId}/devices/{deviceId}/bundles")
+@Tag(name = "Device Management - Bundle")
 public class DeviceManagementBundles extends AbstractKapuaResource {
 
     @Inject
@@ -55,11 +68,43 @@ public class DeviceManagementBundles extends AbstractKapuaResource {
      */
     @GET
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Operation(summary = "Get the Bundles installed on a single Device")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The list of the Bundles installed on a single Device",
+            content = @Content(schema = @Schema(implementation = DeviceBundles.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public DeviceBundles get(
+            @Parameter(description = "The ID of the Scope where to perform the operation.")
             @PathParam("scopeId") ScopeId scopeId,
+            @Parameter(description = "The ID of the Device on which to perform the operation")
             @PathParam("deviceId") EntityId deviceId,
+            @Parameter(description = "The name of the parameter that will be used as a sorting key")
             @QueryParam("sortParam") String sortParam,
+            @Parameter(description = "The sort direction. Can be ASCENDING (default), DESCENDING. Case-insensitive.")
             @QueryParam("sortDir") @DefaultValue("ASCENDING") SortOrder sortDir,
+            @Parameter(description = "The timeout for the request in milliseconds")
             @QueryParam("timeout") @DefaultValue("30000") Long timeout) throws KapuaException {
         DeviceBundles deviceBundles = bundleService.get(scopeId, deviceId, timeout);
         if (!Strings.isNullOrEmpty(sortParam)) {
@@ -96,10 +141,50 @@ public class DeviceManagementBundles extends AbstractKapuaResource {
     @POST
     @Path("{bundleId}/_start")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Operation(summary = "Start the desired Bundle on a single Device")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "204",
+            description = "The Bundle has been successfully started"
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "The desired entity could not be found",
+            content = @Content(schema = @Schema(implementation = EntityNotFoundExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "409",
+            description = "A conflict in the request - the device is disconnected and the request cannot be accomplished",
+            content = @Content(schema = @Schema(implementation = DeviceNotConnectedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public Response start(
+            @Parameter(description = "The ID of the Scope where to perform the operation.")
             @PathParam("scopeId") ScopeId scopeId,
+            @Parameter(description = "The ID of the Device on which to perform the operation")
             @PathParam("deviceId") EntityId deviceId,
+            @Parameter(description = "The ID of the Bundle on which to perform the operation")
             @PathParam("bundleId") String bundleId,
+            @Parameter(description = "The timeout for the request in milliseconds")
             @QueryParam("timeout") @DefaultValue("30000") Long timeout) throws KapuaException {
         bundleService.start(scopeId, deviceId, bundleId, timeout);
 
@@ -118,10 +203,50 @@ public class DeviceManagementBundles extends AbstractKapuaResource {
     @POST
     @Path("{bundleId}/_stop")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Operation(summary = "top the desired Bundle on a single Device")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "204",
+            description = "The Bundle has been successfully stopped"
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "The desired entity could not be found",
+            content = @Content(schema = @Schema(implementation = EntityNotFoundExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "409",
+            description = "A conflict in the request - the device is disconnected and the request cannot be accomplished",
+            content = @Content(schema = @Schema(implementation = DeviceNotConnectedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public Response stop(
+            @Parameter(description = "The ID of the Scope where to perform the operation.")
             @PathParam("scopeId") ScopeId scopeId,
+            @Parameter(description = "The ID of the Device on which to perform the operation")
             @PathParam("deviceId") EntityId deviceId,
+            @Parameter(description = "The ID of the Bundle on which to perform the operation")
             @PathParam("bundleId") String bundleId,
+            @Parameter(description = "The timeout for the request in milliseconds")
             @QueryParam("timeout") @DefaultValue("30000") Long timeout) throws KapuaException {
         bundleService.stop(scopeId, deviceId, bundleId, timeout);
 

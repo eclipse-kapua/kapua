@@ -12,16 +12,18 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.rest.model.errors;
 
-import org.eclipse.kapua.service.authorization.exception.SubjectUnauthorizedException;
-import org.eclipse.kapua.service.authorization.permission.Permission;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.eclipse.kapua.service.authorization.exception.SubjectUnauthorizedException;
+import org.eclipse.kapua.service.authorization.permission.Permission;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @XmlRootElement(name = "subjectUnauthorizedExceptionInfo")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Schema(description = "The object to represent the fact that the subject requesting the resource has not the required permissions")
 public class SubjectUnauthorizedExceptionInfo extends ExceptionInfo {
 
     @XmlElement(name = "permission")

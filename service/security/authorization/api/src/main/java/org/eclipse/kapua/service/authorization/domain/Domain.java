@@ -12,12 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.domain;
 
-import org.eclipse.kapua.model.KapuaEntity;
-import org.eclipse.kapua.model.domain.AbstractDomain;
-import org.eclipse.kapua.model.domain.Actions;
-import org.eclipse.kapua.service.KapuaService;
-import org.eclipse.kapua.service.authorization.permission.Permission;
-
+import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -25,7 +20,13 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import java.util.Set;
+
+import org.eclipse.kapua.model.KapuaEntity;
+import org.eclipse.kapua.model.domain.AbstractDomain;
+import org.eclipse.kapua.model.domain.Actions;
+import org.eclipse.kapua.service.KapuaService;
+import org.eclipse.kapua.service.authorization.permission.Permission;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link Domain} {@link KapuaEntity} definition
@@ -45,6 +46,7 @@ public interface Domain extends KapuaEntity {//, org.eclipse.kapua.model.domain.
     String TYPE = "domain";
 
     @Override
+    @Schema(example = "domain")
     default String getType() {
         return TYPE;
     }
@@ -74,6 +76,7 @@ public interface Domain extends KapuaEntity {//, org.eclipse.kapua.model.domain.
      * @since 1.0.0
      */
     @XmlElement(name = "name")
+    @Schema(example = "account")
     String getName();
 
     /**
@@ -104,6 +107,7 @@ public interface Domain extends KapuaEntity {//, org.eclipse.kapua.model.domain.
      */
     @XmlElementWrapper(name = "actions")
     @XmlElement(name = "action")
+    @Schema(example = "{\"delete\", \"write\", \"read\"}")
     Set<Actions> getActions();
 
     /**

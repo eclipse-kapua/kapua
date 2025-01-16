@@ -12,17 +12,18 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job.step;
 
-import org.eclipse.kapua.model.KapuaNamedEntity;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.service.job.step.definition.JobStepProperty;
-
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.List;
+
+import org.eclipse.kapua.model.KapuaNamedEntity;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import org.eclipse.kapua.service.job.step.definition.JobStepProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link JobStep} {@link org.eclipse.kapua.model.KapuaEntity} definition.
@@ -37,11 +38,13 @@ public interface JobStep extends KapuaNamedEntity {
     String TYPE = "jobStep";
 
     @Override
+    @Schema(example = "jobStep")
     default String getType() {
         return TYPE;
     }
 
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(example = "BL2MaF-ldS0")
     KapuaId getJobId();
 
     void setJobId(KapuaId jobId);
@@ -51,6 +54,7 @@ public interface JobStep extends KapuaNamedEntity {
     void setStepIndex(int stepIndex);
 
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(example = "Cg")
     KapuaId getJobStepDefinitionId();
 
     void setJobStepDefinitionId(KapuaId jobDefinitionId);

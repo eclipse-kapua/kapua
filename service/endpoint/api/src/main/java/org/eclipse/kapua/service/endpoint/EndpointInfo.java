@@ -12,17 +12,18 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.endpoint;
 
-import org.eclipse.kapua.KapuaRuntimeException;
-import org.eclipse.kapua.model.KapuaUpdatableEntity;
-
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Set;
+
+import org.eclipse.kapua.KapuaRuntimeException;
+import org.eclipse.kapua.model.KapuaUpdatableEntity;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link EndpointInfo} entity definition.<br>
@@ -40,21 +41,25 @@ public interface EndpointInfo extends KapuaUpdatableEntity {
     String ENDPOINT_TYPE_CORS = "cors";
 
     @Override
+    @Schema(example = "endpointInfo")
     default String getType() {
         return TYPE;
     }
 
     @XmlElement(name = "schema")
+    @Schema(example = "mqtt")
     String getSchema();
 
     void setSchema(String schema);
 
     @XmlElement(name = "dns")
+    @Schema(example = "10.200.12.148")
     String getDns();
 
     void setDns(String dns);
 
     @XmlElement(name = "port")
+    @Schema(example = "1883")
     int getPort();
 
     void setPort(int port);
@@ -85,6 +90,7 @@ public interface EndpointInfo extends KapuaUpdatableEntity {
         }
     }
 
+    @Schema(example = "resource")
     String getEndpointType();
 
     void setEndpointType(String endpointType);

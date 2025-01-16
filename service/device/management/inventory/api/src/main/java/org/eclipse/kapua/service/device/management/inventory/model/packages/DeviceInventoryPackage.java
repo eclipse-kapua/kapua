@@ -12,14 +12,15 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.inventory.model.packages;
 
-import org.eclipse.kapua.service.device.management.inventory.model.bundle.DeviceInventoryBundle;
-
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.List;
+
+import org.eclipse.kapua.service.device.management.inventory.model.bundle.DeviceInventoryBundle;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link DeviceInventoryPackage} definition.
@@ -40,6 +41,7 @@ public interface DeviceInventoryPackage {
      * @since 1.5.0
      */
     @XmlElement(name = "name")
+    @Schema(example = "org.eclipse.kura.example.beacon")
     String getName();
 
     /**
@@ -57,6 +59,7 @@ public interface DeviceInventoryPackage {
      * @since 1.5.0
      */
     @XmlElement(name = "version")
+    @Schema(example = "1.0.500")
     String getVersion();
 
     /**
