@@ -104,13 +104,12 @@ public class GwtKapuaAuthenticationModelConverter {
 
         // Convert scopeId
         KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(gwtCredentialCreator.getScopeId());
-        CredentialCreator credentialCreator = CREDENTIAL_FACTORY
-                .newCreator(scopeId,
-                        GwtKapuaCommonsModelConverter.convertKapuaId(gwtCredentialCreator.getUserId()),
-                        gwtCredentialCreator.getCredentialType(),
-                        gwtCredentialCreator.getCredentialPlainKey(),
-                        convertCredentialStatus(gwtCredentialCreator.getCredentialStatus()),
-                        gwtCredentialCreator.getExpirationDate());
+        CredentialCreator credentialCreator = new CredentialCreator(scopeId,
+                GwtKapuaCommonsModelConverter.convertKapuaId(gwtCredentialCreator.getUserId()),
+                gwtCredentialCreator.getCredentialType(),
+                gwtCredentialCreator.getCredentialPlainKey(),
+                convertCredentialStatus(gwtCredentialCreator.getCredentialStatus()),
+                gwtCredentialCreator.getExpirationDate());
         // Return converted
         return credentialCreator;
     }
@@ -151,7 +150,7 @@ public class GwtKapuaAuthenticationModelConverter {
     public static MfaOptionCreator convertMfaCredentialOptionsCreator(GwtMfaCredentialOptionsCreator gwtMfaCredentialOptionsCreator) {
         KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(gwtMfaCredentialOptionsCreator.getScopeId());
         KapuaId userId = GwtKapuaCommonsModelConverter.convertKapuaId(gwtMfaCredentialOptionsCreator.getUserId());
-        return MFA_OPTION_FACTORY.newCreator(scopeId, userId);
+        return new MfaOptionCreator(scopeId, userId);
     }
 
 }

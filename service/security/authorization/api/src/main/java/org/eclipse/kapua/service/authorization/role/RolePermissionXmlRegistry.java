@@ -29,14 +29,4 @@ public class RolePermissionXmlRegistry {
     public RolePermission newRolePermission() {
         return rolePermissionFactory.newEntity(null);
     }
-
-    /**
-     * Creates a new {@link RolePermission} instance
-     *
-     * @return
-     */
-    public RolePermissionCreator newCreator() {
-        return rolePermissionFactory.newCreator(null);
-    }
-
 }

@@ -60,13 +60,13 @@ public class AccessRoleFactoryImplTest {
 
     @Test
     public void newCreatorTest() {
-        AccessRoleCreator accessRoleCreator = accessRoleFactoryImpl.newCreator(KapuaId.ONE);
+        AccessRoleCreator accessRoleCreator = new AccessRoleCreator(KapuaId.ONE);
         Assert.assertEquals("Expected and actual values should be the same.", KapuaId.ONE, accessRoleCreator.getScopeId());
     }
 
     @Test
     public void newCreatorNullTest() {
-        AccessRoleCreator accessRoleCreator = accessRoleFactoryImpl.newCreator(null);
+        AccessRoleCreator accessRoleCreator = new AccessRoleCreator(null);
         Assert.assertNull("Null expected.", accessRoleCreator.getScopeId());
     }
 

@@ -468,14 +468,14 @@ public class JobExecutionServiceSteps extends JobServiceTestBase {
 
     @When("I test the sanity of the job execution factory")
     public void testTheJobExecutionFactory() {
-        Assert.assertNotNull(jobExecutionFactory.newCreator(SYS_SCOPE_ID));
+        Assert.assertNotNull(new JobExecutionCreator(SYS_SCOPE_ID));
         Assert.assertNotNull(jobExecutionFactory.newEntity(SYS_SCOPE_ID));
     }
     // Private methods
 
     private JobExecutionCreator prepareDefaultJobExecutionCreator() {
         KapuaId currentJobId = (KapuaId) stepData.get(CURRENT_JOB_ID);
-        JobExecutionCreator tmpCr = jobExecutionFactory.newCreator(getCurrentScopeId());
+        JobExecutionCreator tmpCr = new JobExecutionCreator(getCurrentScopeId());
         tmpCr.setJobId(currentJobId);
         tmpCr.setStartedOn(DateTime.now().toDate());
         return tmpCr;

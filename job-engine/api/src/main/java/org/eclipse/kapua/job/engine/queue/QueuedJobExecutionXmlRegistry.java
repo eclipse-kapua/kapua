@@ -34,14 +34,4 @@ public class QueuedJobExecutionXmlRegistry {
     public QueuedJobExecution newQueuedJobExecution() {
         return queuedJobExecutionFactory.newEntity(null);
     }
-
-    /**
-     * Creates a new job creator instance
-     *
-     * @return
-     */
-    public QueuedJobExecutionCreator newQueuedJobExecutionCreator() {
-        return queuedJobExecutionFactory.newCreator(null);
-    }
-
 }

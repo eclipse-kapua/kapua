@@ -17,7 +17,6 @@ import javax.inject.Singleton;
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperation;
-import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationCreator;
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationFactory;
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationProperty;
 
@@ -32,11 +31,6 @@ public class DeviceManagementOperationFactoryImpl implements DeviceManagementOpe
     @Override
     public DeviceManagementOperation newEntity(KapuaId scopeId) {
         return new DeviceManagementOperationImpl(scopeId);
-    }
-
-    @Override
-    public DeviceManagementOperationCreator newCreator(KapuaId scopeId) {
-        return new DeviceManagementOperationCreatorImpl(scopeId);
     }
 
     @Override

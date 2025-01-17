@@ -13,7 +13,6 @@
 package org.eclipse.kapua.service.account;
 
 import org.eclipse.kapua.model.KapuaEntityFactory;
-import org.eclipse.kapua.model.id.KapuaId;
 
 /**
  * {@link Account} {@link KapuaEntityFactory} definition.
@@ -21,21 +20,7 @@ import org.eclipse.kapua.model.id.KapuaId;
  * @see KapuaEntityFactory
  * @since 1.0.0
  */
-public interface AccountFactory extends KapuaEntityFactory<Account, AccountCreator> {
-
-    /**
-     * Instantiates a new {@link AccountCreator} with the given name.
-     *
-     * @param scopeId
-     *         The scope {@link KapuaId} to set in the {@link AccountCreator}
-     * @param name
-     *         The name to set in the {@link AccountCreator}
-     * @return The newly instantiated {@link AccountCreator}
-     * @since 1.0.0
-     * @deprecated Since 1.6.0. Please make use of {@link #newCreator(KapuaId)} and then use {@link AccountCreator#setName(String)}.
-     */
-    @Deprecated
-    AccountCreator newCreator(KapuaId scopeId, String name);
+public interface AccountFactory extends KapuaEntityFactory<Account> {
 
     /**
      * Instantiates a new {@link Organization}.

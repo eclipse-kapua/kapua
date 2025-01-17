@@ -17,7 +17,6 @@ import javax.inject.Singleton;
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.scheduler.trigger.Trigger;
-import org.eclipse.kapua.service.scheduler.trigger.TriggerCreator;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerFactory;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerProperty;
 import org.eclipse.kapua.service.scheduler.trigger.definition.quartz.TriggerPropertyImpl;
@@ -29,11 +28,6 @@ import org.eclipse.kapua.service.scheduler.trigger.definition.quartz.TriggerProp
  */
 @Singleton
 public class TriggerFactoryImpl implements TriggerFactory {
-
-    @Override
-    public TriggerCreator newCreator(KapuaId scopeId) {
-        return new TriggerCreatorImpl(scopeId, null);
-    }
 
     @Override
     public Trigger newEntity(KapuaId scopeId) {

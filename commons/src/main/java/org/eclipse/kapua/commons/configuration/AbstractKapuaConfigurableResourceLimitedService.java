@@ -64,7 +64,7 @@ public abstract class AbstractKapuaConfigurableResourceLimitedService<
         E extends KapuaEntity,
         C extends KapuaEntityCreator<E>,
         S extends KapuaEntityService<E, C>,
-        F extends KapuaEntityFactory<E, C>
+        F extends KapuaEntityFactory<E>
         >
         extends AbstractKapuaConfigurableService
         implements KapuaEntityService<E, C> {

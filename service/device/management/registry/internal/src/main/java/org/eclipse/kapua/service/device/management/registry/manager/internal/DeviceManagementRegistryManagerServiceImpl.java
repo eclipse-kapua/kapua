@@ -31,7 +31,6 @@ import org.eclipse.kapua.service.device.management.registry.operation.DeviceMana
 import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotification;
 import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotificationAttributes;
 import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotificationCreator;
-import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotificationFactory;
 import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotificationListResult;
 import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotificationQuery;
 import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotificationService;
@@ -47,18 +46,15 @@ public class DeviceManagementRegistryManagerServiceImpl implements DeviceManagem
 
     private final DeviceManagementOperationRegistryService deviceManagementOperationRegistryService;
     private final ManagementOperationNotificationService managementOperationNotificationService;
-    private final ManagementOperationNotificationFactory managementOperationNotificationFactory;
 
     private static final String LOG_MESSAGE_GENERATING = "Generating...";
 
     @Inject
     public DeviceManagementRegistryManagerServiceImpl(
             DeviceManagementOperationRegistryService deviceManagementOperationRegistryService,
-            ManagementOperationNotificationService managementOperationNotificationService,
-            ManagementOperationNotificationFactory managementOperationNotificationFactory) {
+            ManagementOperationNotificationService managementOperationNotificationService) {
         this.deviceManagementOperationRegistryService = deviceManagementOperationRegistryService;
         this.managementOperationNotificationService = managementOperationNotificationService;
-        this.managementOperationNotificationFactory = managementOperationNotificationFactory;
     }
 
     @Override
@@ -105,7 +101,7 @@ public class DeviceManagementRegistryManagerServiceImpl implements DeviceManagem
     public void storeManagementNotification(KapuaId scopeId, KapuaId operationId, Date updateOn, NotifyStatus notifyStatus, String resource, Integer progress, String message) throws KapuaException {
         DeviceManagementOperation deviceManagementOperation = getDeviceManagementOperation(scopeId, operationId);
 
-        ManagementOperationNotificationCreator managementOperationNotificationCreator = managementOperationNotificationFactory.newCreator(scopeId);
+        ManagementOperationNotificationCreator managementOperationNotificationCreator = new ManagementOperationNotificationCreator(scopeId);
         managementOperationNotificationCreator.setOperationId(deviceManagementOperation.getId());
         managementOperationNotificationCreator.setSentOn(updateOn);
         managementOperationNotificationCreator.setStatus(DeviceManagementOperationStatus.readFrom(notifyStatus));

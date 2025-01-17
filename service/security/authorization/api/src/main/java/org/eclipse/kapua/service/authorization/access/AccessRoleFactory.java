@@ -20,6 +20,6 @@ import org.eclipse.kapua.model.KapuaEntityFactory;
  * @see org.eclipse.kapua.model.KapuaEntityFactory
  * @since 1.0.0
  */
-public interface AccessRoleFactory extends KapuaEntityFactory<AccessRole, AccessRoleCreator> {
+public interface AccessRoleFactory extends KapuaEntityFactory<AccessRole> {
 
 }

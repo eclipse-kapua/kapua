@@ -29,13 +29,4 @@ public class EventStoreXmlRegistry {
     public EventStoreRecord newEventStoreRecord() {
         return kapuaEventFactory.newEntity(null);
     }
-
-    /**
-     * Creates a new kapuaEvent creator instance
-     *
-     * @return
-     */
-    public EventStoreRecordCreator newEventStoreRecordCreator() {
-        return kapuaEventFactory.newCreator(null);
-    }
 }

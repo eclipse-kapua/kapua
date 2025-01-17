@@ -12,18 +12,44 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.registry.connection;
 
+import javax.xml.bind.annotation.XmlElement;
+
+import org.eclipse.kapua.model.KapuaEntityCreator;
 import org.eclipse.kapua.model.KapuaUpdatableEntityCreator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.device.registry.ConnectionUserCouplingMode;
-
-import javax.xml.bind.annotation.XmlElement;
 
 /**
  * Device connection creator service definition.
  *
  * @since 1.0
  */
-public interface DeviceConnectionCreator extends KapuaUpdatableEntityCreator<DeviceConnection> {
+public class DeviceConnectionCreator extends KapuaUpdatableEntityCreator<DeviceConnection> {
+
+    private static final long serialVersionUID = 2740394157765904615L;
+
+    private DeviceConnectionStatus status;
+    private String clientId;
+    private KapuaId userId;
+    private ConnectionUserCouplingMode userCouplingMode;
+    private KapuaId reservedUserId;
+    private boolean allowUserChange;
+    private String authenticationType;
+    private String lastAuthenticationType;
+    private String protocol;
+    private String clientIp;
+    private String serverIp;
+
+    public DeviceConnectionCreator() {
+    }
+
+    public DeviceConnectionCreator(KapuaId scopeId) {
+        super(scopeId);
+    }
+
+    public DeviceConnectionCreator(KapuaEntityCreator<DeviceConnection> entityCreator) {
+        super(entityCreator);
+    }
 
     /**
      * Get the device connection status
@@ -31,70 +57,90 @@ public interface DeviceConnectionCreator extends KapuaUpdatableEntityCreator<Dev
      * @return
      */
     @XmlElement(name = "status")
-    DeviceConnectionStatus getStatus();
+    public DeviceConnectionStatus getStatus() {
+        return status;
+    }
 
     /**
      * Set the device connection status
      *
      * @param status
      */
-    void setStatus(DeviceConnectionStatus status);
+    public void setStatus(DeviceConnectionStatus status) {
+        this.status = status;
+    }
 
     /**
      * Get the client identifier
      *
      * @return
      */
-    String getClientId();
+    public String getClientId() {
+        return clientId;
+    }
 
     /**
      * Set the client identifier
      *
      * @param clientId
      */
-    void setClientId(String clientId);
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
 
     /**
      * Get the user identifier
      *
      * @return
      */
-    KapuaId getUserId();
+    public KapuaId getUserId() {
+        return userId;
+    }
 
     /**
      * Set the user identifier
      *
      * @param userId
      */
-    void setUserId(KapuaId userId);
+    public void setUserId(KapuaId userId) {
+        this.userId = userId;
+    }
 
     /**
      * Get the device connection user coupling mode.
      *
      * @return
      */
-    ConnectionUserCouplingMode getUserCouplingMode();
+    public ConnectionUserCouplingMode getUserCouplingMode() {
+        return userCouplingMode;
+    }
 
     /**
      * Set the device connection user coupling mode.
      *
      * @param userCouplingMode
      */
-    void setUserCouplingMode(ConnectionUserCouplingMode userCouplingMode);
+    public void setUserCouplingMode(ConnectionUserCouplingMode userCouplingMode) {
+        this.userCouplingMode = userCouplingMode;
+    }
 
     /**
      * Get the reserved user identifier
      *
      * @return
      */
-    KapuaId getReservedUserId();
+    public KapuaId getReservedUserId() {
+        return reservedUserId;
+    }
 
     /**
      * Set the reserved user identifier
      *
      * @param reservedUserId
      */
-    void setReservedUserId(KapuaId reservedUserId);
+    public void setReservedUserId(KapuaId reservedUserId) {
+        this.reservedUserId = reservedUserId;
+    }
 
     /**
      * Gets whether or not the {@link DeviceConnection} can change user on the next login.
@@ -102,14 +148,18 @@ public interface DeviceConnectionCreator extends KapuaUpdatableEntityCreator<Dev
      * @return <code>true</code> if device can changhe user to connect, <code>false</code> if not.
      */
     @XmlElement(name = "allowUserChange")
-    boolean getAllowUserChange();
+    public boolean getAllowUserChange() {
+        return allowUserChange;
+    }
 
     /**
      * Sets whether or not the {@link DeviceConnection} can change user on the next login.
      *
      * @param allowUserChange
      */
-    void setAllowUserChange(boolean allowUserChange);
+    public void setAllowUserChange(boolean allowUserChange) {
+        this.allowUserChange = allowUserChange;
+    }
 
     /**
      * Gets the allowed authentication type.
@@ -117,15 +167,20 @@ public interface DeviceConnectionCreator extends KapuaUpdatableEntityCreator<Dev
      * @return The allowed authentication type.
      * @since 2.0.0
      */
-    String getAuthenticationType();
+    public String getAuthenticationType() {
+        return authenticationType;
+    }
 
     /**
      * Sets the allowed authentication type.
      *
-     * @param authenticationType The allowed authentication type.
+     * @param authenticationType
+     *         The allowed authentication type.
      * @since 2.0.0
      */
-    void setAuthenticationType(String authenticationType);
+    public void setAuthenticationType(String authenticationType) {
+        this.authenticationType = authenticationType;
+    }
 
     /**
      * Gets the last used authentication type.
@@ -133,55 +188,73 @@ public interface DeviceConnectionCreator extends KapuaUpdatableEntityCreator<Dev
      * @return The last used authentication type.
      * @since 2.0.0
      */
-    String getLastAuthenticationType();
+    public String getLastAuthenticationType() {
+        return lastAuthenticationType;
+    }
 
     /**
      * Sets the last used authentication type.
      *
-     * @param lastAuthenticationType The last used authentication type.
+     * @param lastAuthenticationType
+     *         The last used authentication type.
      * @since 2.0.0
      */
-    void setLastAuthenticationType(String lastAuthenticationType);
+    public void setLastAuthenticationType(String lastAuthenticationType) {
+        this.lastAuthenticationType = lastAuthenticationType;
+    }
 
     /**
      * Get the device protocol
      *
      * @return
      */
-    String getProtocol();
+    public String getProtocol() {
+        return protocol;
+    }
 
     /**
      * Set the device protocol
      *
      * @param protocol
      */
-    void setProtocol(String protocol);
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
 
     /**
      * Get the client ip
      *
      * @return
      */
-    String getClientIp();
+    public String getClientIp() {
+        return clientIp;
+    }
 
     /**
      * Set the client ip
      *
      * @param clientIp
      */
-    void setClientIp(String clientIp);
+    public void setClientIp(String clientIp) {
+        this.clientIp = clientIp;
+    }
 
     /**
      * Get the server ip
      *
      * @return
      */
-    String getServerIp();
+    public String getServerIp() {
+        return serverIp;
+    }
 
     /**
      * Set the server ip
      *
      * @param serverIp
      */
-    void setServerIp(String serverIp);
+    public void setServerIp(String serverIp) {
+        this.serverIp = serverIp;
+    }
+
 }

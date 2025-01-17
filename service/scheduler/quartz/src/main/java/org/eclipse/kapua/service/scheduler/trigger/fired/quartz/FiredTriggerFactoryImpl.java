@@ -17,7 +17,6 @@ import javax.inject.Singleton;
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTrigger;
-import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTriggerCreator;
 import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTriggerFactory;
 
 /**
@@ -31,11 +30,6 @@ public class FiredTriggerFactoryImpl implements FiredTriggerFactory {
     @Override
     public FiredTrigger newEntity(KapuaId scopeId) {
         return new FiredTriggerImpl(scopeId);
-    }
-
-    @Override
-    public FiredTriggerCreator newCreator(KapuaId scopeId) {
-        return new FiredTriggerCreatorImpl(scopeId);
     }
 
     @Override

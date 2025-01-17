@@ -12,24 +12,39 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.job;
 
-import org.eclipse.kapua.model.KapuaEntityCreator;
-import org.eclipse.kapua.model.id.KapuaId;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.eclipse.kapua.commons.model.id.KapuaEid;
+import org.eclipse.kapua.model.KapuaEntityCreator;
+import org.eclipse.kapua.model.id.KapuaId;
+
 /**
- * {@link JobDeviceManagementOperationCreator} encapsulates all the information needed to create a new {@link JobDeviceManagementOperation} in the system.<br>
- * The data provided will be used to seed the new {@link JobDeviceManagementOperation}.
+ * {@link JobDeviceManagementOperationCreator} encapsulates all the information needed to create a new {@link JobDeviceManagementOperation} in the system.<br> The data provided will be used to seed
+ * the new {@link JobDeviceManagementOperation}.
  *
  * @since 1.1.0
  */
 @XmlRootElement(name = "jobDeviceManagementOperationCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = JobDeviceManagementOperationXmlRegistry.class, factoryMethod = "newJobDeviceManagementOperationCreator")
-public interface JobDeviceManagementOperationCreator extends KapuaEntityCreator<JobDeviceManagementOperation> {
+@XmlType
+public class JobDeviceManagementOperationCreator extends KapuaEntityCreator<JobDeviceManagementOperation> {
+
+    private KapuaId jobId;
+    private KapuaId deviceManagementOperationId;
+
+    public JobDeviceManagementOperationCreator() {
+    }
+
+    public JobDeviceManagementOperationCreator(KapuaId scopeId) {
+        super(scopeId);
+    }
+
+    public JobDeviceManagementOperationCreator(KapuaEntityCreator<JobDeviceManagementOperation> entityCreator) {
+        super(entityCreator);
+    }
 
     /**
      * Gets the {@link org.eclipse.kapua.service.job.Job} {@link KapuaId}.
@@ -37,15 +52,20 @@ public interface JobDeviceManagementOperationCreator extends KapuaEntityCreator<
      * @return The {@link org.eclipse.kapua.service.job.Job} {@link KapuaId}.
      * @since 1.1.0
      */
-    KapuaId getJobId();
+    public KapuaId getJobId() {
+        return jobId;
+    }
 
     /**
      * Sets the {@link org.eclipse.kapua.service.job.Job} {@link KapuaId}.
      *
-     * @param jobId The {@link org.eclipse.kapua.service.job.Job} {@link KapuaId}.
+     * @param jobId
+     *         The {@link org.eclipse.kapua.service.job.Job} {@link KapuaId}.
      * @since 1.1.0
      */
-    void setJobId(KapuaId jobId);
+    public void setJobId(KapuaId jobId) {
+        this.jobId = jobId;
+    }
 
     /**
      * Gets the {@link org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperation} {@link KapuaId}.
@@ -53,13 +73,18 @@ public interface JobDeviceManagementOperationCreator extends KapuaEntityCreator<
      * @return The {@link org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperation} {@link KapuaId}.
      * @since 1.1.0
      */
-    KapuaId getDeviceManagementOperationId();
+    public KapuaId getDeviceManagementOperationId() {
+        return deviceManagementOperationId;
+    }
 
     /**
      * Sets the {@link org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperation} {@link KapuaId}.
      *
-     * @param deviceManagementOperationId The {@link org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperation} {@link KapuaId}.
+     * @param deviceManagementOperationId
+     *         The {@link org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperation} {@link KapuaId}.
      * @since 1.1.0
      */
-    void setDeviceManagementOperationId(KapuaId deviceManagementOperationId);
+    public void setDeviceManagementOperationId(KapuaId deviceManagementOperationId) {
+        this.deviceManagementOperationId = KapuaEid.parseKapuaId(deviceManagementOperationId);
+    }
 }

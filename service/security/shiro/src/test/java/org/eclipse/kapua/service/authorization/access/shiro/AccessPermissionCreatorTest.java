@@ -14,31 +14,31 @@ package org.eclipse.kapua.service.authorization.access.shiro;
 
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
+import org.eclipse.kapua.service.authorization.access.AccessPermissionCreator;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
 
-
 @Category(JUnitTests.class)
-public class AccessPermissionCreatorImplTest {
+public class AccessPermissionCreatorTest {
 
     @Test
     public void accessPermissionCreatorImplTest() {
-        AccessPermissionCreatorImpl accessPermissionCreatorImpl = new AccessPermissionCreatorImpl(KapuaId.ONE);
+        AccessPermissionCreator accessPermissionCreatorImpl = new AccessPermissionCreator(KapuaId.ONE);
         Assert.assertEquals("Expected and actual values should be the same.", KapuaId.ONE, accessPermissionCreatorImpl.getScopeId());
     }
 
     @Test
     public void accessPermissionCreatorImplNullTest() {
-        AccessPermissionCreatorImpl accessPermissionCreatorImpl = new AccessPermissionCreatorImpl(null);
+        AccessPermissionCreator accessPermissionCreatorImpl = new AccessPermissionCreator(null);
         Assert.assertNull("Null expected.", accessPermissionCreatorImpl.getScopeId());
     }
 
     @Test
     public void setAndGetAccessInfoIdTest() {
-        AccessPermissionCreatorImpl accessPermissionCreatorImpl = new AccessPermissionCreatorImpl(KapuaId.ONE);
+        AccessPermissionCreator accessPermissionCreatorImpl = new AccessPermissionCreator(KapuaId.ONE);
 
         Assert.assertNull("Null expected.", accessPermissionCreatorImpl.getAccessInfoId());
         accessPermissionCreatorImpl.setAccessInfoId(KapuaId.ONE);
@@ -49,7 +49,7 @@ public class AccessPermissionCreatorImplTest {
 
     @Test
     public void setAndGetPermissionTest() {
-        AccessPermissionCreatorImpl accessPermissionCreatorImpl = new AccessPermissionCreatorImpl(KapuaId.ONE);
+        AccessPermissionCreator accessPermissionCreatorImpl = new AccessPermissionCreator(KapuaId.ONE);
         Permission permission = Mockito.mock(Permission.class);
 
         Assert.assertNull("Null expected.", accessPermissionCreatorImpl.getPermission());

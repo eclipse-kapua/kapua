@@ -12,10 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.scheduler.trigger.fired;
 
-import org.eclipse.kapua.model.KapuaEntityCreator;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.service.scheduler.trigger.Trigger;
+import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -23,7 +20,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
+
+import org.eclipse.kapua.model.KapuaEntityCreator;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import org.eclipse.kapua.service.scheduler.trigger.Trigger;
 
 /**
  * {@link FiredTrigger} {@link org.eclipse.kapua.model.KapuaEntityCreator} definition.
@@ -32,8 +33,24 @@ import java.util.Date;
  */
 @XmlRootElement(name = "firedTriggerCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = FiredTriggerXmlRegistry.class, factoryMethod = "newCreator")
-public interface FiredTriggerCreator extends KapuaEntityCreator<FiredTrigger> {
+@XmlType
+public class FiredTriggerCreator extends KapuaEntityCreator<FiredTrigger> {
+
+    private KapuaId triggerId;
+    private Date firedOn;
+    private FiredTriggerStatus status;
+    private String message;
+
+    public FiredTriggerCreator() {
+    }
+
+    public FiredTriggerCreator(KapuaId scopeId) {
+        super(scopeId);
+    }
+
+    public FiredTriggerCreator(KapuaEntityCreator<FiredTrigger> entityCreator) {
+        super(entityCreator);
+    }
 
     /**
      * Gets the {@link Trigger#getId()}
@@ -43,15 +60,20 @@ public interface FiredTriggerCreator extends KapuaEntityCreator<FiredTrigger> {
      */
     @XmlElement(name = "triggerId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
-    KapuaId getTriggerId();
+    public KapuaId getTriggerId() {
+        return triggerId;
+    }
 
     /**
      * Sets the {@link Trigger#getId()}.
      *
-     * @param triggerId The {@link Trigger#getId()}.
+     * @param triggerId
+     *         The {@link Trigger#getId()}.
      * @since 1.5.0
      */
-    void setTriggerId(KapuaId triggerId);
+    public void setTriggerId(KapuaId triggerId) {
+        this.triggerId = triggerId;
+    }
 
     /**
      * Gets the actual fire {@link Date}.
@@ -60,15 +82,20 @@ public interface FiredTriggerCreator extends KapuaEntityCreator<FiredTrigger> {
      * @since 1.5.0
      */
     @XmlElement(name = "firedOn")
-    Date getFiredOn();
+    public Date getFiredOn() {
+        return firedOn;
+    }
 
     /**
      * Sets the actual fire {@link Date}.
      *
-     * @param firedOn The actual fire {@link Date}.
+     * @param firedOn
+     *         The actual fire {@link Date}.
      * @since 1.5.0
      */
-    void setFiredOn(Date firedOn);
+    public void setFiredOn(Date firedOn) {
+        this.firedOn = firedOn;
+    }
 
     /**
      * Gets the {@link FiredTriggerStatus} of the processing.
@@ -77,15 +104,20 @@ public interface FiredTriggerCreator extends KapuaEntityCreator<FiredTrigger> {
      * @since 1.5.0
      */
     @XmlElement(name = "status")
-    FiredTriggerStatus getStatus();
+    public FiredTriggerStatus getStatus() {
+        return status;
+    }
 
     /**
      * Sets the {@link FiredTriggerStatus} of the processing.
      *
-     * @param status The {@link FiredTriggerStatus} of the processing.
+     * @param status
+     *         The {@link FiredTriggerStatus} of the processing.
      * @since 1.5.0
      */
-    void setStatus(FiredTriggerStatus status);
+    public void setStatus(FiredTriggerStatus status) {
+        this.status = status;
+    }
 
     /**
      * Gets the {@link Exception#getMessage()} if there are errors in the processing.
@@ -94,13 +126,19 @@ public interface FiredTriggerCreator extends KapuaEntityCreator<FiredTrigger> {
      * @since 1.5.0
      */
     @XmlElement(name = "message")
-    String getMessage();
+    public String getMessage() {
+        return message;
+    }
 
     /**
      * Sets the {@link Exception#getMessage()} if there are errors in the processing.
      *
-     * @param message The {@link Exception#getMessage()} if there are errors in the processing.
+     * @param message
+     *         The {@link Exception#getMessage()} if there are errors in the processing.
      * @since 1.5.0
      */
-    void setMessage(String message);
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
 }

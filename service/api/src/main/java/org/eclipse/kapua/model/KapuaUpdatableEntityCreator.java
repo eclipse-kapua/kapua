@@ -12,21 +12,52 @@
  *******************************************************************************/
 package org.eclipse.kapua.model;
 
-import org.eclipse.kapua.KapuaException;
+import java.io.IOException;
+import java.util.Properties;
 
 import javax.xml.bind.annotation.XmlTransient;
-import java.util.Properties;
+
+import org.eclipse.kapua.PropertiesUtils;
+import org.eclipse.kapua.entity.EntityPropertiesReadException;
+import org.eclipse.kapua.entity.EntityPropertiesWriteException;
+import org.eclipse.kapua.model.id.KapuaId;
 
 /**
  * {@link KapuaUpdatableEntityCreator} definition.
  *
- * @param <E> entity type
+ * @param <E>
+ *         entity type
  * @since 1.0.0
  */
-public interface KapuaUpdatableEntityCreator<E extends KapuaEntity> extends KapuaEntityCreator<E> {
+public abstract class KapuaUpdatableEntityCreator<E extends KapuaEntity> extends KapuaEntityCreator<E> {
+
+    protected String attributes;
+
+    public KapuaUpdatableEntityCreator() {
+    }
+
+    public KapuaUpdatableEntityCreator(KapuaId scopeId) {
+        super(scopeId);
+    }
+
+    protected KapuaUpdatableEntityCreator(KapuaEntityCreator<E> entityCreator) {
+        super(entityCreator);
+    }
 
     @XmlTransient
-    Properties getEntityAttributes() throws KapuaException;
+    public Properties getEntityAttributes() {
+        try {
+            return PropertiesUtils.readPropertiesFromString(attributes);
+        } catch (IOException e) {
+            throw new EntityPropertiesReadException(e, "attributes", attributes);
+        }
+    }
 
-    void setEntityAttributes(Properties entityAttributes) throws KapuaException;
+    public void setEntityAttributes(Properties attributes) {
+        try {
+            this.attributes = PropertiesUtils.writePropertiesToString(attributes);
+        } catch (IOException e) {
+            throw new EntityPropertiesWriteException(e, "attributes", attributes);
+        }
+    }
 }

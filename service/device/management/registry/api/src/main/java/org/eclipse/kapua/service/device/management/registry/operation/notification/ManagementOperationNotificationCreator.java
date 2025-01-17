@@ -12,6 +12,15 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.registry.operation.notification;
 
+import java.util.Date;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.eclipse.kapua.model.KapuaEntityCreator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdAdapter;
@@ -20,14 +29,6 @@ import org.eclipse.kapua.service.device.management.message.notification.NotifySt
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperation;
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationStatus;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
-
 /**
  * {@link ManagementOperationNotificationCreator} definition.
  *
@@ -35,8 +36,26 @@ import java.util.Date;
  */
 @XmlRootElement(name = "deviceManagementOperationNotificationCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = ManagementOperationNotificationXmlRegistry.class, factoryMethod = "newManagementOperationNotificationCreator")
-public interface ManagementOperationNotificationCreator extends KapuaEntityCreator<ManagementOperationNotification> {
+@XmlType
+public class ManagementOperationNotificationCreator extends KapuaEntityCreator<ManagementOperationNotification> {
+
+    private KapuaId operationId;
+    private Date sentOn;
+    private DeviceManagementOperationStatus status;
+    private String resource;
+    private Integer progress;
+    private String message;
+
+    public ManagementOperationNotificationCreator() {
+    }
+
+    public ManagementOperationNotificationCreator(KapuaId scopeId) {
+        super(scopeId);
+    }
+
+    public ManagementOperationNotificationCreator(KapuaEntityCreator<ManagementOperationNotification> entityCreator) {
+        super(entityCreator);
+    }
 
     /**
      * Gets the {@link DeviceManagementOperation#getId()}.
@@ -46,15 +65,20 @@ public interface ManagementOperationNotificationCreator extends KapuaEntityCreat
      */
     @XmlElement(name = "operationId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
-    KapuaId getOperationId();
+    public KapuaId getOperationId() {
+        return operationId;
+    }
 
     /**
      * Sets the {@link DeviceManagementOperation#getId()}.
      *
-     * @param operationId The {@link DeviceManagementOperation#getId()}.
+     * @param operationId
+     *         The {@link DeviceManagementOperation#getId()}.
      * @since 1.0.0
      */
-    void setOperationId(KapuaId operationId);
+    public void setOperationId(KapuaId operationId) {
+        this.operationId = operationId;
+    }
 
     /**
      * Gets the {@link Date} of when the notification has been sent to the platform.
@@ -64,15 +88,20 @@ public interface ManagementOperationNotificationCreator extends KapuaEntityCreat
      */
     @XmlElement(name = "sentOn")
     @XmlJavaTypeAdapter(DateXmlAdapter.class)
-    Date getSentOn();
+    public Date getSentOn() {
+        return sentOn;
+    }
 
     /**
      * Sets the {@link Date} of when the notification has been sent to the platform.
      *
-     * @param sentOn The {@link Date} of when the notification has been sent to the platform.
+     * @param sentOn
+     *         The {@link Date} of when the notification has been sent to the platform.
      * @since 1.0.0
      */
-    void setSentOn(Date sentOn);
+    public void setSentOn(Date sentOn) {
+        this.sentOn = sentOn;
+    }
 
     /**
      * Gets the {@link NotifyStatus}
@@ -81,15 +110,20 @@ public interface ManagementOperationNotificationCreator extends KapuaEntityCreat
      * @since 1.0.0
      */
     @XmlElement(name = "status")
-    DeviceManagementOperationStatus getStatus();
+    public DeviceManagementOperationStatus getStatus() {
+        return status;
+    }
 
     /**
      * Sets the {@link NotifyStatus}
      *
-     * @param status The {@link NotifyStatus}
+     * @param status
+     *         The {@link NotifyStatus}
      * @since 1.0.0
      */
-    void setStatus(DeviceManagementOperationStatus status);
+    public void setStatus(DeviceManagementOperationStatus status) {
+        this.status = status;
+    }
 
     /**
      * Gets the {@link DeviceManagementOperation#getResource()}
@@ -98,15 +132,20 @@ public interface ManagementOperationNotificationCreator extends KapuaEntityCreat
      * @since 1.0.0
      */
     @XmlElement(name = "resource")
-    String getResource();
+    public String getResource() {
+        return resource;
+    }
 
     /**
      * Sets the {@link DeviceManagementOperation#getResource()}
      *
-     * @param resource The {@link DeviceManagementOperation#getResource()}
+     * @param resource
+     *         The {@link DeviceManagementOperation#getResource()}
      * @since 1.0.0
      */
-    void setResource(String resource);
+    public void setResource(String resource) {
+        this.resource = resource;
+    }
 
     /**
      * Gets the progress percentage of the processing.
@@ -115,15 +154,20 @@ public interface ManagementOperationNotificationCreator extends KapuaEntityCreat
      * @since 1.0.0
      */
     @XmlElement(name = "progress")
-    Integer getProgress();
+    public Integer getProgress() {
+        return progress;
+    }
 
     /**
      * Sets the progress percentage of the processing.
      *
-     * @param progress The progress percentage of the processing.
+     * @param progress
+     *         The progress percentage of the processing.
      * @since 1.0.0
      */
-    void setProgress(Integer progress);
+    public void setProgress(Integer progress) {
+        this.progress = progress;
+    }
 
     /**
      * Gets the detailed message related to the {@link NotifyStatus}
@@ -131,13 +175,18 @@ public interface ManagementOperationNotificationCreator extends KapuaEntityCreat
      * @return The detailed message related to the {@link NotifyStatus}
      * @since 1.2.0
      */
-    String getMessage();
+    public String getMessage() {
+        return message;
+    }
 
     /**
      * Sets the detailed message related to the {@link NotifyStatus}
      *
-     * @param message The detailed message related to the {@link NotifyStatus}
+     * @param message
+     *         The detailed message related to the {@link NotifyStatus}
      * @since 1.2.0
      */
-    void setMessage(String message);
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }

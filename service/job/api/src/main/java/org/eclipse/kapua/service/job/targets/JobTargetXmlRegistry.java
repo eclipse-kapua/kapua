@@ -34,14 +34,4 @@ public class JobTargetXmlRegistry {
     public JobTarget newJobTarget() {
         return jobTargetFactory.newEntity(null);
     }
-
-    /**
-     * Creates a new job creator instance
-     *
-     * @return
-     */
-    public JobTargetCreator newJobTargetCreator() {
-        return jobTargetFactory.newCreator(null);
-    }
-
 }

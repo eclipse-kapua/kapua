@@ -76,7 +76,7 @@ public class GwtTagServiceImpl extends KapuaRemoteServiceServlet implements GwtT
         GwtTag gwtTag = null;
         try {
             KapuaId scopeId = KapuaEid.parseCompactId(gwtTagCreator.getScopeId());
-            TagCreator tagCreator = tagFactory.newCreator(scopeId, gwtTagCreator.getName());
+            TagCreator tagCreator = new TagCreator(scopeId, gwtTagCreator.getName());
             tagCreator.setDescription(gwtTagCreator.getDescription());
 
             Tag tag = tagService.create(tagCreator);

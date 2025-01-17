@@ -12,10 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.token;
 
-import java.util.Date;
-
 import org.eclipse.kapua.model.KapuaEntityFactory;
-import org.eclipse.kapua.model.id.KapuaId;
 
 /**
  * {@link AccessTokenFactory} definition.
@@ -23,25 +20,7 @@ import org.eclipse.kapua.model.id.KapuaId;
  * @see org.eclipse.kapua.model.KapuaEntityFactory
  * @since 1.0.0
  */
-public interface AccessTokenFactory extends KapuaEntityFactory<AccessToken, AccessTokenCreator> {
-
-    /**
-     * Instantiates a new {@link AccessTokenCreator}.
-     *
-     * @param scopeId
-     *         The scope {@link KapuaId} to set into the{@link AccessToken}.
-     * @param userId
-     *         The {@link org.eclipse.kapua.service.user.User} {@link KapuaId} to set into the{@link AccessToken}.
-     * @param tokenId
-     *         The token id to set into the{@link AccessToken}.
-     * @param expiresOn
-     *         The expiration date to set into the{@link AccessToken}.
-     * @param refreshToken
-     *         The refresh token to set into the{@link AccessToken}.
-     * @return The newly instantiated {@link AccessTokenCreator}.
-     * @since 1.0.0
-     */
-    AccessTokenCreator newCreator(KapuaId scopeId, KapuaId userId, String tokenId, Date expiresOn, String refreshToken, Date refreshExpiresOn, String tokenIdentifier);
+public interface AccessTokenFactory extends KapuaEntityFactory<AccessToken> {
 
     /**
      * Instantiates a new {@link LoginInfo}

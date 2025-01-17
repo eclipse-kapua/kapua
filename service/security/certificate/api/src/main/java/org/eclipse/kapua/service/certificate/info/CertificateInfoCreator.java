@@ -12,19 +12,32 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.certificate.info;
 
-import org.eclipse.kapua.model.KapuaNamedEntityCreator;
-import org.eclipse.kapua.service.certificate.info.xml.CertificateInfoXmlRegistry;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.model.KapuaNamedEntityCreator;
+import org.eclipse.kapua.model.id.KapuaId;
 
 /**
  * @since 1.1.0
  */
 @XmlRootElement(name = "certificateInfoCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = CertificateInfoXmlRegistry.class, factoryMethod = "newCreator")
-public interface CertificateInfoCreator extends KapuaNamedEntityCreator<CertificateInfo> {
+@XmlType
+//This class exists only because the Service needed a placeholder.Sigh.
+public class CertificateInfoCreator extends KapuaNamedEntityCreator<CertificateInfo> {
+
+    public CertificateInfoCreator() {
+        throw new UnsupportedOperationException();
+    }
+
+    public CertificateInfoCreator(KapuaId scopeId) {
+        throw new UnsupportedOperationException();
+    }
+
+    public CertificateInfoCreator(KapuaId scopeId, String name) {
+        throw new UnsupportedOperationException();
+    }
 }

@@ -47,17 +47,6 @@ public class MfaOptionFactoryImplTest {
     }
 
     @Test
-    public void newCreatorScopeIdUserIdMfaSecretKeyParametersTest() {
-        for (KapuaId scopeId : scopeIds) {
-            for (KapuaEid userId : userIds) {
-                MfaOptionCreator mfaOptionCreatorImpl = mfaOptionFactoryImpl.newCreator(scopeId, userId);
-                Assert.assertEquals("Expected and actual values should be the same.", scopeId, mfaOptionCreatorImpl.getScopeId());
-                Assert.assertEquals("Expected and actual values should be the same.", userId, mfaOptionCreatorImpl.getUserId());
-            }
-        }
-    }
-
-    @Test
     public void newEntityTest() {
         for (KapuaId scopeId : scopeIds) {
             MfaOption mfaOption = mfaOptionFactoryImpl.newEntity(scopeId);
@@ -68,7 +57,7 @@ public class MfaOptionFactoryImplTest {
     @Test
     public void newCreatorScopeIdParameterTest() {
         for (KapuaId scopeId : scopeIds) {
-            MfaOptionCreator mfaOptionCreator = mfaOptionFactoryImpl.newCreator(scopeId);
+            MfaOptionCreator mfaOptionCreator = new MfaOptionCreator(scopeId);
             Assert.assertEquals("Expected and actual values should be the same.", scopeId, mfaOptionCreator.getScopeId());
         }
     }

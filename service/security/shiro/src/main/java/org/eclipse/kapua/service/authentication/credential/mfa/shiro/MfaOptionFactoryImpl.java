@@ -17,7 +17,6 @@ import javax.inject.Singleton;
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authentication.credential.mfa.MfaOption;
-import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionCreator;
 import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionFactory;
 
 /**
@@ -32,23 +31,11 @@ public class MfaOptionFactoryImpl implements MfaOptionFactory {
     }
 
     @Override
-    public MfaOptionCreator newCreator(KapuaId scopeId) {
-        return new MfaOptionCreatorImpl(scopeId);
-    }
-
-    @Override
     public MfaOption clone(MfaOption mfaOption) {
         try {
             return new MfaOptionImpl(mfaOption);
         } catch (Exception e) {
             throw new KapuaEntityCloneException(e, MfaOption.TYPE, mfaOption);
         }
-    }
-
-    @Override
-    public MfaOptionCreator newCreator(KapuaId scopeId, KapuaId userId) {
-        final MfaOptionCreatorImpl res = new MfaOptionCreatorImpl(scopeId);
-        res.setUserId(userId);
-        return res;
     }
 }

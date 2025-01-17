@@ -17,7 +17,6 @@ import java.util.Date;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.authorization.role.Role;
-import org.eclipse.kapua.service.authorization.role.RoleCreator;
 import org.eclipse.kapua.service.authorization.role.RolePermission;
 import org.junit.Assert;
 import org.junit.Before;
@@ -62,18 +61,6 @@ public class RoleFactoryImplTest {
     public void newEntityNullTest() {
         Assert.assertTrue("True expected.", roleFactoryImpl.newEntity(null) instanceof Role);
         Assert.assertNull("Null expected.", roleFactoryImpl.newEntity(null).getScopeId());
-    }
-
-    @Test
-    public void newCreatorTest() {
-        Assert.assertTrue("True expected.", roleFactoryImpl.newCreator(scopeId) instanceof RoleCreator);
-        Assert.assertEquals("Expected and actual values should be the same.", scopeId, roleFactoryImpl.newCreator(scopeId).getScopeId());
-    }
-
-    @Test
-    public void newCreatorNullTest() {
-        Assert.assertTrue("True expected.", roleFactoryImpl.newCreator(null) instanceof RoleCreator);
-        Assert.assertNull("Null expected.", roleFactoryImpl.newCreator(null).getScopeId());
     }
 
     @Test

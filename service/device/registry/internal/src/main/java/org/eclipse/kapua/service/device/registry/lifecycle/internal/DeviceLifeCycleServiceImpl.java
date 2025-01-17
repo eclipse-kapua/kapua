@@ -17,13 +17,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
@@ -57,6 +55,10 @@ import org.eclipse.kapua.service.device.registry.internal.DeviceExtendedProperty
 import org.eclipse.kapua.service.device.registry.lifecycle.DeviceLifeCycleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
 
 /**
  * {@link DeviceLifeCycleService} implementation.
@@ -103,7 +105,7 @@ public class DeviceLifeCycleServiceImpl implements DeviceLifeCycleService {
         // Device update
         Device device;
         if (deviceId == null) {
-            DeviceCreator deviceCreator = deviceFactory.newCreator(scopeId);
+            DeviceCreator deviceCreator = new DeviceCreator(scopeId);
 
             deviceCreator.setClientId(birthChannel.getClientId());
             deviceCreator.setDisplayName(birthPayload.getDisplayName());
@@ -168,12 +170,17 @@ public class DeviceLifeCycleServiceImpl implements DeviceLifeCycleService {
      * <p>
      * Tries to update the {@link Device} a number of times to allow close device updates to be stored properly.
      *
-     * @param scopeId      The {@link Device#getScopeId()} to update.
-     * @param deviceId     The {@link Device#getId()} to update.
-     * @param birthPayload The {@link KapuaBirthPayload} from which extract data.
-     * @param connectionId The {@link DeviceConnection#getId()}
+     * @param scopeId
+     *         The {@link Device#getScopeId()} to update.
+     * @param deviceId
+     *         The {@link Device#getId()} to update.
+     * @param birthPayload
+     *         The {@link KapuaBirthPayload} from which extract data.
+     * @param connectionId
+     *         The {@link DeviceConnection#getId()}
      * @return The updated {@link Device}.
-     * @throws KapuaException If {@link Device} does not exists or {@link DeviceRegistryService#update(KapuaUpdatableEntity)} causes an error.
+     * @throws KapuaException
+     *         If {@link Device} does not exists or {@link DeviceRegistryService#update(KapuaUpdatableEntity)} causes an error.
      * @since 1.2.0
      */
     private Device updateDeviceInfoFromMessage(KapuaId scopeId, KapuaId deviceId, KapuaBirthPayload birthPayload, KapuaId connectionId) throws KapuaException {
@@ -241,18 +248,21 @@ public class DeviceLifeCycleServiceImpl implements DeviceLifeCycleService {
         return device;
     }
 
-
     /**
      * Creates a {@link DeviceEvent} from the {@link KapuaLifecycleMessage}.
      * <p>
-     * Internally invokes {@link DeviceRegistryService#find(KapuaId, KapuaId)} with the given parameters and
-     * then uses {@link #createLifecycleEvent(Device, String, KapuaLifecycleMessage)}
+     * Internally invokes {@link DeviceRegistryService#find(KapuaId, KapuaId)} with the given parameters and then uses {@link #createLifecycleEvent(Device, String, KapuaLifecycleMessage)}
      *
-     * @param scopeId  The {@link Device#getScopeId()} of the {@link Device} that generated the {@link KapuaLifecycleMessage}.
-     * @param deviceId The {@link Device#getId()} of the {@link Device} that generated the {@link KapuaLifecycleMessage}.
-     * @param resource The resource used to publish the {@link KapuaLifecycleMessage}
-     * @param message  The {@link KapuaLifecycleMessage} from which to extract data.
-     * @throws KapuaException if storing the {@link DeviceEvent} throws a {@link KapuaException}
+     * @param scopeId
+     *         The {@link Device#getScopeId()} of the {@link Device} that generated the {@link KapuaLifecycleMessage}.
+     * @param deviceId
+     *         The {@link Device#getId()} of the {@link Device} that generated the {@link KapuaLifecycleMessage}.
+     * @param resource
+     *         The resource used to publish the {@link KapuaLifecycleMessage}
+     * @param message
+     *         The {@link KapuaLifecycleMessage} from which to extract data.
+     * @throws KapuaException
+     *         if storing the {@link DeviceEvent} throws a {@link KapuaException}
      * @since 1.2.0
      */
     private DeviceEvent createLifecycleEvent(@NotNull KapuaId scopeId, KapuaId deviceId, @NotNull String resource, @NotNull KapuaLifecycleMessage<?, ?> message) throws KapuaException {
@@ -265,15 +275,19 @@ public class DeviceLifeCycleServiceImpl implements DeviceLifeCycleService {
     /**
      * Creates a {@link DeviceEvent} from the {@link KapuaLifecycleMessage}.
      *
-     * @param device   The {@link Device} that generated the {@link KapuaLifecycleMessage}.
-     * @param resource The resource used to publish the {@link KapuaLifecycleMessage}
-     * @param message  The {@link KapuaLifecycleMessage} from which to extract data.
-     * @throws KapuaException if storing the {@link DeviceEvent} throws a {@link KapuaException}
+     * @param device
+     *         The {@link Device} that generated the {@link KapuaLifecycleMessage}.
+     * @param resource
+     *         The resource used to publish the {@link KapuaLifecycleMessage}
+     * @param message
+     *         The {@link KapuaLifecycleMessage} from which to extract data.
+     * @throws KapuaException
+     *         if storing the {@link DeviceEvent} throws a {@link KapuaException}
      * @since 1.2.0
      */
     private DeviceEvent createLifecycleEvent(@NotNull Device device, @NotNull String resource, @NotNull KapuaLifecycleMessage<?, ?> message) throws KapuaException {
 
-        DeviceEventCreator deviceEventCreator = deviceEventFactory.newCreator(device.getScopeId(), device.getId(), message.getReceivedOn(), resource);
+        DeviceEventCreator deviceEventCreator = new DeviceEventCreator(device.getScopeId(), device.getId(), message.getReceivedOn(), resource);
         deviceEventCreator.setResponseCode(KapuaResponseCode.ACCEPTED);
         deviceEventCreator.setSentOn(message.getSentOn());
         deviceEventCreator.setReceivedOn(Date.from(KapuaDateUtils.getKapuaSysDate()));
@@ -293,9 +307,11 @@ public class DeviceLifeCycleServiceImpl implements DeviceLifeCycleService {
     /**
      * Builds the {@link List} of {@link DeviceExtendedProperty}es from the {@link KapuaBirthPayload#getExtendedProperties()} property.
      *
-     * @param extendedPropertiesString The {@link KapuaBirthPayload#getExtendedProperties()} to parse.
+     * @param extendedPropertiesString
+     *         The {@link KapuaBirthPayload#getExtendedProperties()} to parse.
      * @return The {@link List} of {@link DeviceExtendedProperty}es parsed.
-     * @throws KapuaException If there are exception while parsing the JSON-formatted metric.
+     * @throws KapuaException
+     *         If there are exception while parsing the JSON-formatted metric.
      * @since 1.5.0
      */
     private List<DeviceExtendedProperty> buildDeviceExtendedPropertyFromBirth(@Nullable String extendedPropertiesString) throws KapuaException {

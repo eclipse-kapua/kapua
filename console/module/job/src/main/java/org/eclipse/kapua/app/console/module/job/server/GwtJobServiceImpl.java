@@ -116,7 +116,7 @@ public class GwtJobServiceImpl extends KapuaRemoteServiceServlet implements GwtJ
         GwtJob gwtJob = null;
         try {
             KapuaId scopeId = KapuaEid.parseCompactId(gwtJobCreator.getScopeId());
-            JobCreator jobCreator = JOB_FACTORY.newCreator(scopeId);
+            JobCreator jobCreator = new JobCreator(scopeId);
             jobCreator.setName(gwtJobCreator.getName());
             jobCreator.setDescription(gwtJobCreator.getDescription());
             // Create the Job

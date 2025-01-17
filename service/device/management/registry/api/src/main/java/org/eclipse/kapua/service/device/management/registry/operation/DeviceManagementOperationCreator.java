@@ -12,12 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.registry.operation;
 
-import org.eclipse.kapua.model.KapuaEntityCreator;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.model.xml.DateXmlAdapter;
-import org.eclipse.kapua.service.device.management.message.KapuaMethod;
-import org.eclipse.kapua.service.device.management.message.notification.NotifyStatus;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -26,57 +23,116 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
-import java.util.List;
+
+import org.eclipse.kapua.model.KapuaEntityCreator;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import org.eclipse.kapua.model.xml.DateXmlAdapter;
+import org.eclipse.kapua.service.device.management.message.KapuaMethod;
+import org.eclipse.kapua.service.device.management.message.notification.NotifyStatus;
 
 @XmlRootElement(name = "deviceManagementOperationCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DeviceManagementOperationXmlRegistry.class, factoryMethod = "newDeviceManagementOperationCreator")
-public interface DeviceManagementOperationCreator extends KapuaEntityCreator<DeviceManagementOperation> {
+@XmlType
+public class DeviceManagementOperationCreator extends KapuaEntityCreator<DeviceManagementOperation> {
+
+    private Date startedOn;
+    private KapuaId deviceId;
+    private KapuaId operationId;
+    private String appId;
+    private KapuaMethod action;
+    private String resource;
+    private NotifyStatus status;
+    private List<DeviceManagementOperationProperty> inputProperties;
+
+    public DeviceManagementOperationCreator() {
+    }
+
+    public DeviceManagementOperationCreator(KapuaId scopeId) {
+        super(scopeId);
+    }
+
+    public DeviceManagementOperationCreator(KapuaEntityCreator<DeviceManagementOperation> entityCreator) {
+        super(entityCreator);
+    }
 
     @XmlElement(name = "startedOn")
     @XmlJavaTypeAdapter(DateXmlAdapter.class)
-    public Date getStartedOn();
+    public Date getStartedOn() {
+        return startedOn;
+    }
 
-    void setStartedOn(Date startedOn);
+    public void setStartedOn(Date startedOn) {
+        this.startedOn = startedOn;
+    }
 
     @XmlElement(name = "deviceId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
-    KapuaId getDeviceId();
+    public KapuaId getDeviceId() {
+        return deviceId;
+    }
 
-    void setDeviceId(KapuaId deviceId);
-
+    public void setDeviceId(KapuaId deviceId) {
+        this.deviceId = deviceId;
+    }
 
     @XmlElement(name = "operationId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
-    KapuaId getOperationId();
+    public KapuaId getOperationId() {
+        return operationId;
+    }
 
-    void setOperationId(KapuaId operationId);
-
+    public void setOperationId(KapuaId operationId) {
+        this.operationId = operationId;
+    }
 
     @XmlElement(name = "appId")
-    String getAppId();
+    public String getAppId() {
+        return appId;
+    }
 
-    void setAppId(String appId);
+    public void setAppId(String appId) {
+        this.appId = appId;
+    }
 
     @XmlElement(name = "action")
-    KapuaMethod getAction();
+    public KapuaMethod getAction() {
+        return action.normalizeAction();
+    }
 
-    void setAction(KapuaMethod action);
+    public void setAction(KapuaMethod action) {
+        this.action = action.normalizeAction();
+    }
 
     @XmlElement(name = "resource")
-    String getResource();
+    public String getResource() {
+        return resource;
+    }
 
-    void setResource(String resource);
+    public void setResource(String resource) {
+        this.resource = resource;
+    }
 
     @XmlElement(name = "status")
-    NotifyStatus getStatus();
+    public NotifyStatus getStatus() {
+        return status;
+    }
 
-    void setStatus(NotifyStatus status);
+    public void setStatus(NotifyStatus status) {
+        this.status = status;
+    }
 
     @XmlElementWrapper(name = "operationProperties")
     @XmlElement(name = "operationProperty")
-    <P extends DeviceManagementOperationProperty> List<P> getInputProperties();
+    public List<DeviceManagementOperationProperty> getInputProperties() {
+        if (inputProperties == null) {
+            inputProperties = new ArrayList<>();
+        }
 
-    void setInputProperties(List<DeviceManagementOperationProperty> inputProperties);
+        return inputProperties;
+    }
+
+    public void setInputProperties(List<DeviceManagementOperationProperty> inputProperties) {
+        this.inputProperties = inputProperties;
+    }
 }

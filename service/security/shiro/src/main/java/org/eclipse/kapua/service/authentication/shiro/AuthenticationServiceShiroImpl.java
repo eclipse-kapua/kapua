@@ -568,7 +568,7 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
         String jwt = generateJwt(scopeId, userId, now, tokenTtl, tokenId);
 
         // Persist token
-        AccessTokenCreator accessTokenCreator = accessTokenFactory.newCreator(scopeId,
+        AccessTokenCreator accessTokenCreator = new AccessTokenCreator(scopeId,
                 userId,
                 jwt,
                 new Date(now.getTime() + tokenTtl),

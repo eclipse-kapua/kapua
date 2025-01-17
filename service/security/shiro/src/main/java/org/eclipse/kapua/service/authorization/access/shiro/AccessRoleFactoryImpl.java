@@ -17,7 +17,6 @@ import javax.inject.Singleton;
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.access.AccessRole;
-import org.eclipse.kapua.service.authorization.access.AccessRoleCreator;
 import org.eclipse.kapua.service.authorization.access.AccessRoleFactory;
 
 /**
@@ -31,11 +30,6 @@ public class AccessRoleFactoryImpl implements AccessRoleFactory {
     @Override
     public AccessRole newEntity(KapuaId scopeId) {
         return new AccessRoleImpl(scopeId);
-    }
-
-    @Override
-    public AccessRoleCreator newCreator(KapuaId scopeId) {
-        return new AccessRoleCreatorImpl(scopeId);
     }
 
     @Override

@@ -714,7 +714,7 @@ public class AccountServiceSteps extends TestBase {
      * @return The newly created account creator object.
      */
     private AccountCreator prepareRegularAccountCreator(KapuaId parentId, String name) {
-        AccountCreator tmpAccCreator = accountFactory.newCreator(parentId);
+        AccountCreator tmpAccCreator = new AccountCreator(parentId);
 
         tmpAccCreator.setName(name);
         tmpAccCreator.setOrganizationName("org_" + name);
@@ -768,7 +768,7 @@ public class AccountServiceSteps extends TestBase {
      */
     private AccountCreator accountCreatorCreator(String name, BigInteger scopeId, Date expiration) {
 
-        AccountCreator accountCreator = accountFactory.newCreator(new KapuaEid(scopeId));
+        AccountCreator accountCreator = new AccountCreator(new KapuaEid(scopeId));
         accountCreator.setName(name);
         accountCreator.setOrganizationName("ACME Inc.");
         accountCreator.setOrganizationEmail("some@one.com");
@@ -803,7 +803,7 @@ public class AccountServiceSteps extends TestBase {
 
     @And("I create an account with name {string}, organization name {string} and email address {string}")
     public void iCreateAAccountWithNameOrganizationNameAndEmailaddress(String accountName, String organizationName, String email) throws Exception {
-        AccountCreator accountCreator = accountFactory.newCreator(getCurrentScopeId());
+        AccountCreator accountCreator = new AccountCreator(getCurrentScopeId());
         accountCreator.setName(accountName);
         accountCreator.setOrganizationName(organizationName);
         accountCreator.setOrganizationEmail(email);
@@ -850,7 +850,7 @@ public class AccountServiceSteps extends TestBase {
     public void iCreateAccountWithNameOrganizationNameAndEmailaddressAndChildAccount(String accountName, String organizationName, String email) throws Exception {
         Account lastAccount = (Account) stepData.get(LAST_ACCOUNT);
 
-        AccountCreator accountCreator = accountFactory.newCreator(lastAccount.getId());
+        AccountCreator accountCreator = new AccountCreator(lastAccount.getId());
         accountCreator.setName(accountName);
         accountCreator.setOrganizationName(organizationName);
         accountCreator.setOrganizationEmail(email);

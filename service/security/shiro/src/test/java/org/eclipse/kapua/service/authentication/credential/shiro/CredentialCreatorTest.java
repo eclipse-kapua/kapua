@@ -12,26 +12,27 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.credential.shiro;
 
+import java.util.Date;
+
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
+import org.eclipse.kapua.service.authentication.credential.CredentialCreator;
 import org.eclipse.kapua.service.authentication.credential.CredentialStatus;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.util.Date;
-
 
 @Category(JUnitTests.class)
-public class CredentialCreatorImplTest {
+public class CredentialCreatorTest {
 
-    CredentialCreatorImpl credentialCreatorImpl1, credentialCreatorImpl2;
+    CredentialCreator credentialCreatorImpl1, credentialCreatorImpl2;
 
     @Before
     public void initialize() {
-        credentialCreatorImpl1 = new CredentialCreatorImpl(KapuaId.ONE, KapuaId.ONE, "API_KEY", "credential key", CredentialStatus.ENABLED, new Date());
-        credentialCreatorImpl2 = new CredentialCreatorImpl(KapuaId.ONE);
+        credentialCreatorImpl1 = new CredentialCreator(KapuaId.ONE, KapuaId.ONE, "API_KEY", "credential key", CredentialStatus.ENABLED, new Date());
+        credentialCreatorImpl2 = new CredentialCreator(KapuaId.ONE);
     }
 
     @Test
@@ -49,7 +50,7 @@ public class CredentialCreatorImplTest {
                     for (String credentialKey : credentialKeys) {
                         for (CredentialStatus credentialStatus : credentialStatuses) {
                             for (Date date : dates) {
-                                CredentialCreatorImpl credentialCreatorImpl = new CredentialCreatorImpl(scopeId, userId, credentialType, credentialKey, credentialStatus, date);
+                                CredentialCreator credentialCreatorImpl = new CredentialCreator(scopeId, userId, credentialType, credentialKey, credentialStatus, date);
                                 Assert.assertEquals("Expected and actual values should be the same.", scopeId, credentialCreatorImpl.getScopeId());
                                 Assert.assertEquals("Expected and actual values should be the same.", userId, credentialCreatorImpl.getUserId());
                                 Assert.assertEquals("Expected and actual values should be the same.", credentialType, credentialCreatorImpl.getCredentialType());
@@ -68,7 +69,7 @@ public class CredentialCreatorImplTest {
     public void credentialCreatorImplScopeIdParameterTest() {
         KapuaId[] scopeIds = {null, KapuaId.ONE};
         for (KapuaId scopeId : scopeIds) {
-            CredentialCreatorImpl credentialCreatorImpl = new CredentialCreatorImpl(scopeId);
+            CredentialCreator credentialCreatorImpl = new CredentialCreator(scopeId);
             Assert.assertEquals("Expected and actual values should be the same.", scopeId, credentialCreatorImpl.getScopeId());
             Assert.assertNull("Null expected.", credentialCreatorImpl.getUserId());
             Assert.assertNull("Null expected.", credentialCreatorImpl.getCredentialType());

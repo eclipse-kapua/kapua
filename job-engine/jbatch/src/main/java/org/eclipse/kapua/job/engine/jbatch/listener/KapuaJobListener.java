@@ -288,7 +288,7 @@ public class KapuaJobListener extends AbstractJobListener implements JobListener
         Properties jobExecutionProperties = new Properties();
         jobExecutionProperties.put(JBATCH_EXECUTION_ID, Long.toString(jBatchExecutionId));
 
-        JobExecutionCreator jobExecutionCreator = jobExecutionFactory.newCreator(scopeId);
+        JobExecutionCreator jobExecutionCreator = new JobExecutionCreator(scopeId);
 
         jobExecutionCreator.setJobId(jobId);
         jobExecutionCreator.setStartedOn(new Date());
@@ -387,7 +387,7 @@ public class KapuaJobListener extends AbstractJobListener implements JobListener
      */
     private QueuedJobExecution enqueueJobExecution(KapuaId scopeId, KapuaId jobId, KapuaId jobExecutionId, KapuaId runningJobExecutionId) throws KapuaException {
 
-        QueuedJobExecutionCreator queuedJobExecutionCreator = queuedJobExecutionFactory.newCreator(scopeId);
+        QueuedJobExecutionCreator queuedJobExecutionCreator = new QueuedJobExecutionCreator(scopeId);
         queuedJobExecutionCreator.setJobId(jobId);
         queuedJobExecutionCreator.setJobExecutionId(jobExecutionId);
         queuedJobExecutionCreator.setWaitForJobExecutionId(runningJobExecutionId);

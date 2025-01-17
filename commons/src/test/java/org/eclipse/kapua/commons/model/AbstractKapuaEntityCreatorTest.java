@@ -12,9 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.model;
 
+import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.Random;
+
 import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.commons.util.RandomUtils;
 import org.eclipse.kapua.model.KapuaEntity;
+import org.eclipse.kapua.model.KapuaEntityCreator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.junit.Assert;
@@ -23,11 +28,6 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
-import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Random;
-
 
 @Category(JUnitTests.class)
 @RunWith(value = Parameterized.class)
@@ -39,20 +39,20 @@ public class AbstractKapuaEntityCreatorTest {
 
     @Parameters
     public static Iterable<Object[]> eids() {
-        return Arrays.asList(new Object[]{new BigInteger(64, RANDOM)}, new Object[]{null});
+        return Arrays.asList(new Object[] { new BigInteger(64, RANDOM) }, new Object[] { null });
     }
 
     public AbstractKapuaEntityCreatorTest(BigInteger eid) {
         this.eid = eid;
     }
 
-    private class ActualKapuaEntityCreator<E extends KapuaEntity> extends AbstractKapuaEntityCreator<E> {
+    private class ActualKapuaEntityCreator<E extends KapuaEntity> extends KapuaEntityCreator<E> {
 
         public ActualKapuaEntityCreator(KapuaId scopeId) {
             super(scopeId);
         }
 
-        public ActualKapuaEntityCreator(AbstractKapuaEntityCreator<E> abstractEntityCreator) {
+        public ActualKapuaEntityCreator(KapuaEntityCreator<E> abstractEntityCreator) {
             super(abstractEntityCreator);
         }
     }
@@ -60,8 +60,8 @@ public class AbstractKapuaEntityCreatorTest {
     @Test
     public void constructorScopeIdTest() {
         KapuaId scopeId = new KapuaEid(eid);
-        AbstractKapuaEntityCreator kapuaEntityCreator = new ActualKapuaEntityCreator(scopeId);
-        AbstractKapuaEntityCreator kapuaCopyEntityCreator = new ActualKapuaEntityCreator(kapuaEntityCreator);
+        KapuaEntityCreator kapuaEntityCreator = new ActualKapuaEntityCreator(scopeId);
+        KapuaEntityCreator kapuaCopyEntityCreator = new ActualKapuaEntityCreator(kapuaEntityCreator);
         Assert.assertEquals("Those entities should have the same scopeId.", kapuaEntityCreator.getScopeId(), kapuaCopyEntityCreator.getScopeId());
     }
 }

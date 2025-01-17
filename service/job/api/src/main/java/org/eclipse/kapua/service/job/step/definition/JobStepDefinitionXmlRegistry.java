@@ -34,13 +34,4 @@ public class JobStepDefinitionXmlRegistry {
     public JobStepDefinition newJobStepDefinition() {
         return jobStepDefinitionFactory.newEntity(null);
     }
-
-    /**
-     * Creates a new job creator instance
-     *
-     * @return
-     */
-    public JobStepDefinitionCreator newJobStepDefinitionCreator() {
-        return jobStepDefinitionFactory.newCreator(null);
-    }
 }

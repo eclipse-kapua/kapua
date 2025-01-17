@@ -163,7 +163,7 @@ public class UserServiceSteps extends TestBase {
         String userEmail = MessageFormat.format("testuser_{0,number,#}@organization.com", now);
         String displayName = MessageFormat.format("User Display Name {0}", now);
         KapuaEid scpId = new KapuaEid(BigInteger.valueOf(scopeId));
-        UserCreator uc = userFactory.newCreator(scpId, userName);
+        UserCreator uc = new UserCreator(scpId, userName);
         uc.setDisplayName(displayName);
         uc.setEmail(userEmail);
         uc.setPhoneNumber("+1 555 123 4567");
@@ -779,7 +779,7 @@ public class UserServiceSteps extends TestBase {
      * @return UserCreator instance for creating user
      */
     private UserCreator userCreatorCreator(String name, String displayName, String email, String phone, KapuaId scopeId) {
-        UserCreator userCreator = userFactory.newCreator(scopeId, name);
+        UserCreator userCreator = new UserCreator(scopeId, name);
         userCreator.setName(name);
         userCreator.setDisplayName(displayName);
         userCreator.setEmail(email);
@@ -833,7 +833,7 @@ public class UserServiceSteps extends TestBase {
      */
     private CredentialCreator credentialCreatorCreator(KapuaId scopeId, KapuaId userId, String password, CredentialStatus status, Date expirationDate) {
         CredentialCreator credentialCreator;
-        credentialCreator = credentialFactory.newCreator(scopeId, userId, "PASSWORD", password, status, expirationDate);
+        credentialCreator = new CredentialCreator(scopeId, userId, "PASSWORD", password, status, expirationDate);
         return credentialCreator;
     }
 
@@ -873,7 +873,7 @@ public class UserServiceSteps extends TestBase {
      * @return AccessInfoCreator instance for creating user permissions
      */
     private AccessInfoCreator accessInfoCreatorCreator(List<CucPermission> permissionList, ComparableUser user, Account account) throws KapuaException {
-        AccessInfoCreator accessInfoCreator = accessInfoFactory.newCreator(account.getId());
+        AccessInfoCreator accessInfoCreator = new AccessInfoCreator(account.getId());
         accessInfoCreator.setUserId(user.getUser().getId());
         accessInfoCreator.setScopeId(user.getUser().getScopeId());
         Set<Permission> permissions = new HashSet<>();
@@ -926,7 +926,7 @@ public class UserServiceSteps extends TestBase {
     @And("I create user with name {string}")
     public void iCreateUserWithName(String userName) throws Exception {
         stepData.remove(USER_CREATOR);
-        UserCreator userCreator = userFactory.newCreator(getCurrentScopeId());
+        UserCreator userCreator = new UserCreator(getCurrentScopeId());
         userCreator.setName(userName);
         stepData.put(USER_CREATOR, userCreator);
         try {
@@ -957,7 +957,7 @@ public class UserServiceSteps extends TestBase {
     public void iCreateUserWithNameInSubaccount(String name, String accountName) throws Exception {
         Account account = (Account) stepData.get(LAST_ACCOUNT);
         Assert.assertEquals(accountName, account.getName());
-        UserCreator userCreator = userFactory.newCreator(account.getId());
+        UserCreator userCreator = new UserCreator(account.getId());
         userCreator.setName(name);
         primeException();
         try {
@@ -972,7 +972,7 @@ public class UserServiceSteps extends TestBase {
 
     @And("I create users with following names")
     public void iCreateUsersWithFollowingNames(List<CucUser> tmpUsers) throws Exception {
-        UserCreator userCreator = userFactory.newCreator(getCurrentScopeId());
+        UserCreator userCreator = new UserCreator(getCurrentScopeId());
         ArrayList<User> userList = new ArrayList<>();
         for (CucUser tmpUser : tmpUsers) {
             userCreator.setName(tmpUser.getName());
@@ -1217,7 +1217,7 @@ public class UserServiceSteps extends TestBase {
         KapuaId scopeId = KapuaSecurityUtils.getSession().getScopeId();
 
         MfaOptionFactory mfaFactory = KapuaLocator.getInstance().getFactory(MfaOptionFactoryImpl.class);
-        MfaOptionCreator mfaCreator = mfaFactory.newCreator(scopeId, userId);
+        MfaOptionCreator mfaCreator = new MfaOptionCreator(scopeId, userId);
         MfaOptionService mfaOptionService = KapuaLocator.getInstance().getService(MfaOptionService.class);
         try {
             mfaOptionService.create(mfaCreator);

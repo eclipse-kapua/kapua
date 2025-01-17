@@ -83,6 +83,7 @@ import org.eclipse.kapua.service.config.KapuaConfigurableService;
 import org.eclipse.kapua.service.endpoint.EndpointInfo;
 import org.eclipse.kapua.service.endpoint.EndpointInfoFactory;
 import org.eclipse.kapua.service.endpoint.EndpointInfoListResult;
+import org.eclipse.kapua.service.endpoint.EndpointInfoQuery;
 import org.eclipse.kapua.service.endpoint.EndpointInfoService;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserFactory;
@@ -134,7 +135,7 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
         GwtAccount gwtAccount = null;
         KapuaId parentAccountId = KapuaEid.parseCompactId(gwtAccountCreator.getParentAccountId());
         try {
-            AccountCreator accountCreator = ACCOUNT_FACTORY.newCreator(parentAccountId);
+            AccountCreator accountCreator = new AccountCreator(parentAccountId);
 
             accountCreator.setName(gwtAccountCreator.getAccountName());
             accountCreator.setOrganizationName(gwtAccountCreator.getOrganizationName());
@@ -159,7 +160,7 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
                     // Admin
                     Permission adminPermission = PERMISSION_FACTORY.newPermission((String) null, null, account.getId(), null, true);
 
-                    RoleCreator adminRoleCreator = ROLE_FACTORY.newCreator(account.getId());
+                    RoleCreator adminRoleCreator = new RoleCreator(account.getId());
                     adminRoleCreator.setName("Admin");
                     adminRoleCreator.setScopeId(account.getId());
                     adminRoleCreator.setPermissions(Sets.newHashSet(adminPermission));
@@ -169,7 +170,7 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
                     // Thing
                     Permission thingPermission = PERMISSION_FACTORY.newPermission(Domains.BROKER, Actions.connect, account.getId(), null, false);
 
-                    RoleCreator thingRoleCreator = ROLE_FACTORY.newCreator(account.getId());
+                    RoleCreator thingRoleCreator = new RoleCreator(account.getId());
                     thingRoleCreator.setName("Thing");
                     thingRoleCreator.setScopeId(account.getId());
                     thingRoleCreator.setPermissions(Sets.newHashSet(thingPermission));
@@ -252,7 +253,7 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
 
                     @Override
                     public EndpointInfoListResult call() throws Exception {
-                        return ENDPOINT_INFO_SERVICE.query(ENDPOINT_INFO_FACTORY.newQuery(account.getId()));
+                        return ENDPOINT_INFO_SERVICE.query(new EndpointInfoQuery(account.getId()));
                     }
                 });
 

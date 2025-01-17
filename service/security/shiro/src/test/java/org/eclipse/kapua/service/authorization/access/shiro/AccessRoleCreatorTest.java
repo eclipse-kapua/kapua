@@ -14,6 +14,7 @@ package org.eclipse.kapua.service.authorization.access.shiro;
 
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
+import org.eclipse.kapua.service.authorization.access.AccessRoleCreator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,13 +22,13 @@ import org.junit.experimental.categories.Category;
 
 
 @Category(JUnitTests.class)
-public class AccessRoleCreatorImplTest {
+public class AccessRoleCreatorTest {
 
-    AccessRoleCreatorImpl accessRoleCreatorImpl;
+    AccessRoleCreator accessRoleCreatorImpl;
 
     @Before
     public void initialize() {
-        accessRoleCreatorImpl = new AccessRoleCreatorImpl(KapuaId.ONE);
+        accessRoleCreatorImpl = new AccessRoleCreator(KapuaId.ONE);
     }
 
     @Test
@@ -39,7 +40,7 @@ public class AccessRoleCreatorImplTest {
 
     @Test
     public void accessRoleCreatorImplNullTest() {
-        AccessRoleCreatorImpl accessRoleCreatorImplNullId = new AccessRoleCreatorImpl(null);
+        AccessRoleCreator accessRoleCreatorImplNullId = new AccessRoleCreator(null);
         Assert.assertNull("Null expected.", accessRoleCreatorImplNullId.getScopeId());
         Assert.assertNull("Null expected.", accessRoleCreatorImplNullId.getAccessInfoId());
         Assert.assertNull("Null expected.", accessRoleCreatorImplNullId.getRoleId());

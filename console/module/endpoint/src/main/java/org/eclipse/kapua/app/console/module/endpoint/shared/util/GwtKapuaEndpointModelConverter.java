@@ -12,20 +12,21 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.endpoint.shared.util;
 
-import com.extjs.gxt.ui.client.Style.SortDir;
-import com.extjs.gxt.ui.client.data.PagingLoadConfig;
-import com.google.common.base.Strings;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.kapua.app.console.module.api.shared.util.GwtKapuaCommonsModelConverter;
 import org.eclipse.kapua.app.console.module.endpoint.shared.model.GwtEndpointQuery;
+import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.query.FieldSortCriteria;
 import org.eclipse.kapua.model.query.SortOrder;
-import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.model.query.predicate.AttributePredicate;
 import org.eclipse.kapua.service.endpoint.EndpointInfoAttributes;
 import org.eclipse.kapua.service.endpoint.EndpointInfoFactory;
 import org.eclipse.kapua.service.endpoint.EndpointInfoQuery;
+
+import com.extjs.gxt.ui.client.Style.SortDir;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
+import com.google.common.base.Strings;
 
 public class GwtKapuaEndpointModelConverter {
 
@@ -38,13 +39,15 @@ public class GwtKapuaEndpointModelConverter {
     /**
      * Converts a {@link GwtEndpointQuery} into a {@link EndpointInfoQuery} object for backend usage
      *
-     * @param loadConfig       the load configuration
-     * @param gwtEndpointQuery the {@link GwtEndpointQuery} to convertKapuaId
+     * @param loadConfig
+     *         the load configuration
+     * @param gwtEndpointQuery
+     *         the {@link GwtEndpointQuery} to convertKapuaId
      * @return the converted {@link EndpointInfoQuery}
      */
     public static EndpointInfoQuery convertEndpointQuery(PagingLoadConfig loadConfig, GwtEndpointQuery gwtEndpointQuery) {
 
-        EndpointInfoQuery query = ENDPOINT_FACTORY.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(gwtEndpointQuery.getScopeId()));
+        EndpointInfoQuery query = new EndpointInfoQuery(GwtKapuaCommonsModelConverter.convertKapuaId(gwtEndpointQuery.getScopeId()));
 
         // Predicates conversion
         AndPredicate andPredicate = query.andPredicate();

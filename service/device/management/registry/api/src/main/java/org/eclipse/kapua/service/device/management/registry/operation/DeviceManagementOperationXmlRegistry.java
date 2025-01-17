@@ -30,9 +30,4 @@ public class DeviceManagementOperationXmlRegistry {
     DeviceManagementOperation newDeviceManagementOperation() {
         return factory.newEntity(null);
     }
-
-    DeviceManagementOperationCreator newDeviceManagementOperationCreator() {
-        return factory.newCreator(null);
-    }
-
 }

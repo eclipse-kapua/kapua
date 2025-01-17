@@ -30,14 +30,4 @@ public class GroupXmlRegistry {
     public Group newGroup() {
         return groupFactory.newEntity(null);
     }
-
-    /**
-     * Creates a new {@link GroupCreator} instance.
-     *
-     * @return The newly created {@link GroupCreator} instance.
-     * @since 1.0.0
-     */
-    public GroupCreator newGroupCreator() {
-        return groupFactory.newCreator(null, null);
-    }
 }

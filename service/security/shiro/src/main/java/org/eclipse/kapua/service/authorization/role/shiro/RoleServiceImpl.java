@@ -161,7 +161,7 @@ public class RoleServiceImpl extends KapuaConfigurableServiceBase implements Rol
             if (!roleCreator.getPermissions().isEmpty()) {
                 for (Permission p : roleCreator.getPermissions()) {
 
-                    RolePermissionCreator rolePermissionCreator = rolePermissionFactory.newCreator(roleCreator.getScopeId());
+                    RolePermissionCreator rolePermissionCreator = new RolePermissionCreator(roleCreator.getScopeId());
 
                     rolePermissionCreator.setRoleId(createdRole.getId());
                     rolePermissionCreator.setPermission(p);

@@ -12,10 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.account;
 
-import org.eclipse.kapua.model.KapuaEntityCreator;
-import org.eclipse.kapua.model.KapuaNamedEntityCreator;
-import org.eclipse.kapua.model.xml.DateXmlAdapter;
-import org.eclipse.kapua.service.account.xml.AccountXmlRegistry;
+import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -23,7 +20,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
+
+import org.eclipse.kapua.model.KapuaEntityCreator;
+import org.eclipse.kapua.model.KapuaNamedEntityCreator;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.xml.DateXmlAdapter;
 
 /**
  * {@link Account} {@link KapuaEntityCreator} definition.
@@ -46,9 +47,44 @@ import java.util.Date;
                 "organizationStateProvinceCounty",
                 "organizationCountry",
                 "expirationDate"
-        },
-        factoryClass = AccountXmlRegistry.class, factoryMethod = "newAccountCreator")
-public interface AccountCreator extends KapuaNamedEntityCreator<Account> {
+        })
+public class AccountCreator extends KapuaNamedEntityCreator<Account> {
+
+    private static final long serialVersionUID = -2460883485294616032L;
+
+    private String organizationName;
+    private String organizationPersonName;
+    private String organizationEmail;
+    private String organizationPhoneNumber;
+    private String organizationAddressLine1;
+    private String organizationAddressLine2;
+    private String organizationAddressLine3;
+    private String organizationCity;
+    private String organizationZipPostCode;
+    private String organizationStateProvinceCounty;
+    private String organizationCountry;
+
+    private Date expirationDate;
+
+    public AccountCreator() {
+    }
+
+    public AccountCreator(KapuaId scopeId) {
+        super(scopeId);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param scopeId
+     *         The {@link AccountCreator#getScopeId()}.
+     * @param name
+     *         The {@link AccountCreator#getName()}.
+     * @since 1.0.0
+     */
+    public AccountCreator(KapuaId scopeId, String name) {
+        super(scopeId, name);
+    }
 
     /**
      * Gets the {@link Organization#getName()}.
@@ -57,15 +93,20 @@ public interface AccountCreator extends KapuaNamedEntityCreator<Account> {
      * @since 1.0.0
      */
     @XmlElement(name = "organizationName")
-    String getOrganizationName();
+    public String getOrganizationName() {
+        return organizationName;
+    }
 
     /**
      * Sets the {@link Organization#getName()}.
      *
-     * @param organizationName The {@link Organization#getName()}.
+     * @param organizationName
+     *         The {@link Organization#getName()}.
      * @since 1.0.0
      */
-    void setOrganizationName(String organizationName);
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
+    }
 
     /**
      * Gets the {@link Organization#getPersonName()}.
@@ -74,15 +115,20 @@ public interface AccountCreator extends KapuaNamedEntityCreator<Account> {
      * @since 1.0.0
      */
     @XmlElement(name = "organizationPersonName")
-    String getOrganizationPersonName();
+    public String getOrganizationPersonName() {
+        return organizationPersonName;
+    }
 
     /**
      * Sets the {@link Organization#getPersonName()}.
      *
-     * @param organizationPersonName The {@link Organization#getPersonName()}.
+     * @param organizationPersonName
+     *         The {@link Organization#getPersonName()}.
      * @since 1.0.0
      */
-    void setOrganizationPersonName(String organizationPersonName);
+    public void setOrganizationPersonName(String organizationPersonName) {
+        this.organizationPersonName = organizationPersonName;
+    }
 
     /**
      * Gets the {@link Organization#getEmail()}.
@@ -91,15 +137,20 @@ public interface AccountCreator extends KapuaNamedEntityCreator<Account> {
      * @since 1.0.0
      */
     @XmlElement(name = "organizationEmail")
-    String getOrganizationEmail();
+    public String getOrganizationEmail() {
+        return organizationEmail;
+    }
 
     /**
      * Sets the {@link Organization#getEmail()}.
      *
-     * @param organizationEmail The {@link Organization#getEmail()}.
+     * @param organizationEmail
+     *         The {@link Organization#getEmail()}.
      * @since 1.0.0
      */
-    void setOrganizationEmail(String organizationEmail);
+    public void setOrganizationEmail(String organizationEmail) {
+        this.organizationEmail = organizationEmail;
+    }
 
     /**
      * Gets the {@link Organization#getPhoneNumber()}.
@@ -108,15 +159,20 @@ public interface AccountCreator extends KapuaNamedEntityCreator<Account> {
      * @since 1.0.0
      */
     @XmlElement(name = "organizationPhoneNumber")
-    String getOrganizationPhoneNumber();
+    public String getOrganizationPhoneNumber() {
+        return organizationPhoneNumber;
+    }
 
     /**
      * Sets the {@link Organization#getPhoneNumber()}.
      *
-     * @param organizationPhoneNumber The {@link Organization#getPhoneNumber()}.
+     * @param organizationPhoneNumber
+     *         The {@link Organization#getPhoneNumber()}.
      * @since 1.0.0
      */
-    void setOrganizationPhoneNumber(String organizationPhoneNumber);
+    public void setOrganizationPhoneNumber(String organizationPhoneNumber) {
+        this.organizationPhoneNumber = organizationPhoneNumber;
+    }
 
     /**
      * Gets the {@link Organization#getAddressLine1()}.
@@ -125,15 +181,20 @@ public interface AccountCreator extends KapuaNamedEntityCreator<Account> {
      * @since 1.0.0
      */
     @XmlElement(name = "organizationAddressLine1")
-    String getOrganizationAddressLine1();
+    public String getOrganizationAddressLine1() {
+        return organizationAddressLine1;
+    }
 
     /**
      * Sets the {@link Organization#getAddressLine1()}.
      *
-     * @param organizationAddressLine1 The {@link Organization#getAddressLine1()}.
+     * @param organizationAddressLine1
+     *         The {@link Organization#getAddressLine1()}.
      * @since 1.0.0
      */
-    void setOrganizationAddressLine1(String organizationAddressLine1);
+    public void setOrganizationAddressLine1(String organizationAddressLine1) {
+        this.organizationAddressLine1 = organizationAddressLine1;
+    }
 
     /**
      * Gets the {@link Organization#getAddressLine2()}.
@@ -142,32 +203,42 @@ public interface AccountCreator extends KapuaNamedEntityCreator<Account> {
      * @since 1.0.0
      */
     @XmlElement(name = "organizationAddressLine2")
-    String getOrganizationAddressLine2();
+    public String getOrganizationAddressLine2() {
+        return organizationAddressLine2;
+    }
 
     /**
      * Sets the {@link Organization#getAddressLine2()}.
      *
-     * @param organizationAddressLine2 The {@link Organization#getAddressLine2()}.
+     * @param organizationAddressLine2
+     *         The {@link Organization#getAddressLine2()}.
      * @since 1.0.0
      */
-    void setOrganizationAddressLine2(String organizationAddressLine2);
+    public void setOrganizationAddressLine2(String organizationAddressLine2) {
+        this.organizationAddressLine2 = organizationAddressLine2;
+    }
 
-    /*3
+    /**
      * Gets the {@link Organization#getAddressLine3()}.
      *
      * @return The {@link Organization#getAddressLine3()}.
      * @since 1.0.0
      */
     @XmlElement(name = "organizationAddressLine3")
-    String getOrganizationAddressLine3();
+    public String getOrganizationAddressLine3() {
+        return organizationAddressLine3;
+    }
 
     /**
      * Sets the {@link Organization#getAddressLine3()}.
      *
-     * @param organizationAddressLine3 The {@link Organization#getAddressLine3()}.
+     * @param organizationAddressLine3
+     *         The {@link Organization#getAddressLine3()}.
      * @since 1.0.0
      */
-    void setOrganizationAddressLine3(String organizationAddressLine3);
+    public void setOrganizationAddressLine3(String organizationAddressLine3) {
+        this.organizationAddressLine3 = organizationAddressLine3;
+    }
 
     /**
      * Gets the {@link Organization#getCity()}.
@@ -176,15 +247,20 @@ public interface AccountCreator extends KapuaNamedEntityCreator<Account> {
      * @since 1.0.0
      */
     @XmlElement(name = "organizationCity")
-    String getOrganizationCity();
+    public String getOrganizationCity() {
+        return organizationCity;
+    }
 
     /**
      * Sets the {@link Organization#getCity()}.
      *
-     * @param organizationCity The {@link Organization#getCity()}.
+     * @param organizationCity
+     *         The {@link Organization#getCity()}.
      * @since 1.0.0
      */
-    void setOrganizationCity(String organizationCity);
+    public void setOrganizationCity(String organizationCity) {
+        this.organizationCity = organizationCity;
+    }
 
     /**
      * Gets the {@link Organization#getZipPostCode()}.
@@ -193,15 +269,20 @@ public interface AccountCreator extends KapuaNamedEntityCreator<Account> {
      * @since 1.0.0
      */
     @XmlElement(name = "organizationZipPostCode")
-    String getOrganizationZipPostCode();
+    public String getOrganizationZipPostCode() {
+        return organizationZipPostCode;
+    }
 
     /**
      * Sets the {@link Organization#getZipPostCode()}.
      *
-     * @param organizationZipPostCode The {@link Organization#getZipPostCode()}.
+     * @param organizationZipPostCode
+     *         The {@link Organization#getZipPostCode()}.
      * @since 1.0.0
      */
-    void setOrganizationZipPostCode(String organizationZipPostCode);
+    public void setOrganizationZipPostCode(String organizationZipPostCode) {
+        this.organizationZipPostCode = organizationZipPostCode;
+    }
 
     /**
      * Gets the {@link Organization#getStateProvinceCounty()}.
@@ -210,15 +291,20 @@ public interface AccountCreator extends KapuaNamedEntityCreator<Account> {
      * @since 1.0.0
      */
     @XmlElement(name = "organizationStateProvinceCounty")
-    String getOrganizationStateProvinceCounty();
+    public String getOrganizationStateProvinceCounty() {
+        return this.organizationStateProvinceCounty;
+    }
 
     /**
      * Sets the {@link Organization#getStateProvinceCounty()}.
      *
-     * @param organizationStateProvinceCounty The {@link Organization#getStateProvinceCounty()}.
+     * @param organizationStateProvinceCounty
+     *         The {@link Organization#getStateProvinceCounty()}.
      * @since 1.0.0
      */
-    void setOrganizationStateProvinceCounty(String organizationStateProvinceCounty);
+    public void setOrganizationStateProvinceCounty(String organizationStateProvinceCounty) {
+        this.organizationStateProvinceCounty = organizationStateProvinceCounty;
+    }
 
     /**
      * Gets the {@link Organization#getCountry()}.
@@ -227,15 +313,20 @@ public interface AccountCreator extends KapuaNamedEntityCreator<Account> {
      * @since 1.0.0
      */
     @XmlElement(name = "organizationCountry")
-    String getOrganizationCountry();
+    public String getOrganizationCountry() {
+        return organizationCountry;
+    }
 
     /**
      * Sets the {@link Organization#getCountry()}.
      *
-     * @param organizationCountry The {@link Organization#getCountry()}.
+     * @param organizationCountry
+     *         The {@link Organization#getCountry()}.
      * @since 1.0.0
      */
-    void setOrganizationCountry(String organizationCountry);
+    public void setOrganizationCountry(String organizationCountry) {
+        this.organizationCountry = organizationCountry;
+    }
 
     /**
      * Gets the expiration date.
@@ -245,13 +336,18 @@ public interface AccountCreator extends KapuaNamedEntityCreator<Account> {
      */
     @XmlElement(name = "expirationDate")
     @XmlJavaTypeAdapter(DateXmlAdapter.class)
-    Date getExpirationDate();
+    public Date getExpirationDate() {
+        return expirationDate;
+    }
 
     /**
      * Sets the expiration date.
      *
-     * @param expirationDate The expiration date.
+     * @param expirationDate
+     *         The expiration date.
      * @since 1.0.0
      */
-    void setExpirationDate(Date expirationDate);
+    public void setExpirationDate(Date expirationDate) {
+        this.expirationDate = expirationDate;
+    }
 }

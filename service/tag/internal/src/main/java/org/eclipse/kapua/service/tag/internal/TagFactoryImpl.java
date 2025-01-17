@@ -17,7 +17,6 @@ import javax.inject.Singleton;
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.tag.Tag;
-import org.eclipse.kapua.service.tag.TagCreator;
 import org.eclipse.kapua.service.tag.TagFactory;
 
 /**
@@ -29,22 +28,8 @@ import org.eclipse.kapua.service.tag.TagFactory;
 public class TagFactoryImpl implements TagFactory {
 
     @Override
-    public TagCreator newCreator(KapuaId scopeId, String name) {
-        TagCreator creator = newCreator(scopeId);
-
-        creator.setName(name);
-
-        return creator;
-    }
-
-    @Override
     public Tag newEntity(KapuaId scopeId) {
         return new TagImpl(scopeId);
-    }
-
-    @Override
-    public TagCreator newCreator(KapuaId scopeId) {
-        return new TagCreatorImpl(scopeId);
     }
 
     @Override

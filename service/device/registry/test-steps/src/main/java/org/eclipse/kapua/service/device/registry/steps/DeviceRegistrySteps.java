@@ -419,7 +419,7 @@ public class DeviceRegistrySteps extends TestBase {
     public void createDeviceWithName(String clientId) throws KapuaException {
         Account lastAccount = (Account) stepData.get(LAST_ACCOUNT);
 
-        DeviceCreator deviceCreator = deviceFactory.newCreator(lastAccount.getId());
+        DeviceCreator deviceCreator = new DeviceCreator(lastAccount.getId());
         deviceCreator.setClientId(clientId);
 
         Device device = deviceRegistryService.create(deviceCreator);
@@ -438,7 +438,7 @@ public class DeviceRegistrySteps extends TestBase {
         for (int i = 0; i < invalidSymbols.length(); i++) {
             String clientId = DEVICE + invalidSymbols.charAt(i);
             try {
-                DeviceCreator tmpDevCr = deviceFactory.newCreator(tmpAcc.getId(), clientId);
+                DeviceCreator tmpDevCr = new DeviceCreator(tmpAcc.getId(), clientId);
                 Device tmpDev = deviceRegistryService.create(tmpDevCr);
             } catch (KapuaException e) {
                 verifyException(e);
@@ -521,7 +521,7 @@ public class DeviceRegistrySteps extends TestBase {
         primeException();
         try {
             for (int i = 0; i < number; i++) {
-                tmpDevCr = deviceFactory.newCreator(getCurrentScopeId(), "test_" + String.valueOf(random.nextInt()));
+                tmpDevCr = new DeviceCreator(getCurrentScopeId(), "test_" + String.valueOf(random.nextInt()));
                 tmpDevCr.setBiosVersion(version);
                 deviceRegistryService.create(tmpDevCr);
             }
@@ -540,7 +540,7 @@ public class DeviceRegistrySteps extends TestBase {
             for (int i = 0; i < number; i++) {
                 tmpId = new KapuaEid(BigInteger.valueOf(scope));
                 tmpClient = "test_" + String.valueOf(random.nextInt());
-                tmpDevCr = deviceFactory.newCreator(tmpId, tmpClient);
+                tmpDevCr = new DeviceCreator(tmpId, tmpClient);
                 deviceRegistryService.create(tmpDevCr);
             }
         } catch (KapuaException ex) {
@@ -1001,7 +1001,7 @@ public class DeviceRegistrySteps extends TestBase {
         DeviceQuery tmpQuery;
         DeviceListResult tmpListRes;
         tmpDevice = deviceFactory.newEntity(SYS_SCOPE_ID);
-        tmpCreator = deviceFactory.newCreator(SYS_SCOPE_ID);
+        tmpCreator = new DeviceCreator(SYS_SCOPE_ID);
         tmpQuery = new DeviceQuery(SYS_SCOPE_ID);
         tmpListRes = new DeviceListResult();
         Assert.assertNotNull(tmpDevice);
@@ -1073,7 +1073,7 @@ public class DeviceRegistrySteps extends TestBase {
             DeviceConnectionListResult deviceConnections = new DeviceConnectionListResult();
 
             for (CucConnection cucConnection : cucConnections) {
-                connectionCreator = deviceConnectionFactory.newCreator(scopeId);
+                connectionCreator = new DeviceConnectionCreator(scopeId);
                 connectionCreator.setStatus(DeviceConnectionStatus.CONNECTED);
                 connectionCreator.setUserId(userId);
                 connectionCreator.setUserCouplingMode(ConnectionUserCouplingMode.LOOSE);
@@ -1340,7 +1340,7 @@ public class DeviceRegistrySteps extends TestBase {
     public void exerciseAllConnectionFactoryFunctions() {
         DeviceConnectionCreator tmpCreator = null;
         DeviceConnectionQuery tmpQuery = null;
-        tmpCreator = deviceConnectionFactory.newCreator(SYS_SCOPE_ID);
+        tmpCreator = new DeviceConnectionCreator(SYS_SCOPE_ID);
         tmpQuery = new DeviceConnectionQuery(SYS_SCOPE_ID);
         Assert.assertNotNull(tmpCreator);
         Assert.assertNotNull(tmpQuery);
@@ -1635,7 +1635,7 @@ public class DeviceRegistrySteps extends TestBase {
         DeviceEventQuery tmpQuery = null;
         DeviceEventListResult tmpList = null;
         tmpEvent = eventFactory.newEntity(SYS_SCOPE_ID);
-        tmpCreator = eventFactory.newCreator(SYS_SCOPE_ID, getKapuaId(), new Date(), "");
+        tmpCreator = new DeviceEventCreator(SYS_SCOPE_ID, getKapuaId(), new Date(), "");
         tmpQuery = new DeviceEventQuery(SYS_SCOPE_ID);
         tmpList = new DeviceEventListResult();
         Assert.assertNotNull(tmpEvent);
@@ -1686,7 +1686,7 @@ public class DeviceRegistrySteps extends TestBase {
         Device device = (Device) stepData.get(DEVICE);
         primeException();
         try {
-            TagCreator tagCreator = tagFactory.newCreator(account.getId());
+            TagCreator tagCreator = new TagCreator(account.getId());
             tagCreator.setName(deviceTagName);
             Tag tag = tagService.create(tagCreator);
             Set<KapuaId> tags = new HashSet<>();
@@ -1927,7 +1927,7 @@ public class DeviceRegistrySteps extends TestBase {
     public void createConnectionForDevice(List<CucConnection> connections) throws KapuaException {
         KapuaSecurityUtils.doPrivileged(() -> {
             for (CucConnection tmpConn : connections) {
-                DeviceConnectionCreator tmpCreator = deviceConnectionFactory.newCreator(tmpConn.getScopeId());
+                DeviceConnectionCreator tmpCreator = new DeviceConnectionCreator(tmpConn.getScopeId());
                 tmpCreator.setStatus(DeviceConnectionStatus.CONNECTED);
                 tmpCreator.setClientId(tmpConn.getClientId());
                 tmpCreator.setUserId(tmpConn.getUserId());
@@ -2127,7 +2127,7 @@ public class DeviceRegistrySteps extends TestBase {
 
     // Create a device creator object. The creator is pre-filled with default data.
     private DeviceCreator prepareRegularDeviceCreator(KapuaId scopeId, String clientId) {
-        DeviceCreator deviceCreator = deviceFactory.newCreator(scopeId);
+        DeviceCreator deviceCreator = new DeviceCreator(scopeId);
 
         deviceCreator.setClientId(clientId);
         deviceCreator.setStatus(DeviceStatus.ENABLED);
@@ -2186,7 +2186,7 @@ public class DeviceRegistrySteps extends TestBase {
 
     // Create a connection creator object. The creator is pre-filled with default data.
     private DeviceConnectionCreator prepareRegularConnectionCreator(KapuaId scopeId, KapuaId userId) {
-        DeviceConnectionCreator creator = deviceConnectionFactory.newCreator(scopeId);
+        DeviceConnectionCreator creator = new DeviceConnectionCreator(scopeId);
         creator.setUserId(userId);
         creator.setUserCouplingMode(ConnectionUserCouplingMode.LOOSE);
         creator.setReservedUserId(userId);
@@ -2202,7 +2202,7 @@ public class DeviceRegistrySteps extends TestBase {
 
     // Create a event creator object. The creator is pre-filled with default data.
     private DeviceEventCreator prepareRegularDeviceEventCreator(KapuaId accountId, KapuaId deviceId) {
-        DeviceEventCreator tmpCreator = eventFactory.newCreator(accountId);
+        DeviceEventCreator tmpCreator = new DeviceEventCreator(accountId);
         KapuaPosition tmpPosition = messageFactory.newPosition();
         Date timeReceived = new Date();
         Date timeSent = new Date(System.currentTimeMillis() - 5 * 60 * 1000);
@@ -2491,7 +2491,7 @@ public class DeviceRegistrySteps extends TestBase {
 
     @Then("I create a device with name {string}")
     public void iCreateADeviceWithName(String clientId) throws Exception {
-        DeviceCreator deviceCreator = deviceFactory.newCreator(getCurrentScopeId());
+        DeviceCreator deviceCreator = new DeviceCreator(getCurrentScopeId());
         deviceCreator.setClientId(clientId);
         stepData.put(DEVICE_CREATOR, deviceCreator);
         try {
@@ -2507,13 +2507,13 @@ public class DeviceRegistrySteps extends TestBase {
     @Then("I create a device with name {string} and tags")
     public void iCreateADeviceWithName(String clientId, List<String> tags) throws Exception {
         final HashSet<KapuaId> tagIds = new HashSet<>();
-        final TagCreator tagCreator = tagFactory.newCreator(getCurrentScopeId());
+        final TagCreator tagCreator = new TagCreator(getCurrentScopeId());
         for (String tagName : tags) {
             tagCreator.setName(tagName);
             final Tag tag = tagService.create(tagCreator);
             tagIds.add(tag.getId());
         }
-        final DeviceCreator deviceCreator = deviceFactory.newCreator(getCurrentScopeId());
+        final DeviceCreator deviceCreator = new DeviceCreator(getCurrentScopeId());
         deviceCreator.setClientId(clientId);
         deviceCreator.setTagIds(tagIds);
         stepData.put(DEVICE_CREATOR, deviceCreator);
@@ -3331,7 +3331,7 @@ public class DeviceRegistrySteps extends TestBase {
 
     @Given("I create a device with null clientID")
     public void iCreateADeviceWithNullClientID() throws Throwable {
-        DeviceCreator deviceCreator = deviceFactory.newCreator(getCurrentScopeId());
+        DeviceCreator deviceCreator = new DeviceCreator(getCurrentScopeId());
         deviceCreator.setClientId(null);
         stepData.put("DeviceCreator", deviceCreator);
         try {
@@ -3346,7 +3346,7 @@ public class DeviceRegistrySteps extends TestBase {
 
     @Given("I try to create devices with invalid symbols {string} in name")
     public void iTryToCreateDevicesWithInvalidSymbolsInName(String invalidCharacters) throws Exception {
-        DeviceCreator deviceCreator = deviceFactory.newCreator(getCurrentScopeId());
+        DeviceCreator deviceCreator = new DeviceCreator(getCurrentScopeId());
         for (int i = 0; i < invalidCharacters.length(); i++) {
             String deviceName = "deviceName" + invalidCharacters.charAt(i);
             deviceCreator.setClientId(deviceName);

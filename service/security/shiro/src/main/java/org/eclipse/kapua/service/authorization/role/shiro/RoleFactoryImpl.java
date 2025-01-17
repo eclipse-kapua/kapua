@@ -17,7 +17,6 @@ import javax.inject.Singleton;
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.role.Role;
-import org.eclipse.kapua.service.authorization.role.RoleCreator;
 import org.eclipse.kapua.service.authorization.role.RoleFactory;
 import org.eclipse.kapua.service.authorization.role.RolePermission;
 
@@ -32,11 +31,6 @@ public class RoleFactoryImpl implements RoleFactory {
     @Override
     public Role newEntity(KapuaId scopeId) {
         return new RoleImpl(scopeId);
-    }
-
-    @Override
-    public RoleCreator newCreator(KapuaId scopeId) {
-        return new RoleCreatorImpl(scopeId);
     }
 
     @Override

@@ -72,7 +72,7 @@ public class GwtGroupServiceImpl extends KapuaRemoteServiceServlet implements Gw
         try {
             KapuaId scopeId = KapuaEid.parseCompactId(gwtGroupCreator.getScopeId());
 
-            GroupCreator groupCreator = GROUP_FACTORY.newCreator(scopeId, gwtGroupCreator.getName());
+            GroupCreator groupCreator = new GroupCreator(scopeId, gwtGroupCreator.getName());
             groupCreator.setDescription(gwtGroupCreator.getDescription());
             Group group = GROUP_SERVICE.create(groupCreator);
 

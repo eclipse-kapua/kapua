@@ -247,7 +247,7 @@ public class AuthorizationServiceSteps extends TestBase {
                     permissions.add(permissionFactory.newPermission(domain.getDomain().getName(), tmpAct, tmpRole.getScopeId()));
                 }
             }
-            roleCreator = roleFactory.newCreator(tmpRole.getScopeId());
+            roleCreator = new RoleCreator(tmpRole.getScopeId());
             roleCreator.setName(tmpRole.getName());
             roleCreator.setPermissions(permissions);
             try {
@@ -274,7 +274,7 @@ public class AuthorizationServiceSteps extends TestBase {
             Assert.assertNotNull(tmpCPerm.getScopeId());
             Assert.assertNotNull(tmpCPerm.getAction());
             domain.setScopeId(tmpCPerm.getScopeId());
-            RolePermissionCreator rolePermissionCreator = rolePermissionFactory.newCreator(tmpCPerm.getScopeId());
+            RolePermissionCreator rolePermissionCreator = new RolePermissionCreator(tmpCPerm.getScopeId());
             rolePermissionCreator.setRoleId(role.getId());
             rolePermissionCreator.setPermission(permissionFactory.newPermission(domain.getDomain().getName(), tmpCPerm.getAction(), tmpCPerm.getTargetScopeId()));
             try {
@@ -521,14 +521,14 @@ public class AuthorizationServiceSteps extends TestBase {
     @Then("The role factory returns sane results")
     public void performRoleFactorySanityChecks() {
         Assert.assertNotNull(roleFactory.newEntity(SYS_SCOPE_ID));
-        Assert.assertNotNull(roleFactory.newCreator(SYS_SCOPE_ID));
+        Assert.assertNotNull(new RoleCreator(SYS_SCOPE_ID));
         Assert.assertNotNull(roleFactory.newRolePermission());
     }
 
     @Then("The role permission factory returns sane results")
     public void performRolePermissionFactorySanityChecks() {
         Assert.assertNotNull(rolePermissionFactory.newEntity(SYS_SCOPE_ID));
-        Assert.assertNotNull(rolePermissionFactory.newCreator(SYS_SCOPE_ID));
+        Assert.assertNotNull(new RolePermissionCreator(SYS_SCOPE_ID));
     }
 
     @Then("The role comparator does its job")
@@ -602,7 +602,7 @@ public class AuthorizationServiceSteps extends TestBase {
         primeException();
         for (CucDomain tmpDom : domains) {
             tmpDom.doParse();
-            domainCreator = domainFactory.newCreator(tmpDom.getName());
+            domainCreator = new DomainCreator(tmpDom.getName());
             if (tmpDom.getActionSet() != null) {
                 domainCreator.setActions(tmpDom.getActionSet());
             }
@@ -716,7 +716,7 @@ public class AuthorizationServiceSteps extends TestBase {
     @Then("I can compare domain objects")
     public void checkDomainComparison() throws KapuaException {
         KapuaSecurityUtils.doPrivileged(() -> {
-            DomainCreator tmpCreator = domainFactory.newCreator("name_1");
+            DomainCreator tmpCreator = new DomainCreator("name_1");
             tmpCreator.setServiceName("test");
             HashSet<Actions> tmpAct = new HashSet<>();
             tmpAct.add(Actions.read);
@@ -829,7 +829,7 @@ public class AuthorizationServiceSteps extends TestBase {
         primeException();
         for (CucGroup tmpGrp : groups) {
             tmpGrp.doParse();
-            groupCreator = groupFactory.newCreator(tmpGrp.getScopeId(), tmpGrp.getName());
+            groupCreator = new GroupCreator(tmpGrp.getScopeId(), tmpGrp.getName());
             try {
                 group = groupService.create(groupCreator);
                 stepData.put(GROUP_CREATOR, groupCreator);
@@ -1047,7 +1047,7 @@ public class AuthorizationServiceSteps extends TestBase {
     public void provideRoleForDomain(String name) throws Exception {
         KapuaId currId = (KapuaId) stepData.get(LAST_ACCOUNT_ID);
         Set<Permission> permissions = (Set<Permission>) stepData.get(PERMISSIONS);
-        RoleCreator roleCreator = roleFactory.newCreator(currId);
+        RoleCreator roleCreator = new RoleCreator(currId);
         roleCreator.setName(name);
         roleCreator.setPermissions(permissions);
         try {
@@ -1077,7 +1077,7 @@ public class AuthorizationServiceSteps extends TestBase {
         KapuaId currScope = (KapuaId) stepData.get(LAST_ACCOUNT_ID);
         AccessInfo accessInfo = (AccessInfo) stepData.get(ACCESS_INFO);
         Role role = (Role) stepData.get("Role");
-        AccessRoleCreator tmpCreator = accessRoleFactory.newCreator(currScope);
+        AccessRoleCreator tmpCreator = new AccessRoleCreator(currScope);
         tmpCreator.setAccessInfoId(accessInfo.getId());
         tmpCreator.setRoleId(role.getId());
         try {
@@ -1094,7 +1094,7 @@ public class AuthorizationServiceSteps extends TestBase {
     public void createCleanAccessInfoEntity() throws Exception {
         KapuaId currScope = (KapuaId) stepData.get(LAST_ACCOUNT_ID);
         User tmpUser = (User) stepData.get("User");
-        AccessInfoCreator accessInfoCreator = accessInfoFactory.newCreator(currScope);
+        AccessInfoCreator accessInfoCreator = new AccessInfoCreator(currScope);
         accessInfoCreator.setUserId(tmpUser.getId());
         stepData.remove(PERMISSIONS);
         stepData.remove(ROLE_IDS);
@@ -1113,7 +1113,7 @@ public class AuthorizationServiceSteps extends TestBase {
     public void createAccessInfoEntity() throws Exception {
         KapuaId currScope = (KapuaId) stepData.get(LAST_ACCOUNT_ID);
         User tmpUser = (User) stepData.get("User");
-        AccessInfoCreator accessInfoCreator = accessInfoFactory.newCreator(currScope);
+        AccessInfoCreator accessInfoCreator = new AccessInfoCreator(currScope);
         accessInfoCreator.setUserId(tmpUser.getId());
         Set<Permission> permissions = (Set<Permission>) stepData.get(PERMISSIONS);
         Set<KapuaId> roleIds = (Set<KapuaId>) stepData.get(ROLE_IDS);
@@ -1262,7 +1262,7 @@ public class AuthorizationServiceSteps extends TestBase {
         KapuaId currScope = (KapuaId) stepData.get(LAST_ACCOUNT_ID);
         AccessInfo accessInfo = (AccessInfo) stepData.get(ACCESS_INFO);
         Set<Permission> permissions = (Set<Permission>) stepData.get(PERMISSIONS);
-        AccessPermissionCreator accessPermissionCreator = accessPermissionFactory.newCreator(currScope);
+        AccessPermissionCreator accessPermissionCreator = new AccessPermissionCreator(currScope);
         accessPermissionCreator.setAccessInfoId(accessInfo.getId());
         try {
             primeException();
@@ -1316,9 +1316,9 @@ public class AuthorizationServiceSteps extends TestBase {
     public void accessInfoServiceSanityCheck() throws Exception {
         try {
             primeException();
-            Assert.assertNotNull(accessInfoFactory.newCreator(getKapuaId()));
+            Assert.assertNotNull(new AccessInfoCreator(getKapuaId()));
             Assert.assertNotNull(accessInfoFactory.newEntity(null));
-            AccessInfoCreator tmpCreator = accessInfoFactory.newCreator(getKapuaId());
+            AccessInfoCreator tmpCreator = new AccessInfoCreator(getKapuaId());
             Assert.assertNotNull(tmpCreator);
             AccessInfo tmpAccInfo = accessInfoFactory.newEntity(getKapuaId());
             Assert.assertNotNull(tmpAccInfo);
@@ -1331,11 +1331,11 @@ public class AuthorizationServiceSteps extends TestBase {
 
     @When("I check the sanity of the access permission factory")
     public void accessPermissionFactorySanityCheck() {
-        Assert.assertNotNull(accessPermissionFactory.newCreator(getKapuaId()));
+        Assert.assertNotNull(new AccessPermissionCreator(getKapuaId()));
         Assert.assertNotNull(accessPermissionFactory.newEntity(null));
         Assert.assertNotNull(accessPermissionFactory.newEntity(getKapuaId()));
         KapuaId tmpId = getKapuaId();
-        AccessPermissionCreator tmpCreator = accessPermissionFactory.newCreator(tmpId);
+        AccessPermissionCreator tmpCreator = new AccessPermissionCreator(tmpId);
         Assert.assertNotNull(tmpCreator);
         Assert.assertNotNull(tmpCreator.getScopeId());
         Assert.assertEquals(tmpId, tmpCreator.getScopeId());
@@ -1357,10 +1357,10 @@ public class AuthorizationServiceSteps extends TestBase {
     public void accessRoleFactorySanityCheck() throws Exception {
         try {
             primeException();
-            Assert.assertNotNull(accessRoleFactory.newCreator(getKapuaId()));
+            Assert.assertNotNull(new AccessRoleCreator(getKapuaId()));
             Assert.assertNotNull(accessRoleFactory.newEntity(getKapuaId()));
             KapuaId tmpId = getKapuaId();
-            AccessRoleCreator tmpCreator = accessRoleFactory.newCreator(tmpId);
+            AccessRoleCreator tmpCreator = new AccessRoleCreator(tmpId);
             Assert.assertNotNull(tmpCreator);
             Assert.assertNotNull(tmpCreator.getScopeId());
             Assert.assertEquals(tmpId, tmpCreator.getScopeId());
@@ -1622,7 +1622,7 @@ public class AuthorizationServiceSteps extends TestBase {
 
     @And("I create the roles")
     public void iCreateTheRoles(List<CucRole> roleNames) throws Exception {
-        RoleCreator roleCreator = roleFactory.newCreator(getCurrentScopeId());
+        RoleCreator roleCreator = new RoleCreator(getCurrentScopeId());
         ArrayList<Role> roleArrayList = new ArrayList<Role>();
         stepData.remove(ROLE_LIST);
         Role role = null;
@@ -1646,7 +1646,7 @@ public class AuthorizationServiceSteps extends TestBase {
         Role role = (Role) stepData.get("Role");
         Set<Permission> permissions = (Set<Permission>) stepData.get(PERMISSIONS);
         Set<RolePermission> rolePermissionList = new HashSet<>();
-        RolePermissionCreator rolePermissionCreator = rolePermissionFactory.newCreator(getCurrentScopeId());
+        RolePermissionCreator rolePermissionCreator = new RolePermissionCreator(getCurrentScopeId());
         for (Permission permission : permissions) {
             rolePermissionCreator.setPermission(permission);
             rolePermissionCreator.setRoleId(role.getId());
@@ -1669,7 +1669,7 @@ public class AuthorizationServiceSteps extends TestBase {
         List<Role> roleList = (List<Role>) stepData.get(ROLE_LIST);
         User user = (User) stepData.get("User");
         Assert.assertEquals(userName, user.getName());
-        AccessRoleCreator accessRoleCreator = accessRoleFactory.newCreator(getCurrentScopeId());
+        AccessRoleCreator accessRoleCreator = new AccessRoleCreator(getCurrentScopeId());
         for (Role role : roleList) {
             accessRoleCreator.setAccessInfoId(accessInfo.getId());
             accessRoleCreator.setRoleId(role.getId());
@@ -1727,7 +1727,7 @@ public class AuthorizationServiceSteps extends TestBase {
 
     @And("I create a group with name {string}")
     public void iCreateAGroupWithName(String groupName) throws Exception {
-        GroupCreator groupCreator = groupFactory.newCreator(getCurrentScopeId());
+        GroupCreator groupCreator = new GroupCreator(getCurrentScopeId());
         groupCreator.setName(groupName);
         try {
             primeException();
@@ -1741,7 +1741,7 @@ public class AuthorizationServiceSteps extends TestBase {
 
     @And("I try to create groups with invalid characters in name")
     public void iTryToCreateInvalidGroups() throws Exception {
-        GroupCreator groupCreator = groupFactory.newCreator(getCurrentScopeId());
+        GroupCreator groupCreator = new GroupCreator(getCurrentScopeId());
         String invalidCharacters = "!\"#$%&'()=»Ç>:;<-.,⁄@‹›€*ı–°·‚_±Œ„‰?“‘”’ÉØ∏{}|ÆæÒÔÓÌÏÎÍÅ«";
         for (int i = 0; i < invalidCharacters.length(); i++) {
             String groupName = GROUP + invalidCharacters.charAt(i);
@@ -1880,7 +1880,7 @@ public class AuthorizationServiceSteps extends TestBase {
         Account account = (Account) stepData.get(LAST_ACCOUNT);
         Assert.assertEquals(accountName, account.getName());
         RoleCreator roleCreator = null;
-        roleCreator = roleFactory.newCreator(account.getId());
+        roleCreator = new RoleCreator(account.getId());
         roleCreator.setName(roleName);
         try {
             Role role = roleService.create(roleCreator);
@@ -1906,7 +1906,7 @@ public class AuthorizationServiceSteps extends TestBase {
             Assert.assertNotNull(tmpCPerm.getScopeId());
             Assert.assertNotNull(tmpCPerm.getAction());
             domain.setScopeId(tmpCPerm.getScopeId());
-            RolePermissionCreator rolePermissionCreator = rolePermissionFactory.newCreator(account.getId());
+            RolePermissionCreator rolePermissionCreator = new RolePermissionCreator(account.getId());
             rolePermissionCreator.setRoleId(role.getId());
             rolePermissionCreator.setPermission(permissionFactory.newPermission(domain.getDomain().getName(), tmpCPerm.getAction(), tmpCPerm.getTargetScopeId()));
             try {
@@ -1957,7 +1957,7 @@ public class AuthorizationServiceSteps extends TestBase {
         Account account = (Account) stepData.get(LAST_ACCOUNT);
         User childUser = (User) stepData.get("ChildAccountUser");
         Role role = (Role) stepData.get("Role");
-        AccessRoleCreator accessRoleCreator = accessRoleFactory.newCreator(account.getId());
+        AccessRoleCreator accessRoleCreator = new AccessRoleCreator(account.getId());
         accessRoleCreator.setAccessInfoId(accessInfo.getId());
         accessRoleCreator.setRoleId(role.getId());
         stepData.put("ChildAccountAccessRoleCreator", accessRoleCreator);
@@ -1979,7 +1979,7 @@ public class AuthorizationServiceSteps extends TestBase {
     public void iCreateTheAccessInfoEntityInChildAccount(String accountName) throws Exception {
         Account account = (Account) stepData.get(LAST_ACCOUNT);
         User tmpUser = (User) stepData.get("ChildAccountUser");
-        AccessInfoCreator accessInfoCreator = accessInfoFactory.newCreator(account.getId());
+        AccessInfoCreator accessInfoCreator = new AccessInfoCreator(account.getId());
         accessInfoCreator.setUserId(tmpUser.getId());
         Assert.assertEquals(accountName, account.getName());
         Set<Permission> permissions = (Set<Permission>) stepData.get(PERMISSIONS);
@@ -2064,7 +2064,7 @@ public class AuthorizationServiceSteps extends TestBase {
     public void iCreateTheAccessInfoEntities() throws Exception {
         KapuaId currScope = (KapuaId) stepData.get(LAST_ACCOUNT_ID);
         ArrayList<User> userArray = (ArrayList<User>) stepData.get("UserList");
-        AccessInfoCreator accessInfoCreator = accessInfoFactory.newCreator(currScope);
+        AccessInfoCreator accessInfoCreator = new AccessInfoCreator(currScope);
         ArrayList<AccessInfo> accessInfoList = new ArrayList<>();
         Set<Permission> permissions = (Set<Permission>) stepData.get(PERMISSIONS);
         Set<KapuaId> roleIds = (Set<KapuaId>) stepData.get(ROLE_IDS);
@@ -2096,7 +2096,7 @@ public class AuthorizationServiceSteps extends TestBase {
 
     @Given("I prepare a role creator with name {string} and description {string}")
     public void iPrepareARoleCreatorWithNameAndDescription(String name, String description) {
-        RoleCreator roleCreator = roleFactory.newCreator(SYS_SCOPE_ID);
+        RoleCreator roleCreator = new RoleCreator(SYS_SCOPE_ID);
         roleCreator.setName(name);
         roleCreator.setDescription(description);
         stepData.put(ROLE_CREATOR, roleCreator);
@@ -2122,7 +2122,7 @@ public class AuthorizationServiceSteps extends TestBase {
         primeException();
         try {
             for (int i = 0; i < num; i++) {
-                RoleCreator tmpCreator = roleFactory.newCreator(getCurrentScopeId());
+                RoleCreator tmpCreator = new RoleCreator(getCurrentScopeId());
                 tmpCreator.setName(String.format("TestRoleNum%d", i));
                 roleService.create(tmpCreator);
             }
@@ -2182,7 +2182,7 @@ public class AuthorizationServiceSteps extends TestBase {
 
     @Given("I try to create roles with invalid characters {string} in name")
     public void iTryToCreateRolesWithInvalidCharactersInName(String invalidCharacters) throws Exception {
-        RoleCreator roleCreator = roleFactory.newCreator(SYS_SCOPE_ID);
+        RoleCreator roleCreator = new RoleCreator(SYS_SCOPE_ID);
         for (int i = 0; i < invalidCharacters.length(); i++) {
             String roleName = ROLE_NAME + invalidCharacters.charAt(i);
             roleCreator.setName(roleName);
@@ -2199,7 +2199,7 @@ public class AuthorizationServiceSteps extends TestBase {
 
     @Given("I try to create roles with invalid characters {string} in description")
     public void iTryToCreateRolesWithInvalidCharactersInDescription(String invalidCharacters) throws Exception {
-        RoleCreator roleCreator = roleFactory.newCreator(SYS_SCOPE_ID);
+        RoleCreator roleCreator = new RoleCreator(SYS_SCOPE_ID);
         for (int i = 0; i < invalidCharacters.length(); i++) {
             String roleDescription = "roleDescription" + invalidCharacters.charAt(i);
             roleCreator.setDescription(roleDescription);
@@ -2217,7 +2217,7 @@ public class AuthorizationServiceSteps extends TestBase {
 
     @Then("I update the role name with special characters {string}")
     public void iUpdateTheRoleNameWithSpecialCharacters(String invalidSymbols) throws Exception {
-        RoleCreator roleCreator = roleFactory.newCreator(SYS_SCOPE_ID);
+        RoleCreator roleCreator = new RoleCreator(SYS_SCOPE_ID);
         for (int i = 0; i < invalidSymbols.length(); i++) {
             String roleName = ROLE_NAME + invalidSymbols.charAt(i);
             roleCreator.setName(ROLE_NAME + i);
@@ -2292,7 +2292,7 @@ public class AuthorizationServiceSteps extends TestBase {
 
     @Given("I create the group with name {string} and description {string}")
     public void iCreateTheGroupWithName(String groupName, String groupDescription) throws Exception {
-        GroupCreator groupCreator = groupFactory.newCreator(getCurrentScopeId());
+        GroupCreator groupCreator = new GroupCreator(getCurrentScopeId());
         groupCreator.setName(groupName);
         groupCreator.setDescription(groupDescription);
         try {
@@ -2358,7 +2358,7 @@ public class AuthorizationServiceSteps extends TestBase {
 
     @And("I try to create the group with invalid characters {string} in name and description {string}")
     public void iTryToCreateTheGroupWithInvalidCharactersInNameAndDescription(String invalidSymbols, String description) throws Exception {
-        GroupCreator groupCreator = groupFactory.newCreator(getCurrentScopeId());
+        GroupCreator groupCreator = new GroupCreator(getCurrentScopeId());
         for (int i = 0; i < invalidSymbols.length(); i++) {
             String groupName = GROUP_NAME + invalidSymbols.charAt(i);
             groupCreator.setName(groupName);
@@ -2394,7 +2394,7 @@ public class AuthorizationServiceSteps extends TestBase {
 
     @Given("I try to create the group with special characters {string} in description")
     public void iTryToCreateTheGroupWithSpecialCharactersInDescription(String invalidSymbols) throws Exception {
-        GroupCreator groupCreator = groupFactory.newCreator(SYS_SCOPE_ID);
+        GroupCreator groupCreator = new GroupCreator(SYS_SCOPE_ID);
         for (int i = 0; i < invalidSymbols.length(); i++) {
             String groupDescription = "description" + invalidSymbols.charAt(i);
             groupCreator.setDescription(groupDescription);
@@ -2412,7 +2412,7 @@ public class AuthorizationServiceSteps extends TestBase {
 
     @When("I update the group description to description with special characters {string}")
     public void iUpdateTheGroupDescriptionFromToDescriptionWithSpecialCharacters(String invalidSymbols) throws Exception {
-        GroupCreator groupCreator = groupFactory.newCreator(SYS_SCOPE_ID);
+        GroupCreator groupCreator = new GroupCreator(SYS_SCOPE_ID);
         for (int i = 0; i < invalidSymbols.length(); i++) {
             String groupDescription = "description" + invalidSymbols.charAt(i);
             groupCreator.setDescription(groupDescription);

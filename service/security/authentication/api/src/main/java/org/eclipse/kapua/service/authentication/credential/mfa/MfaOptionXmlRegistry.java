@@ -22,16 +22,6 @@ public class MfaOptionXmlRegistry {
     private final MfaOptionFactory mfaOptionFactory = KapuaLocator.getInstance().getFactory(MfaOptionFactory.class);
 
     /**
-     * Instantiates a new {@link MfaOptionCreator} instance
-     *
-     * @return The newly instantiated {@link MfaOptionCreator}
-     * @since 1.3.0
-     */
-    public MfaOptionCreator newMfaOptionCreator() {
-        return mfaOptionFactory.newCreator(null, null);
-    }
-
-    /**
      * Instantiates a new {@link MfaOption} instance
      *
      * @return The newly instantiated {@link MfaOption}

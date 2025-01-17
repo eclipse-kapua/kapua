@@ -36,15 +36,6 @@ public class JobStepXmlRegistry {
         return jobStepFactory.newEntity(null);
     }
 
-    /**
-     * Creates a new job creator instance
-     *
-     * @return
-     */
-    public JobStepCreator newJobStepCreator() {
-        return jobStepFactory.newCreator(null);
-    }
-
     public JobStepProperty newJobStepProperty() {
         return jobStepFactory.newStepProperty(null, null, null);
     }

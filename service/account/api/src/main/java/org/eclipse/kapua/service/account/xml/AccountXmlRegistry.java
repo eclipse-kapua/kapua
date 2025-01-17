@@ -16,7 +16,6 @@ import javax.xml.bind.annotation.XmlRegistry;
 
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.service.account.Account;
-import org.eclipse.kapua.service.account.AccountCreator;
 import org.eclipse.kapua.service.account.AccountFactory;
 import org.eclipse.kapua.service.account.Organization;
 
@@ -39,16 +38,6 @@ public class AccountXmlRegistry {
      */
     public Account newAccount() {
         return factory.newEntity(null);
-    }
-
-    /**
-     * Instantiates a new {@link AccountCreator}.
-     *
-     * @return The newly instantiated {@link AccountCreator}.
-     * @since 1.0.0
-     */
-    public AccountCreator newAccountCreator() {
-        return factory.newCreator(null);
     }
 
     /**

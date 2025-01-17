@@ -12,15 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.endpoint.steps;
 
+import java.util.List;
+import java.util.concurrent.Callable;
 
-import com.google.inject.Singleton;
-import io.cucumber.datatable.DataTable;
-import io.cucumber.java.After;
-import io.cucumber.java.Before;
-import io.cucumber.java.Scenario;
-import io.cucumber.java.en.And;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaIllegalNullArgumentException;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
@@ -38,9 +34,15 @@ import org.eclipse.kapua.service.endpoint.EndpointInfoQuery;
 import org.eclipse.kapua.service.endpoint.EndpointInfoService;
 import org.junit.Assert;
 
-import javax.inject.Inject;
-import java.util.List;
-import java.util.concurrent.Callable;
+import com.google.inject.Singleton;
+
+import io.cucumber.datatable.DataTable;
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 
 @Singleton
 public class EndpointServiceSteps extends TestBase {
@@ -48,13 +50,13 @@ public class EndpointServiceSteps extends TestBase {
     private EndpointInfoService endpointInfoService;
     private EndpointInfoFactory endpointInfoFactory;
 
-// ****************************************************************************************
-// * Implementation of Gherkin steps used in JobService.feature scenarios.                *
-// *                                                                                      *
-// * MockedLocator is used for Location Service. Mockito is used to mock other            *
-// * services that the Account services dependent on. Dependent services are:             *
-// * - Authorization Service                                                              *
-// ****************************************************************************************
+    // ****************************************************************************************
+    // * Implementation of Gherkin steps used in JobService.feature scenarios.                *
+    // *                                                                                      *
+    // * MockedLocator is used for Location Service. Mockito is used to mock other            *
+    // * services that the Account services dependent on. Dependent services are:             *
+    // * - Authorization Service                                                              *
+    // ****************************************************************************************
 
     private static final String ENDPOINT_INFO = "EndpointInfo";
 
@@ -64,7 +66,7 @@ public class EndpointServiceSteps extends TestBase {
         super(stepData);
     }
 
-    @After(value="@setup")
+    @After(value = "@setup")
     public void setServices() {
         KapuaLocator locator = KapuaLocator.getInstance();
         endpointInfoService = locator.getService(EndpointInfoService.class);
@@ -81,7 +83,7 @@ public class EndpointServiceSteps extends TestBase {
     // * Setup and tear-down steps                                                        *
     // ************************************************************************************
 
-    @Before(value="@env_docker or @env_docker_base or @env_none", order=10)
+    @Before(value = "@env_docker or @env_docker_base or @env_none", order = 10)
     public void beforeScenarioNone(Scenario scenario) {
         updateScenario(scenario);
     }
@@ -92,7 +94,7 @@ public class EndpointServiceSteps extends TestBase {
 
     @And("I create endpoint with schema {string}, domain {string} and port {int}")
     public void iCreateEndpointWithSchemaDnsAndPort(String schema, String dns, int port) throws Exception {
-        EndpointInfoCreator endpointInfoCreator = endpointInfoFactory.newCreator(getCurrentScopeId());
+        EndpointInfoCreator endpointInfoCreator = new EndpointInfoCreator(getCurrentScopeId());
         endpointInfoCreator.setSchema(schema);
         endpointInfoCreator.setDns(dns);
         endpointInfoCreator.setPort(port);
@@ -115,7 +117,7 @@ public class EndpointServiceSteps extends TestBase {
                 "æÒ\uF8FFÔÓÌÏÎÍÅ«" +
                 "◊Ñˆ¯Èˇ¿";
         for (int i = 0; i < invalidSymbols.length(); i++) {
-            EndpointInfoCreator endpointInfoCreator = endpointInfoFactory.newCreator(getCurrentScopeId());
+            EndpointInfoCreator endpointInfoCreator = new EndpointInfoCreator(getCurrentScopeId());
             String schema = invalidSymbols + invalidSymbols.charAt(i);
             endpointInfoCreator.setSchema(schema);
             endpointInfoCreator.setDns("dns.com");
@@ -133,7 +135,7 @@ public class EndpointServiceSteps extends TestBase {
 
     @And("I create endpoint with domain name {string} and port {int} without schema")
     public void iCreateEndpointWithDnsAndPort(String dns, int port) throws Exception {
-        EndpointInfoCreator endpointInfoCreator = endpointInfoFactory.newCreator(getCurrentScopeId());
+        EndpointInfoCreator endpointInfoCreator = new EndpointInfoCreator(getCurrentScopeId());
         endpointInfoCreator.setDns(dns);
         endpointInfoCreator.setPort(port);
         endpointInfoCreator.setEndpointType(EndpointInfo.ENDPOINT_TYPE_RESOURCE);
@@ -147,7 +149,7 @@ public class EndpointServiceSteps extends TestBase {
 
     @And("I create endpoint with schema {string} without domain name and port")
     public void iCreateEndpointWithSchemaOnly(String schema) throws Exception {
-        EndpointInfoCreator endpointInfoCreator = endpointInfoFactory.newCreator(getCurrentScopeId());
+        EndpointInfoCreator endpointInfoCreator = new EndpointInfoCreator(getCurrentScopeId());
         endpointInfoCreator.setSchema(schema);
         endpointInfoCreator.setEndpointType(EndpointInfo.ENDPOINT_TYPE_RESOURCE);
         try {
@@ -160,7 +162,7 @@ public class EndpointServiceSteps extends TestBase {
 
     @And("I create endpoint with NULL parameters")
     public void iCreateEndpointWithNullParameters() throws Exception {
-        EndpointInfoCreator endpointInfoCreator = endpointInfoFactory.newCreator(getCurrentScopeId());
+        EndpointInfoCreator endpointInfoCreator = new EndpointInfoCreator(getCurrentScopeId());
         endpointInfoCreator.setSchema(null);
         endpointInfoCreator.setDns(null);
         endpointInfoCreator.setPort(0);
@@ -177,7 +179,7 @@ public class EndpointServiceSteps extends TestBase {
     public void iDeleteEndpointWithSchema(String schema, String domain, int port) throws Throwable {
         primeException();
         try {
-            EndpointInfoQuery endpointInfoQuery = endpointInfoFactory.newQuery(getCurrentScopeId());
+            EndpointInfoQuery endpointInfoQuery = new EndpointInfoQuery(getCurrentScopeId());
             endpointInfoQuery.setPredicate(endpointInfoQuery.attributePredicate(EndpointInfoAttributes.SCHEMA, schema, AttributePredicate.Operator.EQUAL));
             EndpointInfo endpointInfo = endpointInfoService.query(endpointInfoQuery).getFirstItem();
             Assert.assertEquals(schema, endpointInfo.getSchema());
@@ -203,7 +205,7 @@ public class EndpointServiceSteps extends TestBase {
     public void foundEndpointBySchemaDomainPortSection(String schema, String domain, int port, String section) throws Exception {
         primeException();
         try {
-            EndpointInfoQuery endpointInfoQuery = endpointInfoFactory.newQuery(getCurrentScopeId());
+            EndpointInfoQuery endpointInfoQuery = new EndpointInfoQuery(getCurrentScopeId());
             AndPredicate andPredicate = endpointInfoQuery.andPredicate();
 
             if (section.equals("cors")) {
@@ -263,7 +265,7 @@ public class EndpointServiceSteps extends TestBase {
     public void iDeleteEndpointWithSchema(String schema) throws Exception {
         primeException();
         try {
-            EndpointInfoQuery endpointInfoQuery = endpointInfoFactory.newQuery(getCurrentScopeId());
+            EndpointInfoQuery endpointInfoQuery = new EndpointInfoQuery(getCurrentScopeId());
             endpointInfoQuery.setPredicate(endpointInfoQuery.attributePredicate(EndpointInfoAttributes.SCHEMA, schema, AttributePredicate.Operator.EQUAL));
             EndpointInfo endpointInfo = endpointInfoService.query(endpointInfoQuery).getFirstItem();
             endpointInfoService.delete(SYS_SCOPE_ID, endpointInfo.getId());
@@ -286,7 +288,7 @@ public class EndpointServiceSteps extends TestBase {
     public void iDeleteEndpointWithSchemaDomainAndPort(String schema, String domainName, int port) throws Exception {
         primeException();
         try {
-            EndpointInfoQuery endpointInfoQuery = endpointInfoFactory.newQuery(getCurrentScopeId());
+            EndpointInfoQuery endpointInfoQuery = new EndpointInfoQuery(getCurrentScopeId());
             endpointInfoQuery.setPredicate(endpointInfoQuery.attributePredicate(EndpointInfoAttributes.SCHEMA, schema, AttributePredicate.Operator.EQUAL));
             endpointInfoQuery.setPredicate(endpointInfoQuery.attributePredicate(EndpointInfoAttributes.DNS, domainName, AttributePredicate.Operator.EQUAL));
             endpointInfoQuery.setPredicate(endpointInfoQuery.attributePredicate(EndpointInfoAttributes.PORT, port, AttributePredicate.Operator.EQUAL));
@@ -302,7 +304,7 @@ public class EndpointServiceSteps extends TestBase {
     public void iSearchForAllEndpoints() throws Exception {
         primeException();
         try {
-            EndpointInfoQuery endpointInfoQuery = endpointInfoFactory.newQuery(getCurrentScopeId());
+            EndpointInfoQuery endpointInfoQuery = new EndpointInfoQuery(getCurrentScopeId());
             EndpointInfoListResult endpointInfo = endpointInfoService.query(endpointInfoQuery);
             stepData.put("NumberOfEndpoints", endpointInfo.getSize());
         } catch (Exception ex) {
@@ -340,7 +342,7 @@ public class EndpointServiceSteps extends TestBase {
     public void iDeleteEndpointsWithSchema(String schema) throws Throwable {
         primeException();
         try {
-            EndpointInfoQuery endpointInfoQuery = endpointInfoFactory.newQuery(getCurrentScopeId());
+            EndpointInfoQuery endpointInfoQuery = new EndpointInfoQuery(getCurrentScopeId());
             endpointInfoQuery.setPredicate(endpointInfoQuery.attributePredicate(EndpointInfoAttributes.SCHEMA, schema, AttributePredicate.Operator.EQUAL));
             EndpointInfoListResult endpointsToDelete = endpointInfoService.query(endpointInfoQuery);
             for (int i = 0; i < endpointsToDelete.getSize(); i++) {
@@ -393,7 +395,7 @@ public class EndpointServiceSteps extends TestBase {
     @Then("I edit port number to {int} in endpoint with schema {string}, domain {string} and port {int}")
     public void iEditLastCreatedEndpointPortInEndpoint(int newPort, String schema, String domainName, int port) throws Throwable {
         try {
-            EndpointInfoQuery endpointInfoQuery = endpointInfoFactory.newQuery(getCurrentScopeId());
+            EndpointInfoQuery endpointInfoQuery = new EndpointInfoQuery(getCurrentScopeId());
             endpointInfoQuery.setPredicate(endpointInfoQuery.attributePredicate(EndpointInfoAttributes.SCHEMA, schema, AttributePredicate.Operator.EQUAL));
             endpointInfoQuery.setPredicate(endpointInfoQuery.attributePredicate(EndpointInfoAttributes.DNS, domainName, AttributePredicate.Operator.EQUAL));
             endpointInfoQuery.setPredicate(endpointInfoQuery.attributePredicate(EndpointInfoAttributes.PORT, port, AttributePredicate.Operator.EQUAL));
@@ -406,8 +408,8 @@ public class EndpointServiceSteps extends TestBase {
     }
 
     @And("I create endpoint with schema {string} and port {int} without domain name")
-    public void iCreateEndpointWithSchemaAndPortWithoutDomain(String schema, int port ) throws Throwable {
-        EndpointInfoCreator endpointInfoCreator = endpointInfoFactory.newCreator(getCurrentScopeId());
+    public void iCreateEndpointWithSchemaAndPortWithoutDomain(String schema, int port) throws Throwable {
+        EndpointInfoCreator endpointInfoCreator = new EndpointInfoCreator(getCurrentScopeId());
         endpointInfoCreator.setSchema(schema);
         endpointInfoCreator.setPort(port);
         endpointInfoCreator.setDns(null);
@@ -421,8 +423,8 @@ public class EndpointServiceSteps extends TestBase {
     }
 
     @And("I create endpoint with domain name {string} without schema and port")
-    public void iCreateEndpointWithDomainWithoutSchemaAndPort(String domainName) throws Throwable{
-        EndpointInfoCreator endpointInfoCreator = endpointInfoFactory.newCreator(getCurrentScopeId());
+    public void iCreateEndpointWithDomainWithoutSchemaAndPort(String domainName) throws Throwable {
+        EndpointInfoCreator endpointInfoCreator = new EndpointInfoCreator(getCurrentScopeId());
         endpointInfoCreator.setDns(domainName);
         endpointInfoCreator.setEndpointType(EndpointInfo.ENDPOINT_TYPE_RESOURCE);
         try {
@@ -435,7 +437,7 @@ public class EndpointServiceSteps extends TestBase {
 
     @And("I create endpoint with schema {string} and domain {string} without port")
     public void iCreateEndpointWithSchemaAndDomainWithoutPort(String schema, String domainName) throws Throwable {
-        EndpointInfoCreator endpointInfoCreator = endpointInfoFactory.newCreator(getCurrentScopeId());
+        EndpointInfoCreator endpointInfoCreator = new EndpointInfoCreator(getCurrentScopeId());
         endpointInfoCreator.setDns(domainName);
         endpointInfoCreator.setSchema(schema);
         endpointInfoCreator.setEndpointType(EndpointInfo.ENDPOINT_TYPE_RESOURCE);
@@ -448,8 +450,8 @@ public class EndpointServiceSteps extends TestBase {
     }
 
     @And("I create endpoint with port {int} without schema and domain name")
-    public void iCreateEndpointWithPortWithoutSchemaAndDomain(int port) throws Throwable{
-        EndpointInfoCreator endpointInfoCreator = endpointInfoFactory.newCreator(getCurrentScopeId());
+    public void iCreateEndpointWithPortWithoutSchemaAndDomain(int port) throws Throwable {
+        EndpointInfoCreator endpointInfoCreator = new EndpointInfoCreator(getCurrentScopeId());
         endpointInfoCreator.setPort(port);
         endpointInfoCreator.setEndpointType(EndpointInfo.ENDPOINT_TYPE_RESOURCE);
         try {
@@ -462,7 +464,7 @@ public class EndpointServiceSteps extends TestBase {
 
     @And("I create endpoint with schema {string}, domain {string}, port {int} and {string} secure field")
     public void iCreateEndpointWithSchemaDomainPortAndSecureField(String schema, String domainName, int port, String secureField) throws Throwable {
-        EndpointInfoCreator endpointInfoCreator = endpointInfoFactory.newCreator(getCurrentScopeId());
+        EndpointInfoCreator endpointInfoCreator = new EndpointInfoCreator(getCurrentScopeId());
         endpointInfoCreator.setSchema(schema);
         endpointInfoCreator.setDns(domainName);
         endpointInfoCreator.setPort(port);
@@ -497,7 +499,7 @@ public class EndpointServiceSteps extends TestBase {
 
     @When("^I create a CORS filter with schema \"([^\"]*)\", domain \"([^\"]*)\" and port (\\d+)$")
     public void iCreateCORSFilter(String schema, String domain, int port) throws Exception {
-        EndpointInfoCreator endpointInfoCreator = endpointInfoFactory.newCreator(getCurrentScopeId());
+        EndpointInfoCreator endpointInfoCreator = new EndpointInfoCreator(getCurrentScopeId());
         endpointInfoCreator.setSchema(schema);
         endpointInfoCreator.setDns(domain);
         endpointInfoCreator.setPort(port);
@@ -520,9 +522,10 @@ public class EndpointServiceSteps extends TestBase {
     @Then("I have (\\d+) CORS filters?$")
     public void iHaveCORSFilter(int expectedNum) throws KapuaException {
         int corsFilter = KapuaSecurityUtils.doPrivileged(new Callable<Integer>() {
+
             @Override
             public Integer call() throws Exception {
-                EndpointInfoQuery endpointInfoQuery = endpointInfoFactory.newQuery(getCurrentScopeId());
+                EndpointInfoQuery endpointInfoQuery = new EndpointInfoQuery(getCurrentScopeId());
                 EndpointInfoListResult corsFilters = endpointInfoService.query(endpointInfoQuery, EndpointInfo.ENDPOINT_TYPE_CORS);
                 return corsFilters.getSize();
             }
@@ -535,7 +538,7 @@ public class EndpointServiceSteps extends TestBase {
         primeException();
 
         try {
-            EndpointInfoQuery endpointInfoQuery = endpointInfoFactory.newQuery(getCurrentScopeId());
+            EndpointInfoQuery endpointInfoQuery = new EndpointInfoQuery(getCurrentScopeId());
             EndpointInfoListResult endpointsToDelete = endpointInfoService.query(endpointInfoQuery, EndpointInfo.ENDPOINT_TYPE_CORS);
 
             for (int i = 0; i < endpointsToDelete.getSize(); i++) {

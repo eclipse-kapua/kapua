@@ -206,7 +206,7 @@ public class EndpointInfoServiceImpl
             //found but in another scope...is defined in the scope of the first Account that has defined endpoints? (proceeding upwards)
             String type = endpointInfoToFind.getEndpointType();
             //now find the endpoints of the search type that I can use (aka, the nearest proceeding upwards in Accounts hierarchy)
-            EndpointInfoQuery query = endpointInfoFactory.newQuery(scopeId);
+            EndpointInfoQuery query = new EndpointInfoQuery(scopeId);
             EndpointInfoListResult nearestUsableEndpoints = doQuery(tx, query, type);
 
             if (nearestUsableEndpoints.isEmpty() || !nearestUsableEndpoints.getFirstItem().getScopeId()
@@ -388,7 +388,7 @@ public class EndpointInfoServiceImpl
     }
 
     private boolean countAllEndpointsInScope(TxContext txContext, KapuaId scopeId, String section) throws KapuaException {
-        EndpointInfoQuery totalQuery = endpointInfoFactory.newQuery(scopeId);
+        EndpointInfoQuery totalQuery = new EndpointInfoQuery(scopeId);
         addSectionToPredicate(totalQuery, section);
         long totalCount = repository.count(txContext, totalQuery);
         return totalCount != 0;

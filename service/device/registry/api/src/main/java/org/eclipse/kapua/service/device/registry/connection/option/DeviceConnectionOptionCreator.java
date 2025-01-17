@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.registry.connection.option;
 
+import org.eclipse.kapua.model.KapuaEntityCreator;
 import org.eclipse.kapua.model.KapuaUpdatableEntityCreator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.device.registry.ConnectionUserCouplingMode;
@@ -21,35 +22,61 @@ import org.eclipse.kapua.service.device.registry.ConnectionUserCouplingMode;
  *
  * @since 1.0
  */
-public interface DeviceConnectionOptionCreator extends KapuaUpdatableEntityCreator<DeviceConnectionOption> {
+public class DeviceConnectionOptionCreator extends KapuaUpdatableEntityCreator<DeviceConnectionOption> {
+
+    private static final long serialVersionUID = 2740394157765904615L;
+
+    private ConnectionUserCouplingMode userCouplingMode;
+    private KapuaId reservedUserId;
+
+    private String authenticationType;
+
+    public DeviceConnectionOptionCreator() {
+    }
+
+    public DeviceConnectionOptionCreator(KapuaId scopeId) {
+        super(scopeId);
+    }
+
+    public DeviceConnectionOptionCreator(KapuaEntityCreator<DeviceConnectionOption> entityCreator) {
+        super(entityCreator);
+    }
 
     /**
      * Get the device connection user coupling mode.
      *
      * @return
      */
-    ConnectionUserCouplingMode getUserCouplingMode();
+    public ConnectionUserCouplingMode getUserCouplingMode() {
+        return userCouplingMode;
+    }
 
     /**
      * Set the device connection user coupling mode.
      *
      * @param userCouplingMode
      */
-    void setUserCouplingMode(ConnectionUserCouplingMode userCouplingMode);
+    public void setUserCouplingMode(ConnectionUserCouplingMode userCouplingMode) {
+        this.userCouplingMode = userCouplingMode;
+    }
 
     /**
      * Get the reserved user identifier
      *
      * @return
      */
-    KapuaId getReservedUserId();
+    public KapuaId getReservedUserId() {
+        return reservedUserId;
+    }
 
     /**
      * Set the reserved user identifier
      *
      * @param reservedUserId
      */
-    void setReservedUserId(KapuaId reservedUserId);
+    public void setReservedUserId(KapuaId reservedUserId) {
+        this.reservedUserId = reservedUserId;
+    }
 
     /**
      * Gets the allowed authentication type.
@@ -57,13 +84,18 @@ public interface DeviceConnectionOptionCreator extends KapuaUpdatableEntityCreat
      * @return The allowed authentication type.
      * @since 2.0.0
      */
-    String getAuthenticationType();
+    public String getAuthenticationType() {
+        return authenticationType;
+    }
 
     /**
      * Sets the allowed authentication type.
      *
-     * @param authenticationType The allowed authentication type.
+     * @param authenticationType
+     *         The allowed authentication type.
      * @since 2.0.0
      */
-    void setAuthenticationType(String authenticationType);
+    public void setAuthenticationType(String authenticationType) {
+        this.authenticationType = authenticationType;
+    }
 }

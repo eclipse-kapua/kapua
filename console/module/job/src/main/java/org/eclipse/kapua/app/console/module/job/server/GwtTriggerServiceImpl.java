@@ -152,7 +152,7 @@ public class GwtTriggerServiceImpl extends KapuaRemoteServiceServlet implements 
         try {
             KapuaId scopeId = KapuaEid.parseCompactId(gwtTriggerCreator.getScopeId());
 
-            TriggerCreator triggerCreator = TRIGGER_FACTORY.newCreator(scopeId);
+            TriggerCreator triggerCreator = new TriggerCreator(scopeId);
             triggerCreator.setName(gwtTriggerCreator.getTriggerName());
             triggerCreator.setStartsOn(gwtTriggerCreator.getStartsOn());
             triggerCreator.setEndsOn(gwtTriggerCreator.getEndsOn());

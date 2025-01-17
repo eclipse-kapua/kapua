@@ -12,6 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.scheduler.quartz.job;
 
+import java.util.Date;
+
+import javax.validation.constraints.NotNull;
+
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.job.engine.JobEngineService;
@@ -26,25 +31,19 @@ import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTriggerCreator;
 import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTriggerFactory;
 import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTriggerService;
 import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTriggerStatus;
-
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.NotNull;
-import java.util.Date;
-
 /**
  * Ths is the {@link Job} that triggers the {@link JobEngineService#startJob(KapuaId, KapuaId)}.
  * <p>
- * In case of successful start it creates a {@link FiredTrigger} to track that {@link JobEngineService#startJob(KapuaId, KapuaId)}
- * was successful
+ * In case of successful start it creates a {@link FiredTrigger} to track that {@link JobEngineService#startJob(KapuaId, KapuaId)} was successful
  * <p>
- * In case of {@link Exception} from {@link JobEngineService#startJob(KapuaId, KapuaId)} it saves the {@link Exception#getMessage()}
- * into the {@link FiredTrigger#getMessage()} to let the user be able to solve the issue.
+ * In case of {@link Exception} from {@link JobEngineService#startJob(KapuaId, KapuaId)} it saves the {@link Exception#getMessage()} into the {@link FiredTrigger#getMessage()} to let the user be able
+ * to solve the issue.
  *
  * @since 1.0.0
  */
@@ -123,7 +122,8 @@ public class KapuaJobLauncher implements Job {
     /**
      * Sets the {@link org.eclipse.kapua.service.job.Job#getScopeId()}.
      *
-     * @param scopeId The {@link org.eclipse.kapua.service.job.Job#getScopeId()}.
+     * @param scopeId
+     *         The {@link org.eclipse.kapua.service.job.Job#getScopeId()}.
      * @since 1.0.0
      */
     public void setScopeId(KapuaId scopeId) {
@@ -143,7 +143,8 @@ public class KapuaJobLauncher implements Job {
     /**
      * Sets the {@link org.eclipse.kapua.service.job.Job#getId()}.
      *
-     * @param jobId The {@link org.eclipse.kapua.service.job.Job#getId()}.
+     * @param jobId
+     *         The {@link org.eclipse.kapua.service.job.Job#getId()}.
      * @since 1.0.0
      */
     public void setJobId(KapuaId jobId) {
@@ -163,7 +164,8 @@ public class KapuaJobLauncher implements Job {
     /**
      * Sets the {@link org.eclipse.kapua.service.job.Job}'s {@link JobStartOptions}.
      *
-     * @param jobStartOptions The {@link org.eclipse.kapua.service.job.Job}'s {@link JobStartOptions}.
+     * @param jobStartOptions
+     *         The {@link org.eclipse.kapua.service.job.Job}'s {@link JobStartOptions}.
      * @since 1.0.0
      */
     public void setJobStartOptions(JobStartOptions jobStartOptions) {
@@ -173,9 +175,12 @@ public class KapuaJobLauncher implements Job {
     /**
      * Creates a {@link FiredTrigger} with {@link FiredTriggerStatus#FIRED}.
      *
-     * @param scopeId   The {@link Trigger#getScopeId()}.
-     * @param triggerId The {@link Trigger#getId()}.
-     * @param fireTime  The actual {@link Trigger} fire time. Sourced from {@link JobExecutionContext#getFireTime()}.
+     * @param scopeId
+     *         The {@link Trigger#getScopeId()}.
+     * @param triggerId
+     *         The {@link Trigger#getId()}.
+     * @param fireTime
+     *         The actual {@link Trigger} fire time. Sourced from {@link JobExecutionContext#getFireTime()}.
      * @since 1.5.0
      */
     public void createSuccessfulFiredTrigger(@NotNull KapuaId scopeId, @NotNull KapuaId triggerId, @NotNull Date fireTime) {
@@ -185,10 +190,14 @@ public class KapuaJobLauncher implements Job {
     /**
      * Creates a {@link FiredTrigger} with {@link FiredTriggerStatus#FAILED}.
      *
-     * @param scopeId   The {@link Trigger#getScopeId()}.
-     * @param triggerId The {@link Trigger#getId()}.
-     * @param fireTime  The actual {@link Trigger} fire time. Sourced from {@link JobExecutionContext#getFireTime()}.
-     * @param exception The {@link Exception} occurred while processing.
+     * @param scopeId
+     *         The {@link Trigger#getScopeId()}.
+     * @param triggerId
+     *         The {@link Trigger#getId()}.
+     * @param fireTime
+     *         The actual {@link Trigger} fire time. Sourced from {@link JobExecutionContext#getFireTime()}.
+     * @param exception
+     *         The {@link Exception} occurred while processing.
      * @since 1.5.0
      */
     public void createdUnsuccessfulFiredTrigger(@NotNull KapuaId scopeId, @NotNull KapuaId triggerId, @NotNull Date fireTime, @NotNull Exception exception) {
@@ -198,16 +207,21 @@ public class KapuaJobLauncher implements Job {
     /**
      * Creates a {@link FiredTrigger} with the given parameters.
      *
-     * @param scopeId   The {@link Trigger#getScopeId()}.
-     * @param triggerId The {@link Trigger#getId()}.
-     * @param fireTime  The actual {@link Trigger} fire time. Sourced from {@link JobExecutionContext#getFireTime()}.
-     * @param status    The {@link FiredTriggerStatus} of the processing.
-     * @param exception The {@link Exception} occurred while processing, if any.
+     * @param scopeId
+     *         The {@link Trigger#getScopeId()}.
+     * @param triggerId
+     *         The {@link Trigger#getId()}.
+     * @param fireTime
+     *         The actual {@link Trigger} fire time. Sourced from {@link JobExecutionContext#getFireTime()}.
+     * @param status
+     *         The {@link FiredTriggerStatus} of the processing.
+     * @param exception
+     *         The {@link Exception} occurred while processing, if any.
      * @since 1.5.0
      */
     public void createFiredTrigger(@NotNull KapuaId scopeId, @NotNull KapuaId triggerId, @NotNull Date fireTime, @NotNull FiredTriggerStatus status, @Nullable Exception exception) {
         try {
-            FiredTriggerCreator firedTriggerCreator = firedTriggerFactory.newCreator(scopeId);
+            FiredTriggerCreator firedTriggerCreator = new FiredTriggerCreator(scopeId);
             firedTriggerCreator.setTriggerId(triggerId);
             firedTriggerCreator.setFiredOn(fireTime);
             firedTriggerCreator.setStatus(status);

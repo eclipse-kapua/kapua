@@ -198,7 +198,7 @@ public class CORSResponseFilter implements Filter {
             final KapuaQuery accounts = new KapuaQuery((KapuaId) null);
             AccountListResult accountListResult = KapuaSecurityUtils.doPrivileged(() -> accountService.query(accounts));
             accountListResult.getItems().forEach(account -> {
-                EndpointInfoQuery endpointInfoQuery = endpointInfoFactory.newQuery(account.getId());
+                EndpointInfoQuery endpointInfoQuery = new EndpointInfoQuery(account.getId());
                 try {
                     EndpointInfoListResult endpointInfoListResult = KapuaSecurityUtils.doPrivileged(() -> endpointInfoService.query(endpointInfoQuery, EndpointInfo.ENDPOINT_TYPE_CORS));
                     endpointInfoListResult.getItems().forEach(endpointInfo -> newAllowedOrigins.put(endpointInfo.toStringURI(), account.getId()));

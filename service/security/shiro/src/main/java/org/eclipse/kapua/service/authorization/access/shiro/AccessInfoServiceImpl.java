@@ -124,7 +124,7 @@ public class AccessInfoServiceImpl implements AccessInfoService {
 
             if (!accessInfoCreator.getPermissions().isEmpty()) {
                 for (Permission p : accessInfoCreator.getPermissions()) {
-                    AccessPermissionCreator accessPermissionCreator = accessPermissionFactory.newCreator(accessInfoCreator.getScopeId());
+                    AccessPermissionCreator accessPermissionCreator = new AccessPermissionCreator(accessInfoCreator.getScopeId());
 
                     accessPermissionCreator.setAccessInfoId(accessInfo.getId());
                     accessPermissionCreator.setPermission(p);
@@ -139,7 +139,7 @@ public class AccessInfoServiceImpl implements AccessInfoService {
 
             if (!accessInfoCreator.getRoleIds().isEmpty()) {
                 for (KapuaId roleId : accessInfoCreator.getRoleIds()) {
-                    AccessRoleCreator accessRoleCreator = accessRoleFactory.newCreator(accessInfoCreator.getScopeId());
+                    AccessRoleCreator accessRoleCreator = new AccessRoleCreator(accessInfoCreator.getScopeId());
 
                     accessRoleCreator.setAccessInfoId(accessInfo.getId());
                     accessRoleCreator.setRoleId(roleId);

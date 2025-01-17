@@ -28,7 +28,7 @@ import org.eclipse.kapua.model.query.KapuaQuery;
  */
 @XmlRootElement(name = "query")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = EndpointInfoXmlRegistry.class, factoryMethod = "newQuery")
+@XmlType
 public class EndpointInfoQuery extends KapuaQuery {
 
     public EndpointInfoQuery() {

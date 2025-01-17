@@ -25,6 +25,7 @@ import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.tag.Tag;
+import org.eclipse.kapua.service.tag.TagCreator;
 import org.eclipse.kapua.service.tag.TagFactory;
 import org.eclipse.kapua.service.tag.TagRepository;
 import org.eclipse.kapua.storage.TxContext;
@@ -73,8 +74,6 @@ public class TagServiceImplTest {
                 return null;
             }
         };
-        Mockito.when(tagFactory.newCreator(Mockito.any(), Mockito.any()))
-                .thenAnswer(invocation -> new TagCreatorImpl(invocation.getArgumentAt(0, KapuaId.class), invocation.getArgumentAt(1, String.class)));
         Mockito.when(tagFactory.newEntity(Mockito.any()))
                 .thenAnswer(invocation -> new TagImpl(invocation.<KapuaId>getArgumentAt(0, KapuaId.class)));
 
@@ -94,10 +93,10 @@ public class TagServiceImplTest {
                 () -> instance.create(null),
                 "Does not accept null tagCreator");
         Assertions.assertThrows(KapuaIllegalNullArgumentException.class,
-                () -> instance.create(new TagCreatorImpl(null, "testTag")),
+                () -> instance.create(new TagCreator(null, "testTag")),
                 "Does not accept tagCreator with null scope id");
         Assertions.assertThrows(KapuaIllegalNullArgumentException.class,
-                () -> instance.create(new TagCreatorImpl(new KapuaIdImpl(BigInteger.ONE), null)),
+                () -> instance.create(new TagCreator(new KapuaIdImpl(BigInteger.ONE), null)),
                 "Does not accept tagCreator with null name");
     }
 }

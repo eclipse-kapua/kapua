@@ -26,7 +26,6 @@ import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.access.AccessInfo;
 import org.eclipse.kapua.service.authorization.access.AccessInfoCreator;
-import org.eclipse.kapua.service.authorization.access.AccessInfoFactory;
 import org.eclipse.kapua.service.authorization.access.AccessInfoService;
 import org.eclipse.kapua.service.authorization.access.AccessPermission;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionListResult;
@@ -110,8 +109,7 @@ public class GwtAccessInfoServiceImpl extends KapuaRemoteServiceServlet implemen
             AccessInfoService accessInfoService = locator.getService(AccessInfoService.class);
             AccessInfo accessInfo = accessInfoService.findByUserId(scopeId, userId);
             if (accessInfo == null) {
-                AccessInfoFactory accessInfoFactory = locator.getFactory(AccessInfoFactory.class);
-                AccessInfoCreator accessInfoCreator = accessInfoFactory.newCreator(scopeId);
+                AccessInfoCreator accessInfoCreator = new AccessInfoCreator(scopeId);
                 accessInfoCreator.setUserId(userId);
                 accessInfo = accessInfoService.create(accessInfoCreator);
             }

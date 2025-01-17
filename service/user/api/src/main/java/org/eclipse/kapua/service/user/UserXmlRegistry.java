@@ -35,15 +35,6 @@ public class UserXmlRegistry {
         return userFactory.newEntity(null);
     }
 
-    /**
-     * Creates a new user creator instance
-     *
-     * @return
-     */
-    public UserCreator newUserCreator() {
-        return userFactory.newCreator(null, null);
-    }
-
     public UserQuery newQuery() {
         return new UserQuery(null);
     }

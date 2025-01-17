@@ -12,12 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.integration.misc;
 
-import org.eclipse.kapua.locator.KapuaLocator;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.authorization.access.AccessInfoCreator;
-import org.eclipse.kapua.service.authorization.access.AccessInfoFactory;
-import org.eclipse.kapua.service.authorization.access.shiro.AccessInfoCreatorImpl;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.junit.Assert;
 import org.junit.Before;
@@ -25,23 +25,17 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
 
-import java.util.HashSet;
-import java.util.Set;
-
-
 @Category(JUnitTests.class)
-public class AccessInfoCreatorImplTest {
+public class AccessInfoCreatorTest {
 
-    AccessInfoFactory accessInfoFactory;
     AccessInfoCreator accessInfoCreator;
     Set<KapuaId> roleId;
     Set<Permission> setPermission;
-    AccessInfoCreatorImpl accessInfoCreatorImpl1, accessInfoCreatorImpl2;
+    AccessInfoCreator accessInfoCreatorImpl1, accessInfoCreatorImpl2;
 
     @Before
     public void initialize() {
-        accessInfoFactory = KapuaLocator.getInstance().getFactory(AccessInfoFactory.class);
-        accessInfoCreator = accessInfoFactory.newCreator(KapuaId.ONE);
+        accessInfoCreator = new AccessInfoCreator(KapuaId.ONE);
         roleId = new HashSet<>();
         setPermission = new HashSet<>();
         roleId.add(KapuaId.ANY);
@@ -51,8 +45,8 @@ public class AccessInfoCreatorImplTest {
         accessInfoCreator.setRoleIds(roleId);
         accessInfoCreator.setPermissions(setPermission);
 
-        accessInfoCreatorImpl1 = new AccessInfoCreatorImpl(accessInfoCreator);
-        accessInfoCreatorImpl2 = new AccessInfoCreatorImpl(KapuaId.ONE);
+        accessInfoCreatorImpl1 = new AccessInfoCreator(accessInfoCreator);
+        accessInfoCreatorImpl2 = new AccessInfoCreator(KapuaId.ONE);
     }
 
     @Test
@@ -65,7 +59,7 @@ public class AccessInfoCreatorImplTest {
 
     @Test(expected = NullPointerException.class)
     public void accessInfoCreatorImplNullAccessInfoCreatorParameterTest() {
-        accessInfoCreatorImpl1 = new AccessInfoCreatorImpl((AccessInfoCreator) null);
+        accessInfoCreatorImpl1 = new AccessInfoCreator((AccessInfoCreator) null);
     }
 
     @Test
@@ -78,7 +72,7 @@ public class AccessInfoCreatorImplTest {
 
     @Test
     public void accessInfoCreatorNullScopeIdParameterTest() {
-        accessInfoCreatorImpl2 = new AccessInfoCreatorImpl((KapuaId) null);
+        accessInfoCreatorImpl2 = new AccessInfoCreator((KapuaId) null);
 
         Assert.assertNull("Null expected.", accessInfoCreatorImpl2.getScopeId());
         Assert.assertNull("Null expected.", accessInfoCreatorImpl2.getUserId());

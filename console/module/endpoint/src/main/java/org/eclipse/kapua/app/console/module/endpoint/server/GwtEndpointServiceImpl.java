@@ -79,7 +79,7 @@ public class GwtEndpointServiceImpl extends KapuaRemoteServiceServlet implements
         try {
             KapuaId scopeId = KapuaEid.parseCompactId(gwtEndpointCreator.getScopeId());
 
-            EndpointInfoCreator endpointCreator = ENDPOINT_INFO_FACTORY.newCreator(scopeId);
+            EndpointInfoCreator endpointCreator = new EndpointInfoCreator(scopeId);
             endpointCreator.setSchema(gwtEndpointCreator.getSchema());
             endpointCreator.setDns(gwtEndpointCreator.getDns());
             endpointCreator.setPort(gwtEndpointCreator.getPort().intValue());
@@ -246,7 +246,7 @@ public class GwtEndpointServiceImpl extends KapuaRemoteServiceServlet implements
         List<GwtEndpoint> endpointList = new ArrayList<GwtEndpoint>();
 
         try {
-            EndpointInfoQuery query = ENDPOINT_INFO_FACTORY.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(scopeId));
+            EndpointInfoQuery query = new EndpointInfoQuery(GwtKapuaCommonsModelConverter.convertKapuaId(scopeId));
             EndpointInfoListResult result = ENDPOINT_INFO_SERVICE.query(query);
 
             for (EndpointInfo endpoint : result.getItems()) {

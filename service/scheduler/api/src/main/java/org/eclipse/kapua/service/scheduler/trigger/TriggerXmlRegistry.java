@@ -31,10 +31,6 @@ public class TriggerXmlRegistry {
         return triggerFactory.newEntity(null);
     }
 
-    public TriggerCreator newCreator() {
-        return triggerFactory.newCreator(null);
-    }
-
     public TriggerProperty newTriggerProperty() {
         return triggerFactory.newTriggerProperty(null, null, null);
     }

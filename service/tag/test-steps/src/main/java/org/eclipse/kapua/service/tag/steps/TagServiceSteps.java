@@ -240,13 +240,13 @@ public class TagServiceSteps extends TestBase {
      * @return tag creator for tag with specified name
      */
     private TagCreator tagCreatorCreatorWithoutDescription(String tagName) {
-        TagCreator tagCreator = tagFactory.newCreator(getCurrentScopeId());
+        TagCreator tagCreator = new TagCreator(getCurrentScopeId());
         tagCreator.setName(tagName);
         return tagCreator;
     }
 
     public TagCreator tagCreatorCreatorWithDescription(String tagName, String tagDescription) {
-        TagCreator tagCreator = tagFactory.newCreator(SYS_SCOPE_ID);
+        TagCreator tagCreator = new TagCreator(SYS_SCOPE_ID);
         tagCreator.setName(tagName);
         tagCreator.setDescription(tagDescription);
         return tagCreator;

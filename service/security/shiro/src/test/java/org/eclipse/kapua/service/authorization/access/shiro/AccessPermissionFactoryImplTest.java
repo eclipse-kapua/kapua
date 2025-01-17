@@ -15,7 +15,6 @@ package org.eclipse.kapua.service.authorization.access.shiro;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.authorization.access.AccessPermission;
-import org.eclipse.kapua.service.authorization.access.AccessPermissionCreator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,13 +37,6 @@ public class AccessPermissionFactoryImplTest {
     public void newEntityTest() {
         for (KapuaId scopeId : scopeIds) {
             Assert.assertTrue("True expected.", accessPermissionFactoryImpl.newEntity(scopeId) instanceof AccessPermission);
-        }
-    }
-
-    @Test
-    public void newCreatorTest() {
-        for (KapuaId scopeId : scopeIds) {
-            Assert.assertTrue("True expected.", accessPermissionFactoryImpl.newCreator(scopeId) instanceof AccessPermissionCreator);
         }
     }
 

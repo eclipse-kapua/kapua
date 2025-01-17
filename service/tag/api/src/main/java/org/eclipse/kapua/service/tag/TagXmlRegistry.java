@@ -30,16 +30,4 @@ public class TagXmlRegistry {
         return tagFactory.newEntity(null);
     }
 
-    /**
-     * Creates a new tag creator instance
-     *
-     * @return
-     */
-    public TagCreator newTagCreator() {
-        return tagFactory.newCreator(null, null);
-    }
-
-    public TagQuery newQuery() {
-        return new TagQuery(null);
-    }
 }

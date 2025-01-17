@@ -13,7 +13,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.stream.internal;
 
-import com.google.common.base.Strings;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaIllegalArgumentException;
@@ -34,7 +40,6 @@ import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.endpoint.EndpointInfo;
 import org.eclipse.kapua.service.endpoint.EndpointInfoAttributes;
-import org.eclipse.kapua.service.endpoint.EndpointInfoFactory;
 import org.eclipse.kapua.service.endpoint.EndpointInfoQuery;
 import org.eclipse.kapua.service.endpoint.EndpointInfoService;
 import org.eclipse.kapua.service.stream.StreamService;
@@ -46,11 +51,7 @@ import org.eclipse.kapua.transport.TransportFacade;
 import org.eclipse.kapua.transport.exception.TransportClientGetException;
 import org.eclipse.kapua.transport.message.TransportMessage;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import com.google.common.base.Strings;
 
 /**
  * {@link StreamService} implementation.
@@ -64,7 +65,6 @@ public class StreamServiceImpl implements StreamService {
     private final PermissionFactory permissionFactory;
     private final DeviceRegistryService deviceRegistryService;
     private final EndpointInfoService endpointInfoService;
-    private final EndpointInfoFactory endpointInfoFactory;
     private final TransportClientFactory transportClientFactory;
     private final TranslatorHub translatorHub;
 
@@ -74,14 +74,12 @@ public class StreamServiceImpl implements StreamService {
             PermissionFactory permissionFactory,
             DeviceRegistryService deviceRegistryService,
             EndpointInfoService endpointInfoService,
-            EndpointInfoFactory endpointInfoFactory,
             TransportClientFactory transportClientFactory,
             TranslatorHub translatorHub) {
         this.authorizationService = authorizationService;
         this.permissionFactory = permissionFactory;
         this.deviceRegistryService = deviceRegistryService;
         this.endpointInfoService = endpointInfoService;
-        this.endpointInfoFactory = endpointInfoFactory;
         this.transportClientFactory = transportClientFactory;
         this.translatorHub = translatorHub;
     }
@@ -120,9 +118,11 @@ public class StreamServiceImpl implements StreamService {
     /**
      * Picks a {@link TransportFacade} to send the {@link KuraResponseMessage}.
      *
-     * @param kapuaDataMessage The K
+     * @param kapuaDataMessage
+     *         The K
      * @return The {@link TransportFacade} to use to send the {@link KuraDataMessage}.
-     * @throws KuraDeviceCallException If getting the {@link TransportFacade} causes any {@link Exception}.
+     * @throws KuraDeviceCallException
+     *         If getting the {@link TransportFacade} causes any {@link Exception}.
      * @since 1.0.0
      */
     protected TransportFacade<?, ?, ?, ?> borrowClient(KapuaDataMessage kapuaDataMessage) throws KuraDeviceCallException {
@@ -160,11 +160,15 @@ public class StreamServiceImpl implements StreamService {
      *     <li>Both specified: The {@link Device#getClientId()} and the {@link KapuaDataMessage#getClientId()} must match</li>
      * </ul>
      *
-     * @param dataMessage The {@link KapuaDataMessage} to publish
+     * @param dataMessage
+     *         The {@link KapuaDataMessage} to publish
      * @return The {@link Device} matching the {@link KapuaDataMessage#getDeviceId()} or {@link KapuaDataMessage#getClientId()}
-     * @throws KapuaEntityNotFoundException  if {@link KapuaDataMessage#getDeviceId()} does not match any existing {@link Device}
-     * @throws KapuaIllegalArgumentException if {@link KapuaDataMessage#getClientId()} does not match the {@link Device#getClientId()}
-     * @throws KapuaException                If any other error occurs.
+     * @throws KapuaEntityNotFoundException
+     *         if {@link KapuaDataMessage#getDeviceId()} does not match any existing {@link Device}
+     * @throws KapuaIllegalArgumentException
+     *         if {@link KapuaDataMessage#getClientId()} does not match the {@link Device#getClientId()}
+     * @throws KapuaException
+     *         If any other error occurs.
      * @since 1.2.0
      */
     private Device checkDeviceInfo(KapuaDataMessage dataMessage) throws KapuaException {
@@ -196,14 +200,16 @@ public class StreamServiceImpl implements StreamService {
     /**
      * Looks for the available {@link EndpointInfo} with {@link EndpointInfo#getSchema()} = "mqtt"
      *
-     * @param dataMessage The {@link KapuaDataMessage} to publish
+     * @param dataMessage
+     *         The {@link KapuaDataMessage} to publish
      * @return The {@link String} {@link java.net.URI} to connect to.
-     * @throws KapuaException If no {@link EndpointInfo} is available
+     * @throws KapuaException
+     *         If no {@link EndpointInfo} is available
      * @since 1.2.0
      */
     private String getEndpointInfoDNS(KapuaDataMessage dataMessage) throws KapuaException {
         String serverURI;
-        EndpointInfoQuery query = endpointInfoFactory.newQuery(dataMessage.getScopeId());
+        EndpointInfoQuery query = new EndpointInfoQuery(dataMessage.getScopeId());
         query.setPredicate(
                 query.andPredicate(
                         query.attributePredicate(EndpointInfoAttributes.SCHEMA, "mqtt"),
@@ -219,16 +225,20 @@ public class StreamServiceImpl implements StreamService {
         return serverURI;
     }
 
-
     /**
      * Gets the translator for the given {@link Message} types.
      *
-     * @param from The {@link Message} type from which to translate.
-     * @param to   The {@link Message} type to which to translate.
-     * @param <F>  The {@link Message} {@code class}from which to translate.
-     * @param <T>  The {@link Message} {@code class} to which to translate.
+     * @param from
+     *         The {@link Message} type from which to translate.
+     * @param to
+     *         The {@link Message} type to which to translate.
+     * @param <F>
+     *         The {@link Message} {@code class}from which to translate.
+     * @param <T>
+     *         The {@link Message} {@code class} to which to translate.
      * @return The {@link Translator} found.
-     * @throws KuraDeviceCallException If error occurs while loojing for  the {@link Translator}.
+     * @throws KuraDeviceCallException
+     *         If error occurs while loojing for  the {@link Translator}.
      * @since 1.0.0
      */
     protected <F extends Message<?, ?>, T extends Message<?, ?>> Translator<F, T> getTranslator(Class<F> from, Class<T> to) throws KuraDeviceCallException {

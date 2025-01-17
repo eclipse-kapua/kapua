@@ -12,21 +12,35 @@
  *******************************************************************************/
 package org.eclipse.kapua.model;
 
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
 
 /**
  * {@link KapuaEntityCreator} definition
  * <p>
  * All the {@link KapuaEntityCreator} will be an extension of this.
  *
- * @param <E> entity type
+ * @param <E>
+ *         entity type
  * @since 1.0.0
  */
-public interface KapuaEntityCreator<E extends KapuaEntity> {
+public abstract class KapuaEntityCreator<E extends KapuaEntity> {
+
+    protected KapuaId scopeId;
+
+    public KapuaEntityCreator() {
+    }
+
+    public KapuaEntityCreator(KapuaId scopeId) {
+        this.scopeId = scopeId;
+    }
+
+    protected KapuaEntityCreator(KapuaEntityCreator<E> entityCreator) {
+        this(entityCreator.getScopeId());
+    }
 
     /**
      * Gets the scope {@link KapuaId}
@@ -36,13 +50,19 @@ public interface KapuaEntityCreator<E extends KapuaEntity> {
      */
     @XmlElement(name = "scopeId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
-    KapuaId getScopeId();
+    public KapuaId getScopeId() {
+        return scopeId;
+    }
 
     /**
      * Sets the scope {@link KapuaId}
      *
-     * @param scopeId the scope {@link KapuaId}
+     * @param scopeId
+     *         the scope {@link KapuaId}
      * @since 1.0.0
      */
-    void setScopeId(KapuaId scopeId);
+    public void setScopeId(KapuaId scopeId) {
+
+        this.scopeId = scopeId;
+    }
 }

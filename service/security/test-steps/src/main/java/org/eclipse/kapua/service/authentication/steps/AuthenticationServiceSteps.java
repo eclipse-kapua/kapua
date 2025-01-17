@@ -12,12 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.steps;
 
-import com.google.inject.Singleton;
-import io.cucumber.java.After;
-import io.cucumber.java.Before;
-import io.cucumber.java.Scenario;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.When;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.locator.KapuaLocator;
@@ -45,10 +45,13 @@ import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserService;
 import org.junit.Assert;
 
-import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.google.inject.Singleton;
+
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
 
 // Implementation of Gherkin steps used to test miscellaneous Shiro
 // authorization functionality.
@@ -99,7 +102,7 @@ public class AuthenticationServiceSteps extends TestBase {
 
     @When("I create default test-user")
     public void createDefaultUser() throws KapuaException {
-        UserCreator userCreator = userFactory.newCreator(KapuaId.ONE, "test-user");
+        UserCreator userCreator = new UserCreator(KapuaId.ONE, "test-user");
         User user = userService.create(userCreator);
         stepData.put("User", user);
     }
@@ -192,7 +195,7 @@ public class AuthenticationServiceSteps extends TestBase {
         primeException();
 
         User user = (User) stepData.get("User");
-        CredentialCreator credentialCreator = credentialFactory.newCreator(user.getScopeId(), user.getId(), "PASSWORD", password, CredentialStatus.ENABLED, null);
+        CredentialCreator credentialCreator = new CredentialCreator(user.getScopeId(), user.getId(), "PASSWORD", password, CredentialStatus.ENABLED, null);
         try {
             Credential credential = credentialService.create(credentialCreator);
             stepData.put(BasicSteps.LAST_CREDENTIAL_ID, credential.getId());
@@ -200,7 +203,6 @@ public class AuthenticationServiceSteps extends TestBase {
             verifyException(ex);
         }
     }
-
 
     @When("I change the user credential password with old password {string} and new password {string}")
     public void changeUserPasswordCredential(String oldPassword, String newPassword) throws Exception {
@@ -216,7 +218,6 @@ public class AuthenticationServiceSteps extends TestBase {
             verifyException(ex);
         }
     }
-
 
     @When("I reset the last created credential password, with the new password {string}")
     public void resetUserPasswordCredentialPassword(String newPassword) throws Exception {

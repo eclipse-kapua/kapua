@@ -12,8 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.user;
 
-import org.eclipse.kapua.model.KapuaNamedEntityCreator;
-import org.eclipse.kapua.model.xml.DateXmlAdapter;
+import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -21,7 +20,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
+
+import org.eclipse.kapua.model.KapuaNamedEntityCreator;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.xml.DateXmlAdapter;
 
 /**
  * {@link UserCreator} {@link org.eclipse.kapua.model.KapuaEntityCreator} definition
@@ -30,8 +32,39 @@ import java.util.Date;
  */
 @XmlRootElement(name = "userCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = UserXmlRegistry.class, factoryMethod = "newUserCreator")
-public interface UserCreator extends KapuaNamedEntityCreator<User> {
+@XmlType
+public class UserCreator extends KapuaNamedEntityCreator<User> {
+
+    private static final long serialVersionUID = 4664940282892151008L;
+
+    private UserStatus status;
+    private String displayName;
+    private String email;
+    private String phoneNumber;
+    private UserType userType = UserType.INTERNAL;
+    private String externalId;
+    private String externalUsername;
+    private Date expirationDate;
+
+    public UserCreator() {
+        this(null, null);
+    }
+
+    public UserCreator(KapuaId scopeId) {
+        this(scopeId, null);
+    }
+
+    /**
+     * Constructor
+     *
+     * @param accountId
+     * @param name
+     */
+    public UserCreator(KapuaId accountId, String name) {
+        super(accountId, name);
+        setStatus(UserStatus.ENABLED);
+        setUserType(UserType.INTERNAL);
+    }
 
     /**
      * Return the display name (may be a friendly username to show in the UI)
@@ -39,14 +72,18 @@ public interface UserCreator extends KapuaNamedEntityCreator<User> {
      * @return
      */
     @XmlElement(name = "displayName")
-    String getDisplayName();
+    public String getDisplayName() {
+        return displayName;
+    }
 
     /**
      * Set the display name
      *
      * @param displayName
      */
-    void setDisplayName(String displayName);
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
 
     /**
      * Get the email
@@ -54,14 +91,18 @@ public interface UserCreator extends KapuaNamedEntityCreator<User> {
      * @return
      */
     @XmlElement(name = "email")
-    String getEmail();
+    public String getEmail() {
+        return email;
+    }
 
     /**
      * Set the email
      *
      * @param email
      */
-    void setEmail(String email);
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     /**
      * Get the phone number
@@ -69,14 +110,18 @@ public interface UserCreator extends KapuaNamedEntityCreator<User> {
      * @return
      */
     @XmlElement(name = "phoneNumber")
-    String getPhoneNumber();
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 
     /**
      * Set the phone number
      *
      * @param phoneNumber
      */
-    void setPhoneNumber(String phoneNumber);
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
     /**
      * Get the user type
@@ -84,14 +129,18 @@ public interface UserCreator extends KapuaNamedEntityCreator<User> {
      * @return
      */
     @XmlElement(name = "userType")
-    UserType getUserType();
+    public UserType getUserType() {
+        return userType;
+    }
 
     /**
      * Set the user type
      *
      * @param userType
      */
-    void setUserType(UserType userType);
+    public void setUserType(UserType userType) {
+        this.userType = userType;
+    }
 
     /**
      * Get the external ID
@@ -99,14 +148,18 @@ public interface UserCreator extends KapuaNamedEntityCreator<User> {
      * @return
      */
     @XmlElement(name = "externalId")
-    String getExternalId();
+    public String getExternalId() {
+        return externalId;
+    }
 
     /**
      * Set the external ID
      *
      * @param externalId
      */
-    void setExternalId(String externalId);
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
+    }
 
     /**
      * Gets the external username.
@@ -115,25 +168,37 @@ public interface UserCreator extends KapuaNamedEntityCreator<User> {
      * @since 2.0.0
      */
     @XmlElement(name = "externalUsername")
-    String getExternalUsername();
+    public String getExternalUsername() {
+        return externalUsername;
+    }
 
     /**
      * Sets the external username.
      *
-     * @param externalUsername The external username.
+     * @param externalUsername
+     *         The external username.
      * @since 2.0.0
      */
-    void setExternalUsername(String externalUsername);
-
+    public void setExternalUsername(String externalUsername) {
+        this.externalUsername = externalUsername;
+    }
 
     @XmlElement(name = "expirationDate")
     @XmlJavaTypeAdapter(DateXmlAdapter.class)
-    Date getExpirationDate();
+    public Date getExpirationDate() {
+        return expirationDate;
+    }
 
-    void setExpirationDate(Date expirationDate);
+    public void setExpirationDate(Date expirationDate) {
+        this.expirationDate = expirationDate;
+    }
 
     @XmlElement(name = "status")
-    UserStatus getStatus();
+    public UserStatus getStatus() {
+        return status;
+    }
 
-    void setStatus(UserStatus status);
+    public void setStatus(UserStatus status) {
+        this.status = status;
+    }
 }

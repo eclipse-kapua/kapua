@@ -17,7 +17,6 @@ import javax.inject.Singleton;
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinition;
-import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionCreator;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionFactory;
 import org.eclipse.kapua.service.job.step.definition.JobStepProperty;
 
@@ -32,11 +31,6 @@ public class JobStepDefinitionFactoryImpl implements JobStepDefinitionFactory {
     @Override
     public JobStepDefinition newEntity(KapuaId scopeId) {
         return new JobStepDefinitionImpl(scopeId);
-    }
-
-    @Override
-    public JobStepDefinitionCreator newCreator(KapuaId scopeId) {
-        return new JobStepDefinitionCreatorImpl(scopeId);
     }
 
     @Override

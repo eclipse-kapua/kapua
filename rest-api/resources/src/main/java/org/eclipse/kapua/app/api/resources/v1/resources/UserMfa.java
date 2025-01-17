@@ -12,16 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.resources.v1.resources;
 
-import org.eclipse.kapua.KapuaEntityNotFoundException;
-import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
-import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
-import org.eclipse.kapua.service.KapuaService;
-import org.eclipse.kapua.service.authentication.credential.mfa.MfaOption;
-import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionCreator;
-import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionService;
-import org.eclipse.kapua.service.authentication.credential.mfa.shiro.MfaOptionCreatorImpl;
-
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -31,6 +21,15 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.eclipse.kapua.KapuaEntityNotFoundException;
+import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
+import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
+import org.eclipse.kapua.service.KapuaService;
+import org.eclipse.kapua.service.authentication.credential.mfa.MfaOption;
+import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionCreator;
+import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionService;
 
 @Path("user")
 public class UserMfa extends AbstractKapuaResource {
@@ -42,16 +41,17 @@ public class UserMfa extends AbstractKapuaResource {
      * Creates a new {@link MfaOption} for the user specified by the "userId" path parameter.
      *
      * @return The newly created {@link MfaOption} object.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 2.0.0
      */
     @POST
     @Path("mfa")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public Response activateMfa() throws KapuaException {
 
-        MfaOptionCreator mfaOptionCreator = new MfaOptionCreatorImpl(KapuaSecurityUtils.getSession().getScopeId());
+        MfaOptionCreator mfaOptionCreator = new MfaOptionCreator(KapuaSecurityUtils.getSession().getScopeId());
         mfaOptionCreator.setUserId(KapuaSecurityUtils.getSession().getUserId());
 
         return returnCreated(KapuaSecurityUtils.doPrivileged(() -> mfaOptionService.create(mfaOptionCreator)));
@@ -61,12 +61,13 @@ public class UserMfa extends AbstractKapuaResource {
      * Returns the {@link MfaOption} of the user specified by the "userId" path parameter.
      *
      * @return The requested {@link MfaOption} object.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.4.0
      */
     @GET
     @Path("mfa")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public MfaOption findMfa() throws KapuaException {
         MfaOption mfaOption = KapuaSecurityUtils.doPrivileged(() -> mfaOptionService.findByUserId(KapuaSecurityUtils.getSession().getScopeId(), KapuaSecurityUtils.getSession().getUserId()));
         if (mfaOption == null) {
@@ -79,7 +80,8 @@ public class UserMfa extends AbstractKapuaResource {
      * Deletes the {@link MfaOption} of the user specified by the "userId" path parameter.
      *
      * @return HTTP 200 if operation has completed successfully.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.4.0
      */
     @DELETE
@@ -94,13 +96,14 @@ public class UserMfa extends AbstractKapuaResource {
      * Disable trusted machine for a given {@link MfaOption}.
      *
      * @return HTTP 200 if operation has completed successfully.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.4.0
      */
     @DELETE
     @Path("mfa/disableTrust")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public Response disableTrust() throws KapuaException {
         KapuaSecurityUtils.doPrivileged(() -> mfaOptionService.disableTrustByUserId(KapuaSecurityUtils.getSession().getScopeId(), KapuaSecurityUtils.getSession().getUserId()));
         return returnNoContent();

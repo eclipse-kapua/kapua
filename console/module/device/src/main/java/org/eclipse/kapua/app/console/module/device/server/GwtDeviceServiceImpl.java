@@ -385,7 +385,7 @@ public class GwtDeviceServiceImpl extends KapuaRemoteServiceServlet implements G
         try {
             KapuaId scopeId = KapuaEid.parseCompactId(gwtDeviceCreator.getScopeId());
 
-            DeviceCreator deviceCreator = deviceFactory.newCreator(scopeId, gwtDeviceCreator.getClientId());
+            DeviceCreator deviceCreator = new DeviceCreator(scopeId, gwtDeviceCreator.getClientId());
             deviceCreator.setDisplayName(gwtDeviceCreator.getDisplayName());
             deviceCreator.setGroupId(GwtKapuaCommonsModelConverter.convertKapuaId(gwtDeviceCreator.getGroupId()));
             deviceCreator.setStatus((DeviceStatus.valueOf(gwtDeviceCreator.getDeviceStatus())));

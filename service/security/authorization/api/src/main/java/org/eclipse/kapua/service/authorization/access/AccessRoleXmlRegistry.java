@@ -29,14 +29,4 @@ public class AccessRoleXmlRegistry {
     public AccessRole newAccessRole() {
         return accessRoleFactory.newEntity(null);
     }
-
-    /**
-     * Creates a new {@link AccessRole} instance
-     *
-     * @return
-     */
-    public AccessRoleCreator newCreator() {
-        return accessRoleFactory.newCreator(null);
-    }
-
 }

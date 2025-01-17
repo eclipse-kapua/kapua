@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.packages.job;
 
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
@@ -31,8 +33,6 @@ import org.eclipse.kapua.service.device.management.registry.operation.DeviceMana
 import org.eclipse.kapua.service.job.operation.TargetProcessor;
 import org.eclipse.kapua.service.job.targets.JobTarget;
 import org.eclipse.kapua.service.job.targets.JobTargetStatus;
-
-import javax.inject.Inject;
 
 /**
  * {@link AbstractDevicePackageTargetProcessor} for {@link DevicePackageManagementService} operations.
@@ -54,7 +54,7 @@ public abstract class AbstractDevicePackageTargetProcessor extends AbstractDevic
 
     protected void createJobDeviceManagementOperation(KapuaId scopeId, KapuaId jobId, JobTarget jobTarget, KapuaId operationId) throws KapuaException {
         // Save the jobId-deviceManagementOperationId pair to track resuming
-        JobDeviceManagementOperationCreator jobDeviceManagementOperationCreator = jobDeviceManagementOperationFactory.newCreator(scopeId);
+        JobDeviceManagementOperationCreator jobDeviceManagementOperationCreator = new JobDeviceManagementOperationCreator(scopeId);
         jobDeviceManagementOperationCreator.setJobId(jobId);
         jobDeviceManagementOperationCreator.setDeviceManagementOperationId(operationId);
 

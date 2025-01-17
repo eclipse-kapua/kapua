@@ -17,7 +17,6 @@ import javax.inject.Singleton;
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.job.Job;
-import org.eclipse.kapua.service.job.JobCreator;
 import org.eclipse.kapua.service.job.JobFactory;
 
 /**
@@ -31,11 +30,6 @@ public class JobFactoryImpl implements JobFactory {
     @Override
     public Job newEntity(KapuaId scopeId) {
         return new JobImpl(scopeId);
-    }
-
-    @Override
-    public JobCreator newCreator(KapuaId scopeId) {
-        return new JobCreatorImpl(scopeId);
     }
 
     @Override

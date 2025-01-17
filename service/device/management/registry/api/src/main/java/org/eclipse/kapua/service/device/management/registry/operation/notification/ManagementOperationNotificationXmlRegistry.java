@@ -29,9 +29,4 @@ public class ManagementOperationNotificationXmlRegistry {
     ManagementOperationNotification newManagementOperationNotification() {
         return managementOperationNotificationFactory.newEntity(null);
     }
-
-    ManagementOperationNotificationCreator newManagementOperationNotificationCreator() {
-        return managementOperationNotificationFactory.newCreator(null);
-    }
-
 }

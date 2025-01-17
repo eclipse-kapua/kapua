@@ -12,6 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.security.registration.simple;
 
+import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.eclipse.kapua.security.registration.RegistrationProcessor;
 import org.eclipse.kapua.security.registration.RegistrationProcessorProvider;
 import org.eclipse.kapua.security.registration.simple.SimpleRegistrationProcessor.Settings;
@@ -26,11 +32,6 @@ import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserService;
-
-import javax.inject.Inject;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
 
 public class SimpleRegistrationProcessorProvider implements RegistrationProcessorProvider {
 
@@ -80,12 +81,9 @@ public class SimpleRegistrationProcessorProvider implements RegistrationProcesso
                         accountService,
                         accountFactory,
                         credentialService,
-                        credentialFactory,
                         deviceRegistryService,
                         userService,
-                        userFactory,
                         accessInfoService,
-                        accessInfoFactory,
                         permissionFactory,
                         simpleSetting,
                         "preferred_username",

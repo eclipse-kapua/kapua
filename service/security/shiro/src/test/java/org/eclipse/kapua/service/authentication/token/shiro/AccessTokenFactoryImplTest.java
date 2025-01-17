@@ -19,7 +19,6 @@ import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.authentication.token.AccessToken;
-import org.eclipse.kapua.service.authentication.token.AccessTokenCreator;
 import org.eclipse.kapua.service.authentication.token.LoginInfo;
 import org.junit.Assert;
 import org.junit.Before;
@@ -55,45 +54,10 @@ public class AccessTokenFactoryImplTest {
     }
 
     @Test
-    public void newCreatorMultipleParametersTest() {
-        for (KapuaId scopeId : scopeIds) {
-            for (KapuaEid userId : userIds) {
-                for (String tokenId : tokenIds) {
-                    for (Date expiresOnDate : expiresOnDates) {
-                        for (String refreshToken : refreshTokens) {
-                            for (Date refreshExpiresOnDate : refreshExpiresOnDates) {
-                                for (String tokenIdenfier : tokenIdentifiers) {
-                                    AccessTokenCreatorImpl accessTokenCreatorImpl = accessTokenFactoryImpl.newCreator(scopeId, userId, tokenId, expiresOnDate, refreshToken, refreshExpiresOnDate,
-                                            tokenIdenfier);
-                                    Assert.assertEquals("Expected and actual values should be the same.", scopeId, accessTokenCreatorImpl.getScopeId());
-                                    Assert.assertEquals("Expected and actual values should be the same.", userId, accessTokenCreatorImpl.getUserId());
-                                    Assert.assertEquals("Expected and actual values should be the same.", tokenId, accessTokenCreatorImpl.getTokenId());
-                                    Assert.assertEquals("Expected and actual values should be the same.", expiresOnDate, accessTokenCreatorImpl.getExpiresOn());
-                                    Assert.assertEquals("Expected and actual values should be the same.", refreshToken, accessTokenCreatorImpl.getRefreshToken());
-                                    Assert.assertEquals("Expected and actual values should be the same.", refreshExpiresOnDate, accessTokenCreatorImpl.getRefreshExpiresOn());
-                                    Assert.assertEquals("Expected and actual values should be the same.", tokenIdenfier, accessTokenCreatorImpl.getTokenIdentifier());
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    @Test
     public void newEntityTest() {
         for (KapuaId scopeId : scopeIds) {
             AccessToken accessToken = accessTokenFactoryImpl.newEntity(scopeId);
             Assert.assertEquals("Expected and actual values should be the same.", scopeId, accessToken.getScopeId());
-        }
-    }
-
-    @Test
-    public void newCreatorScopeIdParameterTest() {
-        for (KapuaId scopeId : scopeIds) {
-            AccessTokenCreator accessTokenCreator = accessTokenFactoryImpl.newCreator(scopeId);
-            Assert.assertEquals("Expected and actual values should be the same.", scopeId, accessTokenCreator.getScopeId());
         }
     }
 

@@ -31,13 +31,4 @@ public class RoleXmlRegistry {
         return roleFactory.newEntity(null);
     }
 
-    /**
-     * Creates a new {@link RoleCreator} instance.
-     *
-     * @return The newly created {@link RoleCreator} instance.
-     * @since 1.0.0
-     */
-    public RoleCreator newRoleCreator() {
-        return roleFactory.newCreator(null);
-    }
 }

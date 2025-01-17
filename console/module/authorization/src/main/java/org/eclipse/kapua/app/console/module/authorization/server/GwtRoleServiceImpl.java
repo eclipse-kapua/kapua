@@ -341,7 +341,7 @@ public class GwtRoleServiceImpl extends KapuaRemoteServiceServlet implements Gwt
         try {
             KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(gwtRolePermissionCreator.getScopeId());
 
-            RolePermissionCreator rolePermissionCreator = ROLE_PERMISSION_FACTORY.newCreator(scopeId);
+            RolePermissionCreator rolePermissionCreator = new RolePermissionCreator(scopeId);
             rolePermissionCreator.setRoleId(GwtKapuaCommonsModelConverter.convertKapuaId(gwtRolePermissionCreator.getRoleId()));
             rolePermissionCreator.setScopeId(scopeId);
             rolePermissionCreator.setPermission(GwtKapuaAuthorizationModelConverter.convertPermission(gwtPermission));

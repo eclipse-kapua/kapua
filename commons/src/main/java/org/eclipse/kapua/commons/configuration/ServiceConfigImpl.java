@@ -27,8 +27,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.PropertiesUtils;
 import org.eclipse.kapua.commons.model.AbstractKapuaUpdatableEntity;
-import org.eclipse.kapua.commons.util.PropertiesUtils;
 import org.eclipse.kapua.model.id.KapuaId;
 
 @XmlRootElement

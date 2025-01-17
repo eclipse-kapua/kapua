@@ -169,7 +169,7 @@ public class JobTargetServiceSteps extends JobServiceTestBase {
 
         Job job = (Job) stepData.get("Job");
 
-        JobTargetCreator jobTargetCreator = jobTargetFactory.newCreator(getCurrentScopeId());
+        JobTargetCreator jobTargetCreator = new JobTargetCreator(getCurrentScopeId());
         jobTargetCreator.setJobId(job.getId());
 
         List<JobTarget> jobTargets = (ArrayList<JobTarget>) stepData.get(JOB_TARGET_LIST) == null ? new ArrayList<>() : (ArrayList<JobTarget>) stepData.get(JOB_TARGET_LIST);
@@ -184,7 +184,7 @@ public class JobTargetServiceSteps extends JobServiceTestBase {
 
     @And("I add target(s) to job")
     public void addTargetsToJob() throws Exception {
-        JobTargetCreator jobTargetCreator = jobTargetFactory.newCreator(getCurrentScopeId());
+        JobTargetCreator jobTargetCreator = new JobTargetCreator(getCurrentScopeId());
         Job job = (Job) stepData.get("Job");
         ArrayList<Device> devices = (ArrayList<Device>) stepData.get("DeviceList");
         ArrayList<JobTarget> jobTargetList = new ArrayList<>();
@@ -375,7 +375,7 @@ public class JobTargetServiceSteps extends JobServiceTestBase {
 
     @When("I test the sanity of the job target factory")
     public void testTheJobTargetFactory() {
-        Assert.assertNotNull(jobTargetFactory.newCreator(SYS_SCOPE_ID));
+        Assert.assertNotNull(new JobTargetCreator(SYS_SCOPE_ID));
         Assert.assertNotNull(jobTargetFactory.newEntity(SYS_SCOPE_ID));
     }
 
@@ -494,7 +494,7 @@ public class JobTargetServiceSteps extends JobServiceTestBase {
     private JobTargetCreator prepareJobTargetCreator() {
         KapuaId currentJobId = (KapuaId) stepData.get(CURRENT_JOB_ID);
         Device device = (Device) stepData.get(DEVICE);
-        JobTargetCreator tmpCr = jobTargetFactory.newCreator(getCurrentScopeId());
+        JobTargetCreator tmpCr = new JobTargetCreator(getCurrentScopeId());
         tmpCr.setJobId(currentJobId);
         tmpCr.setJobTargetId(device.getId());
         return tmpCr;
@@ -502,7 +502,7 @@ public class JobTargetServiceSteps extends JobServiceTestBase {
 
     private JobTargetCreator prepareDefaultJobTargetCreator() {
         KapuaId currentJobId = (KapuaId) stepData.get(CURRENT_JOB_ID);
-        JobTargetCreator tmpCr = jobTargetFactory.newCreator(getCurrentScopeId());
+        JobTargetCreator tmpCr = new JobTargetCreator(getCurrentScopeId());
         tmpCr.setJobId(currentJobId);
         tmpCr.setJobTargetId(getKapuaId());
         return tmpCr;

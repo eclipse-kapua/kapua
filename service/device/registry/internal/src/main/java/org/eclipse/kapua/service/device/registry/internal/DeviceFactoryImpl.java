@@ -17,7 +17,6 @@ import javax.inject.Singleton;
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.device.registry.Device;
-import org.eclipse.kapua.service.device.registry.DeviceCreator;
 import org.eclipse.kapua.service.device.registry.DeviceExtendedProperty;
 import org.eclipse.kapua.service.device.registry.DeviceFactory;
 
@@ -30,20 +29,8 @@ import org.eclipse.kapua.service.device.registry.DeviceFactory;
 public class DeviceFactoryImpl implements DeviceFactory {
 
     @Override
-    public DeviceCreator newCreator(KapuaId scopeId, String clientId) {
-        DeviceCreator deviceCreator = newCreator(scopeId);
-        deviceCreator.setClientId(clientId);
-        return deviceCreator;
-    }
-
-    @Override
     public Device newEntity(KapuaId scopeId) {
         return new DeviceImpl(scopeId);
-    }
-
-    @Override
-    public DeviceCreator newCreator(KapuaId scopeId) {
-        return new DeviceCreatorImpl(scopeId);
     }
 
     @Override

@@ -16,7 +16,6 @@ import javax.inject.Singleton;
 
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotification;
-import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotificationCreator;
 import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotificationFactory;
 
 /**
@@ -30,11 +29,6 @@ public class ManagementOperationNotificationFactoryImpl implements ManagementOpe
     @Override
     public ManagementOperationNotification newEntity(KapuaId scopeId) {
         return new ManagementOperationNotificationImpl(scopeId);
-    }
-
-    @Override
-    public ManagementOperationNotificationCreator newCreator(KapuaId scopeId) {
-        return new ManagementOperationNotificationCreatorImpl(scopeId);
     }
 
     @Override

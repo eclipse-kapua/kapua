@@ -58,7 +58,7 @@ public class GroupFactoryImplTest {
     @Test
     public void newCreatorScopeIdNameParametersTest() {
         for (String name : names) {
-            GroupCreator groupCreator = groupFactoryImpl.newCreator(scopeId, name);
+            GroupCreator groupCreator = new GroupCreator(scopeId, name);
             Assert.assertEquals("Expected and actual values should be the same.", name, groupCreator.getName());
             Assert.assertEquals("Expected and actual values should be the same.", scopeId, groupCreator.getScopeId());
         }
@@ -67,7 +67,7 @@ public class GroupFactoryImplTest {
     @Test
     public void newCreatorNullScopeIdNameParametersTest() {
         for (String name : names) {
-            GroupCreator groupCreator = groupFactoryImpl.newCreator(null, name);
+            GroupCreator groupCreator = new GroupCreator(null, name);
             Assert.assertEquals("Expected and actual values should be the same.", name, groupCreator.getName());
             Assert.assertNull("Null expected.", groupCreator.getScopeId());
         }
@@ -75,7 +75,7 @@ public class GroupFactoryImplTest {
 
     @Test
     public void newCreatorScopeIdNullNameParametersTest() {
-        GroupCreator groupCreator = groupFactoryImpl.newCreator(scopeId, null);
+        GroupCreator groupCreator = new GroupCreator(scopeId, null);
         Assert.assertNull("Null expected.", groupCreator.getName());
         Assert.assertEquals("Expected and actual values should be the same.", scopeId, groupCreator.getScopeId());
     }
@@ -94,13 +94,13 @@ public class GroupFactoryImplTest {
 
     @Test
     public void newCreatorTest() {
-        GroupCreator groupCreator = groupFactoryImpl.newCreator(scopeId);
+        GroupCreator groupCreator = new GroupCreator(scopeId);
         Assert.assertEquals("Expected and actual values should be the same.", scopeId, groupCreator.getScopeId());
     }
 
     @Test
     public void newCreatorNullTest() {
-        GroupCreator groupCreator = groupFactoryImpl.newCreator(null);
+        GroupCreator groupCreator = new GroupCreator(null);
         Assert.assertNull("Null expected.", groupCreator.getScopeId());
     }
 

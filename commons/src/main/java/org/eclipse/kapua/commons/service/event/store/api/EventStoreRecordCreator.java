@@ -13,7 +13,20 @@
 package org.eclipse.kapua.commons.service.event.store.api;
 
 import org.eclipse.kapua.model.KapuaEntityCreator;
+import org.eclipse.kapua.model.id.KapuaId;
 
-public interface EventStoreRecordCreator extends KapuaEntityCreator<EventStoreRecord> {
+public class EventStoreRecordCreator extends KapuaEntityCreator<EventStoreRecord> {
 
+    private static final long serialVersionUID = 1048699703033893534L;
+
+    public EventStoreRecordCreator() {
+    }
+
+    public EventStoreRecordCreator(KapuaId scopeId) {
+        super(scopeId);
+    }
+
+    public EventStoreRecordCreator(KapuaEntityCreator<EventStoreRecord> entityCreator) {
+        super(entityCreator);
+    }
 }

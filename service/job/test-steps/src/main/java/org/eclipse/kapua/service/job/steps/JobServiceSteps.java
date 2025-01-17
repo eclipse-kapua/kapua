@@ -95,7 +95,7 @@ public class JobServiceSteps extends JobServiceTestBase {
 
     @Given("A regular job creator with the name {string}")
     public void prepareARegularJobCreator(String name) {
-        JobCreator jobCreator = jobFactory.newCreator(getCurrentScopeId());
+        JobCreator jobCreator = new JobCreator(getCurrentScopeId());
         jobCreator.setName(name);
         jobCreator.setDescription(TEST_JOB);
         stepData.put(JOB_CREATOR, jobCreator);
@@ -103,7 +103,7 @@ public class JobServiceSteps extends JobServiceTestBase {
 
     @Given("A job creator with a null name")
     public void prepareAJobCreatorWithNullName() {
-        JobCreator jobCreator = jobFactory.newCreator(getCurrentScopeId());
+        JobCreator jobCreator = new JobCreator(getCurrentScopeId());
         jobCreator.setName(null);
         jobCreator.setDescription(TEST_JOB);
         stepData.put(JOB_CREATOR, jobCreator);
@@ -111,7 +111,7 @@ public class JobServiceSteps extends JobServiceTestBase {
 
     @Given("A job creator with an empty name")
     public void prepareAJobCreatorWithAnEmptyName() {
-        JobCreator jobCreator = jobFactory.newCreator(getCurrentScopeId());
+        JobCreator jobCreator = new JobCreator(getCurrentScopeId());
         jobCreator.setName("");
         jobCreator.setDescription(TEST_JOB);
         stepData.put(JOB_CREATOR, jobCreator);
@@ -138,7 +138,7 @@ public class JobServiceSteps extends JobServiceTestBase {
         primeException();
         try {
             for (int i = 0; i < num; i++) {
-                JobCreator tmpCreator = jobFactory.newCreator(getCurrentScopeId());
+                JobCreator tmpCreator = new JobCreator(getCurrentScopeId());
                 tmpCreator.setName(String.format("TestJobNum%d", i));
                 tmpCreator.setDescription("TestJobDescription");
                 jobService.create(tmpCreator);
@@ -150,7 +150,7 @@ public class JobServiceSteps extends JobServiceTestBase {
 
     @Given("I create {int} job items with the name {string}")
     public void createANumberOfJobsWithName(int num, String name) throws Exception {
-        JobCreator tmpCreator = jobFactory.newCreator(getCurrentScopeId());
+        JobCreator tmpCreator = new JobCreator(getCurrentScopeId());
         tmpCreator.setDescription("TestJobDescription");
         primeException();
         try {
@@ -339,7 +339,7 @@ public class JobServiceSteps extends JobServiceTestBase {
     @When("I test the sanity of the job factory")
     public void testJobFactorySanity() {
         primeException();
-        Assert.assertNotNull("The job factory returned a null creator!", jobFactory.newCreator(SYS_SCOPE_ID));
+        Assert.assertNotNull("The job factory returned a null creator!", new JobCreator(SYS_SCOPE_ID));
         Assert.assertNotNull("The job factory returned a null job object!", jobFactory.newEntity(SYS_SCOPE_ID));
         Assert.assertNotNull("The job factory returned a null job query!", new JobQuery(SYS_SCOPE_ID));
     }
@@ -402,7 +402,7 @@ public class JobServiceSteps extends JobServiceTestBase {
 
     @Given("I prepare a job with name {string} and description {string}")
     public void iPrepareAJobWithNameAndDescription(String name, String description) {
-        JobCreator jobCreator = jobFactory.newCreator(SYS_SCOPE_ID);
+        JobCreator jobCreator = new JobCreator(SYS_SCOPE_ID);
         jobCreator.setName(name);
         jobCreator.setDescription(description);
         stepData.put(JOB_CREATOR, jobCreator);
@@ -472,7 +472,7 @@ public class JobServiceSteps extends JobServiceTestBase {
     // Private methods
 
     private void tryToCreateJob(String characters) throws Exception {
-        JobCreator jobCreator = jobFactory.newCreator(getCurrentScopeId());
+        JobCreator jobCreator = new JobCreator(getCurrentScopeId());
         for (int i = 0; i < characters.length(); i++) {
             String jobName = JOB_NAME + characters.charAt(i);
             jobCreator.setName(jobName);
@@ -488,7 +488,7 @@ public class JobServiceSteps extends JobServiceTestBase {
     }
 
     private void tryToUpdateJobName(String characters) throws Exception {
-        JobCreator jobCreator = jobFactory.newCreator(getCurrentScopeId());
+        JobCreator jobCreator = new JobCreator(getCurrentScopeId());
         //are we sure works as expected with invalid characters?
         for (int i = 0; i < characters.length(); i++) {
             String jobName = JOB_NAME + characters.charAt(i);

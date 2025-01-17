@@ -63,7 +63,7 @@ public class CredentialFactoryImplTest {
                     for (String credentialKey : credentialKeys) {
                         for (CredentialStatus credentialStatus : credentialStatuses) {
                             for (Date date : dates) {
-                                CredentialCreatorImpl credentialCreatorImpl = credentialFactoryImpl.newCreator(scopeId, userId, credentialType, credentialKey, credentialStatus, date);
+                                CredentialCreator credentialCreatorImpl = new CredentialCreator(scopeId, userId, credentialType, credentialKey, credentialStatus, date);
                                 Assert.assertEquals("Expected and actual values should be the same.", scopeId, credentialCreatorImpl.getScopeId());
                                 Assert.assertEquals("Expected and actual values should be the same.", userId, credentialCreatorImpl.getUserId());
                                 Assert.assertEquals("Expected and actual values should be the same.", credentialType, credentialCreatorImpl.getCredentialType());
@@ -121,7 +121,7 @@ public class CredentialFactoryImplTest {
     @Test
     public void newCreatorScopeIdParameterTest() {
         for (KapuaId scopeId : scopeIds) {
-            CredentialCreator credentialCreator = credentialFactoryImpl.newCreator(scopeId);
+            CredentialCreator credentialCreator = new CredentialCreator(scopeId);
             Assert.assertEquals("Expected and actual values should be the same.", scopeId, credentialCreator.getScopeId());
         }
     }

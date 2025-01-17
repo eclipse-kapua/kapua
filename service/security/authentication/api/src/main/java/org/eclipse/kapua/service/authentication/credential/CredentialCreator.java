@@ -12,11 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.credential;
 
-import org.eclipse.kapua.model.KapuaEntityCreator;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.model.xml.DateXmlAdapter;
-import org.eclipse.kapua.service.user.User;
+import java.util.Date;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -24,7 +20,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
+
+import org.eclipse.kapua.model.KapuaEntityCreator;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import org.eclipse.kapua.model.xml.DateXmlAdapter;
+import org.eclipse.kapua.service.user.User;
 
 /**
  * {@link Credential} {@link KapuaEntityCreator}
@@ -33,8 +34,59 @@ import java.util.Date;
  */
 @XmlRootElement(name = "credentialCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = CredentialXmlRegistry.class, factoryMethod = "newCredentialCreator")
-public interface CredentialCreator extends KapuaEntityCreator<Credential> {
+@XmlType
+public class CredentialCreator extends KapuaEntityCreator<Credential> {
+
+    private static final long serialVersionUID = -5020680413729882095L;
+
+    private KapuaId userId;
+    private String credentialType;
+    private String credentialKey;
+    private Date expirationDate;
+    private CredentialStatus credentialStatus;
+
+    public CredentialCreator() {
+    }
+
+    public CredentialCreator(KapuaId scopeId) {
+        super(scopeId);
+    }
+
+    public CredentialCreator(KapuaEntityCreator<Credential> entityCreator) {
+        super(entityCreator);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param scopeId
+     *         The {@link CredentialCreator#getScopeId()}
+     * @param userId
+     *         The {@link CredentialCreator#getUserId()}
+     * @param credentialType
+     *         The {@link CredentialCreator#getCredentialType()}
+     * @param credentialKey
+     *         The plain {@link CredentialCreator#getCredentialPlainKey()}
+     * @param credentialStatus
+     *         The {@link CredentialCreator#getCredentialStatus()}
+     * @param expirationDate
+     *         The {@link CredentialCreator#getExpirationDate()}
+     * @since 1.0.0
+     */
+    public CredentialCreator(KapuaId scopeId,
+            KapuaId userId,
+            String credentialType,
+            String credentialKey,
+            CredentialStatus credentialStatus,
+            Date expirationDate) {
+        super(scopeId);
+
+        this.userId = userId;
+        this.credentialType = credentialType;
+        this.credentialKey = credentialKey;
+        this.credentialStatus = credentialStatus;
+        this.expirationDate = expirationDate;
+    }
 
     /**
      * Gets the {@link User#getId()} owner of the {@link Credential}
@@ -44,15 +96,20 @@ public interface CredentialCreator extends KapuaEntityCreator<Credential> {
      */
     @XmlElement(name = "userId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
-    KapuaId getUserId();
+    public KapuaId getUserId() {
+        return userId;
+    }
 
     /**
      * Sets the {@link User#getId()} owner of the {@link Credential}
      *
-     * @param userId The {@link User#getId()}
+     * @param userId
+     *         The {@link User#getId()}
      * @since 1.0.0
      */
-    void setUserId(KapuaId userId);
+    public void setUserId(KapuaId userId) {
+        this.userId = userId;
+    }
 
     /**
      * Gets the type.
@@ -61,15 +118,20 @@ public interface CredentialCreator extends KapuaEntityCreator<Credential> {
      * @since 1.0.0
      */
     @XmlElement(name = "credentialType")
-    String getCredentialType();
+    public String getCredentialType() {
+        return credentialType;
+    }
 
     /**
      * Sets the type.
      *
-     * @param credentialType The type.
+     * @param credentialType
+     *         The type.
      * @since 1.0.0
      */
-    void setCredentialType(String credentialType);
+    public void setCredentialType(String credentialType) {
+        this.credentialType = credentialType;
+    }
 
     /**
      * Gets the plain secret key
@@ -78,15 +140,20 @@ public interface CredentialCreator extends KapuaEntityCreator<Credential> {
      * @since 1.0.0
      */
     @XmlElement(name = "credentialKey")
-    String getCredentialPlainKey();
+    public String getCredentialPlainKey() {
+        return credentialKey;
+    }
 
     /**
      * Set the plain secret key
      *
-     * @param plainKey The plain secret key
+     * @param plainKey
+     *         The plain secret key
      * @since 1.0.0
      */
-    void setCredentialPlainKey(String plainKey);
+    public void setCredentialPlainKey(String plainKey) {
+        this.credentialKey = plainKey;
+    }
 
     /**
      * Gets the expiration date
@@ -96,15 +163,20 @@ public interface CredentialCreator extends KapuaEntityCreator<Credential> {
      */
     @XmlElement(name = "expirationDate")
     @XmlJavaTypeAdapter(DateXmlAdapter.class)
-    Date getExpirationDate();
+    public Date getExpirationDate() {
+        return expirationDate;
+    }
 
     /**
      * Sets the expiration date
      *
-     * @param expirationDate The expiration date
+     * @param expirationDate
+     *         The expiration date
      * @since 1.0.0
      */
-    void setExpirationDate(Date expirationDate);
+    public void setExpirationDate(Date expirationDate) {
+        this.expirationDate = expirationDate;
+    }
 
     /**
      * Gets the {@link CredentialStatus}
@@ -113,13 +185,18 @@ public interface CredentialCreator extends KapuaEntityCreator<Credential> {
      * @since 1.0.0
      */
     @XmlElement(name = "credentialStatus")
-    CredentialStatus getCredentialStatus();
+    public CredentialStatus getCredentialStatus() {
+        return credentialStatus;
+    }
 
     /**
      * Sets the {@link CredentialStatus}
      *
-     * @param credentialStatus The {@link CredentialStatus}
+     * @param credentialStatus
+     *         The {@link CredentialStatus}
      * @since 1.0.0
      */
-    void setCredentialStatus(CredentialStatus credentialStatus);
+    public void setCredentialStatus(CredentialStatus credentialStatus) {
+        this.credentialStatus = credentialStatus;
+    }
 }

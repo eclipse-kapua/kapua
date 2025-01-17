@@ -37,16 +37,6 @@ public class DeviceXmlRegistry {
     }
 
     /**
-     * Creates a new device creator
-     *
-     * @return
-     * @since 1.0.0
-     */
-    public DeviceCreator newDeviceCreator() {
-        return deviceFactory.newCreator(null, null);
-    }
-
-    /**
      * Instantiates a new {@link DeviceExtendedProperty}.
      *
      * @return The newly instantiated {@link DeviceExtendedProperty}.

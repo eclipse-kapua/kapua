@@ -13,6 +13,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.registry.steps;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.model.id.KapuaEid;
@@ -39,14 +47,6 @@ import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Creator of Accounts, Users, Permissions that are used in ACL tests
@@ -88,7 +88,6 @@ public class AclCreator {
      */
     private AccountFactory accountFactory;
 
-
     /**
      * Constructor with all support services.
      */
@@ -112,8 +111,10 @@ public class AclCreator {
     /**
      * Configure user service with reasonable default values.
      *
-     * @param accId   account id
-     * @param scopeId scope id
+     * @param accId
+     *         account id
+     * @param scopeId
+     *         scope id
      */
     private void configureUserService(KapuaId accId, KapuaId scopeId) {
 
@@ -135,8 +136,10 @@ public class AclCreator {
     /**
      * Configure account service with reasonable default values.
      *
-     * @param accId   account id
-     * @param scopeId scope id
+     * @param accId
+     *         account id
+     * @param scopeId
+     *         scope id
      */
     private void configureAccountService(KapuaId accId, KapuaId scopeId) {
 
@@ -154,10 +157,12 @@ public class AclCreator {
     /**
      * Creates permissions for user with specified account. Permissions are created in privileged mode.
      *
-     * @param permissionList list of permissions for user, if targetScopeId is not set user scope that is
-     *                       specified as account
-     * @param user           user for whom permissions are set
-     * @param account        account in which user is defined
+     * @param permissionList
+     *         list of permissions for user, if targetScopeId is not set user scope that is specified as account
+     * @param user
+     *         user for whom permissions are set
+     * @param account
+     *         account in which user is defined
      * @throws Exception
      */
     private void createPermissions(List<AclPermission> permissionList, User user, Account account)
@@ -175,18 +180,20 @@ public class AclCreator {
     }
 
     /**
-     * Create accessInfoCreator instance with data about user permissions.
-     * If target scope is not defined in permission list use account scope.
+     * Create accessInfoCreator instance with data about user permissions. If target scope is not defined in permission list use account scope.
      *
-     * @param permissionList list of all permissions
-     * @param user           user for which permissions are set
-     * @param account        that user belongs to
+     * @param permissionList
+     *         list of all permissions
+     * @param user
+     *         user for which permissions are set
+     * @param account
+     *         that user belongs to
      * @return AccessInfoCreator instance for creating user permissions
      */
     private AccessInfoCreator accessInfoCreatorCreator(List<AclPermission> permissionList,
-                                                       User user, Account account) {
+            User user, Account account) {
 
-        AccessInfoCreator accessInfoCreator = accessInfoFactory.newCreator(account.getId());
+        AccessInfoCreator accessInfoCreator = new AccessInfoCreator(account.getId());
         accessInfoCreator.setUserId(user.getId());
         accessInfoCreator.setScopeId(user.getScopeId());
         Set<Permission> permissions = new HashSet<>();
@@ -208,7 +215,7 @@ public class AclCreator {
     public void attachUserCredentials(Account account, User user) throws KapuaException {
         KapuaSecurityUtils.doPrivileged(() -> {
             CredentialCreator credentialCreator;
-            credentialCreator = credentialFactory.newCreator(account.getId(), user.getId(), "PASSWORD", "KeepCalm123.", CredentialStatus.ENABLED, null);
+            credentialCreator = new CredentialCreator(account.getId(), user.getId(), "PASSWORD", "KeepCalm123.", CredentialStatus.ENABLED, null);
             try {
                 credentialService.create(credentialCreator);
             } catch (KapuaException ke) {
@@ -222,7 +229,7 @@ public class AclCreator {
     public void attachUserCredentials(Account account, User user, String password) throws KapuaException {
         KapuaSecurityUtils.doPrivileged(() -> {
             CredentialCreator credentialCreator;
-            credentialCreator = credentialFactory.newCreator(account.getId(), user.getId(), "PASSWORD", password, CredentialStatus.ENABLED, null);
+            credentialCreator = new CredentialCreator(account.getId(), user.getId(), "PASSWORD", password, CredentialStatus.ENABLED, null);
             try {
                 credentialService.create(credentialCreator);
             } catch (KapuaException ke) {
@@ -235,14 +242,14 @@ public class AclCreator {
 
     public User createUser(Account account, String name) throws KapuaException {
         configureUserService(account.getId(), SYS_ID);
-        UserCreator userCreator = userFactory.newCreator(account.getId(), name);
+        UserCreator userCreator = new UserCreator(account.getId(), name);
         return userService.create(userCreator);
     }
 
     Account createAccount(String name, String orgName, String orgEmail) throws KapuaException {
         configureAccountService(ROOT_SCOPE_ID, SYS_ID);
 
-        AccountCreator accountCreator = accountFactory.newCreator(ROOT_SCOPE_ID);
+        AccountCreator accountCreator = new AccountCreator(ROOT_SCOPE_ID);
         accountCreator.setName(name);
         accountCreator.setOrganizationName(orgName);
         accountCreator.setOrganizationEmail(orgEmail);

@@ -12,15 +12,19 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.user.steps;
 
+import java.util.ArrayList;
+
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.qa.common.TestBase;
 import org.eclipse.kapua.qa.common.StepData;
-import org.eclipse.kapua.service.authorization.access.AccessRoleService;
-import org.eclipse.kapua.service.authorization.access.AccessRoleFactory;
+import org.eclipse.kapua.qa.common.TestBase;
 import org.eclipse.kapua.service.authorization.access.AccessInfo;
-import org.eclipse.kapua.service.authorization.access.AccessRoleCreator;
 import org.eclipse.kapua.service.authorization.access.AccessRole;
+import org.eclipse.kapua.service.authorization.access.AccessRoleCreator;
+import org.eclipse.kapua.service.authorization.access.AccessRoleFactory;
+import org.eclipse.kapua.service.authorization.access.AccessRoleService;
 import org.eclipse.kapua.service.authorization.role.Role;
 import org.eclipse.kapua.service.user.User;
 import org.junit.Assert;
@@ -32,9 +36,6 @@ import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
-
-import javax.inject.Inject;
-import java.util.ArrayList;
 
 @Singleton
 public class UserRoleServiceSteps extends TestBase {
@@ -49,7 +50,7 @@ public class UserRoleServiceSteps extends TestBase {
         super(stepData);
     }
 
-    @After(value="@setup")
+    @After(value = "@setup")
     public void setServices() {
         KapuaLocator locator = KapuaLocator.getInstance();
         accessRoleService = locator.getService(AccessRoleService.class);
@@ -66,25 +67,25 @@ public class UserRoleServiceSteps extends TestBase {
         AccessInfo accessInfo = (AccessInfo) stepData.get("AccessInfo");
         Role role = (Role) stepData.get("Role");
         User user = (User) stepData.get("User");
-        AccessRoleCreator accessRoleCreator = accessRoleFactory.newCreator(getCurrentScopeId());
-            accessRoleCreator.setAccessInfoId(accessInfo.getId());
-            accessRoleCreator.setRoleId(role.getId());
-            stepData.put("AccessRoleCreator", accessRoleCreator);
-            Assert.assertEquals(roleName, role.getName());
-            Assert.assertEquals(userName, user.getName());
-            try {
-                primeException();
-                stepData.remove(ACCESS_ROLE);
-                AccessRole accessRole = accessRoleService.create(accessRoleCreator);
-                stepData.put(ACCESS_ROLE, accessRole);
-                stepData.put("AccessRoleId", accessRole.getId());
-            } catch (KapuaException ex) {
-                verifyException(ex);
-            }
+        AccessRoleCreator accessRoleCreator = new AccessRoleCreator(getCurrentScopeId());
+        accessRoleCreator.setAccessInfoId(accessInfo.getId());
+        accessRoleCreator.setRoleId(role.getId());
+        stepData.put("AccessRoleCreator", accessRoleCreator);
+        Assert.assertEquals(roleName, role.getName());
+        Assert.assertEquals(userName, user.getName());
+        try {
+            primeException();
+            stepData.remove(ACCESS_ROLE);
+            AccessRole accessRole = accessRoleService.create(accessRoleCreator);
+            stepData.put(ACCESS_ROLE, accessRole);
+            stepData.put("AccessRoleId", accessRole.getId());
+        } catch (KapuaException ex) {
+            verifyException(ex);
+        }
     }
 
     @Then("Access role is not found")
-    public void accessRoleIsNotFound() throws Exception{
+    public void accessRoleIsNotFound() throws Exception {
         AccessRole accessRole = (AccessRole) stepData.get(ACCESS_ROLE);
         try {
             Assert.assertEquals(null, accessRoleService.find(getCurrentScopeId(), accessRole.getId()));
@@ -98,7 +99,7 @@ public class UserRoleServiceSteps extends TestBase {
         ArrayList<AccessInfo> accessInfoList = (ArrayList<AccessInfo>) stepData.get("AccessInfoList");
         ArrayList<AccessRole> accessRoleList = new ArrayList<>();
         Role role = (Role) stepData.get("Role");
-        AccessRoleCreator accessRoleCreator = accessRoleFactory.newCreator(getCurrentScopeId());
+        AccessRoleCreator accessRoleCreator = new AccessRoleCreator(getCurrentScopeId());
         accessRoleCreator.setRoleId(role.getId());
         stepData.put("AccessRoleCreator", accessRoleCreator);
         Assert.assertEquals(roleName, role.getName());

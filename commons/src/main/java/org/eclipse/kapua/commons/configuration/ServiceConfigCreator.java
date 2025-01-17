@@ -14,43 +14,71 @@ package org.eclipse.kapua.commons.configuration;
 
 import java.util.Properties;
 
-import org.eclipse.kapua.KapuaException;
+import javax.xml.bind.annotation.XmlElement;
+
+import org.eclipse.kapua.model.KapuaEntityCreator;
 import org.eclipse.kapua.model.KapuaUpdatableEntityCreator;
+import org.eclipse.kapua.model.id.KapuaId;
 
 /**
  * Service configuration creator definition.
  *
  * @since 1.0
  */
-public interface ServiceConfigCreator extends KapuaUpdatableEntityCreator<ServiceConfig> {
+public class ServiceConfigCreator extends KapuaUpdatableEntityCreator<ServiceConfig> {
+
+    private static final long serialVersionUID = 7508550960304732465L;
+
+    @XmlElement(name = "pid")
+    private String pid;
+
+    @XmlElement(name = "configurations")
+    private Properties configurations;
+
+    public ServiceConfigCreator() {
+    }
+
+    public ServiceConfigCreator(KapuaId scopeId) {
+        super(scopeId);
+    }
+
+    public ServiceConfigCreator(KapuaEntityCreator<ServiceConfig> entityCreator) {
+        super(entityCreator);
+    }
 
     /**
      * Return service pid
      *
      * @return
      */
-    public String getPid();
+    public String getPid() {
+        return pid;
+    }
 
     /**
      * Set service pid
      *
      * @param pid
      */
-    public void setPid(String pid);
+    public void setPid(String pid) {
+        this.pid = pid;
+    }
 
     /**
      * Return service configurations
      *
      * @return
-     * @throws KapuaException
      */
-    public Properties getConfigurations() throws KapuaException;
+    public Properties getConfigurations() {
+        return this.configurations;
+    }
 
     /**
      * Set service configurations
      *
      * @param configurations
-     * @throws KapuaException
      */
-    public void setConfigurations(Properties configurations) throws KapuaException;
+    public void setConfigurations(Properties configurations) {
+        this.configurations = configurations;
+    }
 }

@@ -121,7 +121,7 @@ public class JobStepServiceSteps extends JobServiceTestBase {
         Job job = (Job) stepData.get(JOB);
         JobStepDefinition jobStepDefinition = (JobStepDefinition) stepData.get(JOB_STEP_DEFINITION);
 
-        JobStepCreator jobStepCreator = jobStepFactory.newCreator(job.getScopeId());
+        JobStepCreator jobStepCreator = new JobStepCreator(job.getScopeId());
         jobStepCreator.setJobId(job.getId());
         jobStepCreator.setName(jobStepName);
         jobStepCreator.setJobStepDefinitionId(jobStepDefinition.getId());
@@ -378,7 +378,7 @@ public class JobStepServiceSteps extends JobServiceTestBase {
 
     @When("I test the JobStepFactory")
     public void testTheStepFactory() {
-        Assert.assertNotNull(jobStepFactory.newCreator(SYS_SCOPE_ID));
+        Assert.assertNotNull(new JobStepCreator(SYS_SCOPE_ID));
         Assert.assertNotNull(jobStepFactory.newEntity(SYS_SCOPE_ID));
         Assert.assertNotNull(new KapuaQuery(SYS_SCOPE_ID));
         Assert.assertNotNull(jobStepFactory.newStepProperty("TestName", "TestType", "TestValue"));
@@ -386,7 +386,7 @@ public class JobStepServiceSteps extends JobServiceTestBase {
     // Private methods
 
     private JobStepCreator prepareDefaultJobStepCreator() {
-        JobStepCreator tmpCr = jobStepFactory.newCreator(getCurrentScopeId());
+        JobStepCreator tmpCr = new JobStepCreator(getCurrentScopeId());
         tmpCr.setName(String.format("StepName_%d", random.nextInt()));
         tmpCr.setDescription("StepDescription");
         return tmpCr;

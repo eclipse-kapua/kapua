@@ -29,9 +29,4 @@ public class JobDeviceManagementOperationXmlRegistry {
     public JobDeviceManagementOperation newJobDeviceManagementOperation() {
         return jobDeviceManagementOperationFactory.newEntity(null);
     }
-
-    public JobDeviceManagementOperationCreator newJobDeviceManagementOperationCreator() {
-        return jobDeviceManagementOperationFactory.newCreator(null);
-    }
-
 }

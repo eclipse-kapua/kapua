@@ -101,7 +101,7 @@ public class GwtUserServiceImpl extends KapuaRemoteServiceServlet implements Gwt
         try {
             KapuaId scopeId = KapuaEid.parseCompactId(gwtUserCreator.getScopeId());
 
-            UserCreator userCreator = USER_FACTORY.newCreator(scopeId, gwtUserCreator.getUsername());
+            UserCreator userCreator = new UserCreator(scopeId, gwtUserCreator.getUsername());
             userCreator.setUserType(GwtKapuaUserModelConverter.convertUserType(gwtUserCreator.getUserType()));
             userCreator.setDisplayName(gwtUserCreator.getDisplayName());
             userCreator.setEmail(gwtUserCreator.getEmail());
@@ -116,7 +116,7 @@ public class GwtUserServiceImpl extends KapuaRemoteServiceServlet implements Gwt
             if (UserType.INTERNAL.equals(user.getUserType()) &&
                     gwtUserCreator.getPassword() != null) {
 
-                CredentialCreator credentialCreator = CREDENTIAL_FACTORY.newCreator(scopeId,
+                CredentialCreator credentialCreator = new CredentialCreator(scopeId,
                         user.getId(),
                         "PASSWORD",
                         gwtUserCreator.getPassword(),

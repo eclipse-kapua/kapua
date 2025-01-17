@@ -12,17 +12,17 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.credential.mfa;
 
-import org.eclipse.kapua.model.KapuaEntityCreator;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.service.user.User;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import org.eclipse.kapua.model.KapuaEntityCreator;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import org.eclipse.kapua.service.user.User;
 
 /**
  * {@link MfaOption} {@link KapuaEntityCreator}
@@ -31,8 +31,36 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  */
 @XmlRootElement(name = "mfaOptionCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = MfaOptionXmlRegistry.class, factoryMethod = "newMfaOptionCreator")
-public interface MfaOptionCreator extends KapuaEntityCreator<MfaOption> {
+@XmlType
+public class MfaOptionCreator extends KapuaEntityCreator<MfaOption> {
+
+    private static final long serialVersionUID = -4619585500941519330L;
+
+    private KapuaId userId;
+
+    public MfaOptionCreator() {
+    }
+
+    public MfaOptionCreator(KapuaId scopeId) {
+        super(scopeId);
+    }
+
+    public MfaOptionCreator(KapuaEntityCreator<MfaOption> entityCreator) {
+        super(entityCreator);
+    }
+
+    /**
+     * Constructor
+     *
+     * @param scopeId
+     *         scope identifier
+     * @param userId
+     *         user identifier
+     */
+    public MfaOptionCreator(KapuaId scopeId, KapuaId userId) {
+        super(scopeId);
+        this.userId = userId;
+    }
 
     /**
      * Gets the {@link User#getId()}
@@ -42,13 +70,18 @@ public interface MfaOptionCreator extends KapuaEntityCreator<MfaOption> {
      */
     @XmlElement(name = "userId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
-    KapuaId getUserId();
+    public KapuaId getUserId() {
+        return userId;
+    }
 
     /**
      * Sets the {@link User#getId()}
      *
-     * @param userId The {@link User#getId()}
+     * @param userId
+     *         The {@link User#getId()}
      * @since 1.3.0
      */
-    void setUserId(KapuaId userId);
+    public void setUserId(KapuaId userId) {
+        this.userId = userId;
+    }
 }

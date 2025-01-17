@@ -35,15 +35,6 @@ public class JobXmlRegistry {
         return jobFactory.newEntity(null);
     }
 
-    /**
-     * Creates a new job creator instance
-     *
-     * @return
-     */
-    public JobCreator newJobCreator() {
-        return jobFactory.newCreator(null);
-    }
-
     public JobQuery newQuery() {
         return new JobQuery(null);
     }

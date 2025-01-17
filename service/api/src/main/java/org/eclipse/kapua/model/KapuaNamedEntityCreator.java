@@ -15,6 +15,8 @@ package org.eclipse.kapua.model;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.eclipse.kapua.model.id.KapuaId;
+
 /**
  * {@link KapuaNamedEntityCreator} definition.
  * <p>
@@ -41,11 +43,36 @@ import javax.xml.bind.annotation.XmlType;
  * </p>
  * </div>
  *
- * @param <E> {@link KapuaEntity} which this {@link KapuaEntityCreator} is for
+ * @param <E>
+ *         {@link KapuaEntity} which this {@link KapuaEntityCreator} is for
  * @since 1.0.0
  */
-@XmlType(propOrder = {"name", "description"})
-public interface KapuaNamedEntityCreator<E extends KapuaEntity> extends KapuaUpdatableEntityCreator<E> {
+@XmlType(propOrder = { "name", "description" })
+public abstract class KapuaNamedEntityCreator<E extends KapuaEntity> extends KapuaUpdatableEntityCreator<E> {
+
+    protected String name;
+    protected String description;
+
+    public KapuaNamedEntityCreator() {
+    }
+
+    public KapuaNamedEntityCreator(KapuaId scopeId) {
+        super(scopeId);
+    }
+
+    /**
+     * Constructor
+     *
+     * @param scopeId
+     *         the scope {@link KapuaId}
+     * @param name
+     *         the name
+     * @since 1.0.0
+     */
+    public KapuaNamedEntityCreator(KapuaId scopeId, String name) {
+        super(scopeId);
+        this.name = name;
+    }
 
     /**
      * Gets the name
@@ -54,15 +81,20 @@ public interface KapuaNamedEntityCreator<E extends KapuaEntity> extends KapuaUpd
      * @since 1.0.0
      */
     @XmlElement(name = "name")
-    String getName();
+    public String getName() {
+        return name;
+    }
 
     /**
      * Sets the name
      *
-     * @param name the name
+     * @param name
+     *         the name
      * @since 1.0.0
      */
-    void setName(String name);
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /**
      * Gets the description
@@ -70,13 +102,18 @@ public interface KapuaNamedEntityCreator<E extends KapuaEntity> extends KapuaUpd
      * @return the description
      * @since 1.0.0
      */
-    String getDescription();
+    public String getDescription() {
+        return description;
+    }
 
     /**
      * Sets the description
      *
-     * @param description the description
+     * @param description
+     *         the description
      * @since 1.0.0
      */
-    void setDescription(String description);
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

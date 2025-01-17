@@ -147,7 +147,7 @@ public class GwtJobTargetServiceImpl extends KapuaRemoteServiceServlet implement
                     devices.add(device);
                 }
                 KapuaId creatorScopeId = KapuaEid.parseCompactId(gwtJobTargetCreator.getScopeId());
-                JobTargetCreator jobTargetCreator = JOB_TARGET_FACTORY.newCreator(creatorScopeId);
+                JobTargetCreator jobTargetCreator = new JobTargetCreator(creatorScopeId);
                 jobTargetCreator.setJobId(GwtKapuaCommonsModelConverter.convertKapuaId(gwtJobTargetCreator.getJobId()));
                 jobTargetCreator.setJobTargetId(GwtKapuaCommonsModelConverter.convertKapuaId(gwtJobTargetCreator.getJobTargetId()));
 

@@ -16,7 +16,6 @@ import javax.xml.bind.annotation.XmlRegistry;
 
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.service.certificate.info.CertificateInfo;
-import org.eclipse.kapua.service.certificate.info.CertificateInfoCreator;
 import org.eclipse.kapua.service.certificate.info.CertificateInfoFactory;
 
 @XmlRegistry
@@ -27,9 +26,4 @@ public class CertificateInfoXmlRegistry {
     public CertificateInfo newCertificateInfo() {
         return certificateInfoFactory.newEntity(null);
     }
-
-    public CertificateInfoCreator newCreator() {
-        return certificateInfoFactory.newCreator(null);
-    }
-
 }

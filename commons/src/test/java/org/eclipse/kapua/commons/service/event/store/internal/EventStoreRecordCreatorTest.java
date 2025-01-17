@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.service.event.store.internal;
 
+import java.math.BigInteger;
+
+import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordCreator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdImpl;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
@@ -19,17 +22,15 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.math.BigInteger;
-
-
 @Category(JUnitTests.class)
-public class EventStoreRecordCreatorImplTest {
+public class EventStoreRecordCreatorTest {
+
     @Test
     public void eventStoreRecordCreatorImplTest() {
-        KapuaId[] scopeIdList = {null, new KapuaIdImpl(BigInteger.ONE)};
+        KapuaId[] scopeIdList = { null, new KapuaIdImpl(BigInteger.ONE) };
 
         for (KapuaId scopeId : scopeIdList) {
-            EventStoreRecordCreatorImpl eventStoreRecordCreatorImpl = new EventStoreRecordCreatorImpl(scopeId);
+            EventStoreRecordCreator eventStoreRecordCreatorImpl = new EventStoreRecordCreator(scopeId);
             Assert.assertEquals("Expected and actual values should be the same.", scopeId, eventStoreRecordCreatorImpl.getScopeId());
         }
     }

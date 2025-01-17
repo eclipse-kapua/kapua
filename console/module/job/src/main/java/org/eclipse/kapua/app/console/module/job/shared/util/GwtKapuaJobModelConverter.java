@@ -46,17 +46,14 @@ import org.eclipse.kapua.service.job.JobAttributes;
 import org.eclipse.kapua.service.job.JobFactory;
 import org.eclipse.kapua.service.job.JobQuery;
 import org.eclipse.kapua.service.job.execution.JobExecutionAttributes;
-import org.eclipse.kapua.service.job.execution.JobExecutionFactory;
 import org.eclipse.kapua.service.job.execution.JobExecutionQuery;
 import org.eclipse.kapua.service.job.step.JobStep;
 import org.eclipse.kapua.service.job.step.JobStepAttributes;
 import org.eclipse.kapua.service.job.step.JobStepCreator;
 import org.eclipse.kapua.service.job.step.JobStepFactory;
-import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionFactory;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionQuery;
 import org.eclipse.kapua.service.job.step.definition.JobStepProperty;
 import org.eclipse.kapua.service.job.targets.JobTargetAttributes;
-import org.eclipse.kapua.service.job.targets.JobTargetFactory;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerAttributes;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerFactory;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerProperty;
@@ -68,11 +65,8 @@ public class GwtKapuaJobModelConverter {
 
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
 
-    private static final JobExecutionFactory JOB_EXECUTION_FACTORY = LOCATOR.getFactory(JobExecutionFactory.class);
     private static final JobFactory JOB_FACTORY = LOCATOR.getFactory(JobFactory.class);
     private static final JobStepFactory JOB_STEP_FACTORY = LOCATOR.getFactory(JobStepFactory.class);
-    private static final JobStepDefinitionFactory JOB_STEP_DEFINITION_FACTORY = LOCATOR.getFactory(JobStepDefinitionFactory.class);
-    private static final JobTargetFactory JOB_TARGET_FACTORY = LOCATOR.getFactory(JobTargetFactory.class);
     private static final JobEngineFactory JOB_ENGINE_FACTORY = LOCATOR.getFactory(JobEngineFactory.class);
 
     private static final TriggerFactory TRIGGER_FACTORY = LOCATOR.getFactory(TriggerFactory.class);
@@ -239,7 +233,7 @@ public class GwtKapuaJobModelConverter {
 
         // Convert scopeId
         KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(gwtJobStepCreator.getScopeId());
-        JobStepCreator jobStepCreator = JOB_STEP_FACTORY.newCreator(scopeId);
+        JobStepCreator jobStepCreator = new JobStepCreator(scopeId);
 
         jobStepCreator.setName(gwtJobStepCreator.getJobName());
         jobStepCreator.setDescription(gwtJobStepCreator.getJobDescription());

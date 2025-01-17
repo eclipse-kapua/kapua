@@ -29,14 +29,4 @@ public class AccessInfoXmlRegistry {
     public AccessInfo newAccessInfo() {
         return accessInfoFactory.newEntity(null);
     }
-
-    /**
-     * Creates a new access info creator instance
-     *
-     * @return
-     */
-    public AccessInfoCreator newAccessInfoCreator() {
-        return accessInfoFactory.newCreator(null);
-    }
-
 }

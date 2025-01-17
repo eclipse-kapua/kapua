@@ -20,7 +20,7 @@ import org.eclipse.kapua.model.KapuaEntityFactory;
  * @see KapuaEntityFactory
  * @since 1.1.0
  */
-public interface TriggerDefinitionFactory extends KapuaEntityFactory<TriggerDefinition, TriggerDefinitionCreator> {
+public interface TriggerDefinitionFactory extends KapuaEntityFactory<TriggerDefinition> {
 
     /**
      * Instantiates a new {@link TriggerProperty}.

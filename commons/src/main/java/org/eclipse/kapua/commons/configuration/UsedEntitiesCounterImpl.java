@@ -15,7 +15,6 @@ package org.eclipse.kapua.commons.configuration;
 
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.model.KapuaEntity;
-import org.eclipse.kapua.model.KapuaEntityCreator;
 import org.eclipse.kapua.model.KapuaEntityFactory;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaListResult;
@@ -25,10 +24,8 @@ import org.eclipse.kapua.storage.TxContext;
 
 public class UsedEntitiesCounterImpl<
         E extends KapuaEntity,
-        C extends KapuaEntityCreator<E>,
         L extends KapuaListResult<E>,
-        Q extends KapuaQuery,
-        F extends KapuaEntityFactory<E, C>
+        F extends KapuaEntityFactory<E>
         > implements UsedEntitiesCounter {
 
     private final F factory;

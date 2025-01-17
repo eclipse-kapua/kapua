@@ -13,14 +13,13 @@
 package org.eclipse.kapua.service.endpoint;
 
 import org.eclipse.kapua.model.KapuaEntityFactory;
-import org.eclipse.kapua.model.id.KapuaId;
 
 /**
  * {@link EndpointInfoFactory} definition.
  *
  * @since 1.0.0
  */
-public interface EndpointInfoFactory extends KapuaEntityFactory<EndpointInfo, EndpointInfoCreator> {
+public interface EndpointInfoFactory extends KapuaEntityFactory<EndpointInfo> {
 
     /**
      * Instantiates a new {@link EndpointUsage}.
@@ -31,7 +30,5 @@ public interface EndpointInfoFactory extends KapuaEntityFactory<EndpointInfo, En
      * @since 1.0.0
      */
     EndpointUsage newEndpointUsage(String name);
-
-    EndpointInfoQuery newQuery(KapuaId scopeId);
 
 }

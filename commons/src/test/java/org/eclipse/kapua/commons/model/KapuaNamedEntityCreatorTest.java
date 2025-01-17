@@ -12,8 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.model;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.model.KapuaEntity;
+import org.eclipse.kapua.model.KapuaNamedEntityCreator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.junit.Assert;
@@ -23,13 +27,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import java.util.Arrays;
-import java.util.Collection;
-
-
 @Category(JUnitTests.class)
 @RunWith(value = Parameterized.class)
-public class AbstractKapuaNamedEntityCreatorTest {
+public class KapuaNamedEntityCreatorTest {
 
     private final String name;
 
@@ -37,30 +37,26 @@ public class AbstractKapuaNamedEntityCreatorTest {
 
     KapuaId scopeId = new KapuaEid();
 
-    AbstractKapuaNamedEntityCreator namedEntityCreator = new ActualKapuaNamedEntityCreator(scopeId);
+    KapuaNamedEntityCreator namedEntityCreator = new ActualKapuaNamedEntityCreator(scopeId, null);
 
-    public AbstractKapuaNamedEntityCreatorTest(String name, String description) {
+    public KapuaNamedEntityCreatorTest(String name, String description) {
         this.name = name;
         this.description = description;
     }
 
     @Parameters
     public static Collection<Object[]> strings() {
-        return Arrays.asList(new Object[][]{
-                {"", ""},
-                {"name", "description"},
-                {"NAME", "DESCRIPTION"},
-                {"&name%", "#description!"},
-                {"1234", "5678"},
-                {"make space", "make space"},
+        return Arrays.asList(new Object[][] {
+                { "", "" },
+                { "name", "description" },
+                { "NAME", "DESCRIPTION" },
+                { "&name%", "#description!" },
+                { "1234", "5678" },
+                { "make space", "make space" },
         });
     }
 
-    private class ActualKapuaNamedEntityCreator<E extends KapuaEntity> extends AbstractKapuaNamedEntityCreator<E> {
-
-        protected ActualKapuaNamedEntityCreator(KapuaId scopeId) {
-            super(scopeId);
-        }
+    private class ActualKapuaNamedEntityCreator<E extends KapuaEntity> extends KapuaNamedEntityCreator<E> {
 
         protected ActualKapuaNamedEntityCreator(KapuaId scopeId, String name) {
             super(scopeId, name);
@@ -70,7 +66,7 @@ public class AbstractKapuaNamedEntityCreatorTest {
     @Test
     public void abstractKapuaNamedEntityCreatorNameTest() {
         namedEntityCreator.setName(name);
-        AbstractKapuaNamedEntityCreator namedCopyEntityCreator = new ActualKapuaNamedEntityCreator(scopeId, name);
+        KapuaNamedEntityCreator namedCopyEntityCreator = new ActualKapuaNamedEntityCreator(scopeId, name);
         Assert.assertEquals("Expected and actual values should be the same!", namedEntityCreator.getName(), namedCopyEntityCreator.getName());
     }
 

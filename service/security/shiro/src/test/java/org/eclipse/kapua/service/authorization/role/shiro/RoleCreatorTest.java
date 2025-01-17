@@ -12,29 +12,30 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.role.shiro;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.authorization.permission.Permission;
+import org.eclipse.kapua.service.authorization.role.RoleCreator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
 
-import java.util.HashSet;
-import java.util.Set;
-
 
 @Category(JUnitTests.class)
-public class RoleCreatorImplTest {
+public class RoleCreatorTest {
 
-    RoleCreatorImpl roleCreatorImpl;
+    RoleCreator roleCreatorImpl;
     Set<Permission> permissions;
     Permission permission1, permission2;
 
     @Before
     public void initialize() {
-        roleCreatorImpl = new RoleCreatorImpl(KapuaId.ONE);
+        roleCreatorImpl = new RoleCreator(KapuaId.ONE);
         permissions = new HashSet<>();
         permission1 = Mockito.mock(Permission.class);
         permission2 = Mockito.mock(Permission.class);
@@ -44,7 +45,7 @@ public class RoleCreatorImplTest {
     public void roleCreatorImplTest() {
         KapuaId[] scopeIds = {KapuaId.ONE, null};
         for (KapuaId scopeId : scopeIds) {
-            RoleCreatorImpl roleCreatorImpl = new RoleCreatorImpl(scopeId);
+            RoleCreator roleCreatorImpl = new RoleCreator(scopeId);
             Assert.assertEquals("Expected and actual values should be the same.", scopeId, roleCreatorImpl.getScopeId());
             Assert.assertTrue("True expected.", roleCreatorImpl.getPermissions().isEmpty());
         }

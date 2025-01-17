@@ -30,8 +30,4 @@ public class TriggerDefinitionXmlRegistry {
         return triggerDefinitionFactory.newEntity(null);
     }
 
-    public TriggerDefinitionCreator newCreator() {
-        return triggerDefinitionFactory.newCreator(null);
-    }
-
 }

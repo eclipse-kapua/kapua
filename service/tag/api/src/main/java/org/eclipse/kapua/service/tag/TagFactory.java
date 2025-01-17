@@ -13,7 +13,6 @@
 package org.eclipse.kapua.service.tag;
 
 import org.eclipse.kapua.model.KapuaEntityFactory;
-import org.eclipse.kapua.model.id.KapuaId;
 
 /**
  * {@link TagFactory} definition.
@@ -21,17 +20,6 @@ import org.eclipse.kapua.model.id.KapuaId;
  * @see org.eclipse.kapua.model.KapuaEntityFactory
  * @since 1.0.0
  */
-public interface TagFactory extends KapuaEntityFactory<Tag, TagCreator> {
+public interface TagFactory extends KapuaEntityFactory<Tag> {
 
-    /**
-     * Instantiates a new {@link TagCreator}.
-     *
-     * @param scopeId
-     *         The scope {@link KapuaId} to set into the {@link TagCreator}
-     * @param name
-     *         The name to set into the {@link TagCreator}.
-     * @return The newly instantiated {@link TagCreator}
-     * @since 1.0.0
-     */
-    TagCreator newCreator(KapuaId scopeId, String name);
 }

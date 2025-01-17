@@ -17,7 +17,6 @@ import javax.inject.Singleton;
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.user.User;
-import org.eclipse.kapua.service.user.UserCreator;
 import org.eclipse.kapua.service.user.UserFactory;
 
 /**
@@ -29,22 +28,8 @@ import org.eclipse.kapua.service.user.UserFactory;
 public class UserFactoryImpl implements UserFactory {
 
     @Override
-    public UserCreator newCreator(KapuaId scopeId, String name) {
-        UserCreator creator = newCreator(scopeId);
-
-        creator.setName(name);
-
-        return creator;
-    }
-
-    @Override
     public User newEntity(KapuaId scopeId) {
         return new UserImpl(scopeId);
-    }
-
-    @Override
-    public UserCreator newCreator(KapuaId scopeId) {
-        return new UserCreatorImpl(scopeId);
     }
 
     @Override

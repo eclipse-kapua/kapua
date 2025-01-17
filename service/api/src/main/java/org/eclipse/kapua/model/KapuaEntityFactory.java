@@ -20,11 +20,9 @@ import org.eclipse.kapua.model.id.KapuaId;
  *
  * @param <E>
  *         The {@link KapuaEntity} for which this {@link KapuaEntityFactory} is for.
- * @param <C>
- *         The {@link KapuaEntityCreator} for which this {@link KapuaEntityFactory} is for.
  * @since 1.0.0
  */
-public interface KapuaEntityFactory<E extends KapuaEntity, C extends KapuaEntityCreator<E>> extends KapuaObjectFactory {
+public interface KapuaEntityFactory<E extends KapuaEntity> extends KapuaObjectFactory {
 
     /**
      * Instantiates a new {@link KapuaEntity}.
@@ -35,16 +33,6 @@ public interface KapuaEntityFactory<E extends KapuaEntity, C extends KapuaEntity
      * @since 1.0.0
      */
     E newEntity(KapuaId scopeId);
-
-    /**
-     * Instantiates a new {@link KapuaEntityCreator}.
-     *
-     * @param scopeId
-     *         The scope {@link KapuaId} to be set in the {@link KapuaEntityCreator}
-     * @return The newly instantiated {@link KapuaEntityCreator}
-     * @since 1.0.0
-     */
-    C newCreator(KapuaId scopeId);
 
     /**
      * Deeply clones the given {@link KapuaEntity}.

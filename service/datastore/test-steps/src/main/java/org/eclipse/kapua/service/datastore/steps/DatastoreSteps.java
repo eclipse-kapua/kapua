@@ -567,12 +567,12 @@ public class DatastoreSteps extends TestBase {
         String clientId1 = "test-device-1";
         Date sentOn1 = new Date(new Date().getTime() - 10000);
         Date capturedOn1 = new Date(new Date().getTime() - 500);
-        DeviceCreator tmpDevCr1 = deviceFactory.newCreator(tmpAccount.getId(), clientId1);
+        DeviceCreator tmpDevCr1 = new DeviceCreator(tmpAccount.getId(), clientId1);
         Device device1 = deviceRegistryService.create(tmpDevCr1);
         String clientId2 = "test-device-2";
         Date sentOn2 = new Date(sentOn1.getTime() + 1000);
         Date capturedOn2 = new Date(new Date().getTime());
-        DeviceCreator tmpDevCr2 = deviceFactory.newCreator(tmpAccount.getId(), clientId2);
+        DeviceCreator tmpDevCr2 = new DeviceCreator(tmpAccount.getId(), clientId2);
         Device device2 = deviceRegistryService.create(tmpDevCr2);
         Device tmpDev;
         Date sentOn;

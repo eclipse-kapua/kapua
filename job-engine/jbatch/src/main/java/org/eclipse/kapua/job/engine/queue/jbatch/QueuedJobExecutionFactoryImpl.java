@@ -16,7 +16,6 @@ import javax.inject.Singleton;
 
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.job.engine.queue.QueuedJobExecution;
-import org.eclipse.kapua.job.engine.queue.QueuedJobExecutionCreator;
 import org.eclipse.kapua.job.engine.queue.QueuedJobExecutionFactory;
 import org.eclipse.kapua.model.id.KapuaId;
 
@@ -31,11 +30,6 @@ public class QueuedJobExecutionFactoryImpl implements QueuedJobExecutionFactory 
     @Override
     public QueuedJobExecution newEntity(KapuaId scopeId) {
         return new QueuedJobExecutionImpl(scopeId);
-    }
-
-    @Override
-    public QueuedJobExecutionCreator newCreator(KapuaId scopeId) {
-        return new QueuedJobExecutionCreatorImpl(scopeId);
     }
 
     @Override

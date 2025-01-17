@@ -192,7 +192,7 @@ public class MessageStoreServiceSslTest extends AbstractMessageStoreServiceTest 
         Account account = getTestAccountCreator(adminScopeId);
 
         String clientId = String.format("device-%d", new Date().getTime());
-        DeviceCreator deviceCreator = deviceFactory.newCreator(account.getId(), clientId);
+        DeviceCreator deviceCreator = new DeviceCreator(account.getId(), clientId);
         Device device = deviceRegistryService.create(deviceCreator);
 
         // leave the message index by as default (DEVICE_TIMESTAMP)

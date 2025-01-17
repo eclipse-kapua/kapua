@@ -158,7 +158,7 @@ public class JobStepDefinitionServiceSteps extends JobServiceTestBase {
         primeException();
         try {
             for (int i = 0; i < num; i++) {
-                tmpCreator = jobStepDefinitionFactory.newCreator(getCurrentScopeId());
+                tmpCreator = new JobStepDefinitionCreator(getCurrentScopeId());
                 tmpCreator.setName(String.format("TestStepDefinitionNum%d", random.nextLong()));
                 tmpCreator.setProcessorName("TestStepProcessor");
                 tmpCreator.setStepType(JobStepType.TARGET);
@@ -326,7 +326,7 @@ public class JobStepDefinitionServiceSteps extends JobServiceTestBase {
 
     @When("I test the sanity of the step definition factory")
     public void testTheStepDefinitionFactory() {
-        Assert.assertNotNull(jobStepDefinitionFactory.newCreator(SYS_SCOPE_ID));
+        Assert.assertNotNull(new JobStepDefinitionCreator(SYS_SCOPE_ID));
         Assert.assertNotNull(jobStepDefinitionFactory.newEntity(SYS_SCOPE_ID));
         Assert.assertNotNull(jobStepDefinitionFactory.newStepProperty("TestName", "TestType", "TestValue", "TestExampleValue"));
     }
@@ -340,7 +340,7 @@ public class JobStepDefinitionServiceSteps extends JobServiceTestBase {
     }
 
     private JobStepDefinitionCreator prepareDefaultJobStepDefinitionCreator() {
-        JobStepDefinitionCreator tmpCr = jobStepDefinitionFactory.newCreator(getCurrentScopeId());
+        JobStepDefinitionCreator tmpCr = new JobStepDefinitionCreator(getCurrentScopeId());
         tmpCr.setName(String.format("DefinitionName_%d", random.nextInt()));
         tmpCr.setDescription("DefinitionDescription");
         tmpCr.setReaderName(null);

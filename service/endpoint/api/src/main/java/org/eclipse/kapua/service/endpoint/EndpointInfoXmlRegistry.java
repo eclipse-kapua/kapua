@@ -30,24 +30,6 @@ public class EndpointInfoXmlRegistry {
         return endpointInfoFactory.newEntity(null);
     }
 
-    /**
-     * Creates a new {@link EndpointInfoCreator} instance
-     *
-     * @return
-     */
-    public EndpointInfoCreator newCreator() {
-        return endpointInfoFactory.newCreator(null);
-    }
-
-    /**
-     * Creates a new {@link EndpointInfoQuery}
-     *
-     * @return
-     */
-    public EndpointInfoQuery newQuery() {
-        return endpointInfoFactory.newQuery(null);
-    }
-
     public EndpointUsage newEndpointUsage() {
         return endpointInfoFactory.newEndpointUsage(null);
     }

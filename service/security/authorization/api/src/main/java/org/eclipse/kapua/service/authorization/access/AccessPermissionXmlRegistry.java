@@ -29,13 +29,4 @@ public class AccessPermissionXmlRegistry {
     public AccessPermission newAccessPermission() {
         return accessPermissionFactory.newEntity(null);
     }
-
-    /**
-     * Creates a new {@link AccessPermission} instance
-     *
-     * @return
-     */
-    public AccessPermissionCreator newCreator() {
-        return accessPermissionFactory.newCreator(null);
-    }
 }

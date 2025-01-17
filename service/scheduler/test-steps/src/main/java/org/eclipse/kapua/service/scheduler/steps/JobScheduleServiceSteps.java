@@ -113,7 +113,7 @@ public class JobScheduleServiceSteps extends TestBase {
 
     @And("I try to create scheduler with name {string}")
     public void iTryToCreateSchedulerWithName(String schedulerName) throws Exception {
-        TriggerCreator triggerCreator = triggerFactory.newCreator(getCurrentScopeId());
+        TriggerCreator triggerCreator = new TriggerCreator(getCurrentScopeId());
         KapuaId triggerDefinitionId = (KapuaId) stepData.get(TRIGGER_DEFINITION_ID);
         triggerCreator.setName(schedulerName);
         triggerCreator.setDescription("A trigger description");
@@ -146,7 +146,7 @@ public class JobScheduleServiceSteps extends TestBase {
 
     @And("A regular trigger creator with the name {string} is created")
     public void aRegularTriggerCreatorWithTheName(String triggerName) {
-        TriggerCreator triggerCreator = triggerFactory.newCreator(getCurrentScopeId());
+        TriggerCreator triggerCreator = new TriggerCreator(getCurrentScopeId());
         KapuaId currentTriggerDefId = (KapuaId) stepData.get(TRIGGER_DEFINITION_ID);
         KapuaId jobId = (KapuaId) stepData.get("CurrentJobId");
         triggerCreator.setName(triggerName);
@@ -160,7 +160,7 @@ public class JobScheduleServiceSteps extends TestBase {
 
     @And("A trigger creator without a name")
     public void aTriggerCreatorWithoutAName() {
-        TriggerCreator triggerCreator = triggerFactory.newCreator(getCurrentScopeId());
+        TriggerCreator triggerCreator = new TriggerCreator(getCurrentScopeId());
         KapuaId currentTriggerDefId = (KapuaId) stepData.get(TRIGGER_DEFINITION_ID);
         triggerCreator.setTriggerDefinitionId(currentTriggerDefId);
         triggerCreator.setName(null);
@@ -169,7 +169,7 @@ public class JobScheduleServiceSteps extends TestBase {
 
     @And("A regular trigger creator with the name {string} and following properties")
     public void aRegularTriggerCreatorWithTheNameAndFollowingProperties(String triggerName, List<CucTriggerProperty> list) {
-        TriggerCreator triggerCreator = triggerFactory.newCreator(getCurrentScopeId());
+        TriggerCreator triggerCreator = new TriggerCreator(getCurrentScopeId());
         KapuaId currentTriggerDefId = (KapuaId) stepData.get(TRIGGER_DEFINITION_ID);
         triggerCreator.setName(triggerName);
         triggerCreator.setDescription("A trigger description");

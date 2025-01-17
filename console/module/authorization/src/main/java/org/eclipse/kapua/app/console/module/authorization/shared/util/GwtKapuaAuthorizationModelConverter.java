@@ -215,7 +215,7 @@ public class GwtKapuaAuthorizationModelConverter {
 
         // Convert scopeId
         KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(gwtRoleCreator.getScopeId());
-        RoleCreator roleCreator = roleFactory.newCreator(scopeId);
+        RoleCreator roleCreator = new RoleCreator(scopeId);
 
         // Convert name
         roleCreator.setName(gwtRoleCreator.getName());
@@ -250,7 +250,7 @@ public class GwtKapuaAuthorizationModelConverter {
 
         // Convert scopeId
         KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(gwtAccessRoleCreator.getScopeId());
-        AccessRoleCreator accessRoleCreator = accessRoleFactory.newCreator(scopeId);
+        AccessRoleCreator accessRoleCreator = new AccessRoleCreator(scopeId);
 
         // Convert accessInfoId
         accessRoleCreator.setAccessInfoId(GwtKapuaCommonsModelConverter.convertKapuaId(gwtAccessRoleCreator.getAccessInfoId()));
@@ -277,7 +277,7 @@ public class GwtKapuaAuthorizationModelConverter {
 
         // Convert scopeId
         KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(gwtAccessPermissionCreator.getScopeId());
-        AccessPermissionCreator accessPermissionCreator = accessPermissionFactory.newCreator(scopeId);
+        AccessPermissionCreator accessPermissionCreator = new AccessPermissionCreator(scopeId);
 
         // Convert accessInfoId
         accessPermissionCreator.setAccessInfoId(GwtKapuaCommonsModelConverter.convertKapuaId(gwtAccessPermissionCreator.getAccessInfoId()));
@@ -295,7 +295,7 @@ public class GwtKapuaAuthorizationModelConverter {
 
         // Convert scopeId
         KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(gwtAccessInfoCreator.getScopeId());
-        AccessInfoCreator accessInfoCreator = accessInfoFactory.newCreator(scopeId);
+        AccessInfoCreator accessInfoCreator = new AccessInfoCreator(scopeId);
 
         // Convert userId
         accessInfoCreator.setUserId(GwtKapuaCommonsModelConverter.convertKapuaId(gwtAccessInfoCreator.getUserId()));

@@ -273,7 +273,7 @@ public abstract class AuthenticationLogic {
      */
     protected DeviceConnection createDeviceConnection(AuthContext authContext) throws KapuaException {
         // TODO manage the stealing link event (may be a good idea to use different connect status (connect -stealing)?
-        DeviceConnectionCreator deviceConnectionCreator = deviceConnectionFactory.newCreator(KapuaEid.parseCompactId(authContext.getScopeId()));
+        DeviceConnectionCreator deviceConnectionCreator = new DeviceConnectionCreator(KapuaEid.parseCompactId(authContext.getScopeId()));
         deviceConnectionCreator.setStatus(DeviceConnectionStatus.CONNECTED);
         deviceConnectionCreator.setClientId(authContext.getClientId());
         deviceConnectionCreator.setClientIp(authContext.getClientIp());

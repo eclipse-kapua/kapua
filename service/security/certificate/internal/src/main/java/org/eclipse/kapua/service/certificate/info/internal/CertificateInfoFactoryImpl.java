@@ -17,7 +17,6 @@ import javax.inject.Singleton;
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.certificate.info.CertificateInfo;
-import org.eclipse.kapua.service.certificate.info.CertificateInfoCreator;
 import org.eclipse.kapua.service.certificate.info.CertificateInfoFactory;
 
 @Singleton
@@ -26,11 +25,6 @@ public class CertificateInfoFactoryImpl implements CertificateInfoFactory {
     @Override
     public CertificateInfo newEntity(KapuaId scopeId) {
         return new CertificateInfoImpl(scopeId);
-    }
-
-    @Override
-    public CertificateInfoCreator newCreator(KapuaId scopeId) {
-        throw new UnsupportedOperationException();
     }
 
     @Override

@@ -12,13 +12,16 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job.step.definition;
 
-import org.eclipse.kapua.model.KapuaNamedEntityCreator;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.List;
+
+import org.eclipse.kapua.model.KapuaNamedEntityCreator;
+import org.eclipse.kapua.model.id.KapuaId;
 
 /**
  * {@link JobStepDefinitionCreator} {@link org.eclipse.kapua.model.KapuaEntityCreator} definition
@@ -27,26 +30,74 @@ import java.util.List;
  */
 @XmlRootElement(name = "jobStepDefinitionCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = JobStepDefinitionXmlRegistry.class, factoryMethod = "newJobStepDefinitionCreator")
-public interface JobStepDefinitionCreator extends KapuaNamedEntityCreator<JobStepDefinition> {
+@XmlType
+public class JobStepDefinitionCreator extends KapuaNamedEntityCreator<JobStepDefinition> {
 
-    JobStepType getStepType();
+    private static final long serialVersionUID = 4602067255120049746L;
 
-    void setStepType(JobStepType jobStepType);
+    private JobStepType jobStepType;
+    private String readerName;
+    private String processorName;
+    private String writerName;
+    private List<JobStepProperty> jobStepProperties;
 
-    String getReaderName();
+    public JobStepDefinitionCreator() {
+    }
 
-    void setReaderName(String readerName);
+    public JobStepDefinitionCreator(KapuaId scopeId) {
+        super(scopeId);
+    }
 
-    String getProcessorName();
+    public JobStepDefinitionCreator(KapuaId scopeId, String name) {
+        super(scopeId, name);
+    }
 
-    void setProcessorName(String processorName);
+    public JobStepType getStepType() {
+        return jobStepType;
+    }
 
-    String getWriterName();
+    public JobStepDefinitionCreator setStepType(JobStepType jobStepType) {
+        this.jobStepType = jobStepType;
+        return this;
+    }
 
-    void setWriterName(String writesName);
+    public String getReaderName() {
+        return readerName;
+    }
 
-    List<JobStepProperty> getStepProperties();
+    public JobStepDefinitionCreator setReaderName(String readerName) {
+        this.readerName = readerName;
+        return this;
+    }
 
-    void setStepProperties(List<JobStepProperty> jobStepProperties);
+    public String getProcessorName() {
+        return processorName;
+    }
+
+    public JobStepDefinitionCreator setProcessorName(String processorName) {
+        this.processorName = processorName;
+        return this;
+    }
+
+    public String getWriterName() {
+        return writerName;
+    }
+
+    public JobStepDefinitionCreator setWriterName(String writerName) {
+        this.writerName = writerName;
+        return this;
+    }
+
+    public List<JobStepProperty> getStepProperties() {
+        if (jobStepProperties == null) {
+            jobStepProperties = new ArrayList<>();
+        }
+
+        return jobStepProperties;
+    }
+
+    public JobStepDefinitionCreator setStepProperties(List<JobStepProperty> jobStepProperties) {
+        this.jobStepProperties = jobStepProperties;
+        return this;
+    }
 }

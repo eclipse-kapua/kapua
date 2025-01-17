@@ -20,7 +20,7 @@ import org.eclipse.kapua.model.KapuaEntityFactory;
  * @see org.eclipse.kapua.model.KapuaEntityFactory
  * @since 1.0.0
  */
-public interface CertificateFactory extends KapuaEntityFactory<Certificate, CertificateCreator> {
+public interface CertificateFactory extends KapuaEntityFactory<Certificate> {
 
     /**
      * Instantiates a new {@link CertificateUsage}.

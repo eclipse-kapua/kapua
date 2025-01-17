@@ -14,10 +14,8 @@ package org.eclipse.kapua.service.authorization.domain.shiro;
 
 import javax.inject.Singleton;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.domain.Domain;
-import org.eclipse.kapua.service.authorization.domain.DomainCreator;
 import org.eclipse.kapua.service.authorization.domain.DomainFactory;
 
 /**
@@ -29,18 +27,8 @@ import org.eclipse.kapua.service.authorization.domain.DomainFactory;
 public class DomainFactoryImpl implements DomainFactory {
 
     @Override
-    public DomainCreator newCreator(String name) {
-        return new DomainCreatorImpl(name);
-    }
-
-    @Override
     public Domain newEntity(KapuaId scopeId) {
         return new DomainImpl(scopeId);
-    }
-
-    @Override
-    public DomainCreator newCreator(KapuaId scopeId) {
-        throw new NotImplementedException();
     }
 
     @Override
