@@ -13,9 +13,7 @@
 package org.eclipse.kapua.service.datastore;
 
 import org.eclipse.kapua.service.datastore.model.DatastoreMessage;
-import org.eclipse.kapua.service.datastore.model.MessageListResult;
 import org.eclipse.kapua.service.datastore.model.MetricInfo;
-import org.eclipse.kapua.service.datastore.model.query.MessageQuery;
 import org.eclipse.kapua.service.storable.StorableFactory;
 
 /**
@@ -25,5 +23,6 @@ import org.eclipse.kapua.service.storable.StorableFactory;
  *
  * @since 1.3.0
  */
-public interface MessageStoreFactory extends StorableFactory<DatastoreMessage, MessageListResult, MessageQuery> {
+public interface MessageStoreFactory extends StorableFactory<DatastoreMessage> {
+
 }

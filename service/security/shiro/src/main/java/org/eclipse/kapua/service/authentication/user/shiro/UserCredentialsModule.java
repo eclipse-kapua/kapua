@@ -12,8 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.user.shiro;
 
-import com.google.inject.Module;
-import com.google.inject.Provides;
+import java.util.Set;
+
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaRuntimeException;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
@@ -26,14 +28,13 @@ import org.eclipse.kapua.service.authentication.credential.handler.shiro.Passwor
 import org.eclipse.kapua.service.authentication.credential.shiro.PasswordResetter;
 import org.eclipse.kapua.service.authentication.credential.shiro.PasswordResetterImpl;
 import org.eclipse.kapua.service.authentication.credential.shiro.PasswordValidator;
-import org.eclipse.kapua.service.authentication.user.UserCredentialsFactory;
 import org.eclipse.kapua.service.authentication.user.UserCredentialsService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.user.UserService;
 
-import javax.inject.Singleton;
-import java.util.Set;
+import com.google.inject.Module;
+import com.google.inject.Provides;
 
 /**
  * {@code kapua-security-shiro} {@link Module} implementation.
@@ -44,7 +45,6 @@ public class UserCredentialsModule extends AbstractKapuaModule {
 
     @Override
     protected void configureModule() {
-        bind(UserCredentialsFactory.class).to(UserCredentialsFactoryImpl.class);
     }
 
     @Provides
@@ -73,7 +73,6 @@ public class UserCredentialsModule extends AbstractKapuaModule {
             AuthenticationService authenticationService,
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
-            UserCredentialsFactory userCredentialsFactory,
             CredentialsFactory credentialsFactory,
             CredentialFactory credentialFactory,
             KapuaJpaTxManagerFactory txManagerFactory,
@@ -84,7 +83,6 @@ public class UserCredentialsModule extends AbstractKapuaModule {
                 authenticationService,
                 authorizationService,
                 permissionFactory,
-                userCredentialsFactory,
                 credentialsFactory,
                 credentialFactory,
                 txManagerFactory.create("kapua-authorization"),

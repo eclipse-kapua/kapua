@@ -13,8 +13,6 @@
 package org.eclipse.kapua.service.datastore;
 
 import org.eclipse.kapua.service.datastore.model.ClientInfo;
-import org.eclipse.kapua.service.datastore.model.ClientInfoListResult;
-import org.eclipse.kapua.service.datastore.model.query.ClientInfoQuery;
 import org.eclipse.kapua.service.storable.StorableFactory;
 
 /**
@@ -24,5 +22,6 @@ import org.eclipse.kapua.service.storable.StorableFactory;
  *
  * @since 1.3.0
  */
-public interface ClientInfoFactory extends StorableFactory<ClientInfo, ClientInfoListResult, ClientInfoQuery> {
+public interface ClientInfoFactory extends StorableFactory<ClientInfo> {
+
 }

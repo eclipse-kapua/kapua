@@ -43,12 +43,12 @@ import org.eclipse.kapua.model.type.ObjectValueConverter;
 import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.datastore.MessageStoreFactory;
 import org.eclipse.kapua.service.datastore.MessageStoreService;
-import org.eclipse.kapua.service.datastore.internal.mediator.ChannelInfoField;
-import org.eclipse.kapua.service.datastore.internal.mediator.MessageField;
-import org.eclipse.kapua.service.datastore.internal.schema.MessageSchema;
 import org.eclipse.kapua.service.datastore.model.DatastoreMessage;
 import org.eclipse.kapua.service.datastore.model.MessageListResult;
+import org.eclipse.kapua.service.datastore.model.query.ChannelInfoField;
+import org.eclipse.kapua.service.datastore.model.query.MessageField;
 import org.eclipse.kapua.service.datastore.model.query.MessageQuery;
+import org.eclipse.kapua.service.datastore.model.query.MessageSchema;
 import org.eclipse.kapua.service.datastore.model.query.predicate.DatastorePredicateFactory;
 import org.eclipse.kapua.service.elasticsearch.client.model.InsertResponse;
 import org.eclipse.kapua.service.storable.model.query.SortDirection;
@@ -252,7 +252,7 @@ public class DataMessages extends AbstractKapuaResource {
             andPredicate.getPredicates().add(getMetricPredicate(datastorePredicateFactory, metricName, metricType, metricMinValue, metricMaxValue));
         }
 
-        MessageQuery query = messageStoreFactory.newQuery(scopeId);
+        MessageQuery query = new MessageQuery(scopeId);
         query.setPredicate(andPredicate);
         query.setOffset(offset);
         query.setLimit(limit);

@@ -12,20 +12,41 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.model;
 
-import org.eclipse.kapua.service.datastore.model.xml.ClientInfoXmlRegistry;
-import org.eclipse.kapua.service.storable.model.StorableListResult;
-
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.eclipse.kapua.service.elasticsearch.client.model.ResultList;
+import org.eclipse.kapua.service.storable.model.StorableListResult;
+
 /**
- * Client information query result list definition.<br>
- * This object contains the list of the client information objects retrieved by the search service.
+ * Client information query result list definition.<br> This object contains the list of the client information objects retrieved by the search service.
  *
  * @since 1.0
  */
 @XmlRootElement(name = "clientInfos")
-@XmlType(factoryClass = ClientInfoXmlRegistry.class, factoryMethod = "newListResult")
-public interface ClientInfoListResult extends StorableListResult<ClientInfo> {
+@XmlType
+public class ClientInfoListResult extends StorableListResult<ClientInfo> {
+
+    private static final long serialVersionUID = -1398721444405133343L;
+
+    /**
+     * Constructor.
+     *
+     * @since 1.0.0
+     */
+    public ClientInfoListResult() {
+        super();
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param resultList
+     *         The {@link ResultList} to add.
+     * @since 1.0.0
+     */
+    public ClientInfoListResult(ResultList<ClientInfo> resultList) {
+        super(resultList.getResult(), resultList.getTotalCount());
+    }
 
 }

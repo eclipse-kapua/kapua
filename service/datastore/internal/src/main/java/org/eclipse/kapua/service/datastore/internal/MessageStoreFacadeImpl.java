@@ -12,6 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.internal;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.commons.cache.LocalCache;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
@@ -22,33 +29,30 @@ import org.eclipse.kapua.message.device.data.KapuaDataChannel;
 import org.eclipse.kapua.message.internal.device.data.KapuaDataChannelImpl;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.datastore.exception.DatastoreDisabledException;
-import org.eclipse.kapua.service.datastore.internal.mediator.ChannelInfoField;
-import org.eclipse.kapua.service.datastore.internal.mediator.ClientInfoField;
 import org.eclipse.kapua.service.datastore.internal.mediator.ConfigurationException;
 import org.eclipse.kapua.service.datastore.internal.mediator.DatastoreChannel;
 import org.eclipse.kapua.service.datastore.internal.mediator.DatastoreUtils;
-import org.eclipse.kapua.service.datastore.internal.mediator.MessageField;
+import org.eclipse.kapua.service.datastore.internal.mediator.InfoFieldHelper;
 import org.eclipse.kapua.service.datastore.internal.mediator.MessageInfo;
 import org.eclipse.kapua.service.datastore.internal.mediator.MessageStoreConfiguration;
 import org.eclipse.kapua.service.datastore.internal.mediator.Metric;
-import org.eclipse.kapua.service.datastore.internal.mediator.MetricInfoField;
 import org.eclipse.kapua.service.datastore.internal.model.ChannelInfoImpl;
 import org.eclipse.kapua.service.datastore.internal.model.ClientInfoImpl;
 import org.eclipse.kapua.service.datastore.internal.model.DataIndexBy;
 import org.eclipse.kapua.service.datastore.internal.model.DatastoreMessageImpl;
-import org.eclipse.kapua.service.datastore.internal.model.MessageListResultImpl;
 import org.eclipse.kapua.service.datastore.internal.model.MessageUniquenessCheck;
 import org.eclipse.kapua.service.datastore.internal.model.MetricInfoImpl;
-import org.eclipse.kapua.service.datastore.internal.model.query.ChannelInfoQueryImpl;
-import org.eclipse.kapua.service.datastore.internal.model.query.ClientInfoQueryImpl;
-import org.eclipse.kapua.service.datastore.internal.model.query.MetricInfoQueryImpl;
 import org.eclipse.kapua.service.datastore.internal.model.query.predicate.ChannelMatchPredicateImpl;
 import org.eclipse.kapua.service.datastore.model.ChannelInfoListResult;
 import org.eclipse.kapua.service.datastore.model.ClientInfoListResult;
 import org.eclipse.kapua.service.datastore.model.DatastoreMessage;
 import org.eclipse.kapua.service.datastore.model.MessageListResult;
 import org.eclipse.kapua.service.datastore.model.MetricInfoListResult;
+import org.eclipse.kapua.service.datastore.model.query.ChannelInfoQuery;
+import org.eclipse.kapua.service.datastore.model.query.ClientInfoQuery;
+import org.eclipse.kapua.service.datastore.model.query.MessageField;
 import org.eclipse.kapua.service.datastore.model.query.MessageQuery;
+import org.eclipse.kapua.service.datastore.model.query.MetricInfoQuery;
 import org.eclipse.kapua.service.elasticsearch.client.exception.ClientException;
 import org.eclipse.kapua.service.elasticsearch.client.exception.QueryMappingException;
 import org.eclipse.kapua.service.storable.exception.MappingException;
@@ -56,12 +60,6 @@ import org.eclipse.kapua.service.storable.model.id.StorableId;
 import org.eclipse.kapua.service.storable.model.id.StorableIdFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * Message store facade
@@ -126,7 +124,8 @@ public final class MessageStoreFacadeImpl extends AbstractDatastoreFacade implem
      * @throws ClientException
      */
     @Override
-    public StorableId store(KapuaMessage<?, ?> message, String messageId, boolean newInsert) throws KapuaIllegalArgumentException, DatastoreDisabledException, ConfigurationException, ClientException, MappingException {
+    public StorableId store(KapuaMessage<?, ?> message, String messageId, boolean newInsert)
+            throws KapuaIllegalArgumentException, DatastoreDisabledException, ConfigurationException, ClientException, MappingException {
         ArgumentValidator.notNull(message, "message");
         ArgumentValidator.notNull(message.getScopeId(), SCOPE_ID);
         ArgumentValidator.notNull(message.getReceivedOn(), "receivedOn");
@@ -280,7 +279,6 @@ public final class MessageStoreFacadeImpl extends AbstractDatastoreFacade implem
         return messageRepository.count(query);
     }
 
-
     @Override
     public void onAfterMessageStore(MessageInfo messageInfo, DatastoreMessage message)
             throws KapuaIllegalArgumentException,
@@ -293,7 +291,7 @@ public final class MessageStoreFacadeImpl extends AbstractDatastoreFacade implem
 
         ClientInfoImpl clientInfo = new ClientInfoImpl(message.getScopeId());
         clientInfo.setClientId(message.getClientId());
-        clientInfo.setId(storableIdFactory.newStorableId(ClientInfoField.getOrDeriveId(null, message.getScopeId(), message.getClientId())));
+        clientInfo.setId(storableIdFactory.newStorableId(InfoFieldHelper.getOrDeriveId(null, message.getScopeId(), message.getClientId())));
         clientInfo.setFirstMessageId(message.getDatastoreId());
         clientInfo.setFirstMessageOn(message.getTimestamp());
         clientInfoRegistryFacade.upstore(clientInfo);
@@ -303,7 +301,7 @@ public final class MessageStoreFacadeImpl extends AbstractDatastoreFacade implem
         channelInfo.setName(semanticChannel);
         channelInfo.setFirstMessageId(message.getDatastoreId());
         channelInfo.setFirstMessageOn(message.getTimestamp());
-        channelInfo.setId(storableIdFactory.newStorableId(ChannelInfoField.getOrDeriveId(null, channelInfo)));
+        channelInfo.setId(storableIdFactory.newStorableId(InfoFieldHelper.getOrDeriveId(null, channelInfo)));
         channelInfoStoreFacade.upstore(channelInfo);
 
         KapuaPayload payload = message.getPayload();
@@ -324,7 +322,7 @@ public final class MessageStoreFacadeImpl extends AbstractDatastoreFacade implem
             metricInfo.setChannel(semanticChannel);
             metricInfo.setName(entry.getKey());
             metricInfo.setMetricType(entry.getValue().getClass());
-            metricInfo.setId(storableIdFactory.newStorableId(MetricInfoField.getOrDeriveId(null, metricInfo)));
+            metricInfo.setId(storableIdFactory.newStorableId(InfoFieldHelper.getOrDeriveId(null, metricInfo)));
             metricInfo.setFirstMessageId(message.getDatastoreId());
             metricInfo.setFirstMessageOn(message.getTimestamp());
             messageMetrics[i++] = metricInfo;
@@ -352,12 +350,11 @@ public final class MessageStoreFacadeImpl extends AbstractDatastoreFacade implem
         ArgumentValidator.notNull(query.getScopeId(), QUERY_SCOPE_ID);
         if (!this.isDatastoreServiceEnabled(query.getScopeId())) {
             LOG.debug("Storage not enabled for account {}, returning empty result", query.getScopeId());
-            return new MessageListResultImpl();
+            return new MessageListResult();
         }
 
         return messageRepository.query(query);
     }
-
 
     // TODO cache will not be reset from the client code it should be automatically reset
     // after some time.
@@ -385,7 +382,7 @@ public final class MessageStoreFacadeImpl extends AbstractDatastoreFacade implem
         int offset = 0;
         long totalHits = 1;
 
-        MetricInfoQueryImpl metricQuery = new MetricInfoQueryImpl(scopeId);
+        MetricInfoQuery metricQuery = new MetricInfoQuery(scopeId);
         metricQuery.setLimit(pageSize + 1);
         metricQuery.setOffset(offset);
 
@@ -414,7 +411,7 @@ public final class MessageStoreFacadeImpl extends AbstractDatastoreFacade implem
         LOG.debug("Removed cached channel metrics for: {}", channel);
         metricInfoRepository.delete(metricQuery);
         LOG.debug("Removed channel metrics for: {}", channel);
-        ChannelInfoQueryImpl channelQuery = new ChannelInfoQueryImpl(scopeId);
+        ChannelInfoQuery channelQuery = new ChannelInfoQuery(scopeId);
         channelQuery.setLimit(pageSize + 1);
         channelQuery.setOffset(offset);
 
@@ -448,7 +445,7 @@ public final class MessageStoreFacadeImpl extends AbstractDatastoreFacade implem
         LOG.debug("Removed channels for: {}", channel);
         // Remove client
         if (isClientToDelete) {
-            ClientInfoQueryImpl clientInfoQuery = new ClientInfoQueryImpl(scopeId);
+            ClientInfoQuery clientInfoQuery = new ClientInfoQuery(scopeId);
             clientInfoQuery.setLimit(pageSize + 1);
             clientInfoQuery.setOffset(offset);
 
@@ -483,8 +480,8 @@ public final class MessageStoreFacadeImpl extends AbstractDatastoreFacade implem
     // Utility methods
 
     /**
-     * Check if the channel admit any client identifier (so if the channel has a specific wildcard in the second topic level).<br>
-     * In the MQTT word this method return true if the topic starts with 'account/+/'.
+     * Check if the channel admit any client identifier (so if the channel has a specific wildcard in the second topic level).<br> In the MQTT word this method return true if the topic starts with
+     * 'account/+/'.
      *
      * @param clientId
      * @return
@@ -493,7 +490,6 @@ public final class MessageStoreFacadeImpl extends AbstractDatastoreFacade implem
     private boolean isAnyClientId(String clientId) {
         return DatastoreChannel.SINGLE_LEVEL_WCARD.equals(clientId);
     }
-
 
     @Override
     public void refreshAllIndexes() throws ClientException {
@@ -510,7 +506,6 @@ public final class MessageStoreFacadeImpl extends AbstractDatastoreFacade implem
         channelInfoRepository.deleteAllIndexes();
         metricInfoRepository.deleteAllIndexes();
     }
-
 
     @Override
     public void deleteIndexes(String indexExp) throws ClientException {

@@ -47,10 +47,8 @@ import org.eclipse.kapua.service.authentication.credential.CredentialService;
 import org.eclipse.kapua.service.authentication.shiro.utils.AuthenticationUtils;
 import org.eclipse.kapua.service.authentication.user.PasswordChangeRequest;
 import org.eclipse.kapua.service.authentication.user.PasswordResetRequest;
-import org.eclipse.kapua.service.authentication.user.UserCredentialsFactory;
 import org.eclipse.kapua.service.authentication.user.UserCredentialsService;
 import org.eclipse.kapua.service.user.User;
-import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserListResult;
 import org.eclipse.kapua.service.user.UserQuery;
 import org.eclipse.kapua.service.user.UserService;
@@ -73,10 +71,8 @@ public class GwtCredentialServiceImpl extends KapuaRemoteServiceServlet implemen
     private static final CredentialsFactory CREDENTIALS_FACTORY = LOCATOR.getFactory(CredentialsFactory.class);
 
     private static final UserService USER_SERVICE = LOCATOR.getService(UserService.class);
-    private static final UserFactory USER_FACTORY = LOCATOR.getFactory(UserFactory.class);
 
     private static final UserCredentialsService USER_CREDENTIALS_SERVICE = LOCATOR.getService(UserCredentialsService.class);
-    private static final UserCredentialsFactory USER_CREDENTIALS_FACTORY = LOCATOR.getFactory(UserCredentialsFactory.class);
     private static final AuthenticationUtils AUTHENTICATION_UTILS = LOCATOR.getComponent(AuthenticationUtils.class);
 
     // this should be removed due to the refactoring in fixPasswordValidationBypass method
@@ -215,7 +211,7 @@ public class GwtCredentialServiceImpl extends KapuaRemoteServiceServlet implemen
             loginCredentials.setAuthenticationCode(mfaCode);
             AUTHENTICATION_SERVICE.verifyCredentials(loginCredentials);
 
-            PasswordChangeRequest passwordChangeRequest = USER_CREDENTIALS_FACTORY.newPasswordChangeRequest();
+            PasswordChangeRequest passwordChangeRequest = new PasswordChangeRequest();
             passwordChangeRequest.setCurrentPassword(oldPassword);
             passwordChangeRequest.setNewPassword(newPassword);
             USER_CREDENTIALS_SERVICE.changePassword(scopeId, userId, passwordChangeRequest);
@@ -233,7 +229,7 @@ public class GwtCredentialServiceImpl extends KapuaRemoteServiceServlet implemen
             final KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(stringScopeId);
             final KapuaId credentialId = GwtKapuaCommonsModelConverter.convertKapuaId(gwtCredentialId);
 
-            PasswordResetRequest passwordResetRequest = USER_CREDENTIALS_FACTORY.newPasswordResetRequest();
+            PasswordResetRequest passwordResetRequest = new PasswordResetRequest();
             passwordResetRequest.setNewPassword(newPassword);
             USER_CREDENTIALS_SERVICE.resetPassword(scopeId, credentialId, passwordResetRequest);
         } catch (KapuaException e) {

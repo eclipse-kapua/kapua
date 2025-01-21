@@ -12,8 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.internal;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 import org.eclipse.kapua.commons.cache.LocalCache;
+import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettingsKey;
 import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientProvider;
@@ -29,6 +32,8 @@ import org.eclipse.kapua.service.storable.model.utils.KeyValueEntry;
 import org.eclipse.kapua.service.storable.model.utils.MappingUtils;
 import org.eclipse.kapua.service.storable.repository.StorableRepository;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 public abstract class DatastoreElasticSearchRepositoryBase<
         T extends Storable,
         L extends StorableListResult<T>,
@@ -41,21 +46,25 @@ public abstract class DatastoreElasticSearchRepositoryBase<
     protected DatastoreElasticSearchRepositoryBase(
             ElasticsearchClientProvider elasticsearchClientProviderInstance,
             Class<T> clazz,
-            StorableFactory<T, L, Q> storableFactory,
+            StorableFactory<T> storableFactory,
             StorablePredicateFactory storablePredicateFactory,
             LocalCache<String, Boolean> indexesCache,
-            DatastoreSettings datastoreSettings) {
+            DatastoreSettings datastoreSettings,
+            Function<KapuaId, Q> querySupplier,
+            Supplier<L> listSupplier) {
         super(elasticsearchClientProviderInstance, clazz, storableFactory, storablePredicateFactory,
-                indexesCache);
+                indexesCache, querySupplier, listSupplier);
         this.datastoreSettings = datastoreSettings;
     }
 
     protected DatastoreElasticSearchRepositoryBase(
             ElasticsearchClientProvider elasticsearchClientProviderInstance,
             Class<T> clazz,
-            StorableFactory<T, L, Q> storableFactory,
-            StorablePredicateFactory storablePredicateFactory, DatastoreSettings datastoreSettings) {
-        super(elasticsearchClientProviderInstance, clazz, storableFactory, storablePredicateFactory);
+            StorableFactory<T> storableFactory,
+            StorablePredicateFactory storablePredicateFactory, DatastoreSettings datastoreSettings,
+            Function<KapuaId, Q> querySupplier,
+            Supplier<L> listSupplier) {
+        super(elasticsearchClientProviderInstance, clazz, storableFactory, storablePredicateFactory, querySupplier, listSupplier);
         this.datastoreSettings = datastoreSettings;
     }
 
@@ -73,10 +82,10 @@ public abstract class DatastoreElasticSearchRepositoryBase<
 
         ObjectNode rootNode = MappingUtils.newObjectNode();
         ObjectNode settingsNode = MappingUtils.newObjectNode();
-        ObjectNode refreshIntervalNode = MappingUtils.newObjectNode(new KeyValueEntry[]{
+        ObjectNode refreshIntervalNode = MappingUtils.newObjectNode(new KeyValueEntry[] {
                 new KeyValueEntry(SchemaKeys.KEY_REFRESH_INTERVAL, idxRefreshInterval),
                 new KeyValueEntry(SchemaKeys.KEY_SHARD_NUMBER, idxShardNumber),
-                new KeyValueEntry(SchemaKeys.KEY_REPLICA_NUMBER, idxReplicaNumber)});
+                new KeyValueEntry(SchemaKeys.KEY_REPLICA_NUMBER, idxReplicaNumber) });
         settingsNode.set(SchemaKeys.KEY_INDEX, refreshIntervalNode);
         rootNode.set(SchemaKeys.KEY_SETTINGS, settingsNode);
         logger.info("Creating index for '{}' - refresh: '{}' - shards: '{}' replicas: '{}': ", idxName, idxRefreshInterval, idxShardNumber, idxReplicaNumber);

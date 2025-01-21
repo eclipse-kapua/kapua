@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.user;
 
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -21,11 +20,18 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = UserCredentialsXmlRegistry.class, factoryMethod = "newPasswordResetRequest")
-public interface PasswordResetRequest {
+@XmlType
+public class PasswordResetRequest {
+
+    private String newPassword;
+
     @XmlElement(name = "newPassword")
-    String getNewPassword();
+    public String getNewPassword() {
+        return newPassword;
+    }
 
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
 
-    void setNewPassword(String newPassword);
 }

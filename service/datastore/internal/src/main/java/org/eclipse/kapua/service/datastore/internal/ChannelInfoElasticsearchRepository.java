@@ -12,21 +12,26 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.internal;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import javax.inject.Inject;
+
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.datastore.ChannelInfoFactory;
 import org.eclipse.kapua.service.datastore.internal.mediator.DatastoreUtils;
-import org.eclipse.kapua.service.datastore.internal.schema.ChannelInfoSchema;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
 import org.eclipse.kapua.service.datastore.model.ChannelInfo;
 import org.eclipse.kapua.service.datastore.model.ChannelInfoListResult;
 import org.eclipse.kapua.service.datastore.model.query.ChannelInfoQuery;
+import org.eclipse.kapua.service.datastore.model.query.ChannelInfoSchema;
 import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientProvider;
+import org.eclipse.kapua.service.elasticsearch.client.SchemaKeys;
 import org.eclipse.kapua.service.storable.exception.MappingException;
 import org.eclipse.kapua.service.storable.model.id.StorableId;
 import org.eclipse.kapua.service.storable.model.query.predicate.StorablePredicateFactory;
+import org.eclipse.kapua.service.storable.model.utils.KeyValueEntry;
+import org.eclipse.kapua.service.storable.model.utils.MappingUtils;
 
-import javax.inject.Inject;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class ChannelInfoElasticsearchRepository extends DatastoreElasticSearchRepositoryBase<ChannelInfo, ChannelInfoListResult, ChannelInfoQuery> implements ChannelInfoRepository {
 
@@ -45,7 +50,9 @@ public class ChannelInfoElasticsearchRepository extends DatastoreElasticSearchRe
                 channelInfoFactory,
                 storablePredicateFactory,
                 datastoreCacheManager.getChannelsCache(),
-                datastoreSettings);
+                datastoreSettings,
+                scopeId -> new ChannelInfoQuery(scopeId),
+                () -> new ChannelInfoListResult());
         this.datastoreUtils = datastoreUtils;
     }
 
@@ -61,7 +68,48 @@ public class ChannelInfoElasticsearchRepository extends DatastoreElasticSearchRe
 
     @Override
     protected JsonNode getIndexSchema() throws MappingException {
-        return ChannelInfoSchema.getChannelTypeSchema();
+        return getChannelTypeSchema();
+    }
+
+    /**
+     * Create and return the Json representation of the channel info schema
+     *
+     * @return
+     * @throws MappingException
+     * @since 1.0.0
+     */
+    public static JsonNode getChannelTypeSchema() throws MappingException {
+        ObjectNode channelNode = MappingUtils.newObjectNode();
+
+        {
+            ObjectNode sourceChannel = MappingUtils.newObjectNode(new KeyValueEntry[] { new KeyValueEntry(SchemaKeys.KEY_ENABLED, true) });
+            channelNode.set(SchemaKeys.KEY_SOURCE, sourceChannel);
+
+            ObjectNode propertiesNode = MappingUtils.newObjectNode();
+            {
+                ObjectNode channelScopeId = MappingUtils.newObjectNode(
+                        new KeyValueEntry[] { new KeyValueEntry(SchemaKeys.KEY_TYPE, SchemaKeys.TYPE_KEYWORD), new KeyValueEntry(SchemaKeys.KEY_INDEX, SchemaKeys.VALUE_TRUE) });
+                propertiesNode.set(ChannelInfoSchema.CHANNEL_SCOPE_ID, channelScopeId);
+
+                ObjectNode channelClientId = MappingUtils.newObjectNode(
+                        new KeyValueEntry[] { new KeyValueEntry(SchemaKeys.KEY_TYPE, SchemaKeys.TYPE_KEYWORD), new KeyValueEntry(SchemaKeys.KEY_INDEX, SchemaKeys.VALUE_TRUE) });
+                propertiesNode.set(ChannelInfoSchema.CHANNEL_CLIENT_ID, channelClientId);
+
+                ObjectNode channelName = MappingUtils.newObjectNode(
+                        new KeyValueEntry[] { new KeyValueEntry(SchemaKeys.KEY_TYPE, SchemaKeys.TYPE_KEYWORD), new KeyValueEntry(SchemaKeys.KEY_INDEX, SchemaKeys.VALUE_TRUE) });
+                propertiesNode.set(ChannelInfoSchema.CHANNEL_NAME, channelName);
+
+                ObjectNode channelTimestamp = MappingUtils.newObjectNode(
+                        new KeyValueEntry[] { new KeyValueEntry(SchemaKeys.KEY_TYPE, SchemaKeys.TYPE_DATE), new KeyValueEntry(SchemaKeys.KEY_FORMAT, DatastoreUtils.DATASTORE_DATE_FORMAT) });
+                propertiesNode.set(ChannelInfoSchema.CHANNEL_TIMESTAMP, channelTimestamp);
+
+                ObjectNode channelMessageId = MappingUtils.newObjectNode(
+                        new KeyValueEntry[] { new KeyValueEntry(SchemaKeys.KEY_TYPE, SchemaKeys.TYPE_KEYWORD), new KeyValueEntry(SchemaKeys.KEY_INDEX, SchemaKeys.VALUE_TRUE) });
+                propertiesNode.set(ChannelInfoSchema.CHANNEL_MESSAGE_ID, channelMessageId);
+            }
+            channelNode.set(SchemaKeys.FIELD_NAME_PROPERTIES, propertiesNode);
+        }
+        return channelNode;
     }
 
     @Override

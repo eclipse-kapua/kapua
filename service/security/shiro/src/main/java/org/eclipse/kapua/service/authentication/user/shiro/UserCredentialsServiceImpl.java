@@ -12,6 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.user.shiro;
 
+import java.util.Optional;
+
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaIllegalArgumentException;
@@ -31,16 +35,12 @@ import org.eclipse.kapua.service.authentication.exception.KapuaAuthenticationErr
 import org.eclipse.kapua.service.authentication.exception.KapuaAuthenticationException;
 import org.eclipse.kapua.service.authentication.user.PasswordChangeRequest;
 import org.eclipse.kapua.service.authentication.user.PasswordResetRequest;
-import org.eclipse.kapua.service.authentication.user.UserCredentialsFactory;
 import org.eclipse.kapua.service.authentication.user.UserCredentialsService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserService;
 import org.eclipse.kapua.storage.TxManager;
-
-import javax.inject.Singleton;
-import java.util.Optional;
 
 /**
  * {@link UserCredentialsService} implementation.
@@ -49,10 +49,10 @@ import java.util.Optional;
  */
 @Singleton
 public class UserCredentialsServiceImpl implements UserCredentialsService {
+
     private final AuthenticationService authenticationService;
     private final AuthorizationService authorizationService;
     private final PermissionFactory permissionFactory;
-    private final UserCredentialsFactory userCredentialsFactory;
     private final CredentialsFactory credentialsFactory;
     private final CredentialFactory credentialFactory;
     private final TxManager txManager;
@@ -63,7 +63,7 @@ public class UserCredentialsServiceImpl implements UserCredentialsService {
     public UserCredentialsServiceImpl(
             AuthenticationService authenticationService,
             AuthorizationService authorizationService, PermissionFactory permissionFactory,
-            UserCredentialsFactory userCredentialsFactory, CredentialsFactory credentialsFactory,
+            CredentialsFactory credentialsFactory,
             CredentialFactory credentialFactory,
             TxManager txManager,
             UserService userService,
@@ -72,7 +72,6 @@ public class UserCredentialsServiceImpl implements UserCredentialsService {
         this.authenticationService = authenticationService;
         this.authorizationService = authorizationService;
         this.permissionFactory = permissionFactory;
-        this.userCredentialsFactory = userCredentialsFactory;
         this.credentialsFactory = credentialsFactory;
         this.credentialFactory = credentialFactory;
         this.txManager = txManager;
@@ -97,7 +96,7 @@ public class UserCredentialsServiceImpl implements UserCredentialsService {
             } catch (KapuaAuthenticationException e) {
                 throw new KapuaAuthenticationException(KapuaAuthenticationErrorCodes.INCORRECT_CURRENT_PASSWORD);
             }
-            final PasswordResetRequest passwordResetRequest = userCredentialsFactory.newPasswordResetRequest();
+            final PasswordResetRequest passwordResetRequest = new PasswordResetRequest();
             passwordResetRequest.setNewPassword(passwordChangeRequest.getNewPassword());
             try {
                 return passwordResetter.resetPassword(tx, scopeId, userId, true, passwordResetRequest);
@@ -106,7 +105,6 @@ public class UserCredentialsServiceImpl implements UserCredentialsService {
             }
         });
     }
-
 
     @Override
     public Credential resetPassword(KapuaId scopeId, KapuaId credentialId, PasswordResetRequest passwordResetRequest) throws KapuaException {

@@ -12,32 +12,95 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.storable.model;
 
-import org.eclipse.kapua.KapuaSerializable;
-import org.eclipse.kapua.model.query.KapuaQuery;
-import org.eclipse.kapua.service.storable.model.query.StorableQuery;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.Collection;
-import java.util.List;
+
+import org.eclipse.kapua.KapuaSerializable;
+import org.eclipse.kapua.model.query.KapuaQuery;
+import org.eclipse.kapua.service.storable.model.query.StorableQuery;
 
 /**
  * {@link StorableListResult} definition.
  * <p>
  * It is the base {@code interface} for all list of {@link Storable}s
  *
- * @param <E> The {@link Storable} for which this is a {@link StorableListResult} for.
+ * @param <E>
+ *         The {@link Storable} for which this is a {@link StorableListResult} for.
  * @since 1.0.0
  */
 @XmlRootElement(name = "result")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(propOrder = {"limitExceeded", "size", "items", "nextKey", "totalCount"})
-public interface StorableListResult<E extends Storable> extends KapuaSerializable {
+@XmlType(propOrder = { "limitExceeded", "size", "items", "nextKey", "totalCount" })
+public abstract class StorableListResult<E extends Storable> implements KapuaSerializable {
+
+    private static final long serialVersionUID = -6792613517586602315L;
+
+    private boolean limitExceeded;
+    private ArrayList<E> items;
+    private Object nextKey;
+    private Long totalCount;
+
+    /**
+     * Constructor.
+     *
+     * @since 1.0.0
+     */
+    public StorableListResult() {
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param storables
+     *         The {@link Storable}s to add to the {@link StorableListResult}.
+     * @param totalCount
+     *         The total count of the {@link Storable}s matched.
+     * @since 1.3.0
+     */
+    public StorableListResult(List<E> storables, Long totalCount) {
+        this();
+
+        addItems(storables);
+        setTotalCount(totalCount);
+    }
+
+    /**
+     * Constructors.
+     *
+     * @param nextKey
+     *         The {@link StorableListResult#getNextKey()}.
+     * @since 1.0.0
+     * @deprecated Since 1.3.0, this is not used!
+     */
+    @Deprecated
+    public StorableListResult(Object nextKey) {
+        this();
+        this.nextKey = nextKey;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param nextKeyOffset
+     *         The {@link StorableListResult#getNextKey()}.
+     * @param totalCount
+     *         The {@link StorableListResult#getTotalCount()}.
+     * @since 1.0.0
+     * @deprecated Since 1.3.0, this is not used!
+     */
+    @Deprecated
+    public StorableListResult(Object nextKeyOffset, Long totalCount) {
+        this(nextKeyOffset);
+        this.totalCount = totalCount;
+    }
 
     /**
      * Gets whether or not  the {@link StorableQuery#getLimit()} has been exceeded.
@@ -48,15 +111,20 @@ public interface StorableListResult<E extends Storable> extends KapuaSerializabl
      * @since 1.0.0
      */
     @XmlElement(name = "limitExceeded")
-    boolean isLimitExceeded();
+    public boolean isLimitExceeded() {
+        return limitExceeded;
+    }
 
     /**
      * Sets whether or not  the {@link StorableQuery#getLimit()} has been exceeded.
      *
-     * @param limitExceeded {@code true} if the {@link StorableQuery#getLimit()} has been exceeded, {@code false} otherwise.
+     * @param limitExceeded
+     *         {@code true} if the {@link StorableQuery#getLimit()} has been exceeded, {@code false} otherwise.
      * @since 1.0.0
      */
-    void setLimitExceeded(boolean limitExceeded);
+    public void setLimitExceeded(boolean limitExceeded) {
+        this.limitExceeded = limitExceeded;
+    }
 
     /**
      * Gets the {@link Storable}s
@@ -66,18 +134,28 @@ public interface StorableListResult<E extends Storable> extends KapuaSerializabl
      */
     @XmlElementWrapper(name = "items")
     @XmlElement(name = "item")
-    List<E> getItems();
+    public List<E> getItems() {
+        if (items == null) {
+            items = new ArrayList<>();
+        }
+
+        return items;
+    }
 
     /**
      * Gets the {@link Storable} at the given position in the {@link StorableListResult}.
      *
-     * @param i The position in the {@link StorableListResult}
+     * @param index
+     *         The position in the {@link StorableListResult}
      * @return The {@link Storable} at the position
-     * @throws IndexOutOfBoundsException If position is not available.
+     * @throws IndexOutOfBoundsException
+     *         If position is not available.
      * @see List#get(int)
      * @since 1.0.0
      */
-    E getItem(int i);
+    public E getItem(int index) {
+        return getItems().get(index);
+    }
 
     /**
      * Returns the first element in the {@link StorableListResult}.
@@ -87,7 +165,9 @@ public interface StorableListResult<E extends Storable> extends KapuaSerializabl
      * @return The first element in the {@link Storable} or {@code null} if not present.
      * @since 1.0.0
      */
-    E getFirstItem();
+    public E getFirstItem() {
+        return this.isEmpty() ? null : getItem(0);
+    }
 
     /**
      * Gets the result {@link StorableListResult} size.
@@ -97,7 +177,9 @@ public interface StorableListResult<E extends Storable> extends KapuaSerializabl
      * @since 1.0.0
      */
     @XmlElement(name = "size")
-    int getSize();
+    public int getSize() {
+        return getItems().size();
+    }
 
     /**
      * Checks if the result {@link StorableListResult} is empty.
@@ -106,24 +188,32 @@ public interface StorableListResult<E extends Storable> extends KapuaSerializabl
      * @see List#isEmpty()
      * @since 1.0.0
      */
-    boolean isEmpty();
+    public boolean isEmpty() {
+        return getItems().isEmpty();
+    }
 
     /**
      * Adds {@link Storable}s to the result {@link StorableListResult}
      *
-     * @param items The {@link Storable}s to add.
+     * @param items
+     *         The {@link Storable}s to add.
      * @see List#addAll(Collection)
      * @since 1.0.0
      */
-    void addItems(Collection<? extends E> items);
+    public void addItems(Collection<? extends E> items) {
+        getItems().addAll(items);
+    }
 
     /**
      * Adds a {@link Storable} to the {@link StorableListResult}.
      *
-     * @param item The {@link Storable} to add.
+     * @param item
+     *         The {@link Storable} to add.
      * @since 1.3.0
      */
-    void addItem(@NotNull E item);
+    public void addItem(E item) {
+        getItems().add(item);
+    }
 
     /**
      * Clears {@link Storable} result {@link StorableListResult}
@@ -131,7 +221,9 @@ public interface StorableListResult<E extends Storable> extends KapuaSerializabl
      * @see List#clear()
      * @since 1.0.0
      */
-    void clearItems();
+    public void clearItems() {
+        getItems().clear();
+    }
 
     /**
      * Get the next key.
@@ -143,7 +235,9 @@ public interface StorableListResult<E extends Storable> extends KapuaSerializabl
      * @since 1.0.0
      */
     @XmlElement(name = "nextKey")
-    Object getNextKey();
+    public Object getNextKey() {
+        return nextKey;
+    }
 
     /**
      * Gets the total count of {@link Storable}s that match the {@link StorableQuery#getPredicate()}s regardless of {@link StorableQuery#getLimit()} and {@link StorableQuery#getOffset()}
@@ -151,7 +245,9 @@ public interface StorableListResult<E extends Storable> extends KapuaSerializabl
      * @return The total count
      * @since 1.0.0
      */
-    Long getTotalCount();
+    public Long getTotalCount() {
+        return totalCount;
+    }
 
     /**
      * Sets the total count of {@link Storable}s that match the {@link KapuaQuery#getPredicate()}s regardless of {@code limit} and {@code offset}
@@ -160,6 +256,8 @@ public interface StorableListResult<E extends Storable> extends KapuaSerializabl
      * @since 1.0.0
      */
     @XmlElement(name = "totalCount")
-    void setTotalCount(Long totalCount);
+    public void setTotalCount(Long totalCount) {
+        this.totalCount = totalCount;
+    }
 
 }

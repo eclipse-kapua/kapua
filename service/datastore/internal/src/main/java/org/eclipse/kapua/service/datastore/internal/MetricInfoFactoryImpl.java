@@ -12,16 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.internal;
 
-import org.eclipse.kapua.model.id.KapuaId;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.service.datastore.MetricInfoFactory;
 import org.eclipse.kapua.service.datastore.internal.model.MetricInfoImpl;
-import org.eclipse.kapua.service.datastore.internal.model.MetricInfoListResultImpl;
-import org.eclipse.kapua.service.datastore.internal.model.query.MetricInfoQueryImpl;
 import org.eclipse.kapua.service.datastore.model.MetricInfo;
-import org.eclipse.kapua.service.datastore.model.MetricInfoListResult;
-import org.eclipse.kapua.service.datastore.model.query.MetricInfoQuery;
-
-import javax.inject.Singleton;
 
 /**
  * {@link MetricInfoFactory} implementation.
@@ -34,15 +29,5 @@ public class MetricInfoFactoryImpl implements MetricInfoFactory {
     @Override
     public MetricInfo newStorable() {
         return new MetricInfoImpl();
-    }
-
-    @Override
-    public MetricInfoListResult newListResult() {
-        return new MetricInfoListResultImpl();
-    }
-
-    @Override
-    public MetricInfoQuery newQuery(KapuaId scopeId) {
-        return new MetricInfoQueryImpl(scopeId);
     }
 }

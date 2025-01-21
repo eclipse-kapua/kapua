@@ -12,16 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.internal;
 
-import org.eclipse.kapua.model.id.KapuaId;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.service.datastore.ChannelInfoFactory;
 import org.eclipse.kapua.service.datastore.internal.model.ChannelInfoImpl;
-import org.eclipse.kapua.service.datastore.internal.model.ChannelInfoListResultImpl;
-import org.eclipse.kapua.service.datastore.internal.model.query.ChannelInfoQueryImpl;
 import org.eclipse.kapua.service.datastore.model.ChannelInfo;
-import org.eclipse.kapua.service.datastore.model.ChannelInfoListResult;
-import org.eclipse.kapua.service.datastore.model.query.ChannelInfoQuery;
-
-import javax.inject.Singleton;
 
 /**
  * {@link ChannelInfoFactory} implementation.
@@ -34,15 +29,5 @@ public class ChannelInfoFactoryImpl implements ChannelInfoFactory {
     @Override
     public ChannelInfo newStorable() {
         return new ChannelInfoImpl();
-    }
-
-    @Override
-    public ChannelInfoListResult newListResult() {
-        return new ChannelInfoListResultImpl();
-    }
-
-    @Override
-    public ChannelInfoQuery newQuery(KapuaId scopeId) {
-        return new ChannelInfoQueryImpl(scopeId);
     }
 }

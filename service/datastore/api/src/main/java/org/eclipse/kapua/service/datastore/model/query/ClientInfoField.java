@@ -10,13 +10,9 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.service.datastore.internal.mediator;
+package org.eclipse.kapua.service.datastore.model.query;
 
-import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.service.datastore.internal.schema.ClientInfoSchema;
 import org.eclipse.kapua.service.datastore.model.ClientInfo;
-import org.eclipse.kapua.service.storable.model.id.StorableId;
 import org.eclipse.kapua.service.storable.model.query.StorableField;
 
 /**
@@ -64,36 +60,5 @@ public enum ClientInfoField implements StorableField {
     public String field() {
         return field;
     }
-
-    /**
-     * Get the client identifier (combining accountName and clientId).<br>
-     * <b>If the id is null then it is generated</b>
-     *
-     * @param id
-     * @param scopeId
-     * @param clientId
-     * @return
-     */
-    public static String getOrDeriveId(StorableId id, KapuaId scopeId, String clientId) {
-        if (id == null) {
-            //TODO: FIXME: REMOVE: A collaborator in a data class? Behaviour should not be part of a data class!
-            return KapuaLocator.getInstance().getComponent(DatastoreUtils.class).getHashCode(scopeId.toCompactId(), clientId);
-        } else {
-            return id.toString();
-        }
-    }
-
-    /**
-     * Get the client identifier (combining accountName and clientId).<br>
-     * <b>If the id is null then it is generated</b>
-     *
-     * @param id
-     * @param clientInfo
-     * @return
-     */
-    public static String getOrDeriveId(StorableId id, ClientInfo clientInfo) {
-        return getOrDeriveId(id, clientInfo.getScopeId(), clientInfo.getClientId());
-    }
-
 
 }

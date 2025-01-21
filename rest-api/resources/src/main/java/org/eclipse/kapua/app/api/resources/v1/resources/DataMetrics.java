@@ -35,10 +35,10 @@ import org.eclipse.kapua.app.api.core.model.StorableEntityId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
 import org.eclipse.kapua.service.datastore.MetricInfoFactory;
 import org.eclipse.kapua.service.datastore.MetricInfoRegistryService;
-import org.eclipse.kapua.service.datastore.internal.mediator.MetricInfoField;
 import org.eclipse.kapua.service.datastore.internal.model.query.predicate.ChannelMatchPredicateImpl;
 import org.eclipse.kapua.service.datastore.model.MetricInfo;
 import org.eclipse.kapua.service.datastore.model.MetricInfoListResult;
+import org.eclipse.kapua.service.datastore.model.query.MetricInfoField;
 import org.eclipse.kapua.service.datastore.model.query.MetricInfoQuery;
 import org.eclipse.kapua.service.datastore.model.query.predicate.ChannelMatchPredicate;
 import org.eclipse.kapua.service.datastore.model.query.predicate.DatastorePredicateFactory;
@@ -110,7 +110,7 @@ public class DataMetrics extends AbstractKapuaResource {
             andPredicate.getPredicates().add(clientIdPredicate);
         }
 
-        MetricInfoQuery query = metricInfoFactory.newQuery(scopeId);
+        MetricInfoQuery query = new MetricInfoQuery(scopeId);
         query.setPredicate(andPredicate);
         query.setOffset(offset);
         query.setLimit(limit);

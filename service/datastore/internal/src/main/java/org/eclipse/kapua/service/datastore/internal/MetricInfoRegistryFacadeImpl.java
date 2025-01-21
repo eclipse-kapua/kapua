@@ -22,9 +22,7 @@ import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.datastore.internal.mediator.ConfigurationException;
-import org.eclipse.kapua.service.datastore.internal.mediator.MetricInfoField;
-import org.eclipse.kapua.service.datastore.internal.model.MetricInfoListResultImpl;
-import org.eclipse.kapua.service.datastore.internal.model.query.MetricInfoQueryImpl;
+import org.eclipse.kapua.service.datastore.internal.mediator.InfoFieldHelper;
 import org.eclipse.kapua.service.datastore.model.MetricInfo;
 import org.eclipse.kapua.service.datastore.model.MetricInfoListResult;
 import org.eclipse.kapua.service.datastore.model.query.MetricInfoQuery;
@@ -91,7 +89,7 @@ public class MetricInfoRegistryFacadeImpl extends AbstractDatastoreFacade implem
         ArgumentValidator.notNull(metricInfo.getFirstMessageId(), "metricInfoCreator.firstPublishedMessageId");
         ArgumentValidator.notNull(metricInfo.getFirstMessageOn(), "metricInfoCreator.firstPublishedMessageTimestamp");
 
-        String metricInfoId = MetricInfoField.getOrDeriveId(metricInfo.getId(), metricInfo);
+        String metricInfoId = InfoFieldHelper.getOrDeriveId(metricInfo.getId(), metricInfo);
         StorableId storableId = storableIdFactory.newStorableId(metricInfoId);
 
         // Store channel. Look up channel in the cache, and cache it if it doesn't exist
@@ -126,7 +124,7 @@ public class MetricInfoRegistryFacadeImpl extends AbstractDatastoreFacade implem
         // Create a bulk request
         final List<MetricInfo> toUpsert = new ArrayList<>();
         for (MetricInfo metricInfo : metricInfos) {
-            String metricInfoId = MetricInfoField.getOrDeriveId(metricInfo.getId(), metricInfo);
+            String metricInfoId = InfoFieldHelper.getOrDeriveId(metricInfo.getId(), metricInfo);
             // fix #REPLACE_ISSUE_NUMBER
             if (!datastoreCacheManager.getMetricsCache().get(metricInfoId)) {
                 StorableId storableId = storableIdFactory.newStorableId(metricInfoId);
@@ -198,7 +196,7 @@ public class MetricInfoRegistryFacadeImpl extends AbstractDatastoreFacade implem
     }
 
     private MetricInfo doFind(KapuaId scopeId, StorableId id) throws KapuaIllegalArgumentException, ConfigurationException, ClientException {
-        MetricInfoQueryImpl idsQuery = new MetricInfoQueryImpl(scopeId);
+        MetricInfoQuery idsQuery = new MetricInfoQuery(scopeId);
         idsQuery.setLimit(1);
 
         IdsPredicate idsPredicate = storablePredicateFactory.newIdsPredicate();
@@ -225,7 +223,7 @@ public class MetricInfoRegistryFacadeImpl extends AbstractDatastoreFacade implem
 
         if (!isDatastoreServiceEnabled(query.getScopeId())) {
             LOG.debug(STORAGE_NOT_ENABLED, query.getScopeId());
-            return new MetricInfoListResultImpl();
+            return new MetricInfoListResult();
         }
 
         return repository.query(query);

@@ -229,7 +229,7 @@ public class DataMessagesJson extends AbstractKapuaResource implements JsonSeria
     }
 
     private MessageQuery convertQuery(JsonMessageQuery query) {
-        MessageQuery messageQuery = messageStoreFactory.newQuery(query.getScopeId());
+        MessageQuery messageQuery = new MessageQuery(query.getScopeId());
         messageQuery.setAskTotalCount(query.isAskTotalCount());
         messageQuery.setFetchAttributes(query.getFetchAttributes());
         messageQuery.setFetchStyle(query.getFetchStyle());

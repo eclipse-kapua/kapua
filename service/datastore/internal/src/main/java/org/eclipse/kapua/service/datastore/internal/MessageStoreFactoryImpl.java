@@ -12,17 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.internal;
 
-import org.eclipse.kapua.model.id.KapuaId;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.service.datastore.MessageStoreFactory;
 import org.eclipse.kapua.service.datastore.MetricInfoFactory;
 import org.eclipse.kapua.service.datastore.internal.model.DatastoreMessageImpl;
-import org.eclipse.kapua.service.datastore.internal.model.MessageListResultImpl;
-import org.eclipse.kapua.service.datastore.internal.model.query.MessageQueryImpl;
 import org.eclipse.kapua.service.datastore.model.DatastoreMessage;
-import org.eclipse.kapua.service.datastore.model.MessageListResult;
-import org.eclipse.kapua.service.datastore.model.query.MessageQuery;
-
-import javax.inject.Singleton;
 
 /**
  * {@link MetricInfoFactory} implementation.
@@ -35,15 +30,5 @@ public class MessageStoreFactoryImpl implements MessageStoreFactory {
     @Override
     public DatastoreMessage newStorable() {
         return new DatastoreMessageImpl();
-    }
-
-    @Override
-    public MessageListResult newListResult() {
-        return new MessageListResultImpl();
-    }
-
-    @Override
-    public MessageQuery newQuery(KapuaId scopeId) {
-        return new MessageQueryImpl(scopeId);
     }
 }

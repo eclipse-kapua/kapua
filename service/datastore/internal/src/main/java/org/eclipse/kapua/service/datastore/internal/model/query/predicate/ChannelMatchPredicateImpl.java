@@ -12,8 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.internal.model.query.predicate;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.eclipse.kapua.service.datastore.internal.mediator.MessageField;
+import org.eclipse.kapua.service.datastore.model.query.MessageField;
 import org.eclipse.kapua.service.datastore.model.query.predicate.ChannelMatchPredicate;
 import org.eclipse.kapua.service.storable.exception.MappingException;
 import org.eclipse.kapua.service.storable.model.query.StorableField;
@@ -21,6 +20,8 @@ import org.eclipse.kapua.service.storable.model.query.predicate.MatchPredicate;
 import org.eclipse.kapua.service.storable.model.query.predicate.PredicateConstants;
 import org.eclipse.kapua.service.storable.model.query.predicate.StorablePredicateImpl;
 import org.eclipse.kapua.service.storable.model.utils.KeyValueEntry;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * {@link ChannelMatchPredicate} implementation.
@@ -35,7 +36,8 @@ public class ChannelMatchPredicateImpl extends StorablePredicateImpl implements 
     /**
      * Constructor.
      *
-     * @param expression the channel expression (may use wildcard)
+     * @param expression
+     *         the channel expression (may use wildcard)
      * @since 1.0.0
      */
     public ChannelMatchPredicateImpl(String expression) {
@@ -45,8 +47,10 @@ public class ChannelMatchPredicateImpl extends StorablePredicateImpl implements 
     /**
      * Constructor.
      *
-     * @param field      the field name
-     * @param expression the channel expression (may use wildcard)
+     * @param field
+     *         the field name
+     * @param expression
+     *         the channel expression (may use wildcard)
      * @since 1.0.0
      */
     public ChannelMatchPredicateImpl(StorableField field, String expression) {
@@ -80,7 +84,7 @@ public class ChannelMatchPredicateImpl extends StorablePredicateImpl implements 
 
     @Override
     public ObjectNode toSerializedMap() throws MappingException {
-        ObjectNode expressionNode = newObjectNode(new KeyValueEntry[]{new KeyValueEntry(getField().field(), getExpression())});
+        ObjectNode expressionNode = newObjectNode(new KeyValueEntry[] { new KeyValueEntry(getField().field(), getExpression()) });
 
         ObjectNode rootNode = newObjectNode();
         rootNode.set(PredicateConstants.PREFIX_KEY, expressionNode);

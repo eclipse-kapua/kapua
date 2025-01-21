@@ -12,8 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.elasticsearch.client;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
 import org.eclipse.kapua.commons.cache.LocalCache;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.elasticsearch.client.exception.ClientException;
@@ -37,20 +41,22 @@ import org.eclipse.kapua.service.storable.repository.StorableRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public abstract class ElasticsearchRepository<
         T extends Storable,
         L extends StorableListResult<T>,
         Q extends StorableQuery> implements StorableRepository<T, L, Q> {
+
     protected final ElasticsearchClientProvider elasticsearchClientProviderInstance;
     private final Class<T> clazz;
-    private final StorableFactory<T, L, Q> storableFactory;
+    private final StorableFactory<T> storableFactory;
     protected final StorablePredicateFactory storablePredicateFactory;
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     protected final LocalCache<String, Boolean> indexUpserted;
+    private final Function<KapuaId, Q> querySupplier;
+    private final Supplier<L> listSupplier;
 
     protected abstract String indexResolver(KapuaId scopeId);
 
@@ -63,26 +69,34 @@ public abstract class ElasticsearchRepository<
     protected ElasticsearchRepository(
             ElasticsearchClientProvider elasticsearchClientProviderInstance,
             Class<T> clazz,
-            StorableFactory<T, L, Q> storableFactory,
+            StorableFactory<T> storableFactory,
             StorablePredicateFactory storablePredicateFactory,
-            LocalCache<String, Boolean> indexesCache) {
+            LocalCache<String, Boolean> indexesCache,
+            Function<KapuaId, Q> querySupplier,
+            Supplier<L> listSupplier) {
         this.elasticsearchClientProviderInstance = elasticsearchClientProviderInstance;
         this.storableFactory = storableFactory;
         this.storablePredicateFactory = storablePredicateFactory;
         this.clazz = clazz;
         this.indexUpserted = indexesCache;
+        this.querySupplier = querySupplier;
+        this.listSupplier = listSupplier;
     }
 
     protected ElasticsearchRepository(
             ElasticsearchClientProvider elasticsearchClientProviderInstance,
             Class<T> clazz,
-            StorableFactory<T, L, Q> storableFactory,
-            StorablePredicateFactory storablePredicateFactory) {
+            StorableFactory<T> storableFactory,
+            StorablePredicateFactory storablePredicateFactory,
+            Function<KapuaId, Q> querySupplier,
+            Supplier<L> listSupplier) {
         this.elasticsearchClientProviderInstance = elasticsearchClientProviderInstance;
         this.storableFactory = storableFactory;
         this.storablePredicateFactory = storablePredicateFactory;
         this.clazz = clazz;
         this.indexUpserted = new LocalCache<>(0, null);
+        this.querySupplier = querySupplier;
+        this.listSupplier = listSupplier;
     }
 
     @Override
@@ -92,7 +106,7 @@ public abstract class ElasticsearchRepository<
 
     protected T doFind(KapuaId scopeId, String indexName, StorableId id) {
         try {
-            final Q idsQuery = storableFactory.newQuery(scopeId);
+            final Q idsQuery = querySupplier.apply(scopeId);
             idsQuery.setLimit(1);
 
             final IdsPredicate idsPredicate = storablePredicateFactory.newIdsPredicate();
@@ -123,7 +137,7 @@ public abstract class ElasticsearchRepository<
             final String indexName = indexResolver(query.getScopeId());
             synchIndex(indexName);
             final ResultList<T> partialResult = elasticsearchClientProviderInstance.getElasticsearchClient().query(indexName, query, clazz);
-            final L res = storableFactory.newListResult();
+            final L res = listSupplier.get();
             res.addItems(partialResult.getResult());
             res.setTotalCount(partialResult.getTotalCount());
             setLimitExceed(query, partialResult.getTotalHitsExceedsCount(), res);
@@ -228,7 +242,6 @@ public abstract class ElasticsearchRepository<
             throw new RuntimeException(e);
         }
     }
-
 
     protected void doUpsertIndex(String indexName) {
         final ElasticsearchClient elasticsearchClient;

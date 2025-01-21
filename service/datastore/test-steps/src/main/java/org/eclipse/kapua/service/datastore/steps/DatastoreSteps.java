@@ -67,20 +67,11 @@ import org.eclipse.kapua.service.datastore.MetricInfoRegistryService;
 import org.eclipse.kapua.service.datastore.internal.DatastoreCacheManager;
 import org.eclipse.kapua.service.datastore.internal.MessageStoreFacade;
 import org.eclipse.kapua.service.datastore.internal.MetricEntry;
-import org.eclipse.kapua.service.datastore.internal.mediator.ChannelInfoField;
-import org.eclipse.kapua.service.datastore.internal.mediator.ClientInfoField;
 import org.eclipse.kapua.service.datastore.internal.mediator.DatastoreChannel;
 import org.eclipse.kapua.service.datastore.internal.mediator.DatastoreUtils;
-import org.eclipse.kapua.service.datastore.internal.mediator.MessageField;
 import org.eclipse.kapua.service.datastore.internal.mediator.MessageStoreConfiguration;
-import org.eclipse.kapua.service.datastore.internal.mediator.MetricInfoField;
 import org.eclipse.kapua.service.datastore.internal.model.DataIndexBy;
 import org.eclipse.kapua.service.datastore.internal.model.metric.MetricsIndexBy;
-import org.eclipse.kapua.service.datastore.internal.model.query.MessageQueryImpl;
-import org.eclipse.kapua.service.datastore.internal.schema.ChannelInfoSchema;
-import org.eclipse.kapua.service.datastore.internal.schema.ClientInfoSchema;
-import org.eclipse.kapua.service.datastore.internal.schema.MessageSchema;
-import org.eclipse.kapua.service.datastore.internal.schema.MetricInfoSchema;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettingsKey;
 import org.eclipse.kapua.service.datastore.model.ChannelInfo;
 import org.eclipse.kapua.service.datastore.model.ChannelInfoListResult;
@@ -90,10 +81,18 @@ import org.eclipse.kapua.service.datastore.model.DatastoreMessage;
 import org.eclipse.kapua.service.datastore.model.MessageListResult;
 import org.eclipse.kapua.service.datastore.model.MetricInfo;
 import org.eclipse.kapua.service.datastore.model.MetricInfoListResult;
+import org.eclipse.kapua.service.datastore.model.query.ChannelInfoField;
 import org.eclipse.kapua.service.datastore.model.query.ChannelInfoQuery;
+import org.eclipse.kapua.service.datastore.model.query.ChannelInfoSchema;
+import org.eclipse.kapua.service.datastore.model.query.ClientInfoField;
 import org.eclipse.kapua.service.datastore.model.query.ClientInfoQuery;
+import org.eclipse.kapua.service.datastore.model.query.ClientInfoSchema;
+import org.eclipse.kapua.service.datastore.model.query.MessageField;
 import org.eclipse.kapua.service.datastore.model.query.MessageQuery;
+import org.eclipse.kapua.service.datastore.model.query.MessageSchema;
+import org.eclipse.kapua.service.datastore.model.query.MetricInfoField;
 import org.eclipse.kapua.service.datastore.model.query.MetricInfoQuery;
+import org.eclipse.kapua.service.datastore.model.query.MetricInfoSchema;
 import org.eclipse.kapua.service.datastore.model.query.predicate.ChannelMatchPredicate;
 import org.eclipse.kapua.service.datastore.model.query.predicate.DatastorePredicateFactory;
 import org.eclipse.kapua.service.device.registry.Device;
@@ -382,7 +381,7 @@ public class DatastoreSteps extends TestBase {
     @Then("I expect the number of messages for this device to be {long}")
     public void expectNumberOfMessages(long numberOfMessages) throws Exception {
         session.withLogin(() -> With.withUserAccount(currentDevice.getAccountName(), account -> {
-            MessageQuery query = messageStoreFactory.newQuery(account.getId());
+            MessageQuery query = new MessageQuery(account.getId());
             query.setPredicate(datastorePredicateFactory.newTermPredicate(MessageField.CLIENT_ID, currentDevice.getClientId()));
             query.setAskTotalCount(true);
             query.setLimit((int) numberOfMessages);
@@ -397,7 +396,7 @@ public class DatastoreSteps extends TestBase {
     @Then("I delete the messages for this device")
     public void deleteMessages() throws Exception {
         session.withLogin(() -> With.withUserAccount(currentDevice.getAccountName(), account -> {
-            MessageQuery query = messageStoreFactory.newQuery(account.getId());
+            MessageQuery query = new MessageQuery(account.getId());
             query.setPredicate(datastorePredicateFactory.newTermPredicate(MessageField.CLIENT_ID, currentDevice.getClientId()));
             query.setAskTotalCount(true);
             query.setLimit(100);
@@ -408,7 +407,7 @@ public class DatastoreSteps extends TestBase {
     @Then("I expect the latest captured message on channel {string} to have the metrics")
     public void testMessageData(String topic, List<MetricEntry> expectedMetrics) throws Exception {
         session.withLogin(() -> With.withUserAccount(currentDevice.getAccountName(), account -> {
-            MessageQuery query = messageStoreFactory.newQuery(account.getId());
+            MessageQuery query = new MessageQuery(account.getId());
             AndPredicate and = datastorePredicateFactory.newAndPredicate();
             and.getPredicates().add(datastorePredicateFactory.newTermPredicate(MessageField.CLIENT_ID, currentDevice.getClientId()));
             and.getPredicates().add(datastorePredicateFactory.newTermPredicate(MessageField.CHANNEL, topic));
@@ -2297,7 +2296,7 @@ public class DatastoreSteps extends TestBase {
      */
     public MessageQuery createBaseMessageQuery(KapuaId scopeId, int limit) {
 
-        MessageQuery query = new MessageQueryImpl(scopeId);
+        MessageQuery query = new MessageQuery(scopeId);
         query.setAskTotalCount(true);
         query.setFetchStyle(StorableFetchStyle.SOURCE_FULL);
         query.setLimit(limit);
@@ -2323,7 +2322,7 @@ public class DatastoreSteps extends TestBase {
      */
     public MessageQuery createBaseMessageQuery(KapuaId scopeId, int limit, List<SortField> order) {
 
-        MessageQuery query = new MessageQueryImpl(scopeId);
+        MessageQuery query = new MessageQuery(scopeId);
         query.setAskTotalCount(true);
         query.setFetchStyle(StorableFetchStyle.SOURCE_FULL);
         query.setLimit(limit);
@@ -2344,7 +2343,7 @@ public class DatastoreSteps extends TestBase {
      */
     public ChannelInfoQuery createBaseChannelInfoQuery(KapuaId scopeId, int limit) {
 
-        ChannelInfoQuery query = channelInfoFactory.newQuery(scopeId);
+        ChannelInfoQuery query = new ChannelInfoQuery(scopeId);
         query.setAskTotalCount(true);
         query.setFetchStyle(StorableFetchStyle.SOURCE_FULL);
         query.setLimit(limit);
@@ -2368,7 +2367,7 @@ public class DatastoreSteps extends TestBase {
      */
     public MetricInfoQuery createBaseMetricInfoQuery(KapuaId scopeId, int limit) {
 
-        MetricInfoQuery query = metricInfoFactory.newQuery(scopeId);
+        MetricInfoQuery query = new MetricInfoQuery(scopeId);
         query.setAskTotalCount(true);
         query.setFetchStyle(StorableFetchStyle.SOURCE_FULL);
         query.setLimit(limit);
@@ -2392,7 +2391,7 @@ public class DatastoreSteps extends TestBase {
      */
     public ClientInfoQuery createBaseClientInfoQuery(KapuaId scopeId, int limit) {
 
-        ClientInfoQuery query = clientInfoFactory.newQuery(scopeId);
+        ClientInfoQuery query = new ClientInfoQuery(scopeId);
         query.setAskTotalCount(true);
         query.setFetchStyle(StorableFetchStyle.SOURCE_FULL);
         query.setLimit(limit);

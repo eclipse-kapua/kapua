@@ -36,12 +36,11 @@ import org.eclipse.kapua.app.api.core.model.StorableEntityId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
 import org.eclipse.kapua.model.query.SortOrder;
 import org.eclipse.kapua.service.KapuaService;
-import org.eclipse.kapua.service.datastore.ChannelInfoFactory;
 import org.eclipse.kapua.service.datastore.ChannelInfoRegistryService;
-import org.eclipse.kapua.service.datastore.internal.mediator.ChannelInfoField;
 import org.eclipse.kapua.service.datastore.internal.model.query.predicate.ChannelMatchPredicateImpl;
 import org.eclipse.kapua.service.datastore.model.ChannelInfo;
 import org.eclipse.kapua.service.datastore.model.ChannelInfoListResult;
+import org.eclipse.kapua.service.datastore.model.query.ChannelInfoField;
 import org.eclipse.kapua.service.datastore.model.query.ChannelInfoQuery;
 import org.eclipse.kapua.service.datastore.model.query.predicate.ChannelMatchPredicate;
 import org.eclipse.kapua.service.datastore.model.query.predicate.DatastorePredicateFactory;
@@ -58,8 +57,6 @@ public class DataChannels extends AbstractKapuaResource {
 
     @Inject
     public ChannelInfoRegistryService channelInfoRegistryService;
-    @Inject
-    public ChannelInfoFactory channelInfoFactory;
     @Inject
     public DatastorePredicateFactory datastorePredicateFactory;
 
@@ -114,7 +111,7 @@ public class DataChannels extends AbstractKapuaResource {
             andPredicate.getPredicates().add(channelPredicate);
         }
 
-        ChannelInfoQuery query = channelInfoFactory.newQuery(scopeId);
+        ChannelInfoQuery query = new ChannelInfoQuery(scopeId);
         query.setPredicate(andPredicate);
         query.setOffset(offset);
         query.setLimit(limit);

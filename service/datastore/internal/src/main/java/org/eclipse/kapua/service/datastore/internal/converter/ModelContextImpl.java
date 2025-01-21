@@ -12,7 +12,16 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.internal.converter;
 
-import com.fasterxml.jackson.core.Base64Variants;
+import java.math.BigInteger;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.inject.Inject;
+
 import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.commons.util.KapuaDateUtils;
 import org.eclipse.kapua.message.KapuaPayload;
@@ -26,14 +35,14 @@ import org.eclipse.kapua.service.datastore.internal.model.ChannelInfoImpl;
 import org.eclipse.kapua.service.datastore.internal.model.ClientInfoImpl;
 import org.eclipse.kapua.service.datastore.internal.model.DatastoreMessageImpl;
 import org.eclipse.kapua.service.datastore.internal.model.MetricInfoImpl;
-import org.eclipse.kapua.service.datastore.internal.schema.ChannelInfoSchema;
-import org.eclipse.kapua.service.datastore.internal.schema.ClientInfoSchema;
-import org.eclipse.kapua.service.datastore.internal.schema.MessageSchema;
-import org.eclipse.kapua.service.datastore.internal.schema.MetricInfoSchema;
 import org.eclipse.kapua.service.datastore.model.ChannelInfo;
 import org.eclipse.kapua.service.datastore.model.ClientInfo;
 import org.eclipse.kapua.service.datastore.model.DatastoreMessage;
 import org.eclipse.kapua.service.datastore.model.MetricInfo;
+import org.eclipse.kapua.service.datastore.model.query.ChannelInfoSchema;
+import org.eclipse.kapua.service.datastore.model.query.ClientInfoSchema;
+import org.eclipse.kapua.service.datastore.model.query.MessageSchema;
+import org.eclipse.kapua.service.datastore.model.query.MetricInfoSchema;
 import org.eclipse.kapua.service.elasticsearch.client.ModelContext;
 import org.eclipse.kapua.service.elasticsearch.client.QueryConverter;
 import org.eclipse.kapua.service.elasticsearch.client.exception.DatamodelMappingException;
@@ -42,14 +51,7 @@ import org.eclipse.kapua.service.storable.model.query.StorableFetchStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import java.math.BigInteger;
-import java.text.ParseException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import com.fasterxml.jackson.core.Base64Variants;
 
 /**
  * Datastore model context implementation
@@ -128,7 +130,8 @@ public class ModelContextImpl implements ModelContext {
     /**
      * Unmarshals the {@link DatastoreMessage}.
      *
-     * @param messageMap The {@link DatastoreMessage}.
+     * @param messageMap
+     *         The {@link DatastoreMessage}.
      * @throws ParseException
      * @since 1.0.0
      */
@@ -222,11 +225,11 @@ public class ModelContextImpl implements ModelContext {
         if (messageMap.get(MessageSchema.MESSAGE_METRICS) != null) {
             Map<String, Object> metrics = (Map<String, Object>) messageMap.get(MessageSchema.MESSAGE_METRICS);
             Map<String, Object> payloadMetrics = new HashMap<>();
-            String[] metricNames = metrics.keySet().toArray(new String[]{});
+            String[] metricNames = metrics.keySet().toArray(new String[] {});
             for (String metricsName : metricNames) {
                 Map<String, Object> metricValue = (Map<String, Object>) metrics.get(metricsName);
                 if (metricValue.size() > 0) {
-                    String[] valueTypes = metricValue.keySet().toArray(new String[]{});
+                    String[] valueTypes = metricValue.keySet().toArray(new String[] {});
                     Object value = metricValue.get(valueTypes[0]);
                     // since elasticsearch doesn't return always the same type of the saved field
                     // (usually due to some promotion of the field type)
@@ -305,7 +308,8 @@ public class ModelContextImpl implements ModelContext {
     /**
      * Marshals the {@link DatastoreMessage}.
      *
-     * @param message The {@link DatastoreMessage}.
+     * @param message
+     *         The {@link DatastoreMessage}.
      * @throws ParseException
      * @since 1.0.0
      */
@@ -357,7 +361,7 @@ public class ModelContextImpl implements ModelContext {
         Map<String, Object> kapuaMetrics = payload.getMetrics();
         if (kapuaMetrics != null) {
             Map<String, Object> metrics = new HashMap<>();
-            String[] metricNames = kapuaMetrics.keySet().toArray(new String[]{});
+            String[] metricNames = kapuaMetrics.keySet().toArray(new String[] {});
             for (String kapuaMetricName : metricNames) {
                 Object metricValue = kapuaMetrics.get(kapuaMetricName);
                 // Sanitize field names: '.' is not allowed

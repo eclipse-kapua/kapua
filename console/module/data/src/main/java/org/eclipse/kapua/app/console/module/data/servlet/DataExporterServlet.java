@@ -32,9 +32,9 @@ import org.eclipse.kapua.app.console.module.data.shared.util.KapuaGwtDataModelCo
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.service.datastore.MessageStoreFactory;
 import org.eclipse.kapua.service.datastore.MessageStoreService;
-import org.eclipse.kapua.service.datastore.internal.mediator.MessageField;
 import org.eclipse.kapua.service.datastore.model.DatastoreMessage;
 import org.eclipse.kapua.service.datastore.model.MessageListResult;
+import org.eclipse.kapua.service.datastore.model.query.MessageField;
 import org.eclipse.kapua.service.datastore.model.query.MessageQuery;
 import org.eclipse.kapua.service.datastore.model.query.predicate.DatastorePredicateFactory;
 import org.eclipse.kapua.service.storable.model.query.SortDirection;
@@ -122,7 +122,7 @@ public class DataExporterServlet extends HttpServlet {
                 throw new IllegalArgumentException("format");
             }
             dataExporter.init(headers);
-            MessageQuery query = MESSAGE_STORE_FACTORY.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(scopeIdString));
+            MessageQuery query = new MessageQuery(GwtKapuaCommonsModelConverter.convertKapuaId(scopeIdString));
             Date start = new Date(Long.valueOf(startDate));
             Date end = new Date(Long.valueOf(endDate));
             RangePredicate datePredicate = DATASTORE_PREDICATE_FACTORY.newRangePredicate(MessageField.TIMESTAMP, start, end);

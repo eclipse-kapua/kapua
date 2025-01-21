@@ -47,13 +47,7 @@ import org.eclipse.kapua.service.datastore.MessageStoreFactory;
 import org.eclipse.kapua.service.datastore.MessageStoreService;
 import org.eclipse.kapua.service.datastore.MetricInfoFactory;
 import org.eclipse.kapua.service.datastore.MetricInfoRegistryService;
-import org.eclipse.kapua.service.datastore.internal.mediator.ClientInfoField;
-import org.eclipse.kapua.service.datastore.internal.mediator.MessageField;
-import org.eclipse.kapua.service.datastore.internal.mediator.MetricInfoField;
-import org.eclipse.kapua.service.datastore.internal.model.query.ClientInfoQueryImpl;
-import org.eclipse.kapua.service.datastore.internal.model.query.MessageQueryImpl;
 import org.eclipse.kapua.service.datastore.internal.model.query.predicate.ChannelMatchPredicateImpl;
-import org.eclipse.kapua.service.datastore.internal.schema.MessageSchema;
 import org.eclipse.kapua.service.datastore.model.ChannelInfo;
 import org.eclipse.kapua.service.datastore.model.ChannelInfoListResult;
 import org.eclipse.kapua.service.datastore.model.ClientInfo;
@@ -63,8 +57,12 @@ import org.eclipse.kapua.service.datastore.model.MessageListResult;
 import org.eclipse.kapua.service.datastore.model.MetricInfo;
 import org.eclipse.kapua.service.datastore.model.MetricInfoListResult;
 import org.eclipse.kapua.service.datastore.model.query.ChannelInfoQuery;
+import org.eclipse.kapua.service.datastore.model.query.ClientInfoField;
 import org.eclipse.kapua.service.datastore.model.query.ClientInfoQuery;
+import org.eclipse.kapua.service.datastore.model.query.MessageField;
 import org.eclipse.kapua.service.datastore.model.query.MessageQuery;
+import org.eclipse.kapua.service.datastore.model.query.MessageSchema;
+import org.eclipse.kapua.service.datastore.model.query.MetricInfoField;
 import org.eclipse.kapua.service.datastore.model.query.MetricInfoQuery;
 import org.eclipse.kapua.service.datastore.model.query.predicate.ChannelMatchPredicate;
 import org.eclipse.kapua.service.datastore.model.query.predicate.DatastorePredicateFactory;
@@ -110,7 +108,7 @@ public class GwtDataServiceImpl extends KapuaRemoteServiceServlet implements Gwt
         List<GwtTopic> channelInfoList = new ArrayList<GwtTopic>();
         HashMap<String, GwtTopic> topicMap = new HashMap<String, GwtTopic>();
         ChannelInfoRegistryService channelInfoService = LOCATOR.getService(ChannelInfoRegistryService.class);
-        ChannelInfoQuery query = CHANNEL_INFO_FACTORY.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(scopeId));
+        ChannelInfoQuery query = new ChannelInfoQuery(GwtKapuaCommonsModelConverter.convertKapuaId(scopeId));
         int offset = 0;
         int limit = 250;
         try {
@@ -156,7 +154,7 @@ public class GwtDataServiceImpl extends KapuaRemoteServiceServlet implements Gwt
                 List<SortField> sort = new ArrayList<SortField>();
                 sort.add(SortField.descending(MessageSchema.MESSAGE_TIMESTAMP));
 
-                MessageQuery messageQuery = new MessageQueryImpl(scopeId);
+                MessageQuery messageQuery = new MessageQuery(scopeId);
                 messageQuery.setAskTotalCount(true);
                 messageQuery.setFetchStyle(StorableFetchStyle.FIELDS);
                 messageQuery.setLimit(1);
@@ -196,7 +194,7 @@ public class GwtDataServiceImpl extends KapuaRemoteServiceServlet implements Gwt
             for (GwtDatastoreDevice device : devices) {
                 //TODO: #LAYER_VIOLATION - N+1 query scenario, that could be resolved much more efficiently at a lower layer
 
-                ClientInfoQuery query = new ClientInfoQueryImpl(scopeId);
+                ClientInfoQuery query = new ClientInfoQuery(scopeId);
                 query.setLimit(1);
                 query.setOffset(0);
                 query.setFetchStyle(StorableFetchStyle.FIELDS);
@@ -287,7 +285,7 @@ public class GwtDataServiceImpl extends KapuaRemoteServiceServlet implements Gwt
         List<GwtDatastoreDevice> devices = new ArrayList<GwtDatastoreDevice>();
         KapuaId convertedScopeId = GwtKapuaCommonsModelConverter.convertKapuaId(scopeId);
         //TODO: #LAYER_VIOLATION - entity lookup would be much more efficient at a lower layer
-        ClientInfoQuery clientInfoQuery = CLIENT_INFO_FACTORY.newQuery(convertedScopeId);
+        ClientInfoQuery clientInfoQuery = new ClientInfoQuery(convertedScopeId);
         if (!Strings.isNullOrEmpty(filter)) {
             StorablePredicate predicate = new ChannelMatchPredicateImpl(ClientInfoField.CLIENT_ID, filter);
             clientInfoQuery.setPredicate(predicate);
@@ -351,7 +349,7 @@ public class GwtDataServiceImpl extends KapuaRemoteServiceServlet implements Gwt
         ChannelInfoRegistryService clientInfoService = LOCATOR.getService(ChannelInfoRegistryService.class);
         List<GwtDatastoreAsset> asset = new ArrayList<GwtDatastoreAsset>();
         KapuaId convertedScopeId = GwtKapuaCommonsModelConverter.convertKapuaId(scopeId);
-        ChannelInfoQuery query = CHANNEL_INFO_FACTORY.newQuery(convertedScopeId);
+        ChannelInfoQuery query = new ChannelInfoQuery(convertedScopeId);
         //TODO: #LAYER_VIOLATION - searching should be done at a lower layer, here it is horribly inefficient (and potentially wrong)
         query.setLimit(10000);
         try {
@@ -437,7 +435,7 @@ public class GwtDataServiceImpl extends KapuaRemoteServiceServlet implements Gwt
 
     private ListLoadResult<GwtHeader> findHeaders(String scopeId, StorablePredicate predicate) throws GwtKapuaException {
         MetricInfoRegistryService metricService = LOCATOR.getService(MetricInfoRegistryService.class);
-        MetricInfoQuery query = METRIC_INFO_FACTORY.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(scopeId));
+        MetricInfoQuery query = new MetricInfoQuery(GwtKapuaCommonsModelConverter.convertKapuaId(scopeId));
         query.setLimit(10000);
         if (predicate != null) {
             query.setPredicate(predicate);
@@ -463,7 +461,7 @@ public class GwtDataServiceImpl extends KapuaRemoteServiceServlet implements Gwt
         MessageStoreService messageService = LOCATOR.getService(MessageStoreService.class);
         List<GwtMessage> messages;
         int totalLength = 0;
-        MessageQuery query = MESSAGE_STORE_FACTORY.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(scopeId));
+        MessageQuery query = new MessageQuery(GwtKapuaCommonsModelConverter.convertKapuaId(scopeId));
         query.setLimit(loadConfig.getLimit());
         query.setOffset(loadConfig.getOffset());
         AndPredicate andPredicate = DATASTORE_PREDICATE_FACTORY.newAndPredicate();

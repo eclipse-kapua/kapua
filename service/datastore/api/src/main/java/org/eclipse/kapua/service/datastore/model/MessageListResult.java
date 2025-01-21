@@ -12,20 +12,40 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.model;
 
-import org.eclipse.kapua.service.datastore.model.xml.DatastoreMessageXmlRegistry;
-import org.eclipse.kapua.service.storable.model.StorableListResult;
-
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.eclipse.kapua.service.elasticsearch.client.model.ResultList;
+import org.eclipse.kapua.service.storable.model.StorableListResult;
+
 /**
- * Message information query result list definition.<br>
- * This object contains the list of the message objects retrieved by the search service.
+ * Message information query result list definition.<br> This object contains the list of the message objects retrieved by the search service.
  *
  * @since 1.0
  */
 @XmlRootElement(name = "datastoreMessages")
-@XmlType(factoryClass = DatastoreMessageXmlRegistry.class, factoryMethod = "newListResult")
-public interface MessageListResult extends StorableListResult<DatastoreMessage> {
+@XmlType
+public class MessageListResult extends StorableListResult<DatastoreMessage> {
 
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * Constructor.
+     *
+     * @since 1.0.0
+     */
+    public MessageListResult() {
+        super();
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param resultList
+     *         The {@link ResultList} to add.
+     * @since 1.0.0
+     */
+    public MessageListResult(ResultList<DatastoreMessage> resultList) {
+        super(resultList.getResult(), resultList.getTotalCount());
+    }
 }

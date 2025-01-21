@@ -107,7 +107,6 @@ import org.eclipse.kapua.service.authentication.token.AccessToken;
 import org.eclipse.kapua.service.authentication.token.LoginInfo;
 import org.eclipse.kapua.service.authentication.user.PasswordChangeRequest;
 import org.eclipse.kapua.service.authentication.user.PasswordResetRequest;
-import org.eclipse.kapua.service.authentication.user.UserCredentialsXmlRegistry;
 import org.eclipse.kapua.service.authorization.access.AccessInfo;
 import org.eclipse.kapua.service.authorization.access.AccessInfoCreator;
 import org.eclipse.kapua.service.authorization.access.AccessInfoListResult;
@@ -151,10 +150,6 @@ import org.eclipse.kapua.service.datastore.model.query.ChannelInfoQuery;
 import org.eclipse.kapua.service.datastore.model.query.ClientInfoQuery;
 import org.eclipse.kapua.service.datastore.model.query.MessageQuery;
 import org.eclipse.kapua.service.datastore.model.query.MetricInfoQuery;
-import org.eclipse.kapua.service.datastore.model.xml.ChannelInfoXmlRegistry;
-import org.eclipse.kapua.service.datastore.model.xml.ClientInfoXmlRegistry;
-import org.eclipse.kapua.service.datastore.model.xml.DatastoreMessageXmlRegistry;
-import org.eclipse.kapua.service.datastore.model.xml.MetricInfoXmlRegistry;
 import org.eclipse.kapua.service.device.call.kura.model.bundle.KuraBundles;
 import org.eclipse.kapua.service.device.call.kura.model.configuration.KuraDeviceConfiguration;
 import org.eclipse.kapua.service.device.call.kura.model.deploy.KuraDeploymentPackage;
@@ -403,19 +398,16 @@ public class RestApiJAXBContextProvider implements JAXBContextProvider {
                     ChannelInfo.class,
                     ChannelInfoListResult.class,
                     ChannelInfoQuery.class,
-                    ChannelInfoXmlRegistry.class,
 
                     // Data Client Info
                     ClientInfo.class,
                     ClientInfoListResult.class,
                     ClientInfoQuery.class,
-                    ClientInfoXmlRegistry.class,
 
                     // Data Metric Info
                     MetricInfo.class,
                     MetricInfoListResult.class,
                     MetricInfoQuery.class,
-                    MetricInfoXmlRegistry.class,
 
                     // Data Messages
                     KapuaDataMessage.class,
@@ -430,7 +422,6 @@ public class RestApiJAXBContextProvider implements JAXBContextProvider {
                     JsonDatastoreMessage.class,
 
                     DatastoreMessage.class,
-                    DatastoreMessageXmlRegistry.class,
                     StorableEntityId.class,
                     StorableId.class,
                     SortField.class,
@@ -678,7 +669,6 @@ public class RestApiJAXBContextProvider implements JAXBContextProvider {
                     // User Credentials
                     PasswordChangeRequest.class,
                     PasswordResetRequest.class,
-                    UserCredentialsXmlRegistry.class,
 
                     // User Profile
                     UserProfile.class,

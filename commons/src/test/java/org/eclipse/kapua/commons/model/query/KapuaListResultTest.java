@@ -36,7 +36,7 @@ public class KapuaListResultTest {
     private final static Random RANDOM = RandomUtils.getInstance();
 
     @Test
-    public void kapuaListResultImplTest() {
+    public void kapuaListResultTest() {
         KapuaListResult<AbstractKapuaEntity> kapuaListResult = new KapuaListResult<>();
 
         Assert.assertNotNull(kapuaListResult.getItems());
@@ -181,7 +181,6 @@ public class KapuaListResultTest {
             Assert.assertEquals(entry.getKey(), entry.getValue());
         }
     }
-
 
     @Test
     public void getItemTest() {

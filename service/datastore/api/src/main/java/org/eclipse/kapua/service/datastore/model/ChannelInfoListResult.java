@@ -12,20 +12,18 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.model;
 
-import org.eclipse.kapua.service.datastore.model.xml.ChannelInfoXmlRegistry;
-import org.eclipse.kapua.service.storable.model.StorableListResult;
-
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.eclipse.kapua.service.storable.model.StorableListResult;
+
 /**
- * Channel information query result list definition.<br>
- * This object contains the list of the channel information objects retrieved by the search service.
+ * Channel information query result list definition.<br> This object contains the list of the channel information objects retrieved by the search service.
  *
  * @since 1.0
  */
 @XmlRootElement(name = "channelInfos")
-@XmlType(factoryClass = ChannelInfoXmlRegistry.class, factoryMethod = "newListResult")
-public interface ChannelInfoListResult extends StorableListResult<ChannelInfo> {
+@XmlType
+public class ChannelInfoListResult extends StorableListResult<ChannelInfo> {
 
 }
