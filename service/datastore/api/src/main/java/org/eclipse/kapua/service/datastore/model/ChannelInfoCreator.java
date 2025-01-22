@@ -12,17 +12,30 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.model;
 
+import java.util.Date;
+
+import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.storable.model.StorableCreator;
 import org.eclipse.kapua.service.storable.model.id.StorableId;
-
-import java.util.Date;
 
 /**
  * Channel information schema creator definition
  *
  * @since 1.0.0
  */
-public interface ChannelInfoCreator extends StorableCreator<ChannelInfo> {
+public class ChannelInfoCreator extends StorableCreator<ChannelInfo> {
+
+    private String clientId;
+    private String name;
+    private StorableId messageId;
+    private Date messageTimestamp;
+
+    public ChannelInfoCreator() {
+    }
+
+    public ChannelInfoCreator(KapuaId scopeId) {
+        super(scopeId);
+    }
 
     /**
      * Get the client identifier
@@ -30,13 +43,17 @@ public interface ChannelInfoCreator extends StorableCreator<ChannelInfo> {
      * @return
      * @since 1.0.0
      */
-    String getClientId();
+    public String getClientId() {
+        return this.clientId;
+    }
 
     /**
      * @param clientId
      * @since 1.3.0
      */
-    void setClientId(String clientId);
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
 
     /**
      * Get the name
@@ -44,7 +61,9 @@ public interface ChannelInfoCreator extends StorableCreator<ChannelInfo> {
      * @return
      * @since 1.0.0
      */
-    String getName();
+    public String getName() {
+        return name;
+    }
 
     /**
      * Set the channel name
@@ -52,7 +71,9 @@ public interface ChannelInfoCreator extends StorableCreator<ChannelInfo> {
      * @param name
      * @since 1.0.0
      */
-    void setName(String name);
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /**
      * Get the message identifier (of the first message published on this channel)
@@ -60,7 +81,9 @@ public interface ChannelInfoCreator extends StorableCreator<ChannelInfo> {
      * @return
      * @since 1.0.0
      */
-    StorableId getMessageId();
+    public StorableId getMessageId() {
+        return messageId;
+    }
 
     /**
      * Set the message identifier (of the first message published on this channel)
@@ -68,7 +91,9 @@ public interface ChannelInfoCreator extends StorableCreator<ChannelInfo> {
      * @param messageId
      * @since 1.0.0
      */
-    void setMessageId(StorableId messageId);
+    public void setMessageId(StorableId messageId) {
+        this.messageId = messageId;
+    }
 
     /**
      * Get the message timestamp (of the first message published on this channel)
@@ -76,7 +101,9 @@ public interface ChannelInfoCreator extends StorableCreator<ChannelInfo> {
      * @return
      * @since 1.0.0
      */
-    Date getMessageTimestamp();
+    public Date getMessageTimestamp() {
+        return messageTimestamp;
+    }
 
     /**
      * Set the message timestamp (of the first message published on this channel)
@@ -84,5 +111,8 @@ public interface ChannelInfoCreator extends StorableCreator<ChannelInfo> {
      * @param messageTimestamp
      * @since 1.0.0
      */
-    void setMessageTimestamp(Date messageTimestamp);
+    public void setMessageTimestamp(Date messageTimestamp) {
+        this.messageTimestamp = messageTimestamp;
+    }
+
 }

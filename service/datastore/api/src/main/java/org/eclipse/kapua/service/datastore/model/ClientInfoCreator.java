@@ -12,26 +12,36 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.model;
 
+import java.util.Date;
+
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.storable.model.StorableCreator;
 import org.eclipse.kapua.service.storable.model.id.StorableId;
-
-import java.util.Date;
 
 /**
  * Client information schema creator definition
  *
  * @since 1.0.0
  */
-public interface ClientInfoCreator extends StorableCreator<ClientInfo> {
+public class ClientInfoCreator extends StorableCreator<ClientInfo> {
+
+    private String clientId;
+    private StorableId messageId;
+    private Date messageTimestamp;
+
+    public ClientInfoCreator() {
+    }
 
     /**
-     * Get the account
+     * Construct a client information creator for the given account
      *
-     * @return
+     * @param scopeId
+     *         The scope {@link KapuaId}
      * @since 1.0.0
      */
-    KapuaId getScopeId();
+    public ClientInfoCreator(KapuaId scopeId) {
+        super(scopeId);
+    }
 
     /**
      * Get the client identifier
@@ -39,7 +49,9 @@ public interface ClientInfoCreator extends StorableCreator<ClientInfo> {
      * @return
      * @since 1.0.0
      */
-    String getClientId();
+    public String getClientId() {
+        return clientId;
+    }
 
     /**
      * Set the client identifier
@@ -47,7 +59,9 @@ public interface ClientInfoCreator extends StorableCreator<ClientInfo> {
      * @param clientId
      * @since 1.0.0
      */
-    void setClientId(String clientId);
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
 
     /**
      * Get the message identifier (of the first message published by this client)
@@ -55,7 +69,9 @@ public interface ClientInfoCreator extends StorableCreator<ClientInfo> {
      * @return
      * @since 1.0.0
      */
-    StorableId getMessageId();
+    public StorableId getMessageId() {
+        return messageId;
+    }
 
     /**
      * Set the message identifier (of the first message published by this client)
@@ -63,7 +79,9 @@ public interface ClientInfoCreator extends StorableCreator<ClientInfo> {
      * @param messageId
      * @since 1.0.0
      */
-    void setMessageId(StorableId messageId);
+    public void setMessageId(StorableId messageId) {
+        this.messageId = messageId;
+    }
 
     /**
      * Get the message timestamp (of the first message published by this client)
@@ -71,7 +89,9 @@ public interface ClientInfoCreator extends StorableCreator<ClientInfo> {
      * @return
      * @since 1.0.0
      */
-    Date getMessageTimestamp();
+    public Date getMessageTimestamp() {
+        return messageTimestamp;
+    }
 
     /**
      * Set the message timestamp (of the first message published by this client)
@@ -79,5 +99,8 @@ public interface ClientInfoCreator extends StorableCreator<ClientInfo> {
      * @param messageTimestamp
      * @since 1.0.0
      */
-    void setMessageTimestamp(Date messageTimestamp);
+    public void setMessageTimestamp(Date messageTimestamp) {
+        this.messageTimestamp = messageTimestamp;
+    }
+
 }
