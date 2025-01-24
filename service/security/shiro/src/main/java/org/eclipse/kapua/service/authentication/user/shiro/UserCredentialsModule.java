@@ -20,7 +20,6 @@ import org.eclipse.kapua.KapuaRuntimeException;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.service.authentication.AuthenticationService;
-import org.eclipse.kapua.service.authentication.CredentialsFactory;
 import org.eclipse.kapua.service.authentication.credential.CredentialFactory;
 import org.eclipse.kapua.service.authentication.credential.CredentialRepository;
 import org.eclipse.kapua.service.authentication.credential.handler.CredentialTypeHandler;
@@ -73,7 +72,6 @@ public class UserCredentialsModule extends AbstractKapuaModule {
             AuthenticationService authenticationService,
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
-            CredentialsFactory credentialsFactory,
             CredentialFactory credentialFactory,
             KapuaJpaTxManagerFactory txManagerFactory,
             UserService userService,
@@ -83,7 +81,6 @@ public class UserCredentialsModule extends AbstractKapuaModule {
                 authenticationService,
                 authorizationService,
                 permissionFactory,
-                credentialsFactory,
                 credentialFactory,
                 txManagerFactory.create("kapua-authorization"),
                 userService,

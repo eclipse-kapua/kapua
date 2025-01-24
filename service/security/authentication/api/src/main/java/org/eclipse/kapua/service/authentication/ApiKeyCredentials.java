@@ -25,23 +25,47 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "apiKeyCredentials")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = AuthenticationXmlRegistry.class, factoryMethod = "newApiKeyCredentials")
-public interface ApiKeyCredentials extends LoginCredentials {
+@XmlType
+public class ApiKeyCredentials implements LoginCredentials {
+
+    private static final long serialVersionUID = -5920944517814926028L;
+
+    private String apiKey;
+
+    public ApiKeyCredentials() {
+    }
 
     /**
-     * Gets the Api Key to authenticate.
+     * Constructor.
+     *
+     * @param apiKey
+     *         The Api Key.
+     * @since 1.0.0
+     */
+    public ApiKeyCredentials(String apiKey) {
+        setApiKey(apiKey);
+    }
+
+    /**
+     * /** Gets the Api Key to authenticate.
      *
      * @return The Api Key to authenticate.
      * @since 1.0.0
      */
     @XmlElement(name = "apiKey")
-    String getApiKey();
+    public String getApiKey() {
+        return apiKey;
+    }
 
     /**
      * Sets the Api Key to authenticate.
      *
-     * @param apiKey The Api Key to authenticate.
+     * @param apiKey
+     *         The Api Key to authenticate.
      * @since 1.0.0
      */
-    void setApiKey(String apiKey);
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
 }

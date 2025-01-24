@@ -12,7 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.integration.service.datastoreJunit;
 
-import com.google.common.base.MoreObjects;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Random;
+
 import org.apache.commons.lang.RandomStringUtils;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.jpa.JdbcConnectionUrlResolvers;
@@ -25,17 +29,14 @@ import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.authentication.AuthenticationService;
-import org.eclipse.kapua.service.authentication.CredentialsFactory;
+import org.eclipse.kapua.service.authentication.UsernamePasswordCredentials;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.Random;
+import com.google.common.base.MoreObjects;
 
 @Category(JUnitTests.class)
 public abstract class AbstractMessageStoreServiceTest {
@@ -69,8 +70,7 @@ public abstract class AbstractMessageStoreServiceTest {
             String password = "kapua-password";
 
             AuthenticationService authenticationService = locator.getService(AuthenticationService.class);
-            CredentialsFactory credentialsFactory = locator.getFactory(CredentialsFactory.class);
-            authenticationService.login(credentialsFactory.newUsernamePasswordCredentials(username, password));
+            authenticationService.login(new UsernamePasswordCredentials(username, password));
             // Get current user Id
             adminUserId = KapuaSecurityUtils.getSession().getUserId();
             adminScopeId = KapuaSecurityUtils.getSession().getScopeId();
@@ -106,9 +106,12 @@ public abstract class AbstractMessageStoreServiceTest {
     /**
      * Generates a random {@link String} from the given parameters
      *
-     * @param chars   length of the generated {@link String}
-     * @param letters whether or not use chars
-     * @param numbers whether or not use numbers
+     * @param chars
+     *         length of the generated {@link String}
+     * @param letters
+     *         whether or not use chars
+     * @param numbers
+     *         whether or not use numbers
      * @return the generated {@link String}
      */
     private static String generateRandomString(int chars, boolean letters, boolean numbers) {

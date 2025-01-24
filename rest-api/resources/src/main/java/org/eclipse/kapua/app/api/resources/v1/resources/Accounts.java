@@ -40,7 +40,6 @@ import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountAttributes;
 import org.eclipse.kapua.service.account.AccountCreator;
-import org.eclipse.kapua.service.account.AccountFactory;
 import org.eclipse.kapua.service.account.AccountListResult;
 import org.eclipse.kapua.service.account.AccountService;
 
@@ -51,8 +50,6 @@ public class Accounts extends AbstractKapuaResource {
 
     @Inject
     public AccountService accountService;
-    @Inject
-    public AccountFactory accountFactory;
 
     /**
      * Gets the {@link Account} list in the scope.

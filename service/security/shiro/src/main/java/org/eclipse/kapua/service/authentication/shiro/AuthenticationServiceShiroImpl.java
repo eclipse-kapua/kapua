@@ -72,21 +72,17 @@ import org.eclipse.kapua.service.authentication.token.LoginInfo;
 import org.eclipse.kapua.service.authorization.access.AccessInfo;
 import org.eclipse.kapua.service.authorization.access.AccessInfoService;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionAttributes;
-import org.eclipse.kapua.service.authorization.access.AccessPermissionFactory;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionListResult;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionService;
 import org.eclipse.kapua.service.authorization.access.AccessRole;
 import org.eclipse.kapua.service.authorization.access.AccessRoleAttributes;
-import org.eclipse.kapua.service.authorization.access.AccessRoleFactory;
 import org.eclipse.kapua.service.authorization.access.AccessRoleListResult;
 import org.eclipse.kapua.service.authorization.access.AccessRoleService;
 import org.eclipse.kapua.service.authorization.role.RolePermissionAttributes;
-import org.eclipse.kapua.service.authorization.role.RolePermissionFactory;
 import org.eclipse.kapua.service.authorization.role.RolePermissionListResult;
 import org.eclipse.kapua.service.authorization.role.RolePermissionService;
 import org.eclipse.kapua.service.certificate.Certificate;
 import org.eclipse.kapua.service.certificate.CertificateAttributes;
-import org.eclipse.kapua.service.certificate.CertificateFactory;
 import org.eclipse.kapua.service.certificate.CertificateQuery;
 import org.eclipse.kapua.service.certificate.CertificateService;
 import org.eclipse.kapua.service.certificate.CertificateStatus;
@@ -125,15 +121,11 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
     private final AccessTokenService accessTokenService;
     private final AccessTokenFactory accessTokenFactory;
     private final CertificateService certificateService;
-    private final CertificateFactory certificateFactory;
 
     private final AccessInfoService accessInfoService;
     private final AccessRoleService accessRoleService;
-    private final AccessRoleFactory accessRoleFactory;
     private final RolePermissionService rolePermissionService;
-    private final RolePermissionFactory rolePermissionFactory;
     private final AccessPermissionService accessPermissionService;
-    private final AccessPermissionFactory accessPermissionFactory;
 
     private final UserService userService;
 
@@ -149,14 +141,10 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
             AccessTokenService accessTokenService,
             AccessTokenFactory accessTokenFactory,
             CertificateService certificateService,
-            CertificateFactory certificateFactory,
             AccessInfoService accessInfoService,
             AccessRoleService accessRoleService,
-            AccessRoleFactory accessRoleFactory,
             RolePermissionService rolePermissionService,
-            RolePermissionFactory rolePermissionFactory,
             AccessPermissionService accessPermissionService,
-            AccessPermissionFactory accessPermissionFactory,
             UserService userService,
             Set<CredentialsConverter> credentialsConverters,
             KapuaAuthenticationSetting kapuaAuthenticationSetting) {
@@ -165,14 +153,10 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
         this.accessTokenService = accessTokenService;
         this.accessTokenFactory = accessTokenFactory;
         this.certificateService = certificateService;
-        this.certificateFactory = certificateFactory;
         this.accessInfoService = accessInfoService;
         this.accessRoleService = accessRoleService;
-        this.accessRoleFactory = accessRoleFactory;
         this.rolePermissionService = rolePermissionService;
-        this.rolePermissionFactory = rolePermissionFactory;
         this.accessPermissionService = accessPermissionService;
-        this.accessPermissionFactory = accessPermissionFactory;
         this.userService = userService;
         this.credentialsConverters = credentialsConverters;
         this.kapuaAuthenticationSetting = kapuaAuthenticationSetting;
@@ -187,8 +171,7 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
     public AccessToken login(LoginCredentials loginCredentials, boolean enableTrust) throws KapuaException {
 
         if (loginCredentials instanceof UsernamePasswordCredentials) {
-            UsernamePasswordCredentialsImpl usernamePasswordCredentials = UsernamePasswordCredentialsImpl.parse((UsernamePasswordCredentials) loginCredentials);
-            usernamePasswordCredentials.setTrustMe(enableTrust);
+            ((UsernamePasswordCredentials) loginCredentials).setTrustMe(enableTrust);
         }
 
         return login(loginCredentials);
@@ -598,7 +581,7 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
      */
     private void createTrustKey(AuthenticationToken shiroAuthenticationToken, AccessToken accessToken) throws KapuaException {
         if (shiroAuthenticationToken instanceof UsernamePasswordCredentials) {
-            UsernamePasswordCredentialsImpl usernamePasswordCredentials = UsernamePasswordCredentialsImpl.parse((UsernamePasswordCredentials) shiroAuthenticationToken);
+            UsernamePasswordCredentials usernamePasswordCredentials = (UsernamePasswordCredentials) shiroAuthenticationToken;
 
             if (usernamePasswordCredentials.getTrustMe()) {
                 String trustKey = KapuaSecurityUtils.doPrivileged(() -> {

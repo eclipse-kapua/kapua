@@ -132,7 +132,6 @@ public class AccountLocatorConfiguration {
                                 Mockito.mock(RootUserTester.class),
                                 Mockito.mock(AccountRelativeFinder.class),
                                 new UsedEntitiesCounterImpl(
-                                        accountFactory,
                                         accountRepository),
                                 new ResourceBasedServiceConfigurationMetadataProvider(new XmlUtil(new TestJAXBContextProvider()))
                         ),

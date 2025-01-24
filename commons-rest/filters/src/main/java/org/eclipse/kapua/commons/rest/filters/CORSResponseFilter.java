@@ -39,11 +39,9 @@ import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
-import org.eclipse.kapua.service.account.AccountFactory;
 import org.eclipse.kapua.service.account.AccountListResult;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.endpoint.EndpointInfo;
-import org.eclipse.kapua.service.endpoint.EndpointInfoFactory;
 import org.eclipse.kapua.service.endpoint.EndpointInfoListResult;
 import org.eclipse.kapua.service.endpoint.EndpointInfoQuery;
 import org.eclipse.kapua.service.endpoint.EndpointInfoService;
@@ -68,9 +66,7 @@ public class CORSResponseFilter implements Filter {
 
     private final KapuaLocator locator = KapuaLocator.getInstance();
     private final AccountService accountService = locator.getService(AccountService.class);
-    private final AccountFactory accountFactory = locator.getFactory(AccountFactory.class);
     private final EndpointInfoService endpointInfoService = locator.getService(EndpointInfoService.class);
-    private final EndpointInfoFactory endpointInfoFactory = locator.getFactory(EndpointInfoFactory.class);
     private final KapuaRestFiltersSetting kapuaRestFiltersSetting = locator.getComponent(KapuaRestFiltersSetting.class);
     private final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
     private ScheduledFuture<?> refreshTask;

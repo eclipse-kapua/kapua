@@ -25,7 +25,6 @@ import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authentication.AuthenticationService;
-import org.eclipse.kapua.service.authentication.CredentialsFactory;
 import org.eclipse.kapua.service.authentication.UsernamePasswordCredentials;
 import org.eclipse.kapua.service.authentication.credential.Credential;
 import org.eclipse.kapua.service.authentication.credential.CredentialFactory;
@@ -53,7 +52,6 @@ public class UserCredentialsServiceImpl implements UserCredentialsService {
     private final AuthenticationService authenticationService;
     private final AuthorizationService authorizationService;
     private final PermissionFactory permissionFactory;
-    private final CredentialsFactory credentialsFactory;
     private final CredentialFactory credentialFactory;
     private final TxManager txManager;
     private final UserService userService;
@@ -63,7 +61,6 @@ public class UserCredentialsServiceImpl implements UserCredentialsService {
     public UserCredentialsServiceImpl(
             AuthenticationService authenticationService,
             AuthorizationService authorizationService, PermissionFactory permissionFactory,
-            CredentialsFactory credentialsFactory,
             CredentialFactory credentialFactory,
             TxManager txManager,
             UserService userService,
@@ -72,7 +69,6 @@ public class UserCredentialsServiceImpl implements UserCredentialsService {
         this.authenticationService = authenticationService;
         this.authorizationService = authorizationService;
         this.permissionFactory = permissionFactory;
-        this.credentialsFactory = credentialsFactory;
         this.credentialFactory = credentialFactory;
         this.txManager = txManager;
         this.userService = userService;
@@ -90,7 +86,7 @@ public class UserCredentialsServiceImpl implements UserCredentialsService {
         final User user = Optional.ofNullable(KapuaSecurityUtils.doPrivileged(() -> userService.find(scopeId, userId))
         ).orElseThrow(() -> new KapuaEntityNotFoundException(User.TYPE, userId));
         return txManager.execute(tx -> {
-            final UsernamePasswordCredentials usernamePasswordCredentials = credentialsFactory.newUsernamePasswordCredentials(user.getName(), passwordChangeRequest.getCurrentPassword());
+            final UsernamePasswordCredentials usernamePasswordCredentials = new UsernamePasswordCredentials(user.getName(), passwordChangeRequest.getCurrentPassword());
             try {
                 authenticationService.verifyCredentials(usernamePasswordCredentials);
             } catch (KapuaAuthenticationException e) {

@@ -39,7 +39,6 @@ import org.eclipse.kapua.service.authorization.access.AccessInfo;
 import org.eclipse.kapua.service.authorization.access.AccessPermission;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionAttributes;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionCreator;
-import org.eclipse.kapua.service.authorization.access.AccessPermissionFactory;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionListResult;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionService;
 
@@ -55,8 +54,6 @@ public class AccessPermissions extends AbstractKapuaResource {
 
     @Inject
     public AccessPermissionService accessPermissionService;
-    @Inject
-    public AccessPermissionFactory accessPermissionFactory;
 
     /**
      * Gets the {@link AccessPermission} list in the scope.

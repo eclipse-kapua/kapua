@@ -25,7 +25,6 @@ import org.eclipse.kapua.commons.jpa.EventStorer;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.commons.model.domains.Domains;
-import org.eclipse.kapua.commons.service.event.store.api.EventStoreFactory;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordRepository;
 import org.eclipse.kapua.commons.service.event.store.internal.EventStoreServiceImpl;
 import org.eclipse.kapua.event.ServiceEventBus;
@@ -123,7 +122,6 @@ public class DeviceRegistryModule extends AbstractKapuaModule {
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
             KapuaJpaTxManagerFactory txManagerFactory,
-            EventStoreFactory eventStoreFactory,
             EventStoreRecordRepository eventStoreRecordRepository,
             ServiceEventBus serviceEventBus,
             KapuaDeviceRegistrySettings kapuaDeviceRegistrySettings,
@@ -139,7 +137,6 @@ public class DeviceRegistryModule extends AbstractKapuaModule {
                                 authorizationService,
                                 permissionFactory,
                                 jpaTxManagerFactory.create("kapua-device"),
-                                eventStoreFactory,
                                 eventStoreRecordRepository
                         ),
                         jpaTxManagerFactory.create("kapua-device"),

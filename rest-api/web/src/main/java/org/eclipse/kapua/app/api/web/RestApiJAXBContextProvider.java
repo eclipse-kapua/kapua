@@ -87,7 +87,6 @@ import org.eclipse.kapua.service.account.xml.AccountParentPathXmlAdapter;
 import org.eclipse.kapua.service.account.xml.AccountXmlRegistry;
 import org.eclipse.kapua.service.authentication.ApiKeyCredentials;
 import org.eclipse.kapua.service.authentication.AuthenticationCredentials;
-import org.eclipse.kapua.service.authentication.AuthenticationXmlRegistry;
 import org.eclipse.kapua.service.authentication.JwtCredentials;
 import org.eclipse.kapua.service.authentication.RefreshTokenCredentials;
 import org.eclipse.kapua.service.authentication.UsernamePasswordCredentials;
@@ -571,7 +570,6 @@ public class RestApiJAXBContextProvider implements JAXBContextProvider {
 
                     // Authentication
                     AuthenticationCredentials.class,
-                    AuthenticationXmlRegistry.class,
                     AccessToken.class,
                     LoginInfo.class,
                     ApiKeyCredentials.class,

@@ -37,7 +37,6 @@ import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.authorization.access.AccessRole;
 import org.eclipse.kapua.service.authorization.access.AccessRoleAttributes;
 import org.eclipse.kapua.service.authorization.access.AccessRoleCreator;
-import org.eclipse.kapua.service.authorization.access.AccessRoleFactory;
 import org.eclipse.kapua.service.authorization.access.AccessRoleListResult;
 import org.eclipse.kapua.service.authorization.access.AccessRoleService;
 
@@ -46,8 +45,6 @@ public class AccessRoles extends AbstractKapuaResource {
 
     @Inject
     public AccessRoleService accessRoleService;
-    @Inject
-    public AccessRoleFactory accessRoleFactory;
 
     /**
      * Gets the {@link AccessRole} list in the scope.

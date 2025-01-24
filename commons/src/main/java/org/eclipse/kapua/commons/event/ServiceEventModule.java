@@ -12,11 +12,19 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.event;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.core.ServiceModule;
 import org.eclipse.kapua.commons.jpa.JpaTxContext;
-import org.eclipse.kapua.commons.service.event.store.internal.EventStoreFactoryImpl;
 import org.eclipse.kapua.commons.service.event.store.internal.EventStoreRecordImplJpaRepository;
 import org.eclipse.kapua.commons.service.event.store.internal.EventStoreServiceImpl;
 import org.eclipse.kapua.event.ServiceEventBus;
@@ -27,15 +35,6 @@ import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.storage.TxManagerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Base {@link ServiceModule} implementation to be used by the modules that listen for events.
@@ -103,8 +102,8 @@ public abstract class ServiceEventModule implements ServiceModule {
         houseKeeperJob = new ServiceEventHousekeeper(
                 new EventStoreServiceImpl(locator.getService(AuthorizationService.class),
                         locator.getFactory(PermissionFactory.class),
-                        new TxManagerImpl(() -> new JpaTxContext(serviceEventModuleConfiguration.getEntityManagerFactory().getJpaEntityManagerFactory()), serviceEventModuleConfiguration.maxInsertAttempts),
-                        new EventStoreFactoryImpl(),
+                        new TxManagerImpl(() -> new JpaTxContext(serviceEventModuleConfiguration.getEntityManagerFactory().getJpaEntityManagerFactory()),
+                                serviceEventModuleConfiguration.maxInsertAttempts),
                         new EventStoreRecordImplJpaRepository(serviceEventModuleConfiguration.getKapuaJpaRepositoryConfiguration())
                 ),
                 serviceEventModuleConfiguration.getEntityManagerFactory(),

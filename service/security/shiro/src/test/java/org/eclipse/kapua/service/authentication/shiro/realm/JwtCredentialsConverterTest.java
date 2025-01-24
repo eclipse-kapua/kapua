@@ -16,7 +16,6 @@ import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.authentication.JwtCredentials;
 import org.eclipse.kapua.service.authentication.exception.KapuaAuthenticationException;
 import org.eclipse.kapua.service.authentication.shiro.JwtCredentialsImpl;
-import org.eclipse.kapua.service.authentication.shiro.realm.model.JwtCredentialsAnotherImpl;
 import org.eclipse.kapua.service.authentication.shiro.realm.model.NotProcessableCredentials;
 import org.eclipse.kapua.service.authentication.shiro.realm.model.NotProcessableCredentialsImpl;
 import org.junit.Assert;
@@ -41,34 +40,21 @@ public class JwtCredentialsConverterTest {
 
     @Test
     public void jwtCredentialsImplCanProcessImplTest() throws KapuaAuthenticationException {
-        JwtCredentials jwtCredentialsImpl = new JwtCredentialsImpl("aJwt", "anIdToken");
-        JwtCredentials jwtCredentialsAnother = new JwtCredentialsAnotherImpl("aJwt", "anIdToken");
+        JwtCredentials jwtCredentialsImpl = new JwtCredentials("aJwt", "anIdToken");
         NotProcessableCredentials notProcessableCredentials = new NotProcessableCredentialsImpl();
 
         Assert.assertTrue(instance.canProcess(jwtCredentialsImpl));
-        Assert.assertTrue(instance.canProcess(jwtCredentialsAnother));
         Assert.assertFalse(instance.canProcess(notProcessableCredentials));
     }
 
     @Test
     public void jwtCredentialsImplMapToShiroImplTest() throws KapuaAuthenticationException {
-        JwtCredentialsImpl first = new JwtCredentialsImpl("aJwt", "anIdToken");
+        JwtCredentials first = new JwtCredentials("aJwt", "anIdToken");
 
         JwtCredentialsImpl second = (JwtCredentialsImpl) instance.convertToShiro(first);
 
         Assert.assertNotNull(second);
-        Assert.assertEquals(first, second);
-        Assert.assertEquals(first.getAccessToken(), second.getAccessToken());
-        Assert.assertEquals(first.getIdToken(), second.getIdToken());
-    }
-
-    @Test
-    public void jwtCredentialsImplMapToShiroAnotherTest() throws KapuaAuthenticationException {
-        JwtCredentials first = new JwtCredentialsAnotherImpl("aJwt", "anIdToken");
-
-        JwtCredentialsImpl second = (JwtCredentialsImpl) instance.convertToShiro(first);
-
-        Assert.assertNotNull(second);
+        Assert.assertNotEquals(first, second);
         Assert.assertEquals(first.getAccessToken(), second.getAccessToken());
         Assert.assertEquals(first.getIdToken(), second.getIdToken());
     }
@@ -80,7 +66,7 @@ public class JwtCredentialsConverterTest {
 
     @Test(expected = KapuaAuthenticationException.class)
     public void jwtCredentialsImplMapToShiroEmptyTest() throws KapuaAuthenticationException {
-        JwtCredentialsImpl first = new JwtCredentialsImpl(null, null);
+        JwtCredentials first = new JwtCredentials(null, null);
 
         Assert.assertNotNull(first);
 

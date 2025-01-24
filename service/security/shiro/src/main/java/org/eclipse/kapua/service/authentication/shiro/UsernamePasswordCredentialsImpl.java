@@ -12,12 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.shiro;
 
+import java.util.Optional;
+
+import javax.validation.constraints.NotNull;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.kapua.service.authentication.UsernamePasswordCredentials;
 import org.eclipse.kapua.service.authentication.shiro.realm.KapuaAuthenticationToken;
-
-import javax.validation.constraints.NotNull;
-import java.util.Optional;
 
 /**
  * {@link UsernamePasswordCredentials} implementation.
@@ -26,7 +27,7 @@ import java.util.Optional;
  *
  * @since 1.0.0
  */
-public class UsernamePasswordCredentialsImpl implements UsernamePasswordCredentials, KapuaAuthenticationToken {
+public class UsernamePasswordCredentialsImpl implements KapuaAuthenticationToken {
 
     private static final long serialVersionUID = -7549848672967689716L;
 
@@ -34,52 +35,51 @@ public class UsernamePasswordCredentialsImpl implements UsernamePasswordCredenti
     private String password;
     private String authenticationCode;
     private String trustKey;
-    private boolean trustMe;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getAuthenticationCode() {
+        return authenticationCode;
+    }
+
+    public String getTrustKey() {
+        return trustKey;
+    }
 
     /**
      * Constructor.
      *
-     * @param username The credential username.
-     * @param password The credential password.
+     * @param username
+     *         The credential username.
+     * @param password
+     *         The credential password.
      * @since 1.0.0
      */
     public UsernamePasswordCredentialsImpl(@NotNull String username, @NotNull String password) {
-        setUsername(username);
-        setPassword(password);
+        this.username = username;
+        this.password = password;
+        this.authenticationCode = null;
+        this.trustKey = null;
     }
 
     /**
      * Clone constructor.
      *
-     * @param usernamePasswordCredentials The {@link UsernamePasswordCredentials} to clone.
+     * @param usernamePasswordCredentials
+     *         The {@link UsernamePasswordCredentials} to clone.
      * @since 1.5.0
      */
     public UsernamePasswordCredentialsImpl(@NotNull UsernamePasswordCredentials usernamePasswordCredentials) {
-        setUsername(usernamePasswordCredentials.getUsername());
-        setPassword(usernamePasswordCredentials.getPassword());
-        setAuthenticationCode(usernamePasswordCredentials.getAuthenticationCode());
-        setTrustKey(usernamePasswordCredentials.getTrustKey());
-        setTrustMe(usernamePasswordCredentials.getTrustMe());
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
-    }
-
-    @Override
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public void setPassword(String password) {
-        this.password = password;
+        this.username = usernamePasswordCredentials.getUsername();
+        this.password = usernamePasswordCredentials.getPassword();
+        this.authenticationCode = usernamePasswordCredentials.getAuthenticationCode();
+        this.trustKey = usernamePasswordCredentials.getTrustKey();
     }
 
     @Override
@@ -92,48 +92,17 @@ public class UsernamePasswordCredentialsImpl implements UsernamePasswordCredenti
         return password;
     }
 
-    @Override
-    public String getAuthenticationCode() {
-        return authenticationCode;
-    }
-
-    @Override
-    public void setAuthenticationCode(String authenticationCode) {
-        this.authenticationCode = authenticationCode;
-    }
-
-    @Override
-    public String getTrustKey() {
-        return trustKey;
-    }
-
-    @Override
-    public void setTrustKey(String trustKey) {
-        this.trustKey = trustKey;
-    }
-
-    @Override
-    public boolean getTrustMe() {
-        return trustMe;
-    }
-
-    @Override
-    public void setTrustMe(boolean trustMe) {
-        this.trustMe = trustMe;
-    }
-
     /**
      * Parses a {@link UsernamePasswordCredentials} into a {@link UsernamePasswordCredentialsImpl}.
      *
-     * @param usernamePasswordCredentials The {@link UsernamePasswordCredentials} to parse.
+     * @param usernamePasswordCredentials
+     *         The {@link UsernamePasswordCredentials} to parse.
      * @return An instance of {@link UsernamePasswordCredentialsImpl}.
      * @since 1.5.0
      */
     public static UsernamePasswordCredentialsImpl parse(@Nullable UsernamePasswordCredentials usernamePasswordCredentials) {
         return usernamePasswordCredentials != null ?
-                (usernamePasswordCredentials instanceof UsernamePasswordCredentialsImpl ?
-                        (UsernamePasswordCredentialsImpl) usernamePasswordCredentials :
-                        new UsernamePasswordCredentialsImpl(usernamePasswordCredentials))
+                new UsernamePasswordCredentialsImpl(usernamePasswordCredentials)
                 : null;
     }
 

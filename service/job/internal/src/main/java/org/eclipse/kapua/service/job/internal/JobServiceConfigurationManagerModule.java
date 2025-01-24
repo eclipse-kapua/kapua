@@ -29,7 +29,6 @@ import org.eclipse.kapua.commons.jpa.EntityCacheFactory;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.util.xml.XmlUtil;
-import org.eclipse.kapua.service.job.JobFactory;
 import org.eclipse.kapua.service.job.JobRepository;
 import org.eclipse.kapua.service.job.JobService;
 import org.eclipse.kapua.storage.TxManager;
@@ -55,8 +54,6 @@ public class JobServiceConfigurationManagerModule extends AbstractKapuaModule im
     @Singleton
     public ServiceConfigurationManager jobServiceConfigurationManager(
             @Named("jobTxManager") TxManager txManager,
-
-            JobFactory factory,
             RootUserTester rootUserTester,
             AccountRelativeFinder accountRelativeFinder,
             JobRepository jobRepository,
@@ -76,7 +73,6 @@ public class JobServiceConfigurationManagerModule extends AbstractKapuaModule im
                         rootUserTester,
                         accountRelativeFinder,
                         new UsedEntitiesCounterImpl(
-                                factory,
                                 jobRepository
                         ),
                         new ResourceBasedServiceConfigurationMetadataProvider(xmlUtil)));

@@ -37,11 +37,9 @@ import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authentication.AuthenticationService;
-import org.eclipse.kapua.service.authentication.CredentialsFactory;
 import org.eclipse.kapua.service.authentication.UsernamePasswordCredentials;
 import org.eclipse.kapua.service.authentication.credential.Credential;
 import org.eclipse.kapua.service.authentication.credential.CredentialCreator;
-import org.eclipse.kapua.service.authentication.credential.CredentialFactory;
 import org.eclipse.kapua.service.authentication.credential.CredentialListResult;
 import org.eclipse.kapua.service.authentication.credential.CredentialService;
 import org.eclipse.kapua.service.authentication.shiro.utils.AuthenticationUtils;
@@ -66,9 +64,6 @@ public class GwtCredentialServiceImpl extends KapuaRemoteServiceServlet implemen
     private static final AuthenticationService AUTHENTICATION_SERVICE = LOCATOR.getService(AuthenticationService.class);
 
     private static final CredentialService CREDENTIAL_SERVICE = LOCATOR.getService(CredentialService.class);
-    private static final CredentialFactory CREDENTIAL_FACTORY = LOCATOR.getFactory(CredentialFactory.class);
-
-    private static final CredentialsFactory CREDENTIALS_FACTORY = LOCATOR.getFactory(CredentialsFactory.class);
 
     private static final UserService USER_SERVICE = LOCATOR.getService(UserService.class);
 
@@ -207,7 +202,7 @@ public class GwtCredentialServiceImpl extends KapuaRemoteServiceServlet implemen
             }
             username = user.getName();
             final String finalUsername = username;
-            UsernamePasswordCredentials loginCredentials = CREDENTIALS_FACTORY.newUsernamePasswordCredentials(finalUsername, oldPassword);
+            UsernamePasswordCredentials loginCredentials = new UsernamePasswordCredentials(finalUsername, oldPassword);
             loginCredentials.setAuthenticationCode(mfaCode);
             AUTHENTICATION_SERVICE.verifyCredentials(loginCredentials);
 

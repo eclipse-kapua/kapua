@@ -27,6 +27,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.kura.simulator.GatewayConfiguration;
 import org.eclipse.kapua.kura.simulator.MqttAsyncTransport;
@@ -36,7 +38,7 @@ import org.eclipse.kapua.kura.simulator.app.annotated.AnnotatedApplication;
 import org.eclipse.kapua.kura.simulator.app.command.SimpleCommandApplication;
 import org.eclipse.kapua.kura.simulator.app.deploy.SimpleDeployApplication;
 import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.service.authentication.CredentialsFactory;
+import org.eclipse.kapua.service.authentication.UsernamePasswordCredentials;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundle;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundleManagementService;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundles;
@@ -60,8 +62,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.Singleton;
-
-import javax.inject.Inject;
 
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
@@ -122,7 +122,7 @@ public class SimulatedDeviceSteps {
 
     @Given("My credentials are username {string} and password {string}")
     public void setUsernamePasswordCredentials(String username, String password) {
-        session.setCredentials(KapuaLocator.getInstance().getFactory(CredentialsFactory.class).newUsernamePasswordCredentials(username, password));
+        session.setCredentials(new UsernamePasswordCredentials(username, password));
     }
 
     @When("I start the simulator")

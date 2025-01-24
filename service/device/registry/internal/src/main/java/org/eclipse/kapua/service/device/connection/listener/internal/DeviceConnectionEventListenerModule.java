@@ -12,12 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.connection.listener.internal;
 
-import com.google.inject.Module;
-import com.google.inject.multibindings.ProvidesIntoSet;
+import javax.inject.Named;
+
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.core.ServiceModule;
 import org.eclipse.kapua.commons.event.ServiceEventHouseKeeperFactoryImpl;
-import org.eclipse.kapua.commons.service.event.store.api.EventStoreFactory;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordRepository;
 import org.eclipse.kapua.commons.service.event.store.internal.EventStoreServiceImpl;
 import org.eclipse.kapua.event.ServiceEventBus;
@@ -29,7 +28,8 @@ import org.eclipse.kapua.service.device.registry.KapuaDeviceRegistrySettingKeys;
 import org.eclipse.kapua.service.device.registry.KapuaDeviceRegistrySettings;
 import org.eclipse.kapua.storage.TxManager;
 
-import javax.inject.Named;
+import com.google.inject.Module;
+import com.google.inject.multibindings.ProvidesIntoSet;
 
 /**
  * {@code kapua-account-internal} {@link Module} implementation.
@@ -45,14 +45,13 @@ public class DeviceConnectionEventListenerModule extends AbstractKapuaModule imp
 
     @ProvidesIntoSet
     protected ServiceModule deviceConnectionEventListenerServiceModule(DeviceConnectionEventListenerService deviceConnectionEventListenerService,
-                                                                       AuthorizationService authorizationService,
-                                                                       PermissionFactory permissionFactory,
-                                                                       KapuaDeviceRegistrySettings kapuaDeviceRegistrySettings,
-                                                                       @Named("DeviceRegistryTransactionManager") TxManager txManager,
-                                                                       EventStoreFactory eventStoreFactory,
-                                                                       EventStoreRecordRepository eventStoreRecordRepository,
-                                                                       ServiceEventBus serviceEventBus,
-                                                                       @Named("deviceConnectionEvtSubscriptionGroupId") String subscriptionGroupId
+            AuthorizationService authorizationService,
+            PermissionFactory permissionFactory,
+            KapuaDeviceRegistrySettings kapuaDeviceRegistrySettings,
+            @Named("DeviceRegistryTransactionManager") TxManager txManager,
+            EventStoreRecordRepository eventStoreRecordRepository,
+            ServiceEventBus serviceEventBus,
+            @Named("deviceConnectionEvtSubscriptionGroupId") String subscriptionGroupId
     ) throws ServiceEventBusException {
 
         String address = kapuaDeviceRegistrySettings.getString(KapuaDeviceRegistrySettingKeys.DEVICE_EVENT_ADDRESS);
@@ -64,7 +63,6 @@ public class DeviceConnectionEventListenerModule extends AbstractKapuaModule imp
                                 authorizationService,
                                 permissionFactory,
                                 txManager,
-                                eventStoreFactory,
                                 eventStoreRecordRepository
                         ),
                         txManager,

@@ -28,7 +28,6 @@ import org.eclipse.kapua.commons.event.ServiceEventHouseKeeperFactoryImpl;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.commons.model.domains.Domains;
-import org.eclipse.kapua.commons.service.event.store.api.EventStoreFactory;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordRepository;
 import org.eclipse.kapua.commons.service.event.store.internal.EventStoreServiceImpl;
 import org.eclipse.kapua.commons.util.qr.QRCodeBuilder;
@@ -39,7 +38,6 @@ import org.eclipse.kapua.model.domain.Domain;
 import org.eclipse.kapua.model.domain.DomainEntry;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authentication.AuthenticationService;
-import org.eclipse.kapua.service.authentication.CredentialsFactory;
 import org.eclipse.kapua.service.authentication.credential.CredentialFactory;
 import org.eclipse.kapua.service.authentication.credential.CredentialRepository;
 import org.eclipse.kapua.service.authentication.credential.CredentialService;
@@ -102,7 +100,6 @@ public class AuthenticationModule extends AbstractKapuaModule {
         bind(KapuaAuthenticationSetting.class).in(Singleton.class);
         bind(AuthenticationService.class).to(AuthenticationServiceShiroImpl.class).in(Singleton.class);
         bind(CredentialFactory.class).to(CredentialFactoryImpl.class).in(Singleton.class);
-        bind(CredentialsFactory.class).to(CredentialsFactoryImpl.class).in(Singleton.class);
         bind(MfaOptionFactory.class).to(MfaOptionFactoryImpl.class).in(Singleton.class);
         bind(ScratchCodeFactory.class).to(ScratchCodeFactoryImpl.class).in(Singleton.class);
         bind(AccessTokenFactory.class).to(AccessTokenFactoryImpl.class).in(Singleton.class);
@@ -141,7 +138,6 @@ public class AuthenticationModule extends AbstractKapuaModule {
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
             KapuaJpaTxManagerFactory txManagerFactory,
-            EventStoreFactory eventStoreFactory,
             EventStoreRecordRepository eventStoreRecordRepository,
             ServiceEventBus serviceEventBus,
             KapuaAuthenticationSetting kapuaAuthenticationSetting,
@@ -156,7 +152,6 @@ public class AuthenticationModule extends AbstractKapuaModule {
                                 authorizationService,
                                 permissionFactory,
                                 txManagerFactory.create("kapua-authentication"),
-                                eventStoreFactory,
                                 eventStoreRecordRepository
                         ),
                         txManagerFactory.create("kapua-authentication"),

@@ -25,8 +25,30 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "jwtCredentials")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = AuthenticationXmlRegistry.class, factoryMethod = "newJwtCredentials")
-public interface JwtCredentials extends LoginCredentials {
+@XmlType
+public class JwtCredentials implements LoginCredentials {
+
+    private static final long serialVersionUID = -5920944517814926028L;
+
+    private String accessToken;
+    private String idToken;
+
+    public JwtCredentials() {
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param accessToken
+     *         The credential access token
+     * @param idToken
+     *         The credential id token.
+     * @since 1.4.0
+     */
+    public JwtCredentials(String accessToken, String idToken) {
+        setAccessToken(accessToken);
+        setIdToken(idToken);
+    }
 
     /**
      * Gets the OpenID Connect <a href="https://auth0.com/blog/id-token-access-token-what-is-the-difference/#What-Is-an-Access-Token">accessToken</a>.
@@ -35,15 +57,20 @@ public interface JwtCredentials extends LoginCredentials {
      * @since 1.3.0
      */
     @XmlElement(name = "accessToken")
-    String getAccessToken();
+    public String getAccessToken() {
+        return accessToken;
+    }
 
     /**
      * Set the OpenID Connect accessToken.
      *
-     * @param accessToken The OpenID Connect accessToken.
+     * @param accessToken
+     *         The OpenID Connect accessToken.
      * @since 1.3.0
      */
-    void setAccessToken(String accessToken);
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
 
     /**
      * Gets the OpenID Connect <a href="https://auth0.com/blog/id-token-access-token-what-is-the-difference/#What-Is-an-ID-Token">idToken</a>.
@@ -52,13 +79,19 @@ public interface JwtCredentials extends LoginCredentials {
      * @since 1.3.0
      */
     @XmlElement(name = "idToken")
-    String getIdToken();
+    public String getIdToken() {
+        return idToken;
+    }
 
     /**
      * Set the OpenID Connect idToken.
      *
-     * @param idToken The OpenID Connect idToken.
+     * @param idToken
+     *         The OpenID Connect idToken.
      * @since 1.3.0
      */
-    void setIdToken(String idToken);
+    public void setIdToken(String idToken) {
+        this.idToken = idToken;
+    }
+
 }

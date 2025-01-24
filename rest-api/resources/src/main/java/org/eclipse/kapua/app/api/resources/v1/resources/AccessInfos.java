@@ -36,7 +36,6 @@ import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.authorization.access.AccessInfo;
 import org.eclipse.kapua.service.authorization.access.AccessInfoAttributes;
 import org.eclipse.kapua.service.authorization.access.AccessInfoCreator;
-import org.eclipse.kapua.service.authorization.access.AccessInfoFactory;
 import org.eclipse.kapua.service.authorization.access.AccessInfoListResult;
 import org.eclipse.kapua.service.authorization.access.AccessInfoService;
 import org.eclipse.kapua.service.user.User;
@@ -51,8 +50,6 @@ public class AccessInfos extends AbstractKapuaResource {
 
     @Inject
     public AccessInfoService accessInfoService;
-    @Inject
-    public AccessInfoFactory accessInfoFactory;
 
     /**
      * Gets the {@link AccessInfo} list in the scope.

@@ -12,9 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.service.event.store.internal;
 
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.domains.Domains;
-import org.eclipse.kapua.commons.service.event.store.api.EventStoreFactory;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecord;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordCreator;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordListResult;
@@ -30,8 +31,6 @@ import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.storage.TxManager;
 
-import javax.inject.Inject;
-
 /**
  * {@link EventStoreService} implementation.
  *
@@ -43,7 +42,6 @@ public class EventStoreServiceImpl
     private final AuthorizationService authorizationService;
     private final PermissionFactory permissionFactory;
     private final TxManager txManager;
-    private final EventStoreFactory entityFactory;
     private final EventStoreRecordRepository repository;
 
     @Inject
@@ -51,12 +49,10 @@ public class EventStoreServiceImpl
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
             TxManager txManager,
-            EventStoreFactory entityFactory,
             EventStoreRecordRepository repository) {
         this.authorizationService = authorizationService;
         this.permissionFactory = permissionFactory;
         this.txManager = txManager;
-        this.entityFactory = entityFactory;
         this.repository = repository;
     }
 

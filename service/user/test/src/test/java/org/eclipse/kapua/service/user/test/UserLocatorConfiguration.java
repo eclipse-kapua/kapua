@@ -125,7 +125,6 @@ public class UserLocatorConfiguration {
                         Mockito.mock(RootUserTester.class),
                         accountRelativeFinder,
                         new UsedEntitiesCounterImpl(
-                                userFactory,
                                 userRepository),
                         new ResourceBasedServiceConfigurationMetadataProvider(new XmlUtil(new TestJAXBContextProvider()))
                 );

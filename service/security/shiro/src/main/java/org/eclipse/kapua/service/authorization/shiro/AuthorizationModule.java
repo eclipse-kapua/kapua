@@ -27,7 +27,6 @@ import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.commons.jpa.NamedCacheFactory;
 import org.eclipse.kapua.commons.metric.CommonsMetric;
 import org.eclipse.kapua.commons.model.domains.Domains;
-import org.eclipse.kapua.commons.service.event.store.api.EventStoreFactory;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordRepository;
 import org.eclipse.kapua.commons.service.event.store.internal.EventStoreServiceImpl;
 import org.eclipse.kapua.commons.service.internal.cache.KapuaCacheManager;
@@ -149,7 +148,6 @@ public class AuthorizationModule extends AbstractKapuaModule {
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
             KapuaJpaTxManagerFactory txManagerFactory,
-            EventStoreFactory eventStoreFactory,
             EventStoreRecordRepository eventStoreRecordRepository,
             ServiceEventBus serviceEventBus,
             KapuaAuthorizationSetting kapuaAuthorizationSetting,
@@ -166,7 +164,6 @@ public class AuthorizationModule extends AbstractKapuaModule {
                                 authorizationService,
                                 permissionFactory,
                                 txManagerFactory.create("kapua-authorization"),
-                                eventStoreFactory,
                                 eventStoreRecordRepository
                         ),
                         txManagerFactory.create("kapua-authorization"),

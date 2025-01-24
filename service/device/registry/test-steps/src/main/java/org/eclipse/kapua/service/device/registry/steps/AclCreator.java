@@ -30,20 +30,16 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountCreator;
-import org.eclipse.kapua.service.account.AccountFactory;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authentication.credential.CredentialCreator;
-import org.eclipse.kapua.service.authentication.credential.CredentialFactory;
 import org.eclipse.kapua.service.authentication.credential.CredentialService;
 import org.eclipse.kapua.service.authentication.credential.CredentialStatus;
 import org.eclipse.kapua.service.authorization.access.AccessInfoCreator;
-import org.eclipse.kapua.service.authorization.access.AccessInfoFactory;
 import org.eclipse.kapua.service.authorization.access.AccessInfoService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserCreator;
-import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,30 +59,22 @@ public class AclCreator {
      * Credential service.
      */
     private CredentialService credentialService;
-    private CredentialFactory credentialFactory;
     private PermissionFactory permissionFactory;
 
     /**
      * User service.
      */
     private UserService userService;
-    private UserFactory userFactory;
 
     /**
      * Accessinfo service.
      */
     private AccessInfoService accessInfoService;
-    private AccessInfoFactory accessInfoFactory;
 
     /**
      * Account service.
      */
     private AccountService accountService;
-
-    /**
-     * Account factory.
-     */
-    private AccountFactory accountFactory;
 
     /**
      * Constructor with all support services.
@@ -95,16 +83,12 @@ public class AclCreator {
         KapuaLocator locator = KapuaLocator.getInstance();
 
         accountService = locator.getService(AccountService.class);
-        accountFactory = locator.getFactory(AccountFactory.class);
 
         userService = locator.getService(UserService.class);
-        userFactory = locator.getFactory(UserFactory.class);
 
         accessInfoService = locator.getService(AccessInfoService.class);
-        accessInfoFactory = locator.getFactory(AccessInfoFactory.class);
 
         credentialService = locator.getService(CredentialService.class);
-        credentialFactory = locator.getFactory(CredentialFactory.class);
         permissionFactory = locator.getFactory(PermissionFactory.class);
     }
 

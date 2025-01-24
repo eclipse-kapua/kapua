@@ -82,7 +82,8 @@ public class AuthenticationServiceBackEndCall {
 
     public AuthResponse brokerConnect(AuthRequest authRequest) {
         try {
-            logger.info("Login for clientId {} - user: {} - password: {} - client certificates: {}", authRequest.getClientId(), authRequest.getUsername(), Strings.isNullOrEmpty(authRequest.getPassword()) ? "no" : "yes", authRequest.getCertificates() != null ? "yes" : "no");
+            logger.info("Login for clientId {} - user: {} - password: {} - client certificates: {}", authRequest.getClientId(), authRequest.getUsername(),
+                    Strings.isNullOrEmpty(authRequest.getPassword()) ? "no" : "yes", authRequest.getCertificates() != null ? "yes" : "no");
             ThreadContext.unbindSubject();
             String deviceConnectionAuthType = extractAuthTypeFromAuthRequest(authRequest);
             LoginCredentials authenticationCredentials = buildLoginCredentialsFromAuthType(authRequest, deviceConnectionAuthType);
@@ -244,7 +245,8 @@ public class AuthenticationServiceBackEndCall {
     /**
      * Extracts the {@link DeviceConnection#getAuthenticationType()} to be used for this connect attempt from the {@link AuthRequest}.
      *
-     * @param authRequest The {@link AuthRequest} from which to extract data.
+     * @param authRequest
+     *         The {@link AuthRequest} from which to extract data.
      * @return The resolved  {@link DeviceConnection#getAuthenticationType()}.
      * @throws KapuaException
      * @since 2.0.0
@@ -266,8 +268,10 @@ public class AuthenticationServiceBackEndCall {
     /**
      * Builds the {@link LoginCredentials} to be used from the resolved {@link DeviceConnection#getAuthenticationType()}.
      *
-     * @param authRequest              The {@link AuthRequest} with the {@link LoginCredentials} values.
-     * @param deviceConnectionAuthType The resolved {@link DeviceConnection#getAuthenticationType()}.
+     * @param authRequest
+     *         The {@link AuthRequest} with the {@link LoginCredentials} values.
+     * @param deviceConnectionAuthType
+     *         The resolved {@link DeviceConnection#getAuthenticationType()}.
      * @return The {@link LoginCredentials} for the given {@link DeviceConnection#getAuthenticationType()}.
      * @throws KapuaException
      * @since 2.0.0

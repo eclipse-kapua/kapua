@@ -13,19 +13,16 @@
 package org.eclipse.kapua.service.authentication.shiro;
 
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
-import org.eclipse.kapua.service.authentication.AccessTokenCredentials;
-import org.eclipse.kapua.service.authentication.shiro.realm.model.AccessTokenCredentialsAnotherImpl;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
 
 @Category(JUnitTests.class)
 public class AccessTokenCredentialsImplTest {
 
     @Test(expected = NullPointerException.class)
     public void accessTokenCredentialsImplCloneConstructorNullTest() {
-        new AccessTokenCredentialsImpl((AccessTokenCredentials) null);
+        new AccessTokenCredentialsImpl((AccessTokenCredentialsImpl) null);
     }
 
     @Test
@@ -40,7 +37,7 @@ public class AccessTokenCredentialsImplTest {
 
     @Test
     public void accessTokenCredentialsImplCloneConstructorAnotherTest() {
-        AccessTokenCredentials first = new AccessTokenCredentialsAnotherImpl("anAccessToken");
+        AccessTokenCredentialsImpl first = new AccessTokenCredentialsImpl("anAccessToken");
 
         AccessTokenCredentialsImpl second = new AccessTokenCredentialsImpl(first);
 
@@ -50,7 +47,7 @@ public class AccessTokenCredentialsImplTest {
 
     @Test
     public void accessTokenCredentialsImplTokenIdParameterTest() {
-        String[] tokenIds = {null, "", "!!tokenID-1", "#1(TOKEN.,/token id)9--99", "!$$ 1-2 ID//", "id_tokeN(....)<00>"};
+        String[] tokenIds = { null, "", "!!tokenID-1", "#1(TOKEN.,/token id)9--99", "!$$ 1-2 ID//", "id_tokeN(....)<00>" };
 
         for (String tokenId : tokenIds) {
             AccessTokenCredentialsImpl accessTokenCredentialsImpl = new AccessTokenCredentialsImpl(tokenId);
@@ -62,12 +59,14 @@ public class AccessTokenCredentialsImplTest {
 
     @Test
     public void setAndGetTokenIdPrincipalAndCredentialsTest() {
-        String[] newTokenIds = {null, "", "!!NEWtokenID-1", "#1(newTOKEN.,/token id)9--99", "!$$ 1-2new ID//", "id_tokeN NEW ID(....)<00>"};
-        AccessTokenCredentialsImpl accessTokenCredentialsImpl = new AccessTokenCredentialsImpl("token id");
+        String[] newTokenIds = { null, "", "!!NEWtokenID-1", "#1(newTOKEN.,/token id)9--99", "!$$ 1-2new ID//", "id_tokeN NEW ID(....)<00>" };
+        AccessTokenCredentialsImpl accessTokenCredentials = new AccessTokenCredentialsImpl("token id");
 
         for (String newTokenId : newTokenIds) {
-            accessTokenCredentialsImpl.setTokenId(newTokenId);
-            Assert.assertEquals("Expected and actual values should be the same.", newTokenId, accessTokenCredentialsImpl.getTokenId());
+            accessTokenCredentials.setTokenId(newTokenId);
+            Assert.assertEquals("Expected and actual values should be the same.", newTokenId, accessTokenCredentials.getTokenId());
+            AccessTokenCredentialsImpl accessTokenCredentialsImpl = new AccessTokenCredentialsImpl(accessTokenCredentials);
+            accessTokenCredentials.setTokenId(newTokenId);
             Assert.assertEquals("Expected and actual values should be the same.", newTokenId, accessTokenCredentialsImpl.getPrincipal());
             Assert.assertEquals("Expected and actual values should be the same.", newTokenId, accessTokenCredentialsImpl.getCredentials());
         }

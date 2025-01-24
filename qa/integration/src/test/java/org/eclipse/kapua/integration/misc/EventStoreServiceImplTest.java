@@ -15,7 +15,6 @@ package org.eclipse.kapua.integration.misc;
 import java.math.BigInteger;
 
 import org.eclipse.kapua.commons.model.id.KapuaEid;
-import org.eclipse.kapua.commons.service.event.store.api.EventStoreFactory;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordCreator;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordRepository;
 import org.eclipse.kapua.commons.service.event.store.internal.EventStoreServiceImpl;
@@ -38,7 +37,6 @@ public class EventStoreServiceImplTest {
                 Mockito.mock(AuthorizationService.class),
                 Mockito.mock(PermissionFactory.class),
                 Mockito.mock(TxManager.class),
-                Mockito.mock(EventStoreFactory.class),
                 Mockito.mock(EventStoreRecordRepository.class));
         EventStoreRecordCreator[] creator = { null, new EventStoreRecordCreator(new KapuaEid(BigInteger.ONE)) };
         UnsupportedOperationException unsupportedOperationException = new UnsupportedOperationException();

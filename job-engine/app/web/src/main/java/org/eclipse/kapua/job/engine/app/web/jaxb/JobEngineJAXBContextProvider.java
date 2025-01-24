@@ -40,7 +40,6 @@ import org.eclipse.kapua.commons.util.xml.JAXBContextProvider;
 import org.eclipse.kapua.job.engine.JobStartOptions;
 import org.eclipse.kapua.job.engine.commons.model.JobStepPropertiesOverrides;
 import org.eclipse.kapua.job.engine.commons.model.JobTargetSublist;
-import org.eclipse.kapua.service.authentication.AuthenticationXmlRegistry;
 import org.eclipse.kapua.service.authentication.token.AccessToken;
 import org.eclipse.kapua.service.device.call.kura.model.configuration.KuraDeviceConfiguration;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssets;
@@ -129,7 +128,6 @@ public class JobEngineJAXBContextProvider implements JAXBContextProvider {
                     JobStoppingExceptionInfo.class,
 
                     // Authentication
-                    AuthenticationXmlRegistry.class,
                     AccessToken.class,
 
                     // Device Management Keystore

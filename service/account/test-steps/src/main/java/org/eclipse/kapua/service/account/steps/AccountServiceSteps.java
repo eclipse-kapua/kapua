@@ -45,7 +45,6 @@ import org.eclipse.kapua.qa.common.cucumber.CucConfig;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountAttributes;
 import org.eclipse.kapua.service.account.AccountCreator;
-import org.eclipse.kapua.service.account.AccountFactory;
 import org.eclipse.kapua.service.account.AccountListResult;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.account.Organization;
@@ -81,7 +80,6 @@ public class AccountServiceSteps extends TestBase {
 
     // Account creator object used for creating new accounts.
     private AccountService accountService;
-    private AccountFactory accountFactory;
 
     // Default constructor
     @Inject
@@ -92,7 +90,6 @@ public class AccountServiceSteps extends TestBase {
     @After(value = "@setup")
     public void setServices() {
         locator = KapuaLocator.getInstance();
-        accountFactory = locator.getFactory(AccountFactory.class);
         accountService = locator.getService(AccountService.class);
     }
 

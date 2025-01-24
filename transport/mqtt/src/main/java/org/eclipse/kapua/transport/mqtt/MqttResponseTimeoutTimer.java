@@ -13,7 +13,6 @@
 package org.eclipse.kapua.transport.mqtt;
 
 import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.validation.constraints.NotNull;
 
@@ -26,7 +25,7 @@ public class MqttResponseTimeoutTimer extends Timer {
 
     private static final String MQTT_RESPONSE_TIMEOUT_TIMER_NAME_FORMAT = MqttResponseTimeoutTimer.class.getSimpleName() + "-%s";
 
-    private final MqttResponseCallback mqttResponseCallback;
+    protected final MqttResponseCallback mqttResponseCallback;
 
     /**
      * Starts a {@link Timer} at the given timeout and runs {@link TimeoutTimerTask} when timeout expires.
@@ -44,21 +43,7 @@ public class MqttResponseTimeoutTimer extends Timer {
 
         this.mqttResponseCallback = mqttClientCallback;
 
-        schedule(new TimeoutTimerTask(), timeout);
+        schedule(new TimeoutTimerTask(this), timeout);
     }
 
-    /**
-     * The {@link TimeoutTimerTask} run when timeout expires.
-     *
-     * @since 1.0.0
-     */
-    public class TimeoutTimerTask extends TimerTask {
-
-        @Override
-        public void run() {
-            synchronized (mqttResponseCallback) {
-                mqttResponseCallback.notifyAll();
-            }
-        }
-    }
 }

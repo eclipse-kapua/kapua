@@ -12,20 +12,21 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.shiro;
 
-import org.eclipse.kapua.service.authentication.AccessTokenCredentials;
-import org.eclipse.kapua.service.authentication.shiro.realm.KapuaAuthenticationToken;
-
-import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
+import javax.validation.constraints.NotNull;
+
+import org.eclipse.kapua.service.authentication.SessionCredentials;
+import org.eclipse.kapua.service.authentication.shiro.realm.KapuaAuthenticationToken;
+
 /**
- * {@link AccessTokenCredentials} implementation.
+ * {@link AccessTokenCredentialsImpl} implementation.
  * <p>
  * This implements also {@link KapuaAuthenticationToken} to allow usage in Apache Shiro.
  *
  * @since 1.0.0
  */
-public class AccessTokenCredentialsImpl implements AccessTokenCredentials, KapuaAuthenticationToken {
+public class AccessTokenCredentialsImpl implements KapuaAuthenticationToken, SessionCredentials {
 
     private static final long serialVersionUID = -7549848672967689716L;
 
@@ -34,41 +35,42 @@ public class AccessTokenCredentialsImpl implements AccessTokenCredentials, Kapua
     /**
      * Constructor.
      *
-     * @param tokenId The credential JWT
+     * @param tokenId
+     *         The credential JWT
      * @since 1.0.0
      */
     public AccessTokenCredentialsImpl(@NotNull String tokenId) {
-        setTokenId(tokenId);
+        this.tokenId = tokenId;
     }
 
     /**
      * Clone constructor.
      *
-     * @param accessTokenCredentials The {@link AccessTokenCredentials} to clone.
+     * @param accessTokenCredentials
+     *         The {@link AccessTokenCredentialsImpl} to clone.
      * @since 1.5.0
      */
-    public AccessTokenCredentialsImpl(@NotNull AccessTokenCredentials accessTokenCredentials) {
-        setTokenId(accessTokenCredentials.getTokenId());
+    public AccessTokenCredentialsImpl(@NotNull AccessTokenCredentialsImpl accessTokenCredentials) {
+        this.tokenId = accessTokenCredentials.getTokenId();
     }
 
-    @Override
     public String getTokenId() {
         return tokenId;
     }
 
-    @Override
-    public void setTokenId(String tokenId) {
+    public AccessTokenCredentialsImpl setTokenId(String tokenId) {
         this.tokenId = tokenId;
+        return this;
     }
 
     @Override
     public Object getPrincipal() {
-        return getTokenId();
+        return tokenId;
     }
 
     @Override
     public Object getCredentials() {
-        return getTokenId();
+        return tokenId;
     }
 
     @Override

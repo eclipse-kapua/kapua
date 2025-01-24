@@ -31,7 +31,6 @@ import org.eclipse.kapua.commons.security.KapuaSession;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.account.Account;
-import org.eclipse.kapua.service.authentication.AccessTokenCredentials;
 import org.eclipse.kapua.service.authentication.shiro.AccessTokenCredentialsImpl;
 import org.eclipse.kapua.service.authentication.shiro.exceptions.ExpiredAccessTokenException;
 import org.eclipse.kapua.service.authentication.shiro.exceptions.InvalidatedAccessTokenException;
@@ -63,7 +62,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link AccessTokenCredentials} based {@link AuthenticatingRealm} implementation.
+ * {@link AccessTokenCredentialsImpl} based {@link AuthenticatingRealm} implementation.
  *
  * @since 1.0.0
  */

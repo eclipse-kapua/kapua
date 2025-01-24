@@ -31,18 +31,15 @@ import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.model.query.predicate.AttributePredicate;
 import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.account.Account;
-import org.eclipse.kapua.service.account.AccountFactory;
 import org.eclipse.kapua.service.account.AccountListResult;
 import org.eclipse.kapua.service.account.AccountService;
 
 public class AccountRelativeFinderImpl implements AccountRelativeFinder, KapuaService {
 
-    private final AccountFactory accountFactory;
     private final AccountService accountService;
 
     @Inject
-    public AccountRelativeFinderImpl(AccountFactory accountFactory, AccountService accountService) {
-        this.accountFactory = accountFactory;
+    public AccountRelativeFinderImpl(AccountService accountService) {
         this.accountService = accountService;
     }
 

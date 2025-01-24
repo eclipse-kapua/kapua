@@ -34,7 +34,6 @@ import org.eclipse.kapua.security.registration.simple.setting.SimpleSetting;
 import org.eclipse.kapua.security.registration.simple.setting.SimpleSettingKeys;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountCreator;
-import org.eclipse.kapua.service.account.AccountFactory;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authentication.credential.CredentialCreator;
 import org.eclipse.kapua.service.authentication.credential.CredentialService;
@@ -137,7 +136,6 @@ public class SimpleRegistrationProcessor implements RegistrationProcessor {
     }
 
     private final AccountService accountService;
-    private final AccountFactory accountFactory;
 
     private final CredentialService credentialService;
 
@@ -157,7 +155,6 @@ public class SimpleRegistrationProcessor implements RegistrationProcessor {
      * Create a new simple registration processor
      *
      * @param accountService
-     * @param accountFactory
      * @param credentialService
      * @param deviceRegistryService
      * @param userService
@@ -171,7 +168,6 @@ public class SimpleRegistrationProcessor implements RegistrationProcessor {
      */
     public SimpleRegistrationProcessor(
             AccountService accountService,
-            AccountFactory accountFactory,
             CredentialService credentialService,
             DeviceRegistryService deviceRegistryService,
             UserService userService,
@@ -181,7 +177,6 @@ public class SimpleRegistrationProcessor implements RegistrationProcessor {
             String claimName,
             Settings settings) {
         this.accountService = accountService;
-        this.accountFactory = accountFactory;
         this.credentialService = credentialService;
         this.deviceRegistryService = deviceRegistryService;
         this.userService = userService;

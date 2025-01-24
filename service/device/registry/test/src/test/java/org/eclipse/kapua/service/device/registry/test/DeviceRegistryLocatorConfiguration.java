@@ -39,7 +39,6 @@ import org.eclipse.kapua.message.internal.KapuaMessageFactoryImpl;
 import org.eclipse.kapua.qa.common.MockedLocator;
 import org.eclipse.kapua.service.account.AccountFactory;
 import org.eclipse.kapua.service.account.AccountService;
-import org.eclipse.kapua.service.authentication.CredentialsFactory;
 import org.eclipse.kapua.service.authentication.mfa.MfaAuthenticator;
 import org.eclipse.kapua.service.authentication.shiro.mfa.MfaAuthenticatorImpl;
 import org.eclipse.kapua.service.authentication.shiro.setting.KapuaAuthenticationSetting;
@@ -125,9 +124,7 @@ public class DeviceRegistryLocatorConfiguration {
                 } catch (KapuaException e) {
                     // skip
                 }
-                final CredentialsFactory credentialsFactory = Mockito.mock(CredentialsFactory.class);
                 bind(AuthorizationService.class).toInstance(mockedAuthorization);
-                bind(CredentialsFactory.class).toInstance(credentialsFactory);
                 bind(KapuaJpaRepositoryConfiguration.class).toInstance(new KapuaJpaRepositoryConfiguration());
                 bind(AccountRelativeFinder.class).toInstance(Mockito.mock(AccountRelativeFinder.class));
                 bind(AccountFactory.class).toInstance(Mockito.mock(AccountFactory.class));
@@ -144,7 +141,7 @@ public class DeviceRegistryLocatorConfiguration {
                 bind(DeviceRegistryCacheFactory.class).toInstance(deviceRegistryCacheFactory);
 
                 final Map<String, DeviceConnectionCredentialAdapter> availableDeviceConnectionAdapters = new HashMap<>();
-                availableDeviceConnectionAdapters.put("USER_PASS", new UserPassDeviceConnectionCredentialAdapter(credentialsFactory));
+                availableDeviceConnectionAdapters.put("USER_PASS", new UserPassDeviceConnectionCredentialAdapter());
 
                 final MapBinder<Class, ServiceConfigurationManager> serviceConfigurationManagerMapBinder = MapBinder.newMapBinder(binder(), Class.class, ServiceConfigurationManager.class);
 

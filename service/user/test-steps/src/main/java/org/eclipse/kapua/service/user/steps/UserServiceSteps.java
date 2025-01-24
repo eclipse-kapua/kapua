@@ -46,12 +46,11 @@ import org.eclipse.kapua.qa.common.cucumber.CucPermission;
 import org.eclipse.kapua.qa.common.cucumber.CucUser;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.authentication.AuthenticationService;
-import org.eclipse.kapua.service.authentication.CredentialsFactory;
 import org.eclipse.kapua.service.authentication.LoginCredentials;
+import org.eclipse.kapua.service.authentication.UsernamePasswordCredentials;
 import org.eclipse.kapua.service.authentication.credential.Credential;
 import org.eclipse.kapua.service.authentication.credential.CredentialAttributes;
 import org.eclipse.kapua.service.authentication.credential.CredentialCreator;
-import org.eclipse.kapua.service.authentication.credential.CredentialFactory;
 import org.eclipse.kapua.service.authentication.credential.CredentialListResult;
 import org.eclipse.kapua.service.authentication.credential.CredentialService;
 import org.eclipse.kapua.service.authentication.credential.CredentialStatus;
@@ -61,7 +60,6 @@ import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionFactory;
 import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionService;
 import org.eclipse.kapua.service.authentication.credential.mfa.shiro.MfaOptionFactoryImpl;
 import org.eclipse.kapua.service.authorization.access.AccessInfoCreator;
-import org.eclipse.kapua.service.authorization.access.AccessInfoFactory;
 import org.eclipse.kapua.service.authorization.access.AccessInfoService;
 import org.eclipse.kapua.service.authorization.access.AccessPermission;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionAttributes;
@@ -121,11 +119,8 @@ public class UserServiceSteps extends TestBase {
      */
     private AccessInfoService accessInfoService;
     private AuthenticationService authenticationService;
-    private AccessInfoFactory accessInfoFactory;
     private PermissionFactory permissionFactory;
     private CredentialService credentialService;
-    private CredentialFactory credentialFactory;
-    private CredentialsFactory credentialsFactory;
     private AccessPermissionService accessPermissionService;
 
     @Inject
@@ -145,10 +140,7 @@ public class UserServiceSteps extends TestBase {
         authenticationService = locator.getService(AuthenticationService.class);
         credentialService = locator.getService(CredentialService.class);
         accessInfoService = locator.getService(AccessInfoService.class);
-        accessInfoFactory = locator.getFactory(AccessInfoFactory.class);
         permissionFactory = locator.getFactory(PermissionFactory.class);
-        credentialFactory = locator.getFactory(CredentialFactory.class);
-        credentialsFactory = locator.getFactory(CredentialsFactory.class);
         accessPermissionService = locator.getService(AccessPermissionService.class);
     }
 
@@ -576,7 +568,7 @@ public class UserServiceSteps extends TestBase {
 
     @When("I login as user with name {string} and password {string}")
     public void loginUser(String userName, String password) throws Exception {
-        LoginCredentials credentials = credentialsFactory.newUsernamePasswordCredentials(userName, password);
+        LoginCredentials credentials = new UsernamePasswordCredentials(userName, password);
         authenticationService.logout();
         primeException();
         try {
@@ -589,7 +581,7 @@ public class UserServiceSteps extends TestBase {
     @When("I try to login as user with name {string} with wrong password {int} times")
     public void loginUserNTimes(String userName, int n) throws Exception {
         String password = "wrongPassword";
-        LoginCredentials credentials = credentialsFactory.newUsernamePasswordCredentials(userName, password);
+        LoginCredentials credentials = new UsernamePasswordCredentials(userName, password);
         authenticationService.logout();
         for (int i = 0; i < n; i++) {
             primeException();
