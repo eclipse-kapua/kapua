@@ -12,24 +12,21 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.systeminfo.internal;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.commons.setting.system.SystemSettingKey;
 import org.eclipse.kapua.service.systeminfo.SystemInfo;
-import org.eclipse.kapua.service.systeminfo.SystemInfoFactory;
 import org.eclipse.kapua.service.systeminfo.SystemInfoService;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
 
 @Singleton
 public class SystemInfoServiceImpl implements SystemInfoService {
 
-    private final SystemInfoFactory systemInfoFactory;
     private final SystemSetting systemSetting;
 
     @Inject
-    public SystemInfoServiceImpl(SystemInfoFactory systemInfoFactory, SystemSetting systemSetting) {
-        this.systemInfoFactory = systemInfoFactory;
+    public SystemInfoServiceImpl(SystemSetting systemSetting) {
         this.systemSetting = systemSetting;
     }
 
@@ -41,7 +38,7 @@ public class SystemInfoServiceImpl implements SystemInfoService {
         String timestamp = systemSetting.getString(SystemSettingKey.BUILD_TIMESTAMP);
         String buildNumber = systemSetting.getString(SystemSettingKey.BUILD_NUMBER);
 
-        SystemInfo systemInfo = systemInfoFactory.newSystemInfo();
+        SystemInfo systemInfo = new SystemInfo();
         systemInfo.setVersion(version);
         systemInfo.setRevision(revision);
         systemInfo.setBuildBranch(branch);

@@ -33,9 +33,7 @@ import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
-import org.eclipse.kapua.service.systeminfo.SystemInfoFactory;
 import org.eclipse.kapua.service.systeminfo.SystemInfoService;
-import org.eclipse.kapua.service.systeminfo.internal.SystemInfoFactoryImpl;
 import org.eclipse.kapua.service.systeminfo.internal.SystemInfoServiceImpl;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
@@ -92,9 +90,7 @@ public class SystemInfoLocatorConfiguration {
                 bind(AccountFactory.class).toInstance(Mockito.spy(new AccountFactoryImpl()));
 
                 // Inject actual System Info service related services
-                bind(SystemInfoService.class).toInstance(new SystemInfoServiceImpl(new SystemInfoFactoryImpl(), SystemSetting.getInstance()));
-                bind(SystemInfoFactory.class).toInstance(new SystemInfoFactoryImpl());
-
+                bind(SystemInfoService.class).toInstance(new SystemInfoServiceImpl(SystemSetting.getInstance()));
             }
         };
 
