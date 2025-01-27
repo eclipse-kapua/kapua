@@ -20,22 +20,38 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = UserProfileXmlRegistry.class, factoryMethod = "newUserProfile")
-public interface UserProfile {
-    String TYPE = "userProfile";
+@XmlType
+public class UserProfile {
+
+    private String displayName;
+    private String phoneNumber;
+    private String email;
 
     @XmlElement(name = "displayName")
-    String getDisplayName();
+    public String getDisplayName() {
+        return displayName;
+    }
 
-    void setDisplayName(String displayName);
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
 
     @XmlElement(name = "phoneNumber")
-    String getPhoneNumber();
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 
-    void setPhoneNumber(String phoneNumber);
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
     @XmlElement(name = "email")
-    String getEmail();
+    public String getEmail() {
+        return email;
+    }
 
-    void setEmail(String email);
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
 }

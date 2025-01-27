@@ -13,13 +13,12 @@
 package org.eclipse.kapua.service.user.internal.profile;
 
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
-import org.eclipse.kapua.service.user.profile.UserProfileFactory;
 import org.eclipse.kapua.service.user.profile.UserProfileService;
 
 public class UserProfileModule extends AbstractKapuaModule {
+
     @Override
     protected void configureModule() {
         bind(UserProfileService.class).to(UserProfileServiceImpl.class);
-        bind(UserProfileFactory.class).to(UserProfileFactoryImpl.class);
     }
 }

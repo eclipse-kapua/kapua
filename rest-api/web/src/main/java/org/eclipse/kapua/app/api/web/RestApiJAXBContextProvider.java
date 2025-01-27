@@ -308,7 +308,6 @@ import org.eclipse.kapua.service.user.UserListResult;
 import org.eclipse.kapua.service.user.UserQuery;
 import org.eclipse.kapua.service.user.UserXmlRegistry;
 import org.eclipse.kapua.service.user.profile.UserProfile;
-import org.eclipse.kapua.service.user.profile.UserProfileXmlRegistry;
 import org.eclipse.persistence.jaxb.JAXBContextFactory;
 import org.eclipse.persistence.jaxb.MarshallerProperties;
 
@@ -670,7 +669,6 @@ public class RestApiJAXBContextProvider implements JAXBContextProvider {
 
                     // User Profile
                     UserProfile.class,
-                    UserProfileXmlRegistry.class,
 
                     // KapuaEvent
                     ServiceEvent.class,

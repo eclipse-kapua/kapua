@@ -12,7 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.user.internal.profile;
 
-import com.google.common.base.Strings;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
@@ -21,21 +23,18 @@ import org.eclipse.kapua.commons.util.CommonsValidationRegex;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserService;
 import org.eclipse.kapua.service.user.profile.UserProfile;
-import org.eclipse.kapua.service.user.profile.UserProfileFactory;
 import org.eclipse.kapua.service.user.profile.UserProfileService;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import com.google.common.base.Strings;
 
 @Singleton
 public class UserProfileServiceImpl implements UserProfileService {
+
     private final UserService userService;
-    private final UserProfileFactory userProfileFactory;
 
     @Inject
-    public UserProfileServiceImpl(UserService userService, UserProfileFactory userProfileFactory) {
+    public UserProfileServiceImpl(UserService userService) {
         this.userService = userService;
-        this.userProfileFactory = userProfileFactory;
     }
 
     @Override
@@ -57,7 +56,6 @@ public class UserProfileServiceImpl implements UserProfileService {
         });
     }
 
-
     @Override
     public UserProfile getUserProfile() throws KapuaException {
         return KapuaSecurityUtils.doPrivileged(() -> {
@@ -66,7 +64,7 @@ public class UserProfileServiceImpl implements UserProfileService {
                 throw new KapuaEntityNotFoundException(User.TYPE, KapuaSecurityUtils.getSession().getUserId());
             }
 
-            UserProfile userProfile = userProfileFactory.newUserProfile();
+            UserProfile userProfile = new UserProfile();
             userProfile.setDisplayName(user.getDisplayName());
             userProfile.setEmail(user.getEmail());
             userProfile.setPhoneNumber(user.getPhoneNumber());
