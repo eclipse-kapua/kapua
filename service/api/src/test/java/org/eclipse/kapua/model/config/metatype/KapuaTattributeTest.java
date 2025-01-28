@@ -24,40 +24,40 @@ public class KapuaTattributeTest {
     @Before
     public void createInstanceOfClass() {
 
-        tattributeImpl = new KapuaTattribute();
+        kapuaTattribute = new KapuaTattribute();
     }
 
-    KapuaTattribute tattributeImpl;
+    KapuaTattribute kapuaTattribute;
 
     @Test
     public void getValueTest() {
-        Assert.assertTrue(tattributeImpl.getValue().isEmpty());
+        Assert.assertTrue(kapuaTattribute.getValue().isEmpty());
     }
 
     @Test
     public void getAnyTest() {
-        Assert.assertTrue(tattributeImpl.getAny().isEmpty());
+        Assert.assertTrue(kapuaTattribute.getAny().isEmpty());
     }
 
     @Test
     public void setAndGetAdrefToNullTest() {
-        tattributeImpl.setAdref(null);
-        Assert.assertNull(tattributeImpl.getAdref());
+        kapuaTattribute.setAdref(null);
+        Assert.assertNull(kapuaTattribute.getAdref());
     }
 
     @Test
     public void setAndGetAdrefTest() {
         String[] permittedValues = { "", "!@#$%^^&**(-()_)+/|", "regularAdref", "regular Adref", "49", "regularAdref49", "ADREF", "246465494135646120009090049684646496468456468496846464968496844" };
         for (String value : permittedValues) {
-            tattributeImpl.setAdref(value);
-            Assert.assertTrue(tattributeImpl.getAdref().contains(value));
+            kapuaTattribute.setAdref(value);
+            Assert.assertTrue(kapuaTattribute.getAdref().contains(value));
         }
     }
 
     @Test
     public void setAndGetContentToNullTest() {
-        tattributeImpl.setContent(null);
-        Assert.assertNull(tattributeImpl.getContent());
+        kapuaTattribute.setContent(null);
+        Assert.assertNull(kapuaTattribute.getContent());
     }
 
     @Test
@@ -65,13 +65,13 @@ public class KapuaTattributeTest {
         String[] permittedValues = { "", "!@#$%^^&**(-()_)+/|", "regularContent", "regular Content", "49", "regularContent49", "CONTENT",
                 "246465494135646120009090049684646496468456468496846464968496844" };
         for (String value : permittedValues) {
-            tattributeImpl.setContent(value);
-            Assert.assertTrue(tattributeImpl.getContent().contains(value));
+            kapuaTattribute.setContent(value);
+            Assert.assertTrue(kapuaTattribute.getContent().contains(value));
         }
     }
 
     @Test
     public void getOtherAttributesTest() {
-        Assert.assertTrue(tattributeImpl.getOtherAttributes().isEmpty());
+        Assert.assertTrue(kapuaTattribute.getOtherAttributes().isEmpty());
     }
 }

@@ -123,6 +123,7 @@ public class TranslatorAppConfigurationKuraKapua extends AbstractSimpleTranslato
 
             kuraAd.getOption().forEach(kuraToption -> {
                 KapuaToption kapuaToption = new KapuaToption();
+
                 kapuaToption.setLabel(kuraToption.getLabel());
                 kapuaToption.setValue(kuraToption.getValue());
                 ad.addOption(kapuaToption);

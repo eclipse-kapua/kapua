@@ -45,6 +45,7 @@ import org.eclipse.kapua.model.config.metatype.KapuaTmetadata;
 import org.eclipse.kapua.model.config.metatype.KapuaTobject;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 import org.eclipse.kapua.model.config.metatype.KapuaToption;
+import org.eclipse.kapua.model.config.metatype.KapuaTscalar;
 import org.eclipse.kapua.service.authentication.token.AccessToken;
 import org.eclipse.kapua.service.device.call.kura.model.bundle.KuraBundle;
 import org.eclipse.kapua.service.device.call.kura.model.bundle.KuraBundles;
@@ -104,8 +105,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * JAXB context provided for proper (un)marshalling of interface annotated classes.
- * This particular implementation is used only in unit and integration tests.
+ * JAXB context provided for proper (un)marshalling of interface annotated classes. This particular implementation is used only in unit and integration tests.
  * <p>
  * Application and interfaces have their own implementation of provider.
  */
@@ -123,6 +123,7 @@ public class TestJAXBContextProvider implements JAXBContextProvider {
                     KapuaTocd.class,
                     KapuaTad.class,
                     KapuaTicon.class,
+                    KapuaTscalar.class,
                     KapuaToption.class,
                     KapuaTdesignate.class,
                     KapuaTobject.class,

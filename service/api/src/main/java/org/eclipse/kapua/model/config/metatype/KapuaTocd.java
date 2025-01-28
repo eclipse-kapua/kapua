@@ -57,16 +57,47 @@ import org.w3c.dom.Element;
  */
 @XmlRootElement(name = "OCD", namespace = "http://www.osgi.org/xmlns/metatype/v1.2.0")
 @XmlAccessorType(XmlAccessType.PROPERTY)
+
 @XmlType
 public class KapuaTocd {
 
+    private String id;
+    private String name;
     protected List<KapuaTad> ad;
     protected List<KapuaTicon> icon;
     protected List<Object> any;
-    protected String name;
     protected String description;
-    protected String id;
     private Map<QName, String> otherAttributes = new HashMap<>();
+    private boolean empty;
+
+    public KapuaTocd() {
+        this.empty = false;
+    }
+
+    public static KapuaTocd empty(String id, String name) {
+        KapuaTocd toc = new KapuaTocd();
+        toc.empty = true;
+        toc.id = id;
+        toc.name = name;
+        return toc;
+    }
+
+    public static KapuaTocd empty() {
+        KapuaTocd toc = new KapuaTocd();
+        toc.empty = true;
+        toc.id = null;
+        toc.name = null;
+        return toc;
+    }
+
+    public boolean isEmpty() {
+        return empty;
+    }
+
+    public KapuaTocd setEmpty(boolean empty) {
+        this.empty = empty;
+        return this;
+    }
 
     /**
      * Gets the value of the ad property.
@@ -87,7 +118,6 @@ public class KapuaTocd {
      * Objects of the following type(s) are allowed in the list {@link KapuaTad }
      */
     @XmlElement(name = "AD", namespace = "http://www.osgi.org/xmlns/metatype/v1.2.0", required = true)
-
     public List<KapuaTad> getAD() {
         if (ad == null) {
             ad = new ArrayList<>();
@@ -97,6 +127,19 @@ public class KapuaTocd {
 
     public void setAD(List<KapuaTad> ad) {
         this.ad = ad;
+    }
+
+    /**
+     * Add Tad to the internal list
+     *
+     * @param ad
+     */
+    public void addAD(KapuaTad ad) {
+        if (this.ad == null) {
+            this.ad = new ArrayList<>();
+        }
+
+        this.ad.add(ad);
     }
 
     /**
@@ -112,25 +155,6 @@ public class KapuaTocd {
      * </pre>
      */
     @XmlElement(name = "Icon", namespace = "http://www.osgi.org/xmlns/metatype/v1.2.0")
-
-    /**
-     * Gets the value of the icon property.
-     * <p>
-     * <p>
-     * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is
-     * not a <CODE>set</CODE> method for the icon property.
-     * <p>
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <p>
-     * <pre>
-     * getIcon().add(newItem);
-     * </pre>
-     * <p>
-     * <p>
-     * <p>
-     * Objects of the following type(s) are allowed in the list {@link TiconImpl }
-     */
     public List<KapuaTicon> getIcon() {
         if (icon == null) {
             icon = new ArrayList<>();
@@ -177,7 +201,19 @@ public class KapuaTocd {
     }
 
     public void setAny(List<Object> any) {
+        if (this.empty) {
+            return;
+        }
         this.any = any;
+    }
+
+    /**
+     * Add a generic object to the internal list
+     *
+     * @param object
+     */
+    public void addAny(Object object) {
+        getAny().add(object);
     }
 
     /**
@@ -217,6 +253,9 @@ public class KapuaTocd {
      *         allowed object is {@link String }
      */
     public void setDescription(String value) {
+        if (this.empty) {
+            return;
+        }
         this.description = value;
     }
 
@@ -251,11 +290,10 @@ public class KapuaTocd {
      */
     @XmlAnyAttribute
     public Map<QName, String> getOtherAttributes() {
-        return otherAttributes;
-    }
-
-    public void setOtherAttributes(Map<QName, String> otherAttributes) {
-        this.otherAttributes = otherAttributes;
+        if (this.otherAttributes == null) {
+            this.otherAttributes = new HashMap<>();
+        }
+        return this.otherAttributes;
     }
 
     /**
@@ -269,26 +307,8 @@ public class KapuaTocd {
                 value);
     }
 
-    /**
-     * Add Tad to the internal list
-     *
-     * @param ad
-     */
-    public void addAD(KapuaTad ad) {
-        if (this.ad == null) {
-            this.ad = new ArrayList<>();
-        }
-
-        this.ad.add(ad);
-    }
-
-    /**
-     * Add a generic object to the internal list
-     *
-     * @param object
-     */
-    public void addAny(Object object) {
-        getAny().add(object);
+    public void setOtherAttributes(Map<QName, String> otherAttributes) {
+        this.otherAttributes = otherAttributes;
     }
 
 }

@@ -62,14 +62,14 @@ public class XmlRootAnnotatedJaxbClassesScanner implements JaxbClassProvider {
         final Set<Class<?>> excludedXmlSerializables = serializablesByValidity.get(false);
         final Set<Class<?>> validXmlSerializables = serializablesByValidity.get(true);
         configurationPrinter.withTitle("Kapua XmlSerializable Configuration");
-        if (configurationPrinter.getParentLogger().isDebugEnabled()) {
-            // Printing like this is highly verbose
-            configurationPrinter.logSections("Discovered XmlSerializable Classes", validXmlSerializables.stream().map(Class::getName).collect(Collectors.toList()));
-            configurationPrinter.logSections("Discovered but Excluded XmlSerializable Classes", excludedXmlSerializables.stream().map(Class::getName).collect(Collectors.toList()));
-        } else {
-            configurationPrinter.addParameter("Discovered XmlSerializable Classes", validXmlSerializables.size());
-            configurationPrinter.addParameter("Discovered but Excluded XmlSerializable Classes", excludedXmlSerializables.size());
-        }
+        //        if (configurationPrinter.getParentLogger().isDebugEnabled()) {
+        // Printing like this is highly verbose
+        configurationPrinter.logSections("Discovered XmlSerializable Classes", validXmlSerializables.stream().map(Class::getName).collect(Collectors.toList()));
+        configurationPrinter.logSections("Discovered but Excluded XmlSerializable Classes", excludedXmlSerializables.stream().map(Class::getName).collect(Collectors.toList()));
+        //        } else {
+        //            configurationPrinter.addParameter("Discovered XmlSerializable Classes", validXmlSerializables.size());
+        //            configurationPrinter.addParameter("Discovered but Excluded XmlSerializable Classes", excludedXmlSerializables.size());
+        //        }
         // Print it!
         configurationPrinter.printLog();
 

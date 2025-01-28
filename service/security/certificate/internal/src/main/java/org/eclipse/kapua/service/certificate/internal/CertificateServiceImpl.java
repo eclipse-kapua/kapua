@@ -25,7 +25,6 @@ import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.commons.util.KapuaFileUtils;
-import org.eclipse.kapua.model.config.metatype.EmptyTocd;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
@@ -85,7 +84,7 @@ public class CertificateServiceImpl implements CertificateService {
             }
         });
 
-        emptyTocd = new EmptyTocd(CertificateService.class.getName(), CertificateService.class.getSimpleName());
+        emptyTocd = KapuaTocd.empty(CertificateService.class.getName(), CertificateService.class.getSimpleName());
 
     }
 

@@ -135,5 +135,4 @@ public class KapuaTobject {
     public Map<QName, String> getOtherAttributes() {
         return otherAttributes;
     }
-
 }

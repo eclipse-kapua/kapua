@@ -26,47 +26,47 @@ public class KapuaTiconTest {
     @Before
     public void createInstanceOfClass() {
 
-        ticonImpl = new KapuaTicon();
+        kapuaTicon = new KapuaTicon();
     }
 
-    KapuaTicon ticonImpl;
+    KapuaTicon kapuaTicon;
 
     @Test
     public void getAnyTest() {
-        Assert.assertTrue(ticonImpl.getAny().isEmpty());
+        Assert.assertTrue(kapuaTicon.getAny().isEmpty());
     }
 
     @Test
     public void setAndGetResourcesToNullTest() {
-        ticonImpl.setResource(null);
-        Assert.assertNull(ticonImpl.getResource());
+        kapuaTicon.setResource(null);
+        Assert.assertNull(kapuaTicon.getResource());
     }
 
     @Test
     public void setAndGetResourcesTest() {
         String[] permittedValues = { "", "regularResources", "49", "regular Resources", "regular esources with spaces", "!@#$%&*()_+/->,<", "RESOURCES", "resources123" };
         for (String value : permittedValues) {
-            ticonImpl.setResource(value);
-            Assert.assertTrue(ticonImpl.getResource().contains(value));
+            kapuaTicon.setResource(value);
+            Assert.assertTrue(kapuaTicon.getResource().contains(value));
         }
     }
 
     @Test
     public void setAndGetSizeToNullTest() {
-        ticonImpl.setSize(null);
-        Assert.assertNull(ticonImpl.getSize());
+        kapuaTicon.setSize(null);
+        Assert.assertNull(kapuaTicon.getSize());
     }
 
     @Test
     public void setAndGetSizeBigIntTest() {
         String numStr = "453453453456465765234923423094723472394723423482304823095734957320948305712324000123123";
         BigInteger num = new BigInteger(numStr);
-        ticonImpl.setSize(num);
-        Assert.assertEquals("ticonImpl.size", num, ticonImpl.getSize());
+        kapuaTicon.setSize(num);
+        Assert.assertEquals("KapuaTicon.size", num, kapuaTicon.getSize());
     }
 
     @Test
     public void getOtherAttributesTest() {
-        Assert.assertTrue(ticonImpl.getOtherAttributes().isEmpty());
+        Assert.assertTrue(kapuaTicon.getOtherAttributes().isEmpty());
     }
 }

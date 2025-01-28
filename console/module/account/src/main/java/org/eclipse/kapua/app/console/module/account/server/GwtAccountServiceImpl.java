@@ -58,7 +58,6 @@ import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.service.internal.KapuaServiceDisabledException;
 import org.eclipse.kapua.commons.util.ThrowingRunnable;
 import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.model.config.metatype.EmptyTocd;
 import org.eclipse.kapua.model.config.metatype.KapuaTad;
 import org.eclipse.kapua.model.config.metatype.KapuaTicon;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
@@ -430,7 +429,7 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
                     } catch (KapuaServiceDisabledException ex) {
                         continue;
                     }
-                    if (tocd != null && !(tocd instanceof EmptyTocd)) {
+                    if (tocd != null && !tocd.isEmpty()) {
                         GwtConfigComponent gwtConfig = new GwtConfigComponent();
                         gwtConfig.setId(tocd.getId());
                         gwtConfig.setName(tocd.getName());

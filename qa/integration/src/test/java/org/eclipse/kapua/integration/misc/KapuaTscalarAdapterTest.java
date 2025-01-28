@@ -24,14 +24,14 @@ import org.junit.experimental.categories.Category;
 public class KapuaTscalarAdapterTest {
 
     KapuaTscalarAdapter kapuaTscalarAdapter;
-    KapuaTscalar[] kapuaTscalar;
+    KapuaTscalar[] kapuaTscalars;
     String[] stringValue;
     String[] invalidStringValue;
 
     @Before
     public void initialize() {
         kapuaTscalarAdapter = new KapuaTscalarAdapter();
-        kapuaTscalar = new KapuaTscalar[] { KapuaTscalar.STRING, KapuaTscalar.LONG, KapuaTscalar.DOUBLE, KapuaTscalar.FLOAT, KapuaTscalar.INTEGER,
+        kapuaTscalars = new KapuaTscalar[] { KapuaTscalar.STRING, KapuaTscalar.LONG, KapuaTscalar.DOUBLE, KapuaTscalar.FLOAT, KapuaTscalar.INTEGER,
                 KapuaTscalar.BYTE, KapuaTscalar.CHAR, KapuaTscalar.BOOLEAN, KapuaTscalar.SHORT, KapuaTscalar.PASSWORD };
         stringValue = new String[] { "String", "Long", "Double", "Float", "Integer", "Byte", "Char", "Boolean", "Short", "Password" };
         invalidStringValue = new String[] { null, "Invalid Value" };
@@ -40,8 +40,8 @@ public class KapuaTscalarAdapterTest {
     @Test
     public void marshalTest() throws Exception {
         String[] expectedStringValue = stringValue;
-        for (int i = 0; i < kapuaTscalar.length; i++) {
-            Assert.assertEquals("Expected and actual values should be the same.", expectedStringValue[i], kapuaTscalarAdapter.marshal(kapuaTscalar[i]));
+        for (int i = 0; i < kapuaTscalars.length; i++) {
+            Assert.assertEquals("Expected and actual values should be the same.", expectedStringValue[i], kapuaTscalarAdapter.marshal(kapuaTscalars[i]));
         }
     }
 
@@ -52,7 +52,7 @@ public class KapuaTscalarAdapterTest {
 
     @Test
     public void unmarshalTest() throws Exception {
-        KapuaTscalar[] expectedTscalars = kapuaTscalar;
+        KapuaTscalar[] expectedTscalars = kapuaTscalars;
         for (int i = 0; i < stringValue.length; i++) {
             Assert.assertEquals("Expected and actual values should be the same.", expectedTscalars[i], kapuaTscalarAdapter.unmarshal(stringValue[i]));
         }

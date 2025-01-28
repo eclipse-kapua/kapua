@@ -30,13 +30,13 @@ public class KapuaTmetadataTest {
 
     @Before
     public void createInstanceOfClasses() {
-        emptyTocd = new EmptyTocd();
+        emptyTocd = KapuaTocd.empty();
         tocd = new KapuaTocd();
         tmetadata = new KapuaTmetadata();
         tdesignate = new KapuaTdesignate();
     }
 
-    EmptyTocd emptyTocd;
+    KapuaTocd emptyTocd;
     KapuaTocd tocd;
     KapuaTmetadata tmetadata;
     KapuaTdesignate tdesignate;

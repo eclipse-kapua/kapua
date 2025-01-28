@@ -22,9 +22,7 @@ import javax.inject.Inject;
 
 import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import org.eclipse.kapua.model.config.metatype.KapuaTad;
-import org.eclipse.kapua.model.config.metatype.KapuaTicon;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
-import org.eclipse.kapua.model.config.metatype.KapuaToption;
 import org.eclipse.kapua.model.config.metatype.Password;
 import org.eclipse.kapua.service.device.call.kura.model.configuration.ConfigurationMetrics;
 import org.eclipse.kapua.service.device.call.kura.model.configuration.KuraDeviceComponentConfiguration;
@@ -153,7 +151,7 @@ public class TranslatorAppConfigurationKapuaKura extends AbstractTranslatorKapua
             ad.setRequired(kapuaAd.isRequired());
 
             kapuaAd.getOption().forEach(kuraToption -> {
-                KapuaToption kapuaToption = new KapuaToption();
+                org.eclipse.kapua.model.config.metatype.KapuaToption kapuaToption = new org.eclipse.kapua.model.config.metatype.KapuaToption();
                 kapuaToption.setLabel(kuraToption.getLabel());
                 kapuaToption.setValue(kuraToption.getValue());
                 ad.addOption(kapuaToption);
@@ -165,7 +163,7 @@ public class TranslatorAppConfigurationKapuaKura extends AbstractTranslatorKapua
         });
 
         kapuaDefinition.getIcon().forEach(kapuaIcon -> {
-            KapuaTicon icon = new KapuaTicon();
+            org.eclipse.kapua.model.config.metatype.KapuaTicon icon = new org.eclipse.kapua.model.config.metatype.KapuaTicon();
             icon.setResource(kapuaIcon.getResource());
             icon.setSize(kapuaIcon.getSize());
 
