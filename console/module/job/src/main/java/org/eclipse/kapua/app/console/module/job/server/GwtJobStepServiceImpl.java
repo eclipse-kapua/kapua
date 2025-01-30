@@ -34,7 +34,6 @@ import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.job.step.JobStep;
 import org.eclipse.kapua.service.job.step.JobStepAttributes;
 import org.eclipse.kapua.service.job.step.JobStepCreator;
-import org.eclipse.kapua.service.job.step.JobStepFactory;
 import org.eclipse.kapua.service.job.step.JobStepListResult;
 import org.eclipse.kapua.service.job.step.JobStepService;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinition;
@@ -49,7 +48,6 @@ public class GwtJobStepServiceImpl extends KapuaRemoteServiceServlet implements 
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
 
     private static final JobStepService JOB_STEP_SERVICE = LOCATOR.getService(JobStepService.class);
-    private static final JobStepFactory JOB_STEP_FACTORY = LOCATOR.getFactory(JobStepFactory.class);
 
     private static final JobStepDefinitionService JOB_STEP_DEFINITION_SERVICE = LOCATOR.getService(JobStepDefinitionService.class);
     private static final long serialVersionUID = 6248597422415080827L;

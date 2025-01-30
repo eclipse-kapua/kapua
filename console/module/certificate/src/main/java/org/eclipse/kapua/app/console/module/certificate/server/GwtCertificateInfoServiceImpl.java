@@ -25,7 +25,6 @@ import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.certificate.info.CertificateInfo;
-import org.eclipse.kapua.service.certificate.info.CertificateInfoFactory;
 import org.eclipse.kapua.service.certificate.info.CertificateInfoListResult;
 import org.eclipse.kapua.service.certificate.info.CertificateInfoQuery;
 import org.eclipse.kapua.service.certificate.info.CertificateInfoService;
@@ -39,7 +38,6 @@ public class GwtCertificateInfoServiceImpl extends KapuaRemoteServiceServlet imp
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
 
     private static final CertificateInfoService CERTIFICATE_INFO_SERVICE = LOCATOR.getService(CertificateInfoService.class);
-    private static final CertificateInfoFactory CERTIFICATE_INFO_FACTORY = LOCATOR.getFactory(CertificateInfoFactory.class);
 
     @Override
     public List<GwtCertificateInfo> findAll(String scopeIdString) throws GwtKapuaException {

@@ -48,18 +48,15 @@ import org.eclipse.kapua.service.authorization.group.Group;
 import org.eclipse.kapua.service.authorization.group.GroupService;
 import org.eclipse.kapua.service.authorization.role.Role;
 import org.eclipse.kapua.service.authorization.role.RoleCreator;
-import org.eclipse.kapua.service.authorization.role.RoleFactory;
 import org.eclipse.kapua.service.authorization.role.RoleListResult;
 import org.eclipse.kapua.service.authorization.role.RolePermission;
 import org.eclipse.kapua.service.authorization.role.RolePermissionAttributes;
 import org.eclipse.kapua.service.authorization.role.RolePermissionCreator;
-import org.eclipse.kapua.service.authorization.role.RolePermissionFactory;
 import org.eclipse.kapua.service.authorization.role.RolePermissionListResult;
 import org.eclipse.kapua.service.authorization.role.RolePermissionService;
 import org.eclipse.kapua.service.authorization.role.RoleQuery;
 import org.eclipse.kapua.service.authorization.role.RoleService;
 import org.eclipse.kapua.service.user.User;
-import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserListResult;
 import org.eclipse.kapua.service.user.UserQuery;
 import org.eclipse.kapua.service.user.UserService;
@@ -80,13 +77,10 @@ public class GwtRoleServiceImpl extends KapuaRemoteServiceServlet implements Gwt
     private static final AccountService ACCOUNT_SERVICE = LOCATOR.getService(AccountService.class);
 
     private static final RoleService ROLE_SERVICE = LOCATOR.getService(RoleService.class);
-    private static final RoleFactory ROLE_FACTORY = LOCATOR.getFactory(RoleFactory.class);
 
     private static final RolePermissionService ROLE_PERMISSION_SERVICE = LOCATOR.getService(RolePermissionService.class);
-    private static final RolePermissionFactory ROLE_PERMISSION_FACTORY = LOCATOR.getFactory(RolePermissionFactory.class);
 
     private static final UserService USER_SERVICE = LOCATOR.getService(UserService.class);
-    private static final UserFactory USER_FACTORY = LOCATOR.getFactory(UserFactory.class);
 
     private static final GroupService GROUP_SERVICE = LOCATOR.getService(GroupService.class);
 

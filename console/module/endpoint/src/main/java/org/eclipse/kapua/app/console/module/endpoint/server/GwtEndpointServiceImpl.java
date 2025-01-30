@@ -40,13 +40,11 @@ import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.endpoint.EndpointInfo;
 import org.eclipse.kapua.service.endpoint.EndpointInfoCreator;
-import org.eclipse.kapua.service.endpoint.EndpointInfoFactory;
 import org.eclipse.kapua.service.endpoint.EndpointInfoListResult;
 import org.eclipse.kapua.service.endpoint.EndpointInfoQuery;
 import org.eclipse.kapua.service.endpoint.EndpointInfoService;
 import org.eclipse.kapua.service.endpoint.EndpointUsage;
 import org.eclipse.kapua.service.user.User;
-import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserListResult;
 import org.eclipse.kapua.service.user.UserQuery;
 import org.eclipse.kapua.service.user.UserService;
@@ -64,10 +62,8 @@ public class GwtEndpointServiceImpl extends KapuaRemoteServiceServlet implements
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
 
     private static final EndpointInfoService ENDPOINT_INFO_SERVICE = LOCATOR.getService(EndpointInfoService.class);
-    private static final EndpointInfoFactory ENDPOINT_INFO_FACTORY = LOCATOR.getFactory(EndpointInfoFactory.class);
 
     private static final UserService USER_SERVICE = LOCATOR.getService(UserService.class);
-    private static final UserFactory USER_FACTORY = LOCATOR.getFactory(UserFactory.class);
 
     private static final String ENDPOINT_INFO = "endpointInfo";
     private static final String ENTITY_INFO = "entityInfo";

@@ -39,7 +39,6 @@ import org.eclipse.kapua.service.authorization.access.AccessPermissionAttributes
 import org.eclipse.kapua.service.authorization.access.AccessRole;
 import org.eclipse.kapua.service.authorization.access.AccessRoleAttributes;
 import org.eclipse.kapua.service.authorization.access.AccessRoleCreator;
-import org.eclipse.kapua.service.authorization.access.AccessRoleFactory;
 import org.eclipse.kapua.service.authorization.access.AccessRoleListResult;
 import org.eclipse.kapua.service.authorization.access.AccessRoleService;
 import org.eclipse.kapua.service.authorization.role.Role;
@@ -112,7 +111,6 @@ public class GwtAccessRoleServiceImpl extends KapuaRemoteServiceServlet implemen
                 RoleService roleService = locator.getService(RoleService.class);
                 AccessInfoService accessInfoService = locator.getService(AccessInfoService.class);
                 AccessRoleService accessRoleService = locator.getService(AccessRoleService.class);
-                AccessRoleFactory accessRoleFactory = locator.getFactory(AccessRoleFactory.class);
                 final UserService userService = locator.getService(UserService.class);
 
                 final KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(scopeShortId);

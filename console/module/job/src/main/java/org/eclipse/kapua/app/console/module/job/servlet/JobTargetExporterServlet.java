@@ -28,7 +28,6 @@ import org.eclipse.kapua.model.query.KapuaListResult;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.job.targets.JobTarget;
 import org.eclipse.kapua.service.job.targets.JobTargetAttributes;
-import org.eclipse.kapua.service.job.targets.JobTargetFactory;
 import org.eclipse.kapua.service.job.targets.JobTargetListResult;
 import org.eclipse.kapua.service.job.targets.JobTargetService;
 import org.slf4j.Logger;
@@ -78,7 +77,6 @@ public class JobTargetExporterServlet extends HttpServlet {
             KapuaLocator locator = KapuaLocator.getInstance();
             KapuaIdFactory kapuaIdFactory = locator.getFactory(KapuaIdFactory.class);
             JobTargetService jobTargetService = locator.getService(JobTargetService.class);
-            JobTargetFactory jobTargetFactory = locator.getFactory(JobTargetFactory.class);
 
             jobTargetExporter.init(scopeId, jobId);
 

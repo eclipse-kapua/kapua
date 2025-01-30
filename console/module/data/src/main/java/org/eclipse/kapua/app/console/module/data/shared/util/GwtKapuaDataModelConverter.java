@@ -14,17 +14,11 @@ package org.eclipse.kapua.app.console.module.data.shared.util;
 
 import org.eclipse.kapua.app.console.module.api.shared.util.GwtKapuaCommonsModelConverter;
 import org.eclipse.kapua.app.console.module.data.shared.model.GwtDataChannelInfoQuery;
-import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.service.datastore.ChannelInfoFactory;
 import org.eclipse.kapua.service.datastore.model.query.ChannelInfoQuery;
 
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 
 public class GwtKapuaDataModelConverter {
-
-    private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
-
-    private static final ChannelInfoFactory CHANNEL_INFO_FACTORY = LOCATOR.getFactory(ChannelInfoFactory.class);
 
     private GwtKapuaDataModelConverter() {
     }

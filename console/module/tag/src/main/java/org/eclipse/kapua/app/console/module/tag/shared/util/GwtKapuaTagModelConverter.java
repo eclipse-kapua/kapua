@@ -15,23 +15,18 @@ package org.eclipse.kapua.app.console.module.tag.shared.util;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.kapua.app.console.module.api.shared.util.GwtKapuaCommonsModelConverter;
 import org.eclipse.kapua.app.console.module.tag.shared.model.GwtTagQuery;
-import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.FieldSortCriteria;
 import org.eclipse.kapua.model.query.SortOrder;
 import org.eclipse.kapua.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.model.query.predicate.AttributePredicate.Operator;
 import org.eclipse.kapua.service.tag.TagAttributes;
-import org.eclipse.kapua.service.tag.TagFactory;
 import org.eclipse.kapua.service.tag.TagQuery;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 
 public class GwtKapuaTagModelConverter {
-
-    private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
-    private static final TagFactory TAG_FACTORY = LOCATOR.getFactory(TagFactory.class);
 
     private GwtKapuaTagModelConverter() {
     }

@@ -31,7 +31,6 @@ import org.eclipse.kapua.service.device.management.registry.operation.DeviceMana
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationRegistryService;
 import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotification;
 import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotificationAttributes;
-import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotificationFactory;
 import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotificationListResult;
 import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotificationQuery;
 import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotificationService;
@@ -51,7 +50,6 @@ public class GwtDeviceManagementOperationServiceImpl extends KapuaRemoteServiceS
     private static final DeviceManagementOperationRegistryService DEVICE_MANAGEMENT_OPERATION_REGISTRY_SERVICE = LOCATOR.getService(DeviceManagementOperationRegistryService.class);
 
     private static final ManagementOperationNotificationService MANAGEMENT_OPERATION_NOTIFICATION_SERVICE = LOCATOR.getService(ManagementOperationNotificationService.class);
-    private static final ManagementOperationNotificationFactory MANAGEMENT_OPERATION_NOTIFICATION_FACTORY = LOCATOR.getFactory(ManagementOperationNotificationFactory.class);
     private static final long serialVersionUID = 958857278895524016L;
 
     @Override

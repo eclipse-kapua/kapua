@@ -35,7 +35,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountService;
-import org.eclipse.kapua.service.datastore.MessageStoreFactory;
 import org.eclipse.kapua.service.datastore.MessageStoreService;
 import org.eclipse.kapua.service.datastore.internal.MessageStoreFacade;
 import org.eclipse.kapua.service.datastore.internal.mediator.DatastoreException;
@@ -45,7 +44,6 @@ import org.eclipse.kapua.service.datastore.model.query.MessageSchema;
 import org.eclipse.kapua.service.datastore.model.query.predicate.DatastorePredicateFactory;
 import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceCreator;
-import org.eclipse.kapua.service.device.registry.DeviceFactory;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientProvider;
 import org.eclipse.kapua.service.elasticsearch.client.exception.ClientException;
@@ -70,12 +68,10 @@ public class MessageStoreServiceSslTest extends AbstractMessageStoreServiceTest 
     private final KapuaLocator locator = KapuaLocator.getInstance();
 
     private final DeviceRegistryService deviceRegistryService = locator.getService(DeviceRegistryService.class);
-    private final DeviceFactory deviceFactory = locator.getFactory(DeviceFactory.class);
 
     private final DatastorePredicateFactory datastorePredicateFactory = locator.getFactory(DatastorePredicateFactory.class);
     private final MessageStoreService messageStoreService = locator.getService(MessageStoreService.class);
     private final MessageStoreFacade messageStoreFacade = locator.getComponent(MessageStoreFacade.class);
-    private final MessageStoreFactory messageStoreFactory = locator.getFactory(MessageStoreFactory.class);
     private final KapuaDataMessageFactory dataMessageFactory = locator.getFactory(KapuaDataMessageFactory.class);
     private final ElasticsearchClientProvider elasticsearchClientProvider = locator.getComponent(ElasticsearchClientProvider.class);
 

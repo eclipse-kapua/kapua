@@ -36,12 +36,10 @@ import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.group.Group;
 import org.eclipse.kapua.service.authorization.group.GroupCreator;
-import org.eclipse.kapua.service.authorization.group.GroupFactory;
 import org.eclipse.kapua.service.authorization.group.GroupListResult;
 import org.eclipse.kapua.service.authorization.group.GroupQuery;
 import org.eclipse.kapua.service.authorization.group.GroupService;
 import org.eclipse.kapua.service.user.User;
-import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserListResult;
 import org.eclipse.kapua.service.user.UserQuery;
 import org.eclipse.kapua.service.user.UserService;
@@ -59,10 +57,8 @@ public class GwtGroupServiceImpl extends KapuaRemoteServiceServlet implements Gw
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
 
     private static final GroupService GROUP_SERVICE = LOCATOR.getService(GroupService.class);
-    private static final GroupFactory GROUP_FACTORY = LOCATOR.getFactory(GroupFactory.class);
 
     private static final UserService USER_SERVICE = LOCATOR.getService(UserService.class);
-    private static final UserFactory USER_FACTORY = LOCATOR.getFactory(UserFactory.class);
 
     private static final String ENTITY_INFO = "entityInfo";
 

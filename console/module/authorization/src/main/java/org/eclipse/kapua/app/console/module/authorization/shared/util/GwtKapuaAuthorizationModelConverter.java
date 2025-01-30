@@ -41,16 +41,11 @@ import org.eclipse.kapua.model.query.SortOrder;
 import org.eclipse.kapua.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.model.query.predicate.AttributePredicate.Operator;
 import org.eclipse.kapua.service.authorization.access.AccessInfoCreator;
-import org.eclipse.kapua.service.authorization.access.AccessInfoFactory;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionCreator;
-import org.eclipse.kapua.service.authorization.access.AccessPermissionFactory;
 import org.eclipse.kapua.service.authorization.access.AccessRoleCreator;
-import org.eclipse.kapua.service.authorization.access.AccessRoleFactory;
-import org.eclipse.kapua.service.authorization.domain.DomainFactory;
 import org.eclipse.kapua.service.authorization.domain.DomainListResult;
 import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
 import org.eclipse.kapua.service.authorization.group.GroupAttributes;
-import org.eclipse.kapua.service.authorization.group.GroupFactory;
 import org.eclipse.kapua.service.authorization.group.GroupQuery;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
@@ -74,16 +69,12 @@ public class GwtKapuaAuthorizationModelConverter {
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
 
     private static final DomainRegistryService DOMAIN_REGISTRY_SERVICE = LOCATOR.getService(DomainRegistryService.class);
-    private static final DomainFactory DOMAIN_FACTORY = LOCATOR.getFactory(DomainFactory.class);
 
     private GwtKapuaAuthorizationModelConverter() {
     }
 
     public static GroupQuery convertGroupQuery(PagingLoadConfig loadConfig,
             GwtGroupQuery gwtGroupQuery) {
-        KapuaLocator locator = KapuaLocator.getInstance();
-        GroupFactory groupFactory = locator.getFactory(GroupFactory.class);
-
         GroupQuery query = new GroupQuery(GwtKapuaCommonsModelConverter.convertKapuaId(gwtGroupQuery.getScopeId()));
 
         AndPredicate predicate = query.andPredicate();
@@ -120,10 +111,6 @@ public class GwtKapuaAuthorizationModelConverter {
      * @return the converted {@link RoleQuery}
      */
     public static RoleQuery convertRoleQuery(PagingLoadConfig loadConfig, GwtRoleQuery gwtRoleQuery) {
-
-        // Get Services
-        KapuaLocator locator = KapuaLocator.getInstance();
-        RoleFactory roleFactory = locator.getFactory(RoleFactory.class);
 
         // Convert query
         RoleQuery query = new RoleQuery(GwtKapuaCommonsModelConverter.convertKapuaId(gwtRoleQuery.getScopeId()));
@@ -209,10 +196,6 @@ public class GwtKapuaAuthorizationModelConverter {
      */
     public static RoleCreator convertRoleCreator(GwtRoleCreator gwtRoleCreator) throws KapuaException {
 
-        // Get Services
-        KapuaLocator locator = KapuaLocator.getInstance();
-        RoleFactory roleFactory = locator.getFactory(RoleFactory.class);
-
         // Convert scopeId
         KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(gwtRoleCreator.getScopeId());
         RoleCreator roleCreator = new RoleCreator(scopeId);
@@ -244,10 +227,6 @@ public class GwtKapuaAuthorizationModelConverter {
      */
     public static AccessRoleCreator convertAccessRoleCreator(GwtAccessRoleCreator gwtAccessRoleCreator) {
 
-        // Get Services
-        KapuaLocator locator = KapuaLocator.getInstance();
-        AccessRoleFactory accessRoleFactory = locator.getFactory(AccessRoleFactory.class);
-
         // Convert scopeId
         KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(gwtAccessRoleCreator.getScopeId());
         AccessRoleCreator accessRoleCreator = new AccessRoleCreator(scopeId);
@@ -271,10 +250,6 @@ public class GwtKapuaAuthorizationModelConverter {
      */
     public static AccessPermissionCreator convertAccessPermissionCreator(GwtAccessPermissionCreator gwtAccessPermissionCreator) throws KapuaException {
 
-        // Get Services
-        KapuaLocator locator = KapuaLocator.getInstance();
-        AccessPermissionFactory accessPermissionFactory = locator.getFactory(AccessPermissionFactory.class);
-
         // Convert scopeId
         KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(gwtAccessPermissionCreator.getScopeId());
         AccessPermissionCreator accessPermissionCreator = new AccessPermissionCreator(scopeId);
@@ -289,10 +264,6 @@ public class GwtKapuaAuthorizationModelConverter {
     }
 
     public static AccessInfoCreator convertAccessInfoCreator(GwtAccessInfoCreator gwtAccessInfoCreator) {
-        // Get Services
-        KapuaLocator locator = KapuaLocator.getInstance();
-        AccessInfoFactory accessInfoFactory = locator.getFactory(AccessInfoFactory.class);
-
         // Convert scopeId
         KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(gwtAccessInfoCreator.getScopeId());
         AccessInfoCreator accessInfoCreator = new AccessInfoCreator(scopeId);

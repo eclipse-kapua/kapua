@@ -27,7 +27,6 @@ import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinition;
-import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionFactory;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionListResult;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionService;
 
@@ -39,7 +38,6 @@ public class GwtTriggerDefinitionServiceImpl extends KapuaRemoteServiceServlet i
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
 
     private static final TriggerDefinitionService TRIGGER_DEFINITION_SERVICE = LOCATOR.getService(TriggerDefinitionService.class);
-    private static final TriggerDefinitionFactory TRIGGER_DEFINITION_FACTORY = LOCATOR.getFactory(TriggerDefinitionFactory.class);
 
     @Override
     public ListLoadResult<GwtTriggerDefinition> findAll() throws GwtKapuaException {

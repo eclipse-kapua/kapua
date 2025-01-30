@@ -41,7 +41,6 @@ import org.eclipse.kapua.service.scheduler.trigger.TriggerFactory;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerListResult;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerService;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinition;
-import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionFactory;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionListResult;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionQuery;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionService;
@@ -60,7 +59,6 @@ public class GwtTriggerServiceImpl extends KapuaRemoteServiceServlet implements 
     private static final TriggerFactory TRIGGER_FACTORY = LOCATOR.getFactory(TriggerFactory.class);
 
     private static final TriggerDefinitionService TRIGGER_DEFINITION_SERVICE = LOCATOR.getService(TriggerDefinitionService.class);
-    private static final TriggerDefinitionFactory TRIGGER_DEFINITION_FACTORY = LOCATOR.getFactory(TriggerDefinitionFactory.class);
 
     private static final String TRIGGER_DEFINITION_INTERVAL_NAME = "Interval Job";
     private static final TriggerDefinition TRIGGER_DEFINITION_INTERVAL;

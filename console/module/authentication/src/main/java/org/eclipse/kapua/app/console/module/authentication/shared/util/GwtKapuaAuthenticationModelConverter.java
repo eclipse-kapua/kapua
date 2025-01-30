@@ -32,7 +32,6 @@ import org.eclipse.kapua.service.authentication.credential.CredentialCreator;
 import org.eclipse.kapua.service.authentication.credential.CredentialFactory;
 import org.eclipse.kapua.service.authentication.credential.CredentialStatus;
 import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionCreator;
-import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionFactory;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.BaseModel;
@@ -46,7 +45,6 @@ public class GwtKapuaAuthenticationModelConverter {
     // Get Services
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
     private static final CredentialFactory CREDENTIAL_FACTORY = LOCATOR.getFactory(CredentialFactory.class);
-    private static final MfaOptionFactory MFA_OPTION_FACTORY = LOCATOR.getFactory(MfaOptionFactory.class);
 
     private GwtKapuaAuthenticationModelConverter() {
     }

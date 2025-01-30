@@ -28,7 +28,6 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.domain.Domain;
-import org.eclipse.kapua.service.authorization.domain.DomainFactory;
 import org.eclipse.kapua.service.authorization.domain.DomainListResult;
 import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
 
@@ -38,7 +37,6 @@ public class GwtDomainRegistryServiceImpl extends KapuaRemoteServiceServlet impl
 
     private final KapuaLocator locator = KapuaLocator.getInstance();
     private final DomainRegistryService domainRegistryService = locator.getService(DomainRegistryService.class);
-    private final DomainFactory domainFactory = locator.getFactory(DomainFactory.class);
 
     @Override
     public List<GwtDomain> findAll() throws GwtKapuaException {

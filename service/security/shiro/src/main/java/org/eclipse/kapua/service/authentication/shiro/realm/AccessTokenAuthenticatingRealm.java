@@ -44,7 +44,6 @@ import org.eclipse.kapua.service.authentication.token.AccessTokenService;
 import org.eclipse.kapua.service.certificate.CertificateAttributes;
 import org.eclipse.kapua.service.certificate.CertificateStatus;
 import org.eclipse.kapua.service.certificate.info.CertificateInfo;
-import org.eclipse.kapua.service.certificate.info.CertificateInfoFactory;
 import org.eclipse.kapua.service.certificate.info.CertificateInfoListResult;
 import org.eclipse.kapua.service.certificate.info.CertificateInfoQuery;
 import org.eclipse.kapua.service.certificate.info.CertificateInfoService;
@@ -72,7 +71,6 @@ public class AccessTokenAuthenticatingRealm extends KapuaAuthenticatingRealm {
      * Realm name.
      */
     public static final String REALM_NAME = "accessTokenAuthenticatingRealm";
-    private final CertificateInfoFactory certificateInfoFactory = KapuaLocator.getInstance().getFactory(CertificateInfoFactory.class);
     private final CertificateInfoService certificateInfoService = KapuaLocator.getInstance().getService(CertificateInfoService.class);
     private final AccessTokenService accessTokenService = KapuaLocator.getInstance().getService(AccessTokenService.class);
     private final UserService userService = KapuaLocator.getInstance().getService(UserService.class);

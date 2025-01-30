@@ -364,9 +364,6 @@ public class CredentialServiceImpl extends KapuaConfigurableServiceBase implemen
     }
 
     private void deleteCredentialByUserId(KapuaId scopeId, KapuaId userId) throws KapuaException {
-        KapuaLocator locator = KapuaLocator.getInstance();
-        CredentialFactory credentialFactory = locator.getFactory(CredentialFactory.class);
-
         KapuaQuery query = new KapuaQuery(scopeId);
         query.setPredicate(query.attributePredicate(CredentialAttributes.USER_ID, userId));
 
@@ -378,9 +375,6 @@ public class CredentialServiceImpl extends KapuaConfigurableServiceBase implemen
     }
 
     private void deleteCredentialByAccountId(KapuaId scopeId, KapuaId accountId) throws KapuaException {
-        KapuaLocator locator = KapuaLocator.getInstance();
-        CredentialFactory credentialFactory = locator.getFactory(CredentialFactory.class);
-
         final KapuaQuery query = new KapuaQuery(accountId);
 
         CredentialListResult credentialsToDelete = query(query);

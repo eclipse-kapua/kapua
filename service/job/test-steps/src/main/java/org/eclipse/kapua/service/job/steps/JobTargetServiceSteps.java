@@ -30,7 +30,6 @@ import org.eclipse.kapua.qa.common.StepData;
 import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotification;
 import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceAttributes;
-import org.eclipse.kapua.service.device.registry.DeviceFactory;
 import org.eclipse.kapua.service.device.registry.DeviceListResult;
 import org.eclipse.kapua.service.device.registry.DeviceQuery;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
@@ -63,7 +62,6 @@ public class JobTargetServiceSteps extends JobServiceTestBase {
 
     private static final String DEVICE = "Device";
 
-    private DeviceFactory deviceFactory;
     private DeviceRegistryService deviceRegistryService;
 
     private JobTargetService jobTargetService;
@@ -83,7 +81,6 @@ public class JobTargetServiceSteps extends JobServiceTestBase {
     public void setServices() {
         KapuaLocator locator = KapuaLocator.getInstance();
 
-        deviceFactory = locator.getFactory(DeviceFactory.class);
         deviceRegistryService = locator.getService(DeviceRegistryService.class);
 
         jobTargetService = locator.getService(JobTargetService.class);

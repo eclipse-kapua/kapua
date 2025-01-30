@@ -52,7 +52,6 @@ import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnection;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionStatus;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventCreator;
-import org.eclipse.kapua.service.device.registry.event.DeviceEventFactory;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventService;
 
 /**
@@ -67,7 +66,6 @@ public abstract class AbstractDeviceManagementServiceImpl {
     protected final KapuaLocator kapuaLocator = KapuaLocator.getInstance();
 
     private final DeviceEventService kapuaLocatorService = kapuaLocator.getService(DeviceEventService.class);
-    private final DeviceEventFactory deviceEventFactory = kapuaLocator.getFactory(DeviceEventFactory.class);
 
     private final DeviceRegistryService deviceRegistryService = kapuaLocator.getService(DeviceRegistryService.class);
 

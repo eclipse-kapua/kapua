@@ -35,7 +35,6 @@ import org.eclipse.kapua.model.id.KapuaIdFactory;
 import org.eclipse.kapua.model.query.KapuaListResult;
 import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceAttributes;
-import org.eclipse.kapua.service.device.registry.DeviceFactory;
 import org.eclipse.kapua.service.device.registry.DeviceListResult;
 import org.eclipse.kapua.service.device.registry.DeviceQuery;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
@@ -81,7 +80,6 @@ public class JobTargetExporterCsv extends JobTargetExporter {
         KapuaLocator locator = KapuaLocator.getInstance();
         final KapuaIdFactory kapuaIdFactory = locator.getFactory(KapuaIdFactory.class);
         final DeviceRegistryService deviceRegistryService = locator.getService(DeviceRegistryService.class);
-        final DeviceFactory deviceFactory = locator.getFactory(DeviceFactory.class);
         final DeviceQuery deviceQuery = new DeviceQuery(kapuaIdFactory.newKapuaId(scopeId));
 
         KapuaId[] targetIds = new KapuaId[jobTargets.getSize()];

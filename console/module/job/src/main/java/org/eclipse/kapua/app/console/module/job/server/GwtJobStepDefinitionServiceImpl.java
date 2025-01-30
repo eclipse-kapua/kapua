@@ -29,7 +29,6 @@ import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinition;
-import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionFactory;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionListResult;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionQuery;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionService;
@@ -43,7 +42,6 @@ public class GwtJobStepDefinitionServiceImpl extends KapuaRemoteServiceServlet i
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
 
     private static final JobStepDefinitionService JOB_STEP_DEFINITION_SERVICE = LOCATOR.getService(JobStepDefinitionService.class);
-    private static final JobStepDefinitionFactory JOB_STEP_DEFINITION_FACTORY = LOCATOR.getFactory(JobStepDefinitionFactory.class);
 
     private static final ConsoleSetting CONSOLE_SETTING = ConsoleSetting.getInstance();
 

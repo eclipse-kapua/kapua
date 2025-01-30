@@ -30,7 +30,6 @@ import org.eclipse.kapua.app.console.module.api.setting.ConsoleSettingKeys;
 import org.eclipse.kapua.app.console.module.api.shared.util.GwtKapuaCommonsModelConverter;
 import org.eclipse.kapua.app.console.module.data.shared.util.KapuaGwtDataModelConverter;
 import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.service.datastore.MessageStoreFactory;
 import org.eclipse.kapua.service.datastore.MessageStoreService;
 import org.eclipse.kapua.service.datastore.model.DatastoreMessage;
 import org.eclipse.kapua.service.datastore.model.MessageListResult;
@@ -51,8 +50,6 @@ public class DataExporterServlet extends HttpServlet {
     private static final Logger LOG = LoggerFactory.getLogger(DataExporterServlet.class);
 
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
-
-    private static final MessageStoreFactory MESSAGE_STORE_FACTORY = LOCATOR.getFactory(MessageStoreFactory.class);
 
     private static final DatastorePredicateFactory DATASTORE_PREDICATE_FACTORY = LOCATOR.getFactory(DatastorePredicateFactory.class);
 

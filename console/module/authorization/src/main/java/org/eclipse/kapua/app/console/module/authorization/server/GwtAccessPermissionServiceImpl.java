@@ -41,7 +41,6 @@ import org.eclipse.kapua.service.authorization.access.AccessInfoService;
 import org.eclipse.kapua.service.authorization.access.AccessPermission;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionAttributes;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionCreator;
-import org.eclipse.kapua.service.authorization.access.AccessPermissionFactory;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionListResult;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionService;
 import org.eclipse.kapua.service.authorization.group.Group;
@@ -63,7 +62,6 @@ public class GwtAccessPermissionServiceImpl extends KapuaRemoteServiceServlet im
     private static final AccessInfoService ACCESS_INFO_SERVICE = LOCATOR.getService(AccessInfoService.class);
 
     private static final AccessPermissionService ACCESS_PERMISSION_SERVICE = LOCATOR.getService(AccessPermissionService.class);
-    private static final AccessPermissionFactory ACCESS_PERMISSION_FACTORY = LOCATOR.getFactory(AccessPermissionFactory.class);
 
     private static final AccountService ACCOUNT_SERVICE = LOCATOR.getService(AccountService.class);
     private static final UserService USER_SERVICE = LOCATOR.getService(UserService.class);

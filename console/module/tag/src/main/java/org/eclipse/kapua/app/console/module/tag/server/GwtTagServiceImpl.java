@@ -39,12 +39,10 @@ import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.tag.Tag;
 import org.eclipse.kapua.service.tag.TagCreator;
-import org.eclipse.kapua.service.tag.TagFactory;
 import org.eclipse.kapua.service.tag.TagListResult;
 import org.eclipse.kapua.service.tag.TagQuery;
 import org.eclipse.kapua.service.tag.TagService;
 import org.eclipse.kapua.service.user.User;
-import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserListResult;
 import org.eclipse.kapua.service.user.UserQuery;
 import org.eclipse.kapua.service.user.UserService;
@@ -64,10 +62,8 @@ public class GwtTagServiceImpl extends KapuaRemoteServiceServlet implements GwtT
     DeviceRegistryService deviceRegistryService = locator.getService(DeviceRegistryService.class);
 
     TagService tagService = locator.getService(TagService.class);
-    TagFactory tagFactory = locator.getFactory(TagFactory.class);
 
     final UserService userService = locator.getService(UserService.class);
-    final UserFactory userFactory = locator.getFactory(UserFactory.class);
 
     private static final String ENTITY_INFO = "entityInfo";
 

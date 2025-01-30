@@ -41,14 +41,11 @@ import org.eclipse.kapua.service.device.management.asset.DeviceAssetChannelMode;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssetFactory;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssets;
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationAttributes;
-import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationFactory;
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationQuery;
 import org.eclipse.kapua.service.device.registry.DeviceAttributes;
-import org.eclipse.kapua.service.device.registry.DeviceFactory;
 import org.eclipse.kapua.service.device.registry.DeviceQuery;
 import org.eclipse.kapua.service.device.registry.DeviceStatus;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionAttributes;
-import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionFactory;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionQuery;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionStatus;
 
@@ -58,10 +55,6 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 public class GwtKapuaDeviceModelConverter {
 
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
-
-    private static final DeviceFactory DEVICE_FACTORY = LOCATOR.getFactory(DeviceFactory.class);
-    private static final DeviceConnectionFactory DEVICE_CONNECTION_FACTORY = LOCATOR.getFactory(DeviceConnectionFactory.class);
-    private static final DeviceManagementOperationFactory DEVICE_MANAGEMENT_OPERATION_FACTORY = LOCATOR.getFactory(DeviceManagementOperationFactory.class);
 
     private static final DeviceAssetFactory ASSET_FACTORY = LOCATOR.getFactory(DeviceAssetFactory.class);
 

@@ -55,7 +55,6 @@ import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceAttributes;
 import org.eclipse.kapua.service.device.registry.DeviceCreator;
 import org.eclipse.kapua.service.device.registry.DeviceExtendedProperty;
-import org.eclipse.kapua.service.device.registry.DeviceFactory;
 import org.eclipse.kapua.service.device.registry.DeviceQuery;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.device.registry.DeviceStatus;
@@ -64,7 +63,6 @@ import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionServ
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionStatus;
 import org.eclipse.kapua.service.device.registry.event.DeviceEvent;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventAttributes;
-import org.eclipse.kapua.service.device.registry.event.DeviceEventFactory;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventQuery;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventService;
 import org.eclipse.kapua.service.tag.Tag;
@@ -265,7 +263,6 @@ public class GwtDeviceServiceImpl extends KapuaRemoteServiceServlet implements G
 
                 // GPS infos retrieval
                 if (AUTHORIZATION_SERVICE.isPermitted(PERMISSION_FACTORY.newPermission(Domains.DEVICE_EVENT, Actions.read, device.getScopeId()))) {
-                    DeviceEventFactory deviceEventFactory = locator.getFactory(DeviceEventFactory.class);
                     DeviceEventQuery query = new DeviceEventQuery(device.getScopeId());
                     query.setLimit(1);
                     query.setSortCriteria(query.fieldSortCriteria(DeviceEventAttributes.RECEIVED_ON, SortOrder.DESCENDING));
@@ -379,7 +376,6 @@ public class GwtDeviceServiceImpl extends KapuaRemoteServiceServlet implements G
 
         KapuaLocator locator = KapuaLocator.getInstance();
         DeviceRegistryService deviceRegistryService = locator.getService(DeviceRegistryService.class);
-        DeviceFactory deviceFactory = locator.getFactory(DeviceFactory.class);
         GwtDevice gwtDevice = null;
 
         try {
@@ -544,7 +540,6 @@ public class GwtDeviceServiceImpl extends KapuaRemoteServiceServlet implements G
 
         KapuaLocator locator = KapuaLocator.getInstance();
         DeviceEventService des = locator.getService(DeviceEventService.class);
-        DeviceEventFactory deviceEventFactory = locator.getFactory(DeviceEventFactory.class);
 
         try {
 

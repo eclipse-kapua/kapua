@@ -15,13 +15,11 @@ package org.eclipse.kapua.app.console.module.endpoint.shared.util;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.kapua.app.console.module.api.shared.util.GwtKapuaCommonsModelConverter;
 import org.eclipse.kapua.app.console.module.endpoint.shared.model.GwtEndpointQuery;
-import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.query.FieldSortCriteria;
 import org.eclipse.kapua.model.query.SortOrder;
 import org.eclipse.kapua.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.model.query.predicate.AttributePredicate;
 import org.eclipse.kapua.service.endpoint.EndpointInfoAttributes;
-import org.eclipse.kapua.service.endpoint.EndpointInfoFactory;
 import org.eclipse.kapua.service.endpoint.EndpointInfoQuery;
 
 import com.extjs.gxt.ui.client.Style.SortDir;
@@ -29,9 +27,6 @@ import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.google.common.base.Strings;
 
 public class GwtKapuaEndpointModelConverter {
-
-    private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
-    private static final EndpointInfoFactory ENDPOINT_FACTORY = LOCATOR.getFactory(EndpointInfoFactory.class);
 
     private GwtKapuaEndpointModelConverter() {
     }

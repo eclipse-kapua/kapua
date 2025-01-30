@@ -39,13 +39,9 @@ import org.eclipse.kapua.app.console.module.data.shared.util.KapuaGwtDataModelCo
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.type.ObjectTypeConverter;
-import org.eclipse.kapua.service.datastore.ChannelInfoFactory;
 import org.eclipse.kapua.service.datastore.ChannelInfoRegistryService;
-import org.eclipse.kapua.service.datastore.ClientInfoFactory;
 import org.eclipse.kapua.service.datastore.ClientInfoRegistryService;
-import org.eclipse.kapua.service.datastore.MessageStoreFactory;
 import org.eclipse.kapua.service.datastore.MessageStoreService;
-import org.eclipse.kapua.service.datastore.MetricInfoFactory;
 import org.eclipse.kapua.service.datastore.MetricInfoRegistryService;
 import org.eclipse.kapua.service.datastore.internal.model.query.predicate.ChannelMatchPredicateImpl;
 import org.eclipse.kapua.service.datastore.model.ChannelInfo;
@@ -95,11 +91,6 @@ public class GwtDataServiceImpl extends KapuaRemoteServiceServlet implements Gwt
     private static final long serialVersionUID = -5518740923786017558L;
 
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
-
-    private static final ChannelInfoFactory CHANNEL_INFO_FACTORY = LOCATOR.getFactory(ChannelInfoFactory.class);
-    private static final ClientInfoFactory CLIENT_INFO_FACTORY = LOCATOR.getFactory(ClientInfoFactory.class);
-    private static final MessageStoreFactory MESSAGE_STORE_FACTORY = LOCATOR.getFactory(MessageStoreFactory.class);
-    private static final MetricInfoFactory METRIC_INFO_FACTORY = LOCATOR.getFactory(MetricInfoFactory.class);
 
     private static final DatastorePredicateFactory DATASTORE_PREDICATE_FACTORY = LOCATOR.getFactory(DatastorePredicateFactory.class);
 

@@ -37,7 +37,6 @@ import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.device.registry.event.DeviceEvent;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventAttributes;
-import org.eclipse.kapua.service.device.registry.event.DeviceEventFactory;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventQuery;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventService;
 import org.slf4j.Logger;
@@ -88,7 +87,6 @@ public class DeviceEventExporterServlet extends HttpServlet {
             // get the devices and append them to the exporter
             KapuaLocator locator = KapuaLocator.getInstance();
             DeviceEventService des = locator.getService(DeviceEventService.class);
-            DeviceEventFactory def = locator.getFactory(DeviceEventFactory.class);
 
             final AccountService as = locator.getService(AccountService.class);
             final DeviceRegistryService deviceRegistryService = locator.getService(DeviceRegistryService.class);

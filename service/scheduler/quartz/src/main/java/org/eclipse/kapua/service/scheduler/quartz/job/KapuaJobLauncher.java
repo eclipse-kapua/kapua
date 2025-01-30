@@ -28,7 +28,6 @@ import org.eclipse.kapua.service.job.JobService;
 import org.eclipse.kapua.service.scheduler.trigger.Trigger;
 import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTrigger;
 import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTriggerCreator;
-import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTriggerFactory;
 import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTriggerService;
 import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTriggerStatus;
 import org.quartz.Job;
@@ -59,7 +58,6 @@ public class KapuaJobLauncher implements Job {
     JobEngineService jobEngineService = locator.getService(JobEngineService.class);
 
     FiredTriggerService firedTriggerService = locator.getService(FiredTriggerService.class);
-    FiredTriggerFactory firedTriggerFactory = locator.getFactory(FiredTriggerFactory.class);
 
     private KapuaId scopeId;
     private KapuaId jobId;

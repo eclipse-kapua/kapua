@@ -36,12 +36,10 @@ import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.job.Job;
 import org.eclipse.kapua.service.job.JobCreator;
-import org.eclipse.kapua.service.job.JobFactory;
 import org.eclipse.kapua.service.job.JobListResult;
 import org.eclipse.kapua.service.job.JobQuery;
 import org.eclipse.kapua.service.job.JobService;
 import org.eclipse.kapua.service.user.User;
-import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserListResult;
 import org.eclipse.kapua.service.user.UserQuery;
 import org.eclipse.kapua.service.user.UserService;
@@ -57,10 +55,8 @@ public class GwtJobServiceImpl extends KapuaRemoteServiceServlet implements GwtJ
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
 
     private static final JobService JOB_SERVICE = LOCATOR.getService(JobService.class);
-    private static final JobFactory JOB_FACTORY = LOCATOR.getFactory(JobFactory.class);
 
     private static final UserService USER_SERVICE = LOCATOR.getService(UserService.class);
-    private static final UserFactory USER_FACTORY = LOCATOR.getFactory(UserFactory.class);
 
     private static final String ENTITY_INFO = "entityInfo";
 

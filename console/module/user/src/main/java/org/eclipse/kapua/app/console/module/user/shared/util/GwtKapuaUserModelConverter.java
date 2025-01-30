@@ -17,14 +17,12 @@ import org.eclipse.kapua.app.console.module.api.shared.util.GwtKapuaCommonsModel
 import org.eclipse.kapua.app.console.module.user.shared.model.GwtUser.GwtUserStatus;
 import org.eclipse.kapua.app.console.module.user.shared.model.GwtUser.GwtUserType;
 import org.eclipse.kapua.app.console.module.user.shared.model.GwtUserQuery;
-import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.KapuaEntity;
 import org.eclipse.kapua.model.query.FieldSortCriteria;
 import org.eclipse.kapua.model.query.SortOrder;
 import org.eclipse.kapua.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.model.query.predicate.AttributePredicate.Operator;
 import org.eclipse.kapua.service.user.UserAttributes;
-import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserQuery;
 import org.eclipse.kapua.service.user.UserStatus;
 import org.eclipse.kapua.service.user.UserType;
@@ -51,10 +49,6 @@ public class GwtKapuaUserModelConverter {
      * @return the converted {@link UserQuery}
      */
     public static UserQuery convertUserQuery(PagingLoadConfig loadConfig, GwtUserQuery gwtUserQuery) {
-
-        // Get Services
-        KapuaLocator locator = KapuaLocator.getInstance();
-        UserFactory userFactory = locator.getFactory(UserFactory.class);
 
         UserQuery query = new UserQuery(GwtKapuaCommonsModelConverter.convertKapuaId(gwtUserQuery.getScopeId()));
 

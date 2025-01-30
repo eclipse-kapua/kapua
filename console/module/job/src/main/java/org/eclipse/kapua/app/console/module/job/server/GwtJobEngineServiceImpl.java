@@ -31,7 +31,6 @@ import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.SortOrder;
 import org.eclipse.kapua.service.job.execution.JobExecutionAttributes;
-import org.eclipse.kapua.service.job.execution.JobExecutionFactory;
 import org.eclipse.kapua.service.job.execution.JobExecutionListResult;
 import org.eclipse.kapua.service.job.execution.JobExecutionQuery;
 import org.eclipse.kapua.service.job.execution.JobExecutionService;
@@ -44,7 +43,6 @@ public class GwtJobEngineServiceImpl extends KapuaRemoteServiceServlet implement
     private static final JobEngineFactory JOB_ENGINE_FACTORY = LOCATOR.getFactory(JobEngineFactory.class);
 
     private static final JobExecutionService JOB_EXECUTION_SERVICE = LOCATOR.getService(JobExecutionService.class);
-    private static final JobExecutionFactory JOB_EXECUTION_FACTORY = LOCATOR.getFactory(JobExecutionFactory.class);
 
     @Override
     public void start(String gwtScopeId, String gwtJobId) throws GwtKapuaException {
