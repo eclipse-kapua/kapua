@@ -14,9 +14,10 @@ package org.eclipse.kapua.integration.misc;
 
 import java.util.Date;
 
+import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
-import org.eclipse.kapua.service.authorization.permission.shiro.PermissionImpl;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.role.RolePermission;
 import org.eclipse.kapua.service.authorization.role.shiro.RolePermissionFactoryImpl;
 import org.junit.Assert;
@@ -32,7 +33,7 @@ public class RolePermissionFactoryTest {
     KapuaId scopeId;
     RolePermission rolePermission;
     Date createdOn, modifiedOn;
-    PermissionImpl permission;
+    Permission permission;
 
     @Before
     public void initialize() {
@@ -41,7 +42,7 @@ public class RolePermissionFactoryTest {
         createdOn = new Date();
         modifiedOn = new Date();
         rolePermission = Mockito.mock(RolePermission.class);
-        permission = Mockito.mock(PermissionImpl.class);
+        permission = new Permission("domain", Actions.connect, KapuaId.ONE);
 
         Mockito.when(rolePermission.getId()).thenReturn(KapuaId.ANY);
         Mockito.when(rolePermission.getRoleId()).thenReturn(KapuaId.ONE);

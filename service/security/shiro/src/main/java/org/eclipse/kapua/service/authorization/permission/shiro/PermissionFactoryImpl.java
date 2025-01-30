@@ -12,20 +12,21 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.permission.shiro;
 
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
-
-import javax.inject.Singleton;
 
 /**
  * {@link PermissionFactory} implementation.
  */
 @Singleton
 public class PermissionFactoryImpl implements PermissionFactory {
+
     @Override
     public Permission newPermission(String domain, Actions action, KapuaId targetScopeId, KapuaId groupId, boolean forwardable) {
-        return new PermissionImpl(domain, action, targetScopeId, groupId, forwardable);
+        return new Permission(domain, action, targetScopeId, groupId, forwardable);
     }
 }

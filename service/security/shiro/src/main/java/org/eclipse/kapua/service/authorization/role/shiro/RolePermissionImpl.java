@@ -12,13 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.role.shiro;
 
-import org.eclipse.kapua.commons.model.AbstractKapuaEntity;
-import org.eclipse.kapua.commons.model.id.KapuaEid;
-import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.shiro.PermissionImpl;
-import org.eclipse.kapua.service.authorization.role.RolePermission;
+import java.util.Date;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -27,7 +21,14 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
-import java.util.Date;
+
+import org.eclipse.kapua.commons.model.AbstractKapuaEntity;
+import org.eclipse.kapua.commons.model.id.KapuaEid;
+import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.service.authorization.permission.Permission;
+import org.eclipse.kapua.service.authorization.permission.shiro.PermissionImpl;
+import org.eclipse.kapua.service.authorization.role.RolePermission;
 
 /**
  * {@link RolePermission} implementation.
@@ -61,7 +62,8 @@ public class RolePermissionImpl extends AbstractKapuaEntity implements RolePermi
     /**
      * Constructor.
      *
-     * @param scopeId The scope {@link KapuaId} to set into the {@link RolePermission}
+     * @param scopeId
+     *         The scope {@link KapuaId} to set into the {@link RolePermission}
      * @since 1.0.0
      */
     public RolePermissionImpl(KapuaId scopeId) {
@@ -71,8 +73,10 @@ public class RolePermissionImpl extends AbstractKapuaEntity implements RolePermi
     /**
      * Constructor.
      *
-     * @param scopeId    The scope {@link KapuaId} to set into the {@link RolePermission}
-     * @param permission The {@link Permission} to set into the {@link RolePermission}
+     * @param scopeId
+     *         The scope {@link KapuaId} to set into the {@link RolePermission}
+     * @param permission
+     *         The {@link Permission} to set into the {@link RolePermission}
      * @since 1.0.0
      */
     public RolePermissionImpl(KapuaId scopeId, Permission permission) {
@@ -109,14 +113,16 @@ public class RolePermissionImpl extends AbstractKapuaEntity implements RolePermi
     public void setPermission(Permission permission) {
         PermissionImpl permissionImpl = null;
         if (permission != null) {
-            permissionImpl = permission instanceof PermissionImpl ? (PermissionImpl) permission : new PermissionImpl(permission);
+            permissionImpl = new PermissionImpl(permission);
         }
         this.permission = permissionImpl;
     }
 
     @Override
     public Permission getPermission() {
-        return permission != null ? permission : new PermissionImpl(null, null, null, null);
+        return permission != null
+                ? new Permission(permission.getDomain(), permission.getAction(), permission.getTargetScopeId(), permission.getGroupId(), permission.getForwardable())
+                : new Permission(null, null, null);
     }
 
     @Override

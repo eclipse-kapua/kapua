@@ -12,6 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.integration.misc;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
+import java.util.Date;
+
 import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
@@ -19,24 +23,18 @@ import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.authorization.access.AccessPermission;
 import org.eclipse.kapua.service.authorization.access.shiro.AccessPermissionImpl;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.shiro.PermissionImpl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
-import java.util.Date;
-
-
 @Category(JUnitTests.class)
 public class AccessPermissionImplTest {
 
     AccessPermissionImpl accessPermissionImpl1, accessPermissionImpl2, accessPermissionImpl;
     AccessPermission accessPermission;
-    PermissionImpl permission1, permission2;
+    Permission permission1, permission2;
     Permission newPermission;
     Date createdOn;
 
@@ -45,8 +43,8 @@ public class AccessPermissionImplTest {
         accessPermissionImpl1 = new AccessPermissionImpl(KapuaId.ONE);
         accessPermissionImpl2 = new AccessPermissionImpl(KapuaId.ONE);
         accessPermission = Mockito.mock(AccessPermission.class);
-        permission1 = Mockito.mock(PermissionImpl.class);
-        permission2 = Mockito.mock(PermissionImpl.class);
+        permission1 = new Permission("domain", Actions.connect, KapuaId.ONE, KapuaId.ANY, false);
+        permission2 = new Permission("another", null, null);
         newPermission = Mockito.mock(Permission.class);
         createdOn = new Date();
 
@@ -56,10 +54,6 @@ public class AccessPermissionImplTest {
         Mockito.when(accessPermission.getCreatedOn()).thenReturn(createdOn);
         Mockito.when(accessPermission.getAccessInfoId()).thenReturn(KapuaId.ONE);
         Mockito.when(accessPermission.getPermission()).thenReturn(permission1);
-        Mockito.when(permission1.getDomain()).thenReturn("domain");
-        Mockito.when(permission1.getAction()).thenReturn(Actions.connect);
-        Mockito.when(permission1.getTargetScopeId()).thenReturn(KapuaId.ONE);
-        Mockito.when(permission1.getGroupId()).thenReturn(KapuaId.ANY);
 
         accessPermissionImpl = new AccessPermissionImpl(accessPermission);
     }
@@ -168,8 +162,7 @@ public class AccessPermissionImplTest {
         Mockito.when(permission.getAction()).thenReturn(null);
         Mockito.when(permission.getTargetScopeId()).thenReturn(null);
         Mockito.when(permission.getGroupId()).thenReturn(null);
-        PermissionImpl permissionImpl = new PermissionImpl(permission);
-        accessPermissionImpl1.setPermission(permissionImpl);
+        accessPermissionImpl1.setPermission(permission);
         Assert.assertEquals("Expected and actual values should be the same.", 924482, accessPermissionImpl1.hashCode());
     }
 
@@ -181,8 +174,7 @@ public class AccessPermissionImplTest {
         Mockito.when(permission.getAction()).thenReturn(null);
         Mockito.when(permission.getTargetScopeId()).thenReturn(null);
         Mockito.when(permission.getGroupId()).thenReturn(null);
-        PermissionImpl permissionImpl = new PermissionImpl(permission);
-        accessPermissionImpl1.setPermission(permissionImpl);
+        accessPermissionImpl1.setPermission(permission);
         Assert.assertEquals("Expected and actual values should be the same.", 925474, accessPermissionImpl1.hashCode());
     }
 
@@ -252,7 +244,7 @@ public class AccessPermissionImplTest {
     public void equalsEqualAccessInfoIdsDifferentPermissionsTest() {
         accessPermissionImpl1.setAccessInfoId(KapuaId.ONE);
         accessPermissionImpl2.setAccessInfoId(KapuaId.ONE);
-        accessPermissionImpl1.setPermission(Mockito.mock(PermissionImpl.class));
+        accessPermissionImpl1.setPermission(new Permission("another", null, null));
         Assert.assertFalse("False expected.", accessPermissionImpl1.equals(accessPermissionImpl2));
     }
 }

@@ -38,7 +38,7 @@ import org.eclipse.kapua.service.authorization.access.AccessPermissionService;
 import org.eclipse.kapua.service.authorization.access.AccessRole;
 import org.eclipse.kapua.service.authorization.access.AccessRoleListResult;
 import org.eclipse.kapua.service.authorization.access.AccessRoleService;
-import org.eclipse.kapua.service.authorization.permission.shiro.PermissionImpl;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.role.Role;
 import org.eclipse.kapua.service.authorization.role.RolePermission;
 import org.eclipse.kapua.service.authorization.role.RolePermissionListResult;
@@ -130,7 +130,7 @@ public class KapuaAuthorizingRealm extends AuthorizingRealm {
             }
 
             for (AccessPermission accessPermission : accessPermissions.getItems()) {
-                PermissionImpl p = accessPermission.getPermission();
+                Permission p = accessPermission.getPermission();
                 logger.trace("User: {} has permission: {}", username, p);
                 info.addObjectPermission(permissionMapper.mapPermission(p));
             }
@@ -171,7 +171,7 @@ public class KapuaAuthorizingRealm extends AuthorizingRealm {
 
                 for (RolePermission rolePermission : rolePermissions.getItems()) {
 
-                    PermissionImpl p = rolePermission.getPermission();
+                    Permission p = rolePermission.getPermission();
                     logger.trace("Role: {} has permission: {}", role, p);
                     info.addObjectPermission(permissionMapper.mapPermission(p));
                 }

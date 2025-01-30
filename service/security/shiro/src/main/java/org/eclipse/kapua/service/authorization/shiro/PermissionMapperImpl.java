@@ -12,6 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.shiro;
 
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import org.apache.shiro.authz.Permission;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.authz.permission.WildcardPermission;
@@ -32,10 +36,8 @@ import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
 import org.eclipse.kapua.service.authorization.group.Group;
 
-import javax.inject.Inject;
-import java.util.Optional;
-
 public class PermissionMapperImpl implements PermissionMapper {
+
     private final DomainRegistryService domainService;
     private final AccountService accountService;
 
@@ -50,7 +52,8 @@ public class PermissionMapperImpl implements PermissionMapper {
         return new KapuaPermission(permission.getDomain(), permission.getAction(), permission.getTargetScopeId(), permission.getGroupId(), permission.getForwardable());
     }
 
-    public class KapuaPermission extends WildcardPermission implements org.eclipse.kapua.service.authorization.permission.Permission, Permission {
+    public class KapuaPermission extends WildcardPermission implements Permission {
+
         private String domain;
         private Actions action;
         private KapuaId targetScopeId;
@@ -131,22 +134,21 @@ public class PermissionMapperImpl implements PermissionMapper {
         /**
          * This method needs to be overridden to support Access {@link Group} feature.
          * <p>
-         * {@link KapuaEntityService}s that access a specific {@link KapuaEntity} (i.e. {@link KapuaEntityService#create(KapuaEntityCreator)}, {@link KapuaEntityService#delete(KapuaId, KapuaId)})
-         * can make the control taking in consideration of the {@link Group#getId()} parameter as it is known.<br>
+         * {@link KapuaEntityService}s that access a specific {@link KapuaEntity} (i.e. {@link KapuaEntityService#create(KapuaEntityCreator)}, {@link KapuaEntityService#delete(KapuaId, KapuaId)}) can
+         * make the control taking in consideration of the {@link Group#getId()} parameter as it is known.<br>
          * <p>
-         * Instead, methods that access multiple {@link KapuaEntity}s (i.e. {@link KapuaEntityService#query(KapuaQuery)}, {@link KapuaEntityService#count(KapuaQuery)})
-         * cannot make a direct control of the {@link Group#getId()} parameter as it is not known and they can be a lot.<br>
-         * The access control then, is performed by hiding the data that a {@link Subject} cannot see instead of throwing {@link UnauthorizedException}.
+         * Instead, methods that access multiple {@link KapuaEntity}s (i.e. {@link KapuaEntityService#query(KapuaQuery)}, {@link KapuaEntityService#count(KapuaQuery)}) cannot make a direct control of
+         * the {@link Group#getId()} parameter as it is not known and they can be a lot.<br> The access control then, is performed by hiding the data that a {@link Subject} cannot see instead of
+         * throwing {@link UnauthorizedException}.
          * </p>
          * <p>
          * The access control for {@link KapuaEntityService#query(KapuaQuery)}, {@link KapuaEntityService#count(KapuaQuery)}) must specify that {@link Group#ANY} group assigned to the permission is
          * enough to pass the {@link AuthorizationService#checkPermission(org.eclipse.kapua.service.authorization.permission.Permission)}.
          * </p>
          * <p>
-         * In case of the {@link org.eclipse.kapua.service.authorization.permission.Permission#getForwardable()} equals to {@code true}, more lookup is required.<br>
-         * If a parent account access the resources of one of its child accounts it won't have the direct permission to access it.
-         * A lookup of {@link Account#getParentAccountPath()} will be required to search if the current user scope id is
-         * one of the parent of the given {@link org.eclipse.kapua.service.authorization.permission.Permission#getTargetScopeId()}
+         * In case of the {@link org.eclipse.kapua.service.authorization.permission.Permission#getForwardable()} equals to {@code true}, more lookup is required.<br> If a parent account access the
+         * resources of one of its child accounts it won't have the direct permission to access it. A lookup of {@link Account#getParentAccountPath()} will be required to search if the current user
+         * scope id is one of the parent of the given {@link org.eclipse.kapua.service.authorization.permission.Permission#getTargetScopeId()}
          * </p>
          *
          * @since 1.0.0
@@ -154,7 +156,7 @@ public class PermissionMapperImpl implements PermissionMapper {
         @Override
         public boolean implies(Permission shiroPermission) {
 
-            org.eclipse.kapua.service.authorization.permission.Permission targetPermission = (org.eclipse.kapua.service.authorization.permission.Permission) shiroPermission;
+            KapuaPermission targetPermission = (KapuaPermission) shiroPermission;
 
             // Check target Permission domain
             checkTargetPermissionIsGroupable(targetPermission);
@@ -188,10 +190,11 @@ public class PermissionMapperImpl implements PermissionMapper {
          * <p>
          * If it is, promotes this {@link org.eclipse.kapua.service.authorization.permission.Permission#getGroupId()} to {@code null} (a.k.a. ALL groups).
          *
-         * @param targetPermission The target {@link Permission} to check.
+         * @param targetPermission
+         *         The target {@link Permission} to check.
          * @since 2.0.0
          */
-        private void checkTargetPermissionIsGroupable(org.eclipse.kapua.service.authorization.permission.Permission targetPermission) {
+        private void checkTargetPermissionIsGroupable(KapuaPermission targetPermission) {
             if (targetPermission.getDomain() != null) {
                 try {
                     org.eclipse.kapua.service.authorization.domain.Domain domainDefinition = KapuaSecurityUtils.doPrivileged(() -> domainService.findByName(targetPermission.getDomain()));
@@ -208,21 +211,19 @@ public class PermissionMapperImpl implements PermissionMapper {
         /**
          * Checks {@code this} Permission against the given {@link Permission} parameter.
          * <p>
-         * It tries to forward {@code this} Permission to the {@link #getTargetScopeId()} of the given {@link Permission} parameter.<br>
-         * This means that if the required permission has scope id 'B' and {@code this} {@link Permission} has scope id 'A',
-         * this methods search the {@link Account#getParentAccountPath()} of the scope id 'B' and checks the {@link Permission} forwarding {@code this} Permission
-         * to the same level of the given {@link Permission}.
+         * It tries to forward {@code this} Permission to the {@link #getTargetScopeId()} of the given {@link Permission} parameter.<br> This means that if the required permission has scope id 'B' and
+         * {@code this} {@link Permission} has scope id 'A', this methods search the {@link Account#getParentAccountPath()} of the scope id 'B' and checks the {@link Permission} forwarding
+         * {@code this} Permission to the same level of the given {@link Permission}.
          * </p>
          * <p>
          * <h3>Example:</h3>
-         * User 'A' in account 'A' has scopeId 'A' and this permission (A) "*:*:A:*".
-         * Account 'A' has a child account 'B', then 'B' has this parent account path: '/A/B';
-         * User 'A' tries to access a resource of account 'B' an the direct check {@link Permission#implies(Permission)} fails.
-         * So this method searches the parent account path of account 'B', found that 'A' is a parent of 'B'
+         * User 'A' in account 'A' has scopeId 'A' and this permission (A) "*:*:A:*". Account 'A' has a child account 'B', then 'B' has this parent account path: '/A/B'; User 'A' tries to access a
+         * resource of account 'B' an the direct check {@link Permission#implies(Permission)} fails. So this method searches the parent account path of account 'B', found that 'A' is a parent of 'B'
          * so then {@code this} {@link Permission} is checked again with 'B' as scopeId.
          * </p>
          *
-         * @param shiroPermission The permission to check against.
+         * @param shiroPermission
+         *         The permission to check against.
          * @return {@code true} if this permission is forward-able and is valid when forwarded, {@code false otherwise}
          * @since 1.0.0
          */
@@ -250,8 +251,6 @@ public class PermissionMapperImpl implements PermissionMapper {
             return false;
         }
 
-
-        @Override
         public void setDomain(String domain) {
             this.domain = domain;
         }

@@ -43,7 +43,7 @@ public class TagServiceImplTest {
             .defaultAnswer(invocation -> {
                 throw new UnsupportedOperationException(invocation.toString());
             });
-    public static final Permission FAKE_PERMISSION = new StubPermission("fakeDomain", Actions.execute, new KapuaIdImpl(BigInteger.ONE), new KapuaIdImpl(BigInteger.TEN), true);
+    public static final Permission FAKE_PERMISSION = new Permission("fakeDomain", Actions.execute, new KapuaIdImpl(BigInteger.ONE), new KapuaIdImpl(BigInteger.TEN), true);
     private PermissionFactory permissionFactory;
     private AuthorizationService authorizationService;
     private ServiceConfigurationManager serviceConfigurationManager;

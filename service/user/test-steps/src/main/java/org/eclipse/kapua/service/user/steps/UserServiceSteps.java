@@ -66,6 +66,7 @@ import org.eclipse.kapua.service.authorization.access.AccessPermissionAttributes
 import org.eclipse.kapua.service.authorization.access.AccessPermissionService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.shiro.PermissionImpl;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserAttributes;
 import org.eclipse.kapua.service.user.UserCreator;
@@ -510,7 +511,7 @@ public class UserServiceSteps extends TestBase {
         primeException();
         try {
             KapuaQuery query = new KapuaQuery(getCurrentScopeId());
-            query.setPredicate(query.attributePredicate(AccessPermissionAttributes.PERMISSION, permission));
+            query.setPredicate(query.attributePredicate(AccessPermissionAttributes.PERMISSION, new PermissionImpl(permission)));
             AccessPermission accessPermission = accessPermissionService.query(query).getFirstItem();
             stepData.put(LAST_FOUND_ACCESS_PERMISSION, accessPermission);
         } catch (KapuaException ex) {
