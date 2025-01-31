@@ -38,7 +38,7 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaListResult;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnection;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionQuery;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionService;
@@ -65,7 +65,6 @@ public class GwtDeviceConnectionServiceImpl extends KapuaRemoteServiceServlet im
     private static final DeviceConnectionService DEVICE_CONNECTION_SERVICE = LOCATOR.getService(DeviceConnectionService.class);
     private static final AuthorizationService AUTHORIZATION_SERVICE = LOCATOR.getService(AuthorizationService.class);
 
-    private static final PermissionFactory PERMISSION_FACTORY = LOCATOR.getFactory(PermissionFactory.class);
     private static final UserService USER_SERVICE = LOCATOR.getService(UserService.class);
 
     private static final String CONNECTION_INFO = "connectionInfo";
@@ -193,7 +192,7 @@ public class GwtDeviceConnectionServiceImpl extends KapuaRemoteServiceServlet im
             deviceConnectionPropertiesPairs
                     .add(new GwtGroupedNVPair(CONNECTION_USER_COUPLING_MODE_INFO, "connectionUserCouplingMode",
                             gwtConnectionUserCouplingMode != null ? gwtConnectionUserCouplingMode.getLabel() : null));
-            if (AUTHORIZATION_SERVICE.isPermitted(PERMISSION_FACTORY.newPermission(Domains.USER, Actions.read, scopeId))) {
+            if (AUTHORIZATION_SERVICE.isPermitted(new Permission(Domains.USER, Actions.read, scopeId))) {
                 deviceConnectionPropertiesPairs.add(new GwtGroupedNVPair(CONNECTION_USER_COUPLING_MODE_INFO, "connectionReservedUser", reservedUser != null ? reservedUser.getName() : null));
                 deviceConnectionPropertiesPairs.add(new GwtGroupedNVPair(CONNECTION_USER_COUPLING_MODE_INFO, "allowUserChange", deviceConnection.getAllowUserChange()));
             }

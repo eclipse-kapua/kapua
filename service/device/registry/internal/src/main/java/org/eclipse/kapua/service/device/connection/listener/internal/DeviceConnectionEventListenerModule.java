@@ -22,7 +22,6 @@ import org.eclipse.kapua.commons.service.event.store.internal.EventStoreServiceI
 import org.eclipse.kapua.event.ServiceEventBus;
 import org.eclipse.kapua.event.ServiceEventBusException;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.device.connection.listener.DeviceConnectionEventListenerService;
 import org.eclipse.kapua.service.device.registry.KapuaDeviceRegistrySettingKeys;
 import org.eclipse.kapua.service.device.registry.KapuaDeviceRegistrySettings;
@@ -46,7 +45,6 @@ public class DeviceConnectionEventListenerModule extends AbstractKapuaModule imp
     @ProvidesIntoSet
     protected ServiceModule deviceConnectionEventListenerServiceModule(DeviceConnectionEventListenerService deviceConnectionEventListenerService,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             KapuaDeviceRegistrySettings kapuaDeviceRegistrySettings,
             @Named("DeviceRegistryTransactionManager") TxManager txManager,
             EventStoreRecordRepository eventStoreRecordRepository,
@@ -61,7 +59,6 @@ public class DeviceConnectionEventListenerModule extends AbstractKapuaModule imp
                 new ServiceEventHouseKeeperFactoryImpl(
                         new EventStoreServiceImpl(
                                 authorizationService,
-                                permissionFactory,
                                 txManager,
                                 eventStoreRecordRepository
                         ),

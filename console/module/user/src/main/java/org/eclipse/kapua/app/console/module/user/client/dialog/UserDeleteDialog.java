@@ -16,18 +16,17 @@ import org.eclipse.kapua.app.console.module.api.client.ui.dialog.entity.EntityDe
 import org.eclipse.kapua.app.console.module.api.client.util.DialogUtils;
 import org.eclipse.kapua.app.console.module.user.client.messages.ConsoleUserMessages;
 import org.eclipse.kapua.app.console.module.user.shared.model.GwtUser;
+import org.eclipse.kapua.app.console.module.user.shared.service.GwtUserService;
+import org.eclipse.kapua.app.console.module.user.shared.service.GwtUserServiceAsync;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.eclipse.kapua.app.console.module.user.shared.service.GwtUserService;
-import org.eclipse.kapua.app.console.module.user.shared.service.GwtUserServiceAsync;
 
 public class UserDeleteDialog extends EntityDeleteDialog {
 
     private static final ConsoleUserMessages MSGS = GWT.create(ConsoleUserMessages.class);
 
     private static final GwtUserServiceAsync GWT_USER_SERVICE = GWT.create(GwtUserService.class);
-
     private GwtUser gwtUser;
 
     public UserDeleteDialog(GwtUser gwtUser) {

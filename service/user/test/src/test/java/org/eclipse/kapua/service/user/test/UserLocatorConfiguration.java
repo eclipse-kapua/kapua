@@ -43,7 +43,6 @@ import org.eclipse.kapua.service.authentication.shiro.setting.KapuaAuthenticatio
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserRepository;
 import org.eclipse.kapua.service.user.UserService;
@@ -101,9 +100,6 @@ public class UserLocatorConfiguration {
                 }
 
                 bind(AuthorizationService.class).toInstance(mockedAuthorization);
-                // Inject mocked Permission Factory
-                PermissionFactory mockPermissionFactory = Mockito.mock(PermissionFactory.class);
-                bind(PermissionFactory.class).toInstance(mockPermissionFactory);
 
                 // binding Account related services
                 final AccountRelativeFinder accountRelativeFinder = Mockito.mock(AccountRelativeFinder.class);
@@ -132,7 +128,6 @@ public class UserLocatorConfiguration {
                         new UserServiceImpl(
                                 userConfigurationManager,
                                 mockedAuthorization,
-                                mockPermissionFactory,
                                 txManager,
                                 new UserImplJpaRepository(jpaRepoConfig),
                                 userFactory,

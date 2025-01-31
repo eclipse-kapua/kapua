@@ -33,7 +33,7 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.type.ObjectTypeConverter;
 import org.eclipse.kapua.model.type.ObjectValueConverter;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.device.management.commons.AbstractDeviceManagementTransactionalServiceImpl;
 import org.eclipse.kapua.service.device.management.commons.call.DeviceCallBuilder;
 import org.eclipse.kapua.service.device.management.message.KapuaMethod;
@@ -100,7 +100,6 @@ public class DevicePackageManagementServiceImpl extends AbstractDeviceManagement
     public DevicePackageManagementServiceImpl(
             TxManager txManager,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             DeviceEventService deviceEventService,
             DeviceEventFactory deviceEventFactory,
             DeviceRegistryService deviceRegistryService,
@@ -110,7 +109,6 @@ public class DevicePackageManagementServiceImpl extends AbstractDeviceManagement
             PackageManagementServiceSetting packageManagementServiceSetting) {
         super(txManager,
                 authorizationService,
-                permissionFactory,
                 deviceEventService,
                 deviceEventFactory,
                 deviceRegistryService);
@@ -127,7 +125,7 @@ public class DevicePackageManagementServiceImpl extends AbstractDeviceManagement
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
         // Prepare the request
         PackageRequestChannel packageRequestChannel = new PackageRequestChannel();
         packageRequestChannel.setAppName(PackageAppProperties.APP_NAME);
@@ -193,7 +191,7 @@ public class DevicePackageManagementServiceImpl extends AbstractDeviceManagement
         verifyOverflowPackageFields(packageDownloadRequest);
 
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
         // Generate requestId
         KapuaId operationId = new KapuaEid(IdGenerator.generate());
         // Prepare the request
@@ -277,7 +275,7 @@ public class DevicePackageManagementServiceImpl extends AbstractDeviceManagement
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
         // Prepare the request
         PackageRequestChannel packageRequestChannel = new PackageRequestChannel();
         packageRequestChannel.setAppName(PackageAppProperties.APP_NAME);
@@ -332,7 +330,7 @@ public class DevicePackageManagementServiceImpl extends AbstractDeviceManagement
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
         // Prepare the request
         PackageRequestChannel packageRequestChannel = new PackageRequestChannel();
         packageRequestChannel.setAppName(PackageAppProperties.APP_NAME);
@@ -388,7 +386,7 @@ public class DevicePackageManagementServiceImpl extends AbstractDeviceManagement
         ArgumentValidator.notNull(deployInstallRequest, "deployInstallRequest");
         ArgumentValidator.notNull(packageInstallOptions, "packageInstallOptions");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
         // Generate requestId
         KapuaId operationId = new KapuaEid(IdGenerator.generate());
         // Prepare the request
@@ -449,7 +447,7 @@ public class DevicePackageManagementServiceImpl extends AbstractDeviceManagement
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
         // Prepare the request
         PackageRequestChannel packageRequestChannel = new PackageRequestChannel();
         packageRequestChannel.setAppName(PackageAppProperties.APP_NAME);
@@ -506,7 +504,7 @@ public class DevicePackageManagementServiceImpl extends AbstractDeviceManagement
         ArgumentValidator.notNull(packageUninstallRequest, "packageUninstallRequest");
         ArgumentValidator.notNull(packageUninstallOptions, "packageUninstallOptions");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
         // Generate requestId
         KapuaId operationId = new KapuaEid(IdGenerator.generate());
         // Prepare the request
@@ -567,7 +565,7 @@ public class DevicePackageManagementServiceImpl extends AbstractDeviceManagement
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
         // Prepare the request
         PackageRequestChannel packageRequestChannel = new PackageRequestChannel();
         packageRequestChannel.setAppName(PackageAppProperties.APP_NAME);

@@ -24,7 +24,7 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinition;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionAttributes;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionCreator;
@@ -43,17 +43,14 @@ import org.eclipse.kapua.storage.TxManager;
 public class JobStepDefinitionServiceImpl implements JobStepDefinitionService {
 
     private final AuthorizationService authorizationService;
-    private final PermissionFactory permissionFactory;
     private final TxManager txManager;
     private final JobStepDefinitionRepository repository;
 
     public JobStepDefinitionServiceImpl(
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             TxManager txManager,
             JobStepDefinitionRepository repository) {
         this.authorizationService = authorizationService;
-        this.permissionFactory = permissionFactory;
         this.txManager = txManager;
         this.repository = repository;
     }
@@ -67,7 +64,7 @@ public class JobStepDefinitionServiceImpl implements JobStepDefinitionService {
         ArgumentValidator.validateEntityName(stepDefinitionCreator.getName(), "stepDefinitionCreator.name");
         ArgumentValidator.notEmptyOrNull(stepDefinitionCreator.getProcessorName(), "stepDefinitionCreator.processorName");
         // Check access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.write, null));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.write, null));
 
         return txManager.execute(tx -> {
             // Check duplicate name
@@ -99,7 +96,7 @@ public class JobStepDefinitionServiceImpl implements JobStepDefinitionService {
         ArgumentValidator.notEmptyOrNull(jobStepDefinition.getProcessorName(), "jobStepDefinition.processorName");
 
         // Check access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.write, null));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.write, null));
 
         return txManager.execute(tx -> {
             // Check duplicate name
@@ -119,7 +116,7 @@ public class JobStepDefinitionServiceImpl implements JobStepDefinitionService {
         ArgumentValidator.notNull(stepDefinitionId, "stepDefinitionId");
 
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.read, scopeId));
 
         final JobStepDefinitionQuery query = new JobStepDefinitionQuery(scopeId);
         query.setPredicate(query.attributePredicate(JobStepDefinitionAttributes.ENTITY_ID, stepDefinitionId));
@@ -138,7 +135,7 @@ public class JobStepDefinitionServiceImpl implements JobStepDefinitionService {
             Optional<JobStepDefinition> jobStepDefinition = repository.findByName(tx, name);
             if (jobStepDefinition.isPresent()) {
                 // Check Access
-                authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.read, jobStepDefinition.get().getScopeId()));
+                authorizationService.checkPermission(new Permission(Domains.JOB, Actions.read, jobStepDefinition.get().getScopeId()));
             }
             return jobStepDefinition;
         }).orElse(null);
@@ -149,7 +146,7 @@ public class JobStepDefinitionServiceImpl implements JobStepDefinitionService {
         // Argument Validation
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.read, query.getScopeId()));
         // Do query
         return txManager.execute(tx -> repository.query(tx, query));
     }
@@ -159,7 +156,7 @@ public class JobStepDefinitionServiceImpl implements JobStepDefinitionService {
         // Argument Validation
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.read, query.getScopeId()));
         // Do query
         return txManager.execute(tx -> repository.count(tx, query));
     }
@@ -170,7 +167,7 @@ public class JobStepDefinitionServiceImpl implements JobStepDefinitionService {
         ArgumentValidator.notNull(scopeId, "scopeId");
         ArgumentValidator.notNull(stepDefinitionId, "stepDefinitionId");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.delete, null));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.delete, null));
         // Do delete
         txManager.execute(tx -> repository.delete(tx, scopeId, stepDefinitionId));
     }

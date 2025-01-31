@@ -12,7 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.authentication;
 
-import com.codahale.metrics.Timer.Context;
+import java.util.List;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.client.security.bean.AuthAcl;
 import org.eclipse.kapua.client.security.bean.AuthContext;
@@ -20,14 +21,13 @@ import org.eclipse.kapua.client.security.metric.AuthMetric;
 import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnection;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionFactory;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionService;
 import org.eclipse.kapua.service.device.registry.connection.option.DeviceConnectionOptionFactory;
 import org.eclipse.kapua.service.device.registry.connection.option.DeviceConnectionOptionService;
 
-import java.util.List;
+import com.codahale.metrics.Timer.Context;
 
 /**
  * Admin profile authentication logic implementation
@@ -43,9 +43,8 @@ public class AdminAuthenticationLogic extends AuthenticationLogic {
             DeviceConnectionOptionService deviceConnectionOptionService,
             AuthorizationService authorizationService,
             DeviceConnectionFactory deviceConnectionFactory,
-            PermissionFactory permissionFactory,
             DeviceConnectionService deviceConnectionService) {
-        super(aclCreator, authenticationMetric, deviceConnectionOptionFactory, deviceConnectionOptionService, authorizationService, deviceConnectionFactory, permissionFactory, deviceConnectionService);
+        super(aclCreator, authenticationMetric, deviceConnectionOptionFactory, deviceConnectionOptionService, authorizationService, deviceConnectionFactory, deviceConnectionService);
     }
 
     @Override

@@ -35,7 +35,7 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.device.authentication.api.DeviceConnectionCredentialAdapter;
 import org.eclipse.kapua.service.device.registry.common.DeviceValidationRegex;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnection;
@@ -74,13 +74,12 @@ public class DeviceConnectionServiceImpl extends KapuaConfigurableServiceBase im
     public DeviceConnectionServiceImpl(
             Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             DeviceConnectionFactory entityFactory,
             @Named("DeviceRegistryTransactionManager") TxManager txManager,
             DeviceConnectionRepository repository,
             Map<String, DeviceConnectionCredentialAdapter> availableDeviceConnectionAdapters,
             EventStorer eventStorer) {
-        super(txManager, serviceConfigurationManagersByServiceClass.get(DeviceConnectionService.class), Domains.DEVICE_CONNECTION, authorizationService, permissionFactory);
+        super(txManager, serviceConfigurationManagersByServiceClass.get(DeviceConnectionService.class), Domains.DEVICE_CONNECTION, authorizationService);
         this.entityFactory = entityFactory;
         this.repository = repository;
         this.availableDeviceConnectionAdapters = availableDeviceConnectionAdapters;
@@ -104,7 +103,7 @@ public class DeviceConnectionServiceImpl extends KapuaConfigurableServiceBase im
             throw new KapuaIllegalArgumentException("deviceConnectionCreator.authenticationType", deviceConnectionCreator.getAuthenticationType());
         }
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_CONNECTION, Actions.write, null));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_CONNECTION, Actions.write, null));
         return txManager.execute(tx -> {
             //TODO: check whether this is anywhere efficient
             // Check duplicate ClientId
@@ -144,7 +143,7 @@ public class DeviceConnectionServiceImpl extends KapuaConfigurableServiceBase im
             throw new KapuaIllegalArgumentException("deviceConnection.authenticationType", deviceConnection.getAuthenticationType());
         }
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_CONNECTION, Actions.write, null));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_CONNECTION, Actions.write, null));
         // Do Update
         return txManager.execute(tx -> repository.update(tx, deviceConnection));
     }
@@ -157,7 +156,7 @@ public class DeviceConnectionServiceImpl extends KapuaConfigurableServiceBase im
         ArgumentValidator.notNull(entityId, "entityId");
 
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_CONNECTION, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_CONNECTION, Actions.read, scopeId));
 
         // Do find
         return txManager.execute(tx -> repository.find(tx, scopeId, entityId))
@@ -186,7 +185,7 @@ public class DeviceConnectionServiceImpl extends KapuaConfigurableServiceBase im
         ArgumentValidator.notNull(query, "query");
 
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_CONNECTION, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_CONNECTION, Actions.read, query.getScopeId()));
 
         // Do query
         return txManager.execute(tx -> repository.query(tx, query));
@@ -199,7 +198,7 @@ public class DeviceConnectionServiceImpl extends KapuaConfigurableServiceBase im
         ArgumentValidator.notNull(query, "query");
 
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_CONNECTION, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_CONNECTION, Actions.read, query.getScopeId()));
 
         // Do count
         return txManager.execute(tx -> repository.count(tx, query));
@@ -213,7 +212,7 @@ public class DeviceConnectionServiceImpl extends KapuaConfigurableServiceBase im
         ArgumentValidator.notNull(scopeId, "deviceConnection.scopeId");
 
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_CONNECTION, Actions.write, null));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_CONNECTION, Actions.write, null));
 
         txManager.execute(tx -> repository.delete(tx, scopeId, deviceConnectionId));
     }
@@ -238,15 +237,15 @@ public class DeviceConnectionServiceImpl extends KapuaConfigurableServiceBase im
         ArgumentValidator.notNull(deviceConnectionId, "deviceConnectionId");
 
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_CONNECTION, Actions.write, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_CONNECTION, Actions.write, scopeId));
 
         // Find the specified DeviceConnection
         DeviceConnection deviceConnection =
                 txManager.execute(
-                     tx -> repository.find(tx, scopeId, deviceConnectionId)
-                                     .orElseThrow(() -> new KapuaEntityNotFoundException(DeviceConnection.TYPE, deviceConnectionId)),
-                eventStorer::accept
-        );
+                        tx -> repository.find(tx, scopeId, deviceConnectionId)
+                                .orElseThrow(() -> new KapuaEntityNotFoundException(DeviceConnection.TYPE, deviceConnectionId)),
+                        eventStorer::accept
+                );
     }
 
     @Override

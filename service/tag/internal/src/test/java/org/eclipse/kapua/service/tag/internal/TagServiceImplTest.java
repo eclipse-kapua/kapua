@@ -18,12 +18,9 @@ import java.util.function.BiConsumer;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaIllegalNullArgumentException;
 import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
-import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdImpl;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.tag.Tag;
 import org.eclipse.kapua.service.tag.TagCreator;
 import org.eclipse.kapua.service.tag.TagFactory;
@@ -43,8 +40,6 @@ public class TagServiceImplTest {
             .defaultAnswer(invocation -> {
                 throw new UnsupportedOperationException(invocation.toString());
             });
-    public static final Permission FAKE_PERMISSION = new Permission("fakeDomain", Actions.execute, new KapuaIdImpl(BigInteger.ONE), new KapuaIdImpl(BigInteger.TEN), true);
-    private PermissionFactory permissionFactory;
     private AuthorizationService authorizationService;
     private ServiceConfigurationManager serviceConfigurationManager;
     private TagRepository tagRepository;
@@ -53,9 +48,6 @@ public class TagServiceImplTest {
 
     @BeforeEach
     public void setUp() throws KapuaException {
-        permissionFactory = Mockito.mock(PermissionFactory.class);
-        Mockito.when(permissionFactory.newPermission(Mockito.<String>any(), Mockito.any(), Mockito.any()))
-                .thenReturn(FAKE_PERMISSION);
         authorizationService = Mockito.mock(AuthorizationService.class);
         serviceConfigurationManager = Mockito.mock(ServiceConfigurationManager.class);
         tagRepository = Mockito.mock(TagRepository.class);
@@ -78,7 +70,6 @@ public class TagServiceImplTest {
                 .thenAnswer(invocation -> new TagImpl(invocation.<KapuaId>getArgumentAt(0, KapuaId.class)));
 
         instance = new TagServiceImpl(
-                permissionFactory,
                 authorizationService,
                 serviceConfigurationManager,
                 txManager,

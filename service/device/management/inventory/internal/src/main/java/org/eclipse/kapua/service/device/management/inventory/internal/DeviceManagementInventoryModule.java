@@ -12,20 +12,21 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.inventory.internal;
 
-import com.google.inject.Provides;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.device.management.inventory.DeviceInventoryManagementFactory;
 import org.eclipse.kapua.service.device.management.inventory.DeviceInventoryManagementService;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventFactory;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventService;
 
-import javax.inject.Singleton;
+import com.google.inject.Provides;
 
 public class DeviceManagementInventoryModule extends AbstractKapuaModule {
+
     @Override
     protected void configureModule() {
         bind(DeviceInventoryManagementFactory.class).to(DeviceInventoryManagementFactoryImpl.class);
@@ -35,7 +36,6 @@ public class DeviceManagementInventoryModule extends AbstractKapuaModule {
     @Singleton
     DeviceInventoryManagementService deviceInventoryManagementService(
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             DeviceEventService deviceEventService,
             DeviceEventFactory deviceEventFactory,
             DeviceRegistryService deviceRegistryService,
@@ -44,7 +44,6 @@ public class DeviceManagementInventoryModule extends AbstractKapuaModule {
         return new DeviceInventoryManagementServiceImpl(
                 jpaTxManagerFactory.create("kapua-device_management_operation_registry"),
                 authorizationService,
-                permissionFactory,
                 deviceEventService,
                 deviceEventFactory,
                 deviceRegistryService,

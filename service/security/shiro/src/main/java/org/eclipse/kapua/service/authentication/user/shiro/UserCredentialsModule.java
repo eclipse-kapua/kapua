@@ -20,7 +20,6 @@ import org.eclipse.kapua.KapuaRuntimeException;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.service.authentication.AuthenticationService;
-import org.eclipse.kapua.service.authentication.credential.CredentialFactory;
 import org.eclipse.kapua.service.authentication.credential.CredentialRepository;
 import org.eclipse.kapua.service.authentication.credential.handler.CredentialTypeHandler;
 import org.eclipse.kapua.service.authentication.credential.handler.shiro.PasswordCredentialTypeHandler;
@@ -29,7 +28,6 @@ import org.eclipse.kapua.service.authentication.credential.shiro.PasswordResette
 import org.eclipse.kapua.service.authentication.credential.shiro.PasswordValidator;
 import org.eclipse.kapua.service.authentication.user.UserCredentialsService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.user.UserService;
 
 import com.google.inject.Module;
@@ -71,20 +69,14 @@ public class UserCredentialsModule extends AbstractKapuaModule {
     UserCredentialsService userCredentialsService(
             AuthenticationService authenticationService,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
-            CredentialFactory credentialFactory,
             KapuaJpaTxManagerFactory txManagerFactory,
             UserService userService,
-            CredentialRepository credentialRepository,
             PasswordResetter passwordResetter) {
         return new UserCredentialsServiceImpl(
                 authenticationService,
                 authorizationService,
-                permissionFactory,
-                credentialFactory,
                 txManagerFactory.create("kapua-authorization"),
                 userService,
-                credentialRepository,
                 passwordResetter);
     }
 }

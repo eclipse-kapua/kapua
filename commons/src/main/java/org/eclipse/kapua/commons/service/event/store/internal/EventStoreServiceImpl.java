@@ -28,7 +28,7 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.storage.TxManager;
 
 /**
@@ -40,18 +40,15 @@ public class EventStoreServiceImpl
         implements EventStoreService {
 
     private final AuthorizationService authorizationService;
-    private final PermissionFactory permissionFactory;
     private final TxManager txManager;
     private final EventStoreRecordRepository repository;
 
     @Inject
     public EventStoreServiceImpl(
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             TxManager txManager,
             EventStoreRecordRepository repository) {
         this.authorizationService = authorizationService;
-        this.permissionFactory = permissionFactory;
         this.txManager = txManager;
         this.repository = repository;
     }
@@ -71,7 +68,7 @@ public class EventStoreServiceImpl
         // Validation of the fields
         ArgumentValidator.notNull(kapuaEvent.getId(), "kapuaEvent.id");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.EVENT_STORE, Actions.write, kapuaEvent.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.EVENT_STORE, Actions.write, kapuaEvent.getScopeId()));
         // Do update
         return txManager.execute(tx -> repository.update(tx, kapuaEvent));
     }
@@ -85,7 +82,7 @@ public class EventStoreServiceImpl
         ArgumentValidator.notNull(kapuaEventId, KapuaEntityAttributes.ENTITY_ID);
         // Check Access
         Actions action = Actions.write;
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.EVENT_STORE, action, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.EVENT_STORE, action, scopeId));
         // Do delete
         txManager.execute(tx -> repository.delete(tx, scopeId, kapuaEventId));
     }
@@ -97,7 +94,7 @@ public class EventStoreServiceImpl
         ArgumentValidator.notNull(scopeId, KapuaEntityAttributes.SCOPE_ID);
         ArgumentValidator.notNull(kapuaEventId, KapuaEntityAttributes.ENTITY_ID);
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.EVENT_STORE, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.EVENT_STORE, Actions.read, scopeId));
         // Make sure kapuaEvent exists
         return txManager.execute(tx -> repository.find(tx, scopeId, kapuaEventId))
                 .orElse(null);
@@ -109,7 +106,7 @@ public class EventStoreServiceImpl
         // Validation of the fields
         ArgumentValidator.notNull(kapuaEventId, KapuaEntityAttributes.ENTITY_ID);
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.EVENT_STORE, Actions.read, kapuaEventId));
+        authorizationService.checkPermission(new Permission(Domains.EVENT_STORE, Actions.read, kapuaEventId));
 
         return txManager.execute(tx -> repository.find(tx, KapuaId.ANY, kapuaEventId))
                 .orElse(null);
@@ -120,7 +117,7 @@ public class EventStoreServiceImpl
             throws KapuaException {
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.EVENT_STORE, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.EVENT_STORE, Actions.read, query.getScopeId()));
         return txManager.execute(tx -> repository.query(tx, query));
     }
 
@@ -129,7 +126,7 @@ public class EventStoreServiceImpl
             throws KapuaException {
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.EVENT_STORE, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.EVENT_STORE, Actions.read, query.getScopeId()));
         return txManager.execute(tx -> repository.count(tx, query));
     }
 }

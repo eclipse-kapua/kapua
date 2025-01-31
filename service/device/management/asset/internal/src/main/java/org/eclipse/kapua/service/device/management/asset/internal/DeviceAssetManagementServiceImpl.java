@@ -22,7 +22,7 @@ import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssetFactory;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssetManagementService;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssets;
@@ -63,14 +63,12 @@ public class DeviceAssetManagementServiceImpl extends AbstractDeviceManagementTr
     public DeviceAssetManagementServiceImpl(
             TxManager txManager,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             DeviceEventService deviceEventService,
             DeviceEventFactory deviceEventFactory,
             DeviceRegistryService deviceRegistryService,
             DeviceAssetStoreService deviceAssetStoreService, DeviceAssetFactory deviceAssetFactory) {
         super(txManager,
                 authorizationService,
-                permissionFactory,
                 deviceEventService,
                 deviceEventFactory,
                 deviceRegistryService);
@@ -86,7 +84,7 @@ public class DeviceAssetManagementServiceImpl extends AbstractDeviceManagementTr
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         ArgumentValidator.notNull(deviceAssets, DEVICE_ASSETS);
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
         // Prepare the request
         AssetRequestChannel assetRequestChannel = new AssetRequestChannel();
         assetRequestChannel.setAppName(DeviceAssetAppProperties.APP_NAME);
@@ -151,7 +149,7 @@ public class DeviceAssetManagementServiceImpl extends AbstractDeviceManagementTr
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         ArgumentValidator.notNull(deviceAssets, DEVICE_ASSETS);
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
         // Prepare the request
         AssetRequestChannel assetRequestChannel = new AssetRequestChannel();
         assetRequestChannel.setAppName(DeviceAssetAppProperties.APP_NAME);
@@ -218,7 +216,7 @@ public class DeviceAssetManagementServiceImpl extends AbstractDeviceManagementTr
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         ArgumentValidator.notNull(deviceAssets, DEVICE_ASSETS);
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
         // Prepare the request
         AssetRequestChannel assetRequestChannel = new AssetRequestChannel();
         assetRequestChannel.setAppName(DeviceAssetAppProperties.APP_NAME);

@@ -28,7 +28,7 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.job.Job;
 import org.eclipse.kapua.service.job.JobRepository;
 import org.eclipse.kapua.service.job.targets.JobTarget;
@@ -50,7 +50,6 @@ import org.eclipse.kapua.storage.TxManager;
 public class JobTargetServiceImpl implements JobTargetService {
 
     private final AuthorizationService authorizationService;
-    private final PermissionFactory permissionFactory;
     private final TxManager txManager;
     private final JobTargetRepository jobTargetRepository;
     private final JobTargetFactory jobTargetFactory;
@@ -58,12 +57,10 @@ public class JobTargetServiceImpl implements JobTargetService {
 
     public JobTargetServiceImpl(
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             TxManager txManager,
             JobTargetRepository jobTargetRepository,
             JobTargetFactory jobTargetFactory, JobRepository jobRepository) {
         this.authorizationService = authorizationService;
-        this.permissionFactory = permissionFactory;
         this.txManager = txManager;
         this.jobTargetRepository = jobTargetRepository;
         this.jobTargetFactory = jobTargetFactory;
@@ -78,7 +75,7 @@ public class JobTargetServiceImpl implements JobTargetService {
         ArgumentValidator.notNull(jobTargetCreator.getJobId(), "jobTargetCreator.jobId");
         ArgumentValidator.notNull(jobTargetCreator.getJobTargetId(), "jobTargetCreator.jobTargetId");
         // Check access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.write, jobTargetCreator.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.write, jobTargetCreator.getScopeId()));
         return txManager.execute(tx -> {
             // Check Job Existing
             final Job job = jobRepository.find(tx, jobTargetCreator.getScopeId(), jobTargetCreator.getJobId())
@@ -118,7 +115,7 @@ public class JobTargetServiceImpl implements JobTargetService {
         ArgumentValidator.notNull(scopeId, "scopeId");
         ArgumentValidator.notNull(jobTargetId, "jobTargetId");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.write, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.write, scopeId));
         // Do find
         return txManager.execute(tx -> jobTargetRepository.find(tx, scopeId, jobTargetId))
                 .orElse(null);
@@ -129,7 +126,7 @@ public class JobTargetServiceImpl implements JobTargetService {
         // Argument Validation
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.read, query.getScopeId()));
         // Do query
         return txManager.execute(tx -> jobTargetRepository.query(tx, query));
     }
@@ -139,7 +136,7 @@ public class JobTargetServiceImpl implements JobTargetService {
         // Argument Validation
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.read, query.getScopeId()));
         // Do query
         return txManager.execute(tx -> jobTargetRepository.count(tx, query));
     }
@@ -153,7 +150,7 @@ public class JobTargetServiceImpl implements JobTargetService {
         ArgumentValidator.notNull(jobTarget.getStepIndex(), "jobTarget.stepIndex");
         ArgumentValidator.notNull(jobTarget.getStatus(), "jobTarget.status");
         // Check access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.write, jobTarget.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.write, jobTarget.getScopeId()));
         // Check existence
         return txManager.execute(tx -> {
             if (!jobTargetRepository.find(tx, jobTarget.getScopeId(), jobTarget.getId()).isPresent()) {
@@ -170,7 +167,7 @@ public class JobTargetServiceImpl implements JobTargetService {
         ArgumentValidator.notNull(scopeId, "scopeId");
         ArgumentValidator.notNull(jobTargetId, "jobTargetId");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.delete, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.delete, scopeId));
         // Do delete
         txManager.execute(tx -> jobTargetRepository.delete(tx, scopeId, jobTargetId));
     }

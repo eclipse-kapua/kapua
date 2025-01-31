@@ -30,7 +30,7 @@ import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.model.query.predicate.AttributePredicate;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperation;
 import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationAttributes;
 import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationCreator;
@@ -51,7 +51,6 @@ public class JobDeviceManagementOperationServiceImpl
 
     private final JobDeviceManagementOperationFactory entityFactory;
     private final AuthorizationService authorizationService;
-    private final PermissionFactory permissionFactory;
     private final TxManager txManager;
     private final JobDeviceManagementOperationRepository repository;
 
@@ -59,12 +58,10 @@ public class JobDeviceManagementOperationServiceImpl
     public JobDeviceManagementOperationServiceImpl(
             JobDeviceManagementOperationFactory entityFactory,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             TxManager txManager,
             JobDeviceManagementOperationRepository repository) {
         this.entityFactory = entityFactory;
         this.authorizationService = authorizationService;
-        this.permissionFactory = permissionFactory;
         this.txManager = txManager;
         this.repository = repository;
     }
@@ -77,7 +74,7 @@ public class JobDeviceManagementOperationServiceImpl
         ArgumentValidator.notNull(jobDeviceManagementOperationCreator.getJobId(), "jobDeviceManagementOperationCreator.jobId");
         ArgumentValidator.notNull(jobDeviceManagementOperationCreator.getDeviceManagementOperationId(), "jobDeviceManagementOperationCreator.deviceManagementOperationId");
         // Check access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.write, null));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.write, null));
         // Check duplicate
         KapuaQuery query = new KapuaQuery(jobDeviceManagementOperationCreator.getScopeId());
         query.setPredicate(
@@ -113,7 +110,7 @@ public class JobDeviceManagementOperationServiceImpl
         ArgumentValidator.notNull(scopeId, "scopeId");
         ArgumentValidator.notNull(jobDeviceManagementOperationId, "jobDeviceManagementOperationId");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.write, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.write, scopeId));
         // Do find
         return txManager.execute(tx -> repository.find(tx, scopeId, jobDeviceManagementOperationId))
                 .orElse(null);
@@ -124,7 +121,7 @@ public class JobDeviceManagementOperationServiceImpl
         // Argument Validation
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.read, query.getScopeId()));
         // Do query
         return txManager.execute(tx -> repository.query(tx, query));
     }
@@ -134,7 +131,7 @@ public class JobDeviceManagementOperationServiceImpl
         // Argument Validation
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.read, query.getScopeId()));
         // Do query
         return txManager.execute(tx -> repository.count(tx, query));
     }
@@ -146,7 +143,7 @@ public class JobDeviceManagementOperationServiceImpl
         ArgumentValidator.notNull(jobDeviceManagementOperationId, "jobDeviceManagementOperationId");
 
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.delete, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.delete, scopeId));
 
         // Do delete
         txManager.execute(tx -> repository.delete(tx, scopeId, jobDeviceManagementOperationId));

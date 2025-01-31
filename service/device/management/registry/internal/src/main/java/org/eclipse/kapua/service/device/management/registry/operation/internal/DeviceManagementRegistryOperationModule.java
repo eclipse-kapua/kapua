@@ -12,20 +12,21 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.registry.operation.internal;
 
-import com.google.inject.Provides;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationFactory;
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationRegistryService;
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationRepository;
 import org.eclipse.kapua.service.device.registry.DeviceRepository;
 
-import javax.inject.Singleton;
+import com.google.inject.Provides;
 
 public class DeviceManagementRegistryOperationModule extends AbstractKapuaModule {
+
     @Override
     protected void configureModule() {
         bind(DeviceManagementOperationFactory.class).to(DeviceManagementOperationFactoryImpl.class);
@@ -35,14 +36,12 @@ public class DeviceManagementRegistryOperationModule extends AbstractKapuaModule
     @Singleton
     DeviceManagementOperationRegistryService deviceManagementOperationRegistryService(
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             DeviceRepository deviceRepository,
             DeviceManagementOperationRepository repository,
             DeviceManagementOperationFactory entityFactory,
             KapuaJpaTxManagerFactory jpaTxManagerFactory) {
         return new DeviceManagementOperationRegistryServiceImpl(
                 authorizationService,
-                permissionFactory,
                 deviceRepository,
                 jpaTxManagerFactory.create("kapua-device_management_operation_registry"),
                 repository,

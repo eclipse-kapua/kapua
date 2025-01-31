@@ -32,7 +32,6 @@ import org.eclipse.kapua.service.authentication.shiro.setting.KapuaAuthenticatio
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.systeminfo.SystemInfoService;
 import org.eclipse.kapua.service.systeminfo.internal.SystemInfoServiceImpl;
 import org.mockito.Matchers;
@@ -82,8 +81,6 @@ public class SystemInfoLocatorConfiguration {
                 }
 
                 bind(AuthorizationService.class).toInstance(mockedAuthorization);
-                // Inject mocked Permission Factory
-                bind(PermissionFactory.class).toInstance(Mockito.mock(PermissionFactory.class));
 
                 // binding Account related services
                 bind(AccountService.class).toInstance(Mockito.mock(AccountService.class));

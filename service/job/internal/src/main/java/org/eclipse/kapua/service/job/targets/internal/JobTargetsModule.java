@@ -12,21 +12,22 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job.targets.internal;
 
-import com.google.inject.Provides;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.job.JobRepository;
 import org.eclipse.kapua.service.job.targets.JobTargetFactory;
 import org.eclipse.kapua.service.job.targets.JobTargetRepository;
 import org.eclipse.kapua.service.job.targets.JobTargetService;
 import org.eclipse.kapua.storage.TxManager;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import com.google.inject.Provides;
 
 public class JobTargetsModule extends AbstractKapuaModule {
+
     @Override
     protected void configureModule() {
         bind(JobTargetFactory.class).to(JobTargetFactoryImpl.class);
@@ -35,14 +36,12 @@ public class JobTargetsModule extends AbstractKapuaModule {
     @Provides
     @Singleton
     JobTargetService jobTargetService(AuthorizationService authorizationService,
-                                      PermissionFactory permissionFactory,
-                                      @Named("jobTxManager") TxManager txManager,
-                                      JobTargetRepository jobTargetRepository,
-                                      JobTargetFactory jobTargetFactory,
-                                      JobRepository jobRepository) {
+            @Named("jobTxManager") TxManager txManager,
+            JobTargetRepository jobTargetRepository,
+            JobTargetFactory jobTargetFactory,
+            JobRepository jobRepository) {
         return new JobTargetServiceImpl(
                 authorizationService,
-                permissionFactory,
                 txManager,
                 jobTargetRepository,
                 jobTargetFactory,

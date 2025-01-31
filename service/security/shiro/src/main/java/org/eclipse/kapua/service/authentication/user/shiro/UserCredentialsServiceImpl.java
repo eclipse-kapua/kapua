@@ -27,8 +27,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authentication.AuthenticationService;
 import org.eclipse.kapua.service.authentication.UsernamePasswordCredentials;
 import org.eclipse.kapua.service.authentication.credential.Credential;
-import org.eclipse.kapua.service.authentication.credential.CredentialFactory;
-import org.eclipse.kapua.service.authentication.credential.CredentialRepository;
 import org.eclipse.kapua.service.authentication.credential.shiro.PasswordResetter;
 import org.eclipse.kapua.service.authentication.exception.KapuaAuthenticationErrorCodes;
 import org.eclipse.kapua.service.authentication.exception.KapuaAuthenticationException;
@@ -36,7 +34,7 @@ import org.eclipse.kapua.service.authentication.user.PasswordChangeRequest;
 import org.eclipse.kapua.service.authentication.user.PasswordResetRequest;
 import org.eclipse.kapua.service.authentication.user.UserCredentialsService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserService;
 import org.eclipse.kapua.storage.TxManager;
@@ -51,28 +49,20 @@ public class UserCredentialsServiceImpl implements UserCredentialsService {
 
     private final AuthenticationService authenticationService;
     private final AuthorizationService authorizationService;
-    private final PermissionFactory permissionFactory;
-    private final CredentialFactory credentialFactory;
     private final TxManager txManager;
     private final UserService userService;
-    private final CredentialRepository credentialRepository;
     private final PasswordResetter passwordResetter;
 
     public UserCredentialsServiceImpl(
             AuthenticationService authenticationService,
-            AuthorizationService authorizationService, PermissionFactory permissionFactory,
-            CredentialFactory credentialFactory,
+            AuthorizationService authorizationService,
             TxManager txManager,
             UserService userService,
-            CredentialRepository credentialRepository,
             PasswordResetter passwordResetter) {
         this.authenticationService = authenticationService;
         this.authorizationService = authorizationService;
-        this.permissionFactory = permissionFactory;
-        this.credentialFactory = credentialFactory;
         this.txManager = txManager;
         this.userService = userService;
-        this.credentialRepository = credentialRepository;
         this.passwordResetter = passwordResetter;
     }
 
@@ -110,7 +100,7 @@ public class UserCredentialsServiceImpl implements UserCredentialsService {
         ArgumentValidator.notNull(passwordResetRequest.getNewPassword(), "passwordResetRequest.newPassword");
 
         // Check accessauth
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.CREDENTIAL, Actions.write, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.CREDENTIAL, Actions.write, scopeId));
 
         return txManager.execute(tx -> passwordResetter.resetPassword(tx, scopeId, credentialId, passwordResetRequest));
     }

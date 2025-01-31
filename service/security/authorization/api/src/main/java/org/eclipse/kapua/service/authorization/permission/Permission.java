@@ -12,6 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.permission;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
+
 import javax.security.auth.Subject;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -68,12 +72,22 @@ public class Permission {
         this(domain, action, targetScopeId, null, false);
     }
 
+    public Permission(String domain, Actions action, KapuaId targetScopeId, KapuaId groupId) {
+        this(domain, action, targetScopeId, groupId, false);
+    }
+
     public Permission(String domain, Actions action, KapuaId targetScopeId, KapuaId groupId, boolean forwardable) {
         this.domain = domain;
         this.action = action;
         this.targetScopeId = targetScopeId;
         this.groupId = groupId;
         this.forwardable = forwardable;
+    }
+
+    public static Collection<Permission> newPermissions(String domain, KapuaId targetScopeId, Actions... actions) {
+        return Arrays.stream(actions)
+                .map(action -> new Permission(domain, action, targetScopeId, null, false))
+                .collect(Collectors.toList());
     }
 
     /**

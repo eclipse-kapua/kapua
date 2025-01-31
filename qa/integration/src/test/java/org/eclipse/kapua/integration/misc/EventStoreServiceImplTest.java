@@ -20,7 +20,6 @@ import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordReposit
 import org.eclipse.kapua.commons.service.event.store.internal.EventStoreServiceImpl;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.storage.TxManager;
 import org.junit.Assert;
 import org.junit.Test;
@@ -35,7 +34,6 @@ public class EventStoreServiceImplTest {
     public void createTest() {
         EventStoreServiceImpl eventStoreServiceImpl = new EventStoreServiceImpl(
                 Mockito.mock(AuthorizationService.class),
-                Mockito.mock(PermissionFactory.class),
                 Mockito.mock(TxManager.class),
                 Mockito.mock(EventStoreRecordRepository.class));
         EventStoreRecordCreator[] creator = { null, new EventStoreRecordCreator(new KapuaEid(BigInteger.ONE)) };

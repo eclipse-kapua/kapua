@@ -25,7 +25,7 @@ import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.device.management.commons.AbstractDeviceManagementTransactionalServiceImpl;
 import org.eclipse.kapua.service.device.management.commons.call.DeviceCallBuilder;
 import org.eclipse.kapua.service.device.management.configuration.DeviceComponentConfiguration;
@@ -69,7 +69,6 @@ public class DeviceConfigurationManagementServiceImpl extends AbstractDeviceMana
 
     public DeviceConfigurationManagementServiceImpl(TxManager txManager,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             DeviceEventService deviceEventService,
             DeviceEventFactory deviceEventFactory,
             DeviceRegistryService deviceRegistryService,
@@ -78,7 +77,6 @@ public class DeviceConfigurationManagementServiceImpl extends AbstractDeviceMana
             XmlUtil xmlUtil) {
         super(txManager,
                 authorizationService,
-                permissionFactory,
                 deviceEventService,
                 deviceEventFactory,
                 deviceRegistryService
@@ -95,7 +93,7 @@ public class DeviceConfigurationManagementServiceImpl extends AbstractDeviceMana
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
         // Prepare the request
         ConfigurationRequestChannel configurationRequestChannel = new ConfigurationRequestChannel();
         configurationRequestChannel.setAppName(DeviceConfigurationAppProperties.APP_NAME);
@@ -175,7 +173,7 @@ public class DeviceConfigurationManagementServiceImpl extends AbstractDeviceMana
         ArgumentValidator.notNull(deviceComponentConfiguration, "componentConfiguration");
         ArgumentValidator.notEmptyOrNull(deviceComponentConfiguration.getId(), "componentConfiguration.componentId");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
         // Prepare the request
         ConfigurationRequestChannel configurationRequestChannel = new ConfigurationRequestChannel();
         configurationRequestChannel.setAppName(DeviceConfigurationAppProperties.APP_NAME);
@@ -244,7 +242,7 @@ public class DeviceConfigurationManagementServiceImpl extends AbstractDeviceMana
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         ArgumentValidator.notNull(deviceConfiguration, "componentConfiguration");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
         // Prepare the request
         ConfigurationRequestChannel configurationRequestChannel = new ConfigurationRequestChannel();
         configurationRequestChannel.setAppName(DeviceConfigurationAppProperties.APP_NAME);

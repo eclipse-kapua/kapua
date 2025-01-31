@@ -20,7 +20,6 @@ import org.eclipse.kapua.commons.core.JaxbClassProvider;
 import org.eclipse.kapua.commons.core.SimpleJaxbClassProvider;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.device.management.packages.DevicePackageFactory;
 import org.eclipse.kapua.service.device.management.packages.DevicePackageManagementService;
 import org.eclipse.kapua.service.device.management.packages.internal.setting.PackageManagementServiceSetting;
@@ -52,7 +51,6 @@ public class DeviceManagementPackagesModule extends AbstractKapuaModule {
     @Inject
     DevicePackageManagementService devicePackageManagementService(
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             DeviceEventService deviceEventService,
             DeviceEventFactory deviceEventFactory,
             DeviceRegistryService deviceRegistryService,
@@ -65,7 +63,6 @@ public class DeviceManagementPackagesModule extends AbstractKapuaModule {
         return new DevicePackageManagementServiceImpl(
                 jpaTxManagerFactory.create("kapua-device_management_operation_registry"),
                 authorizationService,
-                permissionFactory,
                 deviceEventService,
                 deviceEventFactory,
                 deviceRegistryService,

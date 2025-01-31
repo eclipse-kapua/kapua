@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job.internal;
 
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaDuplicateNameException;
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
@@ -26,7 +28,7 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.job.Job;
 import org.eclipse.kapua.service.job.JobCreator;
 import org.eclipse.kapua.service.job.JobListResult;
@@ -36,8 +38,6 @@ import org.eclipse.kapua.service.scheduler.trigger.TriggerService;
 import org.eclipse.kapua.storage.TxManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Singleton;
 
 /**
  * {@link JobService} implementation
@@ -56,21 +56,21 @@ public class JobServiceImpl extends KapuaConfigurableServiceBase implements JobS
     /**
      * Default constructor for injection
      *
-     * @param permissionFactory    The {@link PermissionFactory} instance
-     * @param authorizationService The {@link AuthorizationService} instance
+     * @param authorizationService
+     *         The {@link AuthorizationService} instance
      * @param jobRepository
-     * @param triggerService       The {@link TriggerService} instance
+     * @param triggerService
+     *         The {@link TriggerService} instance
      * @since 2.0.0
      */
     public JobServiceImpl(
             ServiceConfigurationManager serviceConfigurationManager,
             JobEngineService jobEngineService,
-            PermissionFactory permissionFactory,
             AuthorizationService authorizationService,
             TxManager txManager,
             JobRepository jobRepository,
             TriggerService triggerService) {
-        super(txManager, serviceConfigurationManager, Domains.JOB, authorizationService, permissionFactory);
+        super(txManager, serviceConfigurationManager, Domains.JOB, authorizationService);
         this.jobEngineService = jobEngineService;
         this.jobRepository = jobRepository;
         this.triggerService = triggerService;
@@ -83,7 +83,7 @@ public class JobServiceImpl extends KapuaConfigurableServiceBase implements JobS
         ArgumentValidator.notNull(creator.getScopeId(), "jobCreator.scopeId");
         ArgumentValidator.validateEntityName(creator.getName(), "jobCreator.name");
         // Check access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.write, creator.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.write, creator.getScopeId()));
         return txManager.execute(tx -> {
             // Check entity limit
             serviceConfigurationManager.checkAllowedEntities(tx, creator.getScopeId(), "Jobs");
@@ -107,7 +107,7 @@ public class JobServiceImpl extends KapuaConfigurableServiceBase implements JobS
         ArgumentValidator.notNull(job.getScopeId(), "job.scopeId");
         ArgumentValidator.validateEntityName(job.getName(), "job.name");
         // Check access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.write, job.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.write, job.getScopeId()));
 
         return txManager.execute(tx -> {
             // Check existence
@@ -129,7 +129,7 @@ public class JobServiceImpl extends KapuaConfigurableServiceBase implements JobS
         ArgumentValidator.notNull(scopeId, "scopeId");
         ArgumentValidator.notNull(jobId, KapuaEntityAttributes.ENTITY_ID);
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.read, scopeId));
         // Do find
         return txManager.execute(tx -> jobRepository.find(tx, scopeId, jobId))
                 .orElse(null);
@@ -140,7 +140,7 @@ public class JobServiceImpl extends KapuaConfigurableServiceBase implements JobS
         // Argument Validation
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.read, query.getScopeId()));
         // Do query
         return txManager.execute(tx -> jobRepository.query(tx, query));
     }
@@ -150,7 +150,7 @@ public class JobServiceImpl extends KapuaConfigurableServiceBase implements JobS
         // Argument Validation
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.read, query.getScopeId()));
         // Do query
         return txManager.execute(tx -> jobRepository.count(tx, query));
     }
@@ -169,13 +169,17 @@ public class JobServiceImpl extends KapuaConfigurableServiceBase implements JobS
     /**
      * Deletes the {@link Job} like {@link #delete(KapuaId, KapuaId)}.
      * <p>
-     * If {@code forced} is {@code true} {@link org.eclipse.kapua.service.authorization.permission.Permission} checked will be {@code job:delete:null},
-     * and when invoking {@link JobEngineService#cleanJobData(KapuaId, KapuaId)} any exception is logged and ignored.
+     * If {@code forced} is {@code true} {@link org.eclipse.kapua.service.authorization.permission.Permission} checked will be {@code job:delete:null}, and when invoking
+     * {@link JobEngineService#cleanJobData(KapuaId, KapuaId)} any exception is logged and ignored.
      *
-     * @param scopeId The {@link KapuaId} scopeId of the {@link Job}.
-     * @param jobId   The {@link KapuaId} of the {@link Job}.
-     * @param forced  Whether or not the {@link Job} must be forcibly deleted.
-     * @throws KapuaException In case something bad happens.
+     * @param scopeId
+     *         The {@link KapuaId} scopeId of the {@link Job}.
+     * @param jobId
+     *         The {@link KapuaId} of the {@link Job}.
+     * @param forced
+     *         Whether or not the {@link Job} must be forcibly deleted.
+     * @throws KapuaException
+     *         In case something bad happens.
      * @since 1.1.0
      */
     private void deleteInternal(KapuaId scopeId, KapuaId jobId, boolean forced) throws KapuaException {
@@ -183,7 +187,7 @@ public class JobServiceImpl extends KapuaConfigurableServiceBase implements JobS
         ArgumentValidator.notNull(scopeId, "scopeId");
         ArgumentValidator.notNull(jobId, KapuaEntityAttributes.ENTITY_ID);
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.delete, forced ? null : scopeId));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.delete, forced ? null : scopeId));
 
         txManager.execute(tx -> {
             // Check existence

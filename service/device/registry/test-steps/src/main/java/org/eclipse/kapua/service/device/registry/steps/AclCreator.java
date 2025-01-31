@@ -37,7 +37,6 @@ import org.eclipse.kapua.service.authentication.credential.CredentialStatus;
 import org.eclipse.kapua.service.authorization.access.AccessInfoCreator;
 import org.eclipse.kapua.service.authorization.access.AccessInfoService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserCreator;
 import org.eclipse.kapua.service.user.UserService;
@@ -59,7 +58,6 @@ public class AclCreator {
      * Credential service.
      */
     private CredentialService credentialService;
-    private PermissionFactory permissionFactory;
 
     /**
      * User service.
@@ -89,7 +87,6 @@ public class AclCreator {
         accessInfoService = locator.getService(AccessInfoService.class);
 
         credentialService = locator.getService(CredentialService.class);
-        permissionFactory = locator.getFactory(PermissionFactory.class);
     }
 
     /**
@@ -188,7 +185,7 @@ public class AclCreator {
                 targetScopeId = (KapuaEid) account.getId();
             }
             String domain = permissionData.getDomain();
-            Permission permission = permissionFactory.newPermission(domain, action, targetScopeId);
+            Permission permission = new Permission(domain, action, targetScopeId);
             permissions.add(permission);
         }
         accessInfoCreator.setPermissions(permissions);

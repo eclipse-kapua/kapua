@@ -48,7 +48,6 @@ import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
 import org.eclipse.kapua.service.authorization.group.GroupAttributes;
 import org.eclipse.kapua.service.authorization.group.GroupQuery;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.authorization.role.Role;
 import org.eclipse.kapua.service.authorization.role.RoleAttributes;
 import org.eclipse.kapua.service.authorization.role.RoleCreator;
@@ -283,11 +282,8 @@ public class GwtKapuaAuthorizationModelConverter {
      * @since 1.0.0
      */
     public static Permission convertPermission(GwtPermission gwtPermission) throws KapuaException {
-        // Get Services
-        KapuaLocator locator = KapuaLocator.getInstance();
-        PermissionFactory permissionFactory = locator.getFactory(PermissionFactory.class);
         // Return converted
-        return permissionFactory.newPermission(gwtPermission.getDomain(),
+        return new Permission(gwtPermission.getDomain(),
                 convertAction(gwtPermission.getActionEnum()),
                 GwtKapuaCommonsModelConverter.convertKapuaId(gwtPermission.getTargetScopeId()),
                 GwtKapuaCommonsModelConverter.convertKapuaId(gwtPermission.getGroupId()),

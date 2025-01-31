@@ -36,7 +36,6 @@ import org.eclipse.kapua.service.KapuaEntityService;
 import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.config.KapuaConfigurableService;
 
 /**
@@ -118,8 +117,8 @@ public abstract class AbstractKapuaConfigurableResourceLimitedService<
      *         The {@link CacheFactory} that handles caching of the entities
      * @since 1.2.0
      * @deprecated Since 2.0.0. Please use
-     *         {@link #AbstractKapuaConfigurableResourceLimitedService(String, Domain, EntityManagerFactory, EntityCacheFactory, KapuaEntityFactory, PermissionFactory, AuthorizationService,
-     *         AccountRelativeFinder, RootUserTester)} This constructor may be removed in a next release
+     *         {@link #AbstractKapuaConfigurableResourceLimitedService(String, Domain, EntityManagerFactory, EntityCacheFactory, KapuaEntityFactory, AuthorizationService, AccountRelativeFinder,
+     *         RootUserTester)} This constructor may be removed in a next release
      */
     @Deprecated
     protected AbstractKapuaConfigurableResourceLimitedService(
@@ -129,7 +128,7 @@ public abstract class AbstractKapuaConfigurableResourceLimitedService<
             EntityCacheFactory abstractCacheFactory,
             Class<S> serviceClass,
             Class<F> factoryClass) {
-        super(pid, domain, entityManagerFactory, abstractCacheFactory, null, null, null);
+        super(pid, domain, entityManagerFactory, abstractCacheFactory, null, null);
 
         /*
         These should be provided by the Locator, but in most cases when this class is instantiated through this constructor the Locator is not yet ready,
@@ -153,8 +152,6 @@ public abstract class AbstractKapuaConfigurableResourceLimitedService<
      *         The {@link CacheFactory} that handles caching of the entities
      * @param factory
      *         The {@link KapuaEntityFactory} instance.
-     * @param permissionFactory
-     *         The {@link PermissionFactory} instance.
      * @param authorizationService
      *         The {@link AuthorizationService} instance.
      * @param rootUserTester
@@ -165,11 +162,10 @@ public abstract class AbstractKapuaConfigurableResourceLimitedService<
             EntityManagerFactory entityManagerFactory,
             EntityCacheFactory abstractCacheFactory,
             F factory,
-            PermissionFactory permissionFactory,
             AuthorizationService authorizationService,
             AccountRelativeFinder accountRelativeFinder,
             RootUserTester rootUserTester) {
-        super(pid, domain, entityManagerFactory, abstractCacheFactory, permissionFactory, authorizationService, rootUserTester);
+        super(pid, domain, entityManagerFactory, abstractCacheFactory, authorizationService, rootUserTester);
         this.factory = factory;
         this.factoryClass = null; //TODO: not needed for this construction path, remove as soon as the deprecated constructor is removed
         this.accountRelativeFinder = accountRelativeFinder;

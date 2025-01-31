@@ -12,20 +12,21 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.snapshot.internal;
 
-import com.google.inject.Provides;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.device.management.snapshot.DeviceSnapshotFactory;
 import org.eclipse.kapua.service.device.management.snapshot.DeviceSnapshotManagementService;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventFactory;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventService;
 
-import javax.inject.Singleton;
+import com.google.inject.Provides;
 
 public class DeviceManagementSnapshotModule extends AbstractKapuaModule {
+
     @Override
     protected void configureModule() {
         bind(DeviceSnapshotFactory.class).to(DeviceSnapshotFactoryImpl.class);
@@ -35,7 +36,6 @@ public class DeviceManagementSnapshotModule extends AbstractKapuaModule {
     @Singleton
     DeviceSnapshotManagementService deviceSnapshotManagementService(
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             DeviceEventService deviceEventService,
             DeviceEventFactory deviceEventFactory,
             DeviceRegistryService deviceRegistryService,
@@ -44,7 +44,6 @@ public class DeviceManagementSnapshotModule extends AbstractKapuaModule {
         return new DeviceSnapshotManagementServiceImpl(
                 jpaTxManagerFactory.create("kapua-device_management_operation_registry"),
                 authorizationService,
-                permissionFactory,
                 deviceEventService,
                 deviceEventFactory,
                 deviceRegistryService,

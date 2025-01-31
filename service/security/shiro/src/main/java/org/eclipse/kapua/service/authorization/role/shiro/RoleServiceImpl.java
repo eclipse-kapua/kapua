@@ -42,7 +42,6 @@ import org.eclipse.kapua.service.authorization.access.AccessRoleFactory;
 import org.eclipse.kapua.service.authorization.access.AccessRoleListResult;
 import org.eclipse.kapua.service.authorization.access.AccessRoleService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.authorization.permission.shiro.PermissionValidator;
 import org.eclipse.kapua.service.authorization.role.Role;
 import org.eclipse.kapua.service.authorization.role.RoleCreator;
@@ -82,8 +81,6 @@ public class RoleServiceImpl extends KapuaConfigurableServiceBase implements Rol
     /**
      * Injectable constructor
      *
-     * @param permissionFactory
-     *         The {@link PermissionFactory} instance.
      * @param authorizationService
      *         The {@link AuthorizationService} instance.
      * @param rolePermissionFactory
@@ -96,7 +93,6 @@ public class RoleServiceImpl extends KapuaConfigurableServiceBase implements Rol
      */
     @Inject
     public RoleServiceImpl(
-            PermissionFactory permissionFactory,
             AuthorizationService authorizationService,
             RolePermissionFactory rolePermissionFactory,
             AccessRoleFactory accessRoleFactory,
@@ -108,7 +104,7 @@ public class RoleServiceImpl extends KapuaConfigurableServiceBase implements Rol
             RoleRepository roleRepository,
             RolePermissionRepository rolePermissionRepository,
             PermissionValidator permissionValidator) {
-        super(txManager, serviceConfigurationManager, Domains.ROLE, authorizationService, permissionFactory);
+        super(txManager, serviceConfigurationManager, Domains.ROLE, authorizationService);
         this.rolePermissionFactory = rolePermissionFactory;
         this.accessRoleFactory = accessRoleFactory;
         this.accessInfoFactory = accessInfoFactory;
@@ -127,7 +123,7 @@ public class RoleServiceImpl extends KapuaConfigurableServiceBase implements Rol
         ArgumentValidator.validateEntityName(roleCreator.getName(), "roleCreator.name");
         ArgumentValidator.notNull(roleCreator.getPermissions(), "roleCreator.permissions");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.ROLE, Actions.write, roleCreator.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.ROLE, Actions.write, roleCreator.getScopeId()));
 
         return txManager.execute(tx -> {
             // Check entity limit
@@ -185,7 +181,7 @@ public class RoleServiceImpl extends KapuaConfigurableServiceBase implements Rol
         ArgumentValidator.notNull(role.getScopeId(), "role.scopeId");
         ArgumentValidator.validateEntityName(role.getName(), "role.name");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.ROLE, Actions.write, role.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.ROLE, Actions.write, role.getScopeId()));
 
         return txManager.execute(tx -> {
             // Check existence
@@ -206,7 +202,7 @@ public class RoleServiceImpl extends KapuaConfigurableServiceBase implements Rol
         ArgumentValidator.notNull(scopeId, "scopeId");
         ArgumentValidator.notNull(roleId, "roleId");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.ROLE, Actions.delete, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.ROLE, Actions.delete, scopeId));
 
         if (roleId.equals(KapuaId.ONE)) {
             throw new KapuaException(KapuaErrorCodes.ADMIN_ROLE_DELETED_ERROR);
@@ -221,7 +217,7 @@ public class RoleServiceImpl extends KapuaConfigurableServiceBase implements Rol
         ArgumentValidator.notNull(scopeId, "scopeId");
         ArgumentValidator.notNull(roleId, "roleId");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.ROLE, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.ROLE, Actions.read, scopeId));
         // Do find
         return txManager.execute(tx -> roleRepository.find(tx, scopeId, roleId))
                 .orElse(null);
@@ -232,7 +228,7 @@ public class RoleServiceImpl extends KapuaConfigurableServiceBase implements Rol
         // Argument validation
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.ROLE, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.ROLE, Actions.read, query.getScopeId()));
         // Do query
         return txManager.execute(tx -> roleRepository.query(tx, query));
     }
@@ -242,7 +238,7 @@ public class RoleServiceImpl extends KapuaConfigurableServiceBase implements Rol
         // Argument validation
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.ROLE, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.ROLE, Actions.read, query.getScopeId()));
         // Do count
         return txManager.execute(tx -> roleRepository.count(tx, query));
     }

@@ -33,10 +33,9 @@ import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.model.query.SortOrder;
 import org.eclipse.kapua.model.query.predicate.AttributePredicate.Operator;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.job.exception.CannotModifyJobStepsException;
 import org.eclipse.kapua.service.job.execution.JobExecutionAttributes;
-import org.eclipse.kapua.service.job.execution.JobExecutionFactory;
 import org.eclipse.kapua.service.job.execution.JobExecutionQuery;
 import org.eclipse.kapua.service.job.execution.JobExecutionService;
 import org.eclipse.kapua.service.job.internal.settings.JobServiceSettingKeys;
@@ -67,32 +66,26 @@ import com.google.common.base.Strings;
 public class JobStepServiceImpl implements JobStepService {
 
     private final AuthorizationService authorizationService;
-    private final PermissionFactory permissionFactory;
     private final TxManager txManager;
     private final JobStepRepository jobStepRepository;
     private final JobStepFactory jobStepFactory;
     private final JobExecutionService jobExecutionService;
-    private final JobExecutionFactory jobExecutionFactory;
     private final JobStepDefinitionRepository jobStepDefinitionRepository;
     private final XmlUtil xmlUtil;
 
     public JobStepServiceImpl(
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             TxManager txManager,
             JobStepRepository jobStepRepository,
             JobStepFactory jobStepFactory,
             JobExecutionService jobExecutionService,
-            JobExecutionFactory jobExecutionFactory,
             JobStepDefinitionRepository jobStepDefinitionRepository,
             XmlUtil xmlUtil) {
         this.authorizationService = authorizationService;
-        this.permissionFactory = permissionFactory;
         this.txManager = txManager;
         this.jobStepRepository = jobStepRepository;
         this.jobStepFactory = jobStepFactory;
         this.jobExecutionService = jobExecutionService;
-        this.jobExecutionFactory = jobExecutionFactory;
         this.jobStepDefinitionRepository = jobStepDefinitionRepository;
         this.xmlUtil = xmlUtil;
     }
@@ -125,7 +118,7 @@ public class JobStepServiceImpl implements JobStepService {
             ArgumentValidator.numRange(jobStepCreator.getDescription().length(), 0, 8192, "jobStepCreator.description");
         }
         // Check access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.write, jobStepCreator.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.write, jobStepCreator.getScopeId()));
 
         return txManager.execute(tx -> {
             // Check job step definition
@@ -211,7 +204,7 @@ public class JobStepServiceImpl implements JobStepService {
             ArgumentValidator.numRange(jobStep.getDescription().length(), 0, 8192, "jobStep.description");
         }
         // Check access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.write, jobStep.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.write, jobStep.getScopeId()));
 
         return txManager.execute(tx -> {
             // Check existence
@@ -278,7 +271,7 @@ public class JobStepServiceImpl implements JobStepService {
         ArgumentValidator.notNull(scopeId, "scopeId");
         ArgumentValidator.notNull(jobStepId, "jobStepId");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.write, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.write, scopeId));
         // Do find
         return txManager.execute(tx -> jobStepRepository.find(tx, scopeId, jobStepId))
                 .orElse(null);
@@ -289,7 +282,7 @@ public class JobStepServiceImpl implements JobStepService {
         // Argument Validation
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.read, query.getScopeId()));
         // Do query
         return txManager.execute(tx -> jobStepRepository.query(tx, query));
     }
@@ -299,7 +292,7 @@ public class JobStepServiceImpl implements JobStepService {
         // Argument Validation
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.read, query.getScopeId()));
         // Do query
         return txManager.execute(tx -> jobStepRepository.count(tx, query));
     }
@@ -310,7 +303,7 @@ public class JobStepServiceImpl implements JobStepService {
         ArgumentValidator.notNull(scopeId, "scopeId");
         ArgumentValidator.notNull(jobStepId, "jobStepId");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.delete, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.delete, scopeId));
 
         txManager.execute(tx -> {
             // Check existence
@@ -354,7 +347,7 @@ public class JobStepServiceImpl implements JobStepService {
     @Override
     public int getJobStepPropertyMaxLength() throws KapuaException {
         // Check access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.read, KapuaId.ANY));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.read, KapuaId.ANY));
 
         // Return the value
         return jobStepPropertyValueLengthMax;

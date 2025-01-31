@@ -39,7 +39,6 @@ import org.eclipse.kapua.service.authentication.shiro.setting.KapuaAuthenticatio
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.job.JobFactory;
 import org.eclipse.kapua.service.job.JobService;
 import org.eclipse.kapua.service.job.execution.JobExecutionFactory;
@@ -134,8 +133,6 @@ public class JobLocatorConfiguration {
                 } catch (Exception e) {
                     LOG.warn("Error while setting mock AuthorizationService. This may lead to failures...", e);
                 }
-                final PermissionFactory mockedPermissionFactory = Mockito.mock(PermissionFactory.class);
-                bind(PermissionFactory.class).toInstance(mockedPermissionFactory);
 
                 // Job
                 bind(JobFactory.class).toInstance(new JobFactoryImpl());
@@ -144,39 +141,34 @@ public class JobLocatorConfiguration {
                 bind(JobService.class).toInstance(new JobServiceImpl(
                         Mockito.mock(ServiceConfigurationManager.class),
                         Mockito.mock(JobEngineService.class),
-                        mockedPermissionFactory,
                         mockedAuthorization,
                         txManager,
                         new JobImplJpaRepository(jpaRepoConfig),
-                        new TriggerServiceImpl(mockedAuthorization, mockedPermissionFactory,
+                        new TriggerServiceImpl(mockedAuthorization,
                                 txManager, triggerImplJpaRepository, new TriggerFactoryImpl(),
                                 new TriggerDefinitionImplJpaRepository(jpaRepoConfig),
                                 new TriggerDefinitionFactoryImpl()
                         )));
                 bind(JobStepDefinitionService.class).toInstance(new JobStepDefinitionServiceImpl(
                         mockedAuthorization,
-                        mockedPermissionFactory,
                         txManager,
                         new JobStepDefinitionImplJpaRepository(jpaRepoConfig)
                 ));
                 bind(JobStepDefinitionFactory.class).toInstance(new JobStepDefinitionFactoryImpl());
                 final JobExecutionImplJpaRepository jobExecutionRepository = new JobExecutionImplJpaRepository(jpaRepoConfig);
-                final JobExecutionService jobExecutionService = new JobExecutionServiceImpl(mockedAuthorization, mockedPermissionFactory, txManager, jobExecutionRepository);
+                final JobExecutionService jobExecutionService = new JobExecutionServiceImpl(mockedAuthorization, txManager, jobExecutionRepository);
                 bind(JobStepService.class).toInstance(new JobStepServiceImpl(
                         mockedAuthorization,
-                        mockedPermissionFactory,
                         txManager,
                         new JobStepImplJpaRepository(jpaRepoConfig),
                         new JobStepFactoryImpl(),
                         jobExecutionService,
-                        new JobExecutionFactoryImpl(),
                         new JobStepDefinitionImplJpaRepository(jpaRepoConfig),
                         new XmlUtil(new TestJAXBContextProvider())
                 ));
                 bind(JobStepFactory.class).toInstance(new JobStepFactoryImpl());
                 bind(JobTargetService.class).toInstance(new JobTargetServiceImpl(
                         mockedAuthorization,
-                        mockedPermissionFactory,
                         txManager,
                         new JobTargetImplJpaRepository(jpaRepoConfig),
                         new JobTargetFactoryImpl(),
@@ -185,7 +177,6 @@ public class JobLocatorConfiguration {
                 bind(JobTargetFactory.class).toInstance(new JobTargetFactoryImpl());
                 bind(JobExecutionService.class).toInstance(new JobExecutionServiceImpl(
                         mockedAuthorization,
-                        mockedPermissionFactory,
                         txManager,
                         jobExecutionRepository
                 ));
@@ -197,7 +188,6 @@ public class JobLocatorConfiguration {
                 final TriggerFactoryImpl triggerFactory = new TriggerFactoryImpl();
                 bind(TriggerService.class).toInstance(new TriggerServiceImpl(
                         mockedAuthorization,
-                        mockedPermissionFactory,
                         txManager,
                         triggerImplJpaRepository,
                         triggerFactory,
@@ -207,7 +197,6 @@ public class JobLocatorConfiguration {
                 bind(TriggerFactory.class).toInstance(triggerFactory);
                 bind(TriggerDefinitionService.class).toInstance(new TriggerDefinitionServiceImpl(
                         mockedAuthorization,
-                        mockedPermissionFactory,
                         txManager,
                         triggerDefinitionRepository,
                         triggerDefinitionFactory

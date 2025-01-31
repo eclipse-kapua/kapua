@@ -12,7 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.keystore.internal;
 
-import com.google.common.base.Strings;
+import java.util.Date;
+
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaIllegalArgumentException;
@@ -21,7 +24,7 @@ import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.certificate.info.CertificateInfo;
 import org.eclipse.kapua.service.certificate.info.CertificateInfoFactory;
 import org.eclipse.kapua.service.certificate.info.CertificateInfoService;
@@ -60,8 +63,7 @@ import org.eclipse.kapua.storage.TxManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Singleton;
-import java.util.Date;
+import com.google.common.base.Strings;
 
 /**
  * {@link DeviceKeystoreManagementService} implementation.
@@ -83,7 +85,6 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
     public DeviceKeystoreManagementServiceImpl(
             TxManager txManager,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             DeviceEventService deviceEventService,
             DeviceEventFactory deviceEventFactory,
             DeviceRegistryService deviceRegistryService,
@@ -91,7 +92,6 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
             CertificateInfoFactory certificateInfoFactory, DeviceKeystoreManagementFactory deviceKeystoreManagementFactory) {
         super(txManager,
                 authorizationService,
-                permissionFactory,
                 deviceEventService,
                 deviceEventFactory,
                 deviceRegistryService);
@@ -107,7 +107,7 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
         // Prepare the request
         KeystoreRequestChannel keystoreRequestChannel = new KeystoreRequestChannel();
         keystoreRequestChannel.setAppName(DeviceKeystoreAppProperties.APP_NAME);
@@ -117,6 +117,7 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         KeystoreRequestPayload keystoreRequestPayload = new KeystoreRequestPayload();
 
         KeystoreQueryRequestMessage keystoreRequestMessage = new KeystoreQueryRequestMessage() {
+
             @Override
             public Class<KeystoresResponseMessage> getResponseClass() {
                 return KeystoresResponseMessage.class;
@@ -170,7 +171,7 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
             throw new KapuaIllegalArgumentException("itemQuery.alias", itemQuery.getAlias());
         }
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
         // Prepare the request
         KeystoreRequestChannel keystoreRequestChannel = new KeystoreRequestChannel();
         keystoreRequestChannel.setAppName(DeviceKeystoreAppProperties.APP_NAME);
@@ -186,6 +187,7 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         }
 
         KeystoreQueryRequestMessage keystoreRequestMessage = new KeystoreQueryRequestMessage() {
+
             @Override
             public Class<KeystoreItemsResponseMessage> getResponseClass() {
                 return KeystoreItemsResponseMessage.class;
@@ -227,7 +229,7 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         ArgumentValidator.notEmptyOrNull(keystoreId, "keystoreId");
         ArgumentValidator.notEmptyOrNull(alias, "alias");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
         // Prepare the request
         KeystoreRequestChannel keystoreRequestChannel = new KeystoreRequestChannel();
         keystoreRequestChannel.setAppName(DeviceKeystoreAppProperties.APP_NAME);
@@ -248,6 +250,7 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         }
 
         KeystoreQueryRequestMessage keystoreRequestMessage = new KeystoreQueryRequestMessage() {
+
             @Override
             public Class<KeystoreItemResponseMessage> getResponseClass() {
                 return KeystoreItemResponseMessage.class;
@@ -293,7 +296,8 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         try {
             certificateInfo = certificateInfoService.find(scopeId, certificateId);
         } catch (UnsupportedOperationException e) {
-            LOG.warn("Unable to get the certificate {} since the implementation does not support CertificateInfoService.find(scopeId, certificateId)... Returning KapuaEntityNotFoundException!", certificateId);
+            LOG.warn("Unable to get the certificate {} since the implementation does not support CertificateInfoService.find(scopeId, certificateId)... Returning KapuaEntityNotFoundException!",
+                    certificateId);
             throw new KapuaEntityNotFoundException(CertificateInfo.TYPE, certificateId);
         }
 
@@ -316,7 +320,7 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         ArgumentValidator.notNull(keystoreCertificate, "keystoreCertificate");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
         // Prepare the request
         KeystoreRequestChannel keystoreRequestChannel = new KeystoreRequestChannel();
         keystoreRequestChannel.setAppName(DeviceKeystoreAppProperties.APP_NAME);
@@ -332,6 +336,7 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         }
 
         KeystoreCertificateRequestMessage keystoreRequestMessage = new KeystoreCertificateRequestMessage() {
+
             @Override
             public Class<KeystoreNoContentResponseMessage> getResponseClass() {
                 return KeystoreNoContentResponseMessage.class;
@@ -373,7 +378,7 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         ArgumentValidator.notNull(keystoreKeypair, "keystoreKeypair");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
         // Prepare the request
         KeystoreRequestChannel keystoreRequestChannel = new KeystoreRequestChannel();
         keystoreRequestChannel.setAppName(DeviceKeystoreAppProperties.APP_NAME);
@@ -389,6 +394,7 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         }
 
         KeystoreKeypairRequestMessage keystoreRequestMessage = new KeystoreKeypairRequestMessage() {
+
             @Override
             public Class<KeystoreNoContentResponseMessage> getResponseClass() {
                 return KeystoreNoContentResponseMessage.class;
@@ -430,7 +436,7 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         ArgumentValidator.notNull(keystoreCSRInfo, "keystoreCSRInfo");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
         // Prepare the request
         KeystoreRequestChannel keystoreRequestChannel = new KeystoreRequestChannel();
         keystoreRequestChannel.setAppName(DeviceKeystoreAppProperties.APP_NAME);
@@ -446,6 +452,7 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         }
 
         KeystoreCsrRequestMessage keystoreRequestMessage = new KeystoreCsrRequestMessage() {
+
             @Override
             public Class<KeystoreCsrResponseMessage> getResponseClass() {
                 return KeystoreCsrResponseMessage.class;
@@ -488,7 +495,7 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         ArgumentValidator.notEmptyOrNull(keystoreId, "keystoreId");
         ArgumentValidator.notEmptyOrNull(alias, "alias");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.delete, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.delete, scopeId));
         // Prepare the request
         KeystoreRequestChannel keystoreRequestChannel = new KeystoreRequestChannel();
         keystoreRequestChannel.setAppName(DeviceKeystoreAppProperties.APP_NAME);
@@ -509,6 +516,7 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         }
 
         KeystoreQueryRequestMessage keystoreRequestMessage = new KeystoreQueryRequestMessage() {
+
             @Override
             public Class<KeystoreNoContentResponseMessage> getResponseClass() {
                 return KeystoreNoContentResponseMessage.class;

@@ -50,7 +50,7 @@ import org.eclipse.kapua.model.query.predicate.AttributePredicate.Operator;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.group.Group;
 import org.eclipse.kapua.service.authorization.group.GroupService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceAttributes;
 import org.eclipse.kapua.service.device.registry.DeviceCreator;
@@ -86,7 +86,6 @@ public class GwtDeviceServiceImpl extends KapuaRemoteServiceServlet implements G
 
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
     private static final AuthorizationService AUTHORIZATION_SERVICE = LOCATOR.getService(AuthorizationService.class);
-    private static final PermissionFactory PERMISSION_FACTORY = LOCATOR.getFactory(PermissionFactory.class);
 
     private boolean isSameId;
 
@@ -179,7 +178,7 @@ public class GwtDeviceServiceImpl extends KapuaRemoteServiceServlet implements G
                     pairs.add(new GwtGroupedNVPair(CONN_INFO, "connConnectionStatus", deviceConnection.getStatus().toString()));
                     pairs.add(new GwtGroupedNVPair(CONN_INFO, "connClientId", device.getClientId()));
                     pairs.add(new GwtGroupedNVPair(CONN_INFO, "connUserName", lastConnectedUser != null ? lastConnectedUser.getName() : null));
-                    if (AUTHORIZATION_SERVICE.isPermitted(PERMISSION_FACTORY.newPermission(Domains.USER, Actions.read, scopeId))) {
+                    if (AUTHORIZATION_SERVICE.isPermitted(new Permission(Domains.USER, Actions.read, scopeId))) {
                         pairs.add(new GwtGroupedNVPair(CONN_INFO, "connReservedUserId", reservedUser != null ? reservedUser.getName() : null));
                     }
                     pairs.add(new GwtGroupedNVPair(CONN_INFO, "connUserCouplingMode", GwtConnectionUserCouplingMode.valueOf(deviceConnection.getUserCouplingMode().name()).getLabel()));
@@ -193,7 +192,7 @@ public class GwtDeviceServiceImpl extends KapuaRemoteServiceServlet implements G
                     pairs.add(new GwtGroupedNVPair(CONN_INFO, "connConnectionStatus", DeviceConnectionStatus.DISCONNECTED.toString()));
                     pairs.add(new GwtGroupedNVPair(CONN_INFO, "connClientId", null));
                     pairs.add(new GwtGroupedNVPair(CONN_INFO, "connUserName", null));
-                    if (AUTHORIZATION_SERVICE.isPermitted(PERMISSION_FACTORY.newPermission(Domains.USER, Actions.read, scopeId))) {
+                    if (AUTHORIZATION_SERVICE.isPermitted(new Permission(Domains.USER, Actions.read, scopeId))) {
                         pairs.add(new GwtGroupedNVPair(CONN_INFO, "connReservedUserId", null));
                     }
                     pairs.add(new GwtGroupedNVPair(CONN_INFO, "connUserCouplingMode", null));
@@ -207,7 +206,7 @@ public class GwtDeviceServiceImpl extends KapuaRemoteServiceServlet implements G
                 pairs.add(new GwtGroupedNVPair(DEV_INFO, "devClientId", device.getClientId()));
                 pairs.add(new GwtGroupedNVPair(DEV_INFO, "devDisplayName", device.getDisplayName()));
 
-                if (AUTHORIZATION_SERVICE.isPermitted(PERMISSION_FACTORY.newPermission(Domains.GROUP, Actions.read, device.getScopeId()))) {
+                if (AUTHORIZATION_SERVICE.isPermitted(new Permission(Domains.GROUP, Actions.read, device.getScopeId()))) {
                     if (device.getGroupId() != null) {
 
                         Group group = groupService.find(scopeId, device.getGroupId());
@@ -219,7 +218,7 @@ public class GwtDeviceServiceImpl extends KapuaRemoteServiceServlet implements G
                     }
                 }
 
-                if (AUTHORIZATION_SERVICE.isPermitted(PERMISSION_FACTORY.newPermission(Domains.DEVICE_EVENT, Actions.read, device.getScopeId()))) {
+                if (AUTHORIZATION_SERVICE.isPermitted(new Permission(Domains.DEVICE_EVENT, Actions.read, device.getScopeId()))) {
                     if (device.getLastEventId() != null) {
                         DeviceEvent lastEvent = deviceEventService.find(scopeId, device.getLastEventId());
 
@@ -262,7 +261,7 @@ public class GwtDeviceServiceImpl extends KapuaRemoteServiceServlet implements G
                 pairs.add(new GwtGroupedNVPair("devJava", "devJvmVersion", device.getJvmVersion()));
 
                 // GPS infos retrieval
-                if (AUTHORIZATION_SERVICE.isPermitted(PERMISSION_FACTORY.newPermission(Domains.DEVICE_EVENT, Actions.read, device.getScopeId()))) {
+                if (AUTHORIZATION_SERVICE.isPermitted(new Permission(Domains.DEVICE_EVENT, Actions.read, device.getScopeId()))) {
                     DeviceEventQuery query = new DeviceEventQuery(device.getScopeId());
                     query.setLimit(1);
                     query.setSortCriteria(query.fieldSortCriteria(DeviceEventAttributes.RECEIVED_ON, SortOrder.DESCENDING));

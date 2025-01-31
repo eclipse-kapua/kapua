@@ -73,7 +73,6 @@ import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.exception.SubjectUnauthorizedException;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.authorization.role.RoleCreator;
 import org.eclipse.kapua.service.authorization.role.RoleService;
 import org.eclipse.kapua.service.config.KapuaConfigurableService;
@@ -111,8 +110,6 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
     private static final EndpointInfoService ENDPOINT_INFO_SERVICE = LOCATOR.getService(EndpointInfoService.class);
     private static final AuthorizationService AUTHORIZATION_SERVICE = LOCATOR.getService(AuthorizationService.class);
 
-    private static final PermissionFactory PERMISSION_FACTORY = LOCATOR.getFactory(PermissionFactory.class);
-
     private static final RoleService ROLE_SERVICE = LOCATOR.getService(RoleService.class);
 
     private static final UserService USER_SERVICE = LOCATOR.getService(UserService.class);
@@ -149,7 +146,7 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
                 @Override
                 public void run() throws Exception {
                     // Admin
-                    Permission adminPermission = PERMISSION_FACTORY.newPermission((String) null, null, account.getId(), null, true);
+                    Permission adminPermission = new Permission((String) null, null, account.getId(), null, true);
 
                     RoleCreator adminRoleCreator = new RoleCreator(account.getId());
                     adminRoleCreator.setName("Admin");
@@ -159,7 +156,7 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
                     ROLE_SERVICE.create(adminRoleCreator);
 
                     // Thing
-                    Permission thingPermission = PERMISSION_FACTORY.newPermission(Domains.BROKER, Actions.connect, account.getId(), null, false);
+                    Permission thingPermission = new Permission(Domains.BROKER, Actions.connect, account.getId(), null, false);
 
                     RoleCreator thingRoleCreator = new RoleCreator(account.getId());
                     thingRoleCreator.setName("Thing");
@@ -237,7 +234,7 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
             }
             accountPropertiesPairs.add(new GwtGroupedNVPair("accountInfo", "accountName", account.getName()));
 
-            if (AUTHORIZATION_SERVICE.isPermitted(PERMISSION_FACTORY.newPermission(Domains.ENDPOINT_INFO, Actions.read, scopeId))) {
+            if (AUTHORIZATION_SERVICE.isPermitted(new Permission(Domains.ENDPOINT_INFO, Actions.read, scopeId))) {
                 //TODO: #LAYER_VIOLATION - related entities lookup should not be done here
 
                 EndpointInfoListResult endpointInfos = KapuaSecurityUtils.doPrivileged(new Callable<EndpointInfoListResult>() {

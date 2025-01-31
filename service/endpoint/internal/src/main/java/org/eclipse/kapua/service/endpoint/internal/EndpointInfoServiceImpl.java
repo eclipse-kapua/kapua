@@ -38,11 +38,10 @@ import org.eclipse.kapua.model.query.predicate.QueryPredicate;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.endpoint.EndpointInfo;
 import org.eclipse.kapua.service.endpoint.EndpointInfoAttributes;
 import org.eclipse.kapua.service.endpoint.EndpointInfoCreator;
-import org.eclipse.kapua.service.endpoint.EndpointInfoFactory;
 import org.eclipse.kapua.service.endpoint.EndpointInfoListResult;
 import org.eclipse.kapua.service.endpoint.EndpointInfoQuery;
 import org.eclipse.kapua.service.endpoint.EndpointInfoRepository;
@@ -60,8 +59,6 @@ public class EndpointInfoServiceImpl
         implements EndpointInfoService {
 
     private final AuthorizationService authorizationService;
-    private final PermissionFactory permissionFactory;
-    private final EndpointInfoFactory endpointInfoFactory;
     private final EndpointInfoRepository repository;
     private final AccountService accountService;
     private final TxManager txManager;
@@ -70,14 +67,10 @@ public class EndpointInfoServiceImpl
     public EndpointInfoServiceImpl(
             AccountService accountService,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
-            EndpointInfoFactory endpointInfoFactory,
             EndpointInfoRepository endpointInfoRepository,
             TxManager txManager) {
         this.accountService = accountService;
         this.authorizationService = authorizationService;
-        this.permissionFactory = permissionFactory;
-        this.endpointInfoFactory = endpointInfoFactory;
         this.repository = endpointInfoRepository;
         this.txManager = txManager;
     }
@@ -108,7 +101,7 @@ public class EndpointInfoServiceImpl
         KapuaId scopeIdPermission = endpointInfoCreator.getEndpointType().equals(EndpointInfo.ENDPOINT_TYPE_CORS) ?
                 endpointInfoCreator.getScopeId() : null;
         authorizationService.checkPermission(
-                permissionFactory.newPermission(Domains.ENDPOINT_INFO, Actions.write, scopeIdPermission)
+                new Permission(Domains.ENDPOINT_INFO, Actions.write, scopeIdPermission)
         );
         // Check duplicate endpoint
         checkDuplicateEndpointInfo(
@@ -150,7 +143,7 @@ public class EndpointInfoServiceImpl
         KapuaId scopeIdPermission = endpointInfo.getEndpointType().equals(EndpointInfo.ENDPOINT_TYPE_CORS) ?
                 endpointInfo.getScopeId() : null;
         authorizationService.checkPermission(
-                permissionFactory.newPermission(Domains.ENDPOINT_INFO, Actions.write, scopeIdPermission)
+                new Permission(Domains.ENDPOINT_INFO, Actions.write, scopeIdPermission)
         );
         // Check duplicate endpoint
         checkDuplicateEndpointInfo(
@@ -180,7 +173,7 @@ public class EndpointInfoServiceImpl
             }
 
             authorizationService.checkPermission(
-                    permissionFactory.newPermission(Domains.ENDPOINT_INFO, Actions.delete, scopeIdPermission)
+                    new Permission(Domains.ENDPOINT_INFO, Actions.delete, scopeIdPermission)
             );
             // Do delete
             return repository.delete(tx, scopeId, endpointInfoId);
@@ -195,7 +188,7 @@ public class EndpointInfoServiceImpl
         // Check Access
         return txManager.execute(tx -> {
             authorizationService.checkPermission(
-                    permissionFactory.newPermission(Domains.ENDPOINT_INFO, Actions.read, scopeId)
+                    new Permission(Domains.ENDPOINT_INFO, Actions.read, scopeId)
             );
             EndpointInfo endpointInfoToFind = repository.find(tx, KapuaId.ANY, endpointInfoId)
                     .orElseThrow(() -> new KapuaEntityNotFoundException(EndpointInfo.TYPE, endpointInfoId)); // search the endpoint in any scope
@@ -233,7 +226,7 @@ public class EndpointInfoServiceImpl
         ArgumentValidator.notNull(query, "query");
         // Check Access
         authorizationService.checkPermission(
-                permissionFactory.newPermission(Domains.ENDPOINT_INFO, Actions.read, query.getScopeId())
+                new Permission(Domains.ENDPOINT_INFO, Actions.read, query.getScopeId())
         );
         return traverse(
                 txContext,
@@ -258,7 +251,7 @@ public class EndpointInfoServiceImpl
         //
         // Check Access
         authorizationService.checkPermission(
-                permissionFactory.newPermission(Domains.ENDPOINT_INFO, Actions.read, query.getScopeId())
+                new Permission(Domains.ENDPOINT_INFO, Actions.read, query.getScopeId())
         );
         return traverse(
                 tx,

@@ -41,7 +41,6 @@ import org.eclipse.kapua.service.authentication.credential.CredentialStatus;
 import org.eclipse.kapua.service.authorization.access.AccessInfoCreator;
 import org.eclipse.kapua.service.authorization.access.AccessInfoService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserCreator;
@@ -145,7 +144,6 @@ public class SimpleRegistrationProcessor implements RegistrationProcessor {
 
     private final AccessInfoService accessInfoService;
 
-    private final PermissionFactory permissionFactory;
     private final SimpleSetting simpleSetting;
 
     private final String claimName;
@@ -159,7 +157,6 @@ public class SimpleRegistrationProcessor implements RegistrationProcessor {
      * @param deviceRegistryService
      * @param userService
      * @param accessInfoService
-     * @param permissionFactory
      * @param simpleSetting
      * @param claimName
      *         the claim to use as account name
@@ -172,7 +169,6 @@ public class SimpleRegistrationProcessor implements RegistrationProcessor {
             DeviceRegistryService deviceRegistryService,
             UserService userService,
             AccessInfoService accessInfoService,
-            PermissionFactory permissionFactory,
             SimpleSetting simpleSetting,
             String claimName,
             Settings settings) {
@@ -181,7 +177,6 @@ public class SimpleRegistrationProcessor implements RegistrationProcessor {
         this.deviceRegistryService = deviceRegistryService;
         this.userService = userService;
         this.accessInfoService = accessInfoService;
-        this.permissionFactory = permissionFactory;
         this.simpleSetting = simpleSetting;
         this.claimName = claimName;
         this.settings = settings;
@@ -277,18 +272,18 @@ public class SimpleRegistrationProcessor implements RegistrationProcessor {
         accessInfoCreator.setUserId(user.getId());
 
         Set<Permission> permissions = new HashSet<>();
-        permissions.add(permissionFactory.newPermission(Domains.ACCESS_INFO, Actions.read, user.getScopeId()));
+        permissions.add(new Permission(Domains.ACCESS_INFO, Actions.read, user.getScopeId()));
 
-        permissions.addAll(permissionFactory.newPermissions(Domains.ACCOUNT, user.getScopeId(), Actions.read));
-        permissions.addAll(permissionFactory.newPermissions(Domains.CREDENTIAL, user.getScopeId(), Actions.read, Actions.write, Actions.delete));
-        permissions.addAll(permissionFactory.newPermissions(Domains.DATASTORE, user.getScopeId(), Actions.read));
-        permissions.addAll(permissionFactory.newPermissions(Domains.DEVICE, user.getScopeId(), Actions.read, Actions.write, Actions.delete));
-        permissions.addAll(permissionFactory.newPermissions(Domains.DEVICE_CONNECTION, user.getScopeId(), Actions.read));
-        permissions.addAll(permissionFactory.newPermissions(Domains.DEVICE_EVENT, user.getScopeId(), Actions.read, Actions.write));
-        permissions.addAll(permissionFactory.newPermissions(Domains.DEVICE_MANAGEMENT, user.getScopeId(), Actions.read, Actions.write, Actions.execute));
-        permissions.addAll(permissionFactory.newPermissions(Domains.GROUP, user.getScopeId(), Actions.read));
-        permissions.addAll(permissionFactory.newPermissions(Domains.ROLE, user.getScopeId(), Actions.read));
-        permissions.addAll(permissionFactory.newPermissions(Domains.USER, user.getScopeId(), Actions.read));
+        permissions.addAll(Permission.newPermissions(Domains.ACCOUNT, user.getScopeId(), Actions.read));
+        permissions.addAll(Permission.newPermissions(Domains.CREDENTIAL, user.getScopeId(), Actions.read, Actions.write, Actions.delete));
+        permissions.addAll(Permission.newPermissions(Domains.DATASTORE, user.getScopeId(), Actions.read));
+        permissions.addAll(Permission.newPermissions(Domains.DEVICE, user.getScopeId(), Actions.read, Actions.write, Actions.delete));
+        permissions.addAll(Permission.newPermissions(Domains.DEVICE_CONNECTION, user.getScopeId(), Actions.read));
+        permissions.addAll(Permission.newPermissions(Domains.DEVICE_EVENT, user.getScopeId(), Actions.read, Actions.write));
+        permissions.addAll(Permission.newPermissions(Domains.DEVICE_MANAGEMENT, user.getScopeId(), Actions.read, Actions.write, Actions.execute));
+        permissions.addAll(Permission.newPermissions(Domains.GROUP, user.getScopeId(), Actions.read));
+        permissions.addAll(Permission.newPermissions(Domains.ROLE, user.getScopeId(), Actions.read));
+        permissions.addAll(Permission.newPermissions(Domains.USER, user.getScopeId(), Actions.read));
 
         accessInfoCreator.setPermissions(permissions);
 
@@ -317,7 +312,7 @@ public class SimpleRegistrationProcessor implements RegistrationProcessor {
         accessInfoCreator.setUserId(user.getId());
 
         Set<Permission> permissions = new HashSet<>();
-        permissions.add(permissionFactory.newPermission(Domains.BROKER, Actions.connect, user.getScopeId()));
+        permissions.add(new Permission(Domains.BROKER, Actions.connect, user.getScopeId()));
 
         accessInfoCreator.setPermissions(permissions);
 

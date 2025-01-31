@@ -28,7 +28,6 @@ import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.device.registry.ConnectionUserCouplingMode;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnection;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionCreator;
@@ -60,7 +59,6 @@ public abstract class AuthenticationLogic {
     protected final DeviceConnectionOptionService deviceConnectionOptionService;
     protected final AuthorizationService authorizationService;
     protected final DeviceConnectionFactory deviceConnectionFactory;
-    protected final PermissionFactory permissionFactory;
     protected final DeviceConnectionService deviceConnectionService;
 
     private static final String USER_NOT_AUTHORIZED = "User not authorized!";
@@ -72,7 +70,6 @@ public abstract class AuthenticationLogic {
             DeviceConnectionOptionService deviceConnectionOptionService,
             AuthorizationService authorizationService,
             DeviceConnectionFactory deviceConnectionFactory,
-            PermissionFactory permissionFactory,
             DeviceConnectionService deviceConnectionService) {
         this.aclCreator = aclCreator;
         this.authenticationMetric = authenticationMetric;
@@ -80,7 +77,6 @@ public abstract class AuthenticationLogic {
         this.deviceConnectionOptionService = deviceConnectionOptionService;
         this.authorizationService = authorizationService;
         this.deviceConnectionFactory = deviceConnectionFactory;
-        this.permissionFactory = permissionFactory;
         this.deviceConnectionService = deviceConnectionService;
     }
 

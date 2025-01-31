@@ -65,7 +65,6 @@ import org.eclipse.kapua.service.authorization.access.AccessPermission;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionAttributes;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.authorization.permission.shiro.PermissionImpl;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserAttributes;
@@ -120,7 +119,6 @@ public class UserServiceSteps extends TestBase {
      */
     private AccessInfoService accessInfoService;
     private AuthenticationService authenticationService;
-    private PermissionFactory permissionFactory;
     private CredentialService credentialService;
     private AccessPermissionService accessPermissionService;
 
@@ -141,7 +139,6 @@ public class UserServiceSteps extends TestBase {
         authenticationService = locator.getService(AuthenticationService.class);
         credentialService = locator.getService(CredentialService.class);
         accessInfoService = locator.getService(AccessInfoService.class);
-        permissionFactory = locator.getFactory(PermissionFactory.class);
         accessPermissionService = locator.getService(AccessPermissionService.class);
     }
 
@@ -878,13 +875,13 @@ public class UserServiceSteps extends TestBase {
                 if (targetScopeId == null) {
                     targetScopeId = (KapuaEid) account.getId();
                 }
-                Permission permission = permissionFactory.newPermission(cucPermission.getDomain(),
+                Permission permission = new Permission(cucPermission.getDomain(),
                         action, targetScopeId);
                 permissions.add(permission);
                 stepData.put(LAST_PERMISSION_ADDED_TO_USER, permission);
             }
         } else {
-            Permission permission = permissionFactory.newPermission((String) null, null, null);
+            Permission permission = new Permission((String) null, null, null);
             permissions.add(permission);
         }
         accessInfoCreator.setPermissions(permissions);

@@ -12,20 +12,21 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job.step.definition.internal;
 
-import com.google.inject.Provides;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionFactory;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionRepository;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionService;
 import org.eclipse.kapua.storage.TxManager;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import com.google.inject.Provides;
 
 public class JobStepDefinitionModule extends AbstractKapuaModule {
+
     @Override
     protected void configureModule() {
         bind(JobStepDefinitionFactory.class).to(JobStepDefinitionFactoryImpl.class);
@@ -38,12 +39,10 @@ public class JobStepDefinitionModule extends AbstractKapuaModule {
     @Inject
     JobStepDefinitionService jobStepDefinitionService(
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             @Named("jobTxManager") TxManager txManager,
             JobStepDefinitionRepository repository) {
         return new JobStepDefinitionServiceImpl(
                 authorizationService,
-                permissionFactory,
                 txManager,
                 repository
         );

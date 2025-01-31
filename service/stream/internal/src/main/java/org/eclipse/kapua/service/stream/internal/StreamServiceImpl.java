@@ -30,7 +30,7 @@ import org.eclipse.kapua.message.Message;
 import org.eclipse.kapua.message.device.data.KapuaDataMessage;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.device.call.kura.exception.KuraDeviceCallErrorCodes;
 import org.eclipse.kapua.service.device.call.kura.exception.KuraDeviceCallException;
 import org.eclipse.kapua.service.device.call.message.kura.app.response.KuraResponseMessage;
@@ -62,7 +62,6 @@ import com.google.common.base.Strings;
 public class StreamServiceImpl implements StreamService {
 
     private final AuthorizationService authorizationService;
-    private final PermissionFactory permissionFactory;
     private final DeviceRegistryService deviceRegistryService;
     private final EndpointInfoService endpointInfoService;
     private final TransportClientFactory transportClientFactory;
@@ -71,13 +70,11 @@ public class StreamServiceImpl implements StreamService {
     @Inject
     public StreamServiceImpl(
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             DeviceRegistryService deviceRegistryService,
             EndpointInfoService endpointInfoService,
             TransportClientFactory transportClientFactory,
             TranslatorHub translatorHub) {
         this.authorizationService = authorizationService;
-        this.permissionFactory = permissionFactory;
         this.deviceRegistryService = deviceRegistryService;
         this.endpointInfoService = endpointInfoService;
         this.transportClientFactory = transportClientFactory;
@@ -91,7 +88,7 @@ public class StreamServiceImpl implements StreamService {
         ArgumentValidator.notNull(kapuaDataMessage.getScopeId(), "dataMessage.scopeId");
         ArgumentValidator.notNull(kapuaDataMessage.getChannel(), "dataMessage.channel");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.STREAM, Actions.write, kapuaDataMessage.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.STREAM, Actions.write, kapuaDataMessage.getScopeId()));
         // Do publish
         try (TransportFacade transportFacade = borrowClient(kapuaDataMessage)) {
             // Get Kura to transport translator for the request and vice versa

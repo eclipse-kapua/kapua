@@ -30,7 +30,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.datastore.ChannelInfoRegistryService;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettingsKey;
@@ -64,9 +63,7 @@ public class ChannelInfoRegistryServiceImpl implements ChannelInfoRegistryServic
     private static final Logger LOG = LoggerFactory.getLogger(ChannelInfoRegistryServiceImpl.class);
     private final DatastorePredicateFactory datastorePredicateFactory;
     protected final Integer maxResultWindowValue;
-    private final AccountService accountService;
     private final AuthorizationService authorizationService;
-    private final PermissionFactory permissionFactory;
     private final ChannelInfoRegistryFacade channelInfoRegistryFacade;
     private final MessageRepository messageRepository;
     private final DatastoreSettings datastoreSettings;
@@ -83,17 +80,14 @@ public class ChannelInfoRegistryServiceImpl implements ChannelInfoRegistryServic
             DatastorePredicateFactory datastorePredicateFactory,
             AccountService accountService,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             MessageRepository messageStoreService,
             ChannelInfoRegistryFacade channelInfoRegistryFacade,
             DatastoreSettings datastoreSettings) {
         this.datastorePredicateFactory = datastorePredicateFactory;
         this.authorizationService = authorizationService;
-        this.permissionFactory = permissionFactory;
         this.messageRepository = messageStoreService;
         this.channelInfoRegistryFacade = channelInfoRegistryFacade;
         this.datastoreSettings = datastoreSettings;
-        this.accountService = accountService;
         this.maxResultWindowValue = datastoreSettings.getInt(DatastoreSettingsKey.MAX_RESULT_WINDOW_VALUE);
     }
 
@@ -211,7 +205,7 @@ public class ChannelInfoRegistryServiceImpl implements ChannelInfoRegistryServic
 
     private void checkDataAccess(KapuaId scopeId, Actions action)
             throws KapuaException {
-        Permission permission = permissionFactory.newPermission(Domains.DATASTORE, action, scopeId);
+        Permission permission = new Permission(Domains.DATASTORE, action, scopeId);
         authorizationService.checkPermission(permission);
     }
 

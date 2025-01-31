@@ -47,7 +47,6 @@ import org.eclipse.kapua.service.authorization.access.GroupQueryHelper;
 import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
 import org.eclipse.kapua.service.authorization.group.GroupService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.device.authentication.UserPassDeviceConnectionCredentialAdapter;
 import org.eclipse.kapua.service.device.authentication.api.DeviceConnectionCredentialAdapter;
 import org.eclipse.kapua.service.device.registry.DeviceFactory;
@@ -116,9 +115,6 @@ public class DeviceRegistryLocatorConfiguration {
 
                 // Inject mocked Authorization Service method checkPermission
                 AuthorizationService mockedAuthorization = Mockito.mock(AuthorizationService.class);
-                // Inject mocked Permission Factory
-                final PermissionFactory permissionFactory = Mockito.mock(PermissionFactory.class);
-                bind(PermissionFactory.class).toInstance(permissionFactory);
                 try {
                     Mockito.doNothing().when(mockedAuthorization).checkPermission(Matchers.any(Permission.class));
                 } catch (KapuaException e) {
@@ -158,7 +154,6 @@ public class DeviceRegistryLocatorConfiguration {
                 final DeviceConnectionService deviceConnectionService = new DeviceConnectionServiceImpl(
                         classServiceConfigurationManagerMap,
                         mockedAuthorization,
-                        permissionFactory,
                         new DeviceConnectionFactoryImpl(),
                         txManager,
                         new DeviceConnectionImplJpaRepository(jpaRepoConfig),
@@ -172,7 +167,6 @@ public class DeviceRegistryLocatorConfiguration {
                 bind(DeviceEventRepository.class).toInstance(new DeviceEventImplJpaRepository(jpaRepoConfig));
                 final DeviceEventService deviceEventService = new DeviceEventServiceImpl(
                         mockedAuthorization,
-                        permissionFactory,
                         txManager,
                         new DeviceImplJpaRepository(jpaRepoConfig),
                         new DeviceEventFactoryImpl(),
@@ -186,13 +180,11 @@ public class DeviceRegistryLocatorConfiguration {
                         new KapuaDeviceRegistrySettings().getInt(KapuaDeviceRegistrySettingKeys.DEVICE_LIFECYCLE_BIRTH_VAR_FIELDS_LENGTH_MAX),
                         new KapuaDeviceRegistrySettings().getInt(KapuaDeviceRegistrySettingKeys.DEVICE_LIFECYCLE_BIRTH_EXTENDED_PROPERTIES_LENGTH_MAX),
                         mockedAuthorization,
-                        permissionFactory,
                         Mockito.mock(GroupService.class),
                         deviceConnectionService,
                         deviceEventService,
                         new DeviceImplJpaRepository(jpaRepoConfig),
                         new TagServiceImpl(
-                                permissionFactory,
                                 mockedAuthorization,
                                 Mockito.mock(ServiceConfigurationManager.class),
                                 new KapuaJpaTxManagerFactory(maxInsertAttempts).create("kapua-tag"),
@@ -204,7 +196,6 @@ public class DeviceRegistryLocatorConfiguration {
                 bind(DeviceRegistryService.class).toInstance(new DeviceRegistryServiceImpl(
                         Mockito.mock(ServiceConfigurationManager.class),
                         mockedAuthorization,
-                        permissionFactory,
                         txManager,
                         new DeviceImplJpaRepository(jpaRepoConfig),
                         new DeviceFactoryImpl(),

@@ -12,9 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.endpoint.internal;
 
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import com.google.inject.multibindings.ProvidesIntoSet;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
@@ -24,12 +21,16 @@ import org.eclipse.kapua.model.domain.Domain;
 import org.eclipse.kapua.model.domain.DomainEntry;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.endpoint.EndpointInfoFactory;
 import org.eclipse.kapua.service.endpoint.EndpointInfoRepository;
 import org.eclipse.kapua.service.endpoint.EndpointInfoService;
 
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+import com.google.inject.multibindings.ProvidesIntoSet;
+
 public class EndpointModule extends AbstractKapuaModule {
+
     @Override
     protected void configureModule() {
         bind(EndpointInfoFactory.class).to(EndpointInfoFactoryImpl.class);
@@ -39,16 +40,12 @@ public class EndpointModule extends AbstractKapuaModule {
     @Singleton
     EndpointInfoService endpointInfoService(
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
-            EndpointInfoFactory endpointInfoFactory,
             AccountService accountService,
             EndpointInfoRepository endpointInfoRepository,
             KapuaJpaTxManagerFactory jpaTxManagerFactory) {
         return new EndpointInfoServiceImpl(
                 accountService,
                 authorizationService,
-                permissionFactory,
-                endpointInfoFactory,
                 endpointInfoRepository,
                 jpaTxManagerFactory.create("kapua-endpoint"));
     }

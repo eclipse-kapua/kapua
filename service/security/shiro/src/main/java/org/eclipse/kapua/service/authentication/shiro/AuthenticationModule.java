@@ -87,7 +87,6 @@ import org.eclipse.kapua.service.authentication.token.shiro.AccessTokenFactoryIm
 import org.eclipse.kapua.service.authentication.token.shiro.AccessTokenImplJpaRepository;
 import org.eclipse.kapua.service.authentication.token.shiro.AccessTokenServiceImpl;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.user.UserService;
 
 import com.google.inject.Provides;
@@ -136,7 +135,6 @@ public class AuthenticationModule extends AbstractKapuaModule {
     public ServiceModule authenticationServiceModule(AccessTokenService accessTokenService,
             CredentialService credentialService,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             KapuaJpaTxManagerFactory txManagerFactory,
             EventStoreRecordRepository eventStoreRecordRepository,
             ServiceEventBus serviceEventBus,
@@ -150,7 +148,6 @@ public class AuthenticationModule extends AbstractKapuaModule {
                 new ServiceEventHouseKeeperFactoryImpl(
                         new EventStoreServiceImpl(
                                 authorizationService,
-                                permissionFactory,
                                 txManagerFactory.create("kapua-authentication"),
                                 eventStoreRecordRepository
                         ),
@@ -199,13 +196,11 @@ public class AuthenticationModule extends AbstractKapuaModule {
     @Singleton
     AccessTokenService accessTokenService(
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             AccessTokenRepository accessTokenRepository,
             AccessTokenFactory accessTokenFactory,
             KapuaJpaTxManagerFactory jpaTxManagerFactory) {
         return new AccessTokenServiceImpl(
                 authorizationService,
-                permissionFactory,
                 jpaTxManagerFactory.create("kapua-authentication"),
                 accessTokenRepository,
                 accessTokenFactory);
@@ -219,7 +214,6 @@ public class AuthenticationModule extends AbstractKapuaModule {
             AccountService accountService,
             ScratchCodeRepository scratchCodeRepository,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             UserService userService,
             KapuaJpaTxManagerFactory jpaTxManagerFactory,
             KapuaAuthenticationSetting kapuaAuthenticationSetting,
@@ -235,7 +229,6 @@ public class AuthenticationModule extends AbstractKapuaModule {
                 accountService,
                 scratchCodeRepository,
                 authorizationService,
-                permissionFactory,
                 userService,
                 authenticationUtils,
                 qrCodeBuilder
@@ -246,13 +239,10 @@ public class AuthenticationModule extends AbstractKapuaModule {
     @Singleton
     ScratchCodeService scratchCodeService(
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             ScratchCodeRepository scratchCodeRepository,
-            KapuaJpaTxManagerFactory jpaTxManagerFactory,
-            AuthenticationUtils authenticationUtils) {
+            KapuaJpaTxManagerFactory jpaTxManagerFactory) {
         return new ScratchCodeServiceImpl(
                 authorizationService,
-                permissionFactory,
                 jpaTxManagerFactory.create("kapua-authentication"),
                 scratchCodeRepository);
     }
@@ -280,7 +270,6 @@ public class AuthenticationModule extends AbstractKapuaModule {
     public CredentialService credentialService(
             Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             CredentialRepository credentialRepository,
             CredentialFactory credentialFactory,
             KapuaJpaTxManagerFactory jpaTxManagerFactory,
@@ -291,7 +280,6 @@ public class AuthenticationModule extends AbstractKapuaModule {
             Set<CredentialTypeHandler> availableCredentialAuthenticationTypes) {
         return new CredentialServiceImpl(serviceConfigurationManagersByServiceClass.get(CredentialService.class),
                 authorizationService,
-                permissionFactory,
                 jpaTxManagerFactory.create("kapua-authentication"),
                 credentialRepository,
                 credentialFactory,

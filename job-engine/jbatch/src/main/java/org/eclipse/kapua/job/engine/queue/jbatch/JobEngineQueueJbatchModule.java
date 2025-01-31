@@ -12,7 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.job.engine.queue.jbatch;
 
-import com.google.inject.Provides;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
@@ -22,11 +23,11 @@ import org.eclipse.kapua.job.engine.queue.QueuedJobExecutionFactory;
 import org.eclipse.kapua.job.engine.queue.QueuedJobExecutionRepository;
 import org.eclipse.kapua.job.engine.queue.QueuedJobExecutionService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 
-import javax.inject.Singleton;
+import com.google.inject.Provides;
 
 public class JobEngineQueueJbatchModule extends AbstractKapuaModule {
+
     @Override
     protected void configureModule() {
         bind(QueuedJobExecutionFactory.class).to(QueuedJobExecutionFactoryImpl.class);
@@ -37,12 +38,10 @@ public class JobEngineQueueJbatchModule extends AbstractKapuaModule {
     @Singleton
     QueuedJobExecutionService queuedJobExecutionService(
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             QueuedJobExecutionRepository repository,
             KapuaJpaTxManagerFactory jpaTxManagerFactory) {
         return new QueuedJobExecutionServiceImpl(
                 authorizationService,
-                permissionFactory,
                 jpaTxManagerFactory.create("kapua-job-engine"),
                 repository);
     }

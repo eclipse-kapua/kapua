@@ -29,7 +29,6 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.datastore.MetricInfoRegistryService;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettingsKey;
@@ -67,7 +66,6 @@ public class MetricInfoRegistryServiceImpl implements MetricInfoRegistryService 
     private final StorablePredicateFactory storablePredicateFactory;
 
     private final AuthorizationService authorizationService;
-    private final PermissionFactory permissionFactory;
     private final MetricInfoRegistryFacade metricInfoRegistryFacade;
     private final DatastorePredicateFactory datastorePredicateFactory;
     private final MessageRepository messageRepository;
@@ -81,14 +79,12 @@ public class MetricInfoRegistryServiceImpl implements MetricInfoRegistryService 
     public MetricInfoRegistryServiceImpl(
             StorablePredicateFactory storablePredicateFactory,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             DatastorePredicateFactory datastorePredicateFactory,
             MetricInfoRegistryFacade metricInfoRegistryFacade,
             MessageRepository messageRepository,
             DatastoreSettings datastoreSettings) {
         this.storablePredicateFactory = storablePredicateFactory;
         this.authorizationService = authorizationService;
-        this.permissionFactory = permissionFactory;
         this.datastorePredicateFactory = datastorePredicateFactory;
         this.metricInfoRegistryFacade = metricInfoRegistryFacade;
         this.messageRepository = messageRepository;
@@ -211,7 +207,7 @@ public class MetricInfoRegistryServiceImpl implements MetricInfoRegistryService 
 
     private void checkDataAccess(KapuaId scopeId, Actions action)
             throws KapuaException {
-        Permission permission = permissionFactory.newPermission(Domains.DATASTORE, action, scopeId);
+        Permission permission = new Permission(Domains.DATASTORE, action, scopeId);
         authorizationService.checkPermission(permission);
     }
 

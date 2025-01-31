@@ -40,7 +40,6 @@ import org.eclipse.kapua.service.account.AccountRepository;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.account.internal.setting.KapuaAccountSetting;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 
 import com.google.inject.Module;
 import com.google.inject.Provides;
@@ -77,7 +76,6 @@ public class AccountModule extends AbstractKapuaModule implements Module {
     @ProvidesIntoSet
     ServiceModule accountServiceModule(AccountService accountService,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             KapuaJpaTxManagerFactory txManagerFactory,
             EventStoreRecordRepository eventStoreRecordRepository,
             ServiceEventBus serviceEventBus,
@@ -90,7 +88,6 @@ public class AccountModule extends AbstractKapuaModule implements Module {
                 new ServiceEventHouseKeeperFactoryImpl(
                         new EventStoreServiceImpl(
                                 authorizationService,
-                                permissionFactory,
                                 txManagerFactory.create("kapua-account"),
                                 eventStoreRecordRepository
                         ),
@@ -104,7 +101,6 @@ public class AccountModule extends AbstractKapuaModule implements Module {
     @Provides
     @Singleton
     AccountService accountService(AccountRepository accountRepository,
-            PermissionFactory permissionFactory,
             AuthorizationService authorizationService,
             Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
             EventStorer eventStorer,
@@ -113,7 +109,6 @@ public class AccountModule extends AbstractKapuaModule implements Module {
         return new AccountServiceImpl(
                 jpaTxManagerFactory.create("kapua-account"),
                 accountRepository,
-                permissionFactory,
                 authorizationService,
                 serviceConfigurationManagersByServiceClass.get(AccountService.class),
                 eventStorer,

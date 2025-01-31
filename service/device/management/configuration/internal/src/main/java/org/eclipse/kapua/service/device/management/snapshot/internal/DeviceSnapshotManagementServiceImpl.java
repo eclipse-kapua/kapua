@@ -12,13 +12,18 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.snapshot.internal;
 
+import java.util.Date;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.device.management.commons.AbstractDeviceManagementTransactionalServiceImpl;
 import org.eclipse.kapua.service.device.management.commons.call.DeviceCallBuilder;
 import org.eclipse.kapua.service.device.management.configuration.internal.DeviceConfigurationAppProperties;
@@ -38,10 +43,6 @@ import org.eclipse.kapua.storage.TxManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.Date;
-
 /**
  * {@link DeviceSnapshotManagementService} implementation.
  *
@@ -56,13 +57,11 @@ public class DeviceSnapshotManagementServiceImpl extends AbstractDeviceManagemen
     public DeviceSnapshotManagementServiceImpl(
             TxManager txManager,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             DeviceEventService deviceEventService,
             DeviceEventFactory deviceEventFactory,
             DeviceRegistryService deviceRegistryService, DeviceSnapshotFactory deviceSnapshotFactory) {
         super(txManager,
                 authorizationService,
-                permissionFactory,
                 deviceEventService,
                 deviceEventFactory,
                 deviceRegistryService);
@@ -78,7 +77,7 @@ public class DeviceSnapshotManagementServiceImpl extends AbstractDeviceManagemen
         ArgumentValidator.notNull(scopeId, "scopeId");
         ArgumentValidator.notNull(deviceId, "deviceId");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
         // Prepare the request
         SnapshotRequestChannel snapshotRequestChannel = new SnapshotRequestChannel();
         snapshotRequestChannel.setAppName(DeviceConfigurationAppProperties.APP_NAME);
@@ -124,7 +123,7 @@ public class DeviceSnapshotManagementServiceImpl extends AbstractDeviceManagemen
         ArgumentValidator.notNull(deviceId, "deviceId");
         ArgumentValidator.notEmptyOrNull(snapshotId, "snapshotId");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.execute, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.execute, scopeId));
         // Prepare the request
         SnapshotRequestChannel snapshotRequestChannel = new SnapshotRequestChannel();
         snapshotRequestChannel.setAppName(DeviceConfigurationAppProperties.APP_NAME);

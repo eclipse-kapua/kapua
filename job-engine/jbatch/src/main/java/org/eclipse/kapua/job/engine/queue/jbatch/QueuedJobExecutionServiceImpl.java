@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.job.engine.queue.jbatch;
 
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
@@ -24,10 +26,8 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.storage.TxManager;
-
-import javax.inject.Singleton;
 
 /**
  * {@link QueuedJobExecutionService} implementation
@@ -36,17 +36,14 @@ import javax.inject.Singleton;
 public class QueuedJobExecutionServiceImpl implements QueuedJobExecutionService {
 
     private final AuthorizationService authorizationService;
-    private final PermissionFactory permissionFactory;
     private final TxManager txManager;
     private final QueuedJobExecutionRepository repository;
 
     public QueuedJobExecutionServiceImpl(
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             TxManager txManager,
             QueuedJobExecutionRepository repository) {
         this.authorizationService = authorizationService;
-        this.permissionFactory = permissionFactory;
         this.txManager = txManager;
         this.repository = repository;
     }
@@ -57,7 +54,7 @@ public class QueuedJobExecutionServiceImpl implements QueuedJobExecutionService 
         ArgumentValidator.notNull(creator, "queuedJobExecutionCreator");
         ArgumentValidator.notNull(creator.getScopeId(), "queuedJobExecutionCreator.scopeId");
         // Check access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.write, null));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.write, null));
 
         QueuedJobExecution queuedJobExecutionImpl = new QueuedJobExecutionImpl(creator.getScopeId());
         queuedJobExecutionImpl.setJobId(creator.getJobId());
@@ -74,7 +71,7 @@ public class QueuedJobExecutionServiceImpl implements QueuedJobExecutionService 
         ArgumentValidator.notNull(queuedJobExecution, "queuedJobExecution");
         ArgumentValidator.notNull(queuedJobExecution.getScopeId(), "queuedJobExecution.scopeId");
         // Check access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.write, null));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.write, null));
 
         return txManager.execute(tx -> repository.update(tx, queuedJobExecution));
     }
@@ -85,7 +82,7 @@ public class QueuedJobExecutionServiceImpl implements QueuedJobExecutionService 
         ArgumentValidator.notNull(scopeId, "scopeId");
         ArgumentValidator.notNull(queuedJobExecutionId, "queuedJobExecutionId");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.read, scopeId));
         // Do find
         return txManager.execute(tx -> repository.find(tx, scopeId, queuedJobExecutionId))
                 .orElse(null);
@@ -96,7 +93,7 @@ public class QueuedJobExecutionServiceImpl implements QueuedJobExecutionService 
         // Argument Validation
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.read, query.getScopeId()));
         // Do query
         return txManager.execute(tx -> repository.query(tx, query));
     }
@@ -106,7 +103,7 @@ public class QueuedJobExecutionServiceImpl implements QueuedJobExecutionService 
         // Argument Validation
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.read, query.getScopeId()));
         // Do query
         return txManager.execute(tx -> repository.count(tx, query));
     }
@@ -117,7 +114,7 @@ public class QueuedJobExecutionServiceImpl implements QueuedJobExecutionService 
         ArgumentValidator.notNull(scopeId, "scopeId");
         ArgumentValidator.notNull(queuedJobExecutionId, "queuedJobExecutionId");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.delete, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.delete, scopeId));
         // Do delete
         txManager.execute(tx -> repository.delete(tx, scopeId, queuedJobExecutionId));
     }

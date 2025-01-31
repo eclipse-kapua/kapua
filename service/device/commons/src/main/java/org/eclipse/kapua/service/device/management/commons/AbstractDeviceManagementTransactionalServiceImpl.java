@@ -25,7 +25,6 @@ import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.commons.util.ThrowingRunnable;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.device.management.DeviceManagementService;
 import org.eclipse.kapua.service.device.management.exception.DeviceManagementResponseBadRequestException;
 import org.eclipse.kapua.service.device.management.exception.DeviceManagementResponseCodeException;
@@ -55,7 +54,6 @@ public abstract class AbstractDeviceManagementTransactionalServiceImpl {
 
     protected final TxManager txManager;
     protected final AuthorizationService authorizationService;
-    protected final PermissionFactory permissionFactory;
 
     protected final DeviceEventService deviceEventService;
     protected final DeviceEventFactory deviceEventFactory;
@@ -65,13 +63,11 @@ public abstract class AbstractDeviceManagementTransactionalServiceImpl {
     public AbstractDeviceManagementTransactionalServiceImpl(
             TxManager txManager,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             DeviceEventService deviceEventService,
             DeviceEventFactory deviceEventFactory,
             DeviceRegistryService deviceRegistryService) {
         this.txManager = txManager;
         this.authorizationService = authorizationService;
-        this.permissionFactory = permissionFactory;
         this.deviceEventService = deviceEventService;
         this.deviceEventFactory = deviceEventFactory;
         this.deviceRegistryService = deviceRegistryService;

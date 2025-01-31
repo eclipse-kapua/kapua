@@ -31,7 +31,6 @@ import org.eclipse.kapua.event.ServiceEventBus;
 import org.eclipse.kapua.event.Subscription;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.storage.TxManagerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,7 +100,6 @@ public abstract class ServiceEventModule implements ServiceModule {
         final KapuaLocator locator = KapuaLocator.getInstance();
         houseKeeperJob = new ServiceEventHousekeeper(
                 new EventStoreServiceImpl(locator.getService(AuthorizationService.class),
-                        locator.getFactory(PermissionFactory.class),
                         new TxManagerImpl(() -> new JpaTxContext(serviceEventModuleConfiguration.getEntityManagerFactory().getJpaEntityManagerFactory()),
                                 serviceEventModuleConfiguration.maxInsertAttempts),
                         new EventStoreRecordImplJpaRepository(serviceEventModuleConfiguration.getKapuaJpaRepositoryConfiguration())

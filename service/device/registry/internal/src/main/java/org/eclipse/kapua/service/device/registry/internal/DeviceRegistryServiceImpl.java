@@ -23,7 +23,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.access.GroupQueryHelper;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceAttributes;
 import org.eclipse.kapua.service.device.registry.DeviceCreator;
@@ -56,13 +55,12 @@ public class DeviceRegistryServiceImpl
     public DeviceRegistryServiceImpl(
             ServiceConfigurationManager serviceConfigurationManager,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             TxManager txManager,
             DeviceRepository deviceRepository,
             DeviceFactory entityFactory,
             GroupQueryHelper groupQueryHelper,
             EventStorer eventStorer, DeviceValidation deviceValidation) {
-        super(txManager, serviceConfigurationManager, Domains.DEVICE, authorizationService, permissionFactory);
+        super(txManager, serviceConfigurationManager, Domains.DEVICE, authorizationService);
         this.deviceRepository = deviceRepository;
         this.entityFactory = entityFactory;
         this.groupQueryHelper = groupQueryHelper;

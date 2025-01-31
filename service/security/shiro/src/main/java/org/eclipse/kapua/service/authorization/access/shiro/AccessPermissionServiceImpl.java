@@ -39,7 +39,6 @@ import org.eclipse.kapua.service.authorization.access.AccessPermissionListResult
 import org.eclipse.kapua.service.authorization.access.AccessPermissionRepository;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.authorization.permission.shiro.PermissionValidator;
 import org.eclipse.kapua.storage.TxManager;
 
@@ -52,7 +51,6 @@ import org.eclipse.kapua.storage.TxManager;
 public class AccessPermissionServiceImpl implements AccessPermissionService {
 
     private final AuthorizationService authorizationService;
-    private final PermissionFactory permissionFactory;
     private final TxManager txManager;
     private final AccessPermissionRepository accessPermissionRepository;
     private final AccessInfoRepository accessInfoRepository;
@@ -61,13 +59,11 @@ public class AccessPermissionServiceImpl implements AccessPermissionService {
     @Inject
     public AccessPermissionServiceImpl(
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             TxManager txManager,
             AccessPermissionRepository accessPermissionRepository,
             AccessInfoRepository accessInfoRepository,
             PermissionValidator permissionValidator) {
         this.authorizationService = authorizationService;
-        this.permissionFactory = permissionFactory;
         this.txManager = txManager;
         this.accessPermissionRepository = accessPermissionRepository;
         this.accessInfoRepository = accessInfoRepository;
@@ -82,7 +78,7 @@ public class AccessPermissionServiceImpl implements AccessPermissionService {
         ArgumentValidator.notNull(accessPermissionCreator.getAccessInfoId(), "accessPermissionCreator.accessInfoId");
         ArgumentValidator.notNull(accessPermissionCreator.getPermission(), "accessPermissionCreator.permission");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.ACCESS_INFO, Actions.write, accessPermissionCreator.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.ACCESS_INFO, Actions.write, accessPermissionCreator.getScopeId()));
         // If permission are created out of the access permission scope, check that the current user has the permission on the external scopeId.
         final Permission permission = accessPermissionCreator.getPermission();
         if (permission.getTargetScopeId() == null || !permission.getTargetScopeId().equals(accessPermissionCreator.getScopeId())) {
@@ -135,7 +131,7 @@ public class AccessPermissionServiceImpl implements AccessPermissionService {
         ArgumentValidator.notNull(accessPermissionId, KapuaEntityAttributes.ENTITY_ID);
 
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.ACCESS_INFO, Actions.delete, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.ACCESS_INFO, Actions.delete, scopeId));
 
         txManager.execute(tx -> accessPermissionRepository.delete(tx, scopeId, accessPermissionId));
     }
@@ -146,7 +142,7 @@ public class AccessPermissionServiceImpl implements AccessPermissionService {
         ArgumentValidator.notNull(scopeId, KapuaEntityAttributes.SCOPE_ID);
         ArgumentValidator.notNull(accessPermissionId, KapuaEntityAttributes.ENTITY_ID);
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.ACCESS_INFO, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.ACCESS_INFO, Actions.read, scopeId));
         return txManager.execute(tx -> accessPermissionRepository.find(tx, scopeId, accessPermissionId))
                 .orElse(null);
     }
@@ -157,7 +153,7 @@ public class AccessPermissionServiceImpl implements AccessPermissionService {
         ArgumentValidator.notNull(scopeId, KapuaEntityAttributes.SCOPE_ID);
         ArgumentValidator.notNull(accessInfoId, "accessInfoId");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.ACCESS_INFO,
+        authorizationService.checkPermission(new Permission(Domains.ACCESS_INFO,
                 Actions.read, scopeId));
 
         return txManager.execute(tx -> accessPermissionRepository.findByAccessInfoId(tx, scopeId, accessInfoId));
@@ -168,7 +164,7 @@ public class AccessPermissionServiceImpl implements AccessPermissionService {
             throws KapuaException {
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.ACCESS_INFO, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.ACCESS_INFO, Actions.read, query.getScopeId()));
         return txManager.execute(tx -> accessPermissionRepository.query(tx, query));
     }
 
@@ -177,7 +173,7 @@ public class AccessPermissionServiceImpl implements AccessPermissionService {
             throws KapuaException {
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.ACCESS_INFO, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.ACCESS_INFO, Actions.read, query.getScopeId()));
         return txManager.execute(tx -> accessPermissionRepository.count(tx, query));
     }
 }

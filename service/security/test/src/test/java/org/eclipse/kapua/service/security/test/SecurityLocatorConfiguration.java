@@ -72,7 +72,6 @@ import org.eclipse.kapua.service.authorization.group.shiro.GroupFactoryImpl;
 import org.eclipse.kapua.service.authorization.group.shiro.GroupImplJpaRepository;
 import org.eclipse.kapua.service.authorization.group.shiro.GroupServiceImpl;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.authorization.permission.shiro.PermissionValidator;
 import org.eclipse.kapua.service.authorization.role.RoleFactory;
 import org.eclipse.kapua.service.authorization.role.RolePermissionFactory;
@@ -138,15 +137,10 @@ public class SecurityLocatorConfiguration {
                 bind(KapuaJpaRepositoryConfiguration.class).toInstance(new KapuaJpaRepositoryConfiguration());
 
                 bind(AuthorizationService.class).toInstance(mockedAuthorization);
-                // Inject mocked Permission Factory
-                PermissionFactory mockPermissionFactory = Mockito.mock(PermissionFactory.class);
-                bind(PermissionFactory.class).toInstance(mockPermissionFactory);
-
                 // Inject actual Role service related services
                 final KapuaJpaRepositoryConfiguration jpaRepoConfig = new KapuaJpaRepositoryConfiguration();
                 final TxManager txManager = new KapuaJpaTxManagerFactory(maxInsertAttempts).create("kapua-authorization");
                 bind(RoleService.class).toInstance(new RoleServiceImpl(
-                        mockPermissionFactory,
                         mockedAuthorization,
                         new RolePermissionFactoryImpl(),
                         new AccessRoleFactoryImpl(),
@@ -163,7 +157,6 @@ public class SecurityLocatorConfiguration {
                 bind(RolePermissionFactory.class).toInstance(new RolePermissionFactoryImpl());
 
                 bind(GroupService.class).toInstance(new GroupServiceImpl(
-                        mockPermissionFactory,
                         mockedAuthorization,
                         Mockito.mock(ServiceConfigurationManager.class),
                         txManager,
@@ -189,7 +182,6 @@ public class SecurityLocatorConfiguration {
                 bind(CredentialService.class).toInstance(new CredentialServiceImpl(
                         credentialServiceConfigurationManager,
                         mockedAuthorization,
-                        mockPermissionFactory,
                         txManager,
                         credentialRepository,
                         credentialFactory,
@@ -229,7 +221,6 @@ public class SecurityLocatorConfiguration {
                 bind(UserService.class).toInstance(new UserServiceImpl(
                         Mockito.mock(ServiceConfigurationManager.class),
                         mockedAuthorization,
-                        mockPermissionFactory,
                         new KapuaJpaTxManagerFactory(maxInsertAttempts).create("kapua-user"),
                         new UserImplJpaRepository(jpaRepoConfig),
                         userFactory,

@@ -25,7 +25,6 @@ import org.eclipse.kapua.model.domain.Domain;
 import org.eclipse.kapua.model.domain.DomainEntry;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.datastore.ChannelInfoFactory;
 import org.eclipse.kapua.service.datastore.ChannelInfoRegistryService;
 import org.eclipse.kapua.service.datastore.ClientInfoFactory;
@@ -107,7 +106,6 @@ public class DatastoreModule extends AbstractKapuaModule {
     @Provides
     @Singleton
     MessageStoreService messageStoreService(
-            PermissionFactory permissionFactory,
             AuthorizationService authorizationService,
             Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
             KapuaJpaTxManagerFactory jpaTxManagerFactory,
@@ -116,7 +114,6 @@ public class DatastoreModule extends AbstractKapuaModule {
             DatastoreSettings datastoreSettings) {
         return new MessageStoreServiceImpl(
                 jpaTxManagerFactory.create("kapua-datastore"),
-                permissionFactory,
                 authorizationService,
                 serviceConfigurationManagersByServiceClass.get(MessageStoreService.class),
                 messageStoreFacade,

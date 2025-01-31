@@ -18,13 +18,12 @@ import java.util.Optional;
 
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
-import org.eclipse.kapua.model.config.metatype.EmptyTocd;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.config.KapuaConfigurableService;
 import org.eclipse.kapua.storage.TxManager;
 
@@ -46,19 +45,16 @@ public class KapuaConfigurableServiceBase
     protected final ServiceConfigurationManager serviceConfigurationManager;
     private final String domain;
     protected final AuthorizationService authorizationService;
-    protected final PermissionFactory permissionFactory;
 
     public KapuaConfigurableServiceBase(
             TxManager txManager,
             ServiceConfigurationManager serviceConfigurationManager,
             String authorizationDomain,
-            AuthorizationService authorizationService,
-            PermissionFactory permissionFactory) {
+            AuthorizationService authorizationService) {
         this.txManager = txManager;
         this.serviceConfigurationManager = serviceConfigurationManager;
         this.domain = authorizationDomain;
         this.authorizationService = authorizationService;
-        this.permissionFactory = permissionFactory;
     }
 
     @Override
@@ -75,9 +71,9 @@ public class KapuaConfigurableServiceBase
         ArgumentValidator.notNull(scopeId, "scopeId");
 
         // Check access
-        if (!authorizationService.isPermitted(permissionFactory.newPermission(domain, Actions.read, scopeId))) {
+        if (!authorizationService.isPermitted(new Permission(domain, Actions.read, scopeId))) {
             //Temporary, use Optional instead
-            return new EmptyTocd();
+            return KapuaTocd.empty();
         }
         return serviceConfigurationManager.getConfigMetadata(scopeId, true).orElse(null);
     }
@@ -88,7 +84,7 @@ public class KapuaConfigurableServiceBase
         ArgumentValidator.notNull(scopeId, "scopeId");
 
         // Check access
-        if (!authorizationService.isPermitted(permissionFactory.newPermission(domain, Actions.read, scopeId))) {
+        if (!authorizationService.isPermitted(new Permission(domain, Actions.read, scopeId))) {
             return Collections.emptyMap();
         }
         return serviceConfigurationManager.getConfigValues(scopeId, true);
@@ -100,7 +96,7 @@ public class KapuaConfigurableServiceBase
         ArgumentValidator.notNull(scopeId, "scopeId");
         ArgumentValidator.notNull(values, "values");
 
-        authorizationService.checkPermission(permissionFactory.newPermission(domain, Actions.write, scopeId));
+        authorizationService.checkPermission(new Permission(domain, Actions.write, scopeId));
 
         serviceConfigurationManager.setConfigValues(scopeId, Optional.ofNullable(parentId), values);
     }

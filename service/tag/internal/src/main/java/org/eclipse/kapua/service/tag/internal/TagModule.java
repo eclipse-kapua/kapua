@@ -25,7 +25,6 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.domain.Domain;
 import org.eclipse.kapua.model.domain.DomainEntry;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.tag.TagFactory;
 import org.eclipse.kapua.service.tag.TagRepository;
 import org.eclipse.kapua.service.tag.TagService;
@@ -43,13 +42,12 @@ public class TagModule extends AbstractKapuaModule {
     @Provides
     @Singleton
     TagService tagService(
-            PermissionFactory permissionFactory,
             AuthorizationService authorizationService,
             Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
             TagRepository tagRepository,
             TagFactory tagFactory,
             KapuaJpaTxManagerFactory jpaTxManagerFactory) {
-        return new TagServiceImpl(permissionFactory, authorizationService, serviceConfigurationManagersByServiceClass.get(TagService.class),
+        return new TagServiceImpl(authorizationService, serviceConfigurationManagersByServiceClass.get(TagService.class),
                 jpaTxManagerFactory.create("kapua-tag"),
                 tagRepository,
                 tagFactory);
