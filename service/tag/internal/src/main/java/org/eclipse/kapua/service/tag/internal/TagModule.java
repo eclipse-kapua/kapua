@@ -25,8 +25,6 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.domain.Domain;
 import org.eclipse.kapua.model.domain.DomainEntry;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.tag.TagFactory;
-import org.eclipse.kapua.service.tag.TagRepository;
 import org.eclipse.kapua.service.tag.TagService;
 
 import com.google.inject.Provides;
@@ -36,7 +34,7 @@ public class TagModule extends AbstractKapuaModule {
 
     @Override
     protected void configureModule() {
-        bind(TagFactory.class).to(TagFactoryImpl.class);
+        bind(TagMapper.class).to(TagMapperImpl.class).in(Singleton.class);
     }
 
     @Provides
@@ -45,12 +43,12 @@ public class TagModule extends AbstractKapuaModule {
             AuthorizationService authorizationService,
             Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
             TagRepository tagRepository,
-            TagFactory tagFactory,
-            KapuaJpaTxManagerFactory jpaTxManagerFactory) {
+            KapuaJpaTxManagerFactory jpaTxManagerFactory,
+            TagMapper tagMapper) {
         return new TagServiceImpl(authorizationService, serviceConfigurationManagersByServiceClass.get(TagService.class),
                 jpaTxManagerFactory.create("kapua-tag"),
                 tagRepository,
-                tagFactory);
+                tagMapper);
     }
 
     @ProvidesIntoSet

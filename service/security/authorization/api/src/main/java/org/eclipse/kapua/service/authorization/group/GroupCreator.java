@@ -30,7 +30,7 @@ import org.eclipse.kapua.model.id.KapuaId;
 @XmlRootElement(name = "groupCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType
-public class GroupCreator extends KapuaNamedEntityCreator<Group> {
+public class GroupCreator extends KapuaNamedEntityCreator {
 
     private static final long serialVersionUID = -4676187845961673421L;
 

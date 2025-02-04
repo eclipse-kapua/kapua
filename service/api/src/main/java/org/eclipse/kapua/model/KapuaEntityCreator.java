@@ -23,11 +23,9 @@ import org.eclipse.kapua.model.id.KapuaIdAdapter;
  * <p>
  * All the {@link KapuaEntityCreator} will be an extension of this.
  *
- * @param <E>
- *         entity type
  * @since 1.0.0
  */
-public abstract class KapuaEntityCreator<E extends KapuaEntity> {
+public abstract class KapuaEntityCreator {
 
     protected KapuaId scopeId;
 
@@ -38,7 +36,7 @@ public abstract class KapuaEntityCreator<E extends KapuaEntity> {
         this.scopeId = scopeId;
     }
 
-    protected KapuaEntityCreator(KapuaEntityCreator<E> entityCreator) {
+    protected KapuaEntityCreator(KapuaEntityCreator entityCreator) {
         this(entityCreator.getScopeId());
     }
 

@@ -12,13 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job.step.definition;
 
-import org.eclipse.kapua.entity.EntityPropertiesReadException;
-import org.eclipse.kapua.entity.EntityPropertiesWriteException;
-import org.eclipse.kapua.model.id.KapuaId;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+
+import org.eclipse.kapua.entity.EntityPropertiesReadException;
+import org.eclipse.kapua.entity.EntityPropertiesWriteException;
+import org.eclipse.kapua.model.id.KapuaId;
 
 public abstract class JobStepDefinitionRecord implements JobStepDefinition {
 
@@ -33,13 +33,13 @@ public abstract class JobStepDefinitionRecord implements JobStepDefinition {
     private List<JobStepProperty> jobStepProperties;
 
     public JobStepDefinitionRecord(KapuaId scopeId,
-                                   String name,
-                                   String description,
-                                   JobStepType stepType,
-                                   String readerName,
-                                   String processorName,
-                                   String writerName,
-                                   List<JobStepProperty> jobStepProperties) {
+            String name,
+            String description,
+            JobStepType stepType,
+            String readerName,
+            String processorName,
+            String writerName,
+            List<JobStepProperty> jobStepProperties) {
         this.scopeId = scopeId;
         this.name = name;
         this.description = description;
@@ -194,11 +194,9 @@ public abstract class JobStepDefinitionRecord implements JobStepDefinition {
         throw new UnsupportedOperationException();
     }
 
-
     @Override
     public void setStepProperties(List<JobStepProperty> jobStepProperties) {
         throw new UnsupportedOperationException();
     }
-
 
 }

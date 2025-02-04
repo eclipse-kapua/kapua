@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.eclipse.kapua.KapuaDuplicateNameException;
+import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.configuration.KapuaConfigurableServiceBase;
 import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
@@ -28,9 +29,7 @@ import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.tag.Tag;
 import org.eclipse.kapua.service.tag.TagCreator;
-import org.eclipse.kapua.service.tag.TagFactory;
 import org.eclipse.kapua.service.tag.TagListResult;
-import org.eclipse.kapua.service.tag.TagRepository;
 import org.eclipse.kapua.service.tag.TagService;
 import org.eclipse.kapua.storage.TxManager;
 
@@ -43,9 +42,9 @@ import org.eclipse.kapua.storage.TxManager;
 public class TagServiceImpl extends KapuaConfigurableServiceBase implements TagService {
 
     private final AuthorizationService authorizationService;
-    private final TagFactory tagFactory;
     private final TxManager txManager;
     private final TagRepository tagRepository;
+    private final TagMapper tagMapper;
 
     /**
      * Injectable Constructor
@@ -57,7 +56,6 @@ public class TagServiceImpl extends KapuaConfigurableServiceBase implements TagS
      * @param txManager
      * @param tagRepository
      *         The {@link TagRepository} instance
-     * @param tagFactory
      * @since 2.0.0
      */
     @Inject
@@ -65,13 +63,12 @@ public class TagServiceImpl extends KapuaConfigurableServiceBase implements TagS
             AuthorizationService authorizationService,
             ServiceConfigurationManager serviceConfigurationManager,
             TxManager txManager,
-            TagRepository tagRepository,
-            TagFactory tagFactory) {
+            TagRepository tagRepository, TagMapper tagMapper) {
         super(txManager, serviceConfigurationManager, Domains.TAG, authorizationService);
         this.authorizationService = authorizationService;
         this.tagRepository = tagRepository;
-        this.tagFactory = tagFactory;
         this.txManager = txManager;
+        this.tagMapper = tagMapper;
     }
 
     @Override
@@ -82,7 +79,7 @@ public class TagServiceImpl extends KapuaConfigurableServiceBase implements TagS
         ArgumentValidator.validateEntityName(tagCreator.getName(), "tagCreator.name");
         // Check Access
         authorizationService.checkPermission(new Permission(Domains.TAG, Actions.write, tagCreator.getScopeId()));
-        return txManager.execute(tx -> {
+        final TagImpl newTag = txManager.execute(tx -> {
             // Check entity limit
             serviceConfigurationManager.checkAllowedEntities(tx, tagCreator.getScopeId(), "Tags");
             // Check duplicate name
@@ -91,12 +88,14 @@ public class TagServiceImpl extends KapuaConfigurableServiceBase implements TagS
                 throw new KapuaDuplicateNameException(tagCreator.getName());
             }
 
-            final Tag toBeCreated = tagFactory.newEntity(tagCreator.getScopeId());
+            final TagImpl toBeCreated = new TagImpl(tagCreator.getScopeId());
             toBeCreated.setName(tagCreator.getName());
             toBeCreated.setDescription(tagCreator.getDescription());
             // Do create
-            return tagRepository.create(tx, toBeCreated);
+            final TagImpl created = tagRepository.create(tx, toBeCreated);
+            return created;
         });
+        return tagMapper.map(newTag);
     }
 
     @Override
@@ -112,16 +111,22 @@ public class TagServiceImpl extends KapuaConfigurableServiceBase implements TagS
                 new Permission(Domains.TAG, Actions.write, tag.getScopeId()));
 
         // Check duplicate name
-        return txManager.execute(tx -> {
+        final TagImpl updatedTag = txManager.execute(tx -> {
             // Check duplicate name
             final long otherEntitiesWithSameName = tagRepository.countOtherEntitiesWithNameInScope(
                     tx, tag.getScopeId(), tag.getId(), tag.getName());
             if (otherEntitiesWithSameName > 0) {
                 throw new KapuaDuplicateNameException(tag.getName());
             }
+            final TagImpl existingTag = tagRepository.find(tx, tag.getScopeId(), tag.getId())
+                    .orElseThrow(() -> new KapuaEntityNotFoundException("tag", tag.getId()));
+            //merge tag info
+            tagMapper.merge(existingTag, tag);
+
             // Do Update
-            return tagRepository.update(tx, tag);
+            return tagRepository.update(tx, existingTag);
         });
+        return tagMapper.map(updatedTag);
     }
 
     @Override
@@ -144,6 +149,7 @@ public class TagServiceImpl extends KapuaConfigurableServiceBase implements TagS
         authorizationService.checkPermission(new Permission(Domains.TAG, Actions.read, scopeId));
         // Do find
         return txManager.execute(tx -> tagRepository.find(tx, scopeId, tagId))
+                .map(tagMapper::map)
                 .orElse(null);
     }
 
@@ -154,7 +160,7 @@ public class TagServiceImpl extends KapuaConfigurableServiceBase implements TagS
         // Check Access
         authorizationService.checkPermission(new Permission(Domains.TAG, Actions.read, query.getScopeId()));
         // Do query
-        return txManager.execute(tx -> tagRepository.query(tx, query));
+        return tagMapper.map(txManager.<TagImplListResult>execute(tx -> tagRepository.query(tx, query)));
     }
 
     @Override

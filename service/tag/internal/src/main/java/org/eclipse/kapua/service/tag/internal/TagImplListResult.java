@@ -10,10 +10,23 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.service.tag;
+package org.eclipse.kapua.service.tag.internal;
 
-import org.eclipse.kapua.storage.KapuaNamedEntityRepository;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
-public interface TagRepository extends
-        KapuaNamedEntityRepository<Tag, TagListResult> {
+import org.eclipse.kapua.model.query.KapuaListResult;
+import org.eclipse.kapua.service.tag.Tag;
+
+/**
+ * {@link Tag} list result definition.
+ *
+ * @since 1.0.0
+ */
+@XmlRootElement(name = "tags")
+@XmlType
+public class TagImplListResult extends KapuaListResult<TagImpl> {
+
+    private static final long serialVersionUID = 791258978210911362L;
+
 }

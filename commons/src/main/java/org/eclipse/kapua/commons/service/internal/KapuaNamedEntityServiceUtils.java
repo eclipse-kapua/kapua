@@ -71,7 +71,7 @@ public class KapuaNamedEntityServiceUtils {
      * @deprecated since 2.0.0 - use {@link org.eclipse.kapua.storage.KapuaNamedEntityRepository} instead
      */
     @Deprecated
-    public static <E extends KapuaNamedEntity, C extends KapuaNamedEntityCreator<E>> void checkEntityNameUniqueness(@NotNull KapuaEntityService<E, C> kapuaNamedEntityService, @NotNull C creator)
+    public static <E extends KapuaNamedEntity, C extends KapuaNamedEntityCreator> void checkEntityNameUniqueness(@NotNull KapuaEntityService<E, C> kapuaNamedEntityService, @NotNull C creator)
             throws KapuaException {
         checkEntityNameUniqueness(kapuaNamedEntityService, creator, Collections.emptyList());
     }
@@ -98,7 +98,7 @@ public class KapuaNamedEntityServiceUtils {
      * @deprecated since 2.0.0 - use {@link org.eclipse.kapua.storage.KapuaNamedEntityRepository} instead
      */
     @Deprecated
-    public static <E extends KapuaNamedEntity, C extends KapuaNamedEntityCreator<E>> void checkEntityNameUniqueness(@NotNull KapuaEntityService<E, C> kapuaNamedEntityService, @NotNull C creator,
+    public static <E extends KapuaNamedEntity, C extends KapuaNamedEntityCreator> void checkEntityNameUniqueness(@NotNull KapuaEntityService<E, C> kapuaNamedEntityService, @NotNull C creator,
             @NotNull List<QueryPredicate> additionalPredicates) throws KapuaException {
         KapuaQuery query = new KapuaQuery();
         query.setScopeId(creator.getScopeId());
@@ -196,7 +196,7 @@ public class KapuaNamedEntityServiceUtils {
      * @deprecated since 2.0.0 - use {@link org.eclipse.kapua.storage.KapuaNamedEntityRepository} instead
      */
     @Deprecated
-    public static <E extends KapuaNamedEntity, C extends KapuaNamedEntityCreator<E>> void checkEntityNameUniquenessInAllScopes(@NotNull KapuaEntityService<E, C> kapuaNamedEntityService,
+    public static <E extends KapuaNamedEntity, C extends KapuaNamedEntityCreator> void checkEntityNameUniquenessInAllScopes(@NotNull KapuaEntityService<E, C> kapuaNamedEntityService,
             @NotNull C creator) throws KapuaException {
         KapuaQuery query = new KapuaQuery();
         query.setPredicate(query.attributePredicate(KapuaNamedEntityAttributes.NAME, creator.getName()));

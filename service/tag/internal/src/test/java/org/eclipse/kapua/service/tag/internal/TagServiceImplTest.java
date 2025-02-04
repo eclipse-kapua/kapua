@@ -18,13 +18,11 @@ import java.util.function.BiConsumer;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaIllegalNullArgumentException;
 import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
-import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.commons.model.mappers.KapuaBaseMapperImpl;
 import org.eclipse.kapua.model.id.KapuaIdImpl;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.tag.Tag;
 import org.eclipse.kapua.service.tag.TagCreator;
-import org.eclipse.kapua.service.tag.TagFactory;
-import org.eclipse.kapua.service.tag.TagRepository;
 import org.eclipse.kapua.storage.TxContext;
 import org.eclipse.kapua.storage.TxManager;
 import org.junit.jupiter.api.Assertions;
@@ -44,16 +42,14 @@ public class TagServiceImplTest {
     private ServiceConfigurationManager serviceConfigurationManager;
     private TagRepository tagRepository;
     private TagServiceImpl instance;
-    private TagFactory tagFactory;
 
     @BeforeEach
     public void setUp() throws KapuaException {
         authorizationService = Mockito.mock(AuthorizationService.class);
         serviceConfigurationManager = Mockito.mock(ServiceConfigurationManager.class);
         tagRepository = Mockito.mock(TagRepository.class);
-        Mockito.when(tagRepository.create(Mockito.<TxContext>any(), Mockito.<Tag>any()))
+        Mockito.when(tagRepository.create(Mockito.<TxContext>any(), Mockito.<TagImpl>any()))
                 .thenAnswer(invocation -> invocation.getArgumentAt(0, Tag.class));
-        tagFactory = Mockito.mock(TagFactory.class);
         final TxManager txManager = new TxManager() {
 
             @Override
@@ -66,15 +62,13 @@ public class TagServiceImplTest {
                 return null;
             }
         };
-        Mockito.when(tagFactory.newEntity(Mockito.any()))
-                .thenAnswer(invocation -> new TagImpl(invocation.<KapuaId>getArgumentAt(0, KapuaId.class)));
 
         instance = new TagServiceImpl(
                 authorizationService,
                 serviceConfigurationManager,
                 txManager,
                 tagRepository,
-                tagFactory
+                new TagMapperImpl(new KapuaBaseMapperImpl())
         );
     }
 

@@ -34,7 +34,7 @@ import org.eclipse.kapua.service.scheduler.trigger.Trigger;
 @XmlRootElement(name = "firedTriggerCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType
-public class FiredTriggerCreator extends KapuaEntityCreator<FiredTrigger> {
+public class FiredTriggerCreator extends KapuaEntityCreator {
 
     private KapuaId triggerId;
     private Date firedOn;
@@ -48,7 +48,7 @@ public class FiredTriggerCreator extends KapuaEntityCreator<FiredTrigger> {
         super(scopeId);
     }
 
-    public FiredTriggerCreator(KapuaEntityCreator<FiredTrigger> entityCreator) {
+    public FiredTriggerCreator(KapuaEntityCreator entityCreator) {
         super(entityCreator);
     }
 

@@ -25,7 +25,7 @@ import org.eclipse.kapua.model.id.KapuaId;
  *
  * @since 1.0
  */
-public class ServiceConfigCreator extends KapuaUpdatableEntityCreator<ServiceConfig> {
+public class ServiceConfigCreator extends KapuaUpdatableEntityCreator {
 
     private static final long serialVersionUID = 7508550960304732465L;
 
@@ -42,7 +42,7 @@ public class ServiceConfigCreator extends KapuaUpdatableEntityCreator<ServiceCon
         super(scopeId);
     }
 
-    public ServiceConfigCreator(KapuaEntityCreator<ServiceConfig> entityCreator) {
+    public ServiceConfigCreator(KapuaEntityCreator entityCreator) {
         super(entityCreator);
     }
 

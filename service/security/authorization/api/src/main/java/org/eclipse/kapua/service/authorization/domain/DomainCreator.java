@@ -32,7 +32,7 @@ import org.eclipse.kapua.service.authorization.permission.Permission;
  */
 @XmlRootElement(name = "domainCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-public class DomainCreator extends KapuaEntityCreator<Domain> { // org.eclipse.kapua.model.domain.Domain {
+public class DomainCreator extends KapuaEntityCreator { // org.eclipse.kapua.model.domain.Domain {
 
     private static final long serialVersionUID = -4676187845961673421L;
 

@@ -60,7 +60,6 @@ public class JobExecutionServiceImpl implements JobExecutionService {
         JobExecution jobExecution = new JobExecutionImpl(jobExecutionCreator.getScopeId());
         jobExecution.setJobId(jobExecutionCreator.getJobId());
         jobExecution.setStartedOn(jobExecutionCreator.getStartedOn());
-        jobExecution.setEntityAttributes(jobExecutionCreator.getEntityAttributes());
         jobExecution.setTargetIds(jobExecutionCreator.getTargetIds());
         // Do create
         return txManager.execute(tx -> jobExecutionRepository.create(tx, jobExecution));

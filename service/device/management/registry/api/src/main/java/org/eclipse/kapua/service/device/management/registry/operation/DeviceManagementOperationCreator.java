@@ -34,7 +34,7 @@ import org.eclipse.kapua.service.device.management.message.notification.NotifySt
 @XmlRootElement(name = "deviceManagementOperationCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType
-public class DeviceManagementOperationCreator extends KapuaEntityCreator<DeviceManagementOperation> {
+public class DeviceManagementOperationCreator extends KapuaEntityCreator {
 
     private Date startedOn;
     private KapuaId deviceId;
@@ -52,7 +52,7 @@ public class DeviceManagementOperationCreator extends KapuaEntityCreator<DeviceM
         super(scopeId);
     }
 
-    public DeviceManagementOperationCreator(KapuaEntityCreator<DeviceManagementOperation> entityCreator) {
+    public DeviceManagementOperationCreator(KapuaEntityCreator entityCreator) {
         super(entityCreator);
     }
 

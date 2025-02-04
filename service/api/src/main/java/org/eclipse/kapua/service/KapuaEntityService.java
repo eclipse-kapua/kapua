@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.service;
 
+import javax.validation.constraints.NotNull;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.model.KapuaEntity;
 import org.eclipse.kapua.model.KapuaEntityCreator;
@@ -19,21 +21,22 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaListResult;
 import org.eclipse.kapua.model.query.KapuaQuery;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * Base {@code interface} for all {@link KapuaService}s that are managing {@link KapuaEntity}es.
  *
- * @param <E> Type of the {@link KapuaEntity} being managed.
- * @param <C> Type of the {@link KapuaEntityCreator} being managed.
+ * @param <E>
+ *         Type of the {@link KapuaEntity} being managed.
+ * @param <C>
+ *         Type of the {@link KapuaEntityCreator} being managed.
  * @since 1.0.0
  */
-public interface KapuaEntityService<E extends KapuaEntity, C extends KapuaEntityCreator<E>> extends KapuaService {
+public interface KapuaEntityService<E, C extends KapuaEntityCreator> extends KapuaService {
 
     /**
      * Creates a {@link KapuaEntity} using information provided in the given {@link KapuaEntityCreator}.
      *
-     * @param creator The {@link KapuaEntityCreator}.
+     * @param creator
+     *         The {@link KapuaEntityCreator}.
      * @return The newly created {@link KapuaEntity}.
      * @throws KapuaException
      * @since 1.0.0
@@ -43,8 +46,10 @@ public interface KapuaEntityService<E extends KapuaEntity, C extends KapuaEntity
     /**
      * Finds a {@link KapuaEntity} identified by its {@link KapuaEntity#getScopeId()} and {@link KapuaEntity#getId()}.
      *
-     * @param scopeId  The {@link KapuaEntity#getScopeId()}.
-     * @param entityId The {@link KapuaEntity#getId()}.
+     * @param scopeId
+     *         The {@link KapuaEntity#getScopeId()}.
+     * @param entityId
+     *         The {@link KapuaEntity#getId()}.
      * @return The found {@link KapuaEntity}, or {@code null}.
      * @throws KapuaException
      * @since 1.0.0
@@ -54,7 +59,8 @@ public interface KapuaEntityService<E extends KapuaEntity, C extends KapuaEntity
     /**
      * Queries the {@link KapuaEntity}es with the criteria in the given {@link KapuaQuery}.
      *
-     * @param query The {@link KapuaQuery} to filter results.
+     * @param query
+     *         The {@link KapuaQuery} to filter results.
      * @return The {@link KapuaListResult} matching the {@link KapuaQuery}.
      * @throws KapuaException
      * @since 1.0.0
@@ -64,7 +70,8 @@ public interface KapuaEntityService<E extends KapuaEntity, C extends KapuaEntity
     /**
      * Counts the {@link KapuaEntity}es with the criteria in the given {@link KapuaQuery}.
      *
-     * @param query The {@link KapuaQuery} to filter the count.
+     * @param query
+     *         The {@link KapuaQuery} to filter the count.
      * @return The count of {@link KapuaEntity}es matching the {@link KapuaQuery}.
      * @throws KapuaException
      * @since 1.0.0
@@ -74,8 +81,10 @@ public interface KapuaEntityService<E extends KapuaEntity, C extends KapuaEntity
     /**
      * Deletes a {@link KapuaEntity} identified by its {@link KapuaEntity#getScopeId()} and {@link KapuaEntity#getId()}.
      *
-     * @param scopeId  The {@link KapuaEntity#getScopeId()}.
-     * @param entityId The {@link KapuaEntity#getId()}.
+     * @param scopeId
+     *         The {@link KapuaEntity#getScopeId()}.
+     * @param entityId
+     *         The {@link KapuaEntity#getId()}.
      * @throws KapuaException
      * @since 1.0.0
      */

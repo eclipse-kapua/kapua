@@ -106,8 +106,8 @@ public abstract class AbstractKapuaUpdatableEntity extends AbstractKapuaEntity i
         setModifiedOn(entity.getModifiedOn());
         setModifiedBy(entity.getModifiedBy());
         setOptlock(entity.getOptlock());
-        setEntityAttributes(entity.getEntityAttributes());
-        setEntityProperties(entity.getEntityProperties());
+        //        setEntityAttributes(entity.getEntityAttributes());
+        //        setEntityProperties(entity.getEntityProperties());
     }
 
     @Override
@@ -156,7 +156,7 @@ public abstract class AbstractKapuaUpdatableEntity extends AbstractKapuaEntity i
     // Attributes APIs
     // -------------------------------------------------
 
-    @Override
+    //    @Override
     public Properties getEntityAttributes() {
         try {
             return PropertiesUtils.readPropertiesFromString(attributes);
@@ -165,7 +165,7 @@ public abstract class AbstractKapuaUpdatableEntity extends AbstractKapuaEntity i
         }
     }
 
-    @Override
+    //    @Override
     public void setEntityAttributes(Properties entityAttributes) {
         try {
             this.attributes = PropertiesUtils.writePropertiesToString(entityAttributes);
@@ -178,7 +178,7 @@ public abstract class AbstractKapuaUpdatableEntity extends AbstractKapuaEntity i
     // Properties APIs
     // -------------------------------------------------
 
-    @Override
+    //    @Override
     public Properties getEntityProperties() {
         try {
             return PropertiesUtils.readPropertiesFromString(properties);
@@ -187,7 +187,7 @@ public abstract class AbstractKapuaUpdatableEntity extends AbstractKapuaEntity i
         }
     }
 
-    @Override
+    //    @Override
     public void setEntityProperties(Properties properties) {
         try {
             this.properties = PropertiesUtils.writePropertiesToString(properties);

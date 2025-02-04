@@ -31,7 +31,7 @@ import org.eclipse.kapua.model.id.KapuaId;
 @XmlRootElement(name = "triggerDefinitionCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType
-public class TriggerDefinitionCreator extends KapuaNamedEntityCreator<TriggerDefinition> {
+public class TriggerDefinitionCreator extends KapuaNamedEntityCreator {
 
     private static final long serialVersionUID = 4602067255120049746L;
 

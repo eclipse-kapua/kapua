@@ -31,7 +31,7 @@ import org.eclipse.kapua.model.id.KapuaId;
 @XmlRootElement(name = "endpointInfoCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType
-public class EndpointInfoCreator extends KapuaEntityCreator<EndpointInfo> {
+public class EndpointInfoCreator extends KapuaEntityCreator {
 
     private String schema;
     private String dns;
@@ -47,7 +47,7 @@ public class EndpointInfoCreator extends KapuaEntityCreator<EndpointInfo> {
         super(scopeId);
     }
 
-    public EndpointInfoCreator(KapuaEntityCreator<EndpointInfo> entityCreator) {
+    public EndpointInfoCreator(KapuaEntityCreator entityCreator) {
         super(entityCreator);
     }
 

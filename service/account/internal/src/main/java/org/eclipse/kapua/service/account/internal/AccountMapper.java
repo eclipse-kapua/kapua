@@ -50,7 +50,11 @@ public interface AccountMapper {
     void merge(@MappingTarget Organization account, Organization request);
 
     //For backward compatibility only
+    @Mapping(target = "entityAttributes", ignore = true)
+    @Mapping(target = "entityProperties", ignore = true)
     AccountUpdateRequest mapChildUpdate(Account account);
 
+    @Mapping(target = "entityAttributes", ignore = true)
+    @Mapping(target = "entityProperties", ignore = true)
     CurrentAccountUpdateRequest mapCurrentUpdate(Account account);
 }

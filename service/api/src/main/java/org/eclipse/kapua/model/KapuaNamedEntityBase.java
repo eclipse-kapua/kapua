@@ -15,12 +15,11 @@ package org.eclipse.kapua.model;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-import org.eclipse.kapua.model.id.KapuaId;
-
 /**
- * {@link KapuaNamedEntityCreator} definition.
+ * {@link KapuaNamedEntityBase} definition.
  * <p>
- * The {@link KapuaNamedEntityCreator} adds on top of the {@link KapuaUpdatableEntityCreator} the following properties:
+ * The {@link KapuaNamedEntityBase} adds on top of the {@link KapuaUpdatableEntity} the following properties:
+ *
  * <ul>
  * <li>name</li>
  * <li>description</li>
@@ -46,71 +45,36 @@ import org.eclipse.kapua.model.id.KapuaId;
  * @since 1.0.0
  */
 @XmlType(propOrder = { "name", "description" })
-public abstract class KapuaNamedEntityCreator extends KapuaUpdatableEntityCreator {
+public abstract class KapuaNamedEntityBase extends KapuaUpdatableEntityBase {
 
-    protected String name;
-    protected String description;
-
-    public KapuaNamedEntityCreator() {
-    }
-
-    public KapuaNamedEntityCreator(KapuaId scopeId) {
-        super(scopeId);
-    }
+    private String name;
+    private String description;
 
     /**
-     * Constructor
+     * Gets the name of the {@link KapuaEntity}
      *
-     * @param scopeId
-     *         the scope {@link KapuaId}
-     * @param name
-     *         the name
-     * @since 1.0.0
-     */
-    public KapuaNamedEntityCreator(KapuaId scopeId, String name) {
-        super(scopeId);
-        this.name = name;
-    }
-
-    /**
-     * Gets the name
-     *
-     * @return the name
+     * @return the name of the {@link KapuaEntity}
      * @since 1.0.0
      */
     @XmlElement(name = "name")
     public String getName() {
-        return name;
+        return this.name;
     }
 
     /**
-     * Sets the name
+     * Gets the description for the {@link KapuaEntity}
      *
-     * @param name
-     *         the name
-     * @since 1.0.0
+     * @return the description of this {@link KapuaEntity}
+     * @since 1.1.0
      */
+    public String getDescription() {
+        return this.description;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * Gets the description
-     *
-     * @return the description
-     * @since 1.0.0
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets the description
-     *
-     * @param description
-     *         the description
-     * @since 1.0.0
-     */
     public void setDescription(String description) {
         this.description = description;
     }

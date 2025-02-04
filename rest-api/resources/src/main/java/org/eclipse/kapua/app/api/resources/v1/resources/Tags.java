@@ -37,7 +37,6 @@ import org.eclipse.kapua.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.tag.Tag;
 import org.eclipse.kapua.service.tag.TagCreator;
-import org.eclipse.kapua.service.tag.TagFactory;
 import org.eclipse.kapua.service.tag.TagListResult;
 import org.eclipse.kapua.service.tag.TagQuery;
 import org.eclipse.kapua.service.tag.TagService;
@@ -49,8 +48,6 @@ public class Tags extends AbstractKapuaResource {
 
     @Inject
     public TagService tagService;
-    @Inject
-    public TagFactory tagFactory;
 
     /**
      * Gets the {@link Tag} list in the scope.
@@ -196,7 +193,7 @@ public class Tags extends AbstractKapuaResource {
             @PathParam("tagId") EntityId tagId) throws KapuaException {
         Tag tag = tagService.find(scopeId, tagId);
 
-        return returnNotNullEntity(tag, Tag.TYPE, tagId);
+        return returnNotNullEntity(tag, "tag", tagId);
     }
 
     /**

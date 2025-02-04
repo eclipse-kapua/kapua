@@ -30,6 +30,7 @@ import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.commons.metric.CommonsMetric;
 import org.eclipse.kapua.commons.metric.MetricsService;
 import org.eclipse.kapua.commons.metric.MetricsServiceImpl;
+import org.eclipse.kapua.commons.model.mappers.KapuaBaseMapperImpl;
 import org.eclipse.kapua.commons.service.event.store.internal.EventStoreRecordImplJpaRepository;
 import org.eclipse.kapua.commons.service.internal.cache.CacheManagerProvider;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
@@ -70,11 +71,10 @@ import org.eclipse.kapua.service.device.registry.event.internal.DeviceEventServi
 import org.eclipse.kapua.service.device.registry.internal.DeviceFactoryImpl;
 import org.eclipse.kapua.service.device.registry.internal.DeviceImplJpaRepository;
 import org.eclipse.kapua.service.device.registry.internal.DeviceRegistryServiceImpl;
-import org.eclipse.kapua.service.tag.TagFactory;
-import org.eclipse.kapua.service.tag.TagRepository;
 import org.eclipse.kapua.service.tag.TagService;
-import org.eclipse.kapua.service.tag.internal.TagFactoryImpl;
 import org.eclipse.kapua.service.tag.internal.TagImplJpaRepository;
+import org.eclipse.kapua.service.tag.internal.TagMapperImpl;
+import org.eclipse.kapua.service.tag.internal.TagRepository;
 import org.eclipse.kapua.service.tag.internal.TagServiceImpl;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
@@ -175,7 +175,8 @@ public class TagLocatorConfiguration {
                                 Mockito.mock(ServiceConfigurationManager.class),
                                 new KapuaJpaTxManagerFactory(maxInsertAttempts).create("kapua-tag"),
                                 new TagImplJpaRepository(jpaRepoConfig),
-                                new TagFactoryImpl())
+                                new TagMapperImpl(new KapuaBaseMapperImpl())
+                        )
                 );
                 bind(DeviceRegistryService.class).toInstance(
                         new DeviceRegistryServiceImpl(
@@ -197,13 +198,12 @@ public class TagLocatorConfiguration {
                 bind(DeviceEventService.class).toInstance(deviceEventService);
                 bind(DeviceEventFactory.class).toInstance(new DeviceEventFactoryImpl());
                 bind(KapuaMessageFactory.class).toInstance(new KapuaMessageFactoryImpl());
-                bind(TagFactory.class).to(TagFactoryImpl.class);
                 bind(TagService.class).toInstance(new TagServiceImpl(
                         mockedAuthorization,
                         Mockito.mock(ServiceConfigurationManager.class),
                         new KapuaJpaTxManagerFactory(maxInsertAttempts).create("kapua-tag"),
                         new TagImplJpaRepository(new KapuaJpaRepositoryConfiguration()),
-                        new TagFactoryImpl()
+                        new TagMapperImpl(new KapuaBaseMapperImpl())
                 ));
             }
         };

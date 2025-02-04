@@ -35,7 +35,7 @@ import org.eclipse.kapua.model.id.KapuaIdAdapter;
 @XmlRootElement(name = "certificateCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType
-public class CertificateCreator extends KapuaNamedEntityCreator<Certificate> {
+public class CertificateCreator extends KapuaNamedEntityCreator {
 
     private String certificate;
     private CertificateStatus status;

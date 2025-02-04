@@ -41,7 +41,7 @@ import org.eclipse.kapua.service.user.User;
 @XmlType(propOrder = { "userId",
         "roleIds",
         "permissions" })
-public class AccessInfoCreator extends KapuaEntityCreator<AccessInfo> {
+public class AccessInfoCreator extends KapuaEntityCreator {
 
     private static final long serialVersionUID = 972154225756734130L;
 

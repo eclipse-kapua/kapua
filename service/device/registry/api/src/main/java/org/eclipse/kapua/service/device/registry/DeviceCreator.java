@@ -75,7 +75,7 @@ import org.eclipse.kapua.service.device.registry.event.DeviceEvent;
         "tagIds",
         "tamperStatus"
 })
-public class DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
+public class DeviceCreator extends KapuaUpdatableEntityCreator {
 
     private static final long serialVersionUID = 8497299443773395462L;
     private KapuaId groupId;
@@ -116,7 +116,7 @@ public class DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
         super(scopeId);
     }
 
-    public DeviceCreator(KapuaEntityCreator<Device> entityCreator) {
+    public DeviceCreator(KapuaEntityCreator entityCreator) {
         super(entityCreator);
     }
 

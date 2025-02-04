@@ -48,7 +48,7 @@ import org.eclipse.kapua.model.xml.DateXmlAdapter;
                 "organizationCountry",
                 "expirationDate"
         })
-public class AccountCreator extends KapuaNamedEntityCreator<Account> {
+public class AccountCreator extends KapuaNamedEntityCreator {
 
     private static final long serialVersionUID = -2460883485294616032L;
 

@@ -33,7 +33,7 @@ import org.eclipse.kapua.model.xml.DateXmlAdapter;
 @XmlRootElement(name = "userCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType
-public class UserCreator extends KapuaNamedEntityCreator<User> {
+public class UserCreator extends KapuaNamedEntityCreator {
 
     private static final long serialVersionUID = 4664940282892151008L;
 

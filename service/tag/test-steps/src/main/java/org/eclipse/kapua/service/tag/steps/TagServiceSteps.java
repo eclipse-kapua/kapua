@@ -31,7 +31,6 @@ import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.tag.Tag;
 import org.eclipse.kapua.service.tag.TagAttributes;
 import org.eclipse.kapua.service.tag.TagCreator;
-import org.eclipse.kapua.service.tag.TagFactory;
 import org.eclipse.kapua.service.tag.TagListResult;
 import org.eclipse.kapua.service.tag.TagQuery;
 import org.eclipse.kapua.service.tag.TagService;
@@ -57,7 +56,6 @@ public class TagServiceSteps extends TestBase {
      * Tag service.
      */
     private TagService tagService;
-    private TagFactory tagFactory;
 
     @Inject
     public TagServiceSteps(StepData stepData) {
@@ -68,7 +66,6 @@ public class TagServiceSteps extends TestBase {
     public void setServices() {
         KapuaLocator locator = KapuaLocator.getInstance();
         tagService = locator.getService(TagService.class);
-        tagFactory = locator.getFactory(TagFactory.class);
     }
 
     // *************************************

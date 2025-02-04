@@ -30,7 +30,7 @@ import org.eclipse.kapua.model.id.KapuaId;
 @XmlRootElement(name = "tagCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType
-public class TagCreator extends KapuaNamedEntityCreator<Tag> {
+public class TagCreator extends KapuaNamedEntityCreator {
 
     private static final long serialVersionUID = -4676187845961673421L;
 

@@ -25,11 +25,9 @@ import org.eclipse.kapua.model.id.KapuaId;
 /**
  * {@link KapuaUpdatableEntityCreator} definition.
  *
- * @param <E>
- *         entity type
  * @since 1.0.0
  */
-public abstract class KapuaUpdatableEntityCreator<E extends KapuaEntity> extends KapuaEntityCreator<E> {
+public abstract class KapuaUpdatableEntityCreator extends KapuaEntityCreator {
 
     protected String attributes;
 
@@ -40,7 +38,7 @@ public abstract class KapuaUpdatableEntityCreator<E extends KapuaEntity> extends
         super(scopeId);
     }
 
-    protected KapuaUpdatableEntityCreator(KapuaEntityCreator<E> entityCreator) {
+    protected KapuaUpdatableEntityCreator(KapuaEntityCreator entityCreator) {
         super(entityCreator);
     }
 

@@ -29,7 +29,7 @@ import org.eclipse.kapua.model.id.KapuaId;
 @XmlRootElement(name = "queuedJobExecutionCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType
-public class QueuedJobExecutionCreator extends KapuaUpdatableEntityCreator<QueuedJobExecution> {
+public class QueuedJobExecutionCreator extends KapuaUpdatableEntityCreator {
 
     private static final long serialVersionUID = 3119071638220738358L;
 
@@ -45,7 +45,7 @@ public class QueuedJobExecutionCreator extends KapuaUpdatableEntityCreator<Queue
         super(scopeId);
     }
 
-    public QueuedJobExecutionCreator(KapuaEntityCreator<QueuedJobExecution> entityCreator) {
+    public QueuedJobExecutionCreator(KapuaEntityCreator entityCreator) {
         super(entityCreator);
     }
 

@@ -37,7 +37,7 @@ import org.eclipse.kapua.model.id.KapuaId;
         "refreshExpiresOn",
         "tokenIdentifier"
 })
-public class AccessTokenCreator extends KapuaEntityCreator<AccessToken> {
+public class AccessTokenCreator extends KapuaEntityCreator {
 
     private static final long serialVersionUID = -27718046815190710L;
 
@@ -55,7 +55,7 @@ public class AccessTokenCreator extends KapuaEntityCreator<AccessToken> {
         super(scopeId);
     }
 
-    public AccessTokenCreator(KapuaEntityCreator<AccessToken> entityCreator) {
+    public AccessTokenCreator(KapuaEntityCreator entityCreator) {
         super(entityCreator);
     }
 

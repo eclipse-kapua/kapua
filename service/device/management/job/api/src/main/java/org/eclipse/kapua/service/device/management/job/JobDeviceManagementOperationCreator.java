@@ -30,7 +30,7 @@ import org.eclipse.kapua.model.id.KapuaId;
 @XmlRootElement(name = "jobDeviceManagementOperationCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType
-public class JobDeviceManagementOperationCreator extends KapuaEntityCreator<JobDeviceManagementOperation> {
+public class JobDeviceManagementOperationCreator extends KapuaEntityCreator {
 
     private KapuaId jobId;
     private KapuaId deviceManagementOperationId;
@@ -42,7 +42,7 @@ public class JobDeviceManagementOperationCreator extends KapuaEntityCreator<JobD
         super(scopeId);
     }
 
-    public JobDeviceManagementOperationCreator(KapuaEntityCreator<JobDeviceManagementOperation> entityCreator) {
+    public JobDeviceManagementOperationCreator(KapuaEntityCreator entityCreator) {
         super(entityCreator);
     }
 

@@ -32,7 +32,7 @@ import org.eclipse.kapua.service.user.User;
 @XmlRootElement(name = "mfaOptionCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType
-public class MfaOptionCreator extends KapuaEntityCreator<MfaOption> {
+public class MfaOptionCreator extends KapuaEntityCreator {
 
     private static final long serialVersionUID = -4619585500941519330L;
 
@@ -45,7 +45,7 @@ public class MfaOptionCreator extends KapuaEntityCreator<MfaOption> {
         super(scopeId);
     }
 
-    public MfaOptionCreator(KapuaEntityCreator<MfaOption> entityCreator) {
+    public MfaOptionCreator(KapuaEntityCreator entityCreator) {
         super(entityCreator);
     }
 

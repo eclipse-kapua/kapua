@@ -37,7 +37,7 @@ import org.eclipse.kapua.service.authorization.permission.Permission;
 @XmlRootElement(name = "roleCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType
-public class RoleCreator extends KapuaNamedEntityCreator<Role> {
+public class RoleCreator extends KapuaNamedEntityCreator {
 
     private static final long serialVersionUID = 972154225756734130L;
 

@@ -27,7 +27,7 @@ import org.eclipse.kapua.model.id.KapuaId;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType
 //This class exists only because the Service needed a placeholder.Sigh.
-public class CertificateInfoCreator extends KapuaNamedEntityCreator<CertificateInfo> {
+public class CertificateInfoCreator extends KapuaNamedEntityCreator {
 
     public CertificateInfoCreator() {
         throw new UnsupportedOperationException();

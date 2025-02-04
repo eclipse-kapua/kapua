@@ -31,7 +31,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 @Category(JUnitTests.class)
 @RunWith(value = Parameterized.class)
-public class AbstractKapuaEntityCreatorTest {
+public class KapuaEntityBaseCreatorTest {
 
     private final static Random RANDOM = RandomUtils.getInstance();
 
@@ -42,17 +42,17 @@ public class AbstractKapuaEntityCreatorTest {
         return Arrays.asList(new Object[] { new BigInteger(64, RANDOM) }, new Object[] { null });
     }
 
-    public AbstractKapuaEntityCreatorTest(BigInteger eid) {
+    public KapuaEntityBaseCreatorTest(BigInteger eid) {
         this.eid = eid;
     }
 
-    private class ActualKapuaEntityCreator<E extends KapuaEntity> extends KapuaEntityCreator<E> {
+    private class ActualKapuaEntityCreator<E extends KapuaEntity> extends KapuaEntityCreator {
 
         public ActualKapuaEntityCreator(KapuaId scopeId) {
             super(scopeId);
         }
 
-        public ActualKapuaEntityCreator(KapuaEntityCreator<E> abstractEntityCreator) {
+        public ActualKapuaEntityCreator(KapuaEntityCreator abstractEntityCreator) {
             super(abstractEntityCreator);
         }
     }

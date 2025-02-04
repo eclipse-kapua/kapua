@@ -45,9 +45,9 @@ public class KapuaListResult<E> implements KapuaSerializable {
 
     private static final long serialVersionUID = 8939666089540269261L;
 
-    private ArrayList<E> items;
-    private boolean limitExceeded;
-    private Long totalCount;
+    protected ArrayList<E> items;
+    protected boolean limitExceeded;
+    protected Long totalCount;
 
     /**
      * Constructor.

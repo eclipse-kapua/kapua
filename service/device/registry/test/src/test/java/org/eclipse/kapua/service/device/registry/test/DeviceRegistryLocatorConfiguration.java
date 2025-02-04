@@ -29,6 +29,7 @@ import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.commons.metric.CommonsMetric;
 import org.eclipse.kapua.commons.metric.MetricsService;
 import org.eclipse.kapua.commons.metric.MetricsServiceImpl;
+import org.eclipse.kapua.commons.model.mappers.KapuaBaseMapperImpl;
 import org.eclipse.kapua.commons.service.event.store.internal.EventStoreRecordImplJpaRepository;
 import org.eclipse.kapua.commons.service.internal.cache.CacheManagerProvider;
 import org.eclipse.kapua.commons.service.internal.cache.KapuaCacheManager;
@@ -72,8 +73,8 @@ import org.eclipse.kapua.service.device.registry.internal.DeviceFactoryImpl;
 import org.eclipse.kapua.service.device.registry.internal.DeviceImplJpaRepository;
 import org.eclipse.kapua.service.device.registry.internal.DeviceRegistryCacheFactory;
 import org.eclipse.kapua.service.device.registry.internal.DeviceRegistryServiceImpl;
-import org.eclipse.kapua.service.tag.internal.TagFactoryImpl;
 import org.eclipse.kapua.service.tag.internal.TagImplJpaRepository;
+import org.eclipse.kapua.service.tag.internal.TagMapperImpl;
 import org.eclipse.kapua.service.tag.internal.TagServiceImpl;
 import org.eclipse.kapua.storage.TxManager;
 import org.mockito.Matchers;
@@ -189,7 +190,8 @@ public class DeviceRegistryLocatorConfiguration {
                                 Mockito.mock(ServiceConfigurationManager.class),
                                 new KapuaJpaTxManagerFactory(maxInsertAttempts).create("kapua-tag"),
                                 new TagImplJpaRepository(jpaRepoConfig),
-                                new TagFactoryImpl())
+                                new TagMapperImpl(new KapuaBaseMapperImpl())
+                        )
                 );
 
                 bind(DeviceValidation.class).toInstance(deviceValidation);

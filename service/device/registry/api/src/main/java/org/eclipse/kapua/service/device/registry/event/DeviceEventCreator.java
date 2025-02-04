@@ -27,7 +27,7 @@ import org.eclipse.kapua.service.device.management.message.response.KapuaRespons
  *
  * @since 1.0
  */
-public class DeviceEventCreator extends KapuaEntityCreator<DeviceEvent> {
+public class DeviceEventCreator extends KapuaEntityCreator {
 
     private static final long serialVersionUID = -3982569213440658172L;
     @XmlElement(name = "deviceId")
@@ -61,7 +61,7 @@ public class DeviceEventCreator extends KapuaEntityCreator<DeviceEvent> {
         super(scopeId);
     }
 
-    public DeviceEventCreator(KapuaEntityCreator<DeviceEvent> entityCreator) {
+    public DeviceEventCreator(KapuaEntityCreator entityCreator) {
         super(entityCreator);
     }
 

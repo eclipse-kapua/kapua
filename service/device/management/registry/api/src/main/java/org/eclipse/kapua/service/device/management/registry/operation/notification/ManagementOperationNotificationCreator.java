@@ -37,7 +37,7 @@ import org.eclipse.kapua.service.device.management.registry.operation.DeviceMana
 @XmlRootElement(name = "deviceManagementOperationNotificationCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType
-public class ManagementOperationNotificationCreator extends KapuaEntityCreator<ManagementOperationNotification> {
+public class ManagementOperationNotificationCreator extends KapuaEntityCreator {
 
     private KapuaId operationId;
     private Date sentOn;
@@ -53,7 +53,7 @@ public class ManagementOperationNotificationCreator extends KapuaEntityCreator<M
         super(scopeId);
     }
 
-    public ManagementOperationNotificationCreator(KapuaEntityCreator<ManagementOperationNotification> entityCreator) {
+    public ManagementOperationNotificationCreator(KapuaEntityCreator entityCreator) {
         super(entityCreator);
     }
 

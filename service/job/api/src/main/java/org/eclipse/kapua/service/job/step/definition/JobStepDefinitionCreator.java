@@ -31,7 +31,7 @@ import org.eclipse.kapua.model.id.KapuaId;
 @XmlRootElement(name = "jobStepDefinitionCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType
-public class JobStepDefinitionCreator extends KapuaNamedEntityCreator<JobStepDefinition> {
+public class JobStepDefinitionCreator extends KapuaNamedEntityCreator {
 
     private static final long serialVersionUID = 4602067255120049746L;
 

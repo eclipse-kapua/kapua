@@ -35,7 +35,7 @@ import org.eclipse.kapua.service.user.User;
 @XmlRootElement(name = "credentialCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType
-public class CredentialCreator extends KapuaEntityCreator<Credential> {
+public class CredentialCreator extends KapuaEntityCreator {
 
     private static final long serialVersionUID = -5020680413729882095L;
 
@@ -52,7 +52,7 @@ public class CredentialCreator extends KapuaEntityCreator<Credential> {
         super(scopeId);
     }
 
-    public CredentialCreator(KapuaEntityCreator<Credential> entityCreator) {
+    public CredentialCreator(KapuaEntityCreator entityCreator) {
         super(entityCreator);
     }
 

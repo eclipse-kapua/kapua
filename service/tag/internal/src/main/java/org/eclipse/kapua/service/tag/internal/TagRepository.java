@@ -10,16 +10,11 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.service.tag;
+package org.eclipse.kapua.service.tag.internal;
 
-import org.eclipse.kapua.model.KapuaEntityFactory;
+import org.eclipse.kapua.storage.KapuaNamedEntityRepository;
 
-/**
- * {@link TagFactory} definition.
- *
- * @see org.eclipse.kapua.model.KapuaEntityFactory
- * @since 1.0.0
- */
-public interface TagFactory extends KapuaEntityFactory<Tag> {
+public interface TagRepository extends
+        KapuaNamedEntityRepository<TagImpl, TagImplListResult> {
 
 }

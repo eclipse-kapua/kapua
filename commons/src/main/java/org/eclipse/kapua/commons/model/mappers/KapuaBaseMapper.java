@@ -41,6 +41,8 @@ public interface KapuaBaseMapper {
     @Mapping(target = "modifiedOn", ignore = true)
     @Mapping(target = "modifiedBy", ignore = true)
     @Mapping(target = "optlock", ignore = true)
+    @Mapping(target = "entityProperties", ignore = true)
+    @Mapping(target = "entityAttributes", ignore = true)
     @IgnoreKapuaEntityReadonlyFields
     public @interface IgnoreKapuaUpdatableEntityReadonlyFields {
 

@@ -56,7 +56,7 @@ public class KapuaNamedEntityCreatorTest {
         });
     }
 
-    private class ActualKapuaNamedEntityCreator<E extends KapuaEntity> extends KapuaNamedEntityCreator<E> {
+    private class ActualKapuaNamedEntityCreator<E extends KapuaEntity> extends KapuaNamedEntityCreator {
 
         protected ActualKapuaNamedEntityCreator(KapuaId scopeId, String name) {
             super(scopeId, name);

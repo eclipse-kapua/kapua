@@ -24,7 +24,7 @@ import org.eclipse.kapua.service.device.registry.ConnectionUserCouplingMode;
  *
  * @since 1.0
  */
-public class DeviceConnectionCreator extends KapuaUpdatableEntityCreator<DeviceConnection> {
+public class DeviceConnectionCreator extends KapuaUpdatableEntityCreator {
 
     private static final long serialVersionUID = 2740394157765904615L;
 
@@ -47,7 +47,7 @@ public class DeviceConnectionCreator extends KapuaUpdatableEntityCreator<DeviceC
         super(scopeId);
     }
 
-    public DeviceConnectionCreator(KapuaEntityCreator<DeviceConnection> entityCreator) {
+    public DeviceConnectionCreator(KapuaEntityCreator entityCreator) {
         super(entityCreator);
     }
 

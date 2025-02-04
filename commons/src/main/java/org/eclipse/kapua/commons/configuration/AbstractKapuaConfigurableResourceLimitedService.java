@@ -61,7 +61,7 @@ import org.eclipse.kapua.service.config.KapuaConfigurableService;
 @Deprecated
 public abstract class AbstractKapuaConfigurableResourceLimitedService<
         E extends KapuaEntity,
-        C extends KapuaEntityCreator<E>,
+        C extends KapuaEntityCreator,
         S extends KapuaEntityService<E, C>,
         F extends KapuaEntityFactory<E>
         >

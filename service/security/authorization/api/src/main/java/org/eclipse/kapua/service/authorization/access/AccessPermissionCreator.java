@@ -32,7 +32,7 @@ import org.eclipse.kapua.service.authorization.permission.Permission;
 @XmlRootElement(name = "accessPermissionCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(propOrder = { "accessInfoId", "permission" })
-public class AccessPermissionCreator extends KapuaEntityCreator<AccessPermission> {
+public class AccessPermissionCreator extends KapuaEntityCreator {
 
     private static final long serialVersionUID = 972154225756734130L;
 

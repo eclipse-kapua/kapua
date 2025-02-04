@@ -63,7 +63,6 @@ import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authorization.domain.Domain;
 import org.eclipse.kapua.service.authorization.group.Group;
 import org.eclipse.kapua.service.authorization.group.GroupAttributes;
-import org.eclipse.kapua.service.authorization.group.GroupFactory;
 import org.eclipse.kapua.service.authorization.group.GroupQuery;
 import org.eclipse.kapua.service.authorization.group.GroupService;
 import org.eclipse.kapua.service.device.management.message.KapuaMethod;
@@ -80,7 +79,6 @@ import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.device.registry.DeviceStatus;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnection;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionCreator;
-import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionFactory;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionListResult;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionQuery;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionService;
@@ -96,7 +94,6 @@ import org.eclipse.kapua.service.device.registry.lifecycle.DeviceLifeCycleServic
 import org.eclipse.kapua.service.tag.Tag;
 import org.eclipse.kapua.service.tag.TagAttributes;
 import org.eclipse.kapua.service.tag.TagCreator;
-import org.eclipse.kapua.service.tag.TagFactory;
 import org.eclipse.kapua.service.tag.TagListResult;
 import org.eclipse.kapua.service.tag.TagQuery;
 import org.eclipse.kapua.service.tag.TagService;
@@ -173,7 +170,6 @@ public class DeviceRegistrySteps extends TestBase {
 
     // Various device connection service related references
     private DeviceConnectionService deviceConnectionService;
-    private DeviceConnectionFactory deviceConnectionFactory;
 
     // Various device event service related references
     private DeviceEventService eventService;
@@ -184,11 +180,9 @@ public class DeviceRegistrySteps extends TestBase {
     private AccountService accountService;
     private UserService userService;
     private TagService tagService;
-    private TagFactory tagFactory;
     private KapuaMessageFactory messageFactory;
     private KapuaLifecycleMessageFactory lifecycleMessageFactory;
     private GroupService groupService;
-    private GroupFactory groupFactory;
 
     private AclCreator aclCreator;
 
@@ -220,7 +214,6 @@ public class DeviceRegistrySteps extends TestBase {
         deviceFactory = locator.getFactory(DeviceFactory.class);
 
         deviceConnectionService = locator.getService(DeviceConnectionService.class);
-        deviceConnectionFactory = locator.getFactory(DeviceConnectionFactory.class);
 
         eventService = locator.getService(DeviceEventService.class);
         eventFactory = locator.getFactory(DeviceEventFactory.class);
@@ -232,10 +225,7 @@ public class DeviceRegistrySteps extends TestBase {
         accountService = locator.getService(AccountService.class);
         userService = locator.getService(UserService.class);
         tagService = locator.getService(TagService.class);
-        tagFactory = locator.getFactory(TagFactory.class);
         groupService = locator.getService(GroupService.class);
-        groupFactory = locator.getFactory(GroupFactory.class);
-
         aclCreator = new AclCreator();
     }
 
