@@ -42,7 +42,6 @@ import org.eclipse.kapua.service.authentication.UsernamePasswordCredentials;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundle;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundleManagementService;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundles;
-import org.eclipse.kapua.service.device.management.packages.DevicePackageFactory;
 import org.eclipse.kapua.service.device.management.packages.DevicePackageManagementService;
 import org.eclipse.kapua.service.device.management.packages.model.DevicePackage;
 import org.eclipse.kapua.service.device.management.packages.model.DevicePackageBundleInfo;
@@ -334,7 +333,7 @@ public class SimulatedDeviceSteps {
                 With.withDevice(account, currentDevice.getClientId(), device -> {
                     final DevicePackageManagementService service = KapuaLocator.getInstance().getService(DevicePackageManagementService.class);
 
-                    final DevicePackageDownloadRequest request = KapuaLocator.getInstance().getFactory(DevicePackageFactory.class).newPackageDownloadRequest();
+                    final DevicePackageDownloadRequest request = new DevicePackageDownloadRequest();
                     request.setInstall(true);
                     request.setName(packageName);
                     request.setVersion(version);

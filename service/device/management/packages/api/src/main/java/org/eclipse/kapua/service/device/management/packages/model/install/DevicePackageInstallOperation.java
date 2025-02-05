@@ -12,16 +12,15 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.packages.model.install;
 
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.service.device.management.packages.model.DevicePackageXmlRegistry;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
 
 /**
  * {@link DevicePackageInstallOperation} definition.
@@ -30,8 +29,13 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  */
 @XmlRootElement(name = "packageInstallOperation")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DevicePackageXmlRegistry.class, factoryMethod = "newDevicePackageInstallOperation")
-public interface DevicePackageInstallOperation {
+@XmlType
+public class DevicePackageInstallOperation {
+
+    private KapuaId id;
+    private String name;
+    private String version;
+    private DevicePackageInstallStatus status;
 
     /**
      * Get the package identifier
@@ -40,14 +44,18 @@ public interface DevicePackageInstallOperation {
      */
     @XmlElement(name = "id")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
-    KapuaId getId();
+    public KapuaId getId() {
+        return id;
+    }
 
     /**
      * Set the package identifier
      *
      * @param id
      */
-    void setId(KapuaId id);
+    public void setId(KapuaId id) {
+        this.id = id;
+    }
 
     /**
      * Get the package name
@@ -55,14 +63,18 @@ public interface DevicePackageInstallOperation {
      * @return
      */
     @XmlElement(name = "name")
-    String getName();
+    public String getName() {
+        return name;
+    }
 
     /**
      * Set the package name
      *
      * @param packageName
      */
-    void setName(String packageName);
+    public void setName(String packageName) {
+        this.name = packageName;
+    }
 
     /**
      * Get the package version
@@ -70,14 +82,18 @@ public interface DevicePackageInstallOperation {
      * @return
      */
     @XmlElement(name = "version")
-    String getVersion();
+    public String getVersion() {
+        return version;
+    }
 
     /**
      * Set the package version
      *
      * @param version
      */
-    void setVersion(String version);
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     /**
      * Get the package install status
@@ -85,12 +101,17 @@ public interface DevicePackageInstallOperation {
      * @return
      */
     @XmlElement(name = "status")
-    DevicePackageInstallStatus getStatus();
+    public DevicePackageInstallStatus getStatus() {
+        return status;
+    }
 
     /**
      * Set the package install status
      *
      * @param status
      */
-    void setStatus(DevicePackageInstallStatus status);
+    public void setStatus(DevicePackageInstallStatus status) {
+        this.status = status;
+    }
+
 }

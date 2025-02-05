@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.translator.kura.kapua;
 
+import java.math.BigInteger;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.service.device.call.kura.model.deploy.KuraBundleInfo;
 import org.eclipse.kapua.service.device.call.kura.model.deploy.KuraDeploymentPackage;
@@ -23,7 +28,6 @@ import org.eclipse.kapua.service.device.call.message.kura.app.response.KuraRespo
 import org.eclipse.kapua.service.device.call.message.kura.app.response.KuraResponseMessage;
 import org.eclipse.kapua.service.device.call.message.kura.app.response.KuraResponsePayload;
 import org.eclipse.kapua.service.device.management.commons.setting.DeviceManagementSetting;
-import org.eclipse.kapua.service.device.management.packages.DevicePackageFactory;
 import org.eclipse.kapua.service.device.management.packages.message.internal.PackageResponseChannel;
 import org.eclipse.kapua.service.device.management.packages.message.internal.PackageResponseMessage;
 import org.eclipse.kapua.service.device.management.packages.message.internal.PackageResponsePayload;
@@ -37,10 +41,6 @@ import org.eclipse.kapua.translator.exception.InvalidPayloadException;
 import org.eclipse.kapua.translator.exception.TranslatorErrorCodes;
 import org.eclipse.kapua.translator.exception.TranslatorException;
 
-import javax.inject.Inject;
-import java.math.BigInteger;
-import java.util.Map;
-
 /**
  * {@link org.eclipse.kapua.translator.Translator} implementation from {@link KuraResponseMessage} to {@link PackageResponseMessage}
  *
@@ -48,12 +48,9 @@ import java.util.Map;
  */
 public class TranslatorAppPackageKuraKapua extends AbstractSimpleTranslatorResponseKuraKapua<PackageResponseChannel, PackageResponsePayload, PackageResponseMessage> {
 
-    private final DevicePackageFactory devicePackageFactory;
-
     @Inject
-    public TranslatorAppPackageKuraKapua(DeviceManagementSetting deviceManagementSetting, DevicePackageFactory devicePackageFactory) {
+    public TranslatorAppPackageKuraKapua(DeviceManagementSetting deviceManagementSetting) {
         super(deviceManagementSetting, PackageResponseMessage.class, PackageResponsePayload.class);
-        this.devicePackageFactory = devicePackageFactory;
     }
 
     @Override
@@ -84,18 +81,18 @@ public class TranslatorAppPackageKuraKapua extends AbstractSimpleTranslatorRespo
 
                         String kuraStatus = (String) metrics.get(PackageMetrics.APP_METRIC_PACKAGE_DOWNLOAD_STATUS.getName());
                         switch (kuraStatus) {
-                            case "IN_PROGRESS":
-                                status = DevicePackageDownloadStatus.IN_PROGRESS;
-                                break;
-                            case "FAILED":
-                                status = DevicePackageDownloadStatus.FAILED;
-                                break;
-                            case "COMPLETED":
-                            case "ALREADY DONE":
-                                status = DevicePackageDownloadStatus.COMPLETED;
-                                break;
-                            default:
-                                throw new TranslatorException(TranslatorErrorCodes.INVALID_PAYLOAD, null, kuraStatus);
+                        case "IN_PROGRESS":
+                            status = DevicePackageDownloadStatus.IN_PROGRESS;
+                            break;
+                        case "FAILED":
+                            status = DevicePackageDownloadStatus.FAILED;
+                            break;
+                        case "COMPLETED":
+                        case "ALREADY DONE":
+                            status = DevicePackageDownloadStatus.COMPLETED;
+                            break;
+                        default:
+                            throw new TranslatorException(TranslatorErrorCodes.INVALID_PAYLOAD, null, kuraStatus);
                         }
                         responsePayload.setPackageDownloadOperationStatus(status);
                     }
@@ -129,18 +126,18 @@ public class TranslatorAppPackageKuraKapua extends AbstractSimpleTranslatorRespo
     }
 
     private DevicePackages translate(KuraDeploymentPackages kuraDeploymentPackages) {
-        DevicePackages deviceDeploymentPackages = devicePackageFactory.newDeviceDeploymentPackages();
+        DevicePackages deviceDeploymentPackages = new DevicePackages();
 
         KuraDeploymentPackage[] deploymentPackageArray = kuraDeploymentPackages.getDeploymentPackages();
         for (KuraDeploymentPackage deploymentPackage : deploymentPackageArray) {
-            DevicePackage deviceDeploymentPackage = devicePackageFactory.newDeviceDeploymentPackage();
+            DevicePackage deviceDeploymentPackage = new DevicePackage();
             deviceDeploymentPackage.setName(deploymentPackage.getName());
             deviceDeploymentPackage.setVersion(deploymentPackage.getVersion());
 
             DevicePackageBundleInfos devicePackageBundleInfos = deviceDeploymentPackage.getBundleInfos();
             KuraBundleInfo[] bundleInfoArray = deploymentPackage.getBundleInfos();
             for (KuraBundleInfo bundleInfo : bundleInfoArray) {
-                DevicePackageBundleInfo devicePackageBundleInfo = devicePackageFactory.newDevicePackageBundleInfo();
+                DevicePackageBundleInfo devicePackageBundleInfo = new DevicePackageBundleInfo();
                 devicePackageBundleInfo.setName(bundleInfo.getName());
                 devicePackageBundleInfo.setVersion(bundleInfo.getVersion());
 

@@ -33,7 +33,7 @@ public abstract class AbstractKapuaResource {
      * <p>
      * If it is {@code null} a {@link NotFoundException} {@link WebApplicationException} is raised.
      * <p>
-     * For {@link KapuaEntity} {@link #returnNotNullEntity(KapuaEntity, String, KapuaId)} is recommended. This is meant for generic {@link Object}s.
+     * For {@link KapuaEntity} {@link #returnNotNullEntity(Object, String, KapuaId)} is recommended. This is meant for generic {@link Object}s.
      *
      * @param object
      *         The {@link Object} to check.

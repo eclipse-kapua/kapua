@@ -20,7 +20,6 @@ import org.eclipse.kapua.commons.core.JaxbClassProvider;
 import org.eclipse.kapua.commons.core.SimpleJaxbClassProvider;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.device.management.packages.DevicePackageFactory;
 import org.eclipse.kapua.service.device.management.packages.DevicePackageManagementService;
 import org.eclipse.kapua.service.device.management.packages.internal.setting.PackageManagementServiceSetting;
 import org.eclipse.kapua.service.device.management.packages.model.install.DevicePackageInstallRequest;
@@ -37,7 +36,6 @@ public class DeviceManagementPackagesModule extends AbstractKapuaModule {
 
     @Override
     protected void configureModule() {
-        bind(DevicePackageFactory.class).to(DevicePackageFactoryImpl.class).in(Singleton.class);
         bind(PackageManagementServiceSetting.class).in(Singleton.class);
         final Multibinder<JaxbClassProvider> jaxbClassProviderMultibinder = Multibinder.newSetBinder(binder(), JaxbClassProvider.class);
         jaxbClassProviderMultibinder.addBinding()
@@ -56,7 +54,6 @@ public class DeviceManagementPackagesModule extends AbstractKapuaModule {
             DeviceRegistryService deviceRegistryService,
             DeviceManagementOperationRegistryService deviceManagementOperationRegistryService,
             DeviceManagementOperationFactory deviceManagementOperationFactory,
-            DevicePackageFactory devicePackageFactory,
             KapuaJpaTxManagerFactory jpaTxManagerFactory,
             PackageManagementServiceSetting packageManagementServiceSetting
     ) {
@@ -68,7 +65,6 @@ public class DeviceManagementPackagesModule extends AbstractKapuaModule {
                 deviceRegistryService,
                 deviceManagementOperationRegistryService,
                 deviceManagementOperationFactory,
-                devicePackageFactory,
                 packageManagementServiceSetting
         );
     }

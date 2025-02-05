@@ -20,7 +20,6 @@ import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.model.KapuaEntityAttributes;
-import org.eclipse.kapua.model.KapuaUpdatableEntity;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
@@ -260,7 +259,7 @@ public final class DeviceValidationImpl implements DeviceValidation {
     }
 
     /**
-     * Validates the {@link Device} for {@link DeviceRegistryService#update(KapuaUpdatableEntity)} operation.
+     * Validates the {@link Device} for {@link DeviceRegistryService#update(Object)} operation.
      *
      * @param device
      *         The {@link Device} to validate.

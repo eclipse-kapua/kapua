@@ -13,12 +13,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.packages.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.List;
 
 /**
  * {@link DevicePackageBundleInfos} implementation.
@@ -27,8 +29,10 @@ import java.util.List;
  */
 @XmlRootElement(name = "bundleInfos")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DevicePackageXmlRegistry.class, factoryMethod = "newDevicePackageBundleInfos")
-public interface DevicePackageBundleInfos {
+@XmlType
+public class DevicePackageBundleInfos {
+
+    List<DevicePackageBundleInfo> bundleInfos;
 
     /**
      * Gets the {@link DevicePackageBundleInfo} {@link List}.
@@ -37,5 +41,10 @@ public interface DevicePackageBundleInfos {
      * @since 1.0.0
      */
     @XmlElement(name = "bundleInfo")
-    List<DevicePackageBundleInfo> getBundlesInfos();
+    public List<DevicePackageBundleInfo> getBundlesInfos() {
+        if (bundleInfos == null) {
+            bundleInfos = new ArrayList<>();
+        }
+        return bundleInfos;
+    }
 }

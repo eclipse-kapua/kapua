@@ -85,7 +85,6 @@ import org.eclipse.kapua.service.device.management.configuration.store.DeviceCon
 import org.eclipse.kapua.service.device.management.configuration.store.DeviceConfigurationStoreService;
 import org.eclipse.kapua.service.device.management.configuration.store.settings.DeviceConfigurationStoreEnablementPolicy;
 import org.eclipse.kapua.service.device.management.configuration.store.settings.DeviceConfigurationStoreSettings;
-import org.eclipse.kapua.service.device.management.packages.DevicePackageFactory;
 import org.eclipse.kapua.service.device.management.packages.DevicePackageManagementService;
 import org.eclipse.kapua.service.device.management.packages.model.DevicePackage;
 import org.eclipse.kapua.service.device.management.packages.model.DevicePackageBundleInfo;
@@ -94,8 +93,10 @@ import org.eclipse.kapua.service.device.management.packages.model.DevicePackages
 import org.eclipse.kapua.service.device.management.packages.model.FileType;
 import org.eclipse.kapua.service.device.management.packages.model.download.AdvancedPackageDownloadOptions;
 import org.eclipse.kapua.service.device.management.packages.model.download.DevicePackageDownloadOperation;
+import org.eclipse.kapua.service.device.management.packages.model.download.DevicePackageDownloadOptions;
 import org.eclipse.kapua.service.device.management.packages.model.download.DevicePackageDownloadRequest;
 import org.eclipse.kapua.service.device.management.packages.model.download.DevicePackageDownloadStatus;
+import org.eclipse.kapua.service.device.management.packages.model.uninstall.DevicePackageUninstallOptions;
 import org.eclipse.kapua.service.device.management.packages.model.uninstall.DevicePackageUninstallRequest;
 import org.eclipse.kapua.service.device.management.snapshot.DeviceSnapshot;
 import org.eclipse.kapua.service.device.management.snapshot.DeviceSnapshotManagementService;
@@ -134,7 +135,6 @@ public class GwtDeviceManagementServiceImpl extends KapuaRemoteServiceServlet im
     private static final DeviceConfigurationStoreFactory DEVICE_CONFIGURATION_STORE_FACTORY = LOCATOR.getFactory(DeviceConfigurationStoreFactory.class);
 
     private static final DevicePackageManagementService PACKAGE_MANAGEMENT_SERVICE = LOCATOR.getService(DevicePackageManagementService.class);
-    private static final DevicePackageFactory DEVICE_PACKAGE_FACTORY = LOCATOR.getFactory(DevicePackageFactory.class);
 
     private static final DeviceSnapshotManagementService SNAPSHOT_MANAGEMENT_SERVICE = LOCATOR.getService(DeviceSnapshotManagementService.class);
 
@@ -192,7 +192,7 @@ public class GwtDeviceManagementServiceImpl extends KapuaRemoteServiceServlet im
                 throw new GwtKapuaException(GwtKapuaErrorCode.PACKAGE_URI_SYNTAX_ERROR, e, e.getLocalizedMessage());
             }
 
-            DevicePackageDownloadRequest packageDownloadRequest = DEVICE_PACKAGE_FACTORY.newPackageDownloadRequest();
+            DevicePackageDownloadRequest packageDownloadRequest = new DevicePackageDownloadRequest();
             packageDownloadRequest.setUri(packageUri);
             packageDownloadRequest.setName(gwtPackageInstallRequest.getPackageName());
             packageDownloadRequest.setVersion(gwtPackageInstallRequest.getPackageVersion());
@@ -212,7 +212,7 @@ public class GwtDeviceManagementServiceImpl extends KapuaRemoteServiceServlet im
             advancedOptions.setNotifyBlockSize(gwtPackageInstallRequest.getNotifyBlockSize());
             advancedOptions.setInstallVerifierURI(gwtPackageInstallRequest.getInstallVerifierURI());
 
-            PACKAGE_MANAGEMENT_SERVICE.downloadExec(scopeId, deviceId, packageDownloadRequest, DEVICE_PACKAGE_FACTORY.newPackageDownloadOptions());
+            PACKAGE_MANAGEMENT_SERVICE.downloadExec(scopeId, deviceId, packageDownloadRequest, new DevicePackageDownloadOptions());
         } catch (Throwable t) {
             throw KapuaExceptionHandler.buildExceptionFromError(t);
         }
@@ -254,13 +254,13 @@ public class GwtDeviceManagementServiceImpl extends KapuaRemoteServiceServlet im
             KapuaId scopeId = KapuaEid.parseCompactId(gwtPackageUninstallRequest.getScopeId());
             KapuaId deviceId = KapuaEid.parseCompactId(gwtPackageUninstallRequest.getDeviceId());
 
-            DevicePackageUninstallRequest packageUninstallRequest = DEVICE_PACKAGE_FACTORY.newPackageUninstallRequest();
+            DevicePackageUninstallRequest packageUninstallRequest = new DevicePackageUninstallRequest();
             packageUninstallRequest.setName(gwtPackageUninstallRequest.getPackageName());
             packageUninstallRequest.setVersion(gwtPackageUninstallRequest.getPackageVersion());
             packageUninstallRequest.setReboot(gwtPackageUninstallRequest.isReboot());
             packageUninstallRequest.setRebootDelay(gwtPackageUninstallRequest.getRebootDelay());
 
-            PACKAGE_MANAGEMENT_SERVICE.uninstallExec(scopeId, deviceId, packageUninstallRequest, DEVICE_PACKAGE_FACTORY.newPackageUninstallOptions());
+            PACKAGE_MANAGEMENT_SERVICE.uninstallExec(scopeId, deviceId, packageUninstallRequest, new DevicePackageUninstallOptions());
         } catch (Throwable t) {
             throw KapuaExceptionHandler.buildExceptionFromError(t);
         }

@@ -12,11 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.packages.job;
 
+import javax.batch.runtime.context.JobContext;
+import javax.batch.runtime.context.StepContext;
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.job.engine.commons.wrappers.JobTargetWrapper;
 import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.service.device.management.packages.DevicePackageFactory;
 import org.eclipse.kapua.service.device.management.packages.DevicePackageManagementService;
 import org.eclipse.kapua.service.device.management.packages.job.definition.DevicePackageDownloadPropertyKeys;
 import org.eclipse.kapua.service.device.management.packages.model.download.DevicePackageDownloadOptions;
@@ -24,10 +27,6 @@ import org.eclipse.kapua.service.device.management.packages.model.download.Devic
 import org.eclipse.kapua.service.job.operation.TargetProcessor;
 import org.eclipse.kapua.service.job.targets.JobTarget;
 import org.eclipse.kapua.service.job.targets.JobTargetStatus;
-
-import javax.batch.runtime.context.JobContext;
-import javax.batch.runtime.context.StepContext;
-import javax.inject.Inject;
 
 /**
  * {@link TargetProcessor} for {@link DevicePackageManagementService#downloadExec(KapuaId, KapuaId, DevicePackageDownloadRequest, Long)}.
@@ -38,8 +37,6 @@ public class DevicePackageDownloadTargetProcessor extends AbstractDevicePackageT
 
     @Inject
     DevicePackageManagementService devicePackageManagementService;
-    @Inject
-    DevicePackageFactory devicePackageFactory;
     @Inject
     JobContext jobContext;
     @Inject
@@ -63,7 +60,7 @@ public class DevicePackageDownloadTargetProcessor extends AbstractDevicePackageT
         DevicePackageDownloadRequest packageDownloadRequest = stepContextWrapper.getStepProperty(DevicePackageDownloadPropertyKeys.PACKAGE_DOWNLOAD_REQUEST, DevicePackageDownloadRequest.class);
         Long timeout = stepContextWrapper.getStepProperty(DevicePackageDownloadPropertyKeys.TIMEOUT, Long.class);
         // Send the request
-        DevicePackageDownloadOptions packageDownloadOptions = devicePackageFactory.newPackageDownloadOptions();
+        DevicePackageDownloadOptions packageDownloadOptions = new DevicePackageDownloadOptions();
         packageDownloadOptions.setTimeout(timeout);
 
         KapuaId operationId = KapuaSecurityUtils.doPrivileged(() -> devicePackageManagementService.downloadExec(scopeId, jobTarget.getJobTargetId(), packageDownloadRequest, packageDownloadOptions));

@@ -19,7 +19,9 @@ import org.eclipse.kapua.service.device.management.registry.operation.DeviceMana
  *
  * @since 1.1.0
  */
-public interface DevicePackageOptions {
+public abstract class DevicePackageOptions {
+
+    private Long timeout;
 
     /**
      * The {@link DeviceManagementOperation} timeout.
@@ -27,13 +29,18 @@ public interface DevicePackageOptions {
      * @return The {@link DeviceManagementOperation} timeout.
      * @since 1.1.0
      */
-    Long getTimeout();
+    public Long getTimeout() {
+        return timeout;
+    }
 
     /**
      * Sets the {@link DeviceManagementOperation} timeout.
      *
-     * @param timeout The {@link DeviceManagementOperation} timeout.
+     * @param timeout
+     *         The {@link DeviceManagementOperation} timeout.
      * @since 1.1.0
      */
-    void setTimeout(Long timeout);
+    public void setTimeout(Long timeout) {
+        this.timeout = timeout;
+    }
 }

@@ -17,61 +17,83 @@ package org.eclipse.kapua.service.device.management.packages.model.install;
  *
  * @since 1.0
  */
-public interface DevicePackageInstallRequest {
+public class DevicePackageInstallRequest {
+
+    private String name;
+    private String version;
+    private Boolean reboot;
+    private Integer rebootDelay;
 
     /**
      * Get the package name
      *
      * @return
      */
-    String getName();
+    public String getName() {
+        return name;
+    }
 
     /**
      * Set the package name
      *
      * @param name
      */
-    void setName(String name);
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /**
      * Get the package version
      *
      * @return
      */
-    String getVersion();
+    public String getVersion() {
+        return version;
+    }
 
     /**
      * Set the package version
      *
      * @param version
      */
-    void setVersion(String version);
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     /**
      * Get the device reboot flag
      *
      * @return
      */
-    Boolean isReboot();
+    public Boolean isReboot() {
+        return reboot;
+    }
 
     /**
      * Set the device reboot flag
      *
      * @param reboot
      */
-    void setReboot(Boolean reboot);
+    public void setReboot(Boolean reboot) {
+        this.reboot = reboot;
+    }
 
     /**
      * Get the reboot delay
      *
      * @return
      */
-    Integer getRebootDelay();
+    public Integer getRebootDelay() {
+        return rebootDelay;
+    }
 
     /**
      * Set the reboot delay
      *
      * @param rebootDelay
      */
-    void setRebootDelay(Integer rebootDelay);
+    public void setRebootDelay(Integer rebootDelay) {
+        this.rebootDelay = rebootDelay;
+    }
+
 }

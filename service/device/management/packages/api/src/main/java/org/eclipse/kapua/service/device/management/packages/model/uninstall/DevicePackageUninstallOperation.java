@@ -12,14 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.packages.model.uninstall;
 
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.service.device.management.packages.model.DevicePackageXmlRegistry;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.model.id.KapuaId;
 
 /**
  * {@link DevicePackageUninstallOperation} definition.
@@ -28,8 +27,13 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "devicePackageUninstallOperation")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DevicePackageXmlRegistry.class, factoryMethod = "newDevicePackageUninstallOperation")
-public interface DevicePackageUninstallOperation {
+@XmlType
+public class DevicePackageUninstallOperation {
+
+    private KapuaId id;
+    private String name;
+    private String version;
+    private DevicePackageUninstallStatus status;
 
     /**
      * Get the package identifier
@@ -37,14 +41,18 @@ public interface DevicePackageUninstallOperation {
      * @return
      */
     @XmlElement(name = "id")
-    KapuaId getId();
+    public KapuaId getId() {
+        return id;
+    }
 
     /**
      * Set the package identifier
      *
      * @param id
      */
-    void setId(KapuaId id);
+    public void setId(KapuaId id) {
+        this.id = id;
+    }
 
     /**
      * Get the package name
@@ -52,14 +60,18 @@ public interface DevicePackageUninstallOperation {
      * @return
      */
     @XmlElement(name = "name")
-    String getName();
+    public String getName() {
+        return name;
+    }
 
     /**
      * Set the package name
      *
      * @param packageName
      */
-    void setName(String packageName);
+    public void setName(String packageName) {
+        this.name = packageName;
+    }
 
     /**
      * Get the package version
@@ -67,14 +79,18 @@ public interface DevicePackageUninstallOperation {
      * @return
      */
     @XmlElement(name = "version")
-    String getVersion();
+    public String getVersion() {
+        return version;
+    }
 
     /**
      * Set the package version
      *
      * @param version
      */
-    void setVersion(String version);
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     /**
      * Get the package uninstall status
@@ -82,12 +98,17 @@ public interface DevicePackageUninstallOperation {
      * @return
      */
     @XmlElement(name = "status")
-    DevicePackageUninstallStatus getStatus();
+    public DevicePackageUninstallStatus getStatus() {
+        return status;
+    }
 
     /**
      * Set the package uninstall status
      *
      * @param status
      */
-    void setStatus(DevicePackageUninstallStatus status);
+    public void setStatus(DevicePackageUninstallStatus status) {
+        this.status = status;
+    }
+
 }

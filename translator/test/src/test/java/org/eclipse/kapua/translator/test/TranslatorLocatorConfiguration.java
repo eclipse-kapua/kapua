@@ -42,7 +42,6 @@ import org.eclipse.kapua.service.device.management.bundle.DeviceBundleFactory;
 import org.eclipse.kapua.service.device.management.configuration.DeviceConfigurationFactory;
 import org.eclipse.kapua.service.device.management.inventory.DeviceInventoryManagementFactory;
 import org.eclipse.kapua.service.device.management.keystore.DeviceKeystoreManagementFactory;
-import org.eclipse.kapua.service.device.management.packages.DevicePackageFactory;
 import org.eclipse.kapua.service.device.management.request.GenericRequestFactory;
 import org.eclipse.kapua.service.device.management.snapshot.DeviceSnapshotFactory;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
@@ -105,7 +104,6 @@ public class TranslatorLocatorConfiguration {
                 bind(DeviceAssetFactory.class).toInstance(Mockito.mock(DeviceAssetFactory.class));
                 bind(DeviceBundleFactory.class).toInstance(Mockito.mock(DeviceBundleFactory.class));
                 bind(KapuaIdFactory.class).toInstance(Mockito.mock(KapuaIdFactory.class));
-                bind(DevicePackageFactory.class).toInstance(Mockito.mock(DevicePackageFactory.class));
                 bind(DeviceSnapshotFactory.class).toInstance(Mockito.mock(DeviceSnapshotFactory.class));
                 bind(KapuaDataMessageFactory.class).toInstance(Mockito.mock(KapuaDataMessageFactory.class));
                 bind(DeviceConfigurationFactory.class).toInstance(Mockito.mock(DeviceConfigurationFactory.class));

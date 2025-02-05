@@ -13,7 +13,6 @@
 package org.eclipse.kapua.model.domain;
 
 import org.eclipse.kapua.model.KapuaEntityCreator;
-import org.eclipse.kapua.model.KapuaUpdatableEntity;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.KapuaEntityService;
@@ -21,8 +20,7 @@ import org.eclipse.kapua.service.KapuaNamedEntityService;
 import org.eclipse.kapua.service.KapuaUpdatableEntityService;
 
 /**
- * {@link Actions} implementation {@code enum}.<br>
- * Available actions defined are:
+ * {@link Actions} implementation {@code enum}.<br> Available actions defined are:
  * <ul>
  * <li>{@link Actions#read}: Represent any type of fetching data from the system.</li>
  * <li>{@link Actions#write}: Represent any type of writing data into the system.</li>
@@ -35,8 +33,7 @@ import org.eclipse.kapua.service.KapuaUpdatableEntityService;
  */
 public enum Actions {
     /**
-     * Represent any type of fetching data from the system. <br>
-     * Common usage is on:
+     * Represent any type of fetching data from the system. <br> Common usage is on:
      * <ul>
      * <li>{@link KapuaEntityService#find(KapuaId, KapuaId)}</li>
      * <li>{@link KapuaEntityService#query(KapuaQuery)}</li>
@@ -49,11 +46,10 @@ public enum Actions {
     read,
 
     /**
-     * Represent any type of writing data into the system.
-     * Common usage is on:
+     * Represent any type of writing data into the system. Common usage is on:
      * <ul>
      * <li>{@link KapuaEntityService#create(KapuaEntityCreator)}</li>
-     * <li>{@link KapuaUpdatableEntityService#update(KapuaUpdatableEntity)}</li>
+     * <li>{@link KapuaUpdatableEntityService#update(Object)}</li>
      * </ul>
      *
      * @since 1.0.0
@@ -61,8 +57,7 @@ public enum Actions {
     write,
 
     /**
-     * Represent any type of deleting data from the system. <br>
-     * Common usage is on:
+     * Represent any type of deleting data from the system. <br> Common usage is on:
      * <ul>
      * <li>{@link KapuaEntityService#delete(KapuaId, KapuaId)}</li>
      * </ul>
@@ -72,8 +67,7 @@ public enum Actions {
     delete,
 
     /**
-     * Represent any type of connect to resources of the system.<br>
-     * Examples are:
+     * Represent any type of connect to resources of the system.<br> Examples are:
      * <ul>
      * <li>Connecting to the message broker.</li>
      * </ul>
