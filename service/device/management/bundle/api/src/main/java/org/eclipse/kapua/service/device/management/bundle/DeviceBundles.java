@@ -13,21 +13,27 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.bundle;
 
-import org.eclipse.kapua.KapuaSerializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.List;
+
+import org.eclipse.kapua.KapuaSerializable;
 
 /**
  * {@link DeviceBundles} definition.
  *
  * @since 1.0.0
  */
-@XmlType(factoryClass = DeviceBundleXmlRegistry.class, factoryMethod = "newBundleListResult")
+@XmlType
 @XmlRootElement(name = "bundles")
-public interface DeviceBundles extends KapuaSerializable {
+public class DeviceBundles implements KapuaSerializable {
+
+    private static final long serialVersionUID = 734716753080998855L;
+
+    private List<DeviceBundle> bundles;
 
     /**
      * Gets the {@link List} of {@link DeviceBundle}
@@ -36,5 +42,11 @@ public interface DeviceBundles extends KapuaSerializable {
      * @since 1.0.0
      */
     @XmlElement(name = "bundle")
-    List<DeviceBundle> getBundles();
+    public List<DeviceBundle> getBundles() {
+        if (bundles == null) {
+            bundles = new ArrayList<>();
+        }
+
+        return bundles;
+    }
 }

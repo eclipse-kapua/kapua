@@ -13,13 +13,17 @@
  *******************************************************************************/
 package org.eclipse.kapua.translator.kura.kapua;
 
+import java.util.Arrays;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.eclipse.kapua.service.device.call.kura.model.bundle.BundleMetrics;
 import org.eclipse.kapua.service.device.call.kura.model.bundle.KuraBundles;
 import org.eclipse.kapua.service.device.call.message.kura.app.response.KuraResponseChannel;
 import org.eclipse.kapua.service.device.call.message.kura.app.response.KuraResponseMessage;
 import org.eclipse.kapua.service.device.call.message.kura.app.response.KuraResponsePayload;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundle;
-import org.eclipse.kapua.service.device.management.bundle.DeviceBundleFactory;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundles;
 import org.eclipse.kapua.service.device.management.bundle.message.internal.BundleResponseChannel;
 import org.eclipse.kapua.service.device.management.bundle.message.internal.BundleResponseMessage;
@@ -28,10 +32,6 @@ import org.eclipse.kapua.service.device.management.commons.setting.DeviceManagem
 import org.eclipse.kapua.translator.exception.InvalidChannelException;
 import org.eclipse.kapua.translator.exception.InvalidPayloadException;
 
-import javax.inject.Inject;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * {@link org.eclipse.kapua.translator.Translator} implementation from {@link KuraResponseMessage} to {@link BundleResponseMessage}
  *
@@ -39,12 +39,9 @@ import java.util.List;
  */
 public class TranslatorAppBundleKuraKapua extends AbstractSimpleTranslatorResponseKuraKapua<BundleResponseChannel, BundleResponsePayload, BundleResponseMessage> {
 
-    private final DeviceBundleFactory deviceBundleFactory;
-
     @Inject
-    public TranslatorAppBundleKuraKapua(DeviceManagementSetting deviceManagementSetting, DeviceBundleFactory deviceBundleFactory) {
+    public TranslatorAppBundleKuraKapua(DeviceManagementSetting deviceManagementSetting) {
         super(deviceManagementSetting, BundleResponseMessage.class, BundleResponsePayload.class);
-        this.deviceBundleFactory = deviceBundleFactory;
     }
 
     @Override
@@ -78,16 +75,17 @@ public class TranslatorAppBundleKuraKapua extends AbstractSimpleTranslatorRespon
     /**
      * Translates {@link KuraBundles} to {@link DeviceBundles}
      *
-     * @param kuraBundles The {@link KuraBundles} to translate.
+     * @param kuraBundles
+     *         The {@link KuraBundles} to translate.
      * @return The translated {@link DeviceBundles}.
      * @since 1.0.0
      */
     private DeviceBundles translate(KuraBundles kuraBundles) {
-        DeviceBundles deviceBundles = deviceBundleFactory.newBundleListResult();
+        DeviceBundles deviceBundles = new DeviceBundles();
         List<DeviceBundle> deviceBundlesList = deviceBundles.getBundles();
 
         Arrays.stream(kuraBundles.getBundles()).forEach(kuraBundle -> {
-            DeviceBundle deviceBundle = deviceBundleFactory.newDeviceBundle();
+            DeviceBundle deviceBundle = new DeviceBundle();
             deviceBundle.setId(kuraBundle.getId());
             deviceBundle.setName(kuraBundle.getName());
             deviceBundle.setVersion(kuraBundle.getVersion());

@@ -22,7 +22,6 @@ import org.eclipse.kapua.model.domain.Domain;
 import org.eclipse.kapua.model.domain.DomainEntry;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.device.management.DeviceManagementService;
-import org.eclipse.kapua.service.device.management.bundle.DeviceBundleFactory;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundleManagementService;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventFactory;
@@ -35,7 +34,6 @@ public class DeviceManagementBundleModule extends AbstractKapuaModule {
 
     @Override
     protected void configureModule() {
-        bind(DeviceBundleFactory.class).to(DeviceBundleFactoryImpl.class);
     }
 
     @ProvidesIntoSet
@@ -50,14 +48,13 @@ public class DeviceManagementBundleModule extends AbstractKapuaModule {
             DeviceEventService deviceEventService,
             DeviceEventFactory deviceEventFactory,
             DeviceRegistryService deviceRegistryService,
-            KapuaJpaTxManagerFactory jpaTxManagerFactory,
-            DeviceBundleFactory deviceBundleFactory) {
+            KapuaJpaTxManagerFactory jpaTxManagerFactory) {
         return new DeviceBundleManagementServiceImpl(
                 jpaTxManagerFactory.create("kapua-device_management_operation_registry"),
                 authorizationService,
                 deviceEventService,
                 deviceEventFactory,
-                deviceRegistryService,
-                deviceBundleFactory);
+                deviceRegistryService
+        );
     }
 }

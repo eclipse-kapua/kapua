@@ -24,7 +24,6 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.device.management.bundle.DeviceBundleFactory;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundleManagementService;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundles;
 import org.eclipse.kapua.service.device.management.bundle.message.internal.BundleRequestChannel;
@@ -54,19 +53,16 @@ public class DeviceBundleManagementServiceImpl extends AbstractDeviceManagementT
     private static final String SCOPE_ID = "scopeId";
     private static final String DEVICE_ID = "deviceId";
 
-    private final DeviceBundleFactory deviceBundleFactory;
-
     public DeviceBundleManagementServiceImpl(TxManager txManager,
             AuthorizationService authorizationService,
             DeviceEventService deviceEventService,
             DeviceEventFactory deviceEventFactory,
-            DeviceRegistryService deviceRegistryService, DeviceBundleFactory deviceBundleFactory) {
+            DeviceRegistryService deviceRegistryService) {
         super(txManager,
                 authorizationService,
                 deviceEventService,
                 deviceEventFactory,
                 deviceRegistryService);
-        this.deviceBundleFactory = deviceBundleFactory;
     }
 
     @Override
@@ -112,7 +108,7 @@ public class DeviceBundleManagementServiceImpl extends AbstractDeviceManagementT
         // Create event
         createDeviceEvent(scopeId, deviceId, bundleRequestMessage, responseMessage);
         // Check response
-        return checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getDeviceBundles().orElse(deviceBundleFactory.newBundleListResult()));
+        return checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getDeviceBundles().orElse(new DeviceBundles()));
     }
 
     @Override

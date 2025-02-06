@@ -26,9 +26,14 @@ import javax.xml.bind.annotation.XmlType;
  * @since 1.0.0
  */
 @XmlRootElement(name = "bundle")
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(factoryClass = DeviceBundleXmlRegistry.class, factoryMethod = "newDeviceBundle")
-public interface DeviceBundle {
+@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlType
+public class DeviceBundle {
+
+    public long id;
+    public String name;
+    public String version;
+    public String state;
 
     /**
      * Gets the bundle identifier.
@@ -37,15 +42,20 @@ public interface DeviceBundle {
      * @since 1.0.0
      */
     @XmlElement(name = "id")
-    long getId();
+    public long getId() {
+        return id;
+    }
 
     /**
      * Sets the bundle identifier.
      *
-     * @param id The bundle identifier.
+     * @param id
+     *         The bundle identifier.
      * @since 1.0.0
      */
-    void setId(long id);
+    public void setId(long id) {
+        this.id = id;
+    }
 
     /**
      * Gets the name.
@@ -54,15 +64,20 @@ public interface DeviceBundle {
      * @since 1.0.0
      */
     @XmlElement(name = "name")
-    String getName();
+    public String getName() {
+        return name;
+    }
 
     /**
      * Sets the name.
      *
-     * @param name The name.
+     * @param name
+     *         The name.
      * @since 1.0.0
      */
-    void setName(String name);
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /**
      * Gets the state.
@@ -71,15 +86,20 @@ public interface DeviceBundle {
      * @since 1.0.0
      */
     @XmlElement(name = "state")
-    String getState();
+    public String getState() {
+        return state;
+    }
 
     /**
      * Sets the state.
      *
-     * @param state The state.
+     * @param state
+     *         The state.
      * @since 1.0.0
      */
-    void setState(String state);
+    public void setState(String state) {
+        this.state = state;
+    }
 
     /**
      * Gets the bundle version.
@@ -88,14 +108,19 @@ public interface DeviceBundle {
      * @since 1.0.0
      */
     @XmlElement(name = "version")
-    String getVersion();
+    public String getVersion() {
+        return version;
+    }
 
     /**
      * Sets the version.
      *
-     * @param version The version.
+     * @param version
+     *         The version.
      * @since 1.0.0
      */
-    void setVersion(String version);
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
 }
