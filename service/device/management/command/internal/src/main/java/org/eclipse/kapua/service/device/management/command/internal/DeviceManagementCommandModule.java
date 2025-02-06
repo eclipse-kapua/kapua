@@ -17,7 +17,6 @@ import javax.inject.Inject;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.device.management.command.DeviceCommandFactory;
 import org.eclipse.kapua.service.device.management.command.DeviceCommandManagementService;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventFactory;
@@ -29,7 +28,6 @@ public class DeviceManagementCommandModule extends AbstractKapuaModule {
 
     @Override
     protected void configureModule() {
-        bind(DeviceCommandFactory.class).to(DeviceCommandFactoryImpl.class);
     }
 
     @Provides

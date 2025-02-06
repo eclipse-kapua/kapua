@@ -13,14 +13,16 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.configuration;
 
-import org.eclipse.kapua.KapuaSerializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.List;
+
+import org.eclipse.kapua.KapuaSerializable;
 
 /**
  * {@link DeviceConfiguration} definition.
@@ -29,8 +31,12 @@ import java.util.List;
  */
 @XmlRootElement(name = "deviceConfigurations")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DeviceConfigurationXmlRegistry.class, factoryMethod = "newConfiguration")
-public interface DeviceConfiguration extends KapuaSerializable {
+@XmlType
+public class DeviceConfiguration implements KapuaSerializable {
+
+    private static final long serialVersionUID = -2167999497954676423L;
+
+    private List<DeviceComponentConfiguration> configurations;
 
     /**
      * Gets the {@link List} of {@link DeviceComponentConfiguration}.
@@ -39,22 +45,34 @@ public interface DeviceConfiguration extends KapuaSerializable {
      * @since 1.0.0
      */
     @XmlElement(name = "configuration")
-    List<DeviceComponentConfiguration> getComponentConfigurations();
+    public List<DeviceComponentConfiguration> getComponentConfigurations() {
+        if (configurations == null) {
+            configurations = new ArrayList<>();
+        }
+
+        return configurations;
+    }
 
     /**
      * Adds a {@link DeviceComponentConfiguration} to the {@link List} of {@link DeviceComponentConfiguration}.
      *
-     * @param componentConfiguration The {@link DeviceComponentConfiguration} to add.
+     * @param componentConfiguration
+     *         The {@link DeviceComponentConfiguration} to add.
      * @since 2.0.0
      */
-    void addComponentConfiguration(DeviceComponentConfiguration componentConfiguration);
+    public void addComponentConfiguration(DeviceComponentConfiguration componentConfiguration) {
+        getComponentConfigurations().add(componentConfiguration);
+    }
 
     /**
      * Sets the {@link List} of {@link DeviceComponentConfiguration}.
      *
-     * @param componentConfigurations The {@link List} of {@link DeviceComponentConfiguration}.
+     * @param componentConfigurations
+     *         The {@link List} of {@link DeviceComponentConfiguration}.
      * @since 2.0.0
      */
-    void setComponentConfigurations(List<DeviceComponentConfiguration> componentConfigurations);
+    public void setComponentConfigurations(List<DeviceComponentConfiguration> componentConfigurations) {
+        this.configurations = componentConfigurations;
+    }
 
 }

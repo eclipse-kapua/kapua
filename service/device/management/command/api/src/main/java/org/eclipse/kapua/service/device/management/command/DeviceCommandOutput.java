@@ -32,8 +32,17 @@ import javax.xml.bind.annotation.XmlType;
         "exceptionStack",
         "exitCode",
         "hasTimedout"
-}, factoryClass = DeviceCommandXmlRegistry.class, factoryMethod = "newCommandOutput")
-public interface DeviceCommandOutput extends DeviceCommand {
+})
+public class DeviceCommandOutput implements DeviceCommand {
+
+    private static final long serialVersionUID = -3987291078035621467L;
+
+    private String stdErr;
+    private String stdOut;
+    private String exceptionMessage;
+    private String exceptionStack;
+    private Integer exitCode;
+    private Boolean timedOut;
 
     /**
      * Get the standard error
@@ -41,14 +50,18 @@ public interface DeviceCommandOutput extends DeviceCommand {
      * @return
      */
     @XmlElement(name = "stderr")
-    String getStderr();
+    public String getStderr() {
+        return stdErr;
+    }
 
     /**
      * Set the standard error
      *
      * @param stderr
      */
-    void setStderr(String stderr);
+    public void setStderr(String stderr) {
+        this.stdErr = stderr;
+    }
 
     /**
      * Get the standard output
@@ -56,14 +69,18 @@ public interface DeviceCommandOutput extends DeviceCommand {
      * @return
      */
     @XmlElement(name = "stdout")
-    String getStdout();
+    public String getStdout() {
+        return stdOut;
+    }
 
     /**
      * Set the standard output
      *
      * @param stdout
      */
-    void setStdout(String stdout);
+    public void setStdout(String stdout) {
+        this.stdOut = stdout;
+    }
 
     /**
      * Get the command execution exception message
@@ -71,14 +88,18 @@ public interface DeviceCommandOutput extends DeviceCommand {
      * @return
      */
     @XmlElement(name = "exceptionMessage")
-    String getExceptionMessage();
+    public String getExceptionMessage() {
+        return exceptionMessage;
+    }
 
     /**
      * Set the command execution exception message
      *
      * @param exceptionMessage
      */
-    void setExceptionMessage(String exceptionMessage);
+    public void setExceptionMessage(String exceptionMessage) {
+        this.exceptionMessage = exceptionMessage;
+    }
 
     /**
      * Get the command execution exception stack
@@ -86,14 +107,18 @@ public interface DeviceCommandOutput extends DeviceCommand {
      * @return
      */
     @XmlElement(name = "exceptionStack")
-    String getExceptionStack();
+    public String getExceptionStack() {
+        return exceptionStack;
+    }
 
     /**
      * Set the command execution exception stack
      *
      * @param exceptionStack
      */
-    void setExceptionStack(String exceptionStack);
+    public void setExceptionStack(String exceptionStack) {
+        this.exceptionStack = exceptionStack;
+    }
 
     /**
      * Get the command execution exit code
@@ -101,14 +126,18 @@ public interface DeviceCommandOutput extends DeviceCommand {
      * @return
      */
     @XmlElement(name = "exitCode")
-    Integer getExitCode();
+    public Integer getExitCode() {
+        return exitCode;
+    }
 
     /**
      * Set the command execution exit code
      *
      * @param exitCode
      */
-    void setExitCode(Integer exitCode);
+    public void setExitCode(Integer exitCode) {
+        this.exitCode = exitCode;
+    }
 
     /**
      * Get the command execution timed out flag
@@ -116,12 +145,17 @@ public interface DeviceCommandOutput extends DeviceCommand {
      * @return
      */
     @XmlElement(name = "hasTimedout")
-    Boolean getHasTimedout();
+    public Boolean getHasTimedout() {
+        return timedOut;
+    }
 
     /**
      * Set the command execution timed out flag
      *
      * @param hasTimedout
      */
-    void setHasTimedout(Boolean hasTimedout);
+    public void setHasTimedout(Boolean hasTimedout) {
+        this.timedOut = hasTimedout;
+    }
+
 }

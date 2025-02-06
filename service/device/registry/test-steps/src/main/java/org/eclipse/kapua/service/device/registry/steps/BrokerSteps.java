@@ -35,7 +35,6 @@ import org.eclipse.kapua.service.device.management.asset.DeviceAssets;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundle;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundleManagementService;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundles;
-import org.eclipse.kapua.service.device.management.command.DeviceCommandFactory;
 import org.eclipse.kapua.service.device.management.command.DeviceCommandInput;
 import org.eclipse.kapua.service.device.management.command.DeviceCommandManagementService;
 import org.eclipse.kapua.service.device.management.command.DeviceCommandOutput;
@@ -133,11 +132,6 @@ public class BrokerSteps extends TestBase {
     private DeviceCommandManagementService deviceCommandManagementService;
 
     /**
-     * Factory for creating commands sent to Kura.
-     */
-    private DeviceCommandFactory deviceCommandFactory;
-
-    /**
      * Service for connecting devices.
      */
     private static DeviceConnectionService deviceConnectionService;
@@ -162,7 +156,6 @@ public class BrokerSteps extends TestBase {
         deviceConfiguratiomManagementService = locator.getService(DeviceConfigurationManagementService.class);
         deviceBundleManagementService = locator.getService(DeviceBundleManagementService.class);
         deviceCommandManagementService = locator.getService(DeviceCommandManagementService.class);
-        deviceCommandFactory = locator.getFactory(DeviceCommandFactory.class);
         deviceConnectionService = locator.getService(DeviceConnectionService.class);
         deviceAssetManagementService = locator.getService(DeviceAssetManagementService.class);
     }
@@ -483,7 +476,7 @@ public class BrokerSteps extends TestBase {
     public void executeCommand(String command) throws Exception {
         for (KuraDevice kuraDevice : kuraDevices) {
             Device device = deviceRegistryService.findByClientId(SYS_SCOPE_ID, kuraDevice.getClientId());
-            DeviceCommandInput commandInput = deviceCommandFactory.newCommandInput();
+            DeviceCommandInput commandInput = new DeviceCommandInput();
             commandInput.setCommand(command);
             commandInput.setRunAsynch(false);
             commandInput.setTimeout(0);

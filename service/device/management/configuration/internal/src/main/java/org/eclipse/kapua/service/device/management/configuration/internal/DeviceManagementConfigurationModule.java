@@ -19,7 +19,6 @@ import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.device.management.configuration.DeviceConfigurationFactory;
 import org.eclipse.kapua.service.device.management.configuration.DeviceConfigurationManagementService;
 import org.eclipse.kapua.service.device.management.configuration.internal.settings.DeviceConfigurationManagementSettings;
 import org.eclipse.kapua.service.device.management.configuration.store.DeviceConfigurationStoreService;
@@ -33,7 +32,6 @@ public class DeviceManagementConfigurationModule extends AbstractKapuaModule {
 
     @Override
     protected void configureModule() {
-        bind(DeviceConfigurationFactory.class).to(DeviceConfigurationFactoryImpl.class).in(Singleton.class);
         bind(DeviceConfigurationManagementSettings.class).in(Singleton.class);
     }
 
@@ -44,7 +42,6 @@ public class DeviceManagementConfigurationModule extends AbstractKapuaModule {
             DeviceEventService deviceEventService,
             DeviceEventFactory deviceEventFactory,
             DeviceRegistryService deviceRegistryService,
-            DeviceConfigurationFactory deviceConfigurationFactory,
             DeviceConfigurationStoreService deviceConfigurationStoreService,
             KapuaJpaTxManagerFactory jpaTxManagerFactory,
             XmlUtil xmlUtil) {
@@ -54,7 +51,6 @@ public class DeviceManagementConfigurationModule extends AbstractKapuaModule {
                 deviceEventService,
                 deviceEventFactory,
                 deviceRegistryService,
-                deviceConfigurationFactory,
                 deviceConfigurationStoreService,
                 xmlUtil
         );

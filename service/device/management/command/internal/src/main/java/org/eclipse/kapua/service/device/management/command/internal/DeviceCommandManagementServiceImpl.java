@@ -127,7 +127,7 @@ public class DeviceCommandManagementServiceImpl extends AbstractDeviceManagement
         return checkResponseAcceptedOrThrowError(responseMessage, () -> {
             CommandResponsePayload responsePayload = responseMessage.getPayload();
 
-            DeviceCommandOutput deviceCommandOutput = new DeviceCommandOutputImpl();
+            DeviceCommandOutput deviceCommandOutput = new DeviceCommandOutput();
             deviceCommandOutput.setExceptionMessage(responsePayload.getExceptionMessage());
             deviceCommandOutput.setExceptionStack(responsePayload.getExceptionStack());
             deviceCommandOutput.setExitCode(responsePayload.getExitCode());

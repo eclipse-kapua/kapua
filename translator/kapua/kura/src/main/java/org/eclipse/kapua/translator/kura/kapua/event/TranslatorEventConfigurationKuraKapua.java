@@ -12,8 +12,15 @@
  *******************************************************************************/
 package org.eclipse.kapua.translator.kura.kapua.event;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountService;
@@ -31,7 +38,6 @@ import org.eclipse.kapua.service.device.management.bundle.internal.DeviceBundleA
 import org.eclipse.kapua.service.device.management.command.internal.CommandAppProperties;
 import org.eclipse.kapua.service.device.management.configuration.DeviceComponentConfiguration;
 import org.eclipse.kapua.service.device.management.configuration.DeviceConfiguration;
-import org.eclipse.kapua.service.device.management.configuration.DeviceConfigurationFactory;
 import org.eclipse.kapua.service.device.management.configuration.internal.DeviceConfigurationAppProperties;
 import org.eclipse.kapua.service.device.management.configuration.message.event.DeviceConfigurationEventMessage;
 import org.eclipse.kapua.service.device.management.configuration.message.event.internal.DeviceConfigurationEventChannelImpl;
@@ -51,13 +57,8 @@ import org.eclipse.kapua.translator.exception.InvalidPayloadException;
 import org.eclipse.kapua.translator.exception.TranslateException;
 import org.eclipse.kapua.translator.kura.kapua.TranslatorKuraKapuaUtils;
 
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * {@link Translator} implementation from {@link KuraConfigurationEventMessage} to {@link DeviceConfigurationEventMessageImpl}
@@ -70,8 +71,6 @@ public class TranslatorEventConfigurationKuraKapua extends Translator<KuraConfig
     private AccountService accountService;
     @Inject
     private DeviceRegistryService deviceRegistryService;
-    @Inject
-    private DeviceConfigurationFactory deviceConfigurationFactory;
     @Inject
     private TranslatorKuraKapuaUtils translatorKuraKapuaUtils;
 
@@ -155,7 +154,7 @@ public class TranslatorEventConfigurationKuraKapua extends Translator<KuraConfig
 
                     deviceComponentConfigurations.add(translate(kuraDeviceComponentConfiguration));
                 }
-                final DeviceConfiguration deviceConfiguration = deviceConfigurationFactory.newConfigurationInstance();
+                final DeviceConfiguration deviceConfiguration = new DeviceConfiguration();
                 deviceConfiguration.setComponentConfigurations(deviceComponentConfigurations);
                 configurationEventPayload.setDeviceComponentConfigurations(deviceConfiguration);
             }
@@ -171,12 +170,13 @@ public class TranslatorEventConfigurationKuraKapua extends Translator<KuraConfig
      * <p>
      * It currently translates only {@link DeviceComponentConfiguration#getId()}
      *
-     * @param kuraDeviceComponentConfiguration The {@link KuraDeviceComponentConfiguration} to translate.
+     * @param kuraDeviceComponentConfiguration
+     *         The {@link KuraDeviceComponentConfiguration} to translate.
      * @return The translated {@link DeviceComponentConfiguration}.
      * @since 2.0.0
      */
     private DeviceComponentConfiguration translate(KuraDeviceComponentConfiguration kuraDeviceComponentConfiguration) {
-        return deviceConfigurationFactory.newComponentConfigurationInstance(kuraDeviceComponentConfiguration.getComponentId());
+        return new DeviceComponentConfiguration(kuraDeviceComponentConfiguration.getComponentId());
     }
 
     @Override

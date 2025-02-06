@@ -73,13 +73,11 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundle;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundleManagementService;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundles;
-import org.eclipse.kapua.service.device.management.command.DeviceCommandFactory;
 import org.eclipse.kapua.service.device.management.command.DeviceCommandInput;
 import org.eclipse.kapua.service.device.management.command.DeviceCommandManagementService;
 import org.eclipse.kapua.service.device.management.command.DeviceCommandOutput;
 import org.eclipse.kapua.service.device.management.configuration.DeviceComponentConfiguration;
 import org.eclipse.kapua.service.device.management.configuration.DeviceConfiguration;
-import org.eclipse.kapua.service.device.management.configuration.DeviceConfigurationFactory;
 import org.eclipse.kapua.service.device.management.configuration.DeviceConfigurationManagementService;
 import org.eclipse.kapua.service.device.management.configuration.store.DeviceConfigurationStoreFactory;
 import org.eclipse.kapua.service.device.management.configuration.store.DeviceConfigurationStoreService;
@@ -125,10 +123,8 @@ public class GwtDeviceManagementServiceImpl extends KapuaRemoteServiceServlet im
     private static final DeviceBundleManagementService BUNDLE_MANAGEMENT_SERVICE = LOCATOR.getService(DeviceBundleManagementService.class);
 
     private static final DeviceCommandManagementService COMMAND_MANAGEMENT_SERVICE = LOCATOR.getService(DeviceCommandManagementService.class);
-    private static final DeviceCommandFactory DEVICE_COMMAND_FACTORY = LOCATOR.getFactory(DeviceCommandFactory.class);
 
     private static final DeviceConfigurationManagementService CONFIGURATION_MANAGEMENT_SERVICE = LOCATOR.getService(DeviceConfigurationManagementService.class);
-    private static final DeviceConfigurationFactory DEVICE_CONFIGURATION_FACTORY = LOCATOR.getFactory(DeviceConfigurationFactory.class);
 
     private static final DeviceConfigurationStoreService DEVICE_CONFIGURATION_STORE_SERVICE = LOCATOR.getService(DeviceConfigurationStoreService.class);
 
@@ -398,7 +394,7 @@ public class GwtDeviceManagementServiceImpl extends KapuaRemoteServiceServlet im
         // Checking validity of the given XSRF Token
         checkXSRFToken(xsrfToken);
         // Set name and properties
-        DeviceComponentConfiguration compConfig = DEVICE_CONFIGURATION_FACTORY.newComponentConfigurationInstance(gwtCompConfig.getUnescapedComponentId());
+        DeviceComponentConfiguration compConfig = new DeviceComponentConfiguration(gwtCompConfig.getUnescapedComponentId());
         compConfig.setName(gwtCompConfig.getUnescapedComponentName());
 
         Map<String, Object> compProps = new HashMap<String, Object>();
@@ -625,7 +621,7 @@ public class GwtDeviceManagementServiceImpl extends KapuaRemoteServiceServlet im
                 args[i++] = st.nextToken();
             }
 
-            DeviceCommandInput commandInput = DEVICE_COMMAND_FACTORY.newCommandInput();
+            DeviceCommandInput commandInput = new DeviceCommandInput();
             commandInput.setArguments(args);
             commandInput.setCommand(command);
             commandInput.setEnvironment(gwtCommandInput.getEnvironment());

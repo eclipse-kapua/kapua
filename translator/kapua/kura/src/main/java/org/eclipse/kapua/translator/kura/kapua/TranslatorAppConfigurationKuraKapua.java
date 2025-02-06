@@ -31,9 +31,8 @@ import org.eclipse.kapua.service.device.call.message.kura.app.response.KuraRespo
 import org.eclipse.kapua.service.device.call.message.kura.app.response.KuraResponseMessage;
 import org.eclipse.kapua.service.device.call.message.kura.app.response.KuraResponsePayload;
 import org.eclipse.kapua.service.device.management.commons.setting.DeviceManagementSetting;
+import org.eclipse.kapua.service.device.management.configuration.DeviceComponentConfiguration;
 import org.eclipse.kapua.service.device.management.configuration.DeviceConfiguration;
-import org.eclipse.kapua.service.device.management.configuration.internal.DeviceComponentConfigurationImpl;
-import org.eclipse.kapua.service.device.management.configuration.internal.DeviceConfigurationImpl;
 import org.eclipse.kapua.service.device.management.configuration.message.internal.ConfigurationResponseChannel;
 import org.eclipse.kapua.service.device.management.configuration.message.internal.ConfigurationResponseMessage;
 import org.eclipse.kapua.service.device.management.configuration.message.internal.ConfigurationResponsePayload;
@@ -82,12 +81,12 @@ public class TranslatorAppConfigurationKuraKapua extends AbstractSimpleTranslato
     }
 
     private DeviceConfiguration translate(KuraDeviceConfiguration kuraDeviceConfiguration) {
-        DeviceConfigurationImpl deviceConfiguration = new DeviceConfigurationImpl();
+        DeviceConfiguration deviceConfiguration = new DeviceConfiguration();
 
         for (KuraDeviceComponentConfiguration kuraDeviceCompConf : kuraDeviceConfiguration.getConfigurations()) {
 
             String componentId = kuraDeviceCompConf.getComponentId();
-            DeviceComponentConfigurationImpl deviceComponentConfiguration = new DeviceComponentConfigurationImpl(componentId);
+            DeviceComponentConfiguration deviceComponentConfiguration = new DeviceComponentConfiguration(componentId);
             deviceComponentConfiguration.setProperties(translate(kuraDeviceCompConf.getProperties()));
 
             // Translate also definitions when they are available

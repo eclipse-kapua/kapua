@@ -12,6 +12,17 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.core.servlet;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.List;
+import java.util.StringTokenizer;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.CharEncoding;
@@ -26,7 +37,6 @@ import org.eclipse.kapua.app.console.module.api.setting.ConsoleSettingKeys;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtXSRFToken;
 import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.service.device.management.command.DeviceCommandFactory;
 import org.eclipse.kapua.service.device.management.command.DeviceCommandInput;
 import org.eclipse.kapua.service.device.management.command.DeviceCommandManagementService;
 import org.eclipse.kapua.service.device.management.command.DeviceCommandOutput;
@@ -34,16 +44,6 @@ import org.eclipse.kapua.service.device.management.configuration.DeviceConfigura
 import org.eclipse.kapua.service.device.management.exception.DeviceManagementException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.List;
-import java.util.StringTokenizer;
 
 public class FileServlet extends KapuaHttpServlet {
 
@@ -55,7 +55,6 @@ public class FileServlet extends KapuaHttpServlet {
 
     private final DeviceConfigurationManagementService deviceConfigurationManagementService;
     private final DeviceCommandManagementService deviceCommandManagementService;
-    private final DeviceCommandFactory deviceCommandFactory;
     private final ConsoleSetting config;
 
     public FileServlet() {
@@ -63,7 +62,6 @@ public class FileServlet extends KapuaHttpServlet {
         KapuaLocator locator = KapuaLocator.getInstance();
         deviceConfigurationManagementService = locator.getService(DeviceConfigurationManagementService.class);
         deviceCommandManagementService = locator.getService(DeviceCommandManagementService.class);
-        deviceCommandFactory = locator.getFactory(DeviceCommandFactory.class);
         config = ConsoleSetting.getInstance();
     }
 
@@ -181,7 +179,7 @@ public class FileServlet extends KapuaHttpServlet {
             // FIXME: set a max size on the MQtt payload
             byte[] data = fileItems.isEmpty() ? null : fileItems.get(0).get();
 
-            DeviceCommandInput commandInput = deviceCommandFactory.newCommandInput();
+            DeviceCommandInput commandInput = new DeviceCommandInput();
 
             StringTokenizer st = new StringTokenizer(command);
             int count = st.countTokens();
