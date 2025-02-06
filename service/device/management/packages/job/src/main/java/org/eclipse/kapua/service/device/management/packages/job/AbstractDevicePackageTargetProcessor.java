@@ -17,7 +17,6 @@ import javax.inject.Inject;
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
-import org.eclipse.kapua.job.engine.JobEngineFactory;
 import org.eclipse.kapua.job.engine.JobEngineService;
 import org.eclipse.kapua.job.engine.JobStartOptions;
 import org.eclipse.kapua.job.engine.commons.operation.AbstractDeviceTargetProcessor;
@@ -49,8 +48,6 @@ public abstract class AbstractDevicePackageTargetProcessor extends AbstractDevic
     JobDeviceManagementOperationFactory jobDeviceManagementOperationFactory;
     @Inject
     JobEngineService jobEngineService;
-    @Inject
-    JobEngineFactory jobEngineFactory;
 
     protected void createJobDeviceManagementOperation(KapuaId scopeId, KapuaId jobId, JobTarget jobTarget, KapuaId operationId) throws KapuaException {
         // Save the jobId-deviceManagementOperationId pair to track resuming
@@ -82,7 +79,7 @@ public abstract class AbstractDevicePackageTargetProcessor extends AbstractDevic
                 return;
             }
             // Enqueue the job
-            JobStartOptions jobStartOptions = jobEngineFactory.newJobStartOptions();
+            JobStartOptions jobStartOptions = new JobStartOptions();
             jobStartOptions.addTargetIdToSublist(jobTarget.getId());
             jobStartOptions.setFromStepIndex(jobTarget.getStepIndex());
             jobStartOptions.setEnqueue(true);

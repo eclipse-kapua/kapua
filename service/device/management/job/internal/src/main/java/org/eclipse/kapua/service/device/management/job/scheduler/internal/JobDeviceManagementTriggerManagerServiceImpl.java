@@ -19,7 +19,6 @@ import javax.inject.Singleton;
 
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
-import org.eclipse.kapua.job.engine.JobEngineFactory;
 import org.eclipse.kapua.job.engine.JobEngineService;
 import org.eclipse.kapua.job.engine.JobStartOptions;
 import org.eclipse.kapua.model.id.KapuaId;
@@ -28,17 +27,14 @@ import org.eclipse.kapua.model.query.predicate.AttributePredicate;
 import org.eclipse.kapua.service.device.management.job.scheduler.manager.JobDeviceManagementTriggerManagerService;
 import org.eclipse.kapua.service.device.management.job.scheduler.manager.exception.ProcessOnConnectException;
 import org.eclipse.kapua.service.job.step.JobStepAttributes;
-import org.eclipse.kapua.service.job.step.JobStepFactory;
 import org.eclipse.kapua.service.job.step.JobStepService;
 import org.eclipse.kapua.service.job.targets.JobTarget;
 import org.eclipse.kapua.service.job.targets.JobTargetAttributes;
-import org.eclipse.kapua.service.job.targets.JobTargetFactory;
 import org.eclipse.kapua.service.job.targets.JobTargetListResult;
 import org.eclipse.kapua.service.job.targets.JobTargetService;
 import org.eclipse.kapua.service.job.targets.JobTargetStatus;
 import org.eclipse.kapua.service.scheduler.trigger.Trigger;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerAttributes;
-import org.eclipse.kapua.service.scheduler.trigger.TriggerFactory;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerListResult;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerService;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinition;
@@ -57,35 +53,23 @@ public class JobDeviceManagementTriggerManagerServiceImpl implements JobDeviceMa
     private static final Logger LOG = LoggerFactory.getLogger(JobDeviceManagementTriggerManagerServiceImpl.class);
 
     private final JobEngineService jobEngineService;
-    private final JobEngineFactory jobEngineFactory;
     private final JobStepService jobStepService;
-    private final JobStepFactory jobStepFactory;
     private final JobTargetService jobTargetService;
-    private final JobTargetFactory jobTargetFactory;
     private final TriggerDefinitionService triggerDefinitionService;
     private final TriggerService triggerService;
-    private final TriggerFactory triggerFactory;
 
     @Inject
     public JobDeviceManagementTriggerManagerServiceImpl(
             JobEngineService jobEngineService,
-            JobEngineFactory jobEngineFactory,
             JobStepService jobStepService,
-            JobStepFactory jobStepFactory,
             JobTargetService jobTargetService,
-            JobTargetFactory jobTargetFactory,
             TriggerDefinitionService triggerDefinitionService,
-            TriggerService triggerService,
-            TriggerFactory triggerFactory) {
+            TriggerService triggerService) {
         this.jobEngineService = jobEngineService;
-        this.jobEngineFactory = jobEngineFactory;
         this.jobStepService = jobStepService;
-        this.jobStepFactory = jobStepFactory;
         this.jobTargetService = jobTargetService;
-        this.jobTargetFactory = jobTargetFactory;
         this.triggerDefinitionService = triggerDefinitionService;
         this.triggerService = triggerService;
-        this.triggerFactory = triggerFactory;
     }
 
     @Override
@@ -134,7 +118,7 @@ public class JobDeviceManagementTriggerManagerServiceImpl implements JobDeviceMa
                 TriggerListResult jobTriggers = KapuaSecurityUtils.doPrivileged(() -> triggerService.query(triggerQuery));
 
                 for (Trigger t : jobTriggers.getItems()) {
-                    JobStartOptions jobStartOptions = jobEngineFactory.newJobStartOptions();
+                    JobStartOptions jobStartOptions = new JobStartOptions();
 
                     jobStartOptions.addTargetIdToSublist(jt.getId());
                     jobStartOptions.setFromStepIndex(jt.getStepIndex());

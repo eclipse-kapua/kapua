@@ -71,7 +71,7 @@ public class JobEngineServiceJbatch implements JobEngineService {
 
     @Override
     public void startJob(KapuaId scopeId, KapuaId jobId) throws KapuaException {
-        startJob(scopeId, jobId, new JobStartOptionsImpl());
+        startJob(scopeId, jobId, new JobStartOptions());
     }
 
     @Override

@@ -19,14 +19,12 @@ import javax.inject.Singleton;
 
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.job.engine.JobEngineFactory;
 import org.eclipse.kapua.job.engine.JobEngineService;
 import org.eclipse.kapua.job.engine.JobStartOptions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperation;
 import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationAttributes;
-import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationFactory;
 import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationListResult;
 import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationService;
 import org.eclipse.kapua.service.device.management.job.manager.JobDeviceManagementOperationManagerService;
@@ -37,7 +35,6 @@ import org.eclipse.kapua.service.device.management.registry.operation.DeviceMana
 import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotification;
 import org.eclipse.kapua.service.job.targets.JobTarget;
 import org.eclipse.kapua.service.job.targets.JobTargetAttributes;
-import org.eclipse.kapua.service.job.targets.JobTargetFactory;
 import org.eclipse.kapua.service.job.targets.JobTargetListResult;
 import org.eclipse.kapua.service.job.targets.JobTargetService;
 import org.eclipse.kapua.service.job.targets.JobTargetStatus;
@@ -56,28 +53,19 @@ public class JobDeviceManagementOperationManagerServiceImpl implements JobDevice
 
     private final DeviceManagementOperationRegistryService deviceManagementOperationRegistryService;
     private final JobDeviceManagementOperationService jobDeviceManagementOperationService;
-    private final JobDeviceManagementOperationFactory jobDeviceManagementOperationFactory;
     private final JobEngineService jobEngineService;
-    private final JobEngineFactory jobEngineFactory;
     private final JobTargetService jobTargetService;
-    private final JobTargetFactory jobTargetFactory;
 
     @Inject
     public JobDeviceManagementOperationManagerServiceImpl(
             DeviceManagementOperationRegistryService deviceManagementOperationRegistryService,
             JobDeviceManagementOperationService jobDeviceManagementOperationService,
-            JobDeviceManagementOperationFactory jobDeviceManagementOperationFactory,
             JobEngineService jobEngineService,
-            JobEngineFactory jobEngineFactory,
-            JobTargetService jobTargetService,
-            JobTargetFactory jobTargetFactory) {
+            JobTargetService jobTargetService) {
         this.deviceManagementOperationRegistryService = deviceManagementOperationRegistryService;
         this.jobDeviceManagementOperationService = jobDeviceManagementOperationService;
-        this.jobDeviceManagementOperationFactory = jobDeviceManagementOperationFactory;
         this.jobEngineService = jobEngineService;
-        this.jobEngineFactory = jobEngineFactory;
         this.jobTargetService = jobTargetService;
-        this.jobTargetFactory = jobTargetFactory;
     }
 
     @Override
@@ -158,7 +146,7 @@ public class JobDeviceManagementOperationManagerServiceImpl implements JobDevice
             return;
         }
         // Start the job
-        JobStartOptions jobStartOptions = jobEngineFactory.newJobStartOptions();
+        JobStartOptions jobStartOptions = new JobStartOptions();
         jobStartOptions.addTargetIdToSublist(jobTarget.getId());
         jobStartOptions.setFromStepIndex(jobTarget.getStepIndex());
         jobStartOptions.setEnqueue(true);

@@ -31,7 +31,6 @@ import org.eclipse.kapua.app.console.module.job.shared.model.GwtJobStepQuery;
 import org.eclipse.kapua.app.console.module.job.shared.model.GwtJobTargetQuery;
 import org.eclipse.kapua.app.console.module.job.shared.model.scheduler.GwtTriggerProperty;
 import org.eclipse.kapua.app.console.module.job.shared.model.scheduler.GwtTriggerQuery;
-import org.eclipse.kapua.job.engine.JobEngineFactory;
 import org.eclipse.kapua.job.engine.JobStartOptions;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
@@ -67,8 +66,6 @@ public class GwtKapuaJobModelConverter {
 
     private static final JobFactory JOB_FACTORY = LOCATOR.getFactory(JobFactory.class);
     private static final JobStepFactory JOB_STEP_FACTORY = LOCATOR.getFactory(JobStepFactory.class);
-    private static final JobEngineFactory JOB_ENGINE_FACTORY = LOCATOR.getFactory(JobEngineFactory.class);
-
     private static final TriggerFactory TRIGGER_FACTORY = LOCATOR.getFactory(TriggerFactory.class);
 
     private GwtKapuaJobModelConverter() {
@@ -306,7 +303,7 @@ public class GwtKapuaJobModelConverter {
     }
 
     public static JobStartOptions convertJobStartOptions(GwtJobStartOptions gwtJobStartOptions) {
-        JobStartOptions jobStartOptions = JOB_ENGINE_FACTORY.newJobStartOptions();
+        JobStartOptions jobStartOptions = new JobStartOptions();
         jobStartOptions.setTargetIdSublist(convertTargetIdSublist(gwtJobStartOptions.getTargetIdSublist()));
         jobStartOptions.setResetStepIndex(gwtJobStartOptions.getResetStepIndex());
         jobStartOptions.setFromStepIndex(gwtJobStartOptions.getFromStepIndex());

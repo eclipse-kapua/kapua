@@ -24,7 +24,6 @@ import org.eclipse.kapua.app.console.module.api.shared.util.GwtKapuaCommonsModel
 import org.eclipse.kapua.app.console.module.job.shared.model.GwtJobStartOptions;
 import org.eclipse.kapua.app.console.module.job.shared.service.GwtJobEngineService;
 import org.eclipse.kapua.app.console.module.job.shared.util.GwtKapuaJobModelConverter;
-import org.eclipse.kapua.job.engine.JobEngineFactory;
 import org.eclipse.kapua.job.engine.JobEngineService;
 import org.eclipse.kapua.job.engine.JobStartOptions;
 import org.eclipse.kapua.locator.KapuaLocator;
@@ -40,7 +39,6 @@ public class GwtJobEngineServiceImpl extends KapuaRemoteServiceServlet implement
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
 
     private static final JobEngineService JOB_ENGINE_SERVICE = LOCATOR.getService(JobEngineService.class);
-    private static final JobEngineFactory JOB_ENGINE_FACTORY = LOCATOR.getFactory(JobEngineFactory.class);
 
     private static final JobExecutionService JOB_EXECUTION_SERVICE = LOCATOR.getService(JobExecutionService.class);
 
@@ -60,7 +58,7 @@ public class GwtJobEngineServiceImpl extends KapuaRemoteServiceServlet implement
             if (gwtJobStartOptions != null) {
                 jobStartOptions = GwtKapuaJobModelConverter.convertJobStartOptions(gwtJobStartOptions);
             } else {
-                jobStartOptions = JOB_ENGINE_FACTORY.newJobStartOptions();
+                jobStartOptions = new JobStartOptions();
 
             }
 
