@@ -18,7 +18,6 @@ import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authentication.token.AccessToken;
 import org.eclipse.kapua.service.authentication.token.AccessTokenFactory;
-import org.eclipse.kapua.service.authentication.token.LoginInfo;
 
 /**
  * {@link AccessTokenFactory} implementation.
@@ -41,10 +40,4 @@ public class AccessTokenFactoryImpl implements AccessTokenFactory {
             throw new KapuaEntityCloneException(e, AccessToken.TYPE, accessToken);
         }
     }
-
-    @Override
-    public LoginInfo newLoginInfo() {
-        return new LoginInfoImpl();
-    }
-
 }

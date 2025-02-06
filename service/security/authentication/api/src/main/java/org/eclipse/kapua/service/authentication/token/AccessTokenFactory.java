@@ -22,11 +22,4 @@ import org.eclipse.kapua.model.KapuaEntityFactory;
  */
 public interface AccessTokenFactory extends KapuaEntityFactory<AccessToken> {
 
-    /**
-     * Instantiates a new {@link LoginInfo}
-     *
-     * @return a new {@link LoginInfo} object
-     */
-    LoginInfo newLoginInfo();
-
 }

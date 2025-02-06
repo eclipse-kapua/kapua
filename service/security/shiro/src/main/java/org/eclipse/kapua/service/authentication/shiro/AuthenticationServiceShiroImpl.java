@@ -396,7 +396,7 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
 
     @Override
     public LoginInfo getLoginInfo() throws KapuaException {
-        LoginInfo loginInfo = accessTokenFactory.newLoginInfo();
+        LoginInfo loginInfo = new LoginInfo();
 
         // AccessToken
         AccessToken accessToken = KapuaSecurityUtils.getSession().getAccessToken();
