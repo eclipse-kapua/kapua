@@ -71,7 +71,9 @@
         <constructor-arg name="metricsLifecycle" ref="metricsLifecycle"/>
     </bean>
     <bean id="deviceManagementNotificationMessageProcessor" class="org.eclipse.kapua.consumer.lifecycle.listener.DeviceManagementNotificationMessageProcessorSpring"/>
+    <bean id="objectSerializer" class="org.eclipse.kapua.service.camel.listener.error.ObjectSerializer"/>
     <bean id="errorMessageListener" class="org.eclipse.kapua.service.camel.listener.error.ErrorMessageListener">
+        <constructor-arg name="objectSerializer" ref="objectSerializer"/>
         <constructor-arg name="metricsCamel" ref="metricsCamel"/>
     </bean>
 

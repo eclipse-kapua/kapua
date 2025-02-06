@@ -82,7 +82,13 @@ public class ServerPlugin implements ActiveMQServerPlugin {
         DESTROY
     }
 
-    public static enum MessageType {
+    public static final String MESSAGE_TYPE_CONTROL = "CTR";
+    public static final String MESSAGE_TYPE_TELEMETRY = "TEL";
+    public static final String MESSAGE_TYPE_SYSTEM = "SYS";
+    public static final String MESSAGE_TYPE_DLQ = "DLQ";
+    public static final String MESSAGE_TYPE_NO_ADDRESS = "NAD";//shouldn't happen
+    public static final String MESSAGE_TYPE_UNKNOWN = "UNK";
+    public static final String MESSAGE_TYPE_NOTIFICATION = "NTF";
 
         Broker("BRK"),
         Control("CTR"),
