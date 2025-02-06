@@ -60,9 +60,9 @@
     <bean id="dataStorageMessageProcessor" class="org.eclipse.kapua.consumer.telemetry.listener.DataStorageMessageProcessor">
         <constructor-arg name="metricsDatastore" ref="metricsDatastore"/>
     </bean>
-    <bean id="objectDeserializer" class="org.eclipse.kapua.service.camel.listener.error.ObjectDeserializer"/>
+    <bean id="objectSerializer" class="org.eclipse.kapua.service.camel.listener.error.ObjectSerializer"/>
     <bean id="errorMessageListener" class="org.eclipse.kapua.service.camel.listener.error.ErrorMessageListener">
-        <constructor-arg name="objectDeserializer" ref="objectDeserializer"/>
+        <constructor-arg name="objectSerializer" ref="objectSerializer"/>
         <constructor-arg name="metricsCamel" ref="metricsCamel"/>
     </bean>
 

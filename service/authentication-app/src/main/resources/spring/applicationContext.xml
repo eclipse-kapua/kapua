@@ -74,9 +74,9 @@
     <!-- session filers (to bind Kapua and Shiro thread context) -->
     <bean id="kapuaCamelFilter" class="org.eclipse.kapua.service.camel.converter.KapuaCamelFilter"/>
 
-    <bean id="objectDeserializer" class="org.eclipse.kapua.service.camel.listener.error.ObjectDeserializer"/>
+    <bean id="objectSerializer" class="org.eclipse.kapua.service.camel.listener.error.ObjectSerializer"/>
     <bean id="errorMessageListener" class="org.eclipse.kapua.service.camel.listener.error.ErrorMessageListener">
-        <constructor-arg name="objectDeserializer" ref="objectDeserializer"/>
+        <constructor-arg name="objectSerializer" ref="objectSerializer"/>
         <constructor-arg name="metricsCamel" ref="metricsCamel"/>
     </bean>
 

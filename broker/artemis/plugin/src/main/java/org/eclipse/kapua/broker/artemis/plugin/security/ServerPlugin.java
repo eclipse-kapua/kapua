@@ -86,7 +86,7 @@ public class ServerPlugin implements ActiveMQServerPlugin {
     public static final String MESSAGE_TYPE_DLQ = "DLQ";
     public static final String MESSAGE_TYPE_NO_ADDRESS = "NAD";//shouldn't happen
     public static final String MESSAGE_TYPE_UNKNOWN = "UNK";
-    public static final String MESSAGE_TYPE_NOTIFICATION = "NOT";
+    public static final String MESSAGE_TYPE_NOTIFICATION = "NTF";
 
     //standard address, if customized please change it
     public static final String PREFIX_MESSAGE_TYPE_NOTIFICATION = "activemq.notifications";
