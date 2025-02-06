@@ -216,7 +216,6 @@ public class ConsoleJAXBContextProvider implements JAXBContextProvider {
                         JobListResult.class,
                         JobQuery.class,
                         JobXmlRegistry.class,
-                        JobEngineXmlRegistry.class,
 
                         // KapuaEvent
                         ServiceEvent.class,
