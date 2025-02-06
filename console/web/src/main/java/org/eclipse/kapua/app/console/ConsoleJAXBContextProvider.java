@@ -65,7 +65,6 @@ import org.eclipse.kapua.service.device.call.kura.model.inventory.packages.KuraI
 import org.eclipse.kapua.service.device.call.kura.model.inventory.system.KuraInventorySystemPackage;
 import org.eclipse.kapua.service.device.call.kura.model.inventory.system.KuraInventorySystemPackages;
 import org.eclipse.kapua.service.device.call.kura.model.snapshot.KuraSnapshotIds;
-import org.eclipse.kapua.service.device.management.asset.DeviceAssetXmlRegistry;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssets;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundle;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundles;
@@ -207,7 +206,6 @@ public class ConsoleJAXBContextProvider implements JAXBContextProvider {
 
                         // Device Management Assets
                         DeviceAssets.class,
-                        DeviceAssetXmlRegistry.class,
 
                         // Job
                         JobTargetSublist.class,

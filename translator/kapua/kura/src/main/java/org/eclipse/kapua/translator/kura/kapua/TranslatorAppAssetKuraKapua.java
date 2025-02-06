@@ -27,7 +27,6 @@ import org.eclipse.kapua.service.device.call.message.kura.app.response.KuraRespo
 import org.eclipse.kapua.service.device.management.asset.DeviceAsset;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssetChannel;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssetChannelMode;
-import org.eclipse.kapua.service.device.management.asset.DeviceAssetFactory;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssets;
 import org.eclipse.kapua.service.device.management.asset.message.internal.AssetResponseChannel;
 import org.eclipse.kapua.service.device.management.asset.message.internal.AssetResponseMessage;
@@ -46,13 +45,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class TranslatorAppAssetKuraKapua extends AbstractSimpleTranslatorResponseKuraKapua<AssetResponseChannel, AssetResponsePayload, AssetResponseMessage> {
 
-    private final DeviceAssetFactory deviceAssetFactory;
     private final XmlUtil xmlUtil;
 
     @Inject
-    public TranslatorAppAssetKuraKapua(DeviceManagementSetting deviceManagementSetting, DeviceAssetFactory deviceAssetFactory, XmlUtil xmlUtil) {
+    public TranslatorAppAssetKuraKapua(DeviceManagementSetting deviceManagementSetting, XmlUtil xmlUtil) {
         super(deviceManagementSetting, AssetResponseMessage.class, AssetResponsePayload.class);
-        this.deviceAssetFactory = deviceAssetFactory;
         this.xmlUtil = xmlUtil;
     }
 
@@ -80,11 +77,11 @@ public class TranslatorAppAssetKuraKapua extends AbstractSimpleTranslatorRespons
                 KuraAssets kuraAssets = KuraAssets.readJsonNode(jsonNode);
 
                 kuraAssets.getAssets().forEach(kuraAsset -> {
-                    DeviceAsset deviceAsset = deviceAssetFactory.newDeviceAsset();
+                    DeviceAsset deviceAsset = new DeviceAsset();
                     deviceAsset.setName(kuraAsset.getName());
 
                     kuraAsset.getChannels().forEach(kuraAssetChannel -> {
-                        DeviceAssetChannel deviceAssetChannel = deviceAssetFactory.newDeviceAssetChannel();
+                        DeviceAssetChannel deviceAssetChannel = new DeviceAssetChannel();
                         deviceAssetChannel.setName(kuraAssetChannel.getName());
                         KuraAssetChannelMode kuraChannelMode = kuraAssetChannel.getMode();
                         if (kuraChannelMode != null) {

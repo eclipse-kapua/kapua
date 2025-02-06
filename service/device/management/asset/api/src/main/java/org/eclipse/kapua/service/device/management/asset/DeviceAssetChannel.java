@@ -21,7 +21,14 @@ import java.util.Date;
  *
  * @since 1.0.0
  */
-public interface DeviceAssetChannel {
+public class DeviceAssetChannel {
+
+    private String name;
+    private Class<?> clazz;
+    private DeviceAssetChannelMode mode;
+    private Object value;
+    private String error;
+    private Date timestamp;
 
     /**
      * Gets the name.
@@ -29,15 +36,20 @@ public interface DeviceAssetChannel {
      * @return The name.
      * @since 1.0.0
      */
-    String getName();
+    public String getName() {
+        return name;
+    }
 
     /**
      * Gets the name.
      *
-     * @param name The name.
+     * @param name
+     *         The name.
      * @since 1.0.0
      */
-    void setName(String name);
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /**
      * Gets the {@link Class} type.
@@ -47,17 +59,20 @@ public interface DeviceAssetChannel {
      * @return The channel value type.
      * @since 1.0.0
      */
-    Class<?> getType();
+    public Class<?> getType() {
+        return clazz;
+    }
 
     /**
-     * Sets the {@link Class} type.
-     * This type must be coherent with the value given to {@link #setValue(Object)}.
-     * If not, errors will occur during the interaction with the device.
+     * Sets the {@link Class} type. This type must be coherent with the value given to {@link #setValue(Object)}. If not, errors will occur during the interaction with the device.
      *
-     * @param type The {@link Class} type.
+     * @param type
+     *         The {@link Class} type.
      * @since 1.0.0
      */
-    void setType(Class<?> type);
+    public void setType(Class<?> type) {
+        this.clazz = type;
+    }
 
     /**
      * Gets the {@link DeviceAssetChannelMode}.
@@ -65,58 +80,74 @@ public interface DeviceAssetChannel {
      * @return The {@link DeviceAssetChannelMode}.
      * @since 1.0.0
      */
-    DeviceAssetChannelMode getMode();
+    public DeviceAssetChannelMode getMode() {
+        return mode;
+    }
 
     /**
      * Sets the {@link DeviceAssetChannelMode}.
      *
-     * @param deviceAssetChannelMode The {@link DeviceAssetChannelMode}.
+     * @param deviceAssetChannelMode
+     *         The {@link DeviceAssetChannelMode}.
      * @since 1.0.0
      */
-    void setMode(DeviceAssetChannelMode deviceAssetChannelMode);
+    public void setMode(DeviceAssetChannelMode deviceAssetChannelMode) {
+        this.mode = deviceAssetChannelMode;
+    }
 
     /**
      * Gets the value channel.
      * <p>
-     * Depending on the {@link DeviceAssetChannelMode} this can be a value {@link DeviceAssetChannelMode#READ} from the channel or
-     * to {@link DeviceAssetChannelMode#WRITE} into the channel.
-     * This is mutually exclusive with {@link #getError()}
+     * Depending on the {@link DeviceAssetChannelMode} this can be a value {@link DeviceAssetChannelMode#READ} from the channel or to {@link DeviceAssetChannelMode#WRITE} into the channel. This is
+     * mutually exclusive with {@link #getError()}
      *
      * @return The value channel.
      * @since 1.0.0
      */
-    Object getValue();
+    public Object getValue() {
+        return value;
+    }
 
     /**
      * Sets the value channel.
      * <p>
-     * Depending on the {@link DeviceAssetChannelMode} this can be a value {@link DeviceAssetChannelMode#READ} from the channel or
-     * to {@link DeviceAssetChannelMode#WRITE} into the channel.
+     * Depending on the {@link DeviceAssetChannelMode} this can be a value {@link DeviceAssetChannelMode#READ} from the channel or to {@link DeviceAssetChannelMode#WRITE} into the channel.
      *
-     * @param value The value channel.
+     * @param value
+     *         The value channel.
      * @since 1.0.0
      */
-    void setValue(Object value);
+    public void setValue(Object value) {
+        this.value = value;
+
+        if (value != null) {
+            setType(value.getClass());
+        }
+    }
 
     /**
      * Gets the error message.
      * <p>
-     * When reading from or writing to a channel, if any error occurs it will be reported here.
-     * This is mutually exclusive with {@link #getValue()}
+     * When reading from or writing to a channel, if any error occurs it will be reported here. This is mutually exclusive with {@link #getValue()}
      *
      * @return The error message, if error has occurred.
      * @since 1.0.0
      */
-    String getError();
+    public String getError() {
+        return error;
+    }
 
     /**
      * Sets the error message.
      * <p>
      * This must be set if error has occurred during reading from/wrtiting to
      *
-     * @param error The error message.
+     * @param error
+     *         The error message.
      */
-    void setError(String error);
+    public void setError(String error) {
+        this.error = error;
+    }
 
     /**
      * Gets the {@link Date} of the time when the value was read from the channel.
@@ -124,13 +155,19 @@ public interface DeviceAssetChannel {
      * @return The {@link Date}  of the time when the value was read from the channel.
      * @since 1.0.0
      */
-    Date getTimestamp();
+    public Date getTimestamp() {
+        return timestamp;
+    }
 
     /**
      * Sets the {@link Date} of the time when the value was read from the channel.
      *
-     * @param timestamp The {@link Date} of the time when the value was read from the channel.
+     * @param timestamp
+     *         The {@link Date} of the time when the value was read from the channel.
      * @since 1.0.0
      */
-    void setTimestamp(Date timestamp);
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
+
 }

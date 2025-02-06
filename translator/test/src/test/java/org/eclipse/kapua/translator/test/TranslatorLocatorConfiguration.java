@@ -37,7 +37,6 @@ import org.eclipse.kapua.service.authentication.shiro.setting.KapuaAuthenticatio
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.device.management.asset.DeviceAssetFactory;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundleFactory;
 import org.eclipse.kapua.service.device.management.configuration.DeviceConfigurationFactory;
 import org.eclipse.kapua.service.device.management.inventory.DeviceInventoryManagementFactory;
@@ -101,7 +100,6 @@ public class TranslatorLocatorConfiguration {
                 bind(AccountService.class).toInstance(Mockito.mock(AccountService.class));
                 bind(DeviceRegistryService.class).toInstance(Mockito.mock(DeviceRegistryService.class));
                 bind(GenericRequestFactory.class).toInstance(Mockito.mock(GenericRequestFactory.class));
-                bind(DeviceAssetFactory.class).toInstance(Mockito.mock(DeviceAssetFactory.class));
                 bind(DeviceBundleFactory.class).toInstance(Mockito.mock(DeviceBundleFactory.class));
                 bind(KapuaIdFactory.class).toInstance(Mockito.mock(KapuaIdFactory.class));
                 bind(DeviceSnapshotFactory.class).toInstance(Mockito.mock(DeviceSnapshotFactory.class));

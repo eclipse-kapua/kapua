@@ -27,7 +27,6 @@ import org.eclipse.kapua.service.device.call.kura.model.asset.KuraAssets;
 import org.eclipse.kapua.service.device.call.message.kura.app.request.KuraRequestChannel;
 import org.eclipse.kapua.service.device.call.message.kura.app.request.KuraRequestMessage;
 import org.eclipse.kapua.service.device.call.message.kura.app.request.KuraRequestPayload;
-import org.eclipse.kapua.service.device.management.asset.DeviceAssetFactory;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssets;
 import org.eclipse.kapua.service.device.management.asset.message.internal.AssetRequestChannel;
 import org.eclipse.kapua.service.device.management.asset.message.internal.AssetRequestMessage;
@@ -46,11 +45,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class TranslatorAppAssetKapuaKura extends AbstractTranslatorKapuaKura<AssetRequestChannel, AssetRequestPayload, AssetRequestMessage> {
 
-    private final DeviceAssetFactory deviceAssetFactory;
-
     @Inject
-    public TranslatorAppAssetKapuaKura(DeviceAssetFactory deviceAssetFactory) {
-        this.deviceAssetFactory = deviceAssetFactory;
+    public TranslatorAppAssetKapuaKura() {
     }
 
     @Override

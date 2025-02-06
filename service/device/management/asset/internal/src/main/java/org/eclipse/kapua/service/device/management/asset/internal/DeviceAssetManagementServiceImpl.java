@@ -23,7 +23,6 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.device.management.asset.DeviceAssetFactory;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssetManagementService;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssets;
 import org.eclipse.kapua.service.device.management.asset.message.internal.AssetRequestChannel;
@@ -58,7 +57,6 @@ public class DeviceAssetManagementServiceImpl extends AbstractDeviceManagementTr
     private static final String DEVICE_ASSETS = "deviceAssets";
 
     private final DeviceAssetStoreService deviceAssetStoreService;
-    private final DeviceAssetFactory deviceAssetFactory;
 
     public DeviceAssetManagementServiceImpl(
             TxManager txManager,
@@ -66,14 +64,13 @@ public class DeviceAssetManagementServiceImpl extends AbstractDeviceManagementTr
             DeviceEventService deviceEventService,
             DeviceEventFactory deviceEventFactory,
             DeviceRegistryService deviceRegistryService,
-            DeviceAssetStoreService deviceAssetStoreService, DeviceAssetFactory deviceAssetFactory) {
+            DeviceAssetStoreService deviceAssetStoreService) {
         super(txManager,
                 authorizationService,
                 deviceEventService,
                 deviceEventFactory,
                 deviceRegistryService);
         this.deviceAssetStoreService = deviceAssetStoreService;
-        this.deviceAssetFactory = deviceAssetFactory;
     }
 
     @Override

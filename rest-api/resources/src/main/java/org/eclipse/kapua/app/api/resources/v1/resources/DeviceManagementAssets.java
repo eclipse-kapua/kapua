@@ -30,7 +30,6 @@ import org.eclipse.kapua.app.api.core.model.ScopeId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
 import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssetChannel;
-import org.eclipse.kapua.service.device.management.asset.DeviceAssetFactory;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssetManagementService;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssets;
 import org.eclipse.kapua.service.device.management.asset.store.DeviceAssetStoreService;
@@ -42,8 +41,6 @@ public class DeviceManagementAssets extends AbstractKapuaResource {
 
     @Inject
     public DeviceAssetManagementService deviceManagementAssetService;
-    @Inject
-    public DeviceAssetFactory deviceAssetFilter;
     @Inject
     public DeviceAssetStoreService deviceAssetStoreService;
 

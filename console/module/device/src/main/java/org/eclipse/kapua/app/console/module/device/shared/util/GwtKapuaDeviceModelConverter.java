@@ -27,7 +27,6 @@ import org.eclipse.kapua.app.console.module.device.shared.model.management.asset
 import org.eclipse.kapua.app.console.module.device.shared.model.management.assets.GwtDeviceAssets;
 import org.eclipse.kapua.app.console.module.device.shared.model.management.registry.GwtDeviceManagementOperationQuery;
 import org.eclipse.kapua.commons.model.id.KapuaEid;
-import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.FieldSortCriteria;
 import org.eclipse.kapua.model.query.SortOrder;
@@ -38,7 +37,6 @@ import org.eclipse.kapua.model.type.ObjectValueConverter;
 import org.eclipse.kapua.service.device.management.asset.DeviceAsset;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssetChannel;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssetChannelMode;
-import org.eclipse.kapua.service.device.management.asset.DeviceAssetFactory;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssets;
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationAttributes;
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationQuery;
@@ -53,10 +51,6 @@ import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 
 public class GwtKapuaDeviceModelConverter {
-
-    private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
-
-    private static final DeviceAssetFactory ASSET_FACTORY = LOCATOR.getFactory(DeviceAssetFactory.class);
 
     private GwtKapuaDeviceModelConverter() {
     }
@@ -126,7 +120,7 @@ public class GwtKapuaDeviceModelConverter {
 
     public static DeviceAsset convertDeviceAsset(GwtDeviceAsset gwtDeviceAsset) {
 
-        DeviceAsset deviceAsset = ASSET_FACTORY.newDeviceAsset();
+        DeviceAsset deviceAsset = new DeviceAsset();
         deviceAsset.setName(gwtDeviceAsset.getName());
         for (GwtDeviceAssetChannel gwtDeviceAssetChannel : gwtDeviceAsset.getChannels()) {
             deviceAsset.getChannels().add(convertDeviceAssetChannel(gwtDeviceAssetChannel));
@@ -136,7 +130,7 @@ public class GwtKapuaDeviceModelConverter {
 
     public static DeviceAssetChannel convertDeviceAssetChannel(GwtDeviceAssetChannel gwtDeviceAssetChannel) {
 
-        DeviceAssetChannel channel = ASSET_FACTORY.newDeviceAssetChannel();
+        DeviceAssetChannel channel = new DeviceAssetChannel();
         channel.setName(gwtDeviceAssetChannel.getName());
         try {
             channel.setType(ObjectTypeConverter.fromString(gwtDeviceAssetChannel.getType()));
