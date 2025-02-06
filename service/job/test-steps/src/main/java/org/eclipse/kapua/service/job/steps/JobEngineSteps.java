@@ -330,7 +330,7 @@ public class JobEngineSteps extends JobServiceTestBase {
         primeException();
         KapuaId currentJobId = (KapuaId) stepData.get(CURRENT_JOB_ID);
         try {
-            JobStartOptions jobStartOptions = jobEngineFactory.newJobStartOptions();
+            JobStartOptions jobStartOptions = new JobStartOptions();
             jobStartOptions.setResetStepIndex(true);
             jobStartOptions.setFromStepIndex(0);
             jobStartOptions.setEnqueue(true);
