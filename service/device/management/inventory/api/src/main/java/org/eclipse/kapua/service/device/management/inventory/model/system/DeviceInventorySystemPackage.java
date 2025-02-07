@@ -27,8 +27,12 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "deviceInventorySystemPackage")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DeviceInventorySystemPackagesXmlRegistry.class, factoryMethod = "newDeviceInventorySystemPackage")
-public interface DeviceInventorySystemPackage {
+@XmlType
+public class DeviceInventorySystemPackage {
+
+    private String name;
+    private String version;
+    private String packageType;
 
     /**
      * Gets the name.
@@ -37,15 +41,20 @@ public interface DeviceInventorySystemPackage {
      * @since 1.5.0
      */
     @XmlElement(name = "name")
-    String getName();
+    public String getName() {
+        return name;
+    }
 
     /**
      * Sets the name.
      *
-     * @param name The name.
+     * @param name
+     *         The name.
      * @since 1.5.0
      */
-    void setName(String name);
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /**
      * Gets the bundle version.
@@ -54,15 +63,20 @@ public interface DeviceInventorySystemPackage {
      * @since 1.5.0
      */
     @XmlElement(name = "version")
-    String getVersion();
+    public String getVersion() {
+        return version;
+    }
 
     /**
      * Sets the version.
      *
-     * @param version The version.
+     * @param version
+     *         The version.
      * @since 1.5.0
      */
-    void setVersion(String version);
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     /**
      * Gets the type.
@@ -71,13 +85,19 @@ public interface DeviceInventorySystemPackage {
      * @since 1.5.0
      */
     @XmlElement(name = "packageType")
-    String getPackageType();
+    public String getPackageType() {
+        return packageType;
+    }
 
     /**
      * Sets the type.
      *
-     * @param packageType The type.
+     * @param packageType
+     *         The type.
      * @since 1.5.0
      */
-    void setPackageType(String packageType);
+    public void setPackageType(String packageType) {
+        this.packageType = packageType;
+    }
+
 }

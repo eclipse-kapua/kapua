@@ -17,7 +17,6 @@ import javax.inject.Singleton;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.device.management.inventory.DeviceInventoryManagementFactory;
 import org.eclipse.kapua.service.device.management.inventory.DeviceInventoryManagementService;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventFactory;
@@ -29,7 +28,6 @@ public class DeviceManagementInventoryModule extends AbstractKapuaModule {
 
     @Override
     protected void configureModule() {
-        bind(DeviceInventoryManagementFactory.class).to(DeviceInventoryManagementFactoryImpl.class);
     }
 
     @Provides
@@ -39,14 +37,12 @@ public class DeviceManagementInventoryModule extends AbstractKapuaModule {
             DeviceEventService deviceEventService,
             DeviceEventFactory deviceEventFactory,
             DeviceRegistryService deviceRegistryService,
-            KapuaJpaTxManagerFactory jpaTxManagerFactory,
-            DeviceInventoryManagementFactory deviceInventoryManagementFactory) {
+            KapuaJpaTxManagerFactory jpaTxManagerFactory) {
         return new DeviceInventoryManagementServiceImpl(
                 jpaTxManagerFactory.create("kapua-device_management_operation_registry"),
                 authorizationService,
                 deviceEventService,
                 deviceEventFactory,
-                deviceRegistryService,
-                deviceInventoryManagementFactory);
+                deviceRegistryService);
     }
 }

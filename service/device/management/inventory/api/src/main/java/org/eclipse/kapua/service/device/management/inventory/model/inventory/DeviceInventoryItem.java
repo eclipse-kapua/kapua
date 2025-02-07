@@ -27,8 +27,12 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "deviceInventoryItem")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DeviceInventoryXmlRegistry.class, factoryMethod = "newDeviceInventoryItem")
-public interface DeviceInventoryItem {
+@XmlType
+public class DeviceInventoryItem {
+
+    private String name;
+    private String version;
+    private String itemType;
 
     /**
      * Gets the name.
@@ -37,15 +41,20 @@ public interface DeviceInventoryItem {
      * @since 1.5.0
      */
     @XmlElement(name = "name")
-    String getName();
+    public String getName() {
+        return name;
+    }
 
     /**
      * Sets the name.
      *
-     * @param name The name.
+     * @param name
+     *         The name.
      * @since 1.5.0
      */
-    void setName(String name);
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /**
      * Gets the bundle version.
@@ -54,15 +63,20 @@ public interface DeviceInventoryItem {
      * @since 1.5.0
      */
     @XmlElement(name = "version")
-    String getVersion();
+    public String getVersion() {
+        return version;
+    }
 
     /**
      * Sets the version.
      *
-     * @param version The version.
+     * @param version
+     *         The version.
      * @since 1.5.0
      */
-    void setVersion(String version);
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     /**
      * Gets the type.
@@ -71,13 +85,19 @@ public interface DeviceInventoryItem {
      * @since 1.5.0
      */
     @XmlElement(name = "itemType")
-    String getItemType();
+    public String getItemType() {
+        return itemType;
+    }
 
     /**
      * Sets the type.
      *
-     * @param itemType The type.
+     * @param itemType
+     *         The type.
      * @since 1.5.0
      */
-    void setItemType(String itemType);
+    public void setItemType(String itemType) {
+        this.itemType = itemType;
+    }
+
 }

@@ -27,7 +27,6 @@ import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.device.management.commons.AbstractDeviceManagementTransactionalServiceImpl;
 import org.eclipse.kapua.service.device.management.commons.call.DeviceCallBuilder;
 import org.eclipse.kapua.service.device.management.exception.DeviceManagementRequestContentException;
-import org.eclipse.kapua.service.device.management.inventory.DeviceInventoryManagementFactory;
 import org.eclipse.kapua.service.device.management.inventory.DeviceInventoryManagementService;
 import org.eclipse.kapua.service.device.management.inventory.internal.message.InventoryBundleExecRequestMessage;
 import org.eclipse.kapua.service.device.management.inventory.internal.message.InventoryBundlesResponseMessage;
@@ -70,20 +69,17 @@ public class DeviceInventoryManagementServiceImpl extends AbstractDeviceManageme
     private static final String SCOPE_ID = "scopeId";
     private static final String DEVICE_ID = "deviceId";
 
-    private final DeviceInventoryManagementFactory deviceInventoryManagementFactory;
-
     public DeviceInventoryManagementServiceImpl(
             TxManager txManager,
             AuthorizationService authorizationService,
             DeviceEventService deviceEventService,
             DeviceEventFactory deviceEventFactory,
-            DeviceRegistryService deviceRegistryService, DeviceInventoryManagementFactory deviceInventoryManagementFactory) {
+            DeviceRegistryService deviceRegistryService) {
         super(txManager,
                 authorizationService,
                 deviceEventService,
                 deviceEventFactory,
                 deviceRegistryService);
-        this.deviceInventoryManagementFactory = deviceInventoryManagementFactory;
     }
 
     @Override
@@ -136,7 +132,7 @@ public class DeviceInventoryManagementServiceImpl extends AbstractDeviceManageme
         // Create event
         createDeviceEvent(scopeId, deviceId, inventoryRequestMessage, responseMessage);
         // Check response
-        return checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getDeviceInventory().orElse(deviceInventoryManagementFactory.newDeviceInventory()));
+        return checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getDeviceInventory().orElse(new DeviceInventory()));
     }
 
     @Override
@@ -189,7 +185,7 @@ public class DeviceInventoryManagementServiceImpl extends AbstractDeviceManageme
         // Create event
         createDeviceEvent(scopeId, deviceId, inventoryRequestMessage, responseMessage);
         // Check response
-        return checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getDeviceInventoryBundles().orElse(deviceInventoryManagementFactory.newDeviceInventoryBundles()));
+        return checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getDeviceInventoryBundles().orElse(new DeviceInventoryBundles()));
     }
 
     @Override
@@ -309,7 +305,7 @@ public class DeviceInventoryManagementServiceImpl extends AbstractDeviceManageme
         createDeviceEvent(scopeId, deviceId, inventoryRequestMessage, responseMessage);
         // Check response
         return checkResponseAcceptedOrThrowError(responseMessage,
-                () -> responseMessage.getPayload().getDeviceInventoryContainers().orElse(deviceInventoryManagementFactory.newDeviceInventoryContainers()));
+                () -> responseMessage.getPayload().getDeviceInventoryContainers().orElse(new DeviceInventoryContainers()));
     }
 
     @Override
@@ -427,7 +423,7 @@ public class DeviceInventoryManagementServiceImpl extends AbstractDeviceManageme
         createDeviceEvent(scopeId, deviceId, inventoryRequestMessage, responseMessage);
         // Check response
         return checkResponseAcceptedOrThrowError(responseMessage,
-                () -> responseMessage.getPayload().getDeviceInventorySystemPackages().orElse(deviceInventoryManagementFactory.newDeviceInventorySystemPackages()));
+                () -> responseMessage.getPayload().getDeviceInventorySystemPackages().orElse(new DeviceInventorySystemPackages()));
     }
 
     @Override
@@ -481,7 +477,7 @@ public class DeviceInventoryManagementServiceImpl extends AbstractDeviceManageme
         createDeviceEvent(scopeId, deviceId, inventoryRequestMessage, responseMessage);
         // Check response
         return checkResponseAcceptedOrThrowError(responseMessage,
-                () -> responseMessage.getPayload().getDeviceInventoryPackages().orElse(deviceInventoryManagementFactory.newDeviceInventoryPackages()));
+                () -> responseMessage.getPayload().getDeviceInventoryPackages().orElse(new DeviceInventoryPackages()));
     }
 
     /**

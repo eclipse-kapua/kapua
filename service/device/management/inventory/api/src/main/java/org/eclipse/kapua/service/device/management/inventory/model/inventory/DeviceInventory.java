@@ -12,14 +12,16 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.inventory.model.inventory;
 
-import org.eclipse.kapua.KapuaSerializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.List;
+
+import org.eclipse.kapua.KapuaSerializable;
 
 /**
  * {@link DeviceInventory} definition.
@@ -28,8 +30,12 @@ import java.util.List;
  */
 @XmlRootElement(name = "deviceInventory")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DeviceInventoryXmlRegistry.class, factoryMethod = "newDeviceInventory")
-public interface DeviceInventory extends KapuaSerializable {
+@XmlType
+public class DeviceInventory implements KapuaSerializable {
+
+    private static final long serialVersionUID = 734716753080998855L;
+
+    private List<DeviceInventoryItem> inventoryItems;
 
     /**
      * Gets the {@link List} of {@link DeviceInventoryItem}s
@@ -38,21 +44,34 @@ public interface DeviceInventory extends KapuaSerializable {
      * @since 1.5.0
      */
     @XmlElement(name = "inventoryItems")
-    List<DeviceInventoryItem> getInventoryItems();
+    public List<DeviceInventoryItem> getInventoryItems() {
+        if (inventoryItems == null) {
+            inventoryItems = new ArrayList<>();
+        }
+
+        return inventoryItems;
+    }
 
     /**
      * Adds a {@link DeviceInventoryItem} to the {@link List}
      *
-     * @param inventoryItem The {@link DeviceInventoryItem} to add.
+     * @param inventoryItem
+     *         The {@link DeviceInventoryItem} to add.
      * @since 1.5.0
      */
-    void addInventoryItem(DeviceInventoryItem inventoryItem);
+    public void addInventoryItem(DeviceInventoryItem inventoryItem) {
+        getInventoryItems().add(inventoryItem);
+    }
 
     /**
      * Sets the {@link List} of {@link DeviceInventoryItem}s
      *
-     * @param inventoryItems The {@link List} of {@link DeviceInventoryItem}s
+     * @param inventoryItems
+     *         The {@link List} of {@link DeviceInventoryItem}s
      * @since 1.5.0
      */
-    void setInventoryItems(List<DeviceInventoryItem> inventoryItems);
+    public void setInventoryItems(List<DeviceInventoryItem> inventoryItems) {
+        this.inventoryItems = inventoryItems;
+    }
+
 }

@@ -12,12 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.device.server;
 
-import com.extjs.gxt.ui.client.data.BaseListLoadResult;
-import com.extjs.gxt.ui.client.data.ListLoadResult;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.server.KapuaRemoteServiceServlet;
 import org.eclipse.kapua.app.console.module.api.server.util.KapuaExceptionHandler;
-import org.eclipse.kapua.app.console.module.api.setting.ConsoleSetting;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtXSRFToken;
 import org.eclipse.kapua.app.console.module.device.shared.model.management.inventory.GwtInventoryBundle;
 import org.eclipse.kapua.app.console.module.device.shared.model.management.inventory.GwtInventoryContainer;
@@ -28,7 +28,6 @@ import org.eclipse.kapua.app.console.module.device.shared.service.GwtDeviceInven
 import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.service.device.management.inventory.DeviceInventoryManagementFactory;
 import org.eclipse.kapua.service.device.management.inventory.DeviceInventoryManagementService;
 import org.eclipse.kapua.service.device.management.inventory.model.bundle.DeviceInventoryBundle;
 import org.eclipse.kapua.service.device.management.inventory.model.bundle.DeviceInventoryBundleAction;
@@ -44,8 +43,8 @@ import org.eclipse.kapua.service.device.management.inventory.model.packages.Devi
 import org.eclipse.kapua.service.device.management.inventory.model.system.DeviceInventorySystemPackage;
 import org.eclipse.kapua.service.device.management.inventory.model.system.DeviceInventorySystemPackages;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.extjs.gxt.ui.client.data.BaseListLoadResult;
+import com.extjs.gxt.ui.client.data.ListLoadResult;
 
 /**
  * The server side implementation of the Device RPC service.
@@ -54,12 +53,9 @@ public class GwtDeviceInventoryManagementServiceImpl extends KapuaRemoteServiceS
 
     private static final long serialVersionUID = -1391026997499175151L;
 
-    private static final ConsoleSetting CONSOLE_SETTING = ConsoleSetting.getInstance();
-
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
 
     private static final DeviceInventoryManagementService DEVICE_INVENTORY_MANAGEMENT_SERVICE = LOCATOR.getService(DeviceInventoryManagementService.class);
-    private static final DeviceInventoryManagementFactory DEVICE_INVENTORY_MANAGEMENT_FACTORY = LOCATOR.getFactory(DeviceInventoryManagementFactory.class);
 
     @Override
     public ListLoadResult<GwtInventoryItem> findDeviceInventory(String scopeIdString, String deviceIdString)
@@ -121,7 +117,7 @@ public class GwtDeviceInventoryManagementServiceImpl extends KapuaRemoteServiceS
             KapuaId scopeId = KapuaEid.parseCompactId(scopeIdString);
             KapuaId deviceId = KapuaEid.parseCompactId(deviceIdString);
 
-            DeviceInventoryBundle deviceInventoryBundle = DEVICE_INVENTORY_MANAGEMENT_FACTORY.newDeviceInventoryBundle();
+            DeviceInventoryBundle deviceInventoryBundle = new DeviceInventoryBundle();
             deviceInventoryBundle.setId(gwtInventoryBundle.getId());
             deviceInventoryBundle.setName(gwtInventoryBundle.getName());
             deviceInventoryBundle.setVersion(gwtInventoryBundle.getVersion());
@@ -174,7 +170,7 @@ public class GwtDeviceInventoryManagementServiceImpl extends KapuaRemoteServiceS
             KapuaId scopeId = KapuaEid.parseCompactId(scopeIdString);
             KapuaId deviceId = KapuaEid.parseCompactId(deviceIdString);
 
-            DeviceInventoryContainer deviceInventoryContainer = DEVICE_INVENTORY_MANAGEMENT_FACTORY.newDeviceInventoryContainer();
+            DeviceInventoryContainer deviceInventoryContainer = new DeviceInventoryContainer();
             deviceInventoryContainer.setName(gwtInventoryContainer.getName());
             deviceInventoryContainer.setVersion(gwtInventoryContainer.getVersion());
             deviceInventoryContainer.setContainerType(gwtInventoryContainer.getType());

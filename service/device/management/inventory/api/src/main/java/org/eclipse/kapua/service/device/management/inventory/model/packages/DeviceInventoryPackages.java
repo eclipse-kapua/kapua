@@ -12,14 +12,16 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.inventory.model.packages;
 
-import org.eclipse.kapua.KapuaSerializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.List;
+
+import org.eclipse.kapua.KapuaSerializable;
 
 /**
  * {@link DeviceInventoryPackages} definition.
@@ -28,8 +30,12 @@ import java.util.List;
  */
 @XmlRootElement(name = "deviceInventoryDeploymentPackages")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DeviceInventoryPackagesXmlRegistry.class, factoryMethod = "newDeviceInventoryPackages")
-public interface DeviceInventoryPackages extends KapuaSerializable {
+@XmlType
+public class DeviceInventoryPackages implements KapuaSerializable {
+
+    private static final long serialVersionUID = -8272540683907649241L;
+
+    private List<DeviceInventoryPackage> packages;
 
     /**
      * Gets the {@link List} of {@link DeviceInventoryPackage}s.
@@ -38,21 +44,34 @@ public interface DeviceInventoryPackages extends KapuaSerializable {
      * @since 1.5.0
      */
     @XmlElement(name = "deploymentPackages")
-    List<DeviceInventoryPackage> getPackages();
+    public List<DeviceInventoryPackage> getPackages() {
+        if (packages == null) {
+            packages = new ArrayList<>();
+        }
+
+        return packages;
+    }
 
     /**
      * Adds a {@link DeviceInventoryPackage} to the {@link List}.
      *
-     * @param aPackage The {@link DeviceInventoryPackage} to add.
+     * @param aPackage
+     *         The {@link DeviceInventoryPackage} to add.
      * @since 1.5.0
      */
-    void addPackage(DeviceInventoryPackage aPackage);
+    public void addPackage(DeviceInventoryPackage aPackage) {
+        getPackages().add(aPackage);
+    }
 
     /**
      * Sets the {@link List} of {@link DeviceInventoryPackage}s.
      *
-     * @param inventoryPackages The {@link List} of {@link DeviceInventoryPackage}s.
+     * @param inventoryPackages
+     *         The {@link List} of {@link DeviceInventoryPackage}s.
      * @since 1.5.0
      */
-    void setPackages(List<DeviceInventoryPackage> inventoryPackages);
+    public void setPackages(List<DeviceInventoryPackage> inventoryPackages) {
+        this.packages = inventoryPackages;
+    }
+
 }

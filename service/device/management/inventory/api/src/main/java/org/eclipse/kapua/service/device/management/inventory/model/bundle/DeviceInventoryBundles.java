@@ -12,7 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.inventory.model.bundle;
 
-import org.eclipse.kapua.KapuaSerializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -20,7 +21,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import java.util.List;
+
+import org.eclipse.kapua.KapuaSerializable;
 
 /**
  * {@link DeviceInventoryBundles} definition.
@@ -29,8 +31,12 @@ import java.util.List;
  */
 @XmlRootElement(name = "deviceInventoryBundles")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DeviceInventoryBundlesXmlRegistry.class, factoryMethod = "newDeviceInventoryBundles")
-public interface DeviceInventoryBundles extends KapuaSerializable {
+@XmlType
+public class DeviceInventoryBundles implements KapuaSerializable {
+
+    private static final long serialVersionUID = 5229149965375932561L;
+
+    private List<DeviceInventoryBundle> inventoryBundles;
 
     /**
      * Gets the {@link List} of {@link DeviceInventoryBundle}s
@@ -39,22 +45,35 @@ public interface DeviceInventoryBundles extends KapuaSerializable {
      * @since 1.5.0
      */
     @XmlElement(name = "inventoryBundles")
-    List<DeviceInventoryBundle> getInventoryBundles();
+    public List<DeviceInventoryBundle> getInventoryBundles() {
+        if (inventoryBundles == null) {
+            inventoryBundles = new ArrayList<>();
+        }
+
+        return inventoryBundles;
+    }
 
     /**
      * Adds a {@link DeviceInventoryBundle} to the {@link List}
      *
-     * @param inventoryBundle The {@link DeviceInventoryBundle} to add.
+     * @param inventoryBundle
+     *         The {@link DeviceInventoryBundle} to add.
      * @since 1.5.0
      */
     @XmlTransient
-    void addInventoryBundle(DeviceInventoryBundle inventoryBundle);
+    public void addInventoryBundle(DeviceInventoryBundle inventoryBundle) {
+        getInventoryBundles().add(inventoryBundle);
+    }
 
     /**
      * Sets the {@link List} of {@link DeviceInventoryBundle}s
      *
-     * @param inventoryBundles The {@link List} of {@link DeviceInventoryBundle}s
+     * @param inventoryBundles
+     *         The {@link List} of {@link DeviceInventoryBundle}s
      * @since 1.5.0
      */
-    void setInventoryBundles(List<DeviceInventoryBundle> inventoryBundles);
+    public void setInventoryBundles(List<DeviceInventoryBundle> inventoryBundles) {
+        this.inventoryBundles = inventoryBundles;
+    }
+
 }

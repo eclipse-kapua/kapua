@@ -27,8 +27,14 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "deviceInventoryBundle")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DeviceInventoryBundlesXmlRegistry.class, factoryMethod = "newDeviceInventoryBundle")
-public interface DeviceInventoryBundle {
+@XmlType
+public class DeviceInventoryBundle {
+
+    private String id;
+    private String name;
+    private String version;
+    private String status;
+    private Boolean signed;
 
     /**
      * Gets the identifier.
@@ -37,15 +43,20 @@ public interface DeviceInventoryBundle {
      * @since 1.5.0
      */
     @XmlElement(name = "id")
-    String getId();
+    public String getId() {
+        return id;
+    }
 
     /**
      * Sets the identifier.
      *
-     * @param id The identifier.
+     * @param id
+     *         The identifier.
      * @since 1.5.0
      */
-    void setId(String id);
+    public void setId(String id) {
+        this.id = id;
+    }
 
     /**
      * Gets the name.
@@ -54,15 +65,20 @@ public interface DeviceInventoryBundle {
      * @since 1.5.0
      */
     @XmlElement(name = "name")
-    String getName();
+    public String getName() {
+        return name;
+    }
 
     /**
      * Sets the name.
      *
-     * @param name The name.
+     * @param name
+     *         The name.
      * @since 1.5.0
      */
-    void setName(String name);
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /**
      * Gets the bundle version.
@@ -71,15 +87,20 @@ public interface DeviceInventoryBundle {
      * @since 1.5.0
      */
     @XmlElement(name = "version")
-    String getVersion();
+    public String getVersion() {
+        return version;
+    }
 
     /**
      * Sets the version.
      *
-     * @param version The version.
+     * @param version
+     *         The version.
      * @since 1.5.0
      */
-    void setVersion(String version);
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     /**
      * Gets the status.
@@ -88,15 +109,20 @@ public interface DeviceInventoryBundle {
      * @since 1.5.0
      */
     @XmlElement(name = "status")
-    String getStatus();
+    public String getStatus() {
+        return status;
+    }
 
     /**
      * Sets the status.
      *
-     * @param status The status.
+     * @param status
+     *         The status.
      * @since 1.5.0
      */
-    void setStatus(String status);
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     /**
      * Whether the bundle is signed.
@@ -104,13 +130,19 @@ public interface DeviceInventoryBundle {
      * @return {@code true} if is signed, {@code false} if not or {@code null} if the information is not known.
      * @since 2.0.0
      */
-    Boolean getSigned();
+    public Boolean getSigned() {
+        return signed;
+    }
 
     /**
      * Sets whether the bundle is signed.
      *
-     * @param signed {@code true} if is signed, {@code false} if not or {@code null} if the information is not known.
+     * @param signed
+     *         {@code true} if is signed, {@code false} if not or {@code null} if the information is not known.
      * @since 2.0.0
      */
-    void setSigned(Boolean signed);
+    public void setSigned(Boolean signed) {
+        this.signed = signed;
+    }
+
 }

@@ -78,7 +78,6 @@ import org.eclipse.kapua.service.device.management.inventory.model.container.Dev
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainers;
 import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventory;
 import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventoryItem;
-import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventoryXmlRegistry;
 import org.eclipse.kapua.service.device.management.inventory.model.packages.DeviceInventoryPackage;
 import org.eclipse.kapua.service.device.management.inventory.model.packages.DeviceInventoryPackages;
 import org.eclipse.kapua.service.device.management.inventory.model.system.DeviceInventorySystemPackage;
@@ -174,7 +173,6 @@ public class ConsoleJAXBContextProvider implements JAXBContextProvider {
                         DeviceInventorySystemPackage.class,
                         KuraInventorySystemPackages.class,
                         KuraInventorySystemPackage.class,
-                        DeviceInventoryXmlRegistry.class,
 
                         // Device Management Keystore
                         DeviceKeystores.class,
