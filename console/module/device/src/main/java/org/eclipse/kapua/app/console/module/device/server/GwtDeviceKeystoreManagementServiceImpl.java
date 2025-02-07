@@ -12,10 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.device.server;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.server.KapuaRemoteServiceServlet;
 import org.eclipse.kapua.app.console.module.api.server.util.KapuaExceptionHandler;
-import org.eclipse.kapua.app.console.module.api.setting.ConsoleSetting;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtXSRFToken;
 import org.eclipse.kapua.app.console.module.device.shared.model.management.keystore.GwtDeviceKeystore;
 import org.eclipse.kapua.app.console.module.device.shared.model.management.keystore.GwtDeviceKeystoreCertificate;
@@ -26,7 +28,6 @@ import org.eclipse.kapua.app.console.module.device.shared.service.GwtDeviceKeyst
 import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.service.device.management.keystore.DeviceKeystoreManagementFactory;
 import org.eclipse.kapua.service.device.management.keystore.DeviceKeystoreManagementService;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystore;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreCSR;
@@ -38,9 +39,6 @@ import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystore
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreKeypair;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystores;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * The server side implementation of the Device RPC service.
  */
@@ -48,12 +46,9 @@ public class GwtDeviceKeystoreManagementServiceImpl extends KapuaRemoteServiceSe
 
     private static final long serialVersionUID = -1391026997499175151L;
 
-    private static final ConsoleSetting CONSOLE_SETTING = ConsoleSetting.getInstance();
-
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
 
     private static final DeviceKeystoreManagementService DEVICE_KEYSTORE_MANAGEMENT_SERVICE = LOCATOR.getService(DeviceKeystoreManagementService.class);
-    private static final DeviceKeystoreManagementFactory DEVICE_KEYSTORE_MANAGEMENT_FACTORY = LOCATOR.getFactory(DeviceKeystoreManagementFactory.class);
 
     @Override
     public List<GwtDeviceKeystore> getKeystores(String scopeIdString, String deviceIdString) throws GwtKapuaException {
@@ -99,14 +94,13 @@ public class GwtDeviceKeystoreManagementServiceImpl extends KapuaRemoteServiceSe
         }
     }
 
-
     @Override
     public List<GwtDeviceKeystoreItem> getKeystoreItems(String scopeIdString, String deviceIdString, String keystoreId) throws GwtKapuaException {
         try {
             KapuaId scopeId = KapuaEid.parseCompactId(scopeIdString);
             KapuaId deviceId = KapuaEid.parseCompactId(deviceIdString);
 
-            DeviceKeystoreItemQuery itemQuery = DEVICE_KEYSTORE_MANAGEMENT_FACTORY.newDeviceKeystoreItemQuery();
+            DeviceKeystoreItemQuery itemQuery = new DeviceKeystoreItemQuery();
             itemQuery.setKeystoreId(keystoreId);
 
             DeviceKeystoreItems deviceKeystores = DEVICE_KEYSTORE_MANAGEMENT_SERVICE.getKeystoreItems(scopeId, deviceId, itemQuery, null);
@@ -144,7 +138,7 @@ public class GwtDeviceKeystoreManagementServiceImpl extends KapuaRemoteServiceSe
             KapuaId scopeId = KapuaEid.parseCompactId(scopeIdString);
             KapuaId deviceId = KapuaEid.parseCompactId(deviceIdString);
 
-            DeviceKeystoreCertificate deviceKeystoreCertificate = DEVICE_KEYSTORE_MANAGEMENT_FACTORY.newDeviceKeystoreCertificate();
+            DeviceKeystoreCertificate deviceKeystoreCertificate = new DeviceKeystoreCertificate();
             deviceKeystoreCertificate.setKeystoreId(gwtKeystoreCertificate.getKeystoreId());
             deviceKeystoreCertificate.setAlias(gwtKeystoreCertificate.getAlias());
             deviceKeystoreCertificate.setCertificate(gwtKeystoreCertificate.getCertificate());
@@ -156,7 +150,8 @@ public class GwtDeviceKeystoreManagementServiceImpl extends KapuaRemoteServiceSe
     }
 
     @Override
-    public void createKeystoreCertificateInfo(GwtXSRFToken xsrfToken, String scopeIdString, String deviceIdString, String keystoreId, String alias, String certificateInfoIdString) throws GwtKapuaException {
+    public void createKeystoreCertificateInfo(GwtXSRFToken xsrfToken, String scopeIdString, String deviceIdString, String keystoreId, String alias, String certificateInfoIdString)
+            throws GwtKapuaException {
         try {
             checkXSRFToken(xsrfToken);
 
@@ -178,7 +173,7 @@ public class GwtDeviceKeystoreManagementServiceImpl extends KapuaRemoteServiceSe
             KapuaId scopeId = KapuaEid.parseCompactId(scopeIdString);
             KapuaId deviceId = KapuaEid.parseCompactId(deviceIdString);
 
-            DeviceKeystoreKeypair deviceKeystoreKeypair = DEVICE_KEYSTORE_MANAGEMENT_FACTORY.newDeviceKeystoreKeypair();
+            DeviceKeystoreKeypair deviceKeystoreKeypair = new DeviceKeystoreKeypair();
             deviceKeystoreKeypair.setKeystoreId(gwtKeystoreKeypair.getKeystoreId());
             deviceKeystoreKeypair.setAlias(gwtKeystoreKeypair.getAlias());
             deviceKeystoreKeypair.setAlgorithm(gwtKeystoreKeypair.getAlgorithm());
@@ -200,7 +195,7 @@ public class GwtDeviceKeystoreManagementServiceImpl extends KapuaRemoteServiceSe
             KapuaId scopeId = KapuaEid.parseCompactId(scopeIdString);
             KapuaId deviceId = KapuaEid.parseCompactId(deviceIdString);
 
-            DeviceKeystoreCSRInfo deviceKeystoreCsrInfo = DEVICE_KEYSTORE_MANAGEMENT_FACTORY.newDeviceKeystoreCSRInfo();
+            DeviceKeystoreCSRInfo deviceKeystoreCsrInfo = new DeviceKeystoreCSRInfo();
             deviceKeystoreCsrInfo.setKeystoreId(gwtKeystoreCsr.getKeystoreId());
             deviceKeystoreCsrInfo.setAlias(gwtKeystoreCsr.getAlias());
             deviceKeystoreCsrInfo.setSignatureAlgorithm(gwtKeystoreCsr.getSignatureAlgorithm());
@@ -218,7 +213,6 @@ public class GwtDeviceKeystoreManagementServiceImpl extends KapuaRemoteServiceSe
             throw KapuaExceptionHandler.buildExceptionFromError(exception);
         }
     }
-
 
     @Override
     public void deleteKeystoreItem(GwtXSRFToken xsrfToken, String scopeIdString, String deviceIdString, String keystoreId, String alias) throws GwtKapuaException {

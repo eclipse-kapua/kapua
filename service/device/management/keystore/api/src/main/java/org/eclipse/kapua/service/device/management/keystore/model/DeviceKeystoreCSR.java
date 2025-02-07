@@ -12,14 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.keystore.model;
 
-import org.eclipse.kapua.KapuaSerializable;
-import org.eclipse.kapua.service.device.registry.Device;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.KapuaSerializable;
+import org.eclipse.kapua.service.device.registry.Device;
 
 /**
  * {@link DeviceKeystoreCSR} definition.
@@ -30,8 +30,10 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "deviceKeystoreCSR")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DeviceKeystoreXmlRegistry.class, factoryMethod = "newDeviceKeystoreCSR")
-public interface DeviceKeystoreCSR extends KapuaSerializable {
+@XmlType
+public class DeviceKeystoreCSR implements KapuaSerializable {
+
+    private String signingRequest;
 
     /**
      * Gets the certificate signing request from the {@link Device#getId()}.
@@ -40,13 +42,19 @@ public interface DeviceKeystoreCSR extends KapuaSerializable {
      * @since 1.5.0
      */
     @XmlElement(name = "signingRequest")
-    String getSigningRequest();
+    public String getSigningRequest() {
+        return signingRequest;
+    }
 
     /**
      * Sets the certificate signing request from the {@link Device#getId()}.
      *
-     * @param signingRequest The signing request from the {@link Device#getId()}.
+     * @param signingRequest
+     *         The signing request from the {@link Device#getId()}.
      * @since 1.5.0
      */
-    void setSigningRequest(String signingRequest);
+    public void setSigningRequest(String signingRequest) {
+        this.signingRequest = signingRequest;
+    }
+
 }

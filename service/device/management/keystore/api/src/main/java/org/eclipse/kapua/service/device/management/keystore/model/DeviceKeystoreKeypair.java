@@ -12,15 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.keystore.model;
 
-import org.eclipse.kapua.KapuaSerializable;
-import org.eclipse.kapua.service.device.registry.Device;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.eclipse.kapua.KapuaSerializable;
+import org.eclipse.kapua.service.device.registry.Device;
 
 /**
  * {@link DeviceKeystoreKeypair} definition.
@@ -31,8 +30,15 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "deviceKeystoreKeypair")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DeviceKeystoreXmlRegistry.class, factoryMethod = "newDeviceKeystoreKeypair")
-public interface DeviceKeystoreKeypair extends KapuaSerializable {
+@XmlType
+public class DeviceKeystoreKeypair implements KapuaSerializable {
+
+    private String keystoreId;
+    private String alias;
+    private String algorithm;
+    private String signatureAlgorithm;
+    private Integer size;
+    private String attributes;
 
     /**
      * Gets the keystore id.
@@ -41,15 +47,20 @@ public interface DeviceKeystoreKeypair extends KapuaSerializable {
      * @since 1.5.0
      */
     @XmlElement(name = "keystoreId")
-    String getKeystoreId();
+    public String getKeystoreId() {
+        return keystoreId;
+    }
 
     /**
      * Sets the keystore id.
      *
-     * @param keystoreId The keystore id.
+     * @param keystoreId
+     *         The keystore id.
      * @since 1.5.0
      */
-    void setKeystoreId(String keystoreId);
+    public void setKeystoreId(String keystoreId) {
+        this.keystoreId = keystoreId;
+    }
 
     /**
      * Gets the alias.
@@ -58,15 +69,20 @@ public interface DeviceKeystoreKeypair extends KapuaSerializable {
      * @since 1.5.0
      */
     @XmlElement(name = "alias")
-    String getAlias();
+    public String getAlias() {
+        return alias;
+    }
 
     /**
      * Sets the alias.
      *
-     * @param alias The alias.
+     * @param alias
+     *         The alias.
      * @since 1.5.0
      */
-    void setAlias(String alias);
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
 
     /**
      * Gets the algorithm.
@@ -75,15 +91,20 @@ public interface DeviceKeystoreKeypair extends KapuaSerializable {
      * @since 1.5.0
      */
     @XmlElement(name = "algorithm")
-    String getAlgorithm();
+    public String getAlgorithm() {
+        return algorithm;
+    }
 
     /**
      * Sets the algorithm.
      *
-     * @param algorithm The algorithm.
+     * @param algorithm
+     *         The algorithm.
      * @since 1.5.0
      */
-    void setAlgorithm(String algorithm);
+    public void setAlgorithm(String algorithm) {
+        this.algorithm = algorithm;
+    }
 
     /**
      * Gets the size in bytes.
@@ -92,15 +113,20 @@ public interface DeviceKeystoreKeypair extends KapuaSerializable {
      * @since 1.5.0
      */
     @XmlElement(name = "size")
-    Integer getSize();
+    public Integer getSize() {
+        return size;
+    }
 
     /**
      * Sets the size in bytes.
      *
-     * @param size The size in bytes.
+     * @param size
+     *         The size in bytes.
      * @since 1.5.0
      */
-    void setSize(Integer size);
+    public void setSize(Integer size) {
+        this.size = size;
+    }
 
     /**
      * Gets the signature algorithm.
@@ -109,15 +135,20 @@ public interface DeviceKeystoreKeypair extends KapuaSerializable {
      * @since 1.5.0
      */
     @XmlElement(name = "signatureAlgorithm")
-    String getSignatureAlgorithm();
+    public String getSignatureAlgorithm() {
+        return signatureAlgorithm;
+    }
 
     /**
      * Sets the signature algorithm.
      *
-     * @param signatureAlgorithm The signature algorithm.
+     * @param signatureAlgorithm
+     *         The signature algorithm.
      * @since 1.5.0
      */
-    void setSignatureAlgorithm(String signatureAlgorithm);
+    public void setSignatureAlgorithm(String signatureAlgorithm) {
+        this.signatureAlgorithm = signatureAlgorithm;
+    }
 
     /**
      * Gets the attributes.
@@ -126,13 +157,19 @@ public interface DeviceKeystoreKeypair extends KapuaSerializable {
      * @since 1.5.0
      */
     @XmlElement(name = "attributes")
-    String getAttributes();
+    public String getAttributes() {
+        return attributes;
+    }
 
     /**
      * Sets the attributes.
      *
-     * @param attributes The attributes.
+     * @param attributes
+     *         The attributes.
      * @since 1.5.0
      */
-    void setAttributes(String attributes);
+    public void setAttributes(String attributes) {
+        this.attributes = attributes;
+    }
+
 }

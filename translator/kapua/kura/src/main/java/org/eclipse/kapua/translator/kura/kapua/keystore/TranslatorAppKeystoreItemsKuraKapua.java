@@ -12,17 +12,16 @@
  *******************************************************************************/
 package org.eclipse.kapua.translator.kura.kapua.keystore;
 
+import javax.inject.Inject;
+
 import org.eclipse.kapua.service.device.call.kura.model.keystore.KuraKeystoreItem;
 import org.eclipse.kapua.service.device.call.message.kura.app.response.KuraResponseMessage;
 import org.eclipse.kapua.service.device.call.message.kura.app.response.KuraResponsePayload;
 import org.eclipse.kapua.service.device.management.commons.setting.DeviceManagementSetting;
-import org.eclipse.kapua.service.device.management.keystore.DeviceKeystoreManagementFactory;
 import org.eclipse.kapua.service.device.management.keystore.internal.message.response.KeystoreItemsResponseMessage;
 import org.eclipse.kapua.service.device.management.keystore.internal.message.response.KeystoreResponsePayload;
 import org.eclipse.kapua.translator.Translator;
 import org.eclipse.kapua.translator.exception.InvalidPayloadException;
-
-import javax.inject.Inject;
 
 /**
  * {@link Translator} implementation from {@link KuraResponseMessage} to {@link KeystoreItemsResponseMessage}
@@ -37,8 +36,8 @@ public class TranslatorAppKeystoreItemsKuraKapua extends AbstractTranslatorAppKe
      * @since 1.5.0
      */
     @Inject
-    public TranslatorAppKeystoreItemsKuraKapua(DeviceManagementSetting deviceManagementSetting, DeviceKeystoreManagementFactory deviceKeystoreManagementFactory) {
-        super(deviceManagementSetting, deviceKeystoreManagementFactory, KeystoreItemsResponseMessage.class);
+    public TranslatorAppKeystoreItemsKuraKapua(DeviceManagementSetting deviceManagementSetting) {
+        super(deviceManagementSetting, KeystoreItemsResponseMessage.class);
     }
 
     @Override

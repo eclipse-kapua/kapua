@@ -12,14 +12,16 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.keystore.model;
 
-import org.eclipse.kapua.KapuaSerializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.List;
+
+import org.eclipse.kapua.KapuaSerializable;
 
 /**
  * {@link DeviceKeystores} definition.
@@ -28,8 +30,12 @@ import java.util.List;
  */
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlRootElement(name = "deviceKeystores")
-@XmlType(factoryClass = DeviceKeystoreXmlRegistry.class, factoryMethod = "newDeviceKeystores")
-public interface DeviceKeystores extends KapuaSerializable {
+@XmlType
+public class DeviceKeystores implements KapuaSerializable {
+
+    private static final long serialVersionUID = 1318691706440015345L;
+
+    private List<DeviceKeystore> keystores;
 
     /**
      * Gets the {@link List} of {@link DeviceKeystore}s
@@ -38,21 +44,34 @@ public interface DeviceKeystores extends KapuaSerializable {
      * @since 1.5.0
      */
     @XmlElement(name = "keystores")
-    List<DeviceKeystore> getKeystores();
+    public List<DeviceKeystore> getKeystores() {
+        if (keystores == null) {
+            keystores = new ArrayList<>();
+        }
+
+        return keystores;
+    }
 
     /**
      * Adds a {@link DeviceKeystore} to the {@link List}
      *
-     * @param keystore The {@link DeviceKeystore} to add.
+     * @param keystore
+     *         The {@link DeviceKeystore} to add.
      * @since 1.5.0
      */
-    void addKeystore(DeviceKeystore keystore);
+    public void addKeystore(DeviceKeystore keystore) {
+        getKeystores().add(keystore);
+    }
 
     /**
      * Sets the {@link List} of {@link DeviceKeystore}s
      *
-     * @param keystores The {@link List} of {@link DeviceKeystore}s
+     * @param keystores
+     *         The {@link List} of {@link DeviceKeystore}s
      * @since 1.5.0
      */
-    void setKeystores(List<DeviceKeystore> keystores);
+    public void setKeystores(List<DeviceKeystore> keystores) {
+        this.keystores = keystores;
+    }
+
 }

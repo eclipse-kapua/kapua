@@ -12,14 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.keystore.model;
 
-import org.eclipse.kapua.KapuaSerializable;
-import org.eclipse.kapua.service.device.registry.Device;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.KapuaSerializable;
+import org.eclipse.kapua.service.device.registry.Device;
 
 /**
  * {@link DeviceKeystoreCertificate} definition.
@@ -30,8 +30,12 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "deviceKeystoreCertificate")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DeviceKeystoreXmlRegistry.class, factoryMethod = "newDeviceKeystoreCertificate")
-public interface DeviceKeystoreCertificate extends KapuaSerializable {
+@XmlType
+public class DeviceKeystoreCertificate implements KapuaSerializable {
+
+    private String keystoreId;
+    private String alias;
+    private String certificate;
 
     /**
      * Gets the keystore id.
@@ -40,15 +44,20 @@ public interface DeviceKeystoreCertificate extends KapuaSerializable {
      * @since 1.5.0
      */
     @XmlElement(name = "keystoreId")
-    String getKeystoreId();
+    public String getKeystoreId() {
+        return keystoreId;
+    }
 
     /**
      * Sets the keystore id.
      *
-     * @param keystoreId The keystore id.
+     * @param keystoreId
+     *         The keystore id.
      * @since 1.5.0
      */
-    void setKeystoreId(String keystoreId);
+    public void setKeystoreId(String keystoreId) {
+        this.keystoreId = keystoreId;
+    }
 
     /**
      * Gets the alias.
@@ -57,15 +66,20 @@ public interface DeviceKeystoreCertificate extends KapuaSerializable {
      * @since 1.5.0
      */
     @XmlElement(name = "alias")
-    String getAlias();
+    public String getAlias() {
+        return alias;
+    }
 
     /**
      * Sets the alias.
      *
-     * @param alias The alias.
+     * @param alias
+     *         The alias.
      * @since 1.5.0
      */
-    void setAlias(String alias);
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
 
     /**
      * Gets the certificate.
@@ -74,13 +88,19 @@ public interface DeviceKeystoreCertificate extends KapuaSerializable {
      * @since 1.5.0
      */
     @XmlElement(name = "certificate")
-    String getCertificate();
+    public String getCertificate() {
+        return certificate;
+    }
 
     /**
      * Sets the certificate.
      *
-     * @param certificate The certificate.
+     * @param certificate
+     *         The certificate.
      * @since 1.5.0
      */
-    void setCertificate(String certificate);
+    public void setCertificate(String certificate) {
+        this.certificate = certificate;
+    }
+
 }

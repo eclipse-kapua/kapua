@@ -12,17 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.registry.steps;
 
-import com.google.inject.Singleton;
-import io.cucumber.java.After;
-import io.cucumber.java.Before;
-import io.cucumber.java.Scenario;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.eclipse.kapua.broker.artemis.plugin.security.setting.BrokerSetting;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.qa.common.StepData;
 import org.eclipse.kapua.qa.common.TestBase;
-import org.eclipse.kapua.service.device.management.keystore.DeviceKeystoreManagementFactory;
 import org.eclipse.kapua.service.device.management.keystore.DeviceKeystoreManagementService;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystore;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreCSR;
@@ -37,8 +34,13 @@ import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.junit.Assert;
 
-import javax.inject.Inject;
-import java.util.List;
+import com.google.inject.Singleton;
+
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 
 @Singleton
 public class DeviceManagementKeystoreSteps extends TestBase {
@@ -52,7 +54,6 @@ public class DeviceManagementKeystoreSteps extends TestBase {
     private DeviceRegistryService deviceRegistryService;
 
     private DeviceKeystoreManagementService deviceKeystoreManagementService;
-    private DeviceKeystoreManagementFactory deviceKeystoreManagementFactory;
     private BrokerSetting brokerSettings = KapuaLocator.getInstance().getComponent(BrokerSetting.class);
 
     /**
@@ -75,7 +76,6 @@ public class DeviceManagementKeystoreSteps extends TestBase {
         KapuaLocator locator = KapuaLocator.getInstance();
         deviceRegistryService = locator.getService(DeviceRegistryService.class);
         deviceKeystoreManagementService = locator.getService(DeviceKeystoreManagementService.class);
-        deviceKeystoreManagementFactory = locator.getFactory(DeviceKeystoreManagementFactory.class);
     }
 
     @When("Keystores are requested")
@@ -145,7 +145,7 @@ public class DeviceManagementKeystoreSteps extends TestBase {
         for (KuraDevice kuraDevice : kuraDevices) {
             Device device = deviceRegistryService.findByClientId(SYS_SCOPE_ID, kuraDevice.getClientId());
             if (device != null) {
-                DeviceKeystoreItemQuery query = deviceKeystoreManagementFactory.newDeviceKeystoreItemQuery();
+                DeviceKeystoreItemQuery query = new DeviceKeystoreItemQuery();
                 query.setAlias(alias);
                 DeviceKeystoreItems keystoreItems = deviceKeystoreManagementService.getKeystoreItems(device.getScopeId(), device.getId(), query, null);
                 List<DeviceKeystoreItem> keystoreItemList = keystoreItems.getKeystoreItems();
@@ -160,7 +160,7 @@ public class DeviceManagementKeystoreSteps extends TestBase {
         for (KuraDevice kuraDevice : kuraDevices) {
             Device device = deviceRegistryService.findByClientId(SYS_SCOPE_ID, kuraDevice.getClientId());
             if (device != null) {
-                DeviceKeystoreItemQuery query = deviceKeystoreManagementFactory.newDeviceKeystoreItemQuery();
+                DeviceKeystoreItemQuery query = new DeviceKeystoreItemQuery();
                 query.setKeystoreId(keystoreId);
                 DeviceKeystoreItems keystoreItems = deviceKeystoreManagementService.getKeystoreItems(device.getScopeId(), device.getId(), query, null);
                 List<DeviceKeystoreItem> keystoreItemList = keystoreItems.getKeystoreItems();
@@ -238,7 +238,7 @@ public class DeviceManagementKeystoreSteps extends TestBase {
         for (KuraDevice kuraDevice : kuraDevices) {
             Device device = deviceRegistryService.findByClientId(SYS_SCOPE_ID, kuraDevice.getClientId());
             if (device != null) {
-                DeviceKeystoreCertificate deviceKeystoreCertificate = deviceKeystoreManagementFactory.newDeviceKeystoreCertificate();
+                DeviceKeystoreCertificate deviceKeystoreCertificate = new DeviceKeystoreCertificate();
                 deviceKeystoreCertificate.setAlias(alias);
                 deviceKeystoreCertificate.setKeystoreId("SSLKeystore");
                 deviceKeystoreCertificate.setCertificate("-----BEGIN CERTIFICATE-----\n" +
@@ -282,7 +282,7 @@ public class DeviceManagementKeystoreSteps extends TestBase {
         for (KuraDevice kuraDevice : (List<KuraDevice>) stepData.get(KURA_DEVICES)) {
             Device device = deviceRegistryService.findByClientId(SYS_SCOPE_ID, kuraDevice.getClientId());
             if (device != null) {
-                DeviceKeystoreKeypair deviceKeystoreKeypair = deviceKeystoreManagementFactory.newDeviceKeystoreKeypair();
+                DeviceKeystoreKeypair deviceKeystoreKeypair = new DeviceKeystoreKeypair();
                 deviceKeystoreKeypair.setAlias(alias);
                 deviceKeystoreKeypair.setKeystoreId("SSLKeystore");
                 deviceKeystoreKeypair.setAlgorithm("RSA");
@@ -343,7 +343,7 @@ public class DeviceManagementKeystoreSteps extends TestBase {
         for (KuraDevice kuraDevice : kuraDevices) {
             Device device = deviceRegistryService.findByClientId(SYS_SCOPE_ID, kuraDevice.getClientId());
             if (device != null) {
-                DeviceKeystoreCSRInfo deviceKeystoreCSRInfo = deviceKeystoreManagementFactory.newDeviceKeystoreCSRInfo();
+                DeviceKeystoreCSRInfo deviceKeystoreCSRInfo = new DeviceKeystoreCSRInfo();
                 deviceKeystoreCSRInfo.setKeystoreId(keystoreId);
                 deviceKeystoreCSRInfo.setAlias(alias);
                 deviceKeystoreCSRInfo.setSignatureAlgorithm("SHA256withRSA");

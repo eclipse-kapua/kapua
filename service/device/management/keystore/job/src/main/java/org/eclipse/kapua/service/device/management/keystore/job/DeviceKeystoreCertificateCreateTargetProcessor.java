@@ -12,21 +12,20 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.keystore.job;
 
+import javax.batch.runtime.context.JobContext;
+import javax.batch.runtime.context.StepContext;
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.job.engine.commons.operation.AbstractDeviceTargetProcessor;
 import org.eclipse.kapua.job.engine.commons.wrappers.JobTargetWrapper;
 import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.service.device.management.keystore.DeviceKeystoreManagementFactory;
 import org.eclipse.kapua.service.device.management.keystore.DeviceKeystoreManagementService;
 import org.eclipse.kapua.service.device.management.keystore.job.definition.DeviceKeystoreCertificateCreatePropertyKeys;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreCertificate;
 import org.eclipse.kapua.service.job.operation.TargetProcessor;
 import org.eclipse.kapua.service.job.targets.JobTarget;
-
-import javax.batch.runtime.context.JobContext;
-import javax.batch.runtime.context.StepContext;
-import javax.inject.Inject;
 
 /**
  * {@link TargetProcessor} for {@link DeviceKeystoreManagementService#createKeystoreCertificate(KapuaId, KapuaId, DeviceKeystoreCertificate, Long)}.
@@ -37,8 +36,6 @@ public class DeviceKeystoreCertificateCreateTargetProcessor extends AbstractDevi
 
     @Inject
     DeviceKeystoreManagementService deviceKeystoreManagementService;
-    @Inject
-    DeviceKeystoreManagementFactory deviceKeystoreManagementFactory;
     @Inject
     JobContext jobContext;
     @Inject
@@ -57,7 +54,7 @@ public class DeviceKeystoreCertificateCreateTargetProcessor extends AbstractDevi
         String certificate = stepContextWrapper.getStepProperty(DeviceKeystoreCertificateCreatePropertyKeys.CERTIFICATE, String.class);
         Long timeout = stepContextWrapper.getStepProperty(DeviceKeystoreCertificateCreatePropertyKeys.TIMEOUT, Long.class);
 
-        DeviceKeystoreCertificate deviceKeystoreCertificate = deviceKeystoreManagementFactory.newDeviceKeystoreCertificate();
+        DeviceKeystoreCertificate deviceKeystoreCertificate = new DeviceKeystoreCertificate();
 
         deviceKeystoreCertificate.setKeystoreId(keystoreId);
         deviceKeystoreCertificate.setAlias(alias);

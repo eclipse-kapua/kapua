@@ -31,7 +31,6 @@ import org.eclipse.kapua.service.certificate.info.CertificateInfoService;
 import org.eclipse.kapua.service.device.management.commons.AbstractDeviceManagementTransactionalServiceImpl;
 import org.eclipse.kapua.service.device.management.commons.call.DeviceCallBuilder;
 import org.eclipse.kapua.service.device.management.exception.DeviceManagementRequestContentException;
-import org.eclipse.kapua.service.device.management.keystore.DeviceKeystoreManagementFactory;
 import org.eclipse.kapua.service.device.management.keystore.DeviceKeystoreManagementService;
 import org.eclipse.kapua.service.device.management.keystore.internal.message.request.KeystoreCertificateRequestMessage;
 import org.eclipse.kapua.service.device.management.keystore.internal.message.request.KeystoreCsrRequestMessage;
@@ -53,8 +52,6 @@ import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystore
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreItems;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreKeypair;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystores;
-import org.eclipse.kapua.service.device.management.keystore.model.internal.DeviceKeystoreCertificateImpl;
-import org.eclipse.kapua.service.device.management.keystore.model.internal.DeviceKeystoreItemQueryImpl;
 import org.eclipse.kapua.service.device.management.message.KapuaMethod;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventFactory;
@@ -80,7 +77,6 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
 
     protected final CertificateInfoService certificateInfoService;
     protected final CertificateInfoFactory certificateInfoFactory;
-    private final DeviceKeystoreManagementFactory deviceKeystoreManagementFactory;
 
     public DeviceKeystoreManagementServiceImpl(
             TxManager txManager,
@@ -89,7 +85,7 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
             DeviceEventFactory deviceEventFactory,
             DeviceRegistryService deviceRegistryService,
             CertificateInfoService certificateInfoService,
-            CertificateInfoFactory certificateInfoFactory, DeviceKeystoreManagementFactory deviceKeystoreManagementFactory) {
+            CertificateInfoFactory certificateInfoFactory) {
         super(txManager,
                 authorizationService,
                 deviceEventService,
@@ -97,7 +93,6 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
                 deviceRegistryService);
         this.certificateInfoService = certificateInfoService;
         this.certificateInfoFactory = certificateInfoFactory;
-        this.deviceKeystoreManagementFactory = deviceKeystoreManagementFactory;
     }
 
     @Override
@@ -148,12 +143,12 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         // Create event
         createDeviceEvent(scopeId, deviceId, keystoreRequestMessage, responseMessage);
         // Check response
-        return checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getKeystores().orElse(deviceKeystoreManagementFactory.newDeviceKeystores()));
+        return checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getKeystores().orElse(new DeviceKeystores()));
     }
 
     @Override
     public DeviceKeystoreItems getKeystoreItems(KapuaId scopeId, KapuaId deviceId, Long timeout) throws KapuaException {
-        return getKeystoreItems(scopeId, deviceId, new DeviceKeystoreItemQueryImpl(), timeout);
+        return getKeystoreItems(scopeId, deviceId, new DeviceKeystoreItemQuery(), timeout);
     }
 
     @Override
@@ -218,7 +213,7 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         // Create event
         createDeviceEvent(scopeId, deviceId, keystoreRequestMessage, responseMessage);
         // Check response
-        return checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getKeystoreItems().orElse(deviceKeystoreManagementFactory.newDeviceKeystoreItems()));
+        return checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getKeystoreItems().orElse(new DeviceKeystoreItems()));
     }
 
     @Override
@@ -238,7 +233,7 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         keystoreRequestChannel.setResource("item");
 
         // Build query
-        DeviceKeystoreItemQuery itemQuery = new DeviceKeystoreItemQueryImpl();
+        DeviceKeystoreItemQuery itemQuery = new DeviceKeystoreItemQuery();
         itemQuery.setKeystoreId(keystoreId);
         itemQuery.setAlias(alias);
 
@@ -281,7 +276,7 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         // Create event
         createDeviceEvent(scopeId, deviceId, keystoreRequestMessage, responseMessage);
         // Check response
-        return checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getKeystoreItem().orElse(deviceKeystoreManagementFactory.newDeviceKeystoreItem()));
+        return checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getKeystoreItem().orElse(new DeviceKeystoreItem()));
     }
 
     @Override
@@ -305,7 +300,7 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
             throw new KapuaEntityNotFoundException(CertificateInfo.TYPE, certificateId);
         }
         // Build DeviceKeystoreCertificate create
-        DeviceKeystoreCertificate deviceKeystoreCertificate = new DeviceKeystoreCertificateImpl();
+        DeviceKeystoreCertificate deviceKeystoreCertificate = new DeviceKeystoreCertificate();
         deviceKeystoreCertificate.setKeystoreId(keystoreId);
         deviceKeystoreCertificate.setAlias(alias);
         deviceKeystoreCertificate.setCertificate(certificateInfo.getCertificate());
@@ -484,7 +479,7 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         // Create event
         createDeviceEvent(scopeId, deviceId, keystoreRequestMessage, responseMessage);
         // Check response
-        return checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getCSR().orElse(deviceKeystoreManagementFactory.newDeviceKeystoreCSR()));
+        return checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getCSR().orElse(new DeviceKeystoreCSR()));
     }
 
     @Override
@@ -504,7 +499,7 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         keystoreRequestChannel.setResource("items");
 
         // Build query
-        DeviceKeystoreItemQuery itemQuery = new DeviceKeystoreItemQueryImpl();
+        DeviceKeystoreItemQuery itemQuery = new DeviceKeystoreItemQuery();
         itemQuery.setKeystoreId(keystoreId);
         itemQuery.setAlias(alias);
 
