@@ -96,6 +96,11 @@ public class AccountLocatorConfiguration {
                 } catch (KapuaException e) {
                     // skip
                 }
+                try {
+                    Mockito.when(mockedAuthorization.isPermitted(Matchers.any(Permission.class))).thenReturn(true);
+                } catch (KapuaException e) {
+                    // skip
+                }
 
                 bind(KapuaJpaRepositoryConfiguration.class).toInstance(new KapuaJpaRepositoryConfiguration());
 
