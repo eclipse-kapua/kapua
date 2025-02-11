@@ -21,20 +21,12 @@ import org.eclipse.kapua.message.KapuaMessage;
  *
  * @since 1.0.0
  */
-public interface KapuaResponseMessage<C extends KapuaResponseChannel, P extends KapuaResponsePayload>
+public class KapuaResponseMessage<C extends KapuaResponseChannel, P extends KapuaResponsePayload>
         extends KapuaMessage<C, P> {
 
-    @Override
-    C getChannel();
+    private static final long serialVersionUID = 8647251974722103216L;
 
-    @Override
-    void setChannel(C semanticChannel);
-
-    @Override
-    P getPayload();
-
-    @Override
-    void setPayload(P payload);
+    private KapuaResponseCode responseCode;
 
     /**
      * Gets the {@link KapuaResponseCode}.
@@ -42,13 +34,19 @@ public interface KapuaResponseMessage<C extends KapuaResponseChannel, P extends 
      * @return The {@link KapuaResponseCode}.
      * @since 1.0.0
      */
-    KapuaResponseCode getResponseCode();
+    public KapuaResponseCode getResponseCode() {
+        return responseCode;
+    }
 
     /**
      * Sets the {@link KapuaResponseCode}.
      *
-     * @param responseCode The {@link KapuaResponseCode}.
+     * @param responseCode
+     *         The {@link KapuaResponseCode}.
      * @since 1.0.0
      */
-    void setResponseCode(KapuaResponseCode responseCode);
+    public void setResponseCode(KapuaResponseCode responseCode) {
+        this.responseCode = responseCode;
+    }
+
 }

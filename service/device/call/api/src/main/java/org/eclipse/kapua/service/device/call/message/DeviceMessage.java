@@ -13,18 +13,22 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.call.message;
 
-import org.eclipse.kapua.message.Message;
-
 import java.util.Date;
+
+import org.eclipse.kapua.message.Channel;
+import org.eclipse.kapua.message.Message;
+import org.eclipse.kapua.message.Payload;
 
 /**
  * {@link DeviceMessage} definition.
  *
- * @param <C> {@link DeviceChannel} type
- * @param <P> {@link DevicePayload} type
+ * @param <C>
+ *         {@link DeviceChannel} type
+ * @param <P>
+ *         {@link DevicePayload} type
  * @since 1.0.0
  */
-public interface DeviceMessage<C extends DeviceChannel, P extends DevicePayload> extends Message<C, P> {
+public interface DeviceMessage<C extends DeviceChannel & Channel, P extends DevicePayload & Payload> extends Message<C, P> {
 
     /**
      * Gets the {@link DeviceChannel}.
@@ -37,7 +41,8 @@ public interface DeviceMessage<C extends DeviceChannel, P extends DevicePayload>
     /**
      * Sets the {@link DeviceChannel}.
      *
-     * @param channel The {@link DeviceChannel} to set.
+     * @param channel
+     *         The {@link DeviceChannel} to set.
      * @since 1.0.0
      */
     void setChannel(C channel);
@@ -53,7 +58,8 @@ public interface DeviceMessage<C extends DeviceChannel, P extends DevicePayload>
     /**
      * Sets the {@link DevicePayload}.
      *
-     * @param payload The {@link DevicePayload} to set.
+     * @param payload
+     *         The {@link DevicePayload} to set.
      * @since 1.0.0
      */
     void setPayload(P payload);
@@ -69,7 +75,8 @@ public interface DeviceMessage<C extends DeviceChannel, P extends DevicePayload>
     /**
      * Sets the timestamp.
      *
-     * @param timestamp The timestamp to set.
+     * @param timestamp
+     *         The timestamp to set.
      * @since 1.0.0
      */
     void setTimestamp(Date timestamp);

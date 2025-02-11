@@ -13,13 +13,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.message;
 
-import org.eclipse.kapua.message.xml.MessageXmlRegistry;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.List;
 
 /**
  * {@link KapuaChannel} definition.
@@ -28,8 +27,14 @@ import java.util.List;
  */
 @XmlRootElement(name = "channel")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(propOrder = {"semanticParts"}, factoryClass = MessageXmlRegistry.class, factoryMethod = "newKapuaChannel")
-public interface KapuaChannel extends Channel {
+@XmlType(propOrder = { "semanticParts" })
+public class KapuaChannel implements Channel {
+
+    private List<String> semanticParts;
+
+    public String toString() {
+        return semanticParts != null ? String.join("/", semanticParts) : "";
+    }
 
     /**
      * Get the channel destination semantic part
@@ -37,7 +42,9 @@ public interface KapuaChannel extends Channel {
      * @return
      * @since 1.0.0
      */
-    List<String> getSemanticParts();
+    public List<String> getSemanticParts() {
+        return semanticParts;
+    }
 
     /**
      * Set the channel destination semantic part
@@ -45,13 +52,15 @@ public interface KapuaChannel extends Channel {
      * @param semanticParts
      * @since 1.0.0
      */
-    void setSemanticParts(List<String> semanticParts);
+    public void setSemanticParts(final List<String> semanticParts) {
+        this.semanticParts = semanticParts;
+    }
 
     /**
      * @return
      * @since 1.0.0
      */
-    default String toPathString() {
+    public String toPathString() {
         return String.join("/", getSemanticParts());
     }
 }

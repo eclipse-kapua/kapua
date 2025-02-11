@@ -12,20 +12,25 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.request.message.request;
 
-import org.eclipse.kapua.service.device.management.message.request.KapuaRequestChannel;
-import org.eclipse.kapua.service.device.management.request.GenericRequestXmlRegistry;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.List;
+
+import org.eclipse.kapua.service.device.management.message.request.KapuaRequestChannel;
 
 /**
  * Generic {@link KapuaRequestChannel} definition.
  *
  * @since 1.0.0
  */
-@XmlType(factoryClass = GenericRequestXmlRegistry.class, factoryMethod = "newRequestChannel")
-public interface GenericRequestChannel extends KapuaRequestChannel {
+@XmlType
+public class GenericRequestChannel extends KapuaRequestChannel {
+
+    private static final long serialVersionUID = -5140230399807797717L;
+
+    private List<String> resources;
 
     /**
      * Gets the resources.
@@ -36,15 +41,24 @@ public interface GenericRequestChannel extends KapuaRequestChannel {
      * @since 1.0.0
      */
     @XmlElement(name = "resources")
-    List<String> getResources();
+    public List<String> getResources() {
+        if (resources == null) {
+            resources = new ArrayList<>();
+        }
+
+        return resources;
+    }
 
     /**
      * Sets the resources.
      * <p>
      * To be used if {@link #setResource(String)} is not enough.
      *
-     * @param resources The resources.
+     * @param resources
+     *         The resources.
      * @since 1.0.0
      */
-    void setResources(List<String> resources);
+    public void setResources(List<String> resources) {
+        this.resources = resources;
+    }
 }

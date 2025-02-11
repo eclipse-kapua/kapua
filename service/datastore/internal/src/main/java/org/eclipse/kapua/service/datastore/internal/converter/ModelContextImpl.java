@@ -26,14 +26,12 @@ import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.commons.util.KapuaDateUtils;
 import org.eclipse.kapua.message.KapuaPayload;
 import org.eclipse.kapua.message.KapuaPosition;
-import org.eclipse.kapua.message.internal.KapuaPositionImpl;
-import org.eclipse.kapua.message.internal.device.data.KapuaDataChannelImpl;
-import org.eclipse.kapua.message.internal.device.data.KapuaDataPayloadImpl;
+import org.eclipse.kapua.message.device.data.KapuaDataChannel;
+import org.eclipse.kapua.message.device.data.KapuaDataPayload;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.datastore.internal.mediator.DatastoreUtils;
 import org.eclipse.kapua.service.datastore.internal.model.ChannelInfoImpl;
 import org.eclipse.kapua.service.datastore.internal.model.ClientInfoImpl;
-import org.eclipse.kapua.service.datastore.internal.model.DatastoreMessageImpl;
 import org.eclipse.kapua.service.datastore.internal.model.MetricInfoImpl;
 import org.eclipse.kapua.service.datastore.model.ChannelInfo;
 import org.eclipse.kapua.service.datastore.model.ClientInfo;
@@ -138,7 +136,7 @@ public class ModelContextImpl implements ModelContext {
     private DatastoreMessage unmarshalDatastoreMessage(Map<String, Object> messageMap) throws ParseException {
 
         StorableFetchStyle fetchStyle = getStorableFetchStyle(messageMap);
-        DatastoreMessageImpl message = new DatastoreMessageImpl();
+        DatastoreMessage message = new DatastoreMessage();
         String id = (String) messageMap.get(getIdKeyName());
         message.setDatastoreId(storableIdFactory.newStorableId(id));
         String messageId = (String) messageMap.get(MessageSchema.MESSAGE_ID);
@@ -159,7 +157,7 @@ public class ModelContextImpl implements ModelContext {
         message.setClientId(clientId);
         message.setDatastoreId(storableIdFactory.newStorableId(id));
 
-        KapuaDataChannelImpl dataChannel = new KapuaDataChannelImpl();
+        KapuaDataChannel dataChannel = new KapuaDataChannel();
         message.setChannel(dataChannel);
 
         String timestamp = (String) messageMap.get(MessageSchema.MESSAGE_TIMESTAMP);
@@ -173,14 +171,14 @@ public class ModelContextImpl implements ModelContext {
         List<String> channelParts = (List<String>) messageMap.get(MessageSchema.MESSAGE_CHANNEL_PARTS);
         dataChannel.setSemanticParts(channelParts);
 
-        KapuaDataPayloadImpl payload = new KapuaDataPayloadImpl();
+        KapuaDataPayload payload = new KapuaDataPayload();
         Map<String, Object> positionMap = (Map<String, Object>) messageMap.get(MessageSchema.MESSAGE_POSITION);
 
-        KapuaPositionImpl position;
+        KapuaPosition position;
         if (positionMap != null) {
             Map<String, Object> locationMap = (Map<String, Object>) positionMap.get(MessageSchema.MESSAGE_POS_LOCATION);
 
-            position = new KapuaPositionImpl();
+            position = new KapuaPosition();
             if (locationMap != null && locationMap.get(MessageSchema.MESSAGE_POSITION_LATITUDE) != null) {
                 position.setLatitude((double) locationMap.get(MessageSchema.MESSAGE_POSITION_LATITUDE));
             }

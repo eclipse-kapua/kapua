@@ -12,13 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.transport.message.mqtt;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
+import java.util.regex.Pattern;
+
 import org.eclipse.kapua.transport.message.TransportChannel;
 import org.eclipse.kapua.transport.mqtt.setting.MqttClientSetting;
 import org.eclipse.kapua.transport.mqtt.setting.MqttClientSettingKeys;
 
-import java.util.regex.Pattern;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 /**
  * Implementation of {@link TransportChannel} API for MQTT transport facade
@@ -52,7 +53,8 @@ public class MqttTopic implements TransportChannel {
     /**
      * Construct a {@link MqttTopic} with the given parameter
      *
-     * @param topic The topic to set for this {@link MqttTopic}
+     * @param topic
+     *         The topic to set for this {@link MqttTopic}
      * @since 1.0.0
      */
     public MqttTopic(String topic) {
@@ -62,11 +64,12 @@ public class MqttTopic implements TransportChannel {
     /**
      * Construct a {@link MqttTopic} with the given parameters.
      * <p>
-     * Topic is built by concatenating all {@link String}[] token following the array order,
-     * separating each token with the topic separator configured in {@link MqttClientSetting}.{@link MqttClientSettingKeys#TRANSPORT_TOPIC_SEPARATOR}
+     * Topic is built by concatenating all {@link String}[] token following the array order, separating each token with the topic separator configured in
+     * {@link MqttClientSetting}.{@link MqttClientSettingKeys#TRANSPORT_TOPIC_SEPARATOR}
      * </p>
      *
-     * @param topicParts The {@link String}[] from which build the full topic.
+     * @param topicParts
+     *         The {@link String}[] from which build the full topic.
      * @since 1.0.0
      */
     public MqttTopic(String[] topicParts) {
@@ -89,7 +92,8 @@ public class MqttTopic implements TransportChannel {
     /**
      * Sets the full topic for this {@link MqttTopic}
      *
-     * @param topic The full topic to set for this {@link MqttTopic}
+     * @param topic
+     *         The full topic to set for this {@link MqttTopic}
      * @since 1.0.0
      */
     public void setTopic(String topic) {

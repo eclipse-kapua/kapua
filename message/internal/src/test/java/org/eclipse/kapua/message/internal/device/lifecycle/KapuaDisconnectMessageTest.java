@@ -20,7 +20,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-
 @Category(JUnitTests.class)
 public class KapuaDisconnectMessageTest {
 
@@ -46,14 +45,14 @@ public class KapuaDisconnectMessageTest {
 
     @Test
     public void kapuaDisconnectMessageConstructor() throws Exception {
-        KapuaDisconnectMessageImpl kapuaDisconnectMessage = new KapuaDisconnectMessageImpl();
+        KapuaDisconnectMessage kapuaDisconnectMessage = new KapuaDisconnectMessage();
 
         Assert.assertNotNull(kapuaDisconnectMessage);
     }
 
     @Test
     public void kapuaDisconnectMessageGetterSetters() throws Exception {
-        KapuaDisconnectMessage kapuaDisconnectMessage = new KapuaDisconnectMessageImpl();
+        KapuaDisconnectMessage kapuaDisconnectMessage = new KapuaDisconnectMessage();
 
         kapuaDisconnectMessage.setClientId("clientId-1");
         Assert.assertEquals("clientId-1", kapuaDisconnectMessage.getClientId());
@@ -61,7 +60,7 @@ public class KapuaDisconnectMessageTest {
 
     @Test
     public void kapuaDisconnectChannelGetterSetters() throws Exception {
-        KapuaDisconnectChannel kapuaDisconnectChannel = new KapuaDisconnectChannelImpl();
+        KapuaDisconnectChannel kapuaDisconnectChannel = new KapuaDisconnectChannel();
 
         kapuaDisconnectChannel.setClientId("clientId-1");
         Assert.assertEquals("clientId-1", kapuaDisconnectChannel.getClientId());
@@ -73,7 +72,7 @@ public class KapuaDisconnectMessageTest {
      * @return all KapuaDisconnectPayload fields populated with data.
      */
     private static KapuaDisconnectPayload populateKapuaDisconnectPayload() {
-        return new KapuaDisconnectPayloadImpl(
+        return new KapuaDisconnectPayload(
                 "12",
                 "A display name"
         );

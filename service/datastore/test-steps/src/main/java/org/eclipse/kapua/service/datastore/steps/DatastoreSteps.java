@@ -37,12 +37,10 @@ import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.util.KapuaDateUtils;
 import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.message.KapuaMessageFactory;
 import org.eclipse.kapua.message.KapuaPayload;
 import org.eclipse.kapua.message.KapuaPosition;
 import org.eclipse.kapua.message.device.data.KapuaDataChannel;
 import org.eclipse.kapua.message.device.data.KapuaDataMessage;
-import org.eclipse.kapua.message.device.data.KapuaDataMessageFactory;
 import org.eclipse.kapua.message.device.data.KapuaDataPayload;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.type.ObjectTypeConverter;
@@ -56,13 +54,9 @@ import org.eclipse.kapua.qa.common.cucumber.CucMessageRange;
 import org.eclipse.kapua.qa.common.cucumber.CucMetric;
 import org.eclipse.kapua.qa.common.cucumber.CucTopic;
 import org.eclipse.kapua.service.account.Account;
-import org.eclipse.kapua.service.datastore.ChannelInfoFactory;
 import org.eclipse.kapua.service.datastore.ChannelInfoRegistryService;
-import org.eclipse.kapua.service.datastore.ClientInfoFactory;
 import org.eclipse.kapua.service.datastore.ClientInfoRegistryService;
-import org.eclipse.kapua.service.datastore.MessageStoreFactory;
 import org.eclipse.kapua.service.datastore.MessageStoreService;
-import org.eclipse.kapua.service.datastore.MetricInfoFactory;
 import org.eclipse.kapua.service.datastore.MetricInfoRegistryService;
 import org.eclipse.kapua.service.datastore.internal.DatastoreCacheManager;
 import org.eclipse.kapua.service.datastore.internal.MessageStoreFacade;
@@ -97,7 +91,6 @@ import org.eclipse.kapua.service.datastore.model.query.predicate.ChannelMatchPre
 import org.eclipse.kapua.service.datastore.model.query.predicate.DatastorePredicateFactory;
 import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceCreator;
-import org.eclipse.kapua.service.device.registry.DeviceFactory;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClient;
 import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientProvider;
@@ -166,7 +159,7 @@ public class DatastoreSteps extends TestBase {
 
         for (CucMetric tmpMet : metLst) {
             KapuaDataMessage tmpMsg = tmpMsgLst.get(tmpMet.getMessage());
-            tmpMsg.setPayload(dataMessageFactory.newKapuaDataPayload());
+            tmpMsg.setPayload(new KapuaDataPayload());
 
             switch (tmpMet.getType().trim().toLowerCase()) {
             case "string": {
@@ -257,14 +250,8 @@ public class DatastoreSteps extends TestBase {
     protected KapuaLocator locator;
     private DeviceRegistryService deviceRegistryService;
 
-    private DeviceFactory deviceFactory;
-
     private ElasticsearchClient<?> elasticsearchClient;
 
-    private ChannelInfoFactory channelInfoFactory;
-    private ClientInfoFactory clientInfoFactory;
-    private MessageStoreFactory messageStoreFactory;
-    private MetricInfoFactory metricInfoFactory;
     private DatastorePredicateFactory datastorePredicateFactory;
     private StorableIdFactory storableIdFactory;
 
@@ -273,8 +260,6 @@ public class DatastoreSteps extends TestBase {
     private ClientInfoRegistryService clientInfoRegistryService;
 
     private MessageStoreService messageStoreService;
-    private KapuaMessageFactory messageFactory;
-    private KapuaDataMessageFactory dataMessageFactory;
     private MessageStoreFacade messageStoreFacade;
 
     private SimulatedDevice currentDevice;
@@ -293,21 +278,13 @@ public class DatastoreSteps extends TestBase {
         locator = KapuaLocator.getInstance();
         // Get instance of services used in different scenarios
         deviceRegistryService = locator.getService(DeviceRegistryService.class);
-        deviceFactory = locator.getFactory(DeviceFactory.class);
         messageStoreService = locator.getService(MessageStoreService.class);
-        messageFactory = locator.getFactory(KapuaMessageFactory.class);
         storableIdFactory = locator.getFactory(StorableIdFactory.class);
         channelInfoRegistryService = locator.getService(ChannelInfoRegistryService.class);
         elasticsearchClient = locator.getComponent(ElasticsearchClientProvider.class).getElasticsearchClient();
-        channelInfoFactory = locator.getFactory(ChannelInfoFactory.class);
-        clientInfoFactory = locator.getFactory(ClientInfoFactory.class);
-        messageStoreFactory = locator.getFactory(MessageStoreFactory.class);
-        metricInfoFactory = locator.getFactory(MetricInfoFactory.class);
         datastorePredicateFactory = locator.getFactory(DatastorePredicateFactory.class);
         metricInfoRegistryService = locator.getService(MetricInfoRegistryService.class);
         clientInfoRegistryService = locator.getService(ClientInfoRegistryService.class);
-        messageFactory = locator.getFactory(KapuaMessageFactory.class);
-        dataMessageFactory = locator.getFactory(KapuaDataMessageFactory.class);
         messageStoreFacade = locator.getComponent(MessageStoreFacade.class);
         datastoreCacheManager = locator.getComponent(DatastoreCacheManager.class);
     }
@@ -517,7 +494,7 @@ public class DatastoreSteps extends TestBase {
     public void appendMetricsToSelectedMessage(int idx, String lstKey, List<CucMetric> metLst) throws Exception {
         List<KapuaDataMessage> tmpMsgLst = (List<KapuaDataMessage>) stepData.get(lstKey);
         KapuaDataMessage tmpMsg = tmpMsgLst.get(idx);
-        tmpMsg.setPayload(dataMessageFactory.newKapuaDataPayload());
+        tmpMsg.setPayload(new KapuaDataPayload());
         for (CucMetric tmpMet : metLst) {
             switch (tmpMet.getType().trim().toLowerCase()) {
             case "string": {
@@ -1649,7 +1626,7 @@ public class DatastoreSteps extends TestBase {
 
     private KapuaDataPayload createRandomTestPayload() throws Exception {
 
-        KapuaDataPayload tmpTestPayload = dataMessageFactory.newKapuaDataPayload();
+        KapuaDataPayload tmpTestPayload = new KapuaDataPayload();
 
         byte[] randomPayload = new byte[128];
         random.nextBytes(randomPayload);
@@ -1690,7 +1667,7 @@ public class DatastoreSteps extends TestBase {
 
     private KapuaPosition createRandomTestPosition(Date timeStamp) {
 
-        KapuaPosition tmpPosition = messageFactory.newPosition();
+        KapuaPosition tmpPosition = new KapuaPosition();
         tmpPosition.setAltitude(20000.0 * random.nextDouble()); // 0 .. 20000
         tmpPosition.setHeading(360.0 * random.nextDouble()); // 0 .. 360
         tmpPosition.setLatitude(180.0 * (random.nextDouble() - 0.5)); // -90 .. 90
@@ -1709,7 +1686,7 @@ public class DatastoreSteps extends TestBase {
 
         String tmpTopic = ((topic != null) && !topic.isEmpty()) ? topic : "default/test/topic";
         String tmpClientId = (clientId != null) ? clientId : ((Device) stepData.get(DEVICE)).getClientId();
-        KapuaDataMessage tmpMessage = dataMessageFactory.newKapuaDataMessage();
+        KapuaDataMessage tmpMessage = new KapuaDataMessage();
 
         Date tmpRecDate = new Date();
         Calendar tmpCal = Calendar.getInstance();
@@ -1728,7 +1705,7 @@ public class DatastoreSteps extends TestBase {
         tmpMessage.setDeviceId(deviceId);
         tmpMessage.setScopeId(scopeId);
 
-        KapuaDataChannel tmpChannel = dataMessageFactory.newKapuaDataChannel();
+        KapuaDataChannel tmpChannel = new KapuaDataChannel();
         tmpChannel.setSemanticParts(new ArrayList<>(Arrays.asList(tmpTopic.split("/"))));
         tmpMessage.setChannel(tmpChannel);
 
@@ -1743,7 +1720,7 @@ public class DatastoreSteps extends TestBase {
 
         String tmpTopic = (topic != null) ? topic : "default/test/topic";
         String tmpClientId = (clientId != null) ? clientId : ((Device) stepData.get(DEVICE)).getClientId();
-        KapuaDataMessage tmpMessage = dataMessageFactory.newKapuaDataMessage();
+        KapuaDataMessage tmpMessage = new KapuaDataMessage();
 
         Date tmpCaptured = (captured != null) ? captured : new Date();
         Calendar tmpCal = Calendar.getInstance();
@@ -1758,7 +1735,7 @@ public class DatastoreSteps extends TestBase {
         tmpMessage.setDeviceId(deviceId);
         tmpMessage.setScopeId(scopeId);
 
-        KapuaDataChannel tmpChannel = dataMessageFactory.newKapuaDataChannel();
+        KapuaDataChannel tmpChannel = new KapuaDataChannel();
         tmpChannel.setSemanticParts(new ArrayList<>(Arrays.asList(tmpTopic.split("/"))));
         tmpMessage.setChannel(tmpChannel);
 

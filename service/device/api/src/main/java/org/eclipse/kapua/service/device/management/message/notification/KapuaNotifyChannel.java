@@ -19,7 +19,11 @@ import org.eclipse.kapua.service.device.management.message.KapuaAppChannel;
  *
  * @since 1.0.0
  */
-public interface KapuaNotifyChannel extends KapuaAppChannel {
+public class KapuaNotifyChannel extends KapuaAppChannel {
+
+    private static final long serialVersionUID = 8630706854304183497L;
+
+    private String[] resources;
 
     /**
      * Get the request resources
@@ -27,7 +31,9 @@ public interface KapuaNotifyChannel extends KapuaAppChannel {
      * @return
      * @since 1.2.0
      */
-    String[] getResources();
+    public String[] getResources() {
+        return resources;
+    }
 
     /**
      * Set the request resources
@@ -35,5 +41,8 @@ public interface KapuaNotifyChannel extends KapuaAppChannel {
      * @param resources
      * @since 1.2.0
      */
-    void setResources(String[] resources);
+    public void setResources(String[] resources) {
+        this.resources = resources;
+    }
+
 }

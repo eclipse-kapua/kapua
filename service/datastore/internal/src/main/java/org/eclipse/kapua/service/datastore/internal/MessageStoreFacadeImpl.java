@@ -26,7 +26,6 @@ import org.eclipse.kapua.commons.util.KapuaDateUtils;
 import org.eclipse.kapua.message.KapuaMessage;
 import org.eclipse.kapua.message.KapuaPayload;
 import org.eclipse.kapua.message.device.data.KapuaDataChannel;
-import org.eclipse.kapua.message.internal.device.data.KapuaDataChannelImpl;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.datastore.exception.DatastoreDisabledException;
 import org.eclipse.kapua.service.datastore.internal.mediator.ConfigurationException;
@@ -39,7 +38,6 @@ import org.eclipse.kapua.service.datastore.internal.mediator.Metric;
 import org.eclipse.kapua.service.datastore.internal.model.ChannelInfoImpl;
 import org.eclipse.kapua.service.datastore.internal.model.ClientInfoImpl;
 import org.eclipse.kapua.service.datastore.internal.model.DataIndexBy;
-import org.eclipse.kapua.service.datastore.internal.model.DatastoreMessageImpl;
 import org.eclipse.kapua.service.datastore.internal.model.MessageUniquenessCheck;
 import org.eclipse.kapua.service.datastore.internal.model.MetricInfoImpl;
 import org.eclipse.kapua.service.datastore.internal.model.query.predicate.ChannelMatchPredicateImpl;
@@ -197,10 +195,10 @@ public final class MessageStoreFacadeImpl extends AbstractDatastoreFacade implem
      */
     @Override
     public DatastoreMessage convertTo(KapuaMessage<?, ?> message, String messageId) {
-        KapuaDataChannel datastoreChannel = new KapuaDataChannelImpl();
+        KapuaDataChannel datastoreChannel = new KapuaDataChannel();
         datastoreChannel.setSemanticParts(message.getChannel().getSemanticParts());
 
-        DatastoreMessage datastoreMessage = new DatastoreMessageImpl();
+        DatastoreMessage datastoreMessage = new DatastoreMessage();
         datastoreMessage.setCapturedOn(message.getCapturedOn());
         datastoreMessage.setChannel(datastoreChannel);
         datastoreMessage.setClientId(message.getClientId());

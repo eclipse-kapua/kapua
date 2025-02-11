@@ -12,13 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.transport.message.jms;
 
+import java.util.Arrays;
+import java.util.Base64;
+
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.kapua.transport.jms.setting.JmsClientSetting;
 import org.eclipse.kapua.transport.jms.setting.JmsClientSettingKeys;
 import org.eclipse.kapua.transport.message.TransportPayload;
-
-import java.util.Arrays;
-import java.util.Base64;
 
 /**
  * Implementation of {@link TransportPayload} API for JMS transport facade.
@@ -40,7 +40,8 @@ public class JmsPayload implements TransportPayload {
     /**
      * Construct a {@link JmsPayload} with the given parameter.
      *
-     * @param body The raw body to set for this {@link JmsPayload}.
+     * @param body
+     *         The raw body to set for this {@link JmsPayload}.
      * @since 1.0.0
      */
     public JmsPayload(byte[] body) {
@@ -60,7 +61,8 @@ public class JmsPayload implements TransportPayload {
     /**
      * Sets the raw body set for this {@link JmsPayload}.
      *
-     * @param body the raw body set for this {@link JmsPayload}.
+     * @param body
+     *         the raw body set for this {@link JmsPayload}.
      * @since 1.0.0
      */
     public void setBody(byte[] body) {
@@ -81,8 +83,8 @@ public class JmsPayload implements TransportPayload {
     /**
      * Gets the {@link Base64} encoded value of {@link #getBody()} as a user-friendly value.
      * <p>
-     * If {@link #hasBody()} the {@link #getBody()} will be shortened if longer that a configurable parameter named: {@code transport.mqtt.payload.body.toString.length}.
-     * Else {@link StringUtils#EMPTY} will be used.
+     * If {@link #hasBody()} the {@link #getBody()} will be shortened if longer that a configurable parameter named: {@code transport.mqtt.payload.body.toString.length}. Else {@link StringUtils#EMPTY}
+     * will be used.
      *
      * @return The {@link Base64} encoded value of {@link #getBody()}.
      * @since 1.2.0

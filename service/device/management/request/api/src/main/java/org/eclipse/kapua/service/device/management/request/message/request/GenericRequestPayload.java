@@ -12,17 +12,18 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.request.message.request;
 
-import org.eclipse.kapua.service.device.management.message.request.KapuaRequestPayload;
-import org.eclipse.kapua.service.device.management.request.GenericRequestXmlRegistry;
-
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.service.device.management.message.request.KapuaRequestPayload;
 
 /**
  * Generic {@link KapuaRequestPayload} definition.
  *
  * @since 1.0.0
  */
-@XmlType(factoryClass = GenericRequestXmlRegistry.class, factoryMethod = "newRequestPayload")
-public interface GenericRequestPayload extends KapuaRequestPayload {
+@XmlType
+public class GenericRequestPayload extends KapuaRequestPayload {
+
+    private static final long serialVersionUID = 7701114223442467835L;
 
 }

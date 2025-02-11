@@ -15,7 +15,6 @@ package org.eclipse.kapua.service.datastore.internal;
 import javax.inject.Inject;
 
 import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.service.datastore.MetricInfoFactory;
 import org.eclipse.kapua.service.datastore.internal.mediator.DatastoreUtils;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
 import org.eclipse.kapua.service.datastore.model.MetricInfo;
@@ -40,14 +39,12 @@ public class MetricInfoRepositoryImpl extends DatastoreElasticSearchRepositoryBa
     @Inject
     protected MetricInfoRepositoryImpl(
             ElasticsearchClientProvider elasticsearchClientProviderInstance,
-            MetricInfoFactory metricInfoFactory,
             StorablePredicateFactory storablePredicateFactory,
             DatastoreSettings datastoreSettings,
             DatastoreUtils datastoreUtils,
             DatastoreCacheManager datastoreCacheManager) {
         super(elasticsearchClientProviderInstance,
                 MetricInfo.class,
-                metricInfoFactory,
                 storablePredicateFactory,
                 datastoreCacheManager.getMetricsCache(),
                 datastoreSettings,

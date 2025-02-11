@@ -41,7 +41,6 @@ import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
 import org.eclipse.kapua.message.device.data.KapuaDataMessage;
 import org.eclipse.kapua.model.type.ObjectValueConverter;
 import org.eclipse.kapua.service.KapuaService;
-import org.eclipse.kapua.service.datastore.MessageStoreFactory;
 import org.eclipse.kapua.service.datastore.MessageStoreService;
 import org.eclipse.kapua.service.datastore.model.DatastoreMessage;
 import org.eclipse.kapua.service.datastore.model.MessageListResult;
@@ -66,8 +65,6 @@ public class DataMessages extends AbstractKapuaResource {
 
     @Inject
     public MessageStoreService messageStoreService;
-    @Inject
-    public MessageStoreFactory messageStoreFactory;
     @Inject
     public DatastorePredicateFactory datastorePredicateFactory;
 
@@ -112,7 +109,7 @@ public class DataMessages extends AbstractKapuaResource {
             @QueryParam("limit") @DefaultValue("50") int limit)
             throws KapuaException {
         MetricType<V> internalMetricType = new MetricType<>(metricType);
-        MessageQuery query = parametersToQuery(datastorePredicateFactory, messageStoreFactory, scopeId, clientIds, channel, strictChannel, startDateParam, endDateParam, metricName, internalMetricType,
+        MessageQuery query = parametersToQuery(datastorePredicateFactory, scopeId, clientIds, channel, strictChannel, startDateParam, endDateParam, metricName, internalMetricType,
                 metricMinValue, metricMaxValue, sortDir, offset, limit);
 
         return query(scopeId, query);
@@ -210,7 +207,6 @@ public class DataMessages extends AbstractKapuaResource {
     //TODO: move this logic within the service, or at least in a collaborator shared with DataMessagesJson
     protected static <V extends Comparable<V>> MessageQuery parametersToQuery(
             DatastorePredicateFactory datastorePredicateFactory,
-            MessageStoreFactory messageStoreFactory,
             ScopeId scopeId,
             List<String> clientIds,
             String channel,

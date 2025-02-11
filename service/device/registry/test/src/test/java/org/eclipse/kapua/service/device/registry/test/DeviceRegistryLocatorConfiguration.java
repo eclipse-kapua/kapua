@@ -35,8 +35,6 @@ import org.eclipse.kapua.commons.service.internal.cache.CacheManagerProvider;
 import org.eclipse.kapua.commons.service.internal.cache.KapuaCacheManager;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.message.KapuaMessageFactory;
-import org.eclipse.kapua.message.internal.KapuaMessageFactoryImpl;
 import org.eclipse.kapua.qa.common.MockedLocator;
 import org.eclipse.kapua.service.account.AccountFactory;
 import org.eclipse.kapua.service.account.AccountService;
@@ -175,7 +173,6 @@ public class DeviceRegistryLocatorConfiguration {
                 );
                 bind(DeviceEventService.class).toInstance(deviceEventService);
                 bind(DeviceEventFactory.class).toInstance(new DeviceEventFactoryImpl());
-                bind(KapuaMessageFactory.class).toInstance(new KapuaMessageFactoryImpl());
 
                 final DeviceValidation deviceValidation = new DeviceValidationImpl(
                         new KapuaDeviceRegistrySettings().getInt(KapuaDeviceRegistrySettingKeys.DEVICE_LIFECYCLE_BIRTH_VAR_FIELDS_LENGTH_MAX),

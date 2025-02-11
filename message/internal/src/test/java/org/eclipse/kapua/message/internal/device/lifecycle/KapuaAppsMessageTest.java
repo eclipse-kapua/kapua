@@ -12,21 +12,16 @@
  *******************************************************************************/
 package org.eclipse.kapua.message.internal.device.lifecycle;
 
-import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.message.device.lifecycle.KapuaAppsChannel;
 import org.eclipse.kapua.message.device.lifecycle.KapuaAppsMessage;
 import org.eclipse.kapua.message.device.lifecycle.KapuaAppsPayload;
-import org.eclipse.kapua.message.device.lifecycle.KapuaLifecycleMessageFactory;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-
 @Category(JUnitTests.class)
 public class KapuaAppsMessageTest {
-
-    private final KapuaLifecycleMessageFactory kapuaLifecycleMessageFactory = KapuaLocator.getInstance().getFactory(KapuaLifecycleMessageFactory.class);
 
     private static final String PAYLOAD_DISPLAY_STR = "" +
             "acceptEncoding=UTF-8" +
@@ -93,7 +88,8 @@ public class KapuaAppsMessageTest {
         Assert.assertEquals("49-015420-323751", kapuaAppsPayload.getModemImei());
         Assert.assertEquals("359881234567890", kapuaAppsPayload.getModemImsi());
         Assert.assertEquals("8991101200003204510", kapuaAppsPayload.getModemIccid());
-        Assert.assertEquals("{\n  \"version\": \"1.0\",\n  \"properties\": {\n    \"GroupName\": {\n      \"propertyName\": \"propertyValue\"\n    }\n  }\n}", kapuaAppsPayload.getExtendedProperties());
+        Assert.assertEquals("{\n  \"version\": \"1.0\",\n  \"properties\": {\n    \"GroupName\": {\n      \"propertyName\": \"propertyValue\"\n    }\n  }\n}",
+                kapuaAppsPayload.getExtendedProperties());
     }
 
     @Test
@@ -106,14 +102,14 @@ public class KapuaAppsMessageTest {
 
     @Test
     public void kapuaAppsMessageConstructor() throws Exception {
-        KapuaAppsMessage kapuaAppsMessage = kapuaLifecycleMessageFactory.newKapuaAppsMessage();
+        KapuaAppsMessage kapuaAppsMessage = new KapuaAppsMessage();
 
         Assert.assertNotNull(kapuaAppsMessage);
     }
 
     @Test
     public void kapuaAppsChannelGetterSetters() throws Exception {
-        KapuaAppsChannel kapuaAppsChannel = kapuaLifecycleMessageFactory.newKapuaAppsChannel();
+        KapuaAppsChannel kapuaAppsChannel = new KapuaAppsChannel();
 
         kapuaAppsChannel.setClientId("clientId-1");
         Assert.assertEquals("clientId-1", kapuaAppsChannel.getClientId());
@@ -125,7 +121,7 @@ public class KapuaAppsMessageTest {
      * @return all KapuaAppsPayload fields populated with data.
      */
     private static KapuaAppsPayload populateKapuaAppsPayload() {
-        return new KapuaAppsPayloadImpl(
+        return new KapuaAppsPayload(
                 "12",
                 "Display Name",
                 "Model Name",

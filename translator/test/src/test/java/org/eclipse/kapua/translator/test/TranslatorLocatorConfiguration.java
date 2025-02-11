@@ -24,9 +24,6 @@ import org.eclipse.kapua.commons.service.internal.cache.CacheManagerProvider;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.commons.util.xml.JAXBContextProvider;
 import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.message.KapuaMessageFactory;
-import org.eclipse.kapua.message.device.data.KapuaDataMessageFactory;
-import org.eclipse.kapua.message.internal.KapuaMessageFactoryImpl;
 import org.eclipse.kapua.model.id.KapuaIdFactory;
 import org.eclipse.kapua.qa.common.MockedLocator;
 import org.eclipse.kapua.qa.common.TestJAXBContextProvider;
@@ -82,7 +79,6 @@ public class TranslatorLocatorConfiguration {
                 bind(String.class).annotatedWith(Names.named("metricModuleName")).toInstance("tests");
                 bind(MetricRegistry.class).toInstance(new MetricRegistry());
                 bind(MetricsService.class).to(MetricsServiceImpl.class).in(Singleton.class);
-                bind(KapuaMessageFactory.class).to(KapuaMessageFactoryImpl.class).in(Singleton.class);
                 // Inject mocked Authorization Service method checkPermission
                 AuthorizationService mockedAuthorization = Mockito.mock(AuthorizationService.class);
                 bind(KapuaJpaRepositoryConfiguration.class).toInstance(new KapuaJpaRepositoryConfiguration());
@@ -98,7 +94,6 @@ public class TranslatorLocatorConfiguration {
                 bind(GenericRequestFactory.class).toInstance(Mockito.mock(GenericRequestFactory.class));
                 bind(KapuaIdFactory.class).toInstance(Mockito.mock(KapuaIdFactory.class));
                 bind(DeviceSnapshotFactory.class).toInstance(Mockito.mock(DeviceSnapshotFactory.class));
-                bind(KapuaDataMessageFactory.class).toInstance(Mockito.mock(KapuaDataMessageFactory.class));
             }
         };
 

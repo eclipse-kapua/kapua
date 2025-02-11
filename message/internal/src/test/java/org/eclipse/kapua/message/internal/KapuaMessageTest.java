@@ -54,12 +54,12 @@ public class KapuaMessageTest {
 
     @Test
     public void kapuaMessage() throws Exception {
-        KapuaChannel kapuaChannel = new KapuaChannelImpl();
-        KapuaPayload kapuaMetrics = new KapuaPayloadImpl();
+        KapuaChannel kapuaChannel = new KapuaChannel();
+        KapuaPayload kapuaMetrics = new KapuaPayload();
 
         KapuaMessageUtil.populateChannel(kapuaChannel);
         KapuaMessageUtil.populatePayload(kapuaMetrics);
-        KapuaMessage<?, ?> kapuaMessage = new KapuaMessageImpl<>(kapuaChannel, kapuaMetrics);
+        KapuaMessage<?, ?> kapuaMessage = new KapuaMessage<>(kapuaChannel, kapuaMetrics);
         KapuaMessageUtil.populateKapuaMessage(kapuaMessage, referenceDate);
 
         Assert.assertEquals(UUID.fromString("11111111-2222-3333-4444-555555555555"), kapuaMessage.getId());
@@ -68,7 +68,7 @@ public class KapuaMessageTest {
         Assert.assertEquals(receivedDate, kapuaMessage.getReceivedOn());
         Assert.assertEquals(sentDate, kapuaMessage.getSentOn());
         Assert.assertEquals(capturedDate, kapuaMessage.getCapturedOn());
-        KapuaPosition position = new KapuaPositionImpl();
+        KapuaPosition position = new KapuaPosition();
         KapuaMessageUtil.populatePosition(position, referenceDate);
         Assert.assertEquals(position.toDisplayString(), kapuaMessage.getPosition().toDisplayString());
         Assert.assertEquals(kapuaChannel, kapuaMessage.getChannel());
@@ -77,12 +77,12 @@ public class KapuaMessageTest {
 
     @Test
     public void setMessageChannelAndPayload() throws Exception {
-        KapuaChannel kapuaChannel = new KapuaChannelImpl();
-        KapuaPayload kapuaPayload = new KapuaPayloadImpl();
+        KapuaChannel kapuaChannel = new KapuaChannel();
+        KapuaPayload kapuaPayload = new KapuaPayload();
 
         KapuaMessageUtil.populateChannel(kapuaChannel);
         KapuaMessageUtil.populatePayload(kapuaPayload);
-        KapuaMessage<KapuaChannel, KapuaPayload> kapuaMessage = new KapuaMessageImpl<>();
+        KapuaMessage<KapuaChannel, KapuaPayload> kapuaMessage = new KapuaMessage<>();
         kapuaMessage.setChannel(kapuaChannel);
         kapuaMessage.setPayload(kapuaPayload);
 
@@ -92,24 +92,24 @@ public class KapuaMessageTest {
 
     @Test
     public void messageEquals() throws Exception {
-        KapuaMessage<KapuaChannel, KapuaPayload> kapuaMessageFirst = new KapuaMessageImpl<>();
+        KapuaMessage<KapuaChannel, KapuaPayload> kapuaMessageFirst = new KapuaMessage<>();
         KapuaMessageUtil.populateKapuaMessage(kapuaMessageFirst, referenceDate);
-        KapuaMessage<KapuaChannel, KapuaPayload> kapuaMessageSecond = new KapuaMessageImpl<>();
+        KapuaMessage<KapuaChannel, KapuaPayload> kapuaMessageSecond = new KapuaMessage<>();
         KapuaMessageUtil.populateKapuaMessage(kapuaMessageSecond, referenceDate);
 
-        Assert.assertEquals(0, ((KapuaMessageImpl<KapuaChannel, KapuaPayload>) kapuaMessageFirst).
-                compareTo((KapuaMessageImpl<KapuaChannel, KapuaPayload>) kapuaMessageSecond));
+        Assert.assertEquals(0, ((KapuaMessage<KapuaChannel, KapuaPayload>) kapuaMessageFirst).
+                compareTo((KapuaMessage<KapuaChannel, KapuaPayload>) kapuaMessageSecond));
     }
 
     @Test
     @Ignore("KapuaMessage marshaling not working")
     public void marshallMessage() throws Exception {
-        KapuaChannel kapuaChannel = new KapuaChannelImpl();
-        KapuaPayload kapuaMetrics = new KapuaPayloadImpl();
+        KapuaChannel kapuaChannel = new KapuaChannel();
+        KapuaPayload kapuaMetrics = new KapuaPayload();
 
         KapuaMessageUtil.populateChannel(kapuaChannel);
         KapuaMessageUtil.populatePayload(kapuaMetrics);
-        KapuaMessage<KapuaChannel, KapuaPayload> kapuaMessage = new KapuaMessageImpl<>(kapuaChannel, kapuaMetrics);
+        KapuaMessage<KapuaChannel, KapuaPayload> kapuaMessage = new KapuaMessage<>(kapuaChannel, kapuaMetrics);
         KapuaMessageUtil.populateKapuaMessage(kapuaMessage, referenceDate);
 
         StringWriter strWriter = new StringWriter();

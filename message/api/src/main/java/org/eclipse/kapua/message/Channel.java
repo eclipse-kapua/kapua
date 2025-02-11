@@ -12,16 +12,16 @@
  *******************************************************************************/
 package org.eclipse.kapua.message;
 
-import org.eclipse.kapua.message.xml.MessageXmlRegistry;
+import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlType;
-import java.io.Serializable;
 
 /**
  * {@link Channel} definition.
  *
  * @since 1.0.0
  */
-@XmlType(factoryClass = MessageXmlRegistry.class, factoryMethod = "newKapuaChannel")
+@XmlType
 public interface Channel extends Serializable {
+
 }

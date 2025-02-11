@@ -18,9 +18,6 @@ import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.message.device.lifecycle.KapuaBirthChannel;
 import org.eclipse.kapua.message.device.lifecycle.KapuaBirthMessage;
 import org.eclipse.kapua.message.device.lifecycle.KapuaBirthPayload;
-import org.eclipse.kapua.message.internal.device.lifecycle.KapuaBirthChannelImpl;
-import org.eclipse.kapua.message.internal.device.lifecycle.KapuaBirthMessageImpl;
-import org.eclipse.kapua.message.internal.device.lifecycle.KapuaBirthPayloadImpl;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.device.call.message.kura.lifecycle.KuraBirthChannel;
@@ -51,7 +48,7 @@ public class TranslatorLifeBirthKuraKapua extends Translator<KuraBirthMessage, K
     @Override
     public KapuaBirthMessage translate(KuraBirthMessage kuraBirthMessage) throws TranslateException {
         try {
-            KapuaBirthMessage kapuaBirthMessage = new KapuaBirthMessageImpl();
+            KapuaBirthMessage kapuaBirthMessage = new KapuaBirthMessage();
             kapuaBirthMessage.setChannel(translate(kuraBirthMessage.getChannel()));
             kapuaBirthMessage.setPayload(translate(kuraBirthMessage.getPayload()));
 
@@ -82,13 +79,13 @@ public class TranslatorLifeBirthKuraKapua extends Translator<KuraBirthMessage, K
     }
 
     private KapuaBirthChannel translate(KuraBirthChannel kuraBirthChannel) {
-        KapuaBirthChannel kapuaBirthChannel = new KapuaBirthChannelImpl();
+        KapuaBirthChannel kapuaBirthChannel = new KapuaBirthChannel();
         kapuaBirthChannel.setClientId(kuraBirthChannel.getClientId());
         return kapuaBirthChannel;
     }
 
     private KapuaBirthPayload translate(KuraBirthPayload kuraBirthPayload) {
-        return new KapuaBirthPayloadImpl(
+        return new KapuaBirthPayload(
                 kuraBirthPayload.getUptime(),
                 kuraBirthPayload.getDisplayName(),
                 kuraBirthPayload.getModelName(),

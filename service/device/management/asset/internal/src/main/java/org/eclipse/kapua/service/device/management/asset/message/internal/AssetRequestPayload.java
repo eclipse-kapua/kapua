@@ -18,7 +18,6 @@ import javax.validation.constraints.NotNull;
 
 import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.message.internal.KapuaPayloadImpl;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssets;
 import org.eclipse.kapua.service.device.management.commons.setting.DeviceManagementSetting;
 import org.eclipse.kapua.service.device.management.commons.setting.DeviceManagementSettingKey;
@@ -29,7 +28,7 @@ import org.eclipse.kapua.service.device.management.message.request.KapuaRequestP
  *
  * @since 1.0.0
  */
-public class AssetRequestPayload extends KapuaPayloadImpl implements KapuaRequestPayload {
+public class AssetRequestPayload extends KapuaRequestPayload {
 
     private static final long serialVersionUID = -4372614820336612199L;
     private final String charEncoding = KapuaLocator.getInstance().getComponent(DeviceManagementSetting.class).getString(DeviceManagementSettingKey.CHAR_ENCODING);

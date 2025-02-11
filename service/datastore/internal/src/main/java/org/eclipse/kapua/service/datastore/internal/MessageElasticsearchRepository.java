@@ -21,7 +21,6 @@ import javax.inject.Inject;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.cache.LocalCache;
 import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.service.datastore.MessageStoreFactory;
 import org.eclipse.kapua.service.datastore.internal.mediator.DatastoreUtils;
 import org.eclipse.kapua.service.datastore.internal.mediator.Metric;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
@@ -52,14 +51,12 @@ public class MessageElasticsearchRepository extends DatastoreElasticSearchReposi
     @Inject
     public MessageElasticsearchRepository(
             ElasticsearchClientProvider elasticsearchClientProviderInstance,
-            MessageStoreFactory messageStoreFactory,
             StorablePredicateFactory storablePredicateFactory,
             DatastoreSettings datastoreSettings,
             DatastoreUtils datastoreUtils,
             DatastoreCacheManager datastoreCacheManager) {
         super(elasticsearchClientProviderInstance,
                 DatastoreMessage.class,
-                messageStoreFactory,
                 storablePredicateFactory,
                 datastoreSettings,
                 scopeId -> new MessageQuery(scopeId),

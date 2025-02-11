@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.message;
 
-import org.eclipse.kapua.commons.util.Payloads;
-import org.eclipse.kapua.message.xml.MessageXmlRegistry;
-import org.eclipse.kapua.model.xml.DateXmlAdapter;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -22,10 +22,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+
+import org.eclipse.kapua.commons.util.Payloads;
+import org.eclipse.kapua.model.xml.DateXmlAdapter;
 
 /**
  * {@link KapuaPosition} definition.
@@ -38,8 +37,20 @@ import java.util.Map;
  */
 @XmlRootElement(name = "position")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = MessageXmlRegistry.class, factoryMethod = "newPosition")
-public interface KapuaPosition extends Position, Serializable {
+@XmlType
+public class KapuaPosition implements Position {
+
+    private static final long serialVersionUID = 1L;
+
+    private Double longitude;
+    private Double latitude;
+    private Double altitude;
+    private Double precision;
+    private Double heading;
+    private Double speed;
+    private Date timestamp;
+    private Integer satellites;
+    private Integer status;
 
     /**
      * Gets the GPS position longitude
@@ -48,15 +59,20 @@ public interface KapuaPosition extends Position, Serializable {
      * @since 1.0.0
      */
     @XmlElement(name = "longitude")
-    Double getLongitude();
+    public Double getLongitude() {
+        return longitude;
+    }
 
     /**
      * Sets the GPS position longitude
      *
-     * @param longitude The GPS position longitude
+     * @param longitude
+     *         The GPS position longitude
      * @since 1.0.0
      */
-    void setLongitude(Double longitude);
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
 
     /**
      * Gets the GPS position latitude
@@ -65,15 +81,20 @@ public interface KapuaPosition extends Position, Serializable {
      * @since 1.0.0
      */
     @XmlElement(name = "latitude")
-    Double getLatitude();
+    public Double getLatitude() {
+        return latitude;
+    }
 
     /**
      * Sets the GPS position latitude
      *
-     * @param latitude The GPS position latitude
+     * @param latitude
+     *         The GPS position latitude
      * @since 1.0.0
      */
-    void setLatitude(Double latitude);
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
 
     /**
      * Gets the GPS position altitude
@@ -82,15 +103,20 @@ public interface KapuaPosition extends Position, Serializable {
      * @since 1.0.0
      */
     @XmlElement(name = "altitude")
-    Double getAltitude();
+    public Double getAltitude() {
+        return altitude;
+    }
 
     /**
      * Sets the GPS position altitude
      *
-     * @param altitude The GPS position altitude
+     * @param altitude
+     *         The GPS position altitude
      * @since 1.0.0
      */
-    void setAltitude(Double altitude);
+    public void setAltitude(Double altitude) {
+        this.altitude = altitude;
+    }
 
     /**
      * Gets the GPS precision
@@ -99,15 +125,20 @@ public interface KapuaPosition extends Position, Serializable {
      * @since 1.0.0
      */
     @XmlElement(name = "precision")
-    Double getPrecision();
+    public Double getPrecision() {
+        return precision;
+    }
 
     /**
      * Sets the GPS precision
      *
-     * @param precision The GPS precision
+     * @param precision
+     *         The GPS precision
      * @since 1.0.0
      */
-    void setPrecision(Double precision);
+    public void setPrecision(Double precision) {
+        this.precision = precision;
+    }
 
     /**
      * Gets the GPS heading
@@ -116,15 +147,20 @@ public interface KapuaPosition extends Position, Serializable {
      * @since 1.0.0
      */
     @XmlElement(name = "heading")
-    Double getHeading();
+    public Double getHeading() {
+        return heading;
+    }
 
     /**
      * Sets the GPS heading
      *
-     * @param heading The GPS heading
+     * @param heading
+     *         The GPS heading
      * @since 1.0.0
      */
-    void setHeading(Double heading);
+    public void setHeading(Double heading) {
+        this.heading = heading;
+    }
 
     /**
      * Gets the GPS speed
@@ -133,15 +169,20 @@ public interface KapuaPosition extends Position, Serializable {
      * @since 1.0.0
      */
     @XmlElement(name = "speed")
-    Double getSpeed();
+    public Double getSpeed() {
+        return speed;
+    }
 
     /**
      * Sets the GPS speed
      *
-     * @param speed The GPS speed
+     * @param speed
+     *         The GPS speed
      * @since 1.0.0
      */
-    void setSpeed(Double speed);
+    public void setSpeed(Double speed) {
+        this.speed = speed;
+    }
 
     /**
      * Gets the timestamp
@@ -151,15 +192,20 @@ public interface KapuaPosition extends Position, Serializable {
      */
     @XmlElement(name = "timestamp")
     @XmlJavaTypeAdapter(DateXmlAdapter.class)
-    Date getTimestamp();
+    public Date getTimestamp() {
+        return timestamp;
+    }
 
     /**
      * Sets the timestamp
      *
-     * @param timestamp The timestamp
+     * @param timestamp
+     *         The timestamp
      * @since 1.0.0
      */
-    void setTimestamp(Date timestamp);
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
 
     /**
      * Gets the satellites count
@@ -168,15 +214,20 @@ public interface KapuaPosition extends Position, Serializable {
      * @since 1.0.0
      */
     @XmlElement(name = "satellites")
-    Integer getSatellites();
+    public Integer getSatellites() {
+        return satellites;
+    }
 
     /**
      * Sets the satellites count
      *
-     * @param satellites The satellites count.
+     * @param satellites
+     *         The satellites count.
      * @since 1.0.0
      */
-    void setSatellites(Integer satellites);
+    public void setSatellites(Integer satellites) {
+        this.satellites = satellites;
+    }
 
     /**
      * Gets the GPS status
@@ -185,15 +236,20 @@ public interface KapuaPosition extends Position, Serializable {
      * @since 1.0.0
      */
     @XmlElement(name = "status")
-    Integer getStatus();
+    public Integer getStatus() {
+        return status;
+    }
 
     /**
      * Sets the GPS status
      *
-     * @param status The GPS status
+     * @param status
+     *         The GPS status
      * @since 1.0.0
      */
-    void setStatus(Integer status);
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
 
     /**
      * Converts the {@link KapuaPosition} attributes to a displayable {@link String}
@@ -201,7 +257,7 @@ public interface KapuaPosition extends Position, Serializable {
      * @return The displayable {@link String}
      * @since 1.0.0
      */
-    default String toDisplayString() {
+    public String toDisplayString() {
 
         Map<String, Object> properties = new HashMap<>();
 

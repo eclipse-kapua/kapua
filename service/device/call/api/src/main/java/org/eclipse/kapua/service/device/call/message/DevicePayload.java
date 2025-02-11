@@ -12,12 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.call.message;
 
+import java.util.Date;
+import java.util.Map;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.util.Payloads;
 import org.eclipse.kapua.message.Payload;
-
-import java.util.Date;
-import java.util.Map;
 
 /**
  * {@link DevicePayload} definition.
@@ -37,7 +37,8 @@ public interface DevicePayload extends Payload {
     /**
      * Sets the timestamp.
      *
-     * @param timestamp The timestamp
+     * @param timestamp
+     *         The timestamp
      * @since 1.0.0
      */
     void setTimestamp(Date timestamp);
@@ -53,7 +54,8 @@ public interface DevicePayload extends Payload {
     /**
      * Sets the {@link DevicePosition}
      *
-     * @param position The {@link DevicePosition}
+     * @param position
+     *         The {@link DevicePosition}
      * @since 1.0.0
      */
     void setPosition(DevicePosition position);
@@ -69,7 +71,8 @@ public interface DevicePayload extends Payload {
     /**
      * Sets the metrics.
      *
-     * @param metrics The metrics.
+     * @param metrics
+     *         The metrics.
      * @since 1.0.0
      */
     void setMetrics(Map<String, Object> metrics);
@@ -77,8 +80,10 @@ public interface DevicePayload extends Payload {
     /**
      * Adds a new metric to {@link #getMetrics()}.
      *
-     * @param name  The name of the metric.
-     * @param value The value of the metric.
+     * @param name
+     *         The name of the metric.
+     * @param value
+     *         The value of the metric.
      * @since 1.2.0
      */
     void addMetric(String name, Object value);
@@ -88,7 +93,8 @@ public interface DevicePayload extends Payload {
      * <p>
      * If not present it will do nothing.
      *
-     * @param name The name of the metric to remove.
+     * @param name
+     *         The name of the metric to remove.
      * @since 1.2.0
      */
     void removeMetric(String name);
@@ -104,7 +110,8 @@ public interface DevicePayload extends Payload {
     /**
      * Sets the raw body.
      *
-     * @param body The raw body.
+     * @param body
+     *         The raw body.
      * @since 1.0.0
      */
     void setBody(byte[] body);
@@ -133,8 +140,10 @@ public interface DevicePayload extends Payload {
     /**
      * Converts the given {@code byte[]} to a {@link DevicePayload}
      *
-     * @param rawPayload The {@code byte[]} to convert
-     * @throws KapuaException If the given {@code byte[]} is not properly formatted.
+     * @param rawPayload
+     *         The {@code byte[]} to convert
+     * @throws KapuaException
+     *         If the given {@code byte[]} is not properly formatted.
      * @since 1.0.0
      */
     void readFromByteArray(byte[] rawPayload)

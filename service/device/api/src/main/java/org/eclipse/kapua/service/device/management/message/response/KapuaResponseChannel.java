@@ -17,11 +17,13 @@ import org.eclipse.kapua.service.device.management.message.KapuaAppChannel;
 /**
  * Response {@link KapuaAppChannel}.
  * <p>
- * This object defines the {@link KapuaAppChannel} for a {@link KapuaResponseMessage}.<br>
- * The response message is used to perform interactive operations with the device (e.g. to send command to the device, to ask configurations...)
+ * This object defines the {@link KapuaAppChannel} for a {@link KapuaResponseMessage}.<br> The response message is used to perform interactive operations with the device (e.g. to send command to the
+ * device, to ask configurations...)
  *
  * @since 1.0.0
  */
-public interface KapuaResponseChannel extends KapuaAppChannel {
+public class KapuaResponseChannel extends KapuaAppChannel {
+
+    private static final long serialVersionUID = -3127210628323426502L;
 
 }

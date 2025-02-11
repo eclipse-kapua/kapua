@@ -12,13 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.translator.kura.kapua;
 
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.message.device.lifecycle.KapuaDisconnectChannel;
 import org.eclipse.kapua.message.device.lifecycle.KapuaDisconnectMessage;
 import org.eclipse.kapua.message.device.lifecycle.KapuaDisconnectPayload;
-import org.eclipse.kapua.message.internal.device.lifecycle.KapuaDisconnectChannelImpl;
-import org.eclipse.kapua.message.internal.device.lifecycle.KapuaDisconnectMessageImpl;
-import org.eclipse.kapua.message.internal.device.lifecycle.KapuaDisconnectPayloadImpl;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.device.call.message.kura.lifecycle.KuraDisconnectChannel;
@@ -31,8 +30,6 @@ import org.eclipse.kapua.translator.exception.InvalidChannelException;
 import org.eclipse.kapua.translator.exception.InvalidMessageException;
 import org.eclipse.kapua.translator.exception.InvalidPayloadException;
 import org.eclipse.kapua.translator.exception.TranslateException;
-
-import javax.inject.Inject;
 
 /**
  * {@link Translator} implementation from {@link KuraDisconnectMessage} to {@link KapuaDisconnectMessage}
@@ -51,7 +48,7 @@ public class TranslatorLifeDisconnectKuraKapua extends Translator<KuraDisconnect
     @Override
     public KapuaDisconnectMessage translate(KuraDisconnectMessage kuraDisconnectMessage) throws TranslateException {
         try {
-            KapuaDisconnectMessage kapuaDisconnectMessage = new KapuaDisconnectMessageImpl();
+            KapuaDisconnectMessage kapuaDisconnectMessage = new KapuaDisconnectMessage();
             kapuaDisconnectMessage.setChannel(translate(kuraDisconnectMessage.getChannel()));
             kapuaDisconnectMessage.setPayload(translate(kuraDisconnectMessage.getPayload()));
 
@@ -81,13 +78,13 @@ public class TranslatorLifeDisconnectKuraKapua extends Translator<KuraDisconnect
     }
 
     private KapuaDisconnectChannel translate(KuraDisconnectChannel kuraDisconnectChannel) {
-        KapuaDisconnectChannel kapuaDisconnectChannel = new KapuaDisconnectChannelImpl();
+        KapuaDisconnectChannel kapuaDisconnectChannel = new KapuaDisconnectChannel();
         kapuaDisconnectChannel.setClientId(kuraDisconnectChannel.getClientId());
         return kapuaDisconnectChannel;
     }
 
     private KapuaDisconnectPayload translate(KuraDisconnectPayload kuraDisconnectPayload) {
-        return new KapuaDisconnectPayloadImpl(kuraDisconnectPayload.getUptime(), kuraDisconnectPayload.getDisplayName());
+        return new KapuaDisconnectPayload(kuraDisconnectPayload.getUptime(), kuraDisconnectPayload.getDisplayName());
     }
 
     @Override

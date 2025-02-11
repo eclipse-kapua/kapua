@@ -18,9 +18,6 @@ import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.message.device.lifecycle.KapuaAppsChannel;
 import org.eclipse.kapua.message.device.lifecycle.KapuaAppsMessage;
 import org.eclipse.kapua.message.device.lifecycle.KapuaAppsPayload;
-import org.eclipse.kapua.message.internal.device.lifecycle.KapuaAppsChannelImpl;
-import org.eclipse.kapua.message.internal.device.lifecycle.KapuaAppsMessageImpl;
-import org.eclipse.kapua.message.internal.device.lifecycle.KapuaAppsPayloadImpl;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.device.call.message.kura.lifecycle.KuraAppsChannel;
@@ -51,7 +48,7 @@ public class TranslatorLifeAppsKuraKapua extends Translator<KuraAppsMessage, Kap
     @Override
     public KapuaAppsMessage translate(KuraAppsMessage kuraAppsMessage) throws TranslateException {
         try {
-            KapuaAppsMessage kapuaAppsMessage = new KapuaAppsMessageImpl();
+            KapuaAppsMessage kapuaAppsMessage = new KapuaAppsMessage();
             kapuaAppsMessage.setChannel(translate(kuraAppsMessage.getChannel()));
             kapuaAppsMessage.setPayload(translate(kuraAppsMessage.getPayload()));
 
@@ -81,13 +78,13 @@ public class TranslatorLifeAppsKuraKapua extends Translator<KuraAppsMessage, Kap
     }
 
     private KapuaAppsChannel translate(KuraAppsChannel kuraAppsChannel) {
-        KapuaAppsChannel kapuaAppsChannel = new KapuaAppsChannelImpl();
+        KapuaAppsChannel kapuaAppsChannel = new KapuaAppsChannel();
         kapuaAppsChannel.setClientId(kuraAppsChannel.getClientId());
         return kapuaAppsChannel;
     }
 
     private KapuaAppsPayload translate(KuraAppsPayload kuraAppsPayload) {
-        return new KapuaAppsPayloadImpl(
+        return new KapuaAppsPayload(
                 kuraAppsPayload.getUptime(),
                 kuraAppsPayload.getDisplayName(),
                 kuraAppsPayload.getModelName(),

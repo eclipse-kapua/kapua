@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.snapshot.message.internal;
 
-import org.eclipse.kapua.service.device.management.commons.message.request.KapuaRequestChannelImpl;
 import org.eclipse.kapua.service.device.management.message.request.KapuaRequestChannel;
 import org.eclipse.kapua.service.device.management.snapshot.DeviceSnapshot;
 
@@ -21,7 +20,7 @@ import org.eclipse.kapua.service.device.management.snapshot.DeviceSnapshot;
  *
  * @since 1.0.0
  */
-public class SnapshotRequestChannel extends KapuaRequestChannelImpl implements KapuaRequestChannel {
+public class SnapshotRequestChannel extends KapuaRequestChannel {
 
     private static final long serialVersionUID = 7526183410364623630L;
 
@@ -40,7 +39,8 @@ public class SnapshotRequestChannel extends KapuaRequestChannelImpl implements K
     /**
      * Sets the {@link DeviceSnapshot#getId()}.
      *
-     * @param snapshotId The {@link DeviceSnapshot#getId()}.
+     * @param snapshotId
+     *         The {@link DeviceSnapshot#getId()}.
      * @since 1.0.0
      */
     public void setSnapshotId(String snapshotId) {

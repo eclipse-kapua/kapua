@@ -29,7 +29,6 @@ import org.eclipse.kapua.commons.util.KapuaDateUtils;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.message.device.data.KapuaDataChannel;
 import org.eclipse.kapua.message.device.data.KapuaDataMessage;
-import org.eclipse.kapua.message.device.data.KapuaDataMessageFactory;
 import org.eclipse.kapua.message.device.data.KapuaDataPayload;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
@@ -72,7 +71,6 @@ public class MessageStoreServiceSslTest extends AbstractMessageStoreServiceTest 
     private final DatastorePredicateFactory datastorePredicateFactory = locator.getFactory(DatastorePredicateFactory.class);
     private final MessageStoreService messageStoreService = locator.getService(MessageStoreService.class);
     private final MessageStoreFacade messageStoreFacade = locator.getComponent(MessageStoreFacade.class);
-    private final KapuaDataMessageFactory dataMessageFactory = locator.getFactory(KapuaDataMessageFactory.class);
     private final ElasticsearchClientProvider elasticsearchClientProvider = locator.getComponent(ElasticsearchClientProvider.class);
 
     /**
@@ -210,7 +208,7 @@ public class MessageStoreServiceSslTest extends AbstractMessageStoreServiceTest 
     }
 
     private KapuaDataMessage insertMessage(Account account, String clientId, KapuaId deviceId, String semanticTopic, byte[] payload, Date sentOn) throws InterruptedException, KapuaException {
-        KapuaDataPayload messagePayload = dataMessageFactory.newKapuaDataPayload();
+        KapuaDataPayload messagePayload = new KapuaDataPayload();
         Map<String, Object> metrics = new HashMap<>();
         metrics.put("float", new Float((float) 0.01));
         messagePayload.setMetrics(metrics);
@@ -251,11 +249,11 @@ public class MessageStoreServiceSslTest extends AbstractMessageStoreServiceTest 
      * @return
      */
     private KapuaDataMessage createMessage(String clientId, KapuaId scopeId, KapuaId deviceId, Date receivedOn, Date capturedOn, Date sentOn) {
-        KapuaDataMessage message = dataMessageFactory.newKapuaDataMessage();
+        KapuaDataMessage message = new KapuaDataMessage();
         message.setReceivedOn(receivedOn);
         message.setCapturedOn(capturedOn);
         message.setSentOn(sentOn);
-        message.setChannel(dataMessageFactory.newKapuaDataChannel());
+        message.setChannel(new KapuaDataChannel());
         message.setClientId(clientId);
         message.setDeviceId(deviceId);
         message.setScopeId(scopeId);
@@ -269,7 +267,7 @@ public class MessageStoreServiceSslTest extends AbstractMessageStoreServiceTest 
      * @param semanticPart
      */
     private void setChannel(KapuaDataMessage message, String semanticPart) {
-        KapuaDataChannel channel = dataMessageFactory.newKapuaDataChannel();
+        KapuaDataChannel channel = new KapuaDataChannel();
         channel.setSemanticParts(new ArrayList<>(Arrays.asList(semanticPart.split("/"))));
 
         message.setChannel(channel);

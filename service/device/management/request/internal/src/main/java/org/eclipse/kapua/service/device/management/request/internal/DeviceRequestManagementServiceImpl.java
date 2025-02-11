@@ -98,13 +98,13 @@ public class DeviceRequestManagementServiceImpl extends AbstractDeviceManagement
         }
         authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, action, requestInput.getScopeId()));
         // Prepare the request
-        GenericRequestChannel genericRequestChannel = genericRequestFactory.newRequestChannel();
+        GenericRequestChannel genericRequestChannel = new GenericRequestChannel();
         genericRequestChannel.setAppName(requestInput.getChannel().getAppName());
         genericRequestChannel.setVersion(requestInput.getChannel().getVersion());
         genericRequestChannel.setMethod(requestInput.getChannel().getMethod());
         genericRequestChannel.setResources(requestInput.getChannel().getResources());
 
-        GenericRequestPayload genericRequestPayload = genericRequestFactory.newRequestPayload();
+        GenericRequestPayload genericRequestPayload = new GenericRequestPayload();
         genericRequestPayload.setMetrics(requestInput.getPayload().getMetrics());
         genericRequestPayload.setBody(requestInput.getPayload().getBody());
 

@@ -16,7 +16,6 @@ import java.util.Optional;
 
 import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.message.internal.KapuaPayloadImpl;
 import org.eclipse.kapua.service.device.management.commons.setting.DeviceManagementSetting;
 import org.eclipse.kapua.service.device.management.commons.setting.DeviceManagementSettingKey;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystore;
@@ -31,7 +30,7 @@ import org.eclipse.kapua.service.device.management.message.request.KapuaRequestP
  *
  * @since 1.5.0
  */
-public class KeystoreRequestPayload extends KapuaPayloadImpl implements KapuaRequestPayload {
+public class KeystoreRequestPayload extends KapuaRequestPayload {
 
     private static final long serialVersionUID = 837931637524736407L;
 

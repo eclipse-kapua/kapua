@@ -12,17 +12,15 @@
  *******************************************************************************/
 package org.eclipse.kapua.message.internal;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.kapua.message.device.data.KapuaDataChannel;
-import org.eclipse.kapua.message.internal.device.data.KapuaDataChannelImpl;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.util.ArrayList;
-import java.util.List;
-
 
 @Category(JUnitTests.class)
 public class KapuaChannelTest {
@@ -31,7 +29,7 @@ public class KapuaChannelTest {
 
     @Before
     public void before() throws Exception {
-        kapuaDataChannel = new KapuaDataChannelImpl();
+        kapuaDataChannel = new KapuaDataChannel();
     }
 
     @Test

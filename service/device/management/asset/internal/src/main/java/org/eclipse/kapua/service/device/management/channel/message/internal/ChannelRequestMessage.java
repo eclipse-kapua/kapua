@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.channel.message.internal;
 
-import org.eclipse.kapua.message.internal.KapuaMessageImpl;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssetChannel;
 import org.eclipse.kapua.service.device.management.message.request.KapuaRequestMessage;
 
@@ -22,8 +21,7 @@ import org.eclipse.kapua.service.device.management.message.request.KapuaRequestM
  *
  * @since 1.0.0
  */
-public class ChannelRequestMessage extends KapuaMessageImpl<ChannelRequestChannel, ChannelRequestPayload>
-        implements KapuaRequestMessage<ChannelRequestChannel, ChannelRequestPayload> {
+public class ChannelRequestMessage extends KapuaRequestMessage<ChannelRequestChannel, ChannelRequestPayload> {
 
     private static final long serialVersionUID = 5108417578217263516L;
 

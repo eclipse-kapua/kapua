@@ -20,5 +20,6 @@ import org.eclipse.kapua.service.device.management.message.event.KapuaManagement
  *
  * @since 2.0.0
  */
-public interface DeviceConfigurationEventChannel extends KapuaManagementEventChannel {
+public class DeviceConfigurationEventChannel extends KapuaManagementEventChannel {
+
 }

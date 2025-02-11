@@ -12,11 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.message.xml;
 
-import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.service.device.management.message.KapuaAppProperties;
-import org.eclipse.kapua.service.device.management.message.request.KapuaRequestMessageFactory;
-
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+
+import org.eclipse.kapua.service.device.management.message.KapuaAppProperties;
+import org.eclipse.kapua.service.device.management.message.KapuaAppPropertiesImpl;
 
 /**
  * {@link KapuaAppProperties} {@link XmlAdapter}.
@@ -25,8 +24,6 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  */
 public class KapuaAppPropertiesXmlAdapter extends XmlAdapter<String, KapuaAppProperties> {
 
-    private final KapuaRequestMessageFactory kapuaRequestMessageFactory = KapuaLocator.getInstance().getFactory(KapuaRequestMessageFactory.class);
-
     @Override
     public String marshal(KapuaAppProperties kapuaAppProperties) throws Exception {
         return kapuaAppProperties.getValue();
@@ -34,6 +31,6 @@ public class KapuaAppPropertiesXmlAdapter extends XmlAdapter<String, KapuaAppPro
 
     @Override
     public KapuaAppProperties unmarshal(String string) throws Exception {
-        return kapuaRequestMessageFactory.newAppProperties(string);
+        return new KapuaAppPropertiesImpl(string);
     }
 }

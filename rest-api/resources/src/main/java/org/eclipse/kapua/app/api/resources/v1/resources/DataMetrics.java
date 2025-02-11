@@ -33,7 +33,6 @@ import org.eclipse.kapua.app.api.core.model.CountResult;
 import org.eclipse.kapua.app.api.core.model.ScopeId;
 import org.eclipse.kapua.app.api.core.model.StorableEntityId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
-import org.eclipse.kapua.service.datastore.MetricInfoFactory;
 import org.eclipse.kapua.service.datastore.MetricInfoRegistryService;
 import org.eclipse.kapua.service.datastore.internal.model.query.predicate.ChannelMatchPredicateImpl;
 import org.eclipse.kapua.service.datastore.model.MetricInfo;
@@ -54,8 +53,6 @@ public class DataMetrics extends AbstractKapuaResource {
 
     @Inject
     public MetricInfoRegistryService metricInfoRegistryService;
-    @Inject
-    public MetricInfoFactory metricInfoFactory;
     @Inject
     public DatastorePredicateFactory datastorePredicateFactory;
 

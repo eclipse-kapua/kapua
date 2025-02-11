@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.inventory.internal.message;
 
-import org.eclipse.kapua.message.internal.KapuaMessageImpl;
 import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventory;
 import org.eclipse.kapua.service.device.management.message.request.KapuaRequestMessage;
 
@@ -21,8 +20,7 @@ import org.eclipse.kapua.service.device.management.message.request.KapuaRequestM
  *
  * @since 1.5.0
  */
-public abstract class InventoryRequestMessage<M extends InventoryRequestMessage> extends KapuaMessageImpl<InventoryRequestChannel, InventoryRequestPayload>
-        implements KapuaRequestMessage<InventoryRequestChannel, InventoryRequestPayload> {
+public abstract class InventoryRequestMessage<M extends InventoryRequestMessage> extends KapuaRequestMessage<InventoryRequestChannel, InventoryRequestPayload> {
 
     private static final long serialVersionUID = 3593350285989405174L;
 
@@ -31,13 +29,13 @@ public abstract class InventoryRequestMessage<M extends InventoryRequestMessage>
     /**
      * Constructor.
      *
-     * @param requestClass The {@link InventoryRequestMessage} sub-type
+     * @param requestClass
+     *         The {@link InventoryRequestMessage} sub-type
      * @since 1.5.0
      */
     protected InventoryRequestMessage(Class<M> requestClass) {
         this.requestClass = requestClass;
     }
-
 
     @Override
     public Class<M> getRequestClass() {

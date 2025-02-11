@@ -35,8 +35,6 @@ import org.eclipse.kapua.commons.service.event.store.internal.EventStoreRecordIm
 import org.eclipse.kapua.commons.service.internal.cache.CacheManagerProvider;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.message.KapuaMessageFactory;
-import org.eclipse.kapua.message.internal.KapuaMessageFactoryImpl;
 import org.eclipse.kapua.qa.common.MockedLocator;
 import org.eclipse.kapua.service.account.AccountFactory;
 import org.eclipse.kapua.service.account.AccountService;
@@ -197,7 +195,6 @@ public class TagLocatorConfiguration {
                 bind(DeviceConnectionRepository.class).toInstance(new DeviceConnectionImplJpaRepository(jpaRepoConfig));
                 bind(DeviceEventService.class).toInstance(deviceEventService);
                 bind(DeviceEventFactory.class).toInstance(new DeviceEventFactoryImpl());
-                bind(KapuaMessageFactory.class).toInstance(new KapuaMessageFactoryImpl());
                 bind(TagService.class).toInstance(new TagServiceImpl(
                         mockedAuthorization,
                         Mockito.mock(ServiceConfigurationManager.class),

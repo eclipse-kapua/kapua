@@ -31,7 +31,6 @@ import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.message.KapuaMessageFactory;
 import org.eclipse.kapua.message.KapuaPosition;
 import org.eclipse.kapua.message.device.lifecycle.KapuaAppsChannel;
 import org.eclipse.kapua.message.device.lifecycle.KapuaAppsMessage;
@@ -42,7 +41,6 @@ import org.eclipse.kapua.message.device.lifecycle.KapuaBirthPayload;
 import org.eclipse.kapua.message.device.lifecycle.KapuaDisconnectChannel;
 import org.eclipse.kapua.message.device.lifecycle.KapuaDisconnectMessage;
 import org.eclipse.kapua.message.device.lifecycle.KapuaDisconnectPayload;
-import org.eclipse.kapua.message.device.lifecycle.KapuaLifecycleMessageFactory;
 import org.eclipse.kapua.message.device.lifecycle.KapuaMissingChannel;
 import org.eclipse.kapua.message.device.lifecycle.KapuaMissingMessage;
 import org.eclipse.kapua.message.device.lifecycle.KapuaMissingPayload;
@@ -180,8 +178,6 @@ public class DeviceRegistrySteps extends TestBase {
     private AccountService accountService;
     private UserService userService;
     private TagService tagService;
-    private KapuaMessageFactory messageFactory;
-    private KapuaLifecycleMessageFactory lifecycleMessageFactory;
     private GroupService groupService;
 
     private AclCreator aclCreator;
@@ -217,9 +213,6 @@ public class DeviceRegistrySteps extends TestBase {
 
         eventService = locator.getService(DeviceEventService.class);
         eventFactory = locator.getFactory(DeviceEventFactory.class);
-
-        messageFactory = locator.getFactory(KapuaMessageFactory.class);
-        lifecycleMessageFactory = locator.getFactory(KapuaLifecycleMessageFactory.class);
 
         deviceLifeCycleService = locator.getService(DeviceLifeCycleService.class);
         accountService = locator.getService(AccountService.class);
@@ -1720,13 +1713,13 @@ public class DeviceRegistrySteps extends TestBase {
         semanticParts.add(PART1);
         semanticParts.add(PART2);
 
-        KapuaBirthChannel birthChannel = lifecycleMessageFactory.newKapuaBirthChannel();
+        KapuaBirthChannel birthChannel = new KapuaBirthChannel();
         birthChannel.setClientId(clientId);
         birthChannel.setSemanticParts(semanticParts);
 
         KapuaBirthPayload birthPayload = prepareDefaultBirthPayload();
 
-        KapuaBirthMessage birthMessage = lifecycleMessageFactory.newKapuaBirthMessage();
+        KapuaBirthMessage birthMessage = new KapuaBirthMessage();
         birthMessage.setChannel(birthChannel);
         birthMessage.setPayload(birthPayload);
         birthMessage.setScopeId(lastAccount.getId());
@@ -1763,13 +1756,13 @@ public class DeviceRegistrySteps extends TestBase {
         semanticParts.add(PART1);
         semanticParts.add(PART2);
 
-        KapuaDisconnectChannel disconnectChannel = lifecycleMessageFactory.newKapuaDisconnectChannel();
+        KapuaDisconnectChannel disconnectChannel = new KapuaDisconnectChannel();
         disconnectChannel.setClientId(clientId);
         disconnectChannel.setSemanticParts(semanticParts);
 
         KapuaDisconnectPayload disconnectPayload = prepareDefaultDeathPayload();
 
-        KapuaDisconnectMessage disconnectMessage = lifecycleMessageFactory.newKapuaDisconnectMessage();
+        KapuaDisconnectMessage disconnectMessage = new KapuaDisconnectMessage();
         disconnectMessage.setChannel(disconnectChannel);
         disconnectMessage.setPayload(disconnectPayload);
         disconnectMessage.setScopeId(lastAccount.getId());
@@ -1807,12 +1800,12 @@ public class DeviceRegistrySteps extends TestBase {
         semanticParts.add(PART1);
         semanticParts.add(PART2);
 
-        KapuaMissingChannel missingChannel = lifecycleMessageFactory.newKapuaMissingChannel();
+        KapuaMissingChannel missingChannel = new KapuaMissingChannel();
         missingChannel.setClientId(clientId);
         missingChannel.setSemanticParts(semanticParts);
 
         KapuaMissingPayload missingPayload = prepareDefaultMissingPayload();
-        KapuaMissingMessage missingMessage = lifecycleMessageFactory.newKapuaMissingMessage();
+        KapuaMissingMessage missingMessage = new KapuaMissingMessage();
         missingMessage.setChannel(missingChannel);
         missingMessage.setPayload(missingPayload);
         missingMessage.setScopeId(lastAccount.getId());
@@ -1847,13 +1840,13 @@ public class DeviceRegistrySteps extends TestBase {
         semanticParts.add(PART1);
         semanticParts.add(PART2);
 
-        KapuaAppsChannel appsChannel = lifecycleMessageFactory.newKapuaAppsChannel();
+        KapuaAppsChannel appsChannel = new KapuaAppsChannel();
         appsChannel.setClientId(clientId);
         appsChannel.setSemanticParts(semanticParts);
 
         KapuaAppsPayload appsPayload = prepareDefaultApplicationPayload();
 
-        KapuaAppsMessage appsMessage = lifecycleMessageFactory.newKapuaAppsMessage();
+        KapuaAppsMessage appsMessage = new KapuaAppsMessage();
         appsMessage.setChannel(appsChannel);
         appsMessage.setPayload(appsPayload);
         appsMessage.setScopeId(lastAccount.getId());
@@ -2193,7 +2186,7 @@ public class DeviceRegistrySteps extends TestBase {
     // Create a event creator object. The creator is pre-filled with default data.
     private DeviceEventCreator prepareRegularDeviceEventCreator(KapuaId accountId, KapuaId deviceId) {
         DeviceEventCreator tmpCreator = new DeviceEventCreator(accountId);
-        KapuaPosition tmpPosition = messageFactory.newPosition();
+        KapuaPosition tmpPosition = new KapuaPosition();
         Date timeReceived = new Date();
         Date timeSent = new Date(System.currentTimeMillis() - 5 * 60 * 1000);
         tmpCreator.setDeviceId(deviceId);
@@ -2251,7 +2244,7 @@ public class DeviceRegistrySteps extends TestBase {
     }
 
     private KapuaPosition getDefaultPosition() {
-        KapuaPosition tmpPos = messageFactory.newPosition();
+        KapuaPosition tmpPos = new KapuaPosition();
         tmpPos.setAltitude(250.0);
         tmpPos.setHeading(90.0);
         tmpPos.setLatitude(45.5);
@@ -2265,7 +2258,7 @@ public class DeviceRegistrySteps extends TestBase {
     }
 
     private KapuaBirthPayload prepareDefaultBirthPayload() {
-        KapuaBirthPayload payload = lifecycleMessageFactory.newKapuaBirthPayload();
+        KapuaBirthPayload payload = new KapuaBirthPayload();
         payload.setUptime("500");
         payload.setDisplayName(RELIAGATE_10_20);
         payload.setModelId(RELIAGATE_10_20);
@@ -2299,19 +2292,19 @@ public class DeviceRegistrySteps extends TestBase {
     }
 
     private KapuaDisconnectPayload prepareDefaultDeathPayload() {
-        KapuaDisconnectPayload payload = lifecycleMessageFactory.newKapuaDisconnectPayload();
+        KapuaDisconnectPayload payload = new KapuaDisconnectPayload();
         payload.setUptime("1000");
         payload.setDisplayName(RELIAGATE_10_20);
         return payload;
     }
 
     private KapuaMissingPayload prepareDefaultMissingPayload() {
-        KapuaMissingPayload tmpPayload = lifecycleMessageFactory.newKapuaMissingPayload();
+        KapuaMissingPayload tmpPayload = new KapuaMissingPayload();
         return tmpPayload;
     }
 
     private KapuaAppsPayload prepareDefaultApplicationPayload() {
-        KapuaAppsPayload payload = lifecycleMessageFactory.newKapuaAppsPayload();
+        KapuaAppsPayload payload = new KapuaAppsPayload();
         payload.setUptime("500");
         payload.setDisplayName(RELIAGATE_10_20);
         payload.setModelName("ReliaGate");

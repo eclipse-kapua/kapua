@@ -19,6 +19,8 @@ import org.eclipse.kapua.message.KapuaMessage;
  *
  * @since 1.0.0
  */
-public interface KapuaNotifyMessage extends KapuaMessage<KapuaNotifyChannel, KapuaNotifyPayload> {
+public class KapuaNotifyMessage extends KapuaMessage<KapuaNotifyChannel, KapuaNotifyPayload> {
+
+    private static final long serialVersionUID = 4475824062529778773L;
 
 }

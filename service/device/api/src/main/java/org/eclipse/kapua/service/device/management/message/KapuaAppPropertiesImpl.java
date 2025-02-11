@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2017, 2022 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -10,15 +10,22 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.message.internal.device.lifecycle;
+package org.eclipse.kapua.service.device.management.message;
 
-import org.eclipse.kapua.message.device.lifecycle.KapuaAppsChannel;
+public class KapuaAppPropertiesImpl implements KapuaAppProperties {
 
-/**
- * {@link KapuaAppsChannel} implementation.
- *
- * @since 1.0.0
- */
-public class KapuaAppsChannelImpl extends KapuaBirthChannelImpl implements KapuaAppsChannel {
+    protected String value;
 
+    public KapuaAppPropertiesImpl(String value) {
+        this.value = value;
+    }
+
+    @Override
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
 }

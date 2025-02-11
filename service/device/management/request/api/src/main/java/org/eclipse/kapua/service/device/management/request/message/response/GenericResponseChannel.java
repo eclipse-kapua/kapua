@@ -12,17 +12,18 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.request.message.response;
 
-import org.eclipse.kapua.service.device.management.message.response.KapuaResponseChannel;
-import org.eclipse.kapua.service.device.management.request.GenericRequestXmlRegistry;
-
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.service.device.management.message.response.KapuaResponseChannel;
 
 /**
  * Generic {@link KapuaResponseChannel} definition.
  *
  * @since 1.0.0
  */
-@XmlType(factoryClass = GenericRequestXmlRegistry.class, factoryMethod = "newResponseChannel")
-public interface GenericResponseChannel extends KapuaResponseChannel {
+@XmlType
+public class GenericResponseChannel extends KapuaResponseChannel {
+
+    private static final long serialVersionUID = 5618310103495637564L;
 
 }

@@ -17,10 +17,14 @@ import org.eclipse.kapua.message.KapuaMessage;
 /**
  * Device event {@link KapuaMessage} definition.
  *
- * @param <C> The type of {@link KapuaManagementEventChannel}
- * @param <P> The type of {@link KapuaManagementEventPayload}
+ * @param <C>
+ *         The type of {@link KapuaManagementEventChannel}
+ * @param <P>
+ *         The type of {@link KapuaManagementEventPayload}
  * @since 2.0.0
  */
-public interface KapuaManagementEventMessage<C extends KapuaManagementEventChannel, P extends KapuaManagementEventPayload> extends KapuaMessage<C, P> {
+public class KapuaManagementEventMessage<C extends KapuaManagementEventChannel, P extends KapuaManagementEventPayload> extends KapuaMessage<C, P> {
+
+    private static final long serialVersionUID = 4475824062529778773L;
 
 }

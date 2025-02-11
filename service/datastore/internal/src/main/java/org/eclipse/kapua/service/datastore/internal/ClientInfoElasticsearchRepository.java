@@ -15,7 +15,6 @@ package org.eclipse.kapua.service.datastore.internal;
 import javax.inject.Inject;
 
 import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.service.datastore.ClientInfoFactory;
 import org.eclipse.kapua.service.datastore.internal.mediator.DatastoreUtils;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
 import org.eclipse.kapua.service.datastore.model.ClientInfo;
@@ -40,14 +39,12 @@ public class ClientInfoElasticsearchRepository extends DatastoreElasticSearchRep
     @Inject
     protected ClientInfoElasticsearchRepository(
             ElasticsearchClientProvider elasticsearchClientProviderInstance,
-            ClientInfoFactory clientInfoFactory,
             StorablePredicateFactory storablePredicateFactory,
             DatastoreSettings datastoreSettings,
             DatastoreUtils datastoreUtils,
             DatastoreCacheManager datastoreCacheManager) {
         super(elasticsearchClientProviderInstance,
                 ClientInfo.class,
-                clientInfoFactory,
                 storablePredicateFactory,
                 datastoreCacheManager.getClientsCache(),
                 datastoreSettings,

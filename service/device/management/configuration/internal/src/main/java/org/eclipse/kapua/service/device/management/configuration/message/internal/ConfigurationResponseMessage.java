@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.configuration.message.internal;
 
-import org.eclipse.kapua.service.device.management.commons.message.response.KapuaResponseMessageImpl;
 import org.eclipse.kapua.service.device.management.configuration.DeviceConfiguration;
 import org.eclipse.kapua.service.device.management.message.response.KapuaResponseMessage;
 
@@ -22,8 +21,7 @@ import org.eclipse.kapua.service.device.management.message.response.KapuaRespons
  *
  * @since 1.0.0
  */
-public class ConfigurationResponseMessage extends KapuaResponseMessageImpl<ConfigurationResponseChannel, ConfigurationResponsePayload>
-        implements KapuaResponseMessage<ConfigurationResponseChannel, ConfigurationResponsePayload> {
+public class ConfigurationResponseMessage extends KapuaResponseMessage<ConfigurationResponseChannel, ConfigurationResponsePayload> {
 
     private static final long serialVersionUID = -211188083735456147L;
 }

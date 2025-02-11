@@ -29,7 +29,6 @@ import org.eclipse.kapua.service.elasticsearch.client.model.Response;
 import org.eclipse.kapua.service.elasticsearch.client.model.ResultList;
 import org.eclipse.kapua.service.elasticsearch.client.model.UpdateRequest;
 import org.eclipse.kapua.service.elasticsearch.client.model.UpdateResponse;
-import org.eclipse.kapua.service.storable.StorableFactory;
 import org.eclipse.kapua.service.storable.exception.MappingException;
 import org.eclipse.kapua.service.storable.model.Storable;
 import org.eclipse.kapua.service.storable.model.StorableListResult;
@@ -51,7 +50,6 @@ public abstract class ElasticsearchRepository<
 
     protected final ElasticsearchClientProvider elasticsearchClientProviderInstance;
     private final Class<T> clazz;
-    private final StorableFactory<T> storableFactory;
     protected final StorablePredicateFactory storablePredicateFactory;
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     protected final LocalCache<String, Boolean> indexUpserted;
@@ -69,13 +67,11 @@ public abstract class ElasticsearchRepository<
     protected ElasticsearchRepository(
             ElasticsearchClientProvider elasticsearchClientProviderInstance,
             Class<T> clazz,
-            StorableFactory<T> storableFactory,
             StorablePredicateFactory storablePredicateFactory,
             LocalCache<String, Boolean> indexesCache,
             Function<KapuaId, Q> querySupplier,
             Supplier<L> listSupplier) {
         this.elasticsearchClientProviderInstance = elasticsearchClientProviderInstance;
-        this.storableFactory = storableFactory;
         this.storablePredicateFactory = storablePredicateFactory;
         this.clazz = clazz;
         this.indexUpserted = indexesCache;
@@ -86,12 +82,10 @@ public abstract class ElasticsearchRepository<
     protected ElasticsearchRepository(
             ElasticsearchClientProvider elasticsearchClientProviderInstance,
             Class<T> clazz,
-            StorableFactory<T> storableFactory,
             StorablePredicateFactory storablePredicateFactory,
             Function<KapuaId, Q> querySupplier,
             Supplier<L> listSupplier) {
         this.elasticsearchClientProviderInstance = elasticsearchClientProviderInstance;
-        this.storableFactory = storableFactory;
         this.storablePredicateFactory = storablePredicateFactory;
         this.clazz = clazz;
         this.indexUpserted = new LocalCache<>(0, null);

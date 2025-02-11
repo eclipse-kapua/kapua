@@ -12,18 +12,26 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.message.event;
 
-import org.eclipse.kapua.service.device.management.message.KapuaAppChannel;
-import org.eclipse.kapua.service.device.management.message.KapuaEventChannel;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
+
+import org.eclipse.kapua.service.device.management.message.KapuaAppChannel;
+import org.eclipse.kapua.service.device.management.message.KapuaEventChannel;
 
 /**
  * Device event {@link KapuaAppChannel} definition.
  *
  * @since 2.0.0
  */
-public interface KapuaManagementEventChannel extends KapuaEventChannel {
+public class KapuaManagementEventChannel extends KapuaEventChannel {
 
+    private String appName;
+
+    private String appVersion;
+    private String[] resources;
 
     /**
      * Gets the device application name.
@@ -32,15 +40,20 @@ public interface KapuaManagementEventChannel extends KapuaEventChannel {
      * @since 2.0.0
      */
     @XmlElement(name = "appName")
-    String getAppName();
+    public String getAppName() {
+        return appName;
+    }
 
     /**
      * Sets the device application name.
      *
-     * @param appName The device application name.
+     * @param appName
+     *         The device application name.
      * @since 2.0.0
      */
-    void setAppName(String appName);
+    public void setAppName(String appName) {
+        this.appName = appName;
+    }
 
     /**
      * Gets the device application version.
@@ -49,15 +62,20 @@ public interface KapuaManagementEventChannel extends KapuaEventChannel {
      * @since 2.0.0
      */
     @XmlElement(name = "appVersion")
-    String getAppVersion();
+    public String getAppVersion() {
+        return appVersion;
+    }
 
     /**
      * Sets the device application version.
      *
-     * @param appVersion The device application version.
+     * @param appVersion
+     *         The device application version.
      * @since 2.0.0
      */
-    void setAppVersion(String appVersion);
+    public void setAppVersion(String appVersion) {
+        this.appVersion = appVersion;
+    }
 
     /**
      * Get the request resources
@@ -65,7 +83,9 @@ public interface KapuaManagementEventChannel extends KapuaEventChannel {
      * @return
      * @since 2.0.0
      */
-    String[] getResources();
+    public String[] getResources() {
+        return resources;
+    }
 
     /**
      * Set the request resources
@@ -73,5 +93,26 @@ public interface KapuaManagementEventChannel extends KapuaEventChannel {
      * @param resources
      * @since 2.0.0
      */
-    void setResources(String[] resources);
+    public void setResources(String[] resources) {
+        this.resources = resources;
+    }
+
+    @Override
+    public List<String> getSemanticParts() {
+        List<String> semanticParts = new ArrayList<>();
+        semanticParts.add(getAppName());
+        semanticParts.add(getAppVersion());
+
+        if (getResources() != null) {
+            semanticParts.addAll(Arrays.asList(getResources()));
+        }
+
+        return semanticParts;
+    }
+
+    @Override
+    public void setSemanticParts(List<String> semanticParts) {
+        throw new UnsupportedOperationException();
+    }
+
 }

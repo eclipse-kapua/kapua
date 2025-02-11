@@ -12,10 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.translator.kura.kapua;
 
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.message.device.data.KapuaDataChannel;
 import org.eclipse.kapua.message.device.data.KapuaDataMessage;
-import org.eclipse.kapua.message.device.data.KapuaDataMessageFactory;
 import org.eclipse.kapua.message.device.data.KapuaDataPayload;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountService;
@@ -32,8 +33,6 @@ import org.eclipse.kapua.translator.exception.TranslateException;
 import org.eclipse.kapua.translator.setting.TranslatorKapuaKuraSettingKeys;
 import org.eclipse.kapua.translator.setting.TranslatorKapuaKuraSettings;
 
-import javax.inject.Inject;
-
 /**
  * {@link Translator} implementation from {@link KuraDataMessage} to {@link KapuaDataMessage}
  *
@@ -45,8 +44,6 @@ public class TranslatorDataKuraKapua extends Translator<KuraDataMessage, KapuaDa
     private AccountService accountService;
     @Inject
     private DeviceRegistryService deviceRegistryService;
-    @Inject
-    private KapuaDataMessageFactory kapuaDataMessageFactory;
     @Inject
     private TranslatorKuraKapuaUtils translatorKuraKapuaUtils;
 
@@ -71,7 +68,7 @@ public class TranslatorDataKuraKapua extends Translator<KuraDataMessage, KapuaDa
                 throw new KapuaEntityNotFoundException(Account.TYPE, kuraMessage.getChannel().getScope());
             }
 
-            KapuaDataMessage kapuaDataMessage = kapuaDataMessageFactory.newKapuaDataMessage();
+            KapuaDataMessage kapuaDataMessage = new KapuaDataMessage();
             kapuaDataMessage.setScopeId(account.getId());
             kapuaDataMessage.setClientId(kuraMessage.getChannel().getClientId());
             kapuaDataMessage.setChannel(kapuaDataChannel);
@@ -97,7 +94,7 @@ public class TranslatorDataKuraKapua extends Translator<KuraDataMessage, KapuaDa
     }
 
     private KapuaDataChannel translate(KuraDataChannel kuraChannel) {
-        KapuaDataChannel kapuaChannel = kapuaDataMessageFactory.newKapuaDataChannel();
+        KapuaDataChannel kapuaChannel = new KapuaDataChannel();
         kapuaChannel.setSemanticParts(kuraChannel.getSemanticParts());
 
         // Return Kapua Channel
@@ -105,7 +102,7 @@ public class TranslatorDataKuraKapua extends Translator<KuraDataMessage, KapuaDa
     }
 
     private KapuaDataPayload translate(KuraDataPayload kuraPayload) {
-        KapuaDataPayload kapuaPayload = kapuaDataMessageFactory.newKapuaDataPayload();
+        KapuaDataPayload kapuaPayload = new KapuaDataPayload();
 
         if (!kuraPayload.getMetrics().isEmpty()) {
             kapuaPayload.setMetrics(kuraPayload.getMetrics());

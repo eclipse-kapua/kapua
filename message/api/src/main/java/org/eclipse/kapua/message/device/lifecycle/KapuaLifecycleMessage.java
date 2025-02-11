@@ -19,6 +19,6 @@ import org.eclipse.kapua.message.KapuaMessage;
  *
  * @since 1.1.0
  */
-public interface KapuaLifecycleMessage<C extends KapuaLifecycleChannel, P extends KapuaLifecyclePayload> extends KapuaMessage<C, P> {
+public class KapuaLifecycleMessage<C extends KapuaLifecycleChannel, P extends KapuaLifecyclePayload> extends KapuaMessage<C, P> {
 
 }

@@ -12,17 +12,17 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.packages.message.internal;
 
-import org.eclipse.kapua.service.device.management.commons.message.request.KapuaRequestChannelImpl;
-
 import java.util.Arrays;
 import java.util.List;
+
+import org.eclipse.kapua.service.device.management.message.request.KapuaRequestChannel;
 
 /**
  * Package request message channel.
  *
  * @since 1.0
  */
-public class PackageRequestChannel extends KapuaRequestChannelImpl {
+public class PackageRequestChannel extends KapuaRequestChannel {
 
     private static final long serialVersionUID = -2326105340676100128L;
     private PackageResource packageResource;

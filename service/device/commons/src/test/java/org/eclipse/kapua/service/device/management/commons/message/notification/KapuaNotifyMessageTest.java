@@ -12,12 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.commons.message.notification;
 
+import org.eclipse.kapua.qa.markers.junit.JUnitTests;
+import org.eclipse.kapua.service.device.management.message.notification.KapuaNotifyMessage;
 import org.eclipse.kapua.service.device.management.message.notification.KapuaNotifyPayload;
 import org.junit.Assert;
 import org.junit.Test;
-import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.junit.experimental.categories.Category;
-
 
 @Category(JUnitTests.class)
 public class KapuaNotifyMessageTest {
@@ -26,14 +26,14 @@ public class KapuaNotifyMessageTest {
 
     @Test
     public void kapuaNotifyPayloadConstructor() {
-        KapuaNotifyPayload kapuaNotifyPayload = new KapuaNotifyPayloadImpl();
+        KapuaNotifyPayload kapuaNotifyPayload = new KapuaNotifyPayload();
 
         Assert.assertNotNull(kapuaNotifyPayload);
     }
 
     @Test
     public void kapuaNotifyMessageConstructor() throws Exception {
-        KapuaNotifyMessageImpl kapuaNotifyMessage = new KapuaNotifyMessageImpl();
+        KapuaNotifyMessage kapuaNotifyMessage = new KapuaNotifyMessage();
 
         Assert.assertNotNull(kapuaNotifyMessage);
     }

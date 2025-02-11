@@ -13,7 +13,6 @@
 package org.eclipse.kapua.service.device.management.bundle.message.internal;
 
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundle;
-import org.eclipse.kapua.service.device.management.commons.message.request.KapuaRequestChannelImpl;
 import org.eclipse.kapua.service.device.management.message.request.KapuaRequestChannel;
 
 /**
@@ -21,7 +20,7 @@ import org.eclipse.kapua.service.device.management.message.request.KapuaRequestC
  *
  * @since 1.0.0
  */
-public class BundleRequestChannel extends KapuaRequestChannelImpl implements KapuaRequestChannel {
+public class BundleRequestChannel extends KapuaRequestChannel {
 
     private static final long serialVersionUID = -1300715857785309970L;
 
@@ -41,7 +40,8 @@ public class BundleRequestChannel extends KapuaRequestChannelImpl implements Kap
     /**
      * Sets the {@link DeviceBundle} identifier.
      *
-     * @param bundleId The {@link DeviceBundle} identifier.
+     * @param bundleId
+     *         The {@link DeviceBundle} identifier.
      * @since 1.0.0
      */
     public void setBundleId(String bundleId) {
@@ -61,7 +61,8 @@ public class BundleRequestChannel extends KapuaRequestChannelImpl implements Kap
     /**
      * Sets whether or not the {@link DeviceBundle} has started.
      *
-     * @param start {@code true} if the {@link DeviceBundle} has started, {@code false} otherwise.
+     * @param start
+     *         {@code true} if the {@link DeviceBundle} has started, {@code false} otherwise.
      * @since 1.0.0
      */
     public void setStart(boolean start) {

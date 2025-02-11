@@ -17,7 +17,32 @@ package org.eclipse.kapua.message.device.lifecycle;
  *
  * @since 1.0.0
  */
-public interface KapuaDisconnectPayload extends KapuaLifecyclePayload {
+public class KapuaDisconnectPayload extends KapuaLifecyclePayload {
+
+    /**
+     * Constructor.
+     *
+     * @since 1.1.0
+     */
+    public KapuaDisconnectPayload() {
+        super();
+    }
+
+    /**
+     * Constructor.
+     * <p>
+     * Sets all available properties of the {@link KapuaDisconnectPayload} at once.
+     *
+     * @param uptime
+     *         The {@link KapuaDisconnectPayloadAttibutes#UPTIME}of the {@link KapuaDisconnectPayload}
+     * @param displayName
+     *         The {@link KapuaDisconnectPayloadAttibutes#DISPLAY_NAME} of the {@link KapuaDisconnectPayload}
+     * @since 1.0.0
+     */
+    public KapuaDisconnectPayload(String uptime, String displayName) {
+        setUptime(uptime);
+        setDisplayName(displayName);
+    }
 
     /**
      * Gets the device uptime.
@@ -25,15 +50,20 @@ public interface KapuaDisconnectPayload extends KapuaLifecyclePayload {
      * @return The device uptime.
      * @since 1.0.0
      */
-    String getUptime();
+    public String getUptime() {
+        return (String) getMetrics().get(KapuaDisconnectPayloadAttibutes.UPTIME);
+    }
 
     /**
      * Sets the device uptime.
      *
-     * @param uptime The device uptime.
+     * @param uptime
+     *         The device uptime.
      * @since 1.1.0
      */
-    void setUptime(String uptime);
+    public void setUptime(String uptime) {
+        getMetrics().put(KapuaDisconnectPayloadAttibutes.UPTIME, uptime);
+    }
 
     /**
      * Gets the device display name.
@@ -41,13 +71,19 @@ public interface KapuaDisconnectPayload extends KapuaLifecyclePayload {
      * @return The device display name.
      * @since 1.0.0
      */
-    String getDisplayName();
+    public String getDisplayName() {
+        return (String) getMetrics().get(KapuaDisconnectPayloadAttibutes.DISPLAY_NAME);
+    }
 
     /**
      * Sets the device display name.
      *
-     * @param displayName The device display name
+     * @param displayName
+     *         The device display name
      * @since 1.1.0
      */
-    void setDisplayName(String displayName);
+    public void setDisplayName(String displayName) {
+        getMetrics().put(KapuaDisconnectPayloadAttibutes.DISPLAY_NAME, displayName);
+    }
+
 }

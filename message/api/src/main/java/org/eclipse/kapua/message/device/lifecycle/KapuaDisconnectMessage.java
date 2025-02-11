@@ -17,5 +17,6 @@ package org.eclipse.kapua.message.device.lifecycle;
  *
  * @since 1.0.0
  */
-public interface KapuaDisconnectMessage extends KapuaLifecycleMessage<KapuaDisconnectChannel, KapuaDisconnectPayload> {
+public class KapuaDisconnectMessage extends KapuaLifecycleMessage<KapuaDisconnectChannel, KapuaDisconnectPayload> {
+
 }

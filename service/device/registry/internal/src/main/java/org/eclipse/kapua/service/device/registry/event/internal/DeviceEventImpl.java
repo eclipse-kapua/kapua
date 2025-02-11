@@ -12,14 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.registry.event.internal;
 
-import org.eclipse.kapua.commons.model.AbstractKapuaEntity;
-import org.eclipse.kapua.commons.model.id.KapuaEid;
-import org.eclipse.kapua.message.KapuaPosition;
-import org.eclipse.kapua.message.internal.KapuaPositionImpl;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.service.device.management.message.KapuaMethod;
-import org.eclipse.kapua.service.device.management.message.response.KapuaResponseCode;
-import org.eclipse.kapua.service.device.registry.event.DeviceEvent;
+import java.util.Date;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -33,7 +26,15 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import java.util.Date;
+
+import org.eclipse.kapua.commons.model.AbstractKapuaEntity;
+import org.eclipse.kapua.commons.model.id.KapuaEid;
+import org.eclipse.kapua.message.KapuaPosition;
+import org.eclipse.kapua.message.internal.KapuaPositionImpl;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.service.device.management.message.KapuaMethod;
+import org.eclipse.kapua.service.device.management.message.response.KapuaResponseCode;
+import org.eclipse.kapua.service.device.registry.event.DeviceEvent;
 
 /**
  * {@link DeviceEvent} implementation.
@@ -102,7 +103,8 @@ public class DeviceEventImpl extends AbstractKapuaEntity implements DeviceEvent 
     /**
      * Constructor
      *
-     * @param scopeId The scope {@link KapuaId} to set into the {@link DeviceEvent}
+     * @param scopeId
+     *         The scope {@link KapuaId} to set into the {@link DeviceEvent}
      * @since 1.0.0
      */
     public DeviceEventImpl(KapuaId scopeId) {
@@ -160,23 +162,13 @@ public class DeviceEventImpl extends AbstractKapuaEntity implements DeviceEvent 
 
     @Override
     public KapuaPosition getPosition() {
-        return position;
+        return position.toPosition();
     }
 
     @Override
     public void setPosition(KapuaPosition position) {
         if (position != null) {
-            this.position = new KapuaPositionImpl();
-
-            this.position.setAltitude(position.getAltitude());
-            this.position.setHeading(position.getHeading());
-            this.position.setLatitude(position.getLatitude());
-            this.position.setLongitude(position.getLongitude());
-            this.position.setPrecision(position.getPrecision());
-            this.position.setSatellites(position.getSatellites());
-            this.position.setSpeed(position.getSpeed());
-            this.position.setStatus(position.getStatus());
-            this.position.setTimestamp(position.getTimestamp());
+            this.position = new KapuaPositionImpl(position);
         } else {
             this.position = null;
         }

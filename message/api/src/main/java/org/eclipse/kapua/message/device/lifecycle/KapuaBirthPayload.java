@@ -17,7 +17,152 @@ package org.eclipse.kapua.message.device.lifecycle;
  *
  * @since 1.0.0
  */
-public interface KapuaBirthPayload extends KapuaLifecyclePayload {
+public class KapuaBirthPayload extends KapuaLifecyclePayload {
+
+    private static final long serialVersionUID = 304433271740125817L;
+
+    /**
+     * Constructor.
+     *
+     * @since 1.1.0
+     */
+    public KapuaBirthPayload() {
+        super();
+    }
+
+    /**
+     * Constructor.
+     * <p>
+     * Sets all available properties of the {@link KapuaBirthPayload} at once.
+     *
+     * @param uptime
+     *         The {@link KapuaBirthPayloadAttibutes#UPTIME} of the {@link KapuaBirthMessage}
+     * @param displayName
+     *         The {@link KapuaBirthPayloadAttibutes#DISPLAY_NAME} of the {@link KapuaBirthMessage}
+     * @param modelName
+     *         The {@link KapuaBirthPayloadAttibutes#MODEL_NAME} of the {@link KapuaBirthMessage}
+     * @param modelId
+     *         The {@link KapuaBirthPayloadAttibutes#MODEL_ID} of the {@link KapuaBirthMessage}
+     * @param partNumber
+     *         The {@link KapuaBirthPayloadAttibutes#PART_NUMBER} of the {@link KapuaBirthMessage}
+     * @param serialNumber
+     *         The {@link KapuaBirthPayloadAttibutes#SERIAL_NUMBER} of the {@link KapuaBirthMessage}
+     * @param firmware
+     *         The {@link KapuaBirthPayloadAttibutes#FIRMWARE} of the {@link KapuaBirthMessage}
+     * @param firmwareVersion
+     *         The {@link KapuaBirthPayloadAttibutes#FIRMWARE_VERSION} of the {@link KapuaBirthMessage}
+     * @param bios
+     *         The {@link KapuaBirthPayloadAttibutes#BIOS} of the {@link KapuaBirthMessage}
+     * @param biosVersion
+     *         The {@link KapuaBirthPayloadAttibutes#BIOS_VERSION} of the {@link KapuaBirthMessage}
+     * @param os
+     *         The {@link KapuaBirthPayloadAttibutes#OS} of the {@link KapuaBirthMessage}
+     * @param osVersion
+     *         The {@link KapuaBirthPayloadAttibutes#OS_VERSION} of the {@link KapuaBirthMessage}
+     * @param jvm
+     *         The {@link KapuaBirthPayloadAttibutes#JVM} of the {@link KapuaBirthMessage}
+     * @param jvmVersion
+     *         The {@link KapuaBirthPayloadAttibutes#JVM_VERSION} of the {@link KapuaBirthMessage}
+     * @param jvmProfile
+     *         The {@link KapuaBirthPayloadAttibutes#JVM_PROFILE} of the {@link KapuaBirthMessage}
+     * @param containerFramework
+     *         The {@link KapuaBirthPayloadAttibutes#CONTAINER_FRAMEWORK} of the {@link KapuaBirthMessage}
+     * @param containerFrameworkVersion
+     *         The {@link KapuaBirthPayloadAttibutes#CONTAINER_FRAMEWORK_VERSION} of the {@link KapuaBirthMessage}
+     * @param applicationFramework
+     *         The {@link KapuaBirthPayloadAttibutes#APPLICATION_FRAMEWORK} of the {@link KapuaBirthMessage}
+     * @param applicationFrameworkVersion
+     *         The {@link KapuaBirthPayloadAttibutes#APPLICATION_FRAMEWORK_VERSION} of the {@link KapuaBirthMessage}
+     * @param connectionInterface
+     *         The {@link KapuaBirthPayloadAttibutes#CONNECTION_INTERFACE} of the {@link KapuaBirthMessage}
+     * @param connectionIp
+     *         The {@link KapuaBirthPayloadAttibutes#CONNECTION_IP} of the {@link KapuaBirthMessage}
+     * @param acceptEncoding
+     *         The {@link KapuaBirthPayloadAttibutes#ACCEPT_ENCODING} of the {@link KapuaBirthMessage}
+     * @param applicationIdentifiers
+     *         The {@link KapuaBirthPayloadAttibutes#APPLICATION_IDENTIFIERS} of the {@link KapuaBirthMessage}
+     * @param availableProcessors
+     *         The {@link KapuaBirthPayloadAttibutes#AVAILABLE_PROCESSORS} of the {@link KapuaBirthMessage}
+     * @param totalMemory
+     *         The {@link KapuaBirthPayloadAttibutes#TOTAL_MEMORY} of the {@link KapuaBirthMessage}
+     * @param osArch
+     *         The {@link KapuaBirthPayloadAttibutes#OS_ARCH} of the {@link KapuaBirthMessage}
+     * @param modemImei
+     *         The {@link KapuaBirthPayloadAttibutes#MODEM_IMEI} of the {@link KapuaBirthMessage}
+     * @param modemImsi
+     *         The {@link KapuaBirthPayloadAttibutes#MODEM_IMSI} of the {@link KapuaBirthMessage}
+     * @param modemIccid
+     *         The {@link KapuaBirthPayloadAttibutes#MODEM_ICCID} of the {@link KapuaBirthMessage}
+     * @param extendedProperties
+     *         The {@link KapuaBirthPayloadAttibutes#EXTENDED_PROPERTIES} of the {@link KapuaBirthMessage}
+     * @param tamperStatus
+     *         The {@link KapuaBirthPayloadAttibutes#TAMPER_STATUS} of the {@link KapuaBirthMessage}
+     * @since 1.0.0
+     */
+    public KapuaBirthPayload(String uptime,
+            String displayName,
+            String modelName,
+            String modelId,
+            String partNumber,
+            String serialNumber,
+            String firmware,
+            String firmwareVersion,
+            String bios,
+            String biosVersion,
+            String os,
+            String osVersion,
+            String jvm,
+            String jvmVersion,
+            String jvmProfile,
+            String containerFramework,
+            String containerFrameworkVersion,
+            String applicationFramework,
+            String applicationFrameworkVersion,
+            String connectionInterface,
+            String connectionIp,
+            String acceptEncoding,
+            String applicationIdentifiers,
+            String availableProcessors,
+            String totalMemory,
+            String osArch,
+            String modemImei,
+            String modemImsi,
+            String modemIccid,
+            String extendedProperties,
+            String tamperStatus) {
+
+        setUptime(uptime);
+        setDisplayName(displayName);
+        setModelName(modelName);
+        setModelId(modelId);
+        setPartNumber(partNumber);
+        setSerialNumber(serialNumber);
+        setFirmware(firmware);
+        setFirmwareVersion(firmwareVersion);
+        setBios(bios);
+        setBiosVersion(biosVersion);
+        setOs(os);
+        setOsVersion(osVersion);
+        setJvm(jvm);
+        setJvmVersion(jvmVersion);
+        setJvmProfile(jvmProfile);
+        setContainerFramework(containerFramework);
+        setContainerFrameworkVersion(containerFrameworkVersion);
+        setApplicationFramework(applicationFramework);
+        setApplicationFrameworkVersion(applicationFrameworkVersion);
+        setConnectionInterface(connectionInterface);
+        setConnectionIp(connectionIp);
+        setAcceptEncoding(acceptEncoding);
+        setApplicationIdentifiers(applicationIdentifiers);
+        setAvailableProcessors(availableProcessors);
+        setTotalMemory(totalMemory);
+        setOsArch(osArch);
+        setModemImei(modemImei);
+        setModemImsi(modemImsi);
+        setModemIccid(modemIccid);
+        setExtendedProperties(extendedProperties);
+        setTamperStatus(tamperStatus);
+    }
 
     /**
      * Gets the uptime.
@@ -25,15 +170,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The uptime.
      * @since 1.0.0
      */
-    String getUptime();
+    public String getUptime() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.UPTIME);
+    }
 
     /**
      * Sets the uptime.
      *
-     * @param uptime The uptime.
+     * @param uptime
+     *         The uptime.
      * @since 1.1.0
      */
-    void setUptime(String uptime);
+    public void setUptime(String uptime) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.UPTIME, uptime);
+    }
 
     /**
      * Gets the display name.
@@ -41,15 +191,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The display name.
      * @since 1.0.0
      */
-    String getDisplayName();
+    public String getDisplayName() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.DISPLAY_NAME);
+    }
 
     /**
      * Sets the display name.
      *
-     * @param displayName The display name.
+     * @param displayName
+     *         The display name.
      * @since 1.1.0
      */
-    void setDisplayName(String displayName);
+    public void setDisplayName(String displayName) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.DISPLAY_NAME, displayName);
+    }
 
     /**
      * Gets the model name.
@@ -57,15 +212,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The model name.
      * @since 1.0.0
      */
-    String getModelName();
+    public String getModelName() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.MODEL_NAME);
+    }
 
     /**
      * Sets the model name.
      *
-     * @param modelName The model name.
+     * @param modelName
+     *         The model name.
      * @since 1.1.0
      */
-    void setModelName(String modelName);
+    public void setModelName(String modelName) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.MODEL_NAME, modelName);
+    }
 
     /**
      * Gets the model identifier.
@@ -73,15 +233,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The model identifier.
      * @since 1.0.0
      */
-    String getModelId();
+    public String getModelId() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.MODEL_ID);
+    }
 
     /**
      * Sets the model identifier.
      *
-     * @param modelId The model identifier.
+     * @param modelId
+     *         The model identifier.
      * @since 1.1.0
      */
-    void setModelId(String modelId);
+    public void setModelId(String modelId) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.MODEL_ID, modelId);
+    }
 
     /**
      * Gets the part number.
@@ -89,15 +254,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The part number.
      * @since 1.0.0
      */
-    String getPartNumber();
+    public String getPartNumber() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.PART_NUMBER);
+    }
 
     /**
      * Sets the part number.
      *
-     * @param partNumber The part number.
+     * @param partNumber
+     *         The part number.
      * @since 1.1.0
      */
-    void setPartNumber(String partNumber);
+    public void setPartNumber(String partNumber) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.PART_NUMBER, partNumber);
+    }
 
     /**
      * Gets the serial number.
@@ -105,15 +275,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The serial number.
      * @since 1.0.0
      */
-    String getSerialNumber();
+    public String getSerialNumber() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.SERIAL_NUMBER);
+    }
 
     /**
      * Sets the serial number.
      *
-     * @param serialNumber The serial number.
+     * @param serialNumber
+     *         The serial number.
      * @since 1.1.0
      */
-    void setSerialNumber(String serialNumber);
+    public void setSerialNumber(String serialNumber) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.SERIAL_NUMBER, serialNumber);
+    }
 
     /**
      * Gets the firmware name.
@@ -121,15 +296,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The firmware name.
      * @since 1.0.0
      */
-    String getFirmware();
+    public String getFirmware() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.FIRMWARE);
+    }
 
     /**
      * Sets the firmware name.
      *
-     * @param firmware The firmware name.
+     * @param firmware
+     *         The firmware name.
      * @since 1.1.0
      */
-    void setFirmware(String firmware);
+    public void setFirmware(String firmware) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.FIRMWARE, firmware);
+    }
 
     /**
      * Gets the firmware version.
@@ -137,15 +317,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The firmware version.
      * @since 1.0.0
      */
-    String getFirmwareVersion();
+    public String getFirmwareVersion() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.FIRMWARE_VERSION);
+    }
 
     /**
      * Sets the firmware version.
      *
-     * @param firmwareVersion The firmware version.
+     * @param firmwareVersion
+     *         The firmware version.
      * @since 1.1.0
      */
-    void setFirmwareVersion(String firmwareVersion);
+    public void setFirmwareVersion(String firmwareVersion) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.FIRMWARE_VERSION, firmwareVersion);
+    }
 
     /**
      * Gets the bios name
@@ -153,15 +338,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The bios name.
      * @since 1.0.0
      */
-    String getBios();
+    public String getBios() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.BIOS);
+    }
 
     /**
      * Sets the bios name.
      *
-     * @param bios The bios name.
+     * @param bios
+     *         The bios name.
      * @since 1.1.0
      */
-    void setBios(String bios);
+    public void setBios(String bios) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.BIOS, bios);
+    }
 
     /**
      * Gets the bios version.
@@ -169,15 +359,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The bios version.
      * @since 1.0.0
      */
-    String getBiosVersion();
+    public String getBiosVersion() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.BIOS_VERSION);
+    }
 
     /**
      * Sets the bios version.
      *
-     * @param biosVersion The bios version.
+     * @param biosVersion
+     *         The bios version.
      * @since 1.1.0
      */
-    void setBiosVersion(String biosVersion);
+    public void setBiosVersion(String biosVersion) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.BIOS_VERSION, biosVersion);
+    }
 
     /**
      * Gets the operating system name.
@@ -185,15 +380,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The operating system name.
      * @since 1.0.0
      */
-    String getOs();
+    public String getOs() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.OS);
+    }
 
     /**
      * Sets the operating system name.
      *
-     * @param os The operating system name.
+     * @param os
+     *         The operating system name.
      * @since 1.1.0
      */
-    void setOs(String os);
+    public void setOs(String os) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.OS, os);
+    }
 
     /**
      * Gets the operating system architecture.
@@ -201,15 +401,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The operating system architecture.
      * @since 1.0.0
      */
-    String getOsArch();
+    public String getOsArch() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.OS_ARCH);
+    }
 
     /**
      * Sets the operating system architecture.
      *
-     * @param osArch The operating system architecture.
+     * @param osArch
+     *         The operating system architecture.
      * @since 1.1.0
      */
-    void setOsArch(String osArch);
+    public void setOsArch(String osArch) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.OS_ARCH, osArch);
+    }
 
     /**
      * Gets the operating system version.
@@ -217,15 +422,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The operating system version.
      * @since 1.0.0
      */
-    String getOsVersion();
+    public String getOsVersion() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.OS_VERSION);
+    }
 
     /**
      * Sets the operating system version.
      *
-     * @param osVersion The operating system version.
+     * @param osVersion
+     *         The operating system version.
      * @since 1.0.0
      */
-    void setOsVersion(String osVersion);
+    public void setOsVersion(String osVersion) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.OS_VERSION, osVersion);
+    }
 
     /**
      * Gets the java virtual machine name/vendor.
@@ -233,15 +443,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The java virtual machine name/vendor.
      * @since 1.0.0
      */
-    String getJvm();
+    public String getJvm() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.JVM);
+    }
 
     /**
      * Sets the java virtual machine name/vendor.
      *
-     * @param jvm The java virtual machine name/vendor.
+     * @param jvm
+     *         The java virtual machine name/vendor.
      * @since 1.1.0
      */
-    void setJvm(String jvm);
+    public void setJvm(String jvm) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.JVM, jvm);
+    }
 
     /**
      * Gets the java virtual machine version.
@@ -249,15 +464,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The java virtual machine version.
      * @since 1.0.0
      */
-    String getJvmVersion();
+    public String getJvmVersion() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.JVM_VERSION);
+    }
 
     /**
      * Sets the java virtual machine version.
      *
-     * @param jvmVersion The java virtual machine version.
+     * @param jvmVersion
+     *         The java virtual machine version.
      * @since 1.1.0
      */
-    void setJvmVersion(String jvmVersion);
+    public void setJvmVersion(String jvmVersion) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.JVM_VERSION, jvmVersion);
+    }
 
     /**
      * Gets the java virtual machine profile.
@@ -265,15 +485,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The java virtual machine profile.
      * @since 1.0.0
      */
-    String getJvmProfile();
+    public String getJvmProfile() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.JVM_PROFILE);
+    }
 
     /**
      * Sets the java virtual machine profile.
      *
-     * @param jvmProfile The java virtual machine profile.
+     * @param jvmProfile
+     *         The java virtual machine profile.
      * @since 1.1.0
      */
-    void setJvmProfile(String jvmProfile);
+    public void setJvmProfile(String jvmProfile) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.JVM_PROFILE, jvmProfile);
+    }
 
     /**
      * Gets the container framework name.
@@ -281,15 +506,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The container framework name.
      * @since 1.0.0
      */
-    String getContainerFramework();
+    public String getContainerFramework() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.CONTAINER_FRAMEWORK);
+    }
 
     /**
      * Sets the container framework name.
      *
-     * @param containerFramework The container framework name.
+     * @param containerFramework
+     *         The container framework name.
      * @since 1.1.0
      */
-    void setContainerFramework(String containerFramework);
+    public void setContainerFramework(String containerFramework) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.CONTAINER_FRAMEWORK, containerFramework);
+    }
 
     /**
      * Gets the container framework version.
@@ -297,15 +527,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The container framework version.
      * @since 1.0.0
      */
-    String getContainerFrameworkVersion();
+    public String getContainerFrameworkVersion() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.CONTAINER_FRAMEWORK_VERSION);
+    }
 
     /**
      * Sets the container framework version.
      *
-     * @param containerFrameworkVersion The container framework version.
+     * @param containerFrameworkVersion
+     *         The container framework version.
      * @since 1.1.0
      */
-    void setContainerFrameworkVersion(String containerFrameworkVersion);
+    public void setContainerFrameworkVersion(String containerFrameworkVersion) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.CONTAINER_FRAMEWORK_VERSION, containerFrameworkVersion);
+    }
 
     /**
      * Gets the application framework name.
@@ -313,15 +548,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The application framework name.
      * @since 1.0.0
      */
-    String getApplicationFramework();
+    public String getApplicationFramework() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.APPLICATION_FRAMEWORK);
+    }
 
     /**
      * Sets the application framework name.
      *
-     * @param applicationFramework The application framework name.
+     * @param applicationFramework
+     *         The application framework name.
      * @since 1.1.0
      */
-    void setApplicationFramework(String applicationFramework);
+    public void setApplicationFramework(String applicationFramework) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.APPLICATION_FRAMEWORK, applicationFramework);
+    }
 
     /**
      * Gets the application framework version
@@ -329,15 +569,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The application framework version
      * @since 1.0.0
      */
-    String getApplicationFrameworkVersion();
+    public String getApplicationFrameworkVersion() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.APPLICATION_FRAMEWORK_VERSION);
+    }
 
     /**
      * Sets the application framework version
      *
-     * @param applicationFrameworkVersion The application framework version
+     * @param applicationFrameworkVersion
+     *         The application framework version
      * @since 1.1.0
      */
-    void setApplicationFrameworkVersion(String applicationFrameworkVersion);
+    public void setApplicationFrameworkVersion(String applicationFrameworkVersion) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.APPLICATION_FRAMEWORK_VERSION, applicationFrameworkVersion);
+    }
 
     /**
      * Gets the connection interface.
@@ -345,15 +590,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The connection interface.
      * @since 1.0.0
      */
-    String getConnectionInterface();
+    public String getConnectionInterface() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.CONNECTION_INTERFACE);
+    }
 
     /**
      * Sets the connection interface.
      *
-     * @param connectionInterface The connection interface.
+     * @param connectionInterface
+     *         The connection interface.
      * @since 1.1.0
      */
-    void setConnectionInterface(String connectionInterface);
+    public void setConnectionInterface(String connectionInterface) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.CONNECTION_INTERFACE, connectionInterface);
+    }
 
     /**
      * Gets the connection interface ip.
@@ -361,15 +611,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The connection interface ip.
      * @since 1.0.0
      */
-    String getConnectionIp();
+    public String getConnectionIp() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.CONNECTION_IP);
+    }
 
     /**
      * Sets the connection interface ip.
      *
-     * @param connectionIp The connection interface ip.
+     * @param connectionIp
+     *         The connection interface ip.
      * @since 1.1.0
      */
-    void setConnectionIp(String connectionIp);
+    public void setConnectionIp(String connectionIp) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.CONNECTION_IP, connectionIp);
+    }
 
     /**
      * Gets the accepted encoding.
@@ -377,15 +632,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The accepted encoding.
      * @since 1.0.0
      */
-    String getAcceptEncoding();
+    public String getAcceptEncoding() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.ACCEPT_ENCODING);
+    }
 
     /**
      * Sets the accepted encoding.
      *
-     * @param acceptEncoding The accepted encoding.
+     * @param acceptEncoding
+     *         The accepted encoding.
      * @since 1.1.0
      */
-    void setAcceptEncoding(String acceptEncoding);
+    public void setAcceptEncoding(String acceptEncoding) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.ACCEPT_ENCODING, acceptEncoding);
+    }
 
     /**
      * Gets the application identifiers.
@@ -393,15 +653,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The application identifiers.
      * @since 1.0.0
      */
-    String getApplicationIdentifiers();
+    public String getApplicationIdentifiers() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.APPLICATION_IDENTIFIERS);
+    }
 
     /**
      * Sets the application identifiers.
      *
-     * @param applicationIdentifiers The application identifiers.
+     * @param applicationIdentifiers
+     *         The application identifiers.
      * @since 1.1.0
      */
-    void setApplicationIdentifiers(String applicationIdentifiers);
+    public void setApplicationIdentifiers(String applicationIdentifiers) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.APPLICATION_IDENTIFIERS, applicationIdentifiers);
+    }
 
     /**
      * Gets the available processors.
@@ -409,15 +674,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The available processors.
      * @since 1.0.0
      */
-    String getAvailableProcessors();
+    public String getAvailableProcessors() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.AVAILABLE_PROCESSORS);
+    }
 
     /**
      * Sets the available processors.
      *
-     * @param availableProcessors The available processors.
+     * @param availableProcessors
+     *         The available processors.
      * @since 1.1.0
      */
-    void setAvailableProcessors(String availableProcessors);
+    public void setAvailableProcessors(String availableProcessors) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.AVAILABLE_PROCESSORS, availableProcessors);
+    }
 
     /**
      * Gets the total memory.
@@ -425,15 +695,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The total memory.
      * @since 1.0.0
      */
-    String getTotalMemory();
+    public String getTotalMemory() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.TOTAL_MEMORY);
+    }
 
     /**
      * Sets the total memory.
      *
-     * @param totalMemory The total memory.
+     * @param totalMemory
+     *         The total memory.
      * @since 1.1.0
      */
-    void setTotalMemory(String totalMemory);
+    public void setTotalMemory(String totalMemory) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.TOTAL_MEMORY, totalMemory);
+    }
 
     /**
      * Gets the modem IMEI.
@@ -441,15 +716,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The modem IMEI.
      * @since 1.0.0
      */
-    String getModemImei();
+    public String getModemImei() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.MODEM_IMEI);
+    }
 
     /**
      * Sets the modem IMEI.
      *
-     * @param modemImei The modem IMEI.
+     * @param modemImei
+     *         The modem IMEI.
      * @since 1.1.0
      */
-    void setModemImei(String modemImei);
+    public void setModemImei(String modemImei) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.MODEM_IMEI, modemImei);
+    }
 
     /**
      * Gets the modem IMSI.
@@ -457,15 +737,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The modem IMSI.
      * @since 1.0.0
      */
-    String getModemImsi();
+    public String getModemImsi() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.MODEM_IMSI);
+    }
 
     /**
      * Sets the modem IMSI.
      *
-     * @param modemImsi The modem IMSI.
+     * @param modemImsi
+     *         The modem IMSI.
      * @since 1.1.0
      */
-    void setModemImsi(String modemImsi);
+    public void setModemImsi(String modemImsi) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.MODEM_IMSI, modemImsi);
+    }
 
     /**
      * Gets the modem ICCID.
@@ -473,15 +758,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The modem ICCID.
      * @since 1.0.0
      */
-    String getModemIccid();
+    public String getModemIccid() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.MODEM_ICCID);
+    }
 
     /**
      * Sets the modem ICCID.
      *
-     * @param modemIccid The modem ICCID.
+     * @param modemIccid
+     *         The modem ICCID.
      * @since 1.1.0
      */
-    void setModemIccid(String modemIccid);
+    public void setModemIccid(String modemIccid) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.MODEM_ICCID, modemIccid);
+    }
 
     /**
      * Gets the extended properties.
@@ -489,15 +779,20 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The extended properties.
      * @since 1.5.0
      */
-    String getExtendedProperties();
+    public String getExtendedProperties() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.EXTENDED_PROPERTIES);
+    }
 
     /**
      * Sets the extended properties.
      *
-     * @param extendedProperties The extended properties.
+     * @param extendedProperties
+     *         The extended properties.
      * @since 1.5.0
      */
-    void setExtendedProperties(String extendedProperties);
+    public void setExtendedProperties(String extendedProperties) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.EXTENDED_PROPERTIES, extendedProperties);
+    }
 
     /**
      * Gets the tamper status
@@ -505,13 +800,19 @@ public interface KapuaBirthPayload extends KapuaLifecyclePayload {
      * @return The tamper status.
      * @since 2.0.0
      */
-    String getTamperStatus();
+    public String getTamperStatus() {
+        return (String) getMetrics().get(KapuaBirthPayloadAttibutes.TAMPER_STATUS);
+    }
 
     /**
      * Sets the tamper status.
      *
-     * @param tamperStatus The tamper status.
+     * @param tamperStatus
+     *         The tamper status.
      * @since 1.5.0
      */
-    void setTamperStatus(String tamperStatus);
+    public void setTamperStatus(String tamperStatus) {
+        getMetrics().put(KapuaBirthPayloadAttibutes.TAMPER_STATUS, tamperStatus);
+    }
+
 }

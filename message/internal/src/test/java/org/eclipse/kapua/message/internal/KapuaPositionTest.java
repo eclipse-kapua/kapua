@@ -65,7 +65,7 @@ public class KapuaPositionTest {
 
     @Test
     public void positionGetterSetters() throws Exception {
-        KapuaPosition position = new KapuaPositionImpl();
+        KapuaPosition position = new KapuaPosition();
         KapuaMessageUtil.populatePosition(position, referenceDate);
 
         Assert.assertEquals(Double.valueOf("45.1111"), position.getLongitude());
@@ -81,7 +81,7 @@ public class KapuaPositionTest {
 
     @Test
     public void displayString() throws Exception {
-        KapuaPosition position = new KapuaPositionImpl();
+        KapuaPosition position = new KapuaPosition();
         KapuaMessageUtil.populatePosition(position, referenceDate);
 
         String displayStr = position.toDisplayString();
@@ -92,7 +92,7 @@ public class KapuaPositionTest {
 
     @Test
     public void displayEmptyPositionString() throws Exception {
-        KapuaPosition position = new KapuaPositionImpl();
+        KapuaPosition position = new KapuaPosition();
 
         String displayStr = position.toDisplayString();
         Assert.assertNull(displayStr);
@@ -100,7 +100,7 @@ public class KapuaPositionTest {
 
     @Test
     public void marshallPosition() throws Exception {
-        KapuaPosition position = new KapuaPositionImpl();
+        KapuaPosition position = new KapuaPosition();
         KapuaMessageUtil.populatePosition(position, referenceDate);
 
         StringWriter strWriter = new StringWriter();

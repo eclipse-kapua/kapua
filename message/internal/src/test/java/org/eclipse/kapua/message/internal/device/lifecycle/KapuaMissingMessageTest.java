@@ -20,27 +20,26 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-
 @Category(JUnitTests.class)
 public class KapuaMissingMessageTest {
 
     @Test
     public void kapuaMissingPayloadConstructor() {
-        KapuaMissingPayload kapuaMissingPayload = new KapuaMissingPayloadImpl();
+        KapuaMissingPayload kapuaMissingPayload = new KapuaMissingPayload();
 
         Assert.assertNotNull(kapuaMissingPayload);
     }
 
     @Test
     public void kapuaMissingMessageConstructor() throws Exception {
-        KapuaMissingMessage kapuaMissingMessage = new KapuaMissingMessageImpl();
+        KapuaMissingMessage kapuaMissingMessage = new KapuaMissingMessage();
 
         Assert.assertNotNull(kapuaMissingMessage);
     }
 
     @Test
     public void kapuaMissingChannelGetterSetters() throws Exception {
-        KapuaMissingChannel kapuaMissingChannel = new KapuaMissingChannelImpl();
+        KapuaMissingChannel kapuaMissingChannel = new KapuaMissingChannel();
 
         kapuaMissingChannel.setClientId("clientId-1");
         Assert.assertEquals("clientId-1", kapuaMissingChannel.getClientId());

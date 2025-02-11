@@ -12,8 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.packages.message.internal;
 
-import com.google.common.base.Strings;
-import org.eclipse.kapua.message.internal.KapuaPayloadImpl;
+import java.net.URI;
+
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.device.management.message.request.KapuaRequestPayload;
 import org.eclipse.kapua.service.device.management.packages.model.DevicePackage;
@@ -22,7 +22,7 @@ import org.eclipse.kapua.service.device.management.packages.model.download.Advan
 import org.eclipse.kapua.service.device.management.packages.model.download.DevicePackageDownloadRequest;
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperation;
 
-import java.net.URI;
+import com.google.common.base.Strings;
 
 /**
  * {@link DevicePackage} {@link KapuaRequestPayload} implementation.
@@ -31,7 +31,7 @@ import java.net.URI;
  *
  * @since 1.0.0
  */
-public class PackageRequestPayload extends KapuaPayloadImpl implements KapuaRequestPayload {
+public class PackageRequestPayload extends KapuaRequestPayload {
 
     private static final long serialVersionUID = 3079489211962272959L;
 
@@ -48,7 +48,8 @@ public class PackageRequestPayload extends KapuaPayloadImpl implements KapuaRequ
     /**
      * Set the operation identifier.
      *
-     * @param operationId The operation identifier.
+     * @param operationId
+     *         The operation identifier.
      * @since 1.0.0
      */
     public void setOperationId(KapuaId operationId) {
@@ -240,7 +241,6 @@ public class PackageRequestPayload extends KapuaPayloadImpl implements KapuaRequ
         }
     }
 
-
     /**
      * Get the is a download package and install flag
      *
@@ -276,7 +276,8 @@ public class PackageRequestPayload extends KapuaPayloadImpl implements KapuaRequ
     /**
      * Sets whether or not to restart the download from the beginning.
      *
-     * @param restart {@code true} if the download must be restarted from the beginning, {@code false} otherwise.
+     * @param restart
+     *         {@code true} if the download must be restarted from the beginning, {@code false} otherwise.
      * @since 1.2.0
      */
     public void setPackageDownloadRestart(Boolean restart) {

@@ -12,25 +12,29 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.message.request;
 
-import org.eclipse.kapua.service.device.management.message.KapuaAppChannel;
-import org.eclipse.kapua.service.device.management.message.KapuaMethod;
-import org.eclipse.kapua.service.device.management.message.request.xml.RequestMessageXmlRegistry;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.eclipse.kapua.service.device.management.message.KapuaAppChannel;
+import org.eclipse.kapua.service.device.management.message.KapuaMethod;
+
 /**
  * {@link KapuaRequestMessage} {@link KapuaAppChannel} definition.
  * <p>
- * This object defines the channel for a Kapua request message.
- * The request message is used to perform interactive operations with the device (e.g. to send command to the device, to ask configurations...)
+ * This object defines the channel for a Kapua request message. The request message is used to perform interactive operations with the device (e.g. to send command to the device, to ask
+ * configurations...)
  *
  * @since 1.0.0
  */
 @XmlRootElement(name = "channel")
-@XmlType(factoryClass = RequestMessageXmlRegistry.class, factoryMethod = "newRequestChannel")
-public interface KapuaRequestChannel extends KapuaAppChannel {
+@XmlType
+public class KapuaRequestChannel extends KapuaAppChannel {
+
+    private static final long serialVersionUID = -7140990471048488667L;
+
+    protected KapuaMethod method;
+    protected String resource;
 
     /**
      * Gets the {@link KapuaMethod}
@@ -39,15 +43,20 @@ public interface KapuaRequestChannel extends KapuaAppChannel {
      * @since 1.0.0
      */
     @XmlElement(name = "method")
-    KapuaMethod getMethod();
+    public KapuaMethod getMethod() {
+        return method;
+    }
 
     /**
      * Sets the {@link KapuaMethod}
      *
-     * @param method The {@link KapuaMethod}
+     * @param method
+     *         The {@link KapuaMethod}
      * @since 1.0.0
      */
-    void setMethod(KapuaMethod method);
+    public void setMethod(KapuaMethod method) {
+        this.method = method;
+    }
 
     /**
      * Gets the requested resource.
@@ -56,13 +65,19 @@ public interface KapuaRequestChannel extends KapuaAppChannel {
      * @since 1.5.0
      */
     @XmlElement(name = "resource")
-    String getResource();
+    public String getResource() {
+        return resource;
+    }
 
     /**
      * Sets the requested resource.
      *
-     * @param resource The requested resource.
+     * @param resource
+     *         The requested resource.
      * @since 1.5.0
      */
-    void setResource(String resource);
+    public void setResource(String resource) {
+        this.resource = resource;
+    }
+
 }

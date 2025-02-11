@@ -22,7 +22,6 @@ import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettingsKey
 import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientProvider;
 import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchRepository;
 import org.eclipse.kapua.service.elasticsearch.client.SchemaKeys;
-import org.eclipse.kapua.service.storable.StorableFactory;
 import org.eclipse.kapua.service.storable.exception.MappingException;
 import org.eclipse.kapua.service.storable.model.Storable;
 import org.eclipse.kapua.service.storable.model.StorableListResult;
@@ -46,13 +45,12 @@ public abstract class DatastoreElasticSearchRepositoryBase<
     protected DatastoreElasticSearchRepositoryBase(
             ElasticsearchClientProvider elasticsearchClientProviderInstance,
             Class<T> clazz,
-            StorableFactory<T> storableFactory,
             StorablePredicateFactory storablePredicateFactory,
             LocalCache<String, Boolean> indexesCache,
             DatastoreSettings datastoreSettings,
             Function<KapuaId, Q> querySupplier,
             Supplier<L> listSupplier) {
-        super(elasticsearchClientProviderInstance, clazz, storableFactory, storablePredicateFactory,
+        super(elasticsearchClientProviderInstance, clazz, storablePredicateFactory,
                 indexesCache, querySupplier, listSupplier);
         this.datastoreSettings = datastoreSettings;
     }
@@ -60,11 +58,10 @@ public abstract class DatastoreElasticSearchRepositoryBase<
     protected DatastoreElasticSearchRepositoryBase(
             ElasticsearchClientProvider elasticsearchClientProviderInstance,
             Class<T> clazz,
-            StorableFactory<T> storableFactory,
             StorablePredicateFactory storablePredicateFactory, DatastoreSettings datastoreSettings,
             Function<KapuaId, Q> querySupplier,
             Supplier<L> listSupplier) {
-        super(elasticsearchClientProviderInstance, clazz, storableFactory, storablePredicateFactory, querySupplier, listSupplier);
+        super(elasticsearchClientProviderInstance, clazz, storablePredicateFactory, querySupplier, listSupplier);
         this.datastoreSettings = datastoreSettings;
     }
 
