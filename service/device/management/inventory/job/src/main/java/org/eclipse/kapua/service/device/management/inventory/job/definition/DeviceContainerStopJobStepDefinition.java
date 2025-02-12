@@ -14,7 +14,6 @@ package org.eclipse.kapua.service.device.management.inventory.job.definition;
 
 import com.beust.jcommander.internal.Lists;
 import org.eclipse.kapua.service.device.management.inventory.job.DeviceContainerStopTargetProcessor;
-import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainer;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionRecord;
 import org.eclipse.kapua.service.job.step.definition.JobStepPropertyRecord;
 import org.eclipse.kapua.service.job.step.definition.JobStepType;
@@ -32,16 +31,24 @@ public class DeviceContainerStopJobStepDefinition extends JobStepDefinitionRecor
                 null,
                 Lists.newArrayList(
                         new JobStepPropertyRecord(
-                                DeviceContainerPropertyKeys.CONTAINER_INPUT,
-                                "XML/JSON that defines the container to be stopped",
-                                DeviceInventoryContainer.class.getName(),
+                                DeviceContainerPropertyKeys.CONTAINER_NAME,
+                                "Name of the container to be executed",
+                                String.class.getName(),
                                 null,
-                                "{\n" +
-                                        "  \"name\": \"docker_container_1\",\n" +
-                                        "  \"version\": \"nginx:latest\",\n" +
-                                        "  \"containerType\": \"DOCKER\",\n" +
-                                        "  \"state\": \"ACTIVE\"\n" +
-                                        "}",
+                                null,
+                                Boolean.TRUE,
+                                Boolean.FALSE,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null),
+                        new JobStepPropertyRecord(
+                                DeviceContainerPropertyKeys.CONTAINER_VERSION,
+                                "Version of the container to be executed",
+                                String.class.getName(),
+                                null,
+                                null,
                                 Boolean.TRUE,
                                 Boolean.FALSE,
                                 null,

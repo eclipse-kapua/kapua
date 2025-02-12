@@ -16,6 +16,7 @@ import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.job.engine.commons.operation.AbstractDeviceTargetProcessor;
 import org.eclipse.kapua.job.engine.commons.wrappers.JobTargetWrapper;
+import org.eclipse.kapua.service.device.management.inventory.DeviceInventoryManagementFactory;
 import org.eclipse.kapua.service.device.management.inventory.DeviceInventoryManagementService;
 import org.eclipse.kapua.service.device.management.inventory.job.definition.DeviceContainerPropertyKeys;
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainer;
@@ -31,6 +32,10 @@ public class DeviceContainerStopTargetProcessor extends AbstractDeviceTargetProc
 
     @Inject
     DeviceInventoryManagementService deviceInventoryManagementService;
+
+    @Inject
+    DeviceInventoryManagementFactory deviceInventoryManagementFactory;
+
     @Inject
     JobContext jobContext;
     @Inject
@@ -44,8 +49,13 @@ public class DeviceContainerStopTargetProcessor extends AbstractDeviceTargetProc
     @Override
     public void processTarget(JobTarget jobTarget) throws KapuaException {
 
-        DeviceInventoryContainer containerInput = stepContextWrapper.getStepProperty(DeviceContainerPropertyKeys.CONTAINER_INPUT, DeviceInventoryContainer.class);
+        String containerName = stepContextWrapper.getStepProperty(DeviceContainerPropertyKeys.CONTAINER_NAME, String.class);
+        String containerVersion = stepContextWrapper.getStepProperty(DeviceContainerPropertyKeys.CONTAINER_VERSION, String.class);
         Long timeout = stepContextWrapper.getStepProperty(DeviceContainerPropertyKeys.TIMEOUT, Long.class);
+
+        DeviceInventoryContainer containerInput = deviceInventoryManagementFactory.newDeviceInventoryContainer();
+        containerInput.setName(containerName);
+        containerInput.setVersion(containerVersion);
 
         KapuaSecurityUtils.doPrivileged(() -> deviceInventoryManagementService.execContainer(jobTarget.getScopeId(), jobTarget.getJobTargetId(), containerInput, DeviceInventoryContainerAction.STOP, timeout));
     }
