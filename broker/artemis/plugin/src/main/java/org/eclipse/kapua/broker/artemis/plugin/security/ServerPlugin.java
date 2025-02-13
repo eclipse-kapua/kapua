@@ -28,6 +28,7 @@ import org.apache.activemq.artemis.core.transaction.Transaction;
 import org.apache.activemq.artemis.spi.core.protocol.RemotingConnection;
 import org.apache.activemq.artemis.utils.critical.CriticalComponent;
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.kapua.KapuaRuntimeException;
 import org.eclipse.kapua.broker.artemis.plugin.security.connector.AcceptorHandler;
 import org.eclipse.kapua.broker.artemis.plugin.security.event.BrokerEvent;
@@ -235,7 +236,6 @@ public class ServerPlugin implements ActiveMQServerPlugin {
     public void beforeSend(ServerSession session, Transaction tx, Message message, boolean direct,
             boolean noAutoCreateQueue) throws ActiveMQException {
         Context sendContext = publishMetric.getTime().time();
-        logger.info("======> {}", message.getAddress());
         try {
             String address = message.getAddress();
             int messageSize = message.getEncodeSize();

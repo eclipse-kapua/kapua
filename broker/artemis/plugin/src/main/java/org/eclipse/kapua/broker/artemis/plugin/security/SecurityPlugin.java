@@ -97,29 +97,35 @@ public class SecurityPlugin implements ActiveMQSecurityManager5 {
         String connectionId = pluginUtility.getConnectionId(remotingConnection);
         String clientIp = remotingConnection.getTransportConnection().getRemoteAddress();
         String clientId = extractAndValidateClientId(remotingConnection);
-        SessionContext sessionContext = serverContext.getSecurityContext().getSessionContextWithCacheFallback(connectionId);
-        if (sessionContext != null && sessionContext.getPrincipal() != null) {
-            logger.debug("### authenticate user (cache found): {} - clientId: {} - remoteIP: {} - connectionId: {}", username, clientId, remotingConnection.getTransportConnection().getRemoteAddress(), connectionId);
-            loginMetric.getAuthenticateFromCache().inc();
-            return serverContext.getSecurityContext().buildFromPrincipal(sessionContext.getPrincipal());
-        } else {
-            logger.debug("### authenticate user (no cache): {} - clientId: {} - remoteIP: {} - connectionId: {}", username, clientId, remotingConnection.getTransportConnection().getRemoteAddress(), connectionId);
-            if (!remotingConnection.getTransportConnection().isOpen()) {
-                logger.info("Connection (connectionId: {}) is closed (stealing link occurred?)", connectionId);
-                loginMetric.getLoginClosedConnectionFailure().inc();
-                return null;
+        try {
+            SessionContext sessionContext = serverContext.getSecurityContext().getSessionContextWithCacheFallback(connectionId);
+            if (sessionContext != null && sessionContext.getPrincipal() != null) {
+                logger.debug("### authenticate user (cache found): {} - clientId: {} - remoteIP: {} - connectionId: {}", username, clientId, remotingConnection.getTransportConnection().getRemoteAddress(), connectionId);
+                loginMetric.getAuthenticateFromCache().inc();
+                return serverContext.getSecurityContext().buildFromPrincipal(sessionContext.getPrincipal());
+            } else {
+                logger.debug("### authenticate user (no cache): {} - clientId: {} - remoteIP: {} - connectionId: {}", username, clientId, remotingConnection.getTransportConnection().getRemoteAddress(), connectionId);
+                if (!remotingConnection.getTransportConnection().isOpen()) {
+                    logger.info("Connection (connectionId: {}) is closed (stealing link occurred?)", connectionId);
+                    loginMetric.getLoginClosedConnectionFailure().inc();
+                    return null;
+                }
+                ConnectionInfo connectionInfo = new ConnectionInfo(
+                        pluginUtility.getConnectionId(remotingConnection),//connectionId
+                        clientId,//clientId
+                        clientIp,//clientIp
+                        remotingConnection.getTransportConnection().getConnectorConfig().getName(),//connectorName
+                        remotingConnection.getProtocolName(),//transportProtocol
+                        (String) remotingConnection.getTransportConnection().getConnectorConfig().getCombinedParams().get("sslEnabled"),//sslEnabled
+                        getPeerCertificates(remotingConnection));//clientsCertificates
+                return pluginUtility.isInternal(remotingConnection) ?
+                        authenticateInternalConn(connectionInfo, connectionId, username, password, remotingConnection) :
+                        authenticateExternalConn(connectionInfo, connectionId, username, password, remotingConnection);
             }
-            ConnectionInfo connectionInfo = new ConnectionInfo(
-                    pluginUtility.getConnectionId(remotingConnection),//connectionId
-                    clientId,//clientId
-                    clientIp,//clientIp
-                    remotingConnection.getTransportConnection().getConnectorConfig().getName(),//connectorName
-                    remotingConnection.getProtocolName(),//transportProtocol
-                    (String) remotingConnection.getTransportConnection().getConnectorConfig().getCombinedParams().get("sslEnabled"),//sslEnabled
-                    getPeerCertificates(remotingConnection));//clientsCertificates
-            return pluginUtility.isInternal(remotingConnection) ?
-                    authenticateInternalConn(connectionInfo, connectionId, username, password, remotingConnection) :
-                    authenticateExternalConn(connectionInfo, connectionId, username, password, remotingConnection);
+        } catch (Exception e) {
+            //internal error. do not disclose any info about the reason. just deny the login
+            logger.error("Internal error!", e);
+            return null;
         }
     }
 
