@@ -130,8 +130,8 @@ public class SecurityPlugin implements ActiveMQSecurityManager5 {
                         authenticateExternalConn(connectionInfo, connectionId, username, password, remotingConnection);
             }
         } catch (Exception e) {
-            //shouldn't happen but anyway, if happens, log it but return null so no disclosure
-            logger.warn("Internal error (deny login for security reason)", e);
+            //internal error. do not disclose any info about the reason. just deny the login
+            logger.error("Internal error!", e);
             return null;
         }
     }
