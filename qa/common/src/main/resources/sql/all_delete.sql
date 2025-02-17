@@ -92,11 +92,7 @@ FROM job_job_step;
 
 DELETE
 FROM job_job_step_definition
-WHERE id NOT IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-
-DELETE
-FROM job_job_step_definition_properties
-WHERE step_definition_id NOT IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+WHERE name NOT IN ('Asset Write','Bundle Start','Bundle Stop','Command Execution','Configuration Put','Keystore Certificate Create','Keystore Keypair Create','Keystore Item Delete','Package Download / Install','Package Uninstall','Container Start','Container Stop');
 
 DELETE
 FROM job_job_step_properties;
