@@ -19,13 +19,13 @@ import org.junit.runner.RunWith;
 @RunWith(Cucumber.class)
 @CucumberOptions(
         features = {
-//                "classpath:features/jobEngine/JobEngineServiceOperations.feature",
-//                "classpath:features/jobEngine/JobEngineServiceProcessorAssetI9n.feature",
-//                "classpath:features/jobEngine/JobEngineServiceProcessorBundleI9n.feature",
-//                "classpath:features/jobEngine/JobEngineServiceProcessorCommandI9n.feature",
-//                "classpath:features/jobEngine/JobEngineServiceProcessorConfigurationI9n.feature",
-//                "classpath:features/jobEngine/JobEngineServiceProcessorKeystoreI9n.feature",
-//                "classpath:features/jobEngine/JobEngineServiceProcessorPackagesI9n.feature",
+                "classpath:features/jobEngine/JobEngineServiceOperations.feature",
+                "classpath:features/jobEngine/JobEngineServiceProcessorAssetI9n.feature",
+                "classpath:features/jobEngine/JobEngineServiceProcessorBundleI9n.feature",
+                "classpath:features/jobEngine/JobEngineServiceProcessorCommandI9n.feature",
+                "classpath:features/jobEngine/JobEngineServiceProcessorConfigurationI9n.feature",
+                "classpath:features/jobEngine/JobEngineServiceProcessorKeystoreI9n.feature",
+                "classpath:features/jobEngine/JobEngineServiceProcessorPackagesI9n.feature",
                 "classpath:features/jobEngine/JobEngineServiceProcessorInventoryI9n.feature"
         },
         glue = {
