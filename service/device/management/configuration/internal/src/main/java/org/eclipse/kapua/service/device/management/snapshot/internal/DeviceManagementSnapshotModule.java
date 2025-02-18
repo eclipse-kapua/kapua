@@ -17,7 +17,6 @@ import javax.inject.Singleton;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.device.management.snapshot.DeviceSnapshotFactory;
 import org.eclipse.kapua.service.device.management.snapshot.DeviceSnapshotManagementService;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventFactory;
@@ -29,7 +28,6 @@ public class DeviceManagementSnapshotModule extends AbstractKapuaModule {
 
     @Override
     protected void configureModule() {
-        bind(DeviceSnapshotFactory.class).to(DeviceSnapshotFactoryImpl.class);
     }
 
     @Provides
@@ -39,15 +37,13 @@ public class DeviceManagementSnapshotModule extends AbstractKapuaModule {
             DeviceEventService deviceEventService,
             DeviceEventFactory deviceEventFactory,
             DeviceRegistryService deviceRegistryService,
-            KapuaJpaTxManagerFactory jpaTxManagerFactory,
-            DeviceSnapshotFactory deviceSnapshotFactory) {
+            KapuaJpaTxManagerFactory jpaTxManagerFactory) {
         return new DeviceSnapshotManagementServiceImpl(
                 jpaTxManagerFactory.create("kapua-device_management_operation_registry"),
                 authorizationService,
                 deviceEventService,
                 deviceEventFactory,
-                deviceRegistryService,
-                deviceSnapshotFactory);
+                deviceRegistryService);
 
     }
 

@@ -29,7 +29,6 @@ import org.eclipse.kapua.service.device.management.commons.call.DeviceCallBuilde
 import org.eclipse.kapua.service.device.management.configuration.internal.DeviceConfigurationAppProperties;
 import org.eclipse.kapua.service.device.management.configuration.internal.DeviceConfigurationManagementServiceImpl;
 import org.eclipse.kapua.service.device.management.message.KapuaMethod;
-import org.eclipse.kapua.service.device.management.snapshot.DeviceSnapshotFactory;
 import org.eclipse.kapua.service.device.management.snapshot.DeviceSnapshotManagementService;
 import org.eclipse.kapua.service.device.management.snapshot.DeviceSnapshots;
 import org.eclipse.kapua.service.device.management.snapshot.message.internal.SnapshotRequestChannel;
@@ -51,21 +50,18 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class DeviceSnapshotManagementServiceImpl extends AbstractDeviceManagementTransactionalServiceImpl implements DeviceSnapshotManagementService {
 
-    private final DeviceSnapshotFactory deviceSnapshotFactory;
-
     @Inject
     public DeviceSnapshotManagementServiceImpl(
             TxManager txManager,
             AuthorizationService authorizationService,
             DeviceEventService deviceEventService,
             DeviceEventFactory deviceEventFactory,
-            DeviceRegistryService deviceRegistryService, DeviceSnapshotFactory deviceSnapshotFactory) {
+            DeviceRegistryService deviceRegistryService) {
         super(txManager,
                 authorizationService,
                 deviceEventService,
                 deviceEventFactory,
                 deviceRegistryService);
-        this.deviceSnapshotFactory = deviceSnapshotFactory;
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(DeviceConfigurationManagementServiceImpl.class);
@@ -112,7 +108,7 @@ public class DeviceSnapshotManagementServiceImpl extends AbstractDeviceManagemen
         // Create event
         createDeviceEvent(scopeId, deviceId, snapshotRequestMessage, responseMessage);
         // Check response
-        return checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getDeviceSnapshots().orElse(deviceSnapshotFactory.newDeviceSnapshots()));
+        return checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getDeviceSnapshots().orElse(new DeviceSnapshots()));
     }
 
     @Override

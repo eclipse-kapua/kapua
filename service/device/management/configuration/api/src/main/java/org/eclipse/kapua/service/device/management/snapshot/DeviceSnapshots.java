@@ -12,14 +12,16 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.snapshot;
 
-import org.eclipse.kapua.KapuaSerializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.List;
+
+import org.eclipse.kapua.KapuaSerializable;
 
 /**
  * {@link DeviceSnapshots} definition.
@@ -30,8 +32,12 @@ import java.util.List;
  */
 @XmlRootElement(name = "snapshots")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DeviceSnapshotXmlRegistry.class, factoryMethod = "newDeviceSnapshots")
-public interface DeviceSnapshots extends KapuaSerializable {
+@XmlType
+public class DeviceSnapshots implements KapuaSerializable {
+
+    private static final long serialVersionUID = -7831418953347834946L;
+
+    private List<DeviceSnapshot> snapshotIds;
 
     /**
      * Gets the {@link DeviceSnapshot} {@link List}.
@@ -40,5 +46,11 @@ public interface DeviceSnapshots extends KapuaSerializable {
      * @since 1.0.0
      */
     @XmlElement(name = "snapshotId")
-    List<DeviceSnapshot> getSnapshots();
+    public List<DeviceSnapshot> getSnapshots() {
+        if (snapshotIds == null) {
+            snapshotIds = new ArrayList<>();
+        }
+
+        return snapshotIds;
+    }
 }

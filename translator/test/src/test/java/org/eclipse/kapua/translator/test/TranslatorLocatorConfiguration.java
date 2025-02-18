@@ -35,7 +35,6 @@ import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.device.management.request.GenericRequestFactory;
-import org.eclipse.kapua.service.device.management.snapshot.DeviceSnapshotFactory;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.translator.KapuaKuraTranslatorsModule;
 import org.eclipse.kapua.translator.KuraMqttTranslatorsModule;
@@ -93,7 +92,6 @@ public class TranslatorLocatorConfiguration {
                 bind(DeviceRegistryService.class).toInstance(Mockito.mock(DeviceRegistryService.class));
                 bind(GenericRequestFactory.class).toInstance(Mockito.mock(GenericRequestFactory.class));
                 bind(KapuaIdFactory.class).toInstance(Mockito.mock(KapuaIdFactory.class));
-                bind(DeviceSnapshotFactory.class).toInstance(Mockito.mock(DeviceSnapshotFactory.class));
             }
         };
 
