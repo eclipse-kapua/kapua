@@ -51,4 +51,10 @@ public enum KapuaConfigurationErrorCodes implements KapuaErrorCode {
      * @since 2.0.0
      */
     PARENT_LIMIT_EXCEEDED_BY,
+
+    /**
+     * @see ServiceConfigurationForbiddenException
+     * @since 2.1.0
+     */
+    UPDATE_PROPERTY_FORBIDDEN,
 }
