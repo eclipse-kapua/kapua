@@ -1200,6 +1200,8 @@ components:
       $ref: './serviceConfiguration/serviceConfiguration.yaml#/components/schemas/option'
     serviceAttributeDefinition:
       $ref: './serviceConfiguration/serviceConfiguration.yaml#/components/schemas/attributeDefinition'
+    serviceConfigurationUpdateForbiddenExceptionInfo:
+      $ref: './serviceConfiguration/serviceConfiguration.yaml#/components/schemas/serviceConfigurationUpdateForbiddenExceptionInfo'
     ### System Info Entities ###
     systemInfo:
       $ref: './systemInfo/systemInfo.yaml#/components/schemas/systemInfo'

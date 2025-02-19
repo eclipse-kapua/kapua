@@ -81,7 +81,20 @@ paths:
         401:
           $ref: '../openapi.yaml#/components/responses/unauthenticated'
         403:
-          $ref: '../openapi.yaml#/components/responses/subjectUnauthorized'
+          description: The requested update is forbidden
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '../openapi.yaml#/components/schemas/subjectUnauthorizedExceptionInfo'
+                  - $ref: './serviceConfiguration.yaml#/components/schemas/serviceConfigurationUpdateForbiddenExceptionInfo'
+            application/xml:
+              schema:
+                oneOf:
+                  - $ref: '../openapi.yaml#/components/schemas/subjectUnauthorizedExceptionInfo'
+                  - $ref: './serviceConfiguration.yaml#/components/schemas/serviceConfigurationUpdateForbiddenExceptionInfo'
+                xml:
+                  name: 'serviceConfigurationUpdateForbiddenExceptionInfo'
         404:
           $ref: '../openapi.yaml#/components/responses/entityNotFound'
         500:
