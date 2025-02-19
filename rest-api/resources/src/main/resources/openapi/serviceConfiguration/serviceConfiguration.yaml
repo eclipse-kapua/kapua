@@ -378,3 +378,30 @@ components:
         size:
           type: integer
 
+    ### Exception Info
+    serviceConfigurationUpdateForbiddenExceptionInfo:
+      description: The update of the configuration for the service contains an update to a property than cannot be updated
+      allOf:
+        - $ref: '../openapi.yaml#/components/schemas/exceptionInfo'
+        - properties:
+            scopeId:
+              description: The scope for which the update is forbidden
+              $ref: '../openapi.yaml#/components/schemas/kapuaId'
+            servicePid:
+              type: string
+              description: The Pid of the service
+            propertyId:
+              type: string
+              description: The property id for which the update is forbidden.
+            propertyValue:
+              type: string
+              description: The property value for which the update is forbidden.
+      example:
+        type: "serviceConfigurationUpdateForbiddenExceptionInfo"
+        httpErrorCode: 403
+        message: "Current User cannot update property maxNumberChildEntities of ServiceComponentConfiguration org.eclipse.kapua.service.account.AccountService of Account 2 with value 10"
+        kapuaErrorCode: "UPDATE_PROPERTY_FORBIDDEN"
+        scopeId: 2
+        servicePid: "org.eclipse.kapua.service.account.AccountService"
+        propertyId: "maxNumberChildEntities"
+        propertyValue: "10"
