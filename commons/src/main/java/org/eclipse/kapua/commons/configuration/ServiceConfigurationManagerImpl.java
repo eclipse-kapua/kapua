@@ -16,6 +16,7 @@ import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.KapuaIllegalNullArgumentException;
+import org.eclipse.kapua.commons.configuration.exception.ServiceConfigurationForbiddenException;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.service.internal.KapuaServiceDisabledException;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
@@ -124,11 +125,11 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
                             // and the new value is different from the other one...
                             !originalValues.get(ad.getId()).equals(values.get(ad.getId()));
 
-            if (preventChange) {
-                // ... prevent the change!
-                throw KapuaException.internalError(String.format("The configuration \"%s\" cannot be changed by this user in this account", ad.getId()));
+                if (preventChange) {
+                    // ... prevent the change!
+                    throw new ServiceConfigurationForbiddenException(scopeId, pid, ad.getId(), String.valueOf(values.get(ad.getId())));
+                }
             }
-        }
 
         validateConfigurations(txContext, ocd, values, scopeId, parentId);
 

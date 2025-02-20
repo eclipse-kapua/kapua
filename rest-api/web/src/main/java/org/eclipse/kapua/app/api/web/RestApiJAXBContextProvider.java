@@ -60,6 +60,7 @@ import org.eclipse.kapua.commons.rest.model.errors.MfaRequiredExceptionInfo;
 import org.eclipse.kapua.commons.rest.model.errors.SelfManagedOnlyExceptionInfo;
 import org.eclipse.kapua.commons.rest.model.errors.ServiceConfigurationLimitExceededExceptionInfo;
 import org.eclipse.kapua.commons.rest.model.errors.ServiceConfigurationParentLimitExceededExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.ServiceConfigurationUpdateForbiddenExceptionInfo;
 import org.eclipse.kapua.commons.rest.model.errors.SubjectUnauthorizedExceptionInfo;
 import org.eclipse.kapua.commons.rest.model.errors.ThrowableInfo;
 import org.eclipse.kapua.commons.rest.model.errors.TriggerInvalidDatesExceptionInfo;
@@ -397,6 +398,7 @@ public class RestApiJAXBContextProvider implements JAXBContextProvider {
                     // Service Configuration Exception Info
                     ServiceConfigurationLimitExceededExceptionInfo.class,
                     ServiceConfigurationParentLimitExceededExceptionInfo.class,
+                    ServiceConfigurationUpdateForbiddenExceptionInfo.class,
 
                     // Commons
                     KapuaSerializable.class,
