@@ -28,6 +28,7 @@ import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.KapuaIllegalNullArgumentException;
+import org.eclipse.kapua.commons.configuration.exception.ServiceConfigurationForbiddenException;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.commons.util.StringUtil;
@@ -154,7 +155,7 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
 
                 if (preventChange) {
                     // ... prevent the change!
-                    throw KapuaException.internalError(String.format("The configuration \"%s\" cannot be changed by this user in this account", ad.getId()));
+                    throw new ServiceConfigurationForbiddenException(scopeId, pid, ad.getId(), String.valueOf(values.get(ad.getId())));
                 }
             }
 
