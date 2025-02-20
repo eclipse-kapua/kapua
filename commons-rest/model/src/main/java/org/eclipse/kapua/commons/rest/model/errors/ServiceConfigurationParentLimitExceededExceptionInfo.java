@@ -14,12 +14,14 @@ package org.eclipse.kapua.commons.rest.model.errors;
 
 import org.eclipse.kapua.commons.configuration.exception.ServiceConfigurationParentLimitExceededException;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
 import org.eclipse.kapua.service.config.KapuaConfigurableService;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlRootElement(name = "serviceConfigurationParentLimitExceededExceptionInfo")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -30,7 +32,7 @@ public class ServiceConfigurationParentLimitExceededExceptionInfo extends Except
     private String servicePid;
 
     @XmlElement(name = "parentScopeId")
-
+    @XmlJavaTypeAdapter(KapuaIdAdapter.class)
     private KapuaId parentScopeId;
 
     @XmlElement(name = "limitExceededBy")
