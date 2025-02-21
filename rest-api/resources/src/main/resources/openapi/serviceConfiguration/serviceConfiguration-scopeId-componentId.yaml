@@ -65,19 +65,19 @@ paths:
             application/json:
               schema:
                 oneOf:
-                  - $ref: '../openapi.yaml#/components/schemas/ServiceConfigurationLimitExceededExceptionInfo'
-                  - $ref: '../openapi.yaml#/components/responses/illegalArgument/content/application~1json/schema'
-                  - $ref: '../openapi.yaml#/components/schemas/ServiceConfigurationParentLimitExceededExceptionInfo'
-                  - $ref: '../openapi.yaml#/components/schemas/exceptionInfo'
+                  - $ref: '../openapi.yaml#/components/schemas/illegalArgumentExceptionInfo'
+                  - $ref: '../openapi.yaml#/components/schemas/illegalNullArgumentExceptionInfo'
+                  - $ref: './serviceConfiguration.yaml#/components/schemas/serviceConfigurationLimitExceededExceptionInfo'
+                  - $ref: './serviceConfiguration.yaml#/components/schemas/serviceConfigurationParentLimitExceededExceptionInfo'
             application/xml:
               schema:
                 oneOf:
-                  - $ref: '../openapi.yaml#/components/schemas/ServiceConfigurationLimitExceededExceptionInfo'
-                  - $ref: '../openapi.yaml#/components/responses/illegalArgument/content/application~1xml/schema'
-                  - $ref: '../openapi.yaml#/components/schemas/ServiceConfigurationParentLimitExceededExceptionInfo'
-                  - $ref: '../openapi.yaml#/components/schemas/exceptionInfo'
+                  - $ref: '../openapi.yaml#/components/schemas/illegalArgumentExceptionInfo'
+                  - $ref: '../openapi.yaml#/components/schemas/illegalNullArgumentExceptionInfo'
+                  - $ref: './serviceConfiguration.yaml#/components/schemas/serviceConfigurationLimitExceededExceptionInfo'
+                  - $ref: './serviceConfiguration.yaml#/components/schemas/serviceConfigurationParentLimitExceededExceptionInfo'
                 xml:
-                  name: 'ServiceConfigurationLimitExceededExceptionInfo'
+                  name: 'serviceConfigurationLimitExceededExceptionInfo'
         401:
           $ref: '../openapi.yaml#/components/responses/unauthenticated'
         403:

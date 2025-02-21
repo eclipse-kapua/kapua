@@ -718,50 +718,6 @@ components:
         message: "An illegal value was provided for the argument user.email: null"
         kapuaErrorCode: "ILLEGAL_NULL_ARGUMENT"
         argumentName: "user.email"
-    ServiceConfigurationLimitExceededExceptionInfo:
-      description: The update of the configuration for the service exceeds available resources of the current scope
-      allOf:
-        - $ref: '#/components/schemas/exceptionInfo'
-        - properties:
-            scopeId:
-              description: The scope for which limit has been exceeded
-              $ref: '#/components/schemas/kapuaId'
-            servicePid:
-              type: string
-              description: The Pid of the service
-            limitExceededBy:
-              type: string
-              description: The amount of excess
-      example:
-        type: "ServiceConfigurationLimitExceededExceptionInfo"
-        httpErrorCode: 400
-        message: "The maximum of resources for the org.eclipse.kapua.service.account.AccountService service for the account 2 has been exceeded. The resource limit is exceeded by 3."
-        kapuaErrorCode: "LIMIT_EXCEEDED"
-        scopeId: 2
-        servicePid: "org.eclipse.kapua.service.account.AccountService"
-        limitExceededBy: 3
-    ServiceConfigurationParentLimitExceededExceptionInfo:
-      description: The update of the configuration for the service exceeds available resources of the parent scope
-      allOf:
-        - $ref: '#/components/schemas/exceptionInfo'
-        - properties:
-            parentScopeId:
-              description: The parent scope for which limit has been exceeded
-              $ref: '#/components/schemas/kapuaId'
-            servicePid:
-              type: string
-              description: The Pid of the service
-            limitExceededBy:
-              type: string
-              description: The amount of excess
-      example:
-        type: "ServiceConfigurationLimitExceededExceptionInfo"
-        httpErrorCode: 400
-        message: "The maximum of resources for the org.eclipse.kapua.service.account.AccountService service for the parent account 2 has been exceeded."
-        kapuaErrorCode: "PARENT_LIMIT_EXCEEDED"
-        scopeId: 2
-        servicePid: "org.eclipse.kapua.service.account.AccountService"
-        limitExceededBy: 3
     entityUniquenessExceptionInfo:
       description: The object to represent the fact that an Entity with the same unique fields is already present in the system
       allOf:
@@ -1200,6 +1156,10 @@ components:
       $ref: './serviceConfiguration/serviceConfiguration.yaml#/components/schemas/option'
     serviceAttributeDefinition:
       $ref: './serviceConfiguration/serviceConfiguration.yaml#/components/schemas/attributeDefinition'
+    serviceConfigurationLimitExceededExceptionInfo:
+      $ref: './serviceConfiguration/serviceConfiguration.yaml#/components/schemas/serviceConfigurationLimitExceededExceptionInfo'
+    serviceConfigurationParentLimitExceededExceptionInfo:
+      $ref: './serviceConfiguration/serviceConfiguration.yaml#/components/schemas/serviceConfigurationParentLimitExceededExceptionInfo'
     serviceConfigurationUpdateForbiddenExceptionInfo:
       $ref: './serviceConfiguration/serviceConfiguration.yaml#/components/schemas/serviceConfigurationUpdateForbiddenExceptionInfo'
     ### System Info Entities ###

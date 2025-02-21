@@ -379,6 +379,50 @@ components:
           type: integer
 
     ### Exception Info
+    serviceConfigurationLimitExceededExceptionInfo:
+      description: The update of the configuration for the service exceeds available resources of the current scope
+      allOf:
+        - $ref: '../openapi.yaml#/components/schemas/exceptionInfo'
+        - properties:
+            scopeId:
+              description: The scope for which limit has been exceeded
+              $ref: '../openapi.yaml#/components/schemas/kapuaId'
+            servicePid:
+              type: string
+              description: The Pid of the service
+            limitExceededBy:
+              type: string
+              description: The amount of excess
+      example:
+        type: "ServiceConfigurationLimitExceededExceptionInfo"
+        httpErrorCode: 400
+        message: "The maximum of resources for the org.eclipse.kapua.service.account.AccountService service for the account 2 has been exceeded. The resource limit is exceeded by 3."
+        kapuaErrorCode: "LIMIT_EXCEEDED"
+        scopeId: 2
+        servicePid: "org.eclipse.kapua.service.account.AccountService"
+        limitExceededBy: 3
+    serviceConfigurationParentLimitExceededExceptionInfo:
+      description: The update of the configuration for the service exceeds available resources of the parent scope
+      allOf:
+        - $ref: '../openapi.yaml#/components/schemas/exceptionInfo'
+        - properties:
+            parentScopeId:
+              description: The parent scope for which limit has been exceeded
+              $ref: '../openapi.yaml#/components/schemas/kapuaId'
+            servicePid:
+              type: string
+              description: The Pid of the service
+            limitExceededBy:
+              type: string
+              description: The amount of excess
+      example:
+        type: "ServiceConfigurationLimitExceededExceptionInfo"
+        httpErrorCode: 400
+        message: "The maximum of resources for the org.eclipse.kapua.service.account.AccountService service for the parent account 2 has been exceeded."
+        kapuaErrorCode: "PARENT_LIMIT_EXCEEDED"
+        scopeId: 2
+        servicePid: "org.eclipse.kapua.service.account.AccountService"
+        limitExceededBy: 3
     serviceConfigurationUpdateForbiddenExceptionInfo:
       description: The update of the configuration for the service contains an update to a property than cannot be updated
       allOf:
