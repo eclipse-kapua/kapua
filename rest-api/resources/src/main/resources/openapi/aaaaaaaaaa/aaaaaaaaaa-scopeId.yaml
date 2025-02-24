@@ -1,0 +1,39 @@
+openapi: 3.0.3
+
+info:
+  title: Eclipse Kapua REST API - Aaaaaaaaaa
+  version: '1.0'
+  contact:
+    name: Eclipse Kapua Dev Team
+    url: https://eclipse.org/kapua
+    email: kapua-dev@eclipse.org
+  license:
+    name: Eclipse Public License 2.0
+    url: https://www.eclipse.org/legal/epl-2.0
+
+paths:
+  /{scopeId}/claims:
+    get:
+      tags:
+        - Claims
+      summary: Get all the Claims
+      operationId: fetchUserClaims
+      parameters:
+        - $ref: '../openapi.yaml#/components/parameters/scopeId'
+      responses:
+        200:
+          description: The list of User's claims in the Scope
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+    400:
+      $ref: '../openapi.yaml#/components/responses/illegalArgument'
+      401:
+        $ref: '../openapi.yaml#/components/responses/unauthenticated'
+      403:
+        $ref: '../openapi.yaml#/components/responses/subjectUnauthorized'
+      500:
+        $ref: '../openapi.yaml#/components/responses/kapuaError'
