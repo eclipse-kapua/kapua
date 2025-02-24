@@ -12,20 +12,25 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.shiro;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.apache.shiro.SecurityUtils;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaUnauthenticatedException;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.security.KapuaSession;
+import org.eclipse.kapua.model.domain.Domain;
+import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.exception.SubjectUnauthorizedException;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 
 /**
  * {@link AuthorizationService} implementation.
@@ -34,10 +39,16 @@ import java.util.stream.Collectors;
  */
 @Singleton
 public class AuthorizationServiceImpl implements AuthorizationService {
+
+    private final PermissionFactory permissionFactory;
+    private final Set<Domain> knownDomains;
     private final PermissionMapper permissionMapper;
 
     @Inject
-    public AuthorizationServiceImpl(PermissionMapper permissionMapper) {
+    public AuthorizationServiceImpl(PermissionFactory permissionFactory, Set<Domain> knownDomains,
+            PermissionMapper permissionMapper) {
+        this.permissionFactory = permissionFactory;
+        this.knownDomains = knownDomains;
         this.permissionMapper = permissionMapper;
     }
 
@@ -58,6 +69,30 @@ public class AuthorizationServiceImpl implements AuthorizationService {
                     .collect(Collectors.toList());
             return SecurityUtils.getSubject().isPermitted(permissionsShiro);
         }
+    }
+
+    @Override
+    public Set<String> fetchUserClaims(KapuaId inScope) {
+        final KapuaSession kapuaSession = KapuaSecurityUtils.getSession();
+        final Set<String> claims = knownDomains.stream()
+                .flatMap(domain -> {
+                    return domain.getActions()
+                            .stream()
+                            .filter(action -> {
+                                if (kapuaSession.isTrustedMode()) {
+                                    return true;
+                                }
+                                try {
+                                    final Permission permission = permissionFactory.newPermission(domain.getName(), action, inScope);
+                                    return this.isPermitted(permission);
+                                } catch (KapuaException e) {
+                                    return false;
+                                }
+                            })
+                            .map(action -> String.format("%s:%s", domain.getName(), action));
+                })
+                .collect(Collectors.toSet());
+        return claims;
     }
 
     @Override
