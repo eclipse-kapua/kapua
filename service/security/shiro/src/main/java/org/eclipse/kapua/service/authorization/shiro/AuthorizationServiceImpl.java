@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -45,7 +46,9 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     private final PermissionMapper permissionMapper;
 
     @Inject
-    public AuthorizationServiceImpl(PermissionFactory permissionFactory, Set<Domain> knownDomains,
+    public AuthorizationServiceImpl(
+            PermissionFactory permissionFactory,
+            Set<Domain> knownDomains,
             PermissionMapper permissionMapper) {
         this.permissionFactory = permissionFactory;
         this.knownDomains = knownDomains;
@@ -73,15 +76,11 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
     @Override
     public Set<String> fetchUserClaims(KapuaId inScope) {
-        final KapuaSession kapuaSession = KapuaSecurityUtils.getSession();
         final Set<String> claims = knownDomains.stream()
                 .flatMap(domain -> {
-                    return domain.getActions()
+                    final Stream<String> domainClaims = domain.getActions()
                             .stream()
                             .filter(action -> {
-                                if (kapuaSession.isTrustedMode()) {
-                                    return true;
-                                }
                                 try {
                                     final Permission permission = permissionFactory.newPermission(domain.getName(), action, inScope);
                                     return this.isPermitted(permission);
@@ -90,6 +89,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
                                 }
                             })
                             .map(action -> String.format("%s:%s", domain.getName(), action));
+                    return domainClaims;
                 })
                 .collect(Collectors.toSet());
         return claims;

@@ -1,7 +1,7 @@
 openapi: 3.0.3
 
 info:
-  title: Eclipse Kapua REST API - Aaaaaaaaaa
+  title: Eclipse Kapua REST API - Authorizations
   version: '1.0'
   contact:
     name: Eclipse Kapua Dev Team
@@ -12,10 +12,10 @@ info:
     url: https://www.eclipse.org/legal/epl-2.0
 
 paths:
-  /{scopeId}/claims:
+  /{scopeId}/authorization/claims:
     get:
       tags:
-        - Claims
+        - Authorization
       summary: Get all the Claims
       operationId: fetchUserClaims
       parameters:
