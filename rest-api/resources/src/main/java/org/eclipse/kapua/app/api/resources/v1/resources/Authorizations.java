@@ -27,8 +27,8 @@ import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
 import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 
-@Path("{scopeId}/aaaaaaaaaa/claims")
-public class Aaaaaaaaaa extends AbstractKapuaResource {
+@Path("{scopeId}/authorization/claims")
+public class Authorizations extends AbstractKapuaResource {
 
     @Inject
     private AuthorizationService authorizationService;

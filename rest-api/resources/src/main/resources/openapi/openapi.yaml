@@ -64,9 +64,9 @@ paths:
     $ref: './authentication/authentication-logout.yaml#/paths/~1authentication~1logout'
   /authentication/mfa:
     $ref: './authentication/authentication-mfa.yaml#/paths/~1authentication~1mfa'
-  ### Aaaaaaaaaa ###
-  /{scopeId}/aaaaaaaaaa/claims:
-    $ref: './aaaaaaaaaa/aaaaaaaaaa-scopeId.yaml#/paths/~1{scopeId}~1claims'
+  ### Authorization ###
+  /{scopeId}/authorization/claims:
+    $ref: './authorization/authorization-scopeId.yaml#/paths/~1{scopeId}~1authorization~1claims'
   ### Access Info ###
   /{scopeId}/accessinfos:
     $ref: './accessInfo/accessInfo-scopeId.yaml#/paths/~1{scopeId}~1accessinfos'
