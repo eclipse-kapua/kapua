@@ -40,6 +40,8 @@ public interface ServiceConfigurationManager {
 
     void checkAllowedEntities(TxContext txContext, KapuaId scopeId, String entityType) throws KapuaException;
 
+    long countAllowedEntities(TxContext txContext, KapuaId scopeId) throws KapuaException;
+
     void setConfigValues(KapuaId scopeId, Optional<KapuaId> parentId, Map<String, Object> values) throws KapuaException;
 
     Map<String, Object> getConfigValues(TxContext txContext, KapuaId scopeId, boolean excludeDisabled) throws KapuaException;
