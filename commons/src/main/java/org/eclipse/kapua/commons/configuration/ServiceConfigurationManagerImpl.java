@@ -123,6 +123,11 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
     }
 
     @Override
+    public long countAllowedEntities(TxContext txContext, KapuaId scopeId) throws KapuaException {
+        return Long.MAX_VALUE;
+    }
+
+    @Override
     public void setConfigValues(KapuaId scopeId, Optional<KapuaId> parentId, Map<String, Object> values) throws KapuaException {
         txManager.<Void>execute(tx -> {
             Optional<KapuaTocd> maybeOcd = doGetConfigMetadata(tx, scopeId, false);

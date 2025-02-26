@@ -72,9 +72,13 @@ public class ServiceConfigurationManagerCachingWrapper implements ServiceConfigu
     }
 
     @Override
+    public long countAllowedEntities(TxContext txContext, KapuaId scopeId) throws KapuaException {
+        return wrapped.countAllowedEntities(txContext, scopeId);
+    }
+
+    @Override
     public void setConfigValues(KapuaId scopeId, Optional<KapuaId> parentId, Map<String, Object> values) throws KapuaException {
         wrapped.setConfigValues(scopeId, parentId, values);
-
     }
 
     @Override
