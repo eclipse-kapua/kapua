@@ -91,6 +91,11 @@ public class ResourceLimitedServiceConfigurationManagerImpl
         }
     }
 
+    @Override
+    public long countAllowedEntities(TxContext txContext, KapuaId scopeId) throws KapuaException {
+        return allowedChildEntities(txContext, scopeId);
+    }
+
     /**
      * Gets the number of remaining allowed entity for the given scope, according to the {@link KapuaConfigurableService#getConfigValues(KapuaId)}
      *
