@@ -12,11 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.inventory.job;
 
+import javax.batch.runtime.context.JobContext;
+import javax.batch.runtime.context.StepContext;
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.job.engine.commons.operation.AbstractDeviceTargetProcessor;
 import org.eclipse.kapua.job.engine.commons.wrappers.JobTargetWrapper;
-import org.eclipse.kapua.service.device.management.inventory.DeviceInventoryManagementFactory;
 import org.eclipse.kapua.service.device.management.inventory.DeviceInventoryManagementService;
 import org.eclipse.kapua.service.device.management.inventory.job.definition.DeviceContainerPropertyKeys;
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainer;
@@ -24,17 +27,11 @@ import org.eclipse.kapua.service.device.management.inventory.model.container.Dev
 import org.eclipse.kapua.service.job.operation.TargetProcessor;
 import org.eclipse.kapua.service.job.targets.JobTarget;
 
-import javax.batch.runtime.context.JobContext;
-import javax.batch.runtime.context.StepContext;
-import javax.inject.Inject;
-
 public class DeviceContainerStartTargetProcessor extends AbstractDeviceTargetProcessor implements TargetProcessor {
 
     @Inject
     DeviceInventoryManagementService deviceInventoryManagementService;
 
-    @Inject
-    DeviceInventoryManagementFactory deviceInventoryManagementFactory;
     @Inject
     JobContext jobContext;
     @Inject
@@ -52,11 +49,12 @@ public class DeviceContainerStartTargetProcessor extends AbstractDeviceTargetPro
         String containerVersion = stepContextWrapper.getStepProperty(DeviceContainerPropertyKeys.CONTAINER_VERSION, String.class);
         Long timeout = stepContextWrapper.getStepProperty(DeviceContainerPropertyKeys.TIMEOUT, Long.class);
 
-        DeviceInventoryContainer containerInput = deviceInventoryManagementFactory.newDeviceInventoryContainer();
+        DeviceInventoryContainer containerInput = new DeviceInventoryContainer();
         containerInput.setName(containerName);
         containerInput.setVersion(containerVersion);
 
-        KapuaSecurityUtils.doPrivileged(() -> deviceInventoryManagementService.execContainer(jobTarget.getScopeId(), jobTarget.getJobTargetId(), containerInput, DeviceInventoryContainerAction.START, timeout));
+        KapuaSecurityUtils.doPrivileged(
+                () -> deviceInventoryManagementService.execContainer(jobTarget.getScopeId(), jobTarget.getJobTargetId(), containerInput, DeviceInventoryContainerAction.START, timeout));
     }
 }
 
