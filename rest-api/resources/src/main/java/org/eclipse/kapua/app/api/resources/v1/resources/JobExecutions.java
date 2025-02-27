@@ -25,6 +25,7 @@ import javax.ws.rs.core.MediaType;
 
 import com.google.common.base.Strings;
 import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.app.api.core.model.CountResult;
 import org.eclipse.kapua.app.api.core.model.DateParam;
 import org.eclipse.kapua.app.api.core.model.EntityId;
@@ -82,11 +83,12 @@ public class JobExecutions extends AbstractKapuaResource {
             @QueryParam("askTotalCount") boolean askTotalCount,
             @QueryParam("startDate") DateParam startDateParam,
             @QueryParam("endDate") DateParam endDateParam,
+            @QueryParam("status") JobExecutionStatus statusParam,
             @QueryParam("sortParam") String sortParam,
             @QueryParam("sortDir") @DefaultValue("ASCENDING") SortOrder sortDir,
             @QueryParam("offset") @DefaultValue("0") int offset,
-            @QueryParam("limit") @DefaultValue("50") int limit,
-            @QueryParam("status") JobExecutionStatus statusParam) throws KapuaException {
+            @QueryParam("limit") @DefaultValue("50") int limit)
+    throws KapuaException {
         JobExecutionQuery query = jobExecutionFactory.newQuery(scopeId);
 
         AndPredicate andPredicate = query.andPredicate(query.attributePredicate(JobExecutionAttributes.JOB_ID, jobId));
@@ -97,10 +99,17 @@ public class JobExecutions extends AbstractKapuaResource {
         if (endDateParam != null) {
             andPredicate.and(query.attributePredicate(JobExecutionAttributes.ENDED_ON, endDateParam.getDate(), AttributePredicate.Operator.LESS_THAN_OR_EQUAL));
         }
-        if (statusParam != null && statusParam.equals(JobExecutionStatus.RUNNING)) {
-            andPredicate.and(query.attributePredicate(JobExecutionAttributes.ENDED_ON, null, AttributePredicate.Operator.IS_NULL));
-        } else if (statusParam != null && statusParam.equals(JobExecutionStatus.TERMINATED)) {
-            andPredicate.and(query.attributePredicate(JobExecutionAttributes.ENDED_ON, null, AttributePredicate.Operator.NOT_NULL));
+        if (statusParam != null) {
+            switch (statusParam) {
+                case RUNNING:
+                    andPredicate.and(query.attributePredicate(JobExecutionAttributes.ENDED_ON, null, AttributePredicate.Operator.IS_NULL));
+                    break;
+                case TERMINATED:
+                    andPredicate.and(query.attributePredicate(JobExecutionAttributes.ENDED_ON, null, AttributePredicate.Operator.NOT_NULL));
+                    break;
+                default:
+                    throw new KapuaIllegalArgumentException("status", statusParam.name());
+            }
         }
 
         query.setPredicate(andPredicate);
