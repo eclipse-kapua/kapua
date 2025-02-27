@@ -1088,6 +1088,8 @@ components:
     jobStartOptions:
       $ref: './jobEngine/jobEngine.yaml#/components/schemas/jobStartOptions'
     ### Job Execution Entities ###
+    jobExecutionStatus:
+      $ref: './jobExecution/jobExecution.yaml#/components/schemas/jobExecutionStatus'
     jobExecution:
       $ref: './jobExecution/jobExecution.yaml#/components/schemas/jobExecution'
     jobExecutionListResult:
