@@ -23,6 +23,12 @@ components:
         $ref: '../openapi.yaml#/components/schemas/kapuaId'
       required: true
   schemas:
+    jobExecutionStatus:
+      description: The status of a job execution
+      type: string
+      enum:
+        - RUNNING
+        - TERMINATED
     jobExecution:
       allOf:
         - $ref: '../openapi.yaml#/components/schemas/kapuaUpdatableEntity'
@@ -49,11 +55,7 @@ components:
                 allOf:
                 - $ref: '../openapi.yaml#/components/schemas/kapuaId'
             status:
-                description: status of job execution
-                type: string
-                enum:
-                  - RUNNING
-                  - TERMINATED
+              $ref: '#/components/schemas/jobExecutionStatus'
           example:
             type: jobExecution
             id: GTh9xBWezHY
