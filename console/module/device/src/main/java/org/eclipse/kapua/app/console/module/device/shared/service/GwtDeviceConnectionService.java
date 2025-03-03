@@ -19,6 +19,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtGroupedNVPair;
+import org.eclipse.kapua.app.console.module.api.shared.model.GwtXSRFToken;
 import org.eclipse.kapua.app.console.module.device.shared.model.connection.GwtDeviceConnection;
 import org.eclipse.kapua.app.console.module.device.shared.model.connection.GwtDeviceConnectionQuery;
 
@@ -56,4 +57,14 @@ public interface GwtDeviceConnectionService extends RemoteService {
      */
     PagingLoadResult<GwtDeviceConnection> query(PagingLoadConfig loadConfig, GwtDeviceConnectionQuery gwtDeviceConnectionQuery)
             throws GwtKapuaException;
+
+    /**
+     * Issues a disconnect command
+     *
+     * @param xsrfToken The {@link GwtXSRFToken} for this action
+     * @param scopeIdString The {@link GwtDeviceConnection#getScopeId()}
+     * @param deviceConnectionIdString The {@link GwtDeviceConnection#getId()}
+     * @since 2.1.0
+     */
+    void disconnect(GwtXSRFToken xsrfToken, String scopeIdString, String deviceConnectionIdString) throws GwtKapuaException;
 }
