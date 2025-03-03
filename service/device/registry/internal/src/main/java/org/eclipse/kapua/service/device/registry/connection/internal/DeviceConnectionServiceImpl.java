@@ -234,18 +234,18 @@ public class DeviceConnectionServiceImpl extends KapuaConfigurableServiceBase im
     @RaiseServiceEvent
     public void disconnect(KapuaId scopeId, KapuaId deviceConnectionId) throws KapuaException {
         // Argument Validation
-        ArgumentValidator.notNull(deviceConnectionId, "deviceConnection.id");
-        ArgumentValidator.notNull(scopeId, "deviceConnection.scopeId");
+        ArgumentValidator.notNull(scopeId, "scopeId");
+        ArgumentValidator.notNull(deviceConnectionId, "deviceConnectionId");
 
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_CONNECTION, Actions.write, null));
+        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_CONNECTION, Actions.write, scopeId));
 
         // Find the specified DeviceConnection
-        DeviceConnection deviceConnection = txManager.execute(
-                tx -> {
-                    return repository.find(tx, scopeId, deviceConnectionId)
-                            .orElseThrow(() -> new KapuaEntityNotFoundException(DeviceConnection.TYPE, deviceConnectionId));
-                }, eventStorer::accept
+        DeviceConnection deviceConnection =
+                txManager.execute(
+                     tx -> repository.find(tx, scopeId, deviceConnectionId)
+                                     .orElseThrow(() -> new KapuaEntityNotFoundException(DeviceConnection.TYPE, deviceConnectionId)),
+                eventStorer::accept
         );
     }
 
