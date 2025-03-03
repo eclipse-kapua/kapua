@@ -21,6 +21,7 @@ import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.server.KapuaRemoteServiceServlet;
 import org.eclipse.kapua.app.console.module.api.server.util.KapuaExceptionHandler;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtGroupedNVPair;
+import org.eclipse.kapua.app.console.module.api.shared.model.GwtXSRFToken;
 import org.eclipse.kapua.app.console.module.api.shared.util.GwtKapuaCommonsModelConverter;
 import org.eclipse.kapua.app.console.module.device.shared.model.connection.GwtDeviceConnection;
 import org.eclipse.kapua.app.console.module.device.shared.model.connection.GwtDeviceConnection.GwtConnectionUserCouplingMode;
@@ -207,4 +208,18 @@ public class GwtDeviceConnectionServiceImpl extends KapuaRemoteServiceServlet im
         return new BaseListLoadResult<GwtGroupedNVPair>(deviceConnectionPropertiesPairs);
     }
 
+    @Override
+    public void disconnect(GwtXSRFToken xsrfToken, String scopeIdString, String deviceConnectionIdString) throws GwtKapuaException {
+        checkXSRFToken(xsrfToken);
+
+        try {
+            KapuaId scopeId = KapuaEid.parseCompactId(scopeIdString);
+            KapuaId deviceConnectionId = KapuaEid.parseCompactId(deviceConnectionIdString);
+
+            DEVICE_CONNECTION_SERVICE.disconnect(scopeId, deviceConnectionId);
+        }
+        catch (Exception e) {
+            throw KapuaExceptionHandler.buildExceptionFromError(e);
+        }
+    }
 }

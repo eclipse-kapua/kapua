@@ -12,17 +12,28 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.device.client.connection.toolbar;
 
+import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.Events;
+import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.google.gwt.user.client.Element;
+import org.eclipse.kapua.app.console.module.api.client.resources.icons.IconSet;
+import org.eclipse.kapua.app.console.module.api.client.resources.icons.KapuaIcon;
+import org.eclipse.kapua.app.console.module.api.client.ui.button.KapuaButton;
 import org.eclipse.kapua.app.console.module.api.client.ui.dialog.KapuaDialog;
 import org.eclipse.kapua.app.console.module.api.client.ui.widget.EntityCRUDToolbar;
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
 import org.eclipse.kapua.app.console.module.device.client.connection.ConnectionEditDialog;
 import org.eclipse.kapua.app.console.module.device.shared.model.connection.GwtDeviceConnection;
+import org.eclipse.kapua.app.console.module.device.shared.model.connection.GwtDeviceConnectionStatus;
+import org.eclipse.kapua.app.console.module.device.shared.model.permission.DeviceConnectionSessionPermission;
 
 public class ConnectionGridToolbar extends EntityCRUDToolbar<GwtDeviceConnection> {
 
+    private KapuaButton disconnectButton;
+
     public ConnectionGridToolbar(GwtSession currentSession) {
         super(currentSession);
+
         setAddButtonVisible(false);
         setEditButtonVisible(true);
         setDeleteButtonVisible(false);
@@ -30,6 +41,22 @@ public class ConnectionGridToolbar extends EntityCRUDToolbar<GwtDeviceConnection
 
     @Override
     protected void onRender(Element target, int index) {
+
+        disconnectButton = new KapuaButton("Disconnect", new KapuaIcon(IconSet.CHAIN_BROKEN), new SelectionListener<ButtonEvent>() {
+
+            @Override
+            public void componentSelected(ButtonEvent buttonEvent) {
+                DeviceConnectionDisconnectDialog dialog = new DeviceConnectionDisconnectDialog(gridSelectionModel.getSelectedItem());
+                dialog.addListener(Events.Hide, getHideDialogListener());
+                dialog.show();
+            }
+        });
+        disconnectButton.disable();
+
+        if (currentSession.hasPermission(DeviceConnectionSessionPermission.write())) {
+            addExtraButton(disconnectButton);
+        }
+
         super.onRender(target, index);
     }
 
@@ -53,4 +80,19 @@ public class ConnectionGridToolbar extends EntityCRUDToolbar<GwtDeviceConnection
         return null;
     }
 
+    @Override
+    protected void updateButtonEnablement() {
+        super.updateButtonEnablement();
+
+        getEditEntityButton().setEnabled(
+            currentSession.hasPermission(DeviceConnectionSessionPermission.write()) &&
+            selectedEntity != null
+        );
+
+        disconnectButton.setEnabled(
+            currentSession.hasPermission(DeviceConnectionSessionPermission.write()) &&
+            selectedEntity != null &&
+            GwtDeviceConnectionStatus.CONNECTED.equals(selectedEntity.getConnectionStatusEnum())
+        );
+    }
 }
