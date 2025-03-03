@@ -157,13 +157,6 @@ public class DeviceConnections extends AbstractKapuaResource {
         return returnNotNullEntity(deviceConnection, DeviceConnection.TYPE, deviceConnectionId);
     }
 
-    @GET
-    @Path("_availableAuth")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public SetResult getAvailableAuthAdapter() {
-        return new SetResult(deviceConnectionService.getAvailableAuthTypes());
-    }
-
     /**
      * Request that the DeviceConnection specified by the "deviceConnectionId" is disconnected from the broker.
      *
@@ -181,5 +174,12 @@ public class DeviceConnections extends AbstractKapuaResource {
             @PathParam("deviceConnectionId") EntityId deviceConnectionId) throws KapuaException {
         deviceConnectionService.disconnect(scopeId, deviceConnectionId);
         return returnNoContent();
+    }
+
+    @GET
+    @Path("_availableAuth")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public SetResult getAvailableAuthAdapter() {
+        return new SetResult(deviceConnectionService.getAvailableAuthTypes());
     }
 }
