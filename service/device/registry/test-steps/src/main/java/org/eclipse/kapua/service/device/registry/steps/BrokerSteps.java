@@ -201,6 +201,21 @@ public class BrokerSteps extends TestBase {
         kuraDevices.add(kuraDevice);
     }
 
+    @When("I start the Kura Mock to connect to broker {string}, clientId {string}, username {string} and password {string}")
+    public void startKuraMock(String brokerUri, String clientId, String username, String password) {
+        if (!kuraDevices.isEmpty()) {
+            // Cleanup of any leftover KuraMock, if any
+            for (KuraDevice kuraDevice : kuraDevices) {
+                kuraDevice.mqttClientDisconnect();
+            }
+            kuraDevices.clear();
+        }
+
+        KuraDevice kuraDevice = new KuraDevice(brokerUri, clientId, username, password);
+        kuraDevice.mqttClientConnect();
+        kuraDevices.add(kuraDevice);
+    }
+
     @When("I restart the Kura Mock")
     public void restartKuraMock() {
         if (!kuraDevices.isEmpty()) {
@@ -245,6 +260,14 @@ public class BrokerSteps extends TestBase {
     public void deviceBirthMessage() throws Exception {
         for (KuraDevice kuraDevice : kuraDevices) {
             mqttBirth = "$EDC/kapua-sys/" + kuraDevice.getClientId() + "/MQTT/BIRTH";
+            kuraDevice.sendMessageFromFile(mqttBirth, 0, false, "/mqtt/rpione3_MQTT_BIRTH.mqtt");
+        }
+    }
+
+    @And("Device birth message is sent using account name {string}")
+    public void deviceBirthMessage(String accountName) throws Exception {
+        for (KuraDevice kuraDevice : kuraDevices) {
+            mqttBirth = "$EDC/" + accountName + "/" + kuraDevice.getClientId() + "/MQTT/BIRTH";
             kuraDevice.sendMessageFromFile(mqttBirth, 0, false, "/mqtt/rpione3_MQTT_BIRTH.mqtt");
         }
     }
