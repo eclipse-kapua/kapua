@@ -1,6 +1,27 @@
-# Upgrade Notes v 2.1.0-SNAPSHOT
+# Upgrade notes
+
+---
 
 Below are described most important changes, features, additions and bugfixes that needs attention while performing the upgrade from the previous version.
+
+<!-- TOC -->
+* [2.1.0-SNAPSHOT](#210-snapshot)
+  * [Changes](#changes)
+    * [Deprecation of `db.pool.size.min` and `db.pool.size.max` sizing options [#4112]](#deprecation-of-dbpoolsizemin-and-dbpoolsizemax-sizing-options-4112httpsgithubcomeclipsekapuapull4112)
+    * [Duplicate Name Exception is now returned as a 409 error [#4133]](#duplicate-name-exception-is-now-returned-as-a-409-error-4133httpsgithubcomeclipsekapuapull4112)
+    * [Introduction of un-scoped entities for Job Step Definitions [#3996]](#introduction-of-un-scoped-entities-for-job-step-definitions-3996httpsgithubcomeclipsekapuapull3996)
+    * [Invalid Trigger Exceptions are now returned as a 400 error [#4147]](#invalid-trigger-exceptions-are-now-returned-as-a-400-error-4147httpsgithubcomeclipsekapuapull4147)
+    * [Max Number Of Entity Reached exception is now returned as a 403 error [#4154]](#max-number-of-entity-reached-exception-is-now-returned-as-a-403-error-4154httpsgithubcomeclipsekapuapull4154)
+    * [Job Step Property value now supports JSON format for complex types [#4161]](#job-step-property-value-now-supports-json-format-for-complex-types-4161httpsgithubcomeclipsekapuapull4161)
+    * [Datastore search APIs will now allow multiple `clientId` to be specified [#4130]](#datastore-search-apis-will-now-allow-multiple-clientid-to-be-specified-4130httpsgithubcomeclipsekapuapull4130)
+  * [DB Changes](#db-changes)
+    * [New column in MFA Option table [#4115]](#new-column-in-mfa-option-table-4115httpsgithubcomeclipsekapuapull4115)
+    * [New column in Trigger Definition Property table [#4134]](#new-column-in-trigger-definition-property-table-4134httpsgithubcomeclipsekapuapull4134)
+<!-- TOC -->
+
+---
+
+# 2.1.0-SNAPSHOT
 
 This report is only partial for Eclipse Kapua release 2.1.0-SNAPSHOT, since we started to maintain it mid-release development.
 
