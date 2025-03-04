@@ -26,14 +26,12 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: string
-    400:
-      $ref: '../openapi.yaml#/components/responses/illegalArgument'
-      401:
-        $ref: '../openapi.yaml#/components/responses/unauthenticated'
-      403:
-        $ref: '../openapi.yaml#/components/responses/subjectUnauthorized'
-      500:
-        $ref: '../openapi.yaml#/components/responses/kapuaError'
+                $ref: './authorization.yaml#/components/schemas/claimListResult'
+        400:
+          $ref: '../openapi.yaml#/components/responses/illegalArgument'
+        401:
+          $ref: '../openapi.yaml#/components/responses/unauthenticated'
+        403:
+          $ref: '../openapi.yaml#/components/responses/subjectUnauthorized'
+        500:
+          $ref: '../openapi.yaml#/components/responses/kapuaError'
