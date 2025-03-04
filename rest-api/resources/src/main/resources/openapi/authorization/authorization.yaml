@@ -1,0 +1,40 @@
+openapi: 3.0.3
+
+info:
+  title: Eclipse Kapua REST API - Authorizations
+  version: '1.0'
+  contact:
+    name: Eclipse Kapua Dev Team
+    url: https://eclipse.org/kapua
+    email: kapua-dev@eclipse.org
+  license:
+    name: Eclipse Public License 2.0
+    url: https://www.eclipse.org/legal/epl-2.0
+
+paths: {}
+
+components:
+  schemas:
+    claim:
+      type: string
+      description: Represent a user's claims, in the format `domain:action`.
+    claimListResult:
+      allOf:
+        - description: A container for a list of claim objects
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/claim'
+          example:
+              - "job:read"
+              - "device_management_registry:write"
+              - "group:delete"
+              - "device_lifecycle:read"
+              - "certificate:read"
+              - "device_lifecycle:delete"
+              - "certificate:write"
+              - "credential:read"
+              - "event_store:write"
+              - "device:write"
