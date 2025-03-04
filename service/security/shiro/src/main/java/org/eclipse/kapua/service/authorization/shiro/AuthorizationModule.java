@@ -12,16 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.shiro;
 
-import com.google.inject.Provides;
-import com.google.inject.multibindings.ProvidesIntoSet;
-import org.eclipse.kapua.commons.configuration.AccountRelativeFinder;
-import org.eclipse.kapua.commons.configuration.CachingServiceConfigRepository;
-import org.eclipse.kapua.commons.configuration.ResourceLimitedServiceConfigurationManagerImpl;
-import org.eclipse.kapua.commons.configuration.RootUserTester;
-import org.eclipse.kapua.commons.configuration.ServiceConfigImplJpaRepository;
+import java.util.Map;
+
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
-import org.eclipse.kapua.commons.configuration.ServiceConfigurationManagerCachingWrapper;
-import org.eclipse.kapua.commons.configuration.UsedEntitiesCounterImpl;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.core.ServiceModule;
 import org.eclipse.kapua.commons.event.ServiceEventHouseKeeperFactoryImpl;
@@ -98,10 +94,11 @@ import org.eclipse.kapua.service.authorization.role.shiro.RoleServiceImpl;
 import org.eclipse.kapua.service.authorization.shiro.setting.KapuaAuthorizationSetting;
 import org.eclipse.kapua.storage.TxManager;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import com.google.inject.Provides;
+import com.google.inject.multibindings.ProvidesIntoSet;
 
 public class AuthorizationModule extends AbstractKapuaModule {
+
     @Override
     protected void configureModule() {
         bind(AuthorizationService.class).to(AuthorizationServiceImpl.class).in(Singleton.class);
@@ -146,17 +143,17 @@ public class AuthorizationModule extends AbstractKapuaModule {
 
     @ProvidesIntoSet
     ServiceModule authorizationServiceModule(AccessInfoService accessInfoService,
-                                             RoleService roleService,
-                                             DomainRegistryService domainRegistryService,
-                                             GroupService groupService,
-                                             AuthorizationService authorizationService,
-                                             PermissionFactory permissionFactory,
-                                             KapuaJpaTxManagerFactory txManagerFactory,
-                                             EventStoreFactory eventStoreFactory,
-                                             EventStoreRecordRepository eventStoreRecordRepository,
-                                             ServiceEventBus serviceEventBus,
-                                             KapuaAuthorizationSetting kapuaAuthorizationSetting,
-                                             @Named("eventsModuleName") String eventModuleName
+            RoleService roleService,
+            DomainRegistryService domainRegistryService,
+            GroupService groupService,
+            AuthorizationService authorizationService,
+            PermissionFactory permissionFactory,
+            KapuaJpaTxManagerFactory txManagerFactory,
+            EventStoreFactory eventStoreFactory,
+            EventStoreRecordRepository eventStoreRecordRepository,
+            ServiceEventBus serviceEventBus,
+            KapuaAuthorizationSetting kapuaAuthorizationSetting,
+            @Named("eventsModuleName") String eventModuleName
     ) throws ServiceEventBusException {
         return new AuthorizationServiceModule(
                 accessInfoService,
@@ -212,11 +209,11 @@ public class AuthorizationModule extends AbstractKapuaModule {
     @Provides
     @Singleton
     RolePermissionService rolePermissionService(PermissionFactory permissionFactory,
-                                                AuthorizationService authorizationService,
-                                                RoleRepository roleRepository,
-                                                RolePermissionRepository rolePermissionRepository,
-                                                KapuaJpaTxManagerFactory jpaTxManagerFactory,
-                                                PermissionValidator permissionValidator) {
+            AuthorizationService authorizationService,
+            RoleRepository roleRepository,
+            RolePermissionRepository rolePermissionRepository,
+            KapuaJpaTxManagerFactory jpaTxManagerFactory,
+            PermissionValidator permissionValidator) {
         return new RolePermissionServiceImpl(
                 authorizationService,
                 permissionFactory,
@@ -236,7 +233,7 @@ public class AuthorizationModule extends AbstractKapuaModule {
             AccessInfoFactory accessInfoFactory,
             AccessRoleService accessRoleService,
             AccessInfoService accessInfoService,
-            @Named("RoleServiceConfigurationManager") ServiceConfigurationManager serviceConfigurationManager,
+            Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
             RoleRepository roleRepository,
             RolePermissionRepository rolePermissionRepository,
             KapuaJpaTxManagerFactory jpaTxManagerFactory,
@@ -250,38 +247,12 @@ public class AuthorizationModule extends AbstractKapuaModule {
                 accessInfoFactory,
                 accessRoleService,
                 accessInfoService,
-                serviceConfigurationManager,
+                serviceConfigurationManagersByServiceClass.get(RoleService.class),
                 jpaTxManagerFactory.create("kapua-authorization"),
                 roleRepository,
                 rolePermissionRepository,
                 permissionValidator
         );
-    }
-
-    @Provides
-    @Singleton
-    @Named("RoleServiceConfigurationManager")
-    public ServiceConfigurationManager roleServiceConfigurationManager(
-            RoleFactory roleFactory,
-            RootUserTester rootUserTester,
-            AccountRelativeFinder accountRelativeFinder,
-            RoleRepository roleRepository,
-            KapuaJpaRepositoryConfiguration jpaRepoConfig,
-            EntityCacheFactory entityCacheFactory
-    ) {
-        return new ServiceConfigurationManagerCachingWrapper(
-                new ResourceLimitedServiceConfigurationManagerImpl(
-                        RoleService.class.getName(),
-                        new CachingServiceConfigRepository(
-                                new ServiceConfigImplJpaRepository(jpaRepoConfig),
-                                entityCacheFactory.createCache("AbstractKapuaConfigurableServiceCacheId")
-                        ),
-                        rootUserTester,
-                        accountRelativeFinder,
-                        new UsedEntitiesCounterImpl(
-                                roleFactory,
-                                roleRepository
-                        )));
     }
 
     @Provides
@@ -294,7 +265,7 @@ public class AuthorizationModule extends AbstractKapuaModule {
     @Provides
     @Singleton
     RolePermissionRepository rolePermissionRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig,
-                                                      EntityCacheFactory entityCacheFactory) {
+            EntityCacheFactory entityCacheFactory) {
         return new RolePermissionCachingRepository(new RolePermissionImplJpaRepository(jpaRepoConfig),
                 entityCacheFactory.createCache("RolePermissionId"));
     }
@@ -302,39 +273,13 @@ public class AuthorizationModule extends AbstractKapuaModule {
     @Provides
     @Singleton
     GroupService groupService(PermissionFactory permissionFactory,
-                              AuthorizationService authorizationService,
-                              @Named("GroupServiceConfigurationManager") ServiceConfigurationManager serviceConfigurationManager,
-                              GroupRepository groupRepository,
-                              KapuaJpaTxManagerFactory jpaTxManagerFactory) {
-        return new GroupServiceImpl(permissionFactory, authorizationService, serviceConfigurationManager,
+            AuthorizationService authorizationService,
+            Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
+            GroupRepository groupRepository,
+            KapuaJpaTxManagerFactory jpaTxManagerFactory) {
+        return new GroupServiceImpl(permissionFactory, authorizationService, serviceConfigurationManagersByServiceClass.get(GroupService.class),
                 jpaTxManagerFactory.create("kapua-authorization"),
                 groupRepository);
-    }
-
-    @Provides
-    @Singleton
-    @Named("GroupServiceConfigurationManager")
-    public ServiceConfigurationManager groupServiceConfigurationManager(
-            GroupFactory factory,
-            RootUserTester rootUserTester,
-            AccountRelativeFinder accountRelativeFinder,
-            GroupRepository groupRepository,
-            KapuaJpaRepositoryConfiguration jpaRepoConfig,
-            EntityCacheFactory entityCacheFactory
-    ) {
-        return new ServiceConfigurationManagerCachingWrapper(
-                new ResourceLimitedServiceConfigurationManagerImpl(
-                        GroupService.class.getName(),
-                        new CachingServiceConfigRepository(
-                                new ServiceConfigImplJpaRepository(jpaRepoConfig),
-                                entityCacheFactory.createCache("AbstractKapuaConfigurableServiceCacheId")
-                        ),
-                        rootUserTester,
-                        accountRelativeFinder,
-                        new UsedEntitiesCounterImpl(
-                                factory,
-                                groupRepository
-                        )));
     }
 
     @Provides
@@ -396,11 +341,10 @@ public class AuthorizationModule extends AbstractKapuaModule {
                 permissionValidator);
     }
 
-
     @Provides
     @Singleton
     AccessPermissionRepository accessPermissionRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig,
-                                                          EntityCacheFactory entityCacheFactory) {
+            EntityCacheFactory entityCacheFactory) {
         return new CachingAccessPermissionRepository(
                 new AccessPermissionImplJpaRepository(jpaRepoConfig),
                 entityCacheFactory.createCache("AccessPermissionId")
@@ -410,11 +354,11 @@ public class AuthorizationModule extends AbstractKapuaModule {
     @Provides
     @Singleton
     AccessRoleService accessRoleService(RoleRepository roleRepository,
-                                        AccessInfoRepository accessInfoRepository,
-                                        AccessRoleRepository accessRoleRepository,
-                                        AuthorizationService authorizationService,
-                                        PermissionFactory permissionFactory,
-                                        KapuaJpaTxManagerFactory jpaTxManagerFactory) {
+            AccessInfoRepository accessInfoRepository,
+            AccessRoleRepository accessRoleRepository,
+            AuthorizationService authorizationService,
+            PermissionFactory permissionFactory,
+            KapuaJpaTxManagerFactory jpaTxManagerFactory) {
         return new AccessRoleServiceImpl(
                 jpaTxManagerFactory.create("kapua-authorization"),
                 roleRepository,
@@ -428,7 +372,7 @@ public class AuthorizationModule extends AbstractKapuaModule {
     @Provides
     @Singleton
     AccessRoleRepository accessRoleRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig,
-                                              EntityCacheFactory entityCacheFactory) {
+            EntityCacheFactory entityCacheFactory) {
         return new CachingAccessRoleRepository(
                 new AccessRoleImplJpaRepository(jpaRepoConfig), entityCacheFactory.createCache("AccessRoleId")
         );

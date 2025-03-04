@@ -12,20 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.user.test;
 
-import com.codahale.metrics.MetricRegistry;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Singleton;
-import com.google.inject.name.Names;
-import io.cucumber.java.Before;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.configuration.AccountRelativeFinder;
+import org.eclipse.kapua.commons.configuration.ResourceBasedServiceConfigurationMetadataProvider;
 import org.eclipse.kapua.commons.configuration.ResourceLimitedServiceConfigurationManagerImpl;
 import org.eclipse.kapua.commons.configuration.RootUserTester;
 import org.eclipse.kapua.commons.configuration.ServiceConfigImplJpaRepository;
 import org.eclipse.kapua.commons.configuration.UsedEntitiesCounterImpl;
-import org.eclipse.kapua.commons.configuration.metatype.KapuaMetatypeFactoryImpl;
 import org.eclipse.kapua.commons.crypto.CryptoUtil;
 import org.eclipse.kapua.commons.crypto.CryptoUtilImpl;
 import org.eclipse.kapua.commons.crypto.setting.CryptoSettings;
@@ -35,12 +28,12 @@ import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.commons.metric.CommonsMetric;
 import org.eclipse.kapua.commons.metric.MetricsService;
 import org.eclipse.kapua.commons.metric.MetricsServiceImpl;
+import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.model.query.QueryFactoryImpl;
 import org.eclipse.kapua.commons.service.event.store.internal.EventStoreRecordImplJpaRepository;
 import org.eclipse.kapua.commons.service.internal.cache.CacheManagerProvider;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.model.config.metatype.KapuaMetatypeFactory;
 import org.eclipse.kapua.model.query.QueryFactory;
 import org.eclipse.kapua.qa.common.MockedLocator;
 import org.eclipse.kapua.service.account.AccountService;
@@ -57,8 +50,18 @@ import org.eclipse.kapua.service.user.UserService;
 import org.eclipse.kapua.service.user.internal.UserFactoryImpl;
 import org.eclipse.kapua.service.user.internal.UserImplJpaRepository;
 import org.eclipse.kapua.service.user.internal.UserServiceImpl;
+import org.eclipse.kapua.storage.TxManager;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
+
+import com.codahale.metrics.MetricRegistry;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Singleton;
+import com.google.inject.name.Names;
+
+import io.cucumber.java.Before;
 
 @Singleton
 public class UserLocatorConfiguration {
@@ -105,8 +108,6 @@ public class UserLocatorConfiguration {
                 // Inject mocked Permission Factory
                 PermissionFactory mockPermissionFactory = Mockito.mock(PermissionFactory.class);
                 bind(PermissionFactory.class).toInstance(mockPermissionFactory);
-                // Set KapuaMetatypeFactory for Metatype configuration
-                bind(KapuaMetatypeFactory.class).toInstance(new KapuaMetatypeFactoryImpl());
 
                 // binding Account related services
                 final AccountRelativeFinder accountRelativeFinder = Mockito.mock(AccountRelativeFinder.class);
@@ -119,20 +120,25 @@ public class UserLocatorConfiguration {
                 bind(RootUserTester.class).toInstance(mockRootUserTester);
                 final UserRepository userRepository = Mockito.mock(UserRepository.class);
                 final KapuaJpaRepositoryConfiguration jpaRepoConfig = new KapuaJpaRepositoryConfiguration();
-                final ResourceLimitedServiceConfigurationManagerImpl userConfigurationManager = new ResourceLimitedServiceConfigurationManagerImpl(UserService.class.getName(),
+                final TxManager txManager = new KapuaJpaTxManagerFactory(maxInsertAttempts).create("kapua-user");
+                final ResourceLimitedServiceConfigurationManagerImpl userConfigurationManager = new ResourceLimitedServiceConfigurationManagerImpl(
+                        UserService.class.getName(),
+                        Domains.USER,
+                        txManager,
                         new ServiceConfigImplJpaRepository(jpaRepoConfig),
                         Mockito.mock(RootUserTester.class),
                         accountRelativeFinder,
                         new UsedEntitiesCounterImpl(
                                 userFactory,
-                                userRepository)
+                                userRepository),
+                        new ResourceBasedServiceConfigurationMetadataProvider()
                 );
                 bind(UserService.class).toInstance(
                         new UserServiceImpl(
                                 userConfigurationManager,
                                 mockedAuthorization,
                                 mockPermissionFactory,
-                                new KapuaJpaTxManagerFactory(maxInsertAttempts).create("kapua-user"),
+                                txManager,
                                 new UserImplJpaRepository(jpaRepoConfig),
                                 userFactory,
                                 new EventStorerImpl(new EventStoreRecordImplJpaRepository(jpaRepoConfig)))

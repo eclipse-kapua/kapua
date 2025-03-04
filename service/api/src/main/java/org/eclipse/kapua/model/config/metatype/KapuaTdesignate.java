@@ -12,6 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.model.config.metatype;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
@@ -21,8 +26,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -60,8 +63,17 @@ import java.util.Map;
         "optional",
         "merge",
         "otherAttributes"
-}, factoryClass = MetatypeXmlRegistry.class, factoryMethod = "newKapuaTdesignate")
-public interface KapuaTdesignate {
+})
+public class KapuaTdesignate {
+
+    protected KapuaTobject object;
+    protected List<Object> any;
+    protected String pid;
+    protected String factoryPid;
+    protected String bundle;
+    protected Boolean optional;
+    protected Boolean merge;
+    private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
     /**
      * Gets the value of the object property.
@@ -69,22 +81,25 @@ public interface KapuaTdesignate {
      * @return possible object is {@link KapuaTobject }
      */
     @XmlElement(name = "Object", namespace = "http://www.osgi.org/xmlns/metatype/v1.2.0", required = true)
-    KapuaTobject getObject();
+    public KapuaTobject getObject() {
+        return object;
+    }
 
     /**
      * Sets the value of the object property.
      *
-     * @param value allowed object is   {@link KapuaTobject }
+     * @param value
+     *         allowed object is   {@link KapuaTobject }
      */
-    void setObject(KapuaTobject value);
+    public void setObject(KapuaTobject value) {
+        this.object = value;
+    }
 
     /**
      * Gets the value of the any property.
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the any property.
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is
+     * not a <CODE>set</CODE> method for the any property.
      * <p>
      * For example, to add a new item, do as follows:
      *
@@ -94,9 +109,16 @@ public interface KapuaTdesignate {
      * <p>
      */
     @XmlAnyElement(lax = true)
-    List<Object> getAny();
+    public List<Object> getAny() {
+        if (any == null) {
+            any = new ArrayList<Object>();
+        }
+        return this.any;
+    }
 
-    void setAny(List<Object> any);
+    public void setAny(List<Object> any) {
+        this.any = any;
+    }
 
     /**
      * Gets the value of the pid property.
@@ -104,14 +126,19 @@ public interface KapuaTdesignate {
      * @return possible object is {@link String }
      */
     @XmlAttribute(name = "pid")
-    String getPid();
+    public String getPid() {
+        return pid;
+    }
 
     /**
      * Sets the value of the pid property.
      *
-     * @param value allowed object is {@link String }
+     * @param value
+     *         allowed object is {@link String }
      */
-    void setPid(String value);
+    public void setPid(String value) {
+        this.pid = value;
+    }
 
     /**
      * Gets the value of the factoryPid property.
@@ -119,14 +146,19 @@ public interface KapuaTdesignate {
      * @return possible object is {@link String }
      */
     @XmlAttribute(name = "factoryPid")
-    String getFactoryPid();
+    public String getFactoryPid() {
+        return factoryPid;
+    }
 
     /**
      * Sets the value of the factoryPid property.
      *
-     * @param value allowed object is {@link String }
+     * @param value
+     *         allowed object is {@link String }
      */
-    void setFactoryPid(String value);
+    public void setFactoryPid(String value) {
+        this.factoryPid = value;
+    }
 
     /**
      * Gets the value of the bundle property.
@@ -134,14 +166,19 @@ public interface KapuaTdesignate {
      * @return possible object is {@link String }
      */
     @XmlAttribute(name = "bundle")
-    String getBundle();
+    public String getBundle() {
+        return bundle;
+    }
 
     /**
      * Sets the value of the bundle property.
      *
-     * @param value allowed object is {@link String }
+     * @param value
+     *         allowed object is {@link String }
      */
-    void setBundle(String value);
+    public void setBundle(String value) {
+        this.bundle = value;
+    }
 
     /**
      * Gets the value of the optional property.
@@ -149,14 +186,23 @@ public interface KapuaTdesignate {
      * @return possible object is {@link Boolean }
      */
     @XmlAttribute(name = "optional")
-    Boolean isOptional();
+    public Boolean isOptional() {
+        if (optional == null) {
+            return false;
+        } else {
+            return optional;
+        }
+    }
 
     /**
      * Sets the value of the optional property.
      *
-     * @param value allowed object is {@link Boolean }
+     * @param value
+     *         allowed object is {@link Boolean }
      */
-    void setOptional(Boolean value);
+    public void setOptional(Boolean value) {
+        this.optional = value;
+    }
 
     /**
      * Gets the value of the merge property.
@@ -164,29 +210,40 @@ public interface KapuaTdesignate {
      * @return possible object is {@link Boolean }
      */
     @XmlAttribute(name = "merge")
-    Boolean isMerge();
+    public Boolean isMerge() {
+        if (merge == null) {
+            return false;
+        } else {
+            return merge;
+        }
+    }
 
     /**
      * Sets the value of the merge property.
      *
-     * @param value allowed object is {@link Boolean }
+     * @param value
+     *         allowed object is {@link Boolean }
      */
-    void setMerge(Boolean value);
+    public void setMerge(Boolean value) {
+        this.merge = value;
+    }
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
      * <p>
-     * the map is keyed by the name of the attribute and
-     * the value is the string value of the attribute.
+     * the map is keyed by the name of the attribute and the value is the string value of the attribute.
      * <p>
-     * the map returned by this method is live, and you can add new attribute
-     * by updating the map directly. Because of this design, there's no setter.
+     * the map returned by this method is live, and you can add new attribute by updating the map directly. Because of this design, there's no setter.
      *
      * @return always non-null
      */
     @XmlAnyAttribute
-    Map<QName, String> getOtherAttributes();
+    public Map<QName, String> getOtherAttributes() {
+        return otherAttributes;
+    }
 
-    void setOtherAttributes(Map<QName, String> otherAttributes);
+    public void setOtherAttributes(Map<QName, String> otherAttributes) {
+        this.otherAttributes = otherAttributes;
+    }
 
 }

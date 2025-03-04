@@ -12,6 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.model.config.metatype;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
@@ -21,8 +26,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -50,16 +53,19 @@ import java.util.Map;
 @XmlType(name = "Tobject", propOrder = {
         "attribute",
         "any"
-}, factoryClass = MetatypeXmlRegistry.class, factoryMethod = "newKapuaTobject")
-public interface KapuaTobject {
+})
+public class KapuaTobject {
+
+    protected List<KapuaTattribute> attribute;
+    protected List<Object> any;
+    protected String ocdref;
+    private Map<QName, String> otherAttributes = new HashMap<QName, String>();
 
     /**
      * Gets the value of the attribute property.
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the attribute property.
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is
+     * not a <CODE>set</CODE> method for the attribute property.
      * <p>
      * For example, to add a new item, do as follows:
      *
@@ -68,15 +74,18 @@ public interface KapuaTobject {
      * </pre>
      */
     @XmlElement(name = "Attribute", namespace = "http://www.osgi.org/xmlns/metatype/v1.2.0")
-    List<KapuaTattribute> getAttribute();
+    public List<KapuaTattribute> getAttribute() {
+        if (attribute == null) {
+            attribute = new ArrayList<>();
+        }
+        return new ArrayList<>(this.attribute);
+    }
 
     /**
      * Gets the value of the any property.
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the any property.
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is
+     * not a <CODE>set</CODE> method for the any property.
      * <p>
      * For example, to add a new item, do as follows:
      *
@@ -86,7 +95,12 @@ public interface KapuaTobject {
      * <p>
      */
     @XmlAnyElement(lax = true)
-    List<Object> getAny();
+    public List<Object> getAny() {
+        if (any == null) {
+            any = new ArrayList<Object>();
+        }
+        return this.any;
+    }
 
     /**
      * Gets the value of the ocdref property.
@@ -94,27 +108,32 @@ public interface KapuaTobject {
      * @return possible object is {@link String }
      */
     @XmlAttribute(name = "ocdref", required = true)
-    String getOcdref();
+    public String getOcdref() {
+        return ocdref;
+    }
 
     /**
      * Sets the value of the ocdref property.
      *
-     * @param value allowed object is {@link String }
+     * @param value
+     *         allowed object is {@link String }
      */
-    void setOcdref(String value);
+    public void setOcdref(String value) {
+        this.ocdref = value;
+    }
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
      * <p>
-     * the map is keyed by the name of the attribute and
-     * the value is the string value of the attribute.
+     * the map is keyed by the name of the attribute and the value is the string value of the attribute.
      * <p>
-     * the map returned by this method is live, and you can add new attribute
-     * by updating the map directly. Because of this design, there's no setter.
+     * the map returned by this method is live, and you can add new attribute by updating the map directly. Because of this design, there's no setter.
      *
      * @return always non-null
      */
     @XmlAnyAttribute
-    Map<QName, String> getOtherAttributes();
+    public Map<QName, String> getOtherAttributes() {
+        return otherAttributes;
+    }
 
 }

@@ -12,15 +12,18 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.configuration.metatype;
 
-import com.google.common.base.Strings;
-import org.eclipse.kapua.commons.crypto.CryptoUtil;
-import org.eclipse.kapua.model.xml.XmlPropertyAdapted;
-import org.eclipse.kapua.model.xml.adapters.ClassBasedXmlPropertyAdapterBase;
-
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import org.eclipse.kapua.commons.crypto.CryptoUtil;
+import org.eclipse.kapua.model.config.metatype.Password;
+import org.eclipse.kapua.model.xml.XmlPropertyAdapted;
+import org.eclipse.kapua.model.xml.adapters.ClassBasedXmlPropertyAdapterBase;
+
+import com.google.common.base.Strings;
+
 public class PasswordPropertyAdapter extends ClassBasedXmlPropertyAdapterBase<Password> {
+
     private final CryptoUtil cryptoUtil;
 
     public PasswordPropertyAdapter(CryptoUtil cryptoUtil) {
@@ -51,8 +54,10 @@ public class PasswordPropertyAdapter extends ClassBasedXmlPropertyAdapterBase<Pa
     /**
      * Unmarshalls the given value according to {@link XmlPropertyAdapted#isEncrypted()}.
      *
-     * @param value The value to unmarshall.
-     * @param isEncrypted The {@link XmlPropertyAdapted#isEncrypted()}.
+     * @param value
+     *         The value to unmarshall.
+     * @param isEncrypted
+     *         The {@link XmlPropertyAdapted#isEncrypted()}.
      * @return The unmarshalled {@link Password}
      * @since 2.1.0
      */

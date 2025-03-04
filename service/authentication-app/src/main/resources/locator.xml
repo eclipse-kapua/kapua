@@ -23,6 +23,7 @@
     <packages>
         <package>org.eclipse.kapua.service.authentication</package>
         <package>org.eclipse.kapua.commons</package>
+        <package>org.eclipse.kapua.model</package>
         <package>org.eclipse.kapua.message</package>
         <package>org.eclipse.kapua.model.config</package>
         <package>org.eclipse.kapua.security</package>

@@ -12,21 +12,17 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.user.internal;
 
-import com.google.inject.Provides;
-import com.google.inject.multibindings.ProvidesIntoSet;
-import org.eclipse.kapua.commons.configuration.AccountRelativeFinder;
-import org.eclipse.kapua.commons.configuration.CachingServiceConfigRepository;
-import org.eclipse.kapua.commons.configuration.ResourceLimitedServiceConfigurationManagerImpl;
+import java.util.Map;
+
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.commons.configuration.RootUserTester;
 import org.eclipse.kapua.commons.configuration.RootUserTesterImpl;
-import org.eclipse.kapua.commons.configuration.ServiceConfigImplJpaRepository;
 import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
-import org.eclipse.kapua.commons.configuration.ServiceConfigurationManagerCachingWrapper;
-import org.eclipse.kapua.commons.configuration.UsedEntitiesCounterImpl;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.core.ServiceModule;
 import org.eclipse.kapua.commons.event.ServiceEventHouseKeeperFactoryImpl;
-import org.eclipse.kapua.commons.jpa.EntityCacheFactory;
 import org.eclipse.kapua.commons.jpa.EventStorer;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
@@ -47,10 +43,11 @@ import org.eclipse.kapua.service.user.UserRepository;
 import org.eclipse.kapua.service.user.UserService;
 import org.eclipse.kapua.service.user.internal.setting.KapuaUserSetting;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import com.google.inject.Provides;
+import com.google.inject.multibindings.ProvidesIntoSet;
 
 public class UserModule extends AbstractKapuaModule {
+
     @Override
     protected void configureModule() {
         bind(UserFactory.class).to(UserFactoryImpl.class).in(Singleton.class);
@@ -73,7 +70,7 @@ public class UserModule extends AbstractKapuaModule {
     @Provides
     @Singleton
     public UserService userService(
-            @Named("UserServiceConfigurationManager") ServiceConfigurationManager serviceConfigurationManager,
+            Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
             UserRepository userRepository,
@@ -81,7 +78,7 @@ public class UserModule extends AbstractKapuaModule {
             EventStorer eventStorer,
             KapuaJpaTxManagerFactory jpaTxManagerFactory) {
         return new UserServiceImpl(
-                serviceConfigurationManager,
+                serviceConfigurationManagersByServiceClass.get(UserService.class),
                 authorizationService,
                 permissionFactory,
                 jpaTxManagerFactory.create("kapua-user"),
@@ -92,14 +89,14 @@ public class UserModule extends AbstractKapuaModule {
 
     @ProvidesIntoSet
     public ServiceModule userServiceModule(UserService userService,
-                                           AuthorizationService authorizationService,
-                                           PermissionFactory permissionFactory,
-                                           KapuaJpaTxManagerFactory txManagerFactory,
-                                           EventStoreFactory eventStoreFactory,
-                                           EventStoreRecordRepository eventStoreRecordRepository,
-                                           ServiceEventBus serviceEventBus,
-                                           KapuaUserSetting kapuaUserSetting,
-                                           @Named("eventsModuleName") String eventModuleName
+            AuthorizationService authorizationService,
+            PermissionFactory permissionFactory,
+            KapuaJpaTxManagerFactory txManagerFactory,
+            EventStoreFactory eventStoreFactory,
+            EventStoreRecordRepository eventStoreRecordRepository,
+            ServiceEventBus serviceEventBus,
+            KapuaUserSetting kapuaUserSetting,
+            @Named("eventsModuleName") String eventModuleName
     ) throws ServiceEventBusException {
         return new UserServiceModule(
                 userService,
@@ -116,31 +113,6 @@ public class UserModule extends AbstractKapuaModule {
                         serviceEventBus
                 ), serviceEventBus,
                 eventModuleName);
-    }
-
-    @Provides
-    @Singleton
-    @Named("UserServiceConfigurationManager")
-    ServiceConfigurationManager userServiceConfigurationManager(
-            UserFactory userFactory,
-            RootUserTester rootUserTester,
-            AccountRelativeFinder accountRelativeFinder,
-            UserRepository userRepository,
-            KapuaJpaRepositoryConfiguration jpaRepoConfig,
-            EntityCacheFactory entityCacheFactory
-    ) {
-        return new ServiceConfigurationManagerCachingWrapper(
-                new ResourceLimitedServiceConfigurationManagerImpl(UserService.class.getName(),
-                        new CachingServiceConfigRepository(
-                                new ServiceConfigImplJpaRepository(jpaRepoConfig),
-                                entityCacheFactory.createCache("AbstractKapuaConfigurableServiceCacheId")
-                        ),
-                        rootUserTester,
-                        accountRelativeFinder,
-                        new UsedEntitiesCounterImpl(
-                                userFactory,
-                                userRepository
-                        )));
     }
 
     @Provides

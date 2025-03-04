@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.integration.misc;
 
-import org.eclipse.kapua.commons.configuration.metatype.TscalarImpl;
+import org.eclipse.kapua.model.config.metatype.KapuaTscalar;
 import org.eclipse.kapua.model.config.metatype.KapuaTscalarAdapter;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.junit.Assert;
@@ -20,22 +20,21 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-
 @Category(JUnitTests.class)
 public class KapuaTscalarAdapterTest {
 
     KapuaTscalarAdapter kapuaTscalarAdapter;
-    TscalarImpl[] kapuaTscalar;
+    KapuaTscalar[] kapuaTscalar;
     String[] stringValue;
     String[] invalidStringValue;
 
     @Before
     public void initialize() {
         kapuaTscalarAdapter = new KapuaTscalarAdapter();
-        kapuaTscalar = new TscalarImpl[]{TscalarImpl.STRING, TscalarImpl.LONG, TscalarImpl.DOUBLE, TscalarImpl.FLOAT, TscalarImpl.INTEGER,
-                TscalarImpl.BYTE, TscalarImpl.CHAR, TscalarImpl.BOOLEAN, TscalarImpl.SHORT, TscalarImpl.PASSWORD};
-        stringValue = new String[]{"String", "Long", "Double", "Float", "Integer", "Byte", "Char", "Boolean", "Short", "Password"};
-        invalidStringValue = new String[]{null, "Invalid Value"};
+        kapuaTscalar = new KapuaTscalar[] { KapuaTscalar.STRING, KapuaTscalar.LONG, KapuaTscalar.DOUBLE, KapuaTscalar.FLOAT, KapuaTscalar.INTEGER,
+                KapuaTscalar.BYTE, KapuaTscalar.CHAR, KapuaTscalar.BOOLEAN, KapuaTscalar.SHORT, KapuaTscalar.PASSWORD };
+        stringValue = new String[] { "String", "Long", "Double", "Float", "Integer", "Byte", "Char", "Boolean", "Short", "Password" };
+        invalidStringValue = new String[] { null, "Invalid Value" };
     }
 
     @Test
@@ -53,7 +52,7 @@ public class KapuaTscalarAdapterTest {
 
     @Test
     public void unmarshalTest() throws Exception {
-        TscalarImpl[] expectedTscalars = kapuaTscalar;
+        KapuaTscalar[] expectedTscalars = kapuaTscalar;
         for (int i = 0; i < stringValue.length; i++) {
             Assert.assertEquals("Expected and actual values should be the same.", expectedTscalars[i], kapuaTscalarAdapter.unmarshal(stringValue[i]));
         }

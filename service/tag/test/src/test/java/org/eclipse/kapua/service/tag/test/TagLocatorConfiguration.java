@@ -12,18 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.tag.test;
 
-import com.codahale.metrics.MetricRegistry;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Singleton;
-import com.google.inject.name.Names;
-import io.cucumber.java.Before;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.configuration.AccountRelativeFinder;
 import org.eclipse.kapua.commons.configuration.RootUserTester;
 import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
-import org.eclipse.kapua.commons.configuration.metatype.KapuaMetatypeFactoryImpl;
 import org.eclipse.kapua.commons.crypto.CryptoUtil;
 import org.eclipse.kapua.commons.crypto.CryptoUtilImpl;
 import org.eclipse.kapua.commons.crypto.setting.CryptoSettings;
@@ -41,7 +37,6 @@ import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.message.KapuaMessageFactory;
 import org.eclipse.kapua.message.internal.KapuaMessageFactoryImpl;
-import org.eclipse.kapua.model.config.metatype.KapuaMetatypeFactory;
 import org.eclipse.kapua.model.query.QueryFactory;
 import org.eclipse.kapua.qa.common.MockedLocator;
 import org.eclipse.kapua.service.account.AccountFactory;
@@ -87,15 +82,21 @@ import org.eclipse.kapua.service.tag.internal.TagServiceImpl;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
-import java.util.Collections;
+import com.codahale.metrics.MetricRegistry;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Singleton;
+import com.google.inject.multibindings.MapBinder;
+import com.google.inject.name.Names;
+
+import io.cucumber.java.Before;
 
 @Singleton
 public class TagLocatorConfiguration {
 
     /**
-     * Setup DI with Google Guice DI.
-     * Create mocked and non mocked service under test and bind them with Guice.
-     * It is based on custom MockedLocator locator that is meant for service unit tests.
+     * Setup DI with Google Guice DI. Create mocked and non mocked service under test and bind them with Guice. It is based on custom MockedLocator locator that is meant for service unit tests.
      */
     @Before(value = "@setup", order = 1)
     public void setupDI() {
@@ -133,26 +134,26 @@ public class TagLocatorConfiguration {
                 }
                 bind(QueryFactory.class).toInstance(new QueryFactoryImpl());
 
-                // Set KapuaMetatypeFactory for Metatype configuration
-                bind(KapuaMetatypeFactory.class).toInstance(new KapuaMetatypeFactoryImpl());
-
                 // binding Account related services
                 bind(AccountRelativeFinder.class).toInstance(Mockito.mock(AccountRelativeFinder.class));
                 bind(AccountService.class).toInstance(Mockito.mock(AccountService.class));
                 bind(AccountFactory.class).toInstance(Mockito.spy(new AccountFactoryImpl()));
                 bind(RootUserTester.class).toInstance(Mockito.mock(RootUserTester.class));
 
-                bind(ServiceConfigurationManager.class)
-                        .annotatedWith(Names.named("DeviceConnectionServiceConfigurationManager"))
+                final MapBinder<Class, ServiceConfigurationManager> serviceConfigurationManagerMapBinder = MapBinder.newMapBinder(binder(), Class.class, ServiceConfigurationManager.class);
+
+                serviceConfigurationManagerMapBinder.addBinding(DeviceConnectionService.class)
                         .toInstance(Mockito.mock(ServiceConfigurationManager.class));
 
                 // Inject actual Device service related services
                 final KapuaJpaRepositoryConfiguration jpaRepoConfig = new KapuaJpaRepositoryConfiguration();
                 final EventStorer eventStorer = new EventStorerImpl(new EventStoreRecordImplJpaRepository(jpaRepoConfig));
                 bind(TagRepository.class).toInstance(new TagImplJpaRepository(jpaRepoConfig));
+                final Map<Class<?>, ServiceConfigurationManager> classServiceConfigurationManagerMap = new HashMap<>();
+                classServiceConfigurationManagerMap.put(DeviceConnectionService.class, Mockito.mock(ServiceConfigurationManager.class));
 
                 final DeviceConnectionServiceImpl deviceConnectionService = new DeviceConnectionServiceImpl(
-                        Mockito.mock(ServiceConfigurationManager.class),
+                        classServiceConfigurationManagerMap,
                         mockedAuthorization,
                         permissionFactory,
                         new DeviceConnectionFactoryImpl(),
@@ -170,7 +171,8 @@ public class TagLocatorConfiguration {
                         new DeviceEventImplJpaRepository(jpaRepoConfig)
                 );
 
-                final DeviceValidation deviceValidation = new DeviceValidationImpl(new KapuaDeviceRegistrySettings().getInt(KapuaDeviceRegistrySettingKeys.DEVICE_LIFECYCLE_BIRTH_VAR_FIELDS_LENGTH_MAX),
+                final DeviceValidation deviceValidation = new DeviceValidationImpl(
+                        new KapuaDeviceRegistrySettings().getInt(KapuaDeviceRegistrySettingKeys.DEVICE_LIFECYCLE_BIRTH_VAR_FIELDS_LENGTH_MAX),
                         new KapuaDeviceRegistrySettings().getInt(KapuaDeviceRegistrySettingKeys.DEVICE_LIFECYCLE_BIRTH_EXTENDED_PROPERTIES_LENGTH_MAX),
                         mockedAuthorization,
                         permissionFactory,
@@ -200,16 +202,7 @@ public class TagLocatorConfiguration {
                                 deviceValidation)
                 );
                 bind(DeviceFactory.class).toInstance(new DeviceFactoryImpl());
-
-                bind(DeviceConnectionService.class).toInstance(new DeviceConnectionServiceImpl(
-                        Mockito.mock(ServiceConfigurationManager.class),
-                        mockedAuthorization,
-                        permissionFactory,
-                        new DeviceConnectionFactoryImpl(),
-                        new KapuaJpaTxManagerFactory(maxInsertAttempts).create("kapua-device"),
-                        new DeviceConnectionImplJpaRepository(jpaRepoConfig),
-                        Collections.emptyMap(),
-                        eventStorer));
+                bind(DeviceConnectionService.class).toInstance(deviceConnectionService);
                 bind(DeviceConnectionFactory.class).to(DeviceConnectionFactoryImpl.class);
 
                 bind(DeviceRepository.class).toInstance(new DeviceImplJpaRepository(jpaRepoConfig));

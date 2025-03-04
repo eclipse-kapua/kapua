@@ -12,18 +12,20 @@
  *******************************************************************************/
 package org.eclipse.kapua.model.config.metatype;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
-import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -61,16 +63,27 @@ import java.util.Map;
 @XmlType(name = "Tad", propOrder = {
         "option",
         "any"
-}, factoryClass = MetatypeXmlRegistry.class, factoryMethod = "newKapuaTad")
-public interface KapuaTad {
+})
+public class KapuaTad {
+
+    protected List<KapuaToption> option;
+    protected List<Object> any;
+    protected String name;
+    protected String description;
+    protected String id;
+    protected KapuaTscalar type;
+    protected Integer cardinality;
+    protected String min;
+    protected String max;
+    protected String defaultValue;
+    protected Boolean required;
+    private Map<QName, String> otherAttributes = new HashMap<>();
 
     /**
      * Gets the value of the option property.
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the option property.
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is
+     * not a <CODE>set</CODE> method for the option property.
      * <p>
      * For example, to add a new item, do as follows:
      *
@@ -80,17 +93,38 @@ public interface KapuaTad {
      * <p>
      */
     @XmlElement(name = "Option", namespace = "http://www.osgi.org/xmlns/metatype/v1.2.0")
-    List<KapuaToption> getOption();
+    public List<KapuaToption> getOption() {
+        if (option == null) {
+            option = new ArrayList<>();
+        }
+        return new ArrayList<>(this.option);
+    }
 
-    void setOption(List<KapuaToption> option);
+    /**
+     * Add an option to the internal list
+     *
+     * @param option
+     */
+    public void addOption(KapuaToption option) {
+        if (this.option == null) {
+            this.option = new ArrayList<>();
+        }
+
+        this.option.add(option);
+    }
+
+    public void setOption(List<KapuaToption> option) {
+        this.option = new ArrayList<>();
+        for (KapuaToption singleOption : option) {
+            this.option.add(singleOption);
+        }
+    }
 
     /**
      * Gets the value of the any property.
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the any property.
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is
+     * not a <CODE>set</CODE> method for the any property.
      * <p>
      * For example, to add a new item, do as follows:
      *
@@ -99,10 +133,16 @@ public interface KapuaTad {
      * </pre>
      * <p>
      */
-    @XmlAnyElement(lax = true)
-    List<Object> getAny();
+    public List<Object> getAny() {
+        if (any == null) {
+            any = new ArrayList<Object>();
+        }
+        return this.any;
+    }
 
-    void setAny(List<Object> any);
+    public void setAny(List<Object> any) {
+        this.any = any;
+    }
 
     /**
      * Gets the value of the name property.
@@ -110,14 +150,19 @@ public interface KapuaTad {
      * @return possible object is {@link String}
      */
     @XmlAttribute(name = "name")
-    String getName();
+    public String getName() {
+        return name;
+    }
 
     /**
      * Sets the value of the name property.
      *
-     * @param value allowed object is {@link String }
+     * @param value
+     *         allowed object is {@link String }
      */
-    void setName(String value);
+    public void setName(String value) {
+        this.name = value;
+    }
 
     /**
      * Gets the value of the description property.
@@ -125,14 +170,19 @@ public interface KapuaTad {
      * @return possible object is {@link String }
      */
     @XmlAttribute(name = "description")
-    String getDescription();
+    public String getDescription() {
+        return description;
+    }
 
     /**
      * Sets the value of the description property.
      *
-     * @param value allowed object is {@link String }
+     * @param value
+     *         allowed object is {@link String }
      */
-    void setDescription(String value);
+    public void setDescription(String value) {
+        this.description = value;
+    }
 
     /**
      * Gets the value of the id property.
@@ -140,14 +190,19 @@ public interface KapuaTad {
      * @return possible object is {@link String}
      */
     @XmlAttribute(name = "id", required = true)
-    String getId();
+    public String getId() {
+        return id;
+    }
 
     /**
      * Sets the value of the id property.
      *
-     * @param value allowed object is {@link String }
+     * @param value
+     *         allowed object is {@link String }
      */
-    void setId(String value);
+    public void setId(String value) {
+        this.id = value;
+    }
 
     /**
      * Gets the value of the type property.
@@ -156,14 +211,19 @@ public interface KapuaTad {
      */
     @XmlAttribute(name = "type", required = true)
     @XmlJavaTypeAdapter(KapuaTscalarAdapter.class)
-    KapuaTscalar getType();
+    public KapuaTscalar getType() {
+        return type;
+    }
 
     /**
      * Sets the value of the type property.
      *
-     * @param value allowed object is {@link KapuaTscalar }
+     * @param value
+     *         allowed object is {@link KapuaTscalar }
      */
-    void setType(KapuaTscalar value);
+    public void setType(KapuaTscalar value) {
+        this.type = value;
+    }
 
     /**
      * Gets the value of the cardinality property.
@@ -171,14 +231,23 @@ public interface KapuaTad {
      * @return possible object is {@link Integer }
      */
     @XmlAttribute(name = "cardinality")
-    Integer getCardinality();
+    public Integer getCardinality() {
+        if (cardinality == null) {
+            return 0;
+        } else {
+            return cardinality;
+        }
+    }
 
     /**
      * Sets the value of the cardinality property.
      *
-     * @param value allowed object is {@link Integer }
+     * @param value
+     *         allowed object is {@link Integer }
      */
-    void setCardinality(Integer value);
+    public void setCardinality(Integer value) {
+        this.cardinality = value;
+    }
 
     /**
      * Gets the value of the min property.
@@ -186,14 +255,19 @@ public interface KapuaTad {
      * @return possible object is  {@link String }
      */
     @XmlAttribute(name = "min")
-    String getMin();
+    public String getMin() {
+        return min;
+    }
 
     /**
      * Sets the value of the min property.
      *
-     * @param value allowed object is {@link String }
+     * @param value
+     *         allowed object is {@link String }
      */
-    void setMin(String value);
+    public void setMin(String value) {
+        this.min = value;
+    }
 
     /**
      * Gets the value of the max property.
@@ -201,14 +275,19 @@ public interface KapuaTad {
      * @return possible object is {@link String }
      */
     @XmlAttribute(name = "max")
-    String getMax();
+    public String getMax() {
+        return max;
+    }
 
     /**
      * Sets the value of the max property.
      *
-     * @param value allowed object is  {@link String }
+     * @param value
+     *         allowed object is  {@link String }
      */
-    void setMax(String value);
+    public void setMax(String value) {
+        this.max = value;
+    }
 
     /**
      * Gets the value of the default property.
@@ -216,14 +295,19 @@ public interface KapuaTad {
      * @return possible object is {@link String }
      */
     @XmlAttribute(name = "default")
-    String getDefault();
+    public String getDefault() {
+        return defaultValue;
+    }
 
     /**
      * Sets the value of the default property.
      *
-     * @param value allowed object is {@link String }
+     * @param value
+     *         allowed object is {@link String }
      */
-    void setDefault(String value);
+    public void setDefault(String value) {
+        this.defaultValue = value;
+    }
 
     /**
      * Gets the value of the required property.
@@ -231,27 +315,41 @@ public interface KapuaTad {
      * @return possible object is {@link Boolean }
      */
     @XmlAttribute(name = "required")
-    Boolean isRequired();
+    public Boolean isRequired() {
+        if (required == null) {
+            return true;
+        } else {
+            return required;
+        }
+    }
 
     /**
      * Sets the value of the required property.
      *
-     * @param value allowed object is  {@link Boolean }
+     * @param value
+     *         allowed object is  {@link Boolean }
      */
-    void setRequired(Boolean value);
+    public void setRequired(Boolean value) {
+        this.required = value;
+    }
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
      * <p>
-     * the map is keyed by the name of the attribute and
-     * the value is the string value of the attribute.
+     * the map is keyed by the name of the attribute and the value is the string value of the attribute.
      * <p>
-     * the map returned by this method is live, and you can add new attribute
-     * by updating the map directly. Because of this design, there's no setter.
+     * the map returned by this method is live, and you can add new attribute by updating the map directly. Because of this design, there's no setter.
      *
      * @return always non-null
      */
     @XmlAnyAttribute
-    Map<QName, String> getOtherAttributes();
+    public Map<QName, String> getOtherAttributes() {
+        return otherAttributes;
+    }
+
+    public void putOtherAttribute(QName key, String value) {
+        getOtherAttributes().put(key,
+                value);
+    }
 
 }

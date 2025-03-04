@@ -12,8 +12,28 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.device.server;
 
-import com.extjs.gxt.ui.client.data.BaseListLoadResult;
-import com.extjs.gxt.ui.client.data.ListLoadResult;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.StringTokenizer;
+
+import javax.xml.namespace.QName;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.imaging.ImageFormat;
 import org.apache.commons.imaging.ImageFormats;
@@ -42,13 +62,13 @@ import org.eclipse.kapua.app.console.module.device.shared.model.management.packa
 import org.eclipse.kapua.app.console.module.device.shared.model.management.packages.GwtPackageOperation;
 import org.eclipse.kapua.app.console.module.device.shared.model.management.packages.GwtPackageUninstallRequest;
 import org.eclipse.kapua.app.console.module.device.shared.service.GwtDeviceManagementService;
-import org.eclipse.kapua.commons.configuration.metatype.Password;
 import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.config.metatype.KapuaTad;
 import org.eclipse.kapua.model.config.metatype.KapuaTicon;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 import org.eclipse.kapua.model.config.metatype.KapuaToption;
+import org.eclipse.kapua.model.config.metatype.Password;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundle;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundleManagementService;
@@ -83,26 +103,8 @@ import org.eclipse.kapua.service.device.management.snapshot.DeviceSnapshots;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.namespace.QName;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.security.MessageDigest;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.StringTokenizer;
+import com.extjs.gxt.ui.client.data.BaseListLoadResult;
+import com.extjs.gxt.ui.client.data.ListLoadResult;
 
 /**
  * The server side implementation of the Device RPC service.
@@ -372,7 +374,7 @@ public class GwtDeviceManagementServiceImpl extends KapuaRemoteServiceServlet im
                                                         strValues.add(v.toString());
                                                     }
                                                 }
-                                                gwtParam.setValues(strValues.toArray(new String[]{}));
+                                                gwtParam.setValues(strValues.toArray(new String[] {}));
                                             }
                                         }
                                     }
@@ -462,7 +464,8 @@ public class GwtDeviceManagementServiceImpl extends KapuaRemoteServiceServlet im
 
             deviceConfigurationStoreSettings = DEVICE_CONFIGURATION_STORE_SERVICE.getApplicationSettings(scopeId, deviceId);
             gwtDeviceConfigurationStoreSettings = new GwtDeviceConfigurationStoreSettings();
-            gwtDeviceConfigurationStoreSettings.setStoreEnablementPolicy(GwtDeviceConfigurationStoreSettings.GwtDeviceConfigurationStoreEnablementPolicy.valueOf(deviceConfigurationStoreSettings.getEnablementPolicy().name()));
+            gwtDeviceConfigurationStoreSettings.setStoreEnablementPolicy(
+                    GwtDeviceConfigurationStoreSettings.GwtDeviceConfigurationStoreEnablementPolicy.valueOf(deviceConfigurationStoreSettings.getEnablementPolicy().name()));
             return gwtDeviceConfigurationStoreSettings;
         } catch (Throwable t) {
             throw KapuaExceptionHandler.buildExceptionFromError(t);
@@ -470,7 +473,8 @@ public class GwtDeviceManagementServiceImpl extends KapuaRemoteServiceServlet im
     }
 
     @Override
-    public void setApplicationSettings(GwtXSRFToken xsrfToken, String scopeIdString, String deviceIdString, GwtDeviceConfigurationStoreSettings gwtDeviceConfigurationStoreSettings) throws GwtKapuaException {
+    public void setApplicationSettings(GwtXSRFToken xsrfToken, String scopeIdString, String deviceIdString, GwtDeviceConfigurationStoreSettings gwtDeviceConfigurationStoreSettings)
+            throws GwtKapuaException {
         checkXSRFToken(xsrfToken);
 
         try {
@@ -677,36 +681,36 @@ public class GwtDeviceManagementServiceImpl extends KapuaRemoteServiceServlet im
         if (strValue != null) {
             GwtConfigParameterType gwtType = gwtConfigParam.getType();
             switch (gwtType) {
-                case LONG:
-                    objValue = Long.parseLong(strValue);
-                    break;
-                case DOUBLE:
-                    objValue = Double.parseDouble(strValue);
-                    break;
-                case FLOAT:
-                    objValue = Float.parseFloat(strValue);
-                    break;
-                case INTEGER:
-                    objValue = Integer.parseInt(strValue);
-                    break;
-                case SHORT:
-                    objValue = Short.parseShort(strValue);
-                    break;
-                case BYTE:
-                    objValue = Byte.parseByte(strValue);
-                    break;
-                case BOOLEAN:
-                    objValue = Boolean.parseBoolean(strValue);
-                    break;
-                case PASSWORD:
-                    objValue = new Password(strValue);
-                    break;
-                case CHAR:
-                    objValue = strValue.charAt(0);
-                    break;
-                case STRING:
-                    objValue = strValue;
-                    break;
+            case LONG:
+                objValue = Long.parseLong(strValue);
+                break;
+            case DOUBLE:
+                objValue = Double.parseDouble(strValue);
+                break;
+            case FLOAT:
+                objValue = Float.parseFloat(strValue);
+                break;
+            case INTEGER:
+                objValue = Integer.parseInt(strValue);
+                break;
+            case SHORT:
+                objValue = Short.parseShort(strValue);
+                break;
+            case BYTE:
+                objValue = Byte.parseByte(strValue);
+                break;
+            case BOOLEAN:
+                objValue = Boolean.parseBoolean(strValue);
+                break;
+            case PASSWORD:
+                objValue = new Password(strValue);
+                break;
+            case CHAR:
+                objValue = strValue.charAt(0);
+                break;
+            case STRING:
+                objValue = strValue;
+                break;
             }
         }
         return objValue;
@@ -716,79 +720,76 @@ public class GwtDeviceManagementServiceImpl extends KapuaRemoteServiceServlet im
         List<Object> values = new ArrayList<Object>();
         GwtConfigParameterType type = gwtConfigParam.getType();
         switch (type) {
-            case BOOLEAN:
-                for (String value : defaultValues) {
-                    values.add(Boolean.valueOf(value));
-                }
-                return values.toArray();
+        case BOOLEAN:
+            for (String value : defaultValues) {
+                values.add(Boolean.valueOf(value));
+            }
+            return values.toArray();
 
-            case BYTE:
-                for (String value : defaultValues) {
-                    values.add(Byte.valueOf(value));
-                }
-                return values.toArray();
+        case BYTE:
+            for (String value : defaultValues) {
+                values.add(Byte.valueOf(value));
+            }
+            return values.toArray();
 
-            case CHAR:
-                for (String value : defaultValues) {
-                    values.add(value.charAt(0));
-                }
-                return values.toArray();
+        case CHAR:
+            for (String value : defaultValues) {
+                values.add(value.charAt(0));
+            }
+            return values.toArray();
 
-            case DOUBLE:
-                for (String value : defaultValues) {
-                    values.add(Double.valueOf(value));
-                }
-                return values.toArray();
+        case DOUBLE:
+            for (String value : defaultValues) {
+                values.add(Double.valueOf(value));
+            }
+            return values.toArray();
 
-            case FLOAT:
-                for (String value : defaultValues) {
-                    values.add(Float.valueOf(value));
-                }
-                return values.toArray();
+        case FLOAT:
+            for (String value : defaultValues) {
+                values.add(Float.valueOf(value));
+            }
+            return values.toArray();
 
-            case INTEGER:
-                for (String value : defaultValues) {
-                    values.add(Integer.valueOf(value));
-                }
-                return values.toArray();
+        case INTEGER:
+            for (String value : defaultValues) {
+                values.add(Integer.valueOf(value));
+            }
+            return values.toArray();
 
-            case LONG:
-                for (String value : defaultValues) {
-                    values.add(Long.valueOf(value));
-                }
-                return values.toArray();
+        case LONG:
+            for (String value : defaultValues) {
+                values.add(Long.valueOf(value));
+            }
+            return values.toArray();
 
-            case SHORT:
-                for (String value : defaultValues) {
-                    values.add(Short.valueOf(value));
-                }
-                return values.toArray();
+        case SHORT:
+            for (String value : defaultValues) {
+                values.add(Short.valueOf(value));
+            }
+            return values.toArray();
 
-            case PASSWORD:
-                for (String value : defaultValues) {
-                    values.add(new Password(value));
-                }
-                return values.toArray();
+        case PASSWORD:
+            for (String value : defaultValues) {
+                values.add(new Password(value));
+            }
+            return values.toArray();
 
-            case STRING:
-            default:
-                return defaultValues;
+        case STRING:
+        default:
+            return defaultValues;
         }
     }
 
     /**
-     * Checks the source of the icon.
-     * The component config icon can be one of the well known icon (i.e. MqttDataTransport icon)
-     * as well as an icon loaded from external source with an HTTP link.
+     * Checks the source of the icon. The component config icon can be one of the well known icon (i.e. MqttDataTransport icon) as well as an icon loaded from external source with an HTTP link.
      * <p>
-     * We need to filter HTTP link to protect the console page and also to have content always served from
-     * EC console. Otherwise browsers can alert the user that content is served from domain different from
-     * *.everyware-cloud.com and over insicure connection.
+     * We need to filter HTTP link to protect the console page and also to have content always served from EC console. Otherwise browsers can alert the user that content is served from domain
+     * different from *.everyware-cloud.com and over insicure connection.
      * <p>
-     * To avoid this we will download the image locally on the server temporary directory and give back the page
-     * a token URL to get the file.
+     * To avoid this we will download the image locally on the server temporary directory and give back the page a token URL to get the file.
      *
-     * @param icon The icon from the OCD of the component configuration.
+     * @param icon
+     *         The icon from the OCD of the component configuration.
      */
     private void checkIconResource(KapuaTicon icon) {
         ConsoleSetting config = ConsoleSetting.getInstance();

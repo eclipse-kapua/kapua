@@ -12,6 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.configuration;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+
 import org.eclipse.kapua.commons.configuration.metatype.PasswordPropertyAdapter;
 import org.eclipse.kapua.commons.crypto.CryptoUtil;
 import org.eclipse.kapua.locator.KapuaLocator;
@@ -28,10 +33,6 @@ import org.eclipse.kapua.model.xml.adapters.XmlPropertiesAdapter;
 import org.eclipse.kapua.model.xml.adapters.XmlPropertyAdapter;
 import org.eclipse.kapua.service.device.management.configuration.DeviceXmlConfigPropertyAdapted.ConfigPropertyType;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Xml configuration properties adapter. It marshal and unmarshal configuration properties in a proper way.
  *
@@ -39,7 +40,9 @@ import java.util.Map;
  */
 public class DeviceXmlConfigPropertiesAdapter extends XmlAdapter<DeviceXmlConfigPropertiesAdapted, Map<String, Object>> {
 
-    private XmlPropertiesAdapter<ConfigPropertyType, DeviceXmlConfigPropertyAdapted> adapter = new XmlPropertiesAdapter<>(DeviceXmlConfigPropertyAdapted.class, () -> new DeviceXmlConfigPropertyAdapted(), new HashMap<ConfigPropertyType, XmlPropertyAdapter>() {
+    private XmlPropertiesAdapter<ConfigPropertyType, DeviceXmlConfigPropertyAdapted> adapter = new XmlPropertiesAdapter<>(DeviceXmlConfigPropertyAdapted.class,
+            () -> new DeviceXmlConfigPropertyAdapted(), new HashMap<ConfigPropertyType, XmlPropertyAdapter>() {
+
         {
             put(ConfigPropertyType.stringType, new StringPropertyAdapter());
             put(ConfigPropertyType.longType, new LongPropertyAdapter());

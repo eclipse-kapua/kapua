@@ -12,21 +12,16 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.account.internal;
 
+import java.util.Map;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.eclipse.kapua.commons.configuration.AccountRelativeFinder;
-import org.eclipse.kapua.commons.configuration.CachingServiceConfigRepository;
-import org.eclipse.kapua.commons.configuration.ResourceLimitedServiceConfigurationManagerImpl;
-import org.eclipse.kapua.commons.configuration.RootUserTester;
-import org.eclipse.kapua.commons.configuration.ServiceConfigImplJpaRepository;
 import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
-import org.eclipse.kapua.commons.configuration.ServiceConfigurationManagerCachingWrapper;
-import org.eclipse.kapua.commons.configuration.UsedEntitiesCounterImpl;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.core.ServiceModule;
 import org.eclipse.kapua.commons.event.ServiceEventHouseKeeperFactoryImpl;
-import org.eclipse.kapua.commons.jpa.EntityCacheFactory;
 import org.eclipse.kapua.commons.jpa.EventStorer;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
@@ -117,7 +112,7 @@ public class AccountModule extends AbstractKapuaModule implements Module {
             AccountFactory accountFactory,
             PermissionFactory permissionFactory,
             AuthorizationService authorizationService,
-            @Named("AccountServiceConfigurationManager") ServiceConfigurationManager serviceConfigurationManager,
+            Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
             EventStorer eventStorer,
             KapuaJpaTxManagerFactory jpaTxManagerFactory,
             AccountMapper accountMapper) {
@@ -126,35 +121,9 @@ public class AccountModule extends AbstractKapuaModule implements Module {
                 accountRepository,
                 permissionFactory,
                 authorizationService,
-                serviceConfigurationManager,
+                serviceConfigurationManagersByServiceClass.get(AccountService.class),
                 eventStorer,
                 accountMapper);
-    }
-
-    @Provides
-    @Singleton
-    @Named("AccountServiceConfigurationManager")
-    ServiceConfigurationManager accountServiceConfigurationManager(
-            AccountFactory factory,
-            RootUserTester rootUserTester,
-            AccountRelativeFinder accountRelativeFinder,
-            AccountRepository accountRepository,
-            KapuaJpaRepositoryConfiguration jpaRepoConfig,
-            EntityCacheFactory entityCacheFactory
-    ) {
-        return new ServiceConfigurationManagerCachingWrapper(
-                new ResourceLimitedServiceConfigurationManagerImpl(
-                        AccountService.class.getName(),
-                        new CachingServiceConfigRepository(
-                                new ServiceConfigImplJpaRepository(jpaRepoConfig),
-                                entityCacheFactory.createCache("AbstractKapuaConfigurableServiceCacheId")
-                        ),
-                        rootUserTester,
-                        accountRelativeFinder,
-                        new UsedEntitiesCounterImpl(
-                                factory,
-                                accountRepository)
-                ));
     }
 
     @Provides

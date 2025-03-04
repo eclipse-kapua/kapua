@@ -13,20 +13,19 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.configuration;
 
-import org.eclipse.kapua.commons.configuration.metatype.TscalarImpl;
-import org.eclipse.kapua.model.config.metatype.KapuaTad;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.kapua.model.config.metatype.KapuaTad;
+import org.eclipse.kapua.model.config.metatype.KapuaTscalar;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * The implementation of this class is inspired from the org.eclipse.equinox.metatype.impl.ValueTokenizer class
- * in the Eclipse Equinox project.
+ * The implementation of this class is inspired from the org.eclipse.equinox.metatype.impl.ValueTokenizer class in the Eclipse Equinox project.
  *
  * @since 1.0
  */
@@ -215,7 +214,7 @@ public class ValueTokenizer {
                 boolean rangeError = false;
                 Object minVal = null;
                 Object maxVal = null;
-                TscalarImpl adScalarType = TscalarImpl.fromValue(ad.getType().value());
+                KapuaTscalar adScalarType = KapuaTscalar.fromValue(ad.getType().value());
                 switch (adScalarType) {
                 case PASSWORD:
                 case STRING:

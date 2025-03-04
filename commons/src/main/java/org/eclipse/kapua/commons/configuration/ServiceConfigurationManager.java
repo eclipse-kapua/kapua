@@ -12,20 +12,23 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.configuration;
 
+import java.util.Map;
+import java.util.Optional;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.KapuaService;
+import org.eclipse.kapua.service.config.ServiceComponentConfiguration;
 import org.eclipse.kapua.storage.TxContext;
 
-import java.util.Map;
-import java.util.Optional;
-
 public interface ServiceConfigurationManager {
+
     /**
      * Whether this {@link KapuaService} is enabled for the given scope {@link KapuaId}.
      *
-     * @param scopeId The scope {@link KapuaId} for which to check.
+     * @param scopeId
+     *         The scope {@link KapuaId} for which to check.
      * @return {@code true} if the {@link KapuaService} is enabled, {@code false} otherwise.
      * @since 1.2.0
      */
@@ -33,11 +36,19 @@ public interface ServiceConfigurationManager {
         return true;
     }
 
+    String getDomain();
+
     void checkAllowedEntities(TxContext txContext, KapuaId scopeId, String entityType) throws KapuaException;
 
-    void setConfigValues(TxContext txContext, KapuaId scopeId, Optional<KapuaId> parentId, Map<String, Object> values) throws KapuaException;
+    long countAllowedEntities(TxContext txContext, KapuaId scopeId) throws KapuaException;
+
+    void setConfigValues(KapuaId scopeId, Optional<KapuaId> parentId, Map<String, Object> values) throws KapuaException;
 
     Map<String, Object> getConfigValues(TxContext txContext, KapuaId scopeId, boolean excludeDisabled) throws KapuaException;
 
-    KapuaTocd getConfigMetadata(TxContext txContext, KapuaId scopeId, boolean excludeDisabled) throws KapuaException;
+    Map<String, Object> getConfigValues(KapuaId scopeId, boolean excludeDisabled) throws KapuaException;
+
+    Optional<KapuaTocd> getConfigMetadata(KapuaId scopeId, boolean excludeDisabled) throws KapuaException;
+
+    Optional<ServiceComponentConfiguration> extractServiceComponentConfiguration(KapuaId scopeId) throws KapuaException;
 }

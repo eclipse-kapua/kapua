@@ -14,12 +14,11 @@ package org.eclipse.kapua.commons.util;
 
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaIllegalArgumentException;
-import org.eclipse.kapua.commons.configuration.metatype.Password;
+import org.eclipse.kapua.model.config.metatype.Password;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
 
 @Category(JUnitTests.class)
 public class StringUtilTest {
@@ -31,13 +30,15 @@ public class StringUtilTest {
 
     @Test
     public void splitValuesTest() {
-        String[] delimiterStrings = {"string ,aa", "s,tring", ",string", "string,", "string,,", ",,string", "str,in,g", ",str,in,g,"};
-        String[] escapeStrings = {"\\str \\ing", "\\string \\", "\\str ing", "s\\\\tring", " strin\\g", "st\\ring", "\\", "str\\ing", "stri\\ng", "strin\\g", "string\\", "\\\\"};
-        String[] regularStrings = {"ss  sss               s", "string", "", "s tring", "s tri ng", "!@#$%^&*()_/.'|<>?|:1234567890"};
+        String[] delimiterStrings = { "string ,aa", "s,tring", ",string", "string,", "string,,", ",,string", "str,in,g", ",str,in,g," };
+        String[] escapeStrings = { "\\str \\ing", "\\string \\", "\\str ing", "s\\\\tring", " strin\\g", "st\\ring", "\\", "str\\ing", "stri\\ng", "strin\\g", "string\\", "\\\\" };
+        String[] regularStrings = { "ss  sss               s", "string", "", "s tring", "s tri ng", "!@#$%^&*()_/.'|<>?|:1234567890" };
 
-        String[][] expectedDelimiterStrings = {{"string", "aa"}, {"s", "tring"}, {"", "string"}, {"string", ""}, {"string", "", ""}, {"", "", "string"}, {"str", "in", "g"}, {"", "str", "in", "g", ""}};
-        String[][] expectedEscapeStrings = {{"str ing"}, {"string"}, {"str ing"}, {"s\\tring"}, {"string"}, {"string"}, {""}, {"string"}, {"string"}, {"string"}, {"string"}, {"\\"}};
-        String[][] expectedRegularStrings = {{"ss  sss               s"}, {"string"}, {""}, {"s tring"}, {"s tri ng"}, {"!@#$%^&*()_/.'|<>?|:1234567890"}};
+        String[][] expectedDelimiterStrings = { { "string", "aa" }, { "s", "tring" }, { "", "string" }, { "string", "" }, { "string", "", "" }, { "", "", "string" }, { "str", "in", "g" },
+                { "", "str", "in", "g", "" } };
+        String[][] expectedEscapeStrings = { { "str ing" }, { "string" }, { "str ing" }, { "s\\tring" }, { "string" }, { "string" }, { "" }, { "string" }, { "string" }, { "string" }, { "string" },
+                { "\\" } };
+        String[][] expectedRegularStrings = { { "ss  sss               s" }, { "string" }, { "" }, { "s tring" }, { "s tri ng" }, { "!@#$%^&*()_/.'|<>?|:1234567890" } };
 
         for (int i = 0; i < delimiterStrings.length; i++) {
             Assert.assertArrayEquals("Expected and actual values should be the same.", expectedDelimiterStrings[i], StringUtil.splitValues(delimiterStrings[i]));
@@ -91,8 +92,8 @@ public class StringUtilTest {
 
     @Test
     public void stringToValueStringTypeTest() throws Exception {
-        String[] stringArray = new String[]{"a", "ab", "abc", "string", "String", "STRING", "!#$%&'()=?*QWERTYUIOPŠĐASDFGHJKLČĆŽZXCVBNM;:_>Z⁄@‹›€°·‚Test±}{∏Ø’”ÆæÒÔÓÌ~«¿ˇÈ¯Ñ◊"};
-        String[] type = new String[]{"sTring", "strinG", "string", "STRING"};
+        String[] stringArray = new String[] { "a", "ab", "abc", "string", "String", "STRING", "!#$%&'()=?*QWERTYUIOPŠĐASDFGHJKLČĆŽZXCVBNM;:_>Z⁄@‹›€°·‚Test±}{∏Ø’”ÆæÒÔÓÌ~«¿ˇÈ¯Ñ◊" };
+        String[] type = new String[] { "sTring", "strinG", "string", "STRING" };
 
         // Positive tests
         for (int k = 0; k < stringArray.length; k++) {
@@ -118,10 +119,10 @@ public class StringUtilTest {
 
     @Test
     public void stringToValueBooleanTypeTest() throws Exception {
-        String booleanNegativeType[] = new String[]{"bOolean", "booleaN", "BOOLEAN"};
+        String booleanNegativeType[] = new String[] { "bOolean", "booleaN", "BOOLEAN" };
 
-        String booleanTrueValues[] = new String[]{"true", "True", "tRue", "truE", "TRUE"};
-        String booleanFalseValues[] = new String[]{"false", "False", "faLse", "fals", "FALSE"};
+        String booleanTrueValues[] = new String[] { "true", "True", "tRue", "truE", "TRUE" };
+        String booleanFalseValues[] = new String[] { "false", "False", "faLse", "fals", "FALSE" };
 
         // boolean.True positive tests
         for (int i = 0; i < booleanTrueValues.length; i++) {
@@ -173,9 +174,9 @@ public class StringUtilTest {
 
     @Test
     public void stringToValueByteTypeTest() throws Exception {
-        String[] byteTypeInvalidValues = new String[]{"bYte", "bytE", "BYTE"};
+        String[] byteTypeInvalidValues = new String[] { "bYte", "bytE", "BYTE" };
         String byteTypeValidValues = "Byte";
-        Byte[] byteValues = new Byte[]{-128, 127, 0};
+        Byte[] byteValues = new Byte[] { -128, 127, 0 };
 
         // Byte positive tests
         for (int i = 0; i < byteValues.length; i++) {
@@ -200,8 +201,8 @@ public class StringUtilTest {
 
     @Test
     public void stringToValueCharTypeTest() throws Exception {
-        Character[] characterArray = new Character[]{'!', '#', '$', '%', '&', '(', ')', '=', '?', '*', '/', '1', '2', '3', '4', 'A', 'B', 'C', 'a', 'b', 'c'};
-        String[] charInvalidType = new String[]{"cHar", "chaR", "Character", "cHaracter", "CHARACTER", "CHAR"};
+        Character[] characterArray = new Character[] { '!', '#', '$', '%', '&', '(', ')', '=', '?', '*', '/', '1', '2', '3', '4', 'A', 'B', 'C', 'a', 'b', 'c' };
+        String[] charInvalidType = new String[] { "cHar", "chaR", "Character", "cHaracter", "CHARACTER", "CHAR" };
         String charValidType = "Char";
 
         // Character positive tests
@@ -228,8 +229,8 @@ public class StringUtilTest {
     @Test
     public void stringToValueDoubleTypeTest() throws Exception {
         String doubleValidType = "Double";
-        String[] doubleInvalidType = new String[]{"dOuble", "doublE", "DOUBLE"};
-        Double[] doubleValues = new Double[]{-1.781273812737812731273129312, 1.781273812737812731273129312, 0.0};
+        String[] doubleInvalidType = new String[] { "dOuble", "doublE", "DOUBLE" };
+        Double[] doubleValues = new Double[] { -1.781273812737812731273129312, 1.781273812737812731273129312, 0.0 };
 
         // Double positive tests
         for (int i = 0; i < doubleValues.length; i++) {
@@ -255,8 +256,8 @@ public class StringUtilTest {
     @Test
     public void stringToValueFloatTypeTest() throws Exception {
         String floatValidType = "Float";
-        String[] floatinvalidType = new String[]{"fLoat", "floaT", "FLOAT"};
-        Float[] floatValues = new Float[]{-1.7811233F, 1.7811233F, 0F};
+        String[] floatinvalidType = new String[] { "fLoat", "floaT", "FLOAT" };
+        Float[] floatValues = new Float[] { -1.7811233F, 1.7811233F, 0F };
 
         // Float positive tests
         for (int i = 0; i < floatValues.length; i++) {
@@ -282,8 +283,8 @@ public class StringUtilTest {
     @Test
     public void stringToValueIntegerTypeTest() throws Exception {
         String integerValidType = "Integer";
-        String[] integerInvalidType = new String[]{"iNteger", "integeR", "INTEGER"};
-        Integer[] integerValues = new Integer[]{-2147483648, 2147483647, 0};
+        String[] integerInvalidType = new String[] { "iNteger", "integeR", "INTEGER" };
+        Integer[] integerValues = new Integer[] { -2147483648, 2147483647, 0 };
 
         // Float positive tests
         for (int i = 0; i < integerValues.length; i++) {
@@ -309,8 +310,8 @@ public class StringUtilTest {
     @Test
     public void stringToValueLongTypeTest() throws Exception {
         String longValidType = "Long";
-        String[] longInvalidType = new String[]{"lOng", "lonG", "LONG"};
-        Long[] longValues = new Long[]{-922337203685477600L, 922337203685477600L, 0L};
+        String[] longInvalidType = new String[] { "lOng", "lonG", "LONG" };
+        Long[] longValues = new Long[] { -922337203685477600L, 922337203685477600L, 0L };
 
         // Long positive tests
         for (int i = 0; i < longValues.length; i++) {
@@ -336,8 +337,8 @@ public class StringUtilTest {
     @Test
     public void stringToValueShortTypeTest() throws Exception {
         String shortValidType = "Short";
-        String[] shortInvalidType = new String[]{"sHort", "shorT", "SHORT"};
-        Short[] shortValues = new Short[]{-32768, 32767, 0};
+        String[] shortInvalidType = new String[] { "sHort", "shorT", "SHORT" };
+        Short[] shortValues = new Short[] { -32768, 32767, 0 };
 
         // Short positive tests
         for (int i = 0; i < shortValues.length; i++) {
@@ -363,17 +364,18 @@ public class StringUtilTest {
     @Test
     public void stringToValuePasswordTypeTest() throws Exception {
         String passwordValidType = "Password";
-        String[] passwordInvalidType = new String[]{"pAssword", "passworD", "PASSWORD"};
+        String[] passwordInvalidType = new String[] { "pAssword", "passworD", "PASSWORD" };
         Password password1 = new Password("a");
         Password password2 = new Password("aaaaaaaaaaaaaaaaaaaa");
         Password password3 = new Password("⁄@‹›€°·‚Short}{∏ÆæÒ”");
-        Object[] passwordValues = new Object[]{password1, password2, password3};
+        Object[] passwordValues = new Object[] { password1, password2, password3 };
         // Password [] passwordValues = new Password[]{"a", "aaaaaaaaaaaaaaaaaaaa", "⁄@‹›€°·‚Short}{∏ÆæÒ”"};
 
         // Password positive tests
         for (int i = 0; i < passwordValues.length; i++) {
             try {
-                Assert.assertEquals("Expected and actual values should be the same.", String.valueOf(passwordValues[i]), StringUtil.stringToValue(passwordValidType, String.valueOf(passwordValues[i])).toString());
+                Assert.assertEquals("Expected and actual values should be the same.", String.valueOf(passwordValues[i]),
+                        StringUtil.stringToValue(passwordValidType, String.valueOf(passwordValues[i])).toString());
             } catch (Exception e) {
                 Assert.fail("No exception expected for" + passwordValues[i]);
             }
@@ -398,7 +400,8 @@ public class StringUtilTest {
 
     @Test
     public void valueToStringTypeStringTest() {
-        String[] stringValues = new String[]{"", "s", "string", "STRING", "abcdefgrtqyweuqywueuqeuuqweqabcdefgrtqyweuqywueuqeuuqweqabcdefgrtqyweuqywueuqeuuqweqabcdefgrtqyweuqywueuqeuuqweqabcdefgrtqyweuqywueuqeuuqweqabcdefgrtqyweuqywueuqeuuqweqabcdefgrtqyweuqywueuqeuuqweqabcdefgrtqyweuqywueuqeuuqweqabcdefgrtqyweuqywueuqeuuqweqabcdefgrtqyweuqywueuqeuuqweqabcdefgrtqyweuqywueuqeuuqweqabcdefgrtqyweuqywueuqeuuqweq"};
+        String[] stringValues = new String[] { "", "s", "string", "STRING",
+                "abcdefgrtqyweuqywueuqeuuqweqabcdefgrtqyweuqywueuqeuuqweqabcdefgrtqyweuqywueuqeuuqweqabcdefgrtqyweuqywueuqeuuqweqabcdefgrtqyweuqywueuqeuuqweqabcdefgrtqyweuqywueuqeuuqweqabcdefgrtqyweuqywueuqeuuqweqabcdefgrtqyweuqywueuqeuuqweqabcdefgrtqyweuqywueuqeuuqweqabcdefgrtqyweuqywueuqeuuqweqabcdefgrtqyweuqywueuqeuuqweqabcdefgrtqyweuqywueuqeuuqweq" };
 
         for (int i = 0; i < stringValues.length; i++) {
             try {
@@ -411,7 +414,7 @@ public class StringUtilTest {
 
     @Test
     public void valueToStringTypeLongTest() {
-        Long[] longValues = new Long[]{0L, 922337203685477600L, -922337203685477600L};
+        Long[] longValues = new Long[] { 0L, 922337203685477600L, -922337203685477600L };
         for (int i = 0; i < longValues.length; i++) {
             try {
                 Assert.assertEquals("Expected and actual values should be the same.", longValues[i].toString(), StringUtil.valueToString(longValues[i]));
@@ -423,7 +426,7 @@ public class StringUtilTest {
 
     @Test
     public void valueToStringTypeDoubleTest() {
-        Double[] doubleValues = new Double[]{0.0, 1.781273812737812731273129312, -1.781273812737812731273129312};
+        Double[] doubleValues = new Double[] { 0.0, 1.781273812737812731273129312, -1.781273812737812731273129312 };
         for (int i = 0; i < doubleValues.length; i++) {
             try {
                 Assert.assertEquals("Expected and actual values should be the same.", doubleValues[i].toString(), StringUtil.valueToString(doubleValues[i]));
@@ -435,7 +438,7 @@ public class StringUtilTest {
 
     @Test
     public void valueToStringTypeFloatTest() {
-        Float[] floatValues = new Float[]{0F, 1.781123312321311231F, -1.7811233323123F};
+        Float[] floatValues = new Float[] { 0F, 1.781123312321311231F, -1.7811233323123F };
         for (int i = 0; i < floatValues.length; i++) {
             try {
                 Assert.assertEquals("Expected and actual values should be the same.", floatValues[i].toString(), StringUtil.valueToString(floatValues[i]));
@@ -447,7 +450,7 @@ public class StringUtilTest {
 
     @Test
     public void valueToStringTypeIntegerTest() {
-        Integer[] integerValues = new Integer[]{2147483647, -2147483647, 0};
+        Integer[] integerValues = new Integer[] { 2147483647, -2147483647, 0 };
         for (int i = 0; i < integerValues.length; i++) {
             try {
                 Assert.assertEquals("Expected and actual values should be the same.", integerValues[i].toString(), StringUtil.valueToString(integerValues[i]));
@@ -459,7 +462,7 @@ public class StringUtilTest {
 
     @Test
     public void valueToStringTypeByteTest() {
-        Byte[] byteValues = new Byte[]{-128, 127, 0};
+        Byte[] byteValues = new Byte[] { -128, 127, 0 };
         for (int i = 0; i < byteValues.length; i++) {
             try {
                 Assert.assertEquals("Expected and actual values should be the same.", byteValues[i].toString(), StringUtil.valueToString(byteValues[i]));
@@ -471,7 +474,7 @@ public class StringUtilTest {
 
     @Test
     public void valueToStringTypeCharacterTest() {
-        Character[] characterValues = new Character[]{'a', '1', '@'};
+        Character[] characterValues = new Character[] { 'a', '1', '@' };
         for (int i = 0; i < characterValues.length; i++) {
             try {
                 Assert.assertEquals("Expected and actual values should be the same.", characterValues[i].toString(), StringUtil.valueToString(characterValues[i]));
@@ -483,7 +486,7 @@ public class StringUtilTest {
 
     @Test
     public void valueToStringTypeBooleanTest() {
-        Boolean[] booleanValues = new Boolean[]{Boolean.TRUE, Boolean.FALSE};
+        Boolean[] booleanValues = new Boolean[] { Boolean.TRUE, Boolean.FALSE };
         for (int i = 0; i < booleanValues.length; i++) {
             try {
                 Assert.assertEquals("Expected and actual values should be the same.", booleanValues[i].toString(), StringUtil.valueToString(booleanValues[i]));
@@ -495,7 +498,7 @@ public class StringUtilTest {
 
     @Test
     public void valueToStringTypeShortTest() {
-        Short[] shortValues = new Short[]{-32768, 32767, 0};
+        Short[] shortValues = new Short[] { -32768, 32767, 0 };
         for (int i = 0; i < shortValues.length; i++) {
             try {
                 Assert.assertEquals("Expected and actual values should be the same.", shortValues[i].toString(), StringUtil.valueToString(shortValues[i]));
@@ -510,7 +513,7 @@ public class StringUtilTest {
         Password password1 = new Password("abcdefghijklmnopqrstuvxyzABCDEFGHIJKLMNOPRQSTUVXYZ");
         Password password2 = new Password("01234567890");
         Password password3 = new Password("!#$%&'()=?*/+-.,<>;:_⁄@‹›€°·‚Password±}{∏¿ˇÈ~");
-        Password[] passwordValue = new Password[]{password1, password2, password3};
+        Password[] passwordValue = new Password[] { password1, password2, password3 };
         for (int i = 0; i < passwordValue.length; i++) {
             try {
                 Assert.assertEquals("Expected and actual values should be the same.", passwordValue[i].toString(), StringUtil.valueToString(passwordValue[i]));
@@ -522,63 +525,63 @@ public class StringUtilTest {
 
     @Test
     public void valueToStringTypeStringArrayTest() {
-        String[] stringArray = new String[]{null, "string", "string2", "string3"};
+        String[] stringArray = new String[] { null, "string", "string2", "string3" };
         String resultString = "string,string2,string3";
         Assert.assertEquals("Expected and actual values should be the same.", resultString, StringUtil.valueToString(stringArray));
     }
 
     @Test
     public void valueToStringTypeLongArrayTest() {
-        Long[] longArray = new Long[]{null, 0L, 1L, 12L, 123L, 1234L, 12345L, 123456L, 1234567L, 922337203685477600L, -1L, -12L, -123L, -1234L, -12345L, -922337203685477600L};
+        Long[] longArray = new Long[] { null, 0L, 1L, 12L, 123L, 1234L, 12345L, 123456L, 1234567L, 922337203685477600L, -1L, -12L, -123L, -1234L, -12345L, -922337203685477600L };
         String resultString = "0,1,12,123,1234,12345,123456,1234567,922337203685477600,-1,-12,-123,-1234,-12345,-922337203685477600";
         Assert.assertEquals("Expected and actual values should be the same.", resultString, StringUtil.valueToString(longArray));
     }
 
     @Test
     public void valueToStringTypeDoubleArrayTest() {
-        Double[] doubleArray = new Double[]{null, 0.0, 1.1, 1.23, 1.234, 1.2345, 1.23456, 1.234567, 1.7812738127378127};
+        Double[] doubleArray = new Double[] { null, 0.0, 1.1, 1.23, 1.234, 1.2345, 1.23456, 1.234567, 1.7812738127378127 };
         String resultString = "0.0,1.1,1.23,1.234,1.2345,1.23456,1.234567,1.7812738127378127";
         Assert.assertEquals("Expected and actual values should be the same.", resultString, StringUtil.valueToString(doubleArray));
     }
 
     @Test
     public void valueToStringTypeFloatArrayTest() {
-        Float[] floatArray = new Float[]{null, 0.0F, 1.0F, 1.2F, 12.34F, 123.45F, 1234.56F, 12345.6789F, 1.7811233F, -0.0F, -1.23F, -12345.12345F};
+        Float[] floatArray = new Float[] { null, 0.0F, 1.0F, 1.2F, 12.34F, 123.45F, 1234.56F, 12345.6789F, 1.7811233F, -0.0F, -1.23F, -12345.12345F };
         String resultString = "0.0,1.0,1.2,12.34,123.45,1234.56,12345.679,1.7811233,-0.0,-1.23,-12345.123";
         Assert.assertEquals("Expected and actual values should be the same.", resultString, StringUtil.valueToString(floatArray));
     }
 
     @Test
     public void valueToStringTypeIntegerArrayTest() {
-        Integer[] integerArray = new Integer[]{null, 0, 1, 123, 12345, 12345, 32678, -0, -1, -12, -1234, -12345, -32676};
+        Integer[] integerArray = new Integer[] { null, 0, 1, 123, 12345, 12345, 32678, -0, -1, -12, -1234, -12345, -32676 };
         String resultString = "0,1,123,12345,12345,32678,0,-1,-12,-1234,-12345,-32676";
         Assert.assertEquals("Expected and actual values should be the same.", resultString, StringUtil.valueToString(integerArray));
     }
 
     @Test
     public void valueToStringTypeByteArrayTest() {
-        Byte[] byteArray = new Byte[]{null, 0, 1, 12, 123, 127, -0, -1, -12, -123, -128};
+        Byte[] byteArray = new Byte[] { null, 0, 1, 12, 123, 127, -0, -1, -12, -123, -128 };
         String resultString = "0,1,12,123,127,0,-1,-12,-123,-128";
         Assert.assertEquals("Expected and actual values should be the same.", resultString, StringUtil.valueToString(byteArray));
     }
 
     @Test
     public void valueToStringTypeCharacterArrayTest() {
-        Character[] characterArray = new Character[]{null, 'a', 'A', 'z', 'Z', '@', '!'};
+        Character[] characterArray = new Character[] { null, 'a', 'A', 'z', 'Z', '@', '!' };
         String resultString = "a,A,z,Z,@,!";
         Assert.assertEquals("Expected and actual values should be the same.", resultString, StringUtil.valueToString(characterArray));
     }
 
     @Test
     public void valueToStringTypeBooleanArrayTest() {
-        Boolean[] booleanArray = new Boolean[]{null, Boolean.FALSE, Boolean.TRUE};
+        Boolean[] booleanArray = new Boolean[] { null, Boolean.FALSE, Boolean.TRUE };
         String resultString = "false,true";
         Assert.assertEquals("Expected and actual values should be the same.", resultString, StringUtil.valueToString(booleanArray));
     }
 
     @Test
     public void valueToStringTypeShortArrayTest() {
-        Short[] shortArray = new Short[]{null, 0, 1, 12, 123, 1234, 32767, -32768, -1234, -123, -12, -1, -0};
+        Short[] shortArray = new Short[] { null, 0, 1, 12, 123, 1234, 32767, -32768, -1234, -123, -12, -1, -0 };
         String resultString = "0,1,12,123,1234,32767,-32768,-1234,-123,-12,-1,0";
         Assert.assertEquals("Expected and actual values should be the same.", resultString, StringUtil.valueToString(shortArray));
     }
@@ -588,7 +591,7 @@ public class StringUtilTest {
         Password password1 = new Password("abcdefghijklmnopqrstuvxyzABCDEFGHIJKLMNOPRQSTUVXYZ");
         Password password2 = new Password("01234567890");
         Password password3 = new Password("!#$%&'()=?*/+-.<>;:_⁄@‹›€°·‚Password±}{∏¿ˇÈ~");
-        Password[] passwordArray = new Password[]{null, password1, password2, password3};
+        Password[] passwordArray = new Password[] { null, password1, password2, password3 };
         String resultString = "abcdefghijklmnopqrstuvxyzABCDEFGHIJKLMNOPRQSTUVXYZ,01234567890,!#$%&'()=?*/+-.<>;:_⁄@‹›€°·‚Password±}{∏¿ˇÈ~";
         Assert.assertEquals("Expected and actual values should be the same.", resultString, StringUtil.valueToString(passwordArray));
     }
@@ -617,8 +620,8 @@ public class StringUtilTest {
 
     @Test
     public void unescapeStringTest() {
-        String[] stringArray = new String[]{"        string", "string      ", "   str  ing", "str  ing   ", "str ing", "str\\ ing", "str\\\\\\,ing", "   str\\ \\, ing   "};
-        String[] resultString = new String[]{"string", "string", "str  ing", "str  ing", "str ing", "str ing", "str,ing", "str , ing"};
+        String[] stringArray = new String[] { "        string", "string      ", "   str  ing", "str  ing   ", "str ing", "str\\ ing", "str\\\\\\,ing", "   str\\ \\, ing   " };
+        String[] resultString = new String[] { "string", "string", "str  ing", "str  ing", "str ing", "str ing", "str,ing", "str , ing" };
         for (int i = 0; i < stringArray.length; i++) {
             try {
                 Assert.assertEquals("Expected and actual values should be the same.", resultString[i], StringUtil.unescapeString(stringArray[i]));

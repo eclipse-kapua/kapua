@@ -14,11 +14,11 @@ package org.eclipse.kapua.service.account.test;
 
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.configuration.AccountRelativeFinder;
+import org.eclipse.kapua.commons.configuration.ResourceBasedServiceConfigurationMetadataProvider;
 import org.eclipse.kapua.commons.configuration.ResourceLimitedServiceConfigurationManagerImpl;
 import org.eclipse.kapua.commons.configuration.RootUserTester;
 import org.eclipse.kapua.commons.configuration.ServiceConfigImplJpaRepository;
 import org.eclipse.kapua.commons.configuration.UsedEntitiesCounterImpl;
-import org.eclipse.kapua.commons.configuration.metatype.KapuaMetatypeFactoryImpl;
 import org.eclipse.kapua.commons.crypto.CryptoUtil;
 import org.eclipse.kapua.commons.crypto.CryptoUtilImpl;
 import org.eclipse.kapua.commons.crypto.setting.CryptoSettings;
@@ -28,13 +28,13 @@ import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.commons.metric.CommonsMetric;
 import org.eclipse.kapua.commons.metric.MetricsService;
 import org.eclipse.kapua.commons.metric.MetricsServiceImpl;
+import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.model.mappers.KapuaBaseMapperImpl;
 import org.eclipse.kapua.commons.model.query.QueryFactoryImpl;
 import org.eclipse.kapua.commons.service.event.store.internal.EventStoreRecordImplJpaRepository;
 import org.eclipse.kapua.commons.service.internal.cache.CacheManagerProvider;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.model.config.metatype.KapuaMetatypeFactory;
 import org.eclipse.kapua.model.query.QueryFactory;
 import org.eclipse.kapua.qa.common.MockedLocator;
 import org.eclipse.kapua.service.account.AccountFactory;
@@ -51,6 +51,7 @@ import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.storage.TxManager;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
@@ -103,9 +104,12 @@ public class AccountLocatorConfiguration {
                 bind(AuthorizationService.class).toInstance(mockedAuthorization);
                 // Inject mocked Permission Factory
                 final PermissionFactory mockPermissionFactory = Mockito.mock(PermissionFactory.class);
+                try {
+                    Mockito.when(mockedAuthorization.isPermitted(Mockito.any(Permission.class))).thenReturn(true);
+                } catch (KapuaException e) {
+                    throw new RuntimeException(e);
+                }
                 bind(PermissionFactory.class).toInstance(mockPermissionFactory);
-                // Set KapuaMetatypeFactory for Metatype configuration
-                bind(KapuaMetatypeFactory.class).toInstance(new KapuaMetatypeFactoryImpl());
                 // Inject actual account related services
                 //                final AccountEntityManagerFactory entityManagerFactory = AccountEntityManagerFactory.getInstance();
                 //                bind(AccountEntityManagerFactory.class).toInstance(entityManagerFactory);
@@ -115,19 +119,23 @@ public class AccountLocatorConfiguration {
                 final KapuaJpaRepositoryConfiguration jpaRepoConfig = new KapuaJpaRepositoryConfiguration();
                 final AccountRepository accountRepository = new AccountImplJpaRepository(jpaRepoConfig);
                 final AccountMapperImpl accountMapper = new AccountMapperImpl(new KapuaBaseMapperImpl());
+                final TxManager txManager = new KapuaJpaTxManagerFactory(maxInsertAttempts).create("kapua-account");
                 bind(AccountService.class).toInstance(new AccountServiceImpl(
-                        new KapuaJpaTxManagerFactory(maxInsertAttempts).create("kapua-account"),
+                        txManager,
                         new AccountImplJpaRepository(jpaRepoConfig),
                         mockPermissionFactory,
                         mockedAuthorization,
                         new ResourceLimitedServiceConfigurationManagerImpl(
                                 AccountService.class.getName(),
+                                Domains.ACCOUNT,
+                                txManager,
                                 new ServiceConfigImplJpaRepository(jpaRepoConfig),
                                 Mockito.mock(RootUserTester.class),
                                 Mockito.mock(AccountRelativeFinder.class),
                                 new UsedEntitiesCounterImpl(
                                         accountFactory,
-                                        accountRepository)
+                                        accountRepository),
+                                new ResourceBasedServiceConfigurationMetadataProvider()
                         ),
                         new EventStorerImpl(new EventStoreRecordImplJpaRepository(jpaRepoConfig)),
                         accountMapper));

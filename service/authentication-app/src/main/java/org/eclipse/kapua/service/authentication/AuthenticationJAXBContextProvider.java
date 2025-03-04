@@ -13,7 +13,6 @@
 package org.eclipse.kapua.service.authentication;
 
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.commons.configuration.metatype.TscalarImpl;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordCreator;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordListResult;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordQuery;
@@ -27,7 +26,7 @@ import org.eclipse.kapua.model.config.metatype.KapuaTmetadata;
 import org.eclipse.kapua.model.config.metatype.KapuaTobject;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 import org.eclipse.kapua.model.config.metatype.KapuaToption;
-import org.eclipse.kapua.model.config.metatype.MetatypeXmlRegistry;
+import org.eclipse.kapua.model.config.metatype.KapuaTscalar;
 import org.eclipse.persistence.jaxb.JAXBContextFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,11 +47,10 @@ public class AuthenticationJAXBContextProvider implements JAXBContextProvider {
                     KapuaTocd.class,
                     KapuaTad.class,
                     KapuaTicon.class,
-                    TscalarImpl.class,
+                    KapuaTscalar.class,
                     KapuaToption.class,
                     KapuaTdesignate.class,
                     KapuaTobject.class,
-                    MetatypeXmlRegistry.class,
                     // Kapua Service Event
                     ServiceEvent.class,
                     EventStoreRecordCreator.class,

@@ -12,13 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.model.config.metatype;
 
-import org.eclipse.kapua.locator.KapuaLocator;
-
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 public class KapuaTscalarAdapter extends XmlAdapter<String, KapuaTscalar> {
-
-    private final KapuaMetatypeFactory kapuaMetatypeFactory = KapuaLocator.getInstance().getFactory(KapuaMetatypeFactory.class);
 
     @Override
     public String marshal(KapuaTscalar v) throws Exception {
@@ -27,6 +23,6 @@ public class KapuaTscalarAdapter extends XmlAdapter<String, KapuaTscalar> {
 
     @Override
     public KapuaTscalar unmarshal(String v) throws Exception {
-        return kapuaMetatypeFactory.newKapuaTscalar(v);
+        return KapuaTscalar.fromValue(v);
     }
 }

@@ -12,14 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.util;
 
-import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.commons.configuration.metatype.Password;
-import org.eclipse.kapua.commons.configuration.metatype.TscalarImpl;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.model.config.metatype.KapuaTscalar;
+import org.eclipse.kapua.model.config.metatype.Password;
 
 /**
  * Utilities to manipulate string
@@ -66,81 +65,84 @@ public class StringUtil {
         for (int i = 0; i < strValues.length(); i++) {
             char c1 = strValues.charAt(i);
             switch (c1) {
-                case DELIMITER:
-                    // When the delimiter is encountered, add the extracted
-                    // token to the result and prepare the buffer to receive the
-                    // next token.
-                    values.add(buffer.toString());
-                    buffer.delete(0, buffer.length());
-                    break;
-                case ESCAPE:
-                    // When the escape is encountered, add the immediately
-                    // following character to the token, unless the end of the
-                    // input has been reached. Note this will result in loop
-                    // counter 'i' being incremented twice, once here and once
-                    // at the end of the loop.
-                    if (i + 1 < strValues.length()) {
-                        buffer.append(strValues.charAt(++i));
+            case DELIMITER:
+                // When the delimiter is encountered, add the extracted
+                // token to the result and prepare the buffer to receive the
+                // next token.
+                values.add(buffer.toString());
+                buffer.delete(0, buffer.length());
+                break;
+            case ESCAPE:
+                // When the escape is encountered, add the immediately
+                // following character to the token, unless the end of the
+                // input has been reached. Note this will result in loop
+                // counter 'i' being incremented twice, once here and once
+                // at the end of the loop.
+                if (i + 1 < strValues.length()) {
+                    buffer.append(strValues.charAt(++i));
+                }
+                // If the ESCAPE character occurs as the last character
+                // of the string, ignore it.
+                break;
+            default:
+                // For all other characters, add them to the current token
+                // unless dealing with unescaped whitespace at the beginning
+                // or end. We know the whitespace is unescaped because it
+                // would have been handled in the ESCAPE case otherwise.
+                if (Character.isWhitespace(c1)) {
+                    // Ignore unescaped whitespace at the beginning of the
+                    // token.
+                    if (buffer.length() == 0) {
+                        continue;
                     }
-                    // If the ESCAPE character occurs as the last character
-                    // of the string, ignore it.
-                    break;
-                default:
-                    // For all other characters, add them to the current token
-                    // unless dealing with unescaped whitespace at the beginning
-                    // or end. We know the whitespace is unescaped because it
-                    // would have been handled in the ESCAPE case otherwise.
-                    if (Character.isWhitespace(c1)) {
-                        // Ignore unescaped whitespace at the beginning of the
-                        // token.
-                        if (buffer.length() == 0) {
-                            continue;
-                        }
-                        // If the whitespace is not at the beginning, look
-                        // forward, starting with the next character, to see if
-                        // it's in the middle or at the end. Unescaped
-                        // whitespace in the middle is okay.
-                        for (int j = i + 1; j < strValues.length(); j++) {
-                            // Keep looping until the end of the string is
-                            // reached or a non-whitespace character other than
-                            // the escape is seen.
-                            char c2 = strValues.charAt(j);
-                            if (!Character.isWhitespace(c2)) {
-                                // If the current character is not the DELIMITER, all whitespace
-                                // characters are significant and should be added to the token.
-                                // Otherwise, they're at the end and should be ignored. But watch
-                                // out for an escape character at the end of the input. Ignore it
-                                // and any previous insignificant whitespace if it exists.
-                                if (c2 == ESCAPE && j + 1 >= strValues.length()) {
-                                    continue;
-                                }
-                                if (c2 != DELIMITER) {
-                                    buffer.append(strValues.substring(i, j));
-                                }
-                                // Let loop counter i catch up with the inner loop but keep in
-                                // mind it will still be incremented at the end of the outer loop.
-                                i = j - 1;
-                                break;
+                    // If the whitespace is not at the beginning, look
+                    // forward, starting with the next character, to see if
+                    // it's in the middle or at the end. Unescaped
+                    // whitespace in the middle is okay.
+                    for (int j = i + 1; j < strValues.length(); j++) {
+                        // Keep looping until the end of the string is
+                        // reached or a non-whitespace character other than
+                        // the escape is seen.
+                        char c2 = strValues.charAt(j);
+                        if (!Character.isWhitespace(c2)) {
+                            // If the current character is not the DELIMITER, all whitespace
+                            // characters are significant and should be added to the token.
+                            // Otherwise, they're at the end and should be ignored. But watch
+                            // out for an escape character at the end of the input. Ignore it
+                            // and any previous insignificant whitespace if it exists.
+                            if (c2 == ESCAPE && j + 1 >= strValues.length()) {
+                                continue;
                             }
+                            if (c2 != DELIMITER) {
+                                buffer.append(strValues.substring(i, j));
+                            }
+                            // Let loop counter i catch up with the inner loop but keep in
+                            // mind it will still be incremented at the end of the outer loop.
+                            i = j - 1;
+                            break;
                         }
-                    } else {
-                        // For non-whitespace characters.
-                        buffer.append(c1);
                     }
+                } else {
+                    // For non-whitespace characters.
+                    buffer.append(c1);
+                }
             }
         }
         // Don't forget to add the last token.
         values.add(buffer.toString());
-        return values.toArray(new String[]{});
+        return values.toArray(new String[] {});
     }
 
     /**
      * Convert the string to the appropriate Object based on type
      *
-     * @param type              allowed values are {@link TscalarImpl}
-     * @param string            the input value
-     * @return                  the output value
-     * @throws KapuaException   when something goes wrong
+     * @param type
+     *         allowed values are {@link KapuaTscalar}
+     * @param string
+     *         the input value
+     * @return the output value
+     * @throws KapuaException
+     *         when something goes wrong
      */
     public static Object stringToValue(String type, String string) throws KapuaException {
         if (string == null) {
@@ -151,45 +153,45 @@ public class StringUtil {
             throw KapuaException.internalError("Invalid type");
         }
 
-        TscalarImpl scalarType = TscalarImpl.fromValue(type);
+        KapuaTscalar scalarType = KapuaTscalar.fromValue(type);
 
-        if (TscalarImpl.STRING.equals(scalarType)) {
+        if (KapuaTscalar.STRING.equals(scalarType)) {
             return string;
         }
 
-        if (TscalarImpl.BOOLEAN.equals(scalarType)) {
+        if (KapuaTscalar.BOOLEAN.equals(scalarType)) {
             return StringUtils.isEmpty(string) ? null : Boolean.valueOf(string);
         }
 
-        if (TscalarImpl.BYTE.equals(scalarType)) {
+        if (KapuaTscalar.BYTE.equals(scalarType)) {
             return StringUtils.isEmpty(string) ? null : Byte.valueOf(string);
         }
 
-        if (TscalarImpl.CHAR.equals(scalarType)) {
+        if (KapuaTscalar.CHAR.equals(scalarType)) {
             return string.toCharArray()[0];
         }
 
-        if (TscalarImpl.DOUBLE.equals(scalarType)) {
+        if (KapuaTscalar.DOUBLE.equals(scalarType)) {
             return StringUtils.isEmpty(string) ? null : Double.valueOf(string);
         }
 
-        if (TscalarImpl.FLOAT.equals(scalarType)) {
+        if (KapuaTscalar.FLOAT.equals(scalarType)) {
             return StringUtils.isEmpty(string) ? null : Float.valueOf(string);
         }
 
-        if (TscalarImpl.INTEGER.equals(scalarType)) {
+        if (KapuaTscalar.INTEGER.equals(scalarType)) {
             return StringUtils.isEmpty(string) ? null : Integer.valueOf(string);
         }
 
-        if (TscalarImpl.LONG.equals(scalarType)) {
+        if (KapuaTscalar.LONG.equals(scalarType)) {
             return StringUtils.isEmpty(string) ? null : Long.valueOf(string);
         }
 
-        if (TscalarImpl.SHORT.equals(scalarType)) {
+        if (KapuaTscalar.SHORT.equals(scalarType)) {
             return StringUtils.isEmpty(string) ? null : Short.valueOf(string);
         }
 
-        if (TscalarImpl.PASSWORD.equals(scalarType)) {
+        if (KapuaTscalar.PASSWORD.equals(scalarType)) {
             return new Password(string);
         }
 
@@ -197,8 +199,7 @@ public class StringUtil {
     }
 
     /**
-     * Convert the value to a String.<br>
-     * It supports also arrays such as Integer[], Boolean[], ... Password[]). For the arrays the converted String will be a comma separated concatenation.
+     * Convert the value to a String.<br> It supports also arrays such as Integer[], Boolean[], ... Password[]). For the arrays the converted String will be a comma separated concatenation.
      *
      * @param value
      * @return
@@ -352,8 +353,7 @@ public class StringUtil {
     }
 
     /**
-     * Escape the String <br>
-     * Escaped values are '\' ',' and ' '
+     * Escape the String <br> Escaped values are '\' ',' and ' '
      *
      * @param s
      * @return

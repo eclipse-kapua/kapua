@@ -12,11 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.configuration;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
+import org.eclipse.kapua.model.config.metatype.EmptyTocd;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
@@ -29,10 +31,10 @@ import org.eclipse.kapua.storage.TxManager;
 /**
  * Base {@link KapuaConfigurableService} implementation, build upon {@link ServiceConfigurationManager}.
  * <p>
- * Note: at first glance, this might seems like a violation of Composition over Inheritance principle, however:
- * - in this case inheritance is an acceptable strategy due to the strong link between {@link ServiceConfigurationManager#isServiceEnabled(org.eclipse.kapua.storage.TxContext, KapuaId)}
- * and {@link org.eclipse.kapua.service.KapuaService#isServiceEnabled(KapuaId)} (the latter being dependent from the first for configurable services).
- * - this class is nothing more than glue and convenience, demanding all of its logic to the {@link ServiceConfigurationManager}'s instance provided, so no flexibility has been sacrificed
+ * Note: at first glance, this might seems like a violation of Composition over Inheritance principle, however: - in this case inheritance is an acceptable strategy due to the strong link between
+ * {@link ServiceConfigurationManager#isServiceEnabled(org.eclipse.kapua.storage.TxContext, KapuaId)} and {@link org.eclipse.kapua.service.KapuaService#isServiceEnabled(KapuaId)} (the latter being
+ * dependent from the first for configurable services). - this class is nothing more than glue and convenience, demanding all of its logic to the {@link ServiceConfigurationManager}'s instance
+ * provided, so no flexibility has been sacrificed
  *
  * @since 2.0.0
  */
@@ -73,8 +75,11 @@ public class KapuaConfigurableServiceBase
         ArgumentValidator.notNull(scopeId, "scopeId");
 
         // Check access
-        authorizationService.checkPermission(permissionFactory.newPermission(domain, Actions.read, scopeId));
-        return txManager.execute(tx -> serviceConfigurationManager.getConfigMetadata(tx, scopeId, true));
+        if (!authorizationService.isPermitted(permissionFactory.newPermission(domain, Actions.read, scopeId))) {
+            //Temporary, use Optional instead
+            return new EmptyTocd();
+        }
+        return serviceConfigurationManager.getConfigMetadata(scopeId, true).orElse(null);
     }
 
     @Override
@@ -83,9 +88,10 @@ public class KapuaConfigurableServiceBase
         ArgumentValidator.notNull(scopeId, "scopeId");
 
         // Check access
-        authorizationService.checkPermission(permissionFactory.newPermission(domain, Actions.read, scopeId));
-
-        return txManager.execute(tx -> serviceConfigurationManager.getConfigValues(tx, scopeId, true));
+        if (!authorizationService.isPermitted(permissionFactory.newPermission(domain, Actions.read, scopeId))) {
+            return Collections.emptyMap();
+        }
+        return serviceConfigurationManager.getConfigValues(scopeId, true);
     }
 
     @Override
@@ -96,9 +102,6 @@ public class KapuaConfigurableServiceBase
 
         authorizationService.checkPermission(permissionFactory.newPermission(domain, Actions.write, scopeId));
 
-        txManager.<Void>execute(tx -> {
-            serviceConfigurationManager.setConfigValues(tx, scopeId, Optional.ofNullable(parentId), values);
-            return null;
-        });
+        serviceConfigurationManager.setConfigValues(scopeId, Optional.ofNullable(parentId), values);
     }
 }

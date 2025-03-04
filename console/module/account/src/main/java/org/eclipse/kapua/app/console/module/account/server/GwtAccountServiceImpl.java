@@ -12,12 +12,26 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.account.server;
 
-import com.extjs.gxt.ui.client.data.BaseListLoadResult;
-import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
-import com.extjs.gxt.ui.client.data.ListLoadResult;
-import com.extjs.gxt.ui.client.data.PagingLoadConfig;
-import com.extjs.gxt.ui.client.data.PagingLoadResult;
-import com.google.common.collect.Sets;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.concurrent.Callable;
+
+import javax.xml.namespace.QName;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.imaging.ImageFormat;
 import org.apache.commons.imaging.ImageFormats;
@@ -38,13 +52,13 @@ import org.eclipse.kapua.app.console.module.api.shared.model.GwtConfigParameter;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtGroupedNVPair;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtXSRFToken;
 import org.eclipse.kapua.app.console.module.api.shared.util.GwtKapuaCommonsModelConverter;
-import org.eclipse.kapua.commons.configuration.metatype.EmptyTocd;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.service.internal.KapuaServiceDisabledException;
 import org.eclipse.kapua.commons.util.ThrowingRunnable;
 import org.eclipse.kapua.locator.KapuaLocator;
+import org.eclipse.kapua.model.config.metatype.EmptyTocd;
 import org.eclipse.kapua.model.config.metatype.KapuaTad;
 import org.eclipse.kapua.model.config.metatype.KapuaTicon;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
@@ -77,24 +91,12 @@ import org.eclipse.kapua.service.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.namespace.QName;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.security.MessageDigest;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.concurrent.Callable;
+import com.extjs.gxt.ui.client.data.BaseListLoadResult;
+import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
+import com.extjs.gxt.ui.client.data.ListLoadResult;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
+import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.google.common.collect.Sets;
 
 /**
  * The server side implementation of the RPC service.
@@ -207,7 +209,7 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
         try {
             final Account account = ACCOUNT_SERVICE.find(scopeId, accountId);
 
-//TODO: #LAYER_VIOLATION - user lookup should not be done here
+            //TODO: #LAYER_VIOLATION - user lookup should not be done here
             UserListResult userListResult = KapuaSecurityUtils.doPrivileged(new Callable<UserListResult>() {
 
                 @Override
@@ -490,7 +492,7 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
                                                         strValues.add(v.toString());
                                                     }
                                                 }
-                                                gwtParam.setValues(strValues.toArray(new String[]{}));
+                                                gwtParam.setValues(strValues.toArray(new String[] {}));
                                             }
                                         }
                                     }

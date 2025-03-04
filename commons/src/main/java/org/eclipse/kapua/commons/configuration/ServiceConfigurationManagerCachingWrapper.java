@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.configuration;
 
+import java.util.Map;
+import java.util.Optional;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.eclipse.kapua.KapuaException;
@@ -23,12 +26,11 @@ import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.config.KapuaConfigurableService;
+import org.eclipse.kapua.service.config.ServiceComponentConfiguration;
 import org.eclipse.kapua.storage.TxContext;
 
-import java.util.Map;
-import java.util.Optional;
-
 public class ServiceConfigurationManagerCachingWrapper implements ServiceConfigurationManager {
+
     private final ServiceConfigurationManager wrapped;
 
     private static final int LOCAL_CACHE_SIZE_MAX = SystemSetting.getInstance().getInt(SystemSettingKey.TMETADATA_LOCAL_CACHE_SIZE_MAXIMUM, 100);
@@ -48,18 +50,20 @@ public class ServiceConfigurationManagerCachingWrapper implements ServiceConfigu
     private final LocalCache<Pair<KapuaId, Boolean>, KapuaTocd> kapuaTocdLocalCache = new LocalCache<>(LOCAL_CACHE_SIZE_MAX, null);
 
     /**
-     * This cache only holds the {@link Boolean} value {@literal True} if the {@link KapuaTocd} has been already read from the file
-     * at least once, regardless of the value. With this we can know when a read from {@code KAPUA_TOCD_LOCAL_CACHE}
-     * returns {@literal null} because of the requested key is not present, and when the key is present but its actual value
-     * is {@literal null}.
+     * This cache only holds the {@link Boolean} value {@literal True} if the {@link KapuaTocd} has been already read from the file at least once, regardless of the value. With this we can know when a
+     * read from {@code KAPUA_TOCD_LOCAL_CACHE} returns {@literal null} because of the requested key is not present, and when the key is present but its actual value is {@literal null}.
      *
      * @since 1.2.0
      */
     private final LocalCache<Pair<KapuaId, Boolean>, Boolean> kapuaTocdEmptyLocalCache = new LocalCache<>(LOCAL_CACHE_SIZE_MAX, false);
 
-
     public ServiceConfigurationManagerCachingWrapper(ServiceConfigurationManager wrapped) {
         this.wrapped = wrapped;
+    }
+
+    @Override
+    public String getDomain() {
+        return wrapped.getDomain();
     }
 
     @Override
@@ -68,9 +72,18 @@ public class ServiceConfigurationManagerCachingWrapper implements ServiceConfigu
     }
 
     @Override
-    public void setConfigValues(TxContext txContext, KapuaId scopeId, Optional<KapuaId> parentId, Map<String, Object> values) throws KapuaException {
-        wrapped.setConfigValues(txContext, scopeId, parentId, values);
+    public long countAllowedEntities(TxContext txContext, KapuaId scopeId) throws KapuaException {
+        return wrapped.countAllowedEntities(txContext, scopeId);
+    }
 
+    @Override
+    public void setConfigValues(KapuaId scopeId, Optional<KapuaId> parentId, Map<String, Object> values) throws KapuaException {
+        wrapped.setConfigValues(scopeId, parentId, values);
+    }
+
+    @Override
+    public Map<String, Object> getConfigValues(KapuaId scopeId, boolean excludeDisabled) throws KapuaException {
+        return wrapped.getConfigValues(scopeId, excludeDisabled);
     }
 
     @Override
@@ -79,24 +92,24 @@ public class ServiceConfigurationManagerCachingWrapper implements ServiceConfigu
     }
 
     @Override
-    public KapuaTocd getConfigMetadata(TxContext txContext, KapuaId scopeId, boolean excludeDisabled) throws KapuaException {
+    public Optional<KapuaTocd> getConfigMetadata(KapuaId scopeId, boolean excludeDisabled) throws KapuaException {
         // Argument validation
         ArgumentValidator.notNull(scopeId, "scopeId");
 
         // Get the Tocd
         // Keep distinct values for service PID, Scope ID and disabled properties included/excluded from AD
-        Pair<KapuaId, Boolean> cacheKey = Pair.of(scopeId, excludeDisabled);
+        final Pair<KapuaId, Boolean> cacheKey = Pair.of(scopeId, excludeDisabled);
         try {
             // Check if the OCD is already in cache, but not in the "empty" cache
-            KapuaTocd tocd;
-            tocd = kapuaTocdLocalCache.get(cacheKey);
-            if (tocd == null && !kapuaTocdEmptyLocalCache.get(cacheKey)) {
+            Optional<KapuaTocd> tocd;
+            tocd = Optional.ofNullable(kapuaTocdLocalCache.get(cacheKey));
+            if (!tocd.isPresent() && !kapuaTocdEmptyLocalCache.get(cacheKey)) {
                 // If not, read metadata and process it
-                tocd = wrapped.getConfigMetadata(txContext, scopeId, excludeDisabled);
+                tocd = wrapped.getConfigMetadata(scopeId, excludeDisabled);
                 // If null, put it in the "empty" ocd cache, else put it in the "standard" cache
-                if (tocd != null) {
+                if (tocd.isPresent()) {
                     // If the value is not null, put it in "standard" cache and remove the entry from the "empty" cache if present
-                    kapuaTocdLocalCache.put(cacheKey, tocd);
+                    kapuaTocdLocalCache.put(cacheKey, tocd.get());
                     kapuaTocdEmptyLocalCache.remove(cacheKey);
                 } else {
                     // If the value is null, just remember we already read it from file at least once
@@ -107,5 +120,10 @@ public class ServiceConfigurationManagerCachingWrapper implements ServiceConfigu
         } catch (Exception e) {
             throw KapuaException.internalError(e);
         }
+    }
+
+    @Override
+    public Optional<ServiceComponentConfiguration> extractServiceComponentConfiguration(KapuaId scopeId) throws KapuaException {
+        return wrapped.extractServiceComponentConfiguration(scopeId);
     }
 }

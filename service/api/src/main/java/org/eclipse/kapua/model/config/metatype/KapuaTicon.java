@@ -12,6 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.model.config.metatype;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
@@ -21,9 +27,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
-import java.math.BigInteger;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -50,16 +53,19 @@ import java.util.Map;
  */
 @XmlRootElement(name = "Icon", namespace = "http://www.osgi.org/xmlns/metatype/v1.2.0")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(name = "Icon", namespace = "http://www.osgi.org/xmlns/metatype/v1.2.0", factoryClass = MetatypeXmlRegistry.class, factoryMethod = "newKapuaTicon")
-public interface KapuaTicon {
+@XmlType(name = "Icon", namespace = "http://www.osgi.org/xmlns/metatype/v1.2.0")
+public class KapuaTicon {
+
+    protected List<Object> any;
+    protected String resource;
+    protected BigInteger size;
+    private Map<QName, String> otherAttributes = new HashMap<>();
 
     /**
      * Gets the value of the any property.
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the any property.
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object. This is why there is
+     * not a <CODE>set</CODE> method for the any property.
      * <p>
      * For example, to add a new item, do as follows:
      *
@@ -68,7 +74,12 @@ public interface KapuaTicon {
      * </pre>
      */
     @XmlAnyElement(lax = true)
-    List<Object> getAny();
+    public List<Object> getAny() {
+        if (any == null) {
+            any = new ArrayList<>();
+        }
+        return this.any;
+    }
 
     /**
      * Gets the value of the resource property.
@@ -76,14 +87,19 @@ public interface KapuaTicon {
      * @return possible object is {@link String }
      */
     @XmlAttribute(name = "resource", required = true)
-    String getResource();
+    public String getResource() {
+        return resource;
+    }
 
     /**
      * Sets the value of the resource property.
      *
-     * @param value allowed object is {@link String }
+     * @param value
+     *         allowed object is {@link String }
      */
-    void setResource(String value);
+    public void setResource(String value) {
+        this.resource = value;
+    }
 
     /**
      * Gets the value of the size property.
@@ -92,27 +108,32 @@ public interface KapuaTicon {
      */
     @XmlAttribute(name = "size", required = true)
     @XmlSchemaType(name = "positiveInteger")
-    BigInteger getSize();
+    public BigInteger getSize() {
+        return size;
+    }
 
     /**
      * Sets the value of the size property.
      *
-     * @param value allowed object is {@link BigInteger }
+     * @param value
+     *         allowed object is {@link BigInteger }
      */
-    void setSize(BigInteger value);
+    public void setSize(BigInteger value) {
+        this.size = value;
+    }
 
     /**
      * Gets a map that contains attributes that aren't bound to any typed property on this class.
      * <p></p>
-     * the map is keyed by the name of the attribute and
-     * the value is the string value of the attribute.
+     * the map is keyed by the name of the attribute and the value is the string value of the attribute.
      * <p>
-     * the map returned by this method is live, and you can add new attribute
-     * by updating the map directly. Because of this design, there's no setter.
+     * the map returned by this method is live, and you can add new attribute by updating the map directly. Because of this design, there's no setter.
      *
      * @return always non-null
      */
     @XmlAnyAttribute
-    Map<QName, String> getOtherAttributes();
+    public Map<QName, String> getOtherAttributes() {
+        return otherAttributes;
+    }
 
 }

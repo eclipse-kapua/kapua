@@ -12,6 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.registry.connection.internal;
 
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.NotImplementedException;
 import org.eclipse.kapua.KapuaDuplicateNameException;
 import org.eclipse.kapua.KapuaEntityNotFoundException;
@@ -43,12 +50,6 @@ import org.eclipse.kapua.storage.TxManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * {@link DeviceConnectionService} implementation.
  *
@@ -67,12 +68,11 @@ public class DeviceConnectionServiceImpl extends KapuaConfigurableServiceBase im
     /**
      * Constructor.
      *
-     * @param serviceConfigurationManager The {@link ServiceConfigurationManager} instance.
      * @since 2.0.0
      */
     @Inject
     public DeviceConnectionServiceImpl(
-            @Named("DeviceConnectionServiceConfigurationManager") ServiceConfigurationManager serviceConfigurationManager,
+            Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
             DeviceConnectionFactory entityFactory,
@@ -80,7 +80,7 @@ public class DeviceConnectionServiceImpl extends KapuaConfigurableServiceBase im
             DeviceConnectionRepository repository,
             Map<String, DeviceConnectionCredentialAdapter> availableDeviceConnectionAdapters,
             EventStorer eventStorer) {
-        super(txManager, serviceConfigurationManager, Domains.DEVICE_CONNECTION, authorizationService, permissionFactory);
+        super(txManager, serviceConfigurationManagersByServiceClass.get(DeviceConnectionService.class), Domains.DEVICE_CONNECTION, authorizationService, permissionFactory);
         this.entityFactory = entityFactory;
         this.repository = repository;
         this.availableDeviceConnectionAdapters = availableDeviceConnectionAdapters;

@@ -14,7 +14,12 @@ package org.eclipse.kapua.service.authentication.credential.shiro;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import javax.inject.Singleton;
 
 import org.eclipse.kapua.KapuaEntityNotFoundException;
@@ -22,6 +27,7 @@ import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.KapuaRuntimeException;
 import org.eclipse.kapua.commons.configuration.KapuaConfigurableServiceBase;
+import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.event.ServiceEvent;
@@ -33,14 +39,13 @@ import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.model.query.predicate.AttributePredicate;
 import org.eclipse.kapua.service.authentication.credential.Credential;
 import org.eclipse.kapua.service.authentication.credential.CredentialAttributes;
-import org.eclipse.kapua.service.authentication.credential.handler.CredentialTypeHandler;
 import org.eclipse.kapua.service.authentication.credential.CredentialCreator;
 import org.eclipse.kapua.service.authentication.credential.CredentialFactory;
 import org.eclipse.kapua.service.authentication.credential.CredentialListResult;
 import org.eclipse.kapua.service.authentication.credential.CredentialQuery;
 import org.eclipse.kapua.service.authentication.credential.CredentialRepository;
 import org.eclipse.kapua.service.authentication.credential.CredentialService;
-import org.eclipse.kapua.service.authentication.shiro.CredentialServiceConfigurationManager;
+import org.eclipse.kapua.service.authentication.credential.handler.CredentialTypeHandler;
 import org.eclipse.kapua.service.authentication.shiro.setting.KapuaAuthenticationSetting;
 import org.eclipse.kapua.service.authentication.shiro.setting.KapuaAuthenticationSettingKeys;
 import org.eclipse.kapua.service.authentication.user.PasswordResetRequest;
@@ -49,11 +54,6 @@ import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.storage.TxManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * {@link CredentialService} implementation.
@@ -69,13 +69,14 @@ public class CredentialServiceImpl extends KapuaConfigurableServiceBase implemen
     private final CredentialRepository credentialRepository;
     private final CredentialFactory credentialFactory;
     private final KapuaAuthenticationSetting kapuaAuthenticationSetting;
+    private final AccountPasswordLengthProvider accountPasswordLengthProvider;
     private final PasswordValidator passwordValidator;
     private final PasswordResetter passwordResetter;
 
     private final Map<String, CredentialTypeHandler> availableCredentialAuthenticationType;
 
     public CredentialServiceImpl(
-            CredentialServiceConfigurationManager serviceConfigurationManager,
+            ServiceConfigurationManager serviceConfigurationManager,
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
             TxManager txManager,
@@ -83,14 +84,15 @@ public class CredentialServiceImpl extends KapuaConfigurableServiceBase implemen
             CredentialFactory credentialFactory,
             PasswordValidator passwordValidator,
             KapuaAuthenticationSetting kapuaAuthenticationSetting,
-            PasswordResetter passwordResetter,
-            Set<CredentialTypeHandler> availableCredentialAuthenticationType
-    ) {
+            Set<CredentialTypeHandler> availableCredentialAuthenticationType,
+            AccountPasswordLengthProvider accountPasswordLengthProvider,
+            PasswordResetter passwordResetter) {
         super(txManager, serviceConfigurationManager, Domains.CREDENTIAL, authorizationService, permissionFactory);
 
         this.credentialRepository = credentialRepository;
         this.credentialFactory = credentialFactory;
         this.kapuaAuthenticationSetting = kapuaAuthenticationSetting;
+        this.accountPasswordLengthProvider = accountPasswordLengthProvider;
         this.passwordResetter = passwordResetter;
         try {
             random = SecureRandom.getInstance("SHA1PRNG");
@@ -138,12 +140,12 @@ public class CredentialServiceImpl extends KapuaConfigurableServiceBase implemen
 
             // Convert creator to entity
             Credential newCredential = new CredentialImpl(
-                credentialCreator.getScopeId(),
-                credentialCreator.getUserId(),
-                credentialCreator.getCredentialType(),
-                encryptedKey,
-                credentialCreator.getCredentialStatus(),
-                credentialCreator.getExpirationDate()
+                    credentialCreator.getScopeId(),
+                    credentialCreator.getUserId(),
+                    credentialCreator.getCredentialType(),
+                    encryptedKey,
+                    credentialCreator.getCredentialStatus(),
+                    credentialCreator.getExpirationDate()
             );
 
             // Do create
@@ -275,18 +277,16 @@ public class CredentialServiceImpl extends KapuaConfigurableServiceBase implemen
         CredentialQuery credentialQuery = new CredentialQueryImpl(scopeId);
 
         credentialQuery.setPredicate(
-            credentialQuery.andPredicate(
-                credentialQuery.attributePredicate(CredentialAttributes.USER_ID, userId),
-                credentialQuery.attributePredicate(CredentialAttributes.CREDENTIAL_TYPE, credentialType)
-            )
+                credentialQuery.andPredicate(
+                        credentialQuery.attributePredicate(CredentialAttributes.USER_ID, userId),
+                        credentialQuery.attributePredicate(CredentialAttributes.CREDENTIAL_TYPE, credentialType)
+                )
         );
 
         CredentialListResult credentials = txManager.execute(tx -> credentialRepository.query(tx, credentialQuery));
         credentials.getItems().forEach(credential -> credential.setCredentialKey(null));
         return credentials;
     }
-
-
 
     @Override
     public Credential findByApiKey(String apiKey) throws KapuaException {
@@ -304,10 +304,10 @@ public class CredentialServiceImpl extends KapuaConfigurableServiceBase implemen
             KapuaQuery query = new CredentialQueryImpl();
 
             query.setPredicate(
-                query.andPredicate(
-                    query.attributePredicate(CredentialAttributes.CREDENTIAL_TYPE, "API_KEY"),
-                    query.attributePredicate(CredentialAttributes.CREDENTIAL_KEY, apiKeyPreValue, AttributePredicate.Operator.STARTS_WITH)
-                )
+                    query.andPredicate(
+                            query.attributePredicate(CredentialAttributes.CREDENTIAL_TYPE, "API_KEY"),
+                            query.attributePredicate(CredentialAttributes.CREDENTIAL_KEY, apiKeyPreValue, AttributePredicate.Operator.STARTS_WITH)
+                    )
             );
 
             // Query
@@ -347,7 +347,7 @@ public class CredentialServiceImpl extends KapuaConfigurableServiceBase implemen
 
     @Override
     public int getMinimumPasswordLength(KapuaId scopeId) throws KapuaException {
-        return txManager.execute(tx -> passwordValidator.getMinimumPasswordLength(tx, scopeId));
+        return txManager.execute(tx -> accountPasswordLengthProvider.getMinimumPasswordLength(tx, scopeId));
     }
 
     //@ListenServiceEvent(fromAddress="account")
@@ -426,7 +426,6 @@ public class CredentialServiceImpl extends KapuaConfigurableServiceBase implemen
         return txManager.execute(tx -> passwordResetter.resetPassword(tx, scopeId, userId, false, passwordResetRequest));
     }
 
-
     @Override
     public Set<String> getAvailableCredentialTypes() {
         return availableCredentialAuthenticationType.keySet();
@@ -434,8 +433,8 @@ public class CredentialServiceImpl extends KapuaConfigurableServiceBase implemen
 
     private boolean tryEditAdminFields(Credential updated, Credential current) {
         return updated.getLoginFailures() != current.getLoginFailures() ||
-                   updated.getFirstLoginFailure() != current.getFirstLoginFailure() ||
-                   updated.getLoginFailuresReset() != current.getLoginFailuresReset() ||
-                   updated.getLockoutReset() != current.getLockoutReset();
+                updated.getFirstLoginFailure() != current.getFirstLoginFailure() ||
+                updated.getLoginFailuresReset() != current.getLoginFailuresReset() ||
+                updated.getLockoutReset() != current.getLockoutReset();
     }
 }

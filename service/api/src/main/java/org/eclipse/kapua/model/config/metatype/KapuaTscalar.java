@@ -12,6 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.model.config.metatype;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+
 /**
  * <p>
  * Java class for Tscalar complex type.
@@ -37,12 +44,63 @@ package org.eclipse.kapua.model.config.metatype;
  *
  * @since 1.0
  */
-public interface KapuaTscalar {
+@XmlEnum
+@XmlType(name = "Tscalar")
+@XmlRootElement(name = "OCD", namespace = "http://www.osgi.org/xmlns/metatype/v1.2.0")
+@XmlAccessorType(XmlAccessType.PROPERTY)
+public enum KapuaTscalar {
+    @XmlEnumValue("String")
+    STRING("String"),
+    @XmlEnumValue("Long")
+    LONG("Long"),
+    @XmlEnumValue("Double")
+    DOUBLE("Double"),
+    @XmlEnumValue("Float")
+    FLOAT("Float"),
+    @XmlEnumValue("Integer")
+    INTEGER("Integer"),
+    @XmlEnumValue("Byte")
+    BYTE("Byte"),
+    @XmlEnumValue("Char")
+    CHAR("Char"),
+    @XmlEnumValue("Boolean")
+    BOOLEAN("Boolean"),
+    @XmlEnumValue("Short")
+    SHORT("Short"),
+    @XmlEnumValue("Password")
+    PASSWORD("Password");
+    private final String value;
+
+    /**
+     * Constructor
+     *
+     * @param v
+     */
+    KapuaTscalar(String v) {
+        value = v;
+    }
 
     /**
      * Gets the value property.
      *
      * @return possible object is {@link String } with restricted values
      */
-    String value();
+    public String value() {
+        return value;
+    }
+
+    /**
+     * Convert a String value to a {@link KapuaTscalar}
+     *
+     * @param v
+     * @return
+     */
+    public static KapuaTscalar fromValue(String v) {
+        for (KapuaTscalar c : KapuaTscalar.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
 }

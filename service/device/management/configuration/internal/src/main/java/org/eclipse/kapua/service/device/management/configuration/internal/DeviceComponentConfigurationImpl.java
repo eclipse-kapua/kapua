@@ -12,11 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.configuration.internal;
 
-import org.eclipse.kapua.commons.configuration.metatype.TocdImpl;
+import java.util.Map;
+
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 import org.eclipse.kapua.service.device.management.configuration.DeviceComponentConfiguration;
-
-import java.util.Map;
 
 /**
  * Device component configuration entity implementation.
@@ -27,7 +26,7 @@ public class DeviceComponentConfigurationImpl implements DeviceComponentConfigur
 
     private String id;
     private String name;
-    private TocdImpl definition;
+    private KapuaTocd definition;
     private Map<String, Object> properties;
 
     /**
@@ -41,7 +40,8 @@ public class DeviceComponentConfigurationImpl implements DeviceComponentConfigur
     /**
      * Constructor.
      *
-     * @param id The {@link DeviceComponentConfiguration#getId()}
+     * @param id
+     *         The {@link DeviceComponentConfiguration#getId()}
      * @since 1.0.0
      */
     public DeviceComponentConfigurationImpl(String id) {
@@ -70,7 +70,7 @@ public class DeviceComponentConfigurationImpl implements DeviceComponentConfigur
 
     @Override
     public void setDefinition(KapuaTocd definition) {
-        this.definition = (TocdImpl) definition;
+        this.definition = definition;
     }
 
     @Override
