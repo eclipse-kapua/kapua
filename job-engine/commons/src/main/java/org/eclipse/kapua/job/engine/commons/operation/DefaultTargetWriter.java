@@ -91,7 +91,7 @@ public class DefaultTargetWriter extends AbstractItemWriter implements TargetWri
 
                 if (stepContextWrapper.getNextStepIndex() != null) {
                     jobTarget.setStepIndex(stepContextWrapper.getNextStepIndex());
-                    jobTarget.setStatus(JobTargetStatus.PROCESS_AWAITING); //TODO: is this correct when jobstep is async???
+                    jobTarget.setStatus(JobTargetStatus.PROCESS_AWAITING);
                 } else {
                     jobTarget.setStatus(JobTargetStatus.PROCESS_OK);
                 }

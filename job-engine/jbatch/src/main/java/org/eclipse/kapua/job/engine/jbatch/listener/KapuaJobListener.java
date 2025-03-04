@@ -217,13 +217,13 @@ public class KapuaJobListener extends AbstractJobListener implements JobListener
             jobLogger.info("Resetting {} targets to step index: {}... DONE!", jobExecution.getTargetIds().size(), resetToStepIndex);
         } else {
             for (KapuaId jobTargetId : jobExecution.getTargetIds()) {
-//                JobTarget jobTarget = KapuaSecurityUtils.doPrivileged(() -> jobTargetService.find(jobExecution.getScopeId(), jobTargetId));
-//                    if (jobTarget.getStatus().equals(JobTargetStatus.PROCESS_FAILED)) {
-//                        jobTarget.setStatus(JobTargetStatus.PROCESS_AWAITING); //TODO: TO CHANGE ONLY WHEN STEP IS SYNCRONOUS, OTHERWISE BUG
-//                        jobTarget.setStatusMessage(null);
-//                        jobTarget.setException(null);
-//                        KapuaSecurityUtils.doPrivileged(() -> jobTargetService.update(jobTarget));
-//                    }
+                JobTarget jobTarget = KapuaSecurityUtils.doPrivileged(() -> jobTargetService.find(jobExecution.getScopeId(), jobTargetId));
+                if (jobTarget.getStatus().equals(JobTargetStatus.PROCESS_FAILED)) {
+                    jobTarget.setStatus(JobTargetStatus.PROCESS_AWAITING);
+                    jobTarget.setStatusMessage(null);
+                    jobTarget.setException(null);
+                    KapuaSecurityUtils.doPrivileged(() -> jobTargetService.update(jobTarget));
+                }
             }
         }
 
