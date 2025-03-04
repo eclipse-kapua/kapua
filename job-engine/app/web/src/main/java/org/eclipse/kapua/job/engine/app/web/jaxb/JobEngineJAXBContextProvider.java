@@ -43,6 +43,7 @@ import org.eclipse.kapua.service.device.call.kura.model.configuration.KuraDevice
 import org.eclipse.kapua.service.device.management.asset.DeviceAssets;
 import org.eclipse.kapua.service.device.management.command.DeviceCommandInput;
 import org.eclipse.kapua.service.device.management.configuration.DeviceConfiguration;
+import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainer;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystore;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreCSR;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreCSRInfo;
@@ -132,6 +133,9 @@ public class JobEngineJAXBContextProvider implements JAXBContextProvider {
                     // Authentication
                     AuthenticationXmlRegistry.class,
                     AccessToken.class,
+
+                    // Device Management Inventory
+                    DeviceInventoryContainer.class,
 
                     // Device Management Keystore
                     DeviceKeystores.class,
