@@ -1989,7 +1989,7 @@ public class DeviceRegistrySteps extends TestBase {
         Account account = accountService.findByName(accountName);
         Assert.assertNotNull("Account cannot be null!", account);
         User connectionUserId = userService.findByName(connectionUsername);
-        Assert.assertNotNull("Coonection username not valid!", connectionUserId);
+        Assert.assertNotNull("Connection username not valid!", connectionUserId);
         while (executions++ < timeout) {
             if (searchForConnectionFromDeviceWithClientIDStatusAndUser(clientId, account.getId(), status, connectionUserId.getId(), false)) {
                 return;
@@ -2000,6 +2000,7 @@ public class DeviceRegistrySteps extends TestBase {
     }
 
     private boolean searchForConnectionFromDeviceWithClientIDStatusAndUser(String clientId, KapuaId accountId, String connectionStatus, KapuaId connectionUserId, boolean timeoutOccurred) throws Exception {
+        boolean retValue = true;
         try {
             Device device = deviceRegistryService.findByClientId(accountId, clientId);
             if (timeoutOccurred) {
@@ -2016,9 +2017,9 @@ public class DeviceRegistrySteps extends TestBase {
                 }
             } else {
                 if (connectionUserId != null) {
-                    return deviceConnection != null && connectionStatus.equals(deviceConnection.getStatus().name()) && connectionUserId.equals(deviceConnection.getUserId());
+                    retValue = deviceConnection != null && connectionStatus.equals(deviceConnection.getStatus().name()) && connectionUserId.equals(deviceConnection.getUserId());
                 } else {
-                    return deviceConnection != null && connectionStatus.equals(deviceConnection.getStatus().name());
+                    retValue = deviceConnection != null && connectionStatus.equals(deviceConnection.getStatus().name());
                 }
             }
             stepData.put(DEVICE_CONNECTION, deviceConnection);
@@ -2030,7 +2031,7 @@ public class DeviceRegistrySteps extends TestBase {
         } catch (KapuaException ex) {
             verifyException(ex);
         }
-        return true;
+        return retValue;
     }
 
     @Then("The connection user is {string}")
