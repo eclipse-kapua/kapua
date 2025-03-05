@@ -150,7 +150,7 @@ Feature: Job Engine Service - Operations
       | timeout      | java.lang.Long                                                         | 30000                                                                                                                                                                                                                                           |
     When I start a job
     #Now I await some time in order to synch job-engine and the service used to read job executions...
-    And I wait for another job start up to 2s
+    And I wait job to finish its execution up to 15s
     Then I confirm that job has 1 job execution
     And I confirm that job target in job has step index 0 and status "PROCESS_FAILED"
     Then I start the Kura Mock
