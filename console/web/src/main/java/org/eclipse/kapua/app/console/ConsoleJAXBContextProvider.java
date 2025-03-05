@@ -20,7 +20,6 @@ import javax.xml.bind.JAXBContext;
 import org.eclipse.kapua.ExceptionInfo;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.ThrowableInfo;
-import org.eclipse.kapua.commons.configuration.metatype.TscalarImpl;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordCreator;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordListResult;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordQuery;
