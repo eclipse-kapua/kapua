@@ -13,7 +13,6 @@
 package org.eclipse.kapua.job.engine.commons.operation;
 
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.job.engine.commons.logger.JobLogger;
 import org.eclipse.kapua.job.engine.commons.wrappers.JobContextWrapper;
 import org.eclipse.kapua.job.engine.commons.wrappers.JobTargetWrapper;
@@ -21,7 +20,6 @@ import org.eclipse.kapua.job.engine.commons.wrappers.StepContextWrapper;
 import org.eclipse.kapua.model.id.KapuaIdFactory;
 import org.eclipse.kapua.service.job.operation.TargetProcessor;
 import org.eclipse.kapua.service.job.targets.JobTarget;
-import org.eclipse.kapua.service.job.targets.JobTargetService;
 import org.eclipse.kapua.service.job.targets.JobTargetStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,16 +57,6 @@ public abstract class AbstractTargetProcessor implements TargetProcessor {
         JobTarget jobTarget = wrappedJobTarget.getJobTarget();
         jobLogger.info("Processing target:{} (id:{})", getTargetDisplayName(jobTarget), jobTarget.getId().toCompactId());
         try {
-
-            if (jobTarget.getStatus().equals(JobTargetStatus.PROCESS_FAILED)) {
-                jobTarget.setStatus(JobTargetStatus.PROCESS_AWAITING); //TODO: TO CHANGE ONLY WHEN STEP IS SYNCRONOUS, OTHERWISE BUG
-                jobTarget.setStatusMessage(null);
-                jobTarget.setException(null);
-                JobTarget finalJobTarget = jobTarget;
-                wrappedJobTarget.setJobTarget(KapuaSecurityUtils.doPrivileged(() -> jobTargetService.update(finalJobTarget)));
-            }
-            jobTarget = wrappedJobTarget.getJobTarget();
-
             processTarget(jobTarget);
 
             jobTarget.setStatus(getCompletedStatus(jobTarget));
