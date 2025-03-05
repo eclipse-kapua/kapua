@@ -14,10 +14,9 @@ package org.eclipse.kapua.commons.jersey.rest.model;
 
 import java.util.Date;
 
+import com.google.common.base.Strings;
 import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.model.xml.DateXmlAdapter;
-
-import jdk.internal.joptsimple.internal.Strings;
 
 /**
  * Adapted for query parameters of type {@link Date}.
