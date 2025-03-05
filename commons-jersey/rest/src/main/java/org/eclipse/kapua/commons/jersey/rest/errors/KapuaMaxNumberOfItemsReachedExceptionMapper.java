@@ -10,7 +10,7 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.rest.errors;
+package org.eclipse.kapua.commons.jersey.rest.errors;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
@@ -19,7 +19,8 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.eclipse.kapua.KapuaMaxNumberOfItemsReachedException;
-import org.eclipse.kapua.commons.rest.model.errors.MaxNumberOfItemsReachedExceptionInfo;
+import org.eclipse.kapua.commons.jersey.rest.ExceptionConfigurationProvider;
+import org.eclipse.kapua.commons.jersey.rest.model.errors.MaxNumberOfItemsReachedExceptionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

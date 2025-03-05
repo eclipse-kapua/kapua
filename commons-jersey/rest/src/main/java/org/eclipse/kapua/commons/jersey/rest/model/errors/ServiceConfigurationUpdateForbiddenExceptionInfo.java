@@ -10,8 +10,9 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.rest.model.errors;
+package org.eclipse.kapua.commons.jersey.rest.model.errors;
 
+import org.eclipse.kapua.ExceptionInfo;
 import org.eclipse.kapua.commons.configuration.exception.ServiceConfigurationForbiddenException;
 import org.eclipse.kapua.model.config.metatype.KapuaTad;
 import org.eclipse.kapua.model.id.KapuaId;

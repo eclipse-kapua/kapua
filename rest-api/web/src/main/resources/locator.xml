@@ -19,6 +19,7 @@
         <package>org.eclipse.kapua.plugin</package>
         <package>org.eclipse.kapua.model</package>
         <package>org.eclipse.kapua.commons</package>
+        <package>org.eclipse.kapua.job.engine.exception</package>
         <package>org.eclipse.kapua.job.engine.client</package>
         <package>org.eclipse.kapua.message</package>
         <package>org.eclipse.kapua.service</package>

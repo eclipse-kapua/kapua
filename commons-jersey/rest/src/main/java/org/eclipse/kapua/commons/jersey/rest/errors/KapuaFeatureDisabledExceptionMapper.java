@@ -10,9 +10,10 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.rest.errors;
+package org.eclipse.kapua.commons.jersey.rest.errors;
 
-import org.eclipse.kapua.commons.rest.model.errors.ExceptionInfo;
+import org.eclipse.kapua.ExceptionInfo;
+import org.eclipse.kapua.commons.jersey.rest.ExceptionConfigurationProvider;
 import org.eclipse.kapua.commons.service.internal.KapuaServiceDisabledException;
 import org.eclipse.kapua.exception.KapuaFeatureDisabledException;
 import org.slf4j.Logger;

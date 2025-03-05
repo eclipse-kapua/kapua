@@ -10,13 +10,14 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.rest.model.errors;
+package org.eclipse.kapua.commons.jersey.rest.model.errors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.eclipse.kapua.ExceptionInfo;
 import org.eclipse.kapua.KapuaMaxNumberOfItemsReachedException;
 
 @XmlRootElement(name = "maxNumberOfItemsReachedExceptionInfo")

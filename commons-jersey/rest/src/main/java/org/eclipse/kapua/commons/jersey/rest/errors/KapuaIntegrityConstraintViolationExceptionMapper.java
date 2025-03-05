@@ -10,10 +10,11 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.rest.errors;
+package org.eclipse.kapua.commons.jersey.rest.errors;
 
+import org.eclipse.kapua.ExceptionInfo;
+import org.eclipse.kapua.commons.jersey.rest.ExceptionConfigurationProvider;
 import org.eclipse.kapua.kapuaIntegrityConstraintViolationException;
-import org.eclipse.kapua.commons.rest.model.errors.ExceptionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +29,7 @@ public class KapuaIntegrityConstraintViolationExceptionMapper implements Excepti
     private static final Logger LOG = LoggerFactory.getLogger(kapuaIntegrityConstraintViolationException.class);
 
     private static final Status STATUS = Status.CONFLICT;
+
     @Inject
     public ExceptionConfigurationProvider exceptionConfigurationProvider;
 

@@ -10,10 +10,11 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.commons.rest.errors;
+package org.eclipse.kapua.commons.jersey.rest.errors;
 
 import org.eclipse.kapua.commons.configuration.exception.ServiceConfigurationForbiddenException;
-import org.eclipse.kapua.commons.rest.model.errors.ServiceConfigurationUpdateForbiddenExceptionInfo;
+import org.eclipse.kapua.commons.jersey.rest.ExceptionConfigurationProvider;
+import org.eclipse.kapua.commons.jersey.rest.model.errors.ServiceConfigurationUpdateForbiddenExceptionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
