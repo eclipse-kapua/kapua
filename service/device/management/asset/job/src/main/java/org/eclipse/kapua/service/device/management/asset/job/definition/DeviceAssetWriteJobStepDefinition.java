@@ -43,7 +43,7 @@ public class DeviceAssetWriteJobStepDefinition extends JobStepDefinitionRecord {
                 Lists.newArrayList(
                         new JobStepPropertyRecord(
                                 DeviceAssetWritePropertyKeys.ASSETS,
-                                "XML string that defines the asset, channels and values to be written",
+                                "XML or JSON string that defines the asset, channels and values to be written",
                                 DeviceAssets.class.getName(),
                                 null,
                                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n <deviceAssets>\n     <deviceAsset>\n         <name>assetName</name>\n         <channels>\n             <channel>\n                 <valueType>binary</valueType>\n                 <value>EGVzdCBzdHJpbmcgdmFsdWU=</value>\n                 <name>binaryTest</name>\n             </channel>\n         </channels>\n     </deviceAsset>\n</deviceAssets>",

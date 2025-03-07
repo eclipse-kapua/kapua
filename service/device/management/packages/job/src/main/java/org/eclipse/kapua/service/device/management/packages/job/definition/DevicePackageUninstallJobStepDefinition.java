@@ -44,7 +44,7 @@ public class DevicePackageUninstallJobStepDefinition extends JobStepDefinitionRe
                 Lists.newArrayList(
                         new JobStepPropertyRecord(
                                 DevicePackageUninstallPropertyKeys.PACKAGE_UNINSTALL_REQUEST,
-                                "XML string that defines the package uninstall request sent",
+                                "XML or JSON string that defines the package uninstall request sent",
                                 DevicePackageUninstallRequest.class.getName(),
                                 null,
                                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<uninstallRequest>\n   <name>heater</name>\n   <version>1.0.300</version>\n   <reboot>true</reboot>\n   <rebootDelay>30000</rebootDelay>\n</uninstallRequest>",

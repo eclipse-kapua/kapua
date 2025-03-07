@@ -44,7 +44,7 @@ public class DevicePackageDownloadJobStepDefinition extends JobStepDefinitionRec
                 Lists.newArrayList(
                         new JobStepPropertyRecord(
                                 DevicePackageDownloadPropertyKeys.PACKAGE_DOWNLOAD_REQUEST,
-                                "XML string that defines the package download request sent",
+                                "XML or JSON string that defines the package download request sent",
                                 DevicePackageDownloadRequest.class.getName(),
                                 null,
                                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<downloadRequest>\n   <uri>http://download.eclipse.org/kura/releases/3.2.0/org.eclipse.kura.demo.heater_1.0.300.dp</uri>\n   <name>heater</name>\n   <version>1.0.300</version>\n   <install>true</install>\n</downloadRequest>",
