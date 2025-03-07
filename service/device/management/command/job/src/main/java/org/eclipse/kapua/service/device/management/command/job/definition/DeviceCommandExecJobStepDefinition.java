@@ -43,7 +43,7 @@ public class DeviceCommandExecJobStepDefinition extends JobStepDefinitionRecord 
                 Lists.newArrayList(
                         new JobStepPropertyRecord(
                                 DeviceCommandExecPropertyKeys.COMMAND_INPUT,
-                                "XML string that defines the system command to be executed",
+                                "XML or JSON string that defines the system command to be executed",
                                 DeviceCommandInput.class.getName(),
                                 null,
                                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<commandInput>\n    <command>ls</command>\n    <timeout>30000</timeout>\n    <runAsynch>false</runAsynch>\n</commandInput>",
