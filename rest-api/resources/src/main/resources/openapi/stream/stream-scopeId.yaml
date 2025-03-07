@@ -18,7 +18,7 @@ paths:
         - Stream
       summary: Publish a message
       operationId: streamMessage
-      description: Publishes a fire-and-forget message to a topic composed of [account-name] / [client-id] / [semtantic-parts]
+      description: Publishes a message to a topic composed of [account-name] / [client-id] / [semantic-parts]
       parameters:
         - $ref: '../openapi.yaml#/components/parameters/scopeId'
         - $ref: '../device/device.yaml#/components/parameters/timeout'
