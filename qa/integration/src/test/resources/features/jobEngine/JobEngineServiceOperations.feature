@@ -136,6 +136,34 @@ Feature: Job Engine Service - Operations
     Then I confirm that job has 2 job execution
     And I confirm that job target in job has step index 0 and status "PROCESS_OK"
 
+  Scenario: Start - JobTarget failed, then "loading status" (process_awaiting), then ok
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I create a device with name "rpione3"
+    And I create a job with the name "TestJob"
+    And I add device targets to job
+      | rpione3 |
+    And I search for step definition with the name
+      | Command Execution |
+    And I add job step to job with name "Test Step - Command Exec" and with selected job step definition and properties
+      | name         | type                                                                   | value                                                                                                                                                                                                                                           |
+      | commandInput | org.eclipse.kapua.service.device.management.command.DeviceCommandInput | <?xml version="1.0" encoding="UTF-8"?><commandInput><command>ping</command><arguments><argument>-c</argument><argument>10</argument><argument>8.8.8.8</argument></arguments><timeout>30000</timeout><runAsynch>false</runAsynch></commandInput> |
+      | timeout      | java.lang.Long                                                         | 30000                                                                                                                                                                                                                                           |
+    When I start a job
+    #Now I await some time in order to synch job-engine and the service used to read job executions...
+    And I wait job to finish its execution up to 15s
+    Then I confirm that job has 1 job execution
+    And I confirm that job target in job has step index 0 and status "PROCESS_FAILED"
+    Then I start the Kura Mock
+    And Device birth message is sent
+    And Device "rpione3" is connected within 10s
+    When I start a job
+    And I wait for another job start up to 2s
+    Then I confirm that job has 2 job execution
+    And I confirm that job target in job has step index 0 and status "PROCESS_AWAITING"
+    And I wait job to finish its execution up to 15s
+    And I confirm that job target in job has step index 0 and status "PROCESS_OK"
+
   Scenario: Start - Two JobSteps
 
     Given I login as user with name "kapua-sys" and password "kapua-password"
