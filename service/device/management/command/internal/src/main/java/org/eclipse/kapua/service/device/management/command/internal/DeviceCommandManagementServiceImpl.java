@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.command.internal;
 
+import java.util.Date;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
@@ -36,9 +39,6 @@ import org.eclipse.kapua.service.device.registry.event.DeviceEventService;
 import org.eclipse.kapua.storage.TxManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Singleton;
-import java.util.Date;
 
 /**
  * {@link DeviceCommandManagementService} implementation.
@@ -72,6 +72,7 @@ public class DeviceCommandManagementServiceImpl extends AbstractDeviceManagement
         ArgumentValidator.notNull(deviceId, "deviceId");
         ArgumentValidator.notNull(commandInput, "commandInput");
         ArgumentValidator.notNull(commandInput.getTimeout(), "commandInput.timeout");
+        ArgumentValidator.notEmptyOrNull(commandInput.getCommand(), "commandInput.command");
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.execute, scopeId));
         // Prepare the request
