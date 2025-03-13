@@ -99,7 +99,17 @@ public class DeviceCommandInputImpl implements DeviceCommandInput {
     }
 
     @Override
+    public void setEnvironments(String[] environment) {
+        this.envVars = environment;
+    }
+
+    @Override
     public String[] getEnvironment() {
+        return envVars;
+    }
+
+    @Override
+    public String[] getEnvironments() {
         return envVars;
     }
 
