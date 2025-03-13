@@ -42,7 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Kapua message converter reference implementation used to convert from Camel incoming messages ({@link JmsMessage}) to a platform specific message type.
+ * Kapua message converter reference implementation used to convert from Camel incoming messages ({@link Message}) to a platform specific message type.
  *
  * @since 1.0
  */

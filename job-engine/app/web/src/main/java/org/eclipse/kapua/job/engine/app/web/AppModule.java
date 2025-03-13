@@ -26,19 +26,8 @@ import javax.inject.Singleton;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.ContainerIdResolver;
 import org.eclipse.kapua.commons.DefaultContainerIdResolver;
-import org.eclipse.kapua.commons.core.AbstractKapuaModule;
-import org.eclipse.kapua.commons.core.JaxbClassProvider;
-import org.eclipse.kapua.commons.liquibase.DatabaseCheckUpdate;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.commons.setting.system.SystemSettingKey;
-import org.eclipse.kapua.commons.util.xml.JAXBContextProvider;
-import org.eclipse.kapua.commons.util.xml.JAXBContextProviderImpl;
-import org.eclipse.kapua.commons.util.xml.XmlRootAnnotatedJaxbClassesScanner;
-import org.eclipse.kapua.locator.LocatorConfig;
-import org.eclipse.kapua.service.job.step.definition.internal.JobStepDefinitionAligner;
-
-import com.google.inject.Provides;
-import com.google.inject.multibindings.ProvidesIntoSet;
 
 public class AppModule extends AbstractKapuaModule {
     @Override

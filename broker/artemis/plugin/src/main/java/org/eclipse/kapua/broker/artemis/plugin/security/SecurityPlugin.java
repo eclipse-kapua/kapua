@@ -14,7 +14,6 @@ package org.eclipse.kapua.broker.artemis.plugin.security;
 
 import com.codahale.metrics.Timer.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.common.base.Strings;
 
 import io.netty.handler.ssl.SslHandler;
 import org.apache.activemq.artemis.api.core.ActiveMQException;
@@ -57,7 +56,6 @@ import javax.security.auth.login.CredentialException;
 import javax.security.cert.X509Certificate;
 import java.security.cert.Certificate;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Kapua Artemis security plugin implementation (authentication/authorization)
@@ -65,10 +63,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SecurityPlugin implements ActiveMQSecurityManager5 {
 
     protected static Logger logger = LoggerFactory.getLogger(SecurityPlugin.class);
-
-    //this class should be a singleton but just to be sure let's use the atomic integer
-    private static final AtomicInteger INDEX = new AtomicInteger();
-    private String clientIdPrefix = "internal-client-id-";
 
     private final LoginMetric loginMetric;
     private final PublishMetric publishMetric;
@@ -136,14 +130,25 @@ public class SecurityPlugin implements ActiveMQSecurityManager5 {
         }
     }
 
+//    private String extractAndValidateClientId(RemotingConnection remotingConnection) {
+//        String clientId = remotingConnection.getClientID();
+//        //set a random client id value if not set by the client
+//        //from JMS 2 specs "Although setting client ID remains mandatory when creating an unshared durable subscription, it is optional when creating a shared durable subscription."
+//        if (Strings.isNullOrEmpty(clientId)) {
+//            clientId = clientIdPrefix + INDEX.getAndIncrement();
+//            logger.info("Updated empty client id to: {}", clientId);
+//        }
+//        //leave the clientId validation to the DeviceCreator. Here just check for / or ::
+//        //ArgumentValidator.match(clientId, DeviceValidationRegex.CLIENT_ID, "deviceCreator.clientId");
+//        if (clientId != null && (clientId.contains("/") || clientId.contains("::"))) {
+//            //TODO look for the right exception mapped to MQTT invalid client id error code
+//            throw new SecurityException("Invalid Client Id!");
+//        }
+//        return clientId;
+//    }
+
     private String extractAndValidateClientId(RemotingConnection remotingConnection) {
         String clientId = remotingConnection.getClientID();
-        //set a random client id value if not set by the client
-        //from JMS 2 specs "Although setting client ID remains mandatory when creating an unshared durable subscription, it is optional when creating a shared durable subscription."
-        if (Strings.isNullOrEmpty(clientId)) {
-            clientId = clientIdPrefix + INDEX.getAndIncrement();
-            logger.info("Updated empty client id to: {}", clientId);
-        }
         //leave the clientId validation to the DeviceCreator. Here just check for / or ::
         //ArgumentValidator.match(clientId, DeviceValidationRegex.CLIENT_ID, "deviceCreator.clientId");
         if (clientId != null && (clientId.contains("/") || clientId.contains("::"))) {
@@ -165,16 +170,9 @@ public class SecurityPlugin implements ActiveMQSecurityManager5 {
             logger.info("Authenticate internal: user: {} - clientId: {} - connectionIp: {} - connectionId: {} - remoteIP: {} - isOpen: {}",
                     username, connectionInfo.getClientId(), connectionInfo.getClientIp(), remotingConnection.getID(),
                     remotingConnection.getTransportConnection().getRemoteAddress(), remotingConnection.getTransportConnection().isOpen());
-            //TODO double check why the client id is null once coming from AMQP connection (the Kapua connection factory with custom client id generation is called)
             KapuaPrincipal kapuaPrincipal = buildInternalKapuaPrincipal(getAdminAccountInfo().getId(), username, connectionInfo.getClientId());
-            //auto generate client id if null. It shouldn't be null but in some case the one from JMS connection is.
-            String clientId = connectionInfo.getClientId();
             //set a random client id value if not set by the client
             //from JMS 2 specs "Although setting client ID remains mandatory when creating an unshared durable subscription, it is optional when creating a shared durable subscription."
-            if (Strings.isNullOrEmpty(clientId)) {
-                clientId = clientIdPrefix + INDEX.getAndIncrement();
-                logger.info("Updated empty client id to: {}", clientId);
-            }
             //update client id with account|clientId (see pattern)
             String fullClientId = Utils.getFullClientId(getAdminAccountInfo().getId(), connectionInfo.getClientId());
             remotingConnection.setClientID(fullClientId);

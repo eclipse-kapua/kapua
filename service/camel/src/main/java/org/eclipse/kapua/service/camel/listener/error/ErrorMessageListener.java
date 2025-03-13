@@ -42,12 +42,12 @@ public class ErrorMessageListener {
     private static final String EMPTY_FIELD = "N/A";
 
     private final MetricsCamel metrics;
-    private final ObjectDeserializer objectDeserializer;
+    private final ObjectSerializer objectSerializer;
 
     @Inject
-    public ErrorMessageListener(ObjectDeserializer objectDeserializer, MetricsCamel metricsCamel) {
+    public ErrorMessageListener(ObjectSerializer objectSerializer, MetricsCamel metricsCamel) {
         this.metrics = metricsCamel;
-        this.objectDeserializer = objectDeserializer;
+        this.objectSerializer = objectSerializer;
     }
 
     /**

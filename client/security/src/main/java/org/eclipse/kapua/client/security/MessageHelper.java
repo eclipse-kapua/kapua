@@ -23,7 +23,7 @@ import javax.jms.JMSException;
 
 import org.eclipse.kapua.client.security.bean.EntityRequest;
 import org.eclipse.kapua.client.security.bean.MessageConstants;
-import org.eclipse.kapua.client.security.amqpclient.Message;
+import org.eclipse.kapua.client.security.client.Message;
 import org.eclipse.kapua.client.security.bean.AuthRequest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -62,13 +62,7 @@ public class MessageHelper {
             buildBaseMessage(entityRequest));
     }
 
-    static Message getEntityMessage(EntityRequest entityRequest) throws Exception {
-        return new Message(
-            entityRequest!=null ? writer.writeValueAsString(entityRequest) : "",
-            buildBaseMessage(entityRequest));
-    }
-
-    static Map<String, Object> buildBaseMessage(AuthRequest authRequest) throws JMSException {
+    private Map<String, Object> buildBaseMessage(AuthRequest authRequest) throws JMSException {
         Map<String, Object> properties = new HashMap<>();
         properties.put(MessageConstants.HEADER_REQUEST_ID, authRequest.getRequestId());
         properties.put(MessageConstants.HEADER_ACTION, authRequest.getAction());
@@ -79,7 +73,7 @@ public class MessageHelper {
         return properties;
     }
 
-    static Map<String, Object> buildBaseMessage(EntityRequest entityRequest) throws JMSException {
+    private Map<String, Object> buildBaseMessage(EntityRequest entityRequest) throws JMSException {
         Map<String, Object> properties = new HashMap<>();
         properties.put(MessageConstants.HEADER_REQUEST_ID, entityRequest.getRequestId());
         properties.put(MessageConstants.HEADER_ACTION, entityRequest.getAction());

@@ -21,13 +21,8 @@ import org.eclipse.kapua.commons.DefaultContainerIdResolver;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.commons.setting.system.SystemSettingKey;
-import org.eclipse.kapua.commons.util.xml.JAXBContextProvider;
-import org.eclipse.kapua.qa.common.TestJAXBContextProvider;
 
 import com.google.inject.Provides;
-import org.eclipse.kapua.commons.core.AbstractKapuaModule;
-
-import javax.inject.Named;
 
 public class TestConfigModule extends AbstractKapuaModule {
     @Override

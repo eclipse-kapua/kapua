@@ -18,12 +18,8 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.app.api.core.model.StorableEntityId;
-import org.eclipse.kapua.app.api.core.model.device.management.JsonGenericRequestMessage;
-import org.eclipse.kapua.app.api.core.model.device.management.JsonGenericResponseMessage;
 import org.eclipse.kapua.app.api.core.settings.KapuaApiCoreSetting;
 import org.eclipse.kapua.app.api.core.settings.KapuaApiCoreSettingKeys;
-import org.eclipse.kapua.app.api.resources.v1.resources.model.device.management.keystore.DeviceKeystoreCertificateInfo;
 import org.eclipse.kapua.commons.ContainerIdResolver;
 import org.eclipse.kapua.commons.DefaultContainerIdResolver;
 import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
@@ -34,12 +30,12 @@ import org.eclipse.kapua.commons.liquibase.DatabaseCheckUpdate;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.commons.setting.system.SystemSettingKey;
 import org.eclipse.kapua.commons.util.xml.JAXBContextProvider;
+import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 
 import com.google.inject.Provides;
-import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import org.eclipse.kapua.service.scheduler.trigger.definition.quartz.TriggerDefinitionAligner;
 
 public class AppModule extends AbstractKapuaModule {
@@ -99,7 +95,7 @@ public class AppModule extends AbstractKapuaModule {
     @Provides
     @Named("deviceConnectionEvtSubscriptionGroupId")
     String deviceConnectionEvtSubscriptionGroupId(ContainerIdResolver containerIdResolver) {
-        return "brk-tel-" + containerIdResolver.getContainerId();
+        return getSubscriptionId(containerIdResolver);
     }
 
     @Provides
@@ -116,5 +112,13 @@ public class AppModule extends AbstractKapuaModule {
 
     private String getSubscriptionId(ContainerIdResolver containerIdResolver) {
         return "rest-api-" + containerIdResolver.getContainerId();
+    }
+
+    @Provides
+    @Singleton
+    JAXBContextProvider jaxbContextProvider() {
+        final JAXBContextProvider jaxbContextProvider = new RestApiJAXBContextProvider();
+        XmlUtil.setContextProvider(jaxbContextProvider);
+        return jaxbContextProvider;
     }
 }

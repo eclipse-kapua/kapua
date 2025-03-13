@@ -58,7 +58,7 @@ objects:
                     -Dcommons.db.schema.update=true
                     -Dcommons.db.connection.host=$SQL_SERVICE_HOST
                     -Dcommons.db.connection.port=$SQL_PORT_3306_TCP_PORT
-                    -Dcommons.eventbus.url="failover:(amqp://${EVENTS_BROKER_PORT_5672_TCP_ADDR}:${EVENTS_BROKER_PORT_5672_TCP_PORT})"
+                    -Dcommons.eventbus.url="amqp://${EVENTS_BROKER_PORT_5672_TCP_ADDR}:${EVENTS_BROKER_PORT_5672_TCP_PORT}"
                     -Dbroker.host=$KAPUA_BROKER_SERVICE_HOST
                     -Dcertificate.jwt.private.key=file:///var/opt/jetty/key.pk8
                     -Dcertificate.jwt.certificate=file:///var/opt/jetty/cert.pem
