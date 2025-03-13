@@ -68,15 +68,21 @@ public class TranslatorAppCommandKapuaKura extends AbstractTranslatorKapuaKura<C
             // Payload translation
             Map<String, Object> metrics = kuraRequestPayload.getMetrics();
             metrics.put(PROPERTIES_DICTIONARY.get(CommandAppProperties.APP_PROPERTY_CMD).getName(), kapuaPayload.getCommand());
-            metrics.put(PROPERTIES_DICTIONARY.get(CommandAppProperties.APP_PROPERTY_ENVP).getName(), kapuaPayload.getEnvironmentPairs());
             metrics.put(PROPERTIES_DICTIONARY.get(CommandAppProperties.APP_PROPERTY_DIR).getName(), kapuaPayload.getWorkingDir());
             metrics.put(PROPERTIES_DICTIONARY.get(CommandAppProperties.APP_PROPERTY_STDIN).getName(), kapuaPayload.getStdin());
             metrics.put(PROPERTIES_DICTIONARY.get(CommandAppProperties.APP_PROPERTY_TOUT).getName(), kapuaPayload.getTimeout());
             metrics.put(PROPERTIES_DICTIONARY.get(CommandAppProperties.APP_PROPERTY_ASYNC).getName(), kapuaPayload.isRunAsync());
             metrics.put(PROPERTIES_DICTIONARY.get(CommandAppProperties.APP_PROPERTY_PASSWORD).getName(), kapuaPayload.getPassword());
 
-            // argument translation
+            // environment variables translation
             int i = 0;
+            String[] envs = kapuaPayload.getEnvironmentPairs();
+            for (String env : envs) {
+                metrics.put(PROPERTIES_DICTIONARY.get(CommandAppProperties.APP_PROPERTY_ENVP).getName() + i++, env);
+            }
+
+            // argument translation
+            i = 0;
             String[] arguments = kapuaPayload.getArguments();
             for (String argument : arguments) {
                 metrics.put(PROPERTIES_DICTIONARY.get(CommandAppProperties.APP_PROPERTY_ARG).getName() + i++, argument);
