@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.job.engine.app.web.jaxb;
 
-import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.rest.model.IsJobRunningResponse;
 import org.eclipse.kapua.commons.rest.model.errors.CleanJobDataExceptionInfo;
 import org.eclipse.kapua.commons.rest.model.errors.EntityNotFoundExceptionInfo;
@@ -32,7 +31,11 @@ import org.eclipse.kapua.commons.rest.model.errors.JobStartingExceptionInfo;
 import org.eclipse.kapua.commons.rest.model.errors.JobStoppingExceptionInfo;
 import org.eclipse.kapua.commons.rest.model.errors.SubjectUnauthorizedExceptionInfo;
 import org.eclipse.kapua.commons.rest.model.errors.ThrowableInfo;
+import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordCreator;
+import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordListResult;
+import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordQuery;
 import org.eclipse.kapua.commons.util.xml.JAXBContextProvider;
+import org.eclipse.kapua.event.ServiceEvent;
 import org.eclipse.kapua.job.engine.JobStartOptions;
 import org.eclipse.kapua.job.engine.client.JobStartOptionsClient;
 import org.eclipse.kapua.job.engine.commons.model.JobStepPropertiesOverrides;
@@ -90,10 +93,11 @@ public class JobEngineJAXBContextProvider implements JAXBContextProvider {
     private JAXBContext jaxbContext;
 
     @Override
-    public JAXBContext getJAXBContext() throws KapuaException {
+    public JAXBContext getJAXBContext() {
         if (jaxbContext != null) {
             return jaxbContext;
         }
+
         try {
             Map<String, Object> properties = new HashMap<>(1);
             properties.put(MarshallerProperties.JSON_WRAPPER_AS_ARRAY_NAME, true);
@@ -187,7 +191,14 @@ public class JobEngineJAXBContextProvider implements JAXBContextProvider {
                     TriggerQuery.class,
                     TriggerXmlRegistry.class,
 
-                    KuraDeviceConfiguration.class
+                    KuraDeviceConfiguration.class,
+
+                    // KapuaEvent
+                    ServiceEvent.class,
+                    EventStoreRecordCreator.class,
+                    EventStoreRecordListResult.class,
+                    EventStoreRecordQuery.class,
+
             }, properties);
         } catch (Exception e) {
             throw new RuntimeException(e);
