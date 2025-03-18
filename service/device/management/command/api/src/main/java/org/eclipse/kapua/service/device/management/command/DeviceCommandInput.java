@@ -34,6 +34,7 @@ import javax.xml.bind.annotation.XmlType;
         "workingDir",
         "body",
         "environment",
+        "environments",
         "runAsynch",
         "stdin"
 }, factoryClass = DeviceCommandXmlRegistry.class, factoryMethod = "newCommandInput")
@@ -134,16 +135,38 @@ public interface DeviceCommandInput extends DeviceCommand {
      * Get the environment attributes
      *
      * @return
+     * @deprecated Since 2.1.0
      */
+    @Deprecated
     @XmlElement(name = "environment")
     String[] getEnvironment();
+
+    /**
+     * Get the environment attributes
+     *
+     * @return
+     * @since 2.1.0
+     */
+    @XmlElementWrapper(name = "environments")
+    @XmlElement(name = "environment")
+    String[] getEnvironments();
 
     /**
      * Set the environment attributes
      *
      * @param environment
+     * @deprecated Since 2.1.0
      */
+    @Deprecated
     void setEnvironment(String[] environment);
+
+    /**
+     * Set the environment attributes
+     *
+     * @param environment
+     * @since 2.1.0
+     */
+    void setEnvironments(String[] environment);
 
     /**
      * Get the asynchronous run flag
