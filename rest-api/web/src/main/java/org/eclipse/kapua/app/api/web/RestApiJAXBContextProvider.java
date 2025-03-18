@@ -71,7 +71,6 @@ import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordQuery;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreXmlRegistry;
 import org.eclipse.kapua.commons.util.xml.JAXBContextProvider;
 import org.eclipse.kapua.event.ServiceEvent;
-import org.eclipse.kapua.job.engine.JobEngineXmlRegistry;
 import org.eclipse.kapua.job.engine.JobStartOptions;
 import org.eclipse.kapua.message.device.data.KapuaDataChannel;
 import org.eclipse.kapua.message.device.data.KapuaDataMessage;
@@ -280,16 +279,13 @@ import org.eclipse.kapua.service.job.Job;
 import org.eclipse.kapua.service.job.JobCreator;
 import org.eclipse.kapua.service.job.JobListResult;
 import org.eclipse.kapua.service.job.JobQuery;
-import org.eclipse.kapua.service.job.JobXmlRegistry;
 import org.eclipse.kapua.service.job.execution.JobExecution;
 import org.eclipse.kapua.service.job.execution.JobExecutionListResult;
 import org.eclipse.kapua.service.job.execution.JobExecutionQuery;
-import org.eclipse.kapua.service.job.execution.JobExecutionXmlRegistry;
 import org.eclipse.kapua.service.job.step.JobStep;
 import org.eclipse.kapua.service.job.step.JobStepCreator;
 import org.eclipse.kapua.service.job.step.JobStepListResult;
 import org.eclipse.kapua.service.job.step.JobStepQuery;
-import org.eclipse.kapua.service.job.step.JobStepXmlRegistry;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinition;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionListResult;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionQuery;
@@ -303,16 +299,13 @@ import org.eclipse.kapua.service.scheduler.trigger.Trigger;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerCreator;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerListResult;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerQuery;
-import org.eclipse.kapua.service.scheduler.trigger.TriggerXmlRegistry;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinition;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionListResult;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionQuery;
-import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionXmlRegistry;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerProperty;
 import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTrigger;
 import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTriggerListResult;
 import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTriggerQuery;
-import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTriggerXmlRegistry;
 import org.eclipse.kapua.service.storable.model.id.StorableId;
 import org.eclipse.kapua.service.storable.model.query.SortField;
 import org.eclipse.kapua.service.storable.model.query.SortFieldXmlAdapter;
@@ -367,24 +360,6 @@ public class RestApiJAXBContextProvider implements JAXBContextProvider {
                     IllegalNullArgumentExceptionInfo.class,
                     MfaRequiredExceptionInfo.class,
                     MaxNumberOfItemsReachedExceptionInfo.class,
-
-                    // Jobs Exception Info
-                    CleanJobDataExceptionInfo.class,
-                    JobAlreadyRunningExceptionInfo.class,
-                    JobEngineExceptionInfo.class,
-                    JobScopedEngineExceptionInfo.class,
-                    JobInvalidTargetExceptionInfo.class,
-                    JobMissingStepExceptionInfo.class,
-                    JobMissingTargetExceptionInfo.class,
-                    JobNotRunningExceptionInfo.class,
-                    JobResumingExceptionInfo.class,
-                    JobRunningExceptionInfo.class,
-                    JobStartingExceptionInfo.class,
-                    JobStoppingExceptionInfo.class,
-
-                    // Scheduler Exception Info
-                    TriggerInvalidDatesExceptionInfo.class,
-                    TriggerInvalidSchedulingExceptionInfo.class,
 
                     // Device Management Exception Info
                     DeviceManagementRequestContentExceptionInfo.class,
@@ -723,58 +698,71 @@ public class RestApiJAXBContextProvider implements JAXBContextProvider {
                     ServiceConfiguration.class,
                     ServiceComponentConfiguration.class,
 
-                    // Jobs
-                    Job.class,
+                    // Job Engine
                     JobStartOptions.class,
                     IsJobRunningResponse.class,
                     IsJobRunningMultipleResponse.class,
                     MultipleJobIdRequest.class,
+
+                    // Job Engine Exception Info
+                    CleanJobDataExceptionInfo.class,
+                    JobAlreadyRunningExceptionInfo.class,
+                    JobEngineExceptionInfo.class,
+                    JobScopedEngineExceptionInfo.class,
+                    JobInvalidTargetExceptionInfo.class,
+                    JobMissingStepExceptionInfo.class,
+                    JobMissingTargetExceptionInfo.class,
+                    JobNotRunningExceptionInfo.class,
+                    JobResumingExceptionInfo.class,
+                    JobRunningExceptionInfo.class,
+                    JobStartingExceptionInfo.class,
+                    JobStoppingExceptionInfo.class,
+
+                    // Jobs
+                    Job.class,
                     JobCreator.class,
                     JobListResult.class,
                     JobQuery.class,
-                    JobXmlRegistry.class,
-                    JobEngineXmlRegistry.class,
+
+                    JobExecution.class,
+                    JobExecutionListResult.class,
+                    JobExecutionQuery.class,
 
                     JobStep.class,
                     JobStepCreator.class,
                     JobStepListResult.class,
                     JobStepQuery.class,
-                    JobStepXmlRegistry.class,
                     JobStepProperty.class,
 
-                    JobExecution.class,
-                    JobExecutionListResult.class,
-                    JobExecutionQuery.class,
-                    JobExecutionXmlRegistry.class,
+                    JobStepDefinition.class,
+                    JobStepDefinitionListResult.class,
+                    JobStepDefinitionQuery.class,
+                    JobStepDefinitionXmlRegistry.class,
 
                     JobTarget.class,
                     JobTargetCreator.class,
                     JobTargetListResult.class,
                     JobTargetQuery.class,
-                    JobExecutionXmlRegistry.class,
 
-                    // Trigger
+                    // Scheduler
                     Trigger.class,
                     TriggerCreator.class,
                     TriggerListResult.class,
                     TriggerQuery.class,
                     TriggerProperty.class,
-                    TriggerXmlRegistry.class,
 
                     TriggerDefinition.class,
                     TriggerDefinitionListResult.class,
                     TriggerDefinitionQuery.class,
-                    TriggerDefinitionXmlRegistry.class,
 
                     FiredTrigger.class,
                     FiredTriggerListResult.class,
                     FiredTriggerQuery.class,
-                    FiredTriggerXmlRegistry.class,
 
-                    JobStepDefinition.class,
-                    JobStepDefinitionListResult.class,
-                    JobStepDefinitionQuery.class,
-                    JobStepDefinitionXmlRegistry.class
+                    // Scheduler Exception Info
+                    TriggerInvalidDatesExceptionInfo.class,
+                    TriggerInvalidSchedulingExceptionInfo.class,
+
             }, properties);
         } catch (Exception e) {
             throw new RuntimeException(e);
