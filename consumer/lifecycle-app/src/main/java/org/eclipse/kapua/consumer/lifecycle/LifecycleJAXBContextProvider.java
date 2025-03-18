@@ -13,6 +13,9 @@
 package org.eclipse.kapua.consumer.lifecycle;
 
 import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.commons.rest.model.IsJobRunningMultipleResponse;
+import org.eclipse.kapua.commons.rest.model.IsJobRunningResponse;
+import org.eclipse.kapua.commons.rest.model.MultipleJobIdRequest;
 import org.eclipse.kapua.commons.rest.model.errors.CleanJobDataExceptionInfo;
 import org.eclipse.kapua.commons.rest.model.errors.JobAlreadyRunningExceptionInfo;
 import org.eclipse.kapua.commons.rest.model.errors.JobEngineExceptionInfo;
@@ -32,8 +35,6 @@ import org.eclipse.kapua.commons.service.event.store.api.EventStoreXmlRegistry;
 import org.eclipse.kapua.commons.util.xml.JAXBContextProvider;
 import org.eclipse.kapua.event.ServiceEvent;
 import org.eclipse.kapua.job.engine.JobStartOptions;
-import org.eclipse.kapua.job.engine.commons.model.JobStepPropertiesOverrides;
-import org.eclipse.kapua.job.engine.commons.model.JobTargetSublist;
 import org.eclipse.kapua.model.config.metatype.KapuaTad;
 import org.eclipse.kapua.model.config.metatype.KapuaTdesignate;
 import org.eclipse.kapua.model.config.metatype.KapuaTicon;
@@ -64,9 +65,6 @@ import org.eclipse.kapua.service.device.management.packages.model.download.Devic
 import org.eclipse.kapua.service.device.management.packages.model.uninstall.DevicePackageUninstallRequest;
 import org.eclipse.kapua.service.device.management.snapshot.DeviceSnapshot;
 import org.eclipse.kapua.service.device.management.snapshot.DeviceSnapshots;
-import org.eclipse.kapua.service.job.Job;
-import org.eclipse.kapua.service.job.JobListResult;
-import org.eclipse.kapua.service.job.JobXmlRegistry;
 import org.eclipse.persistence.jaxb.JAXBContextFactory;
 import org.eclipse.persistence.jaxb.MarshallerProperties;
 import org.slf4j.Logger;
@@ -105,17 +103,13 @@ public class LifecycleJAXBContextProvider implements JAXBContextProvider {
                     EventStoreXmlRegistry.class,
 
                     // TODO EXT-CAMEL only for test remove when jobs will be defined in their own container
-                    // Job
-                    Job.class,
-                    JobListResult.class,
-                    JobXmlRegistry.class,
-
                     // Job Engine
                     JobStartOptions.class,
-                    JobTargetSublist.class,
-                    JobStepPropertiesOverrides.class,
+                    IsJobRunningResponse.class,
+                    IsJobRunningMultipleResponse.class,
+                    MultipleJobIdRequest.class,
 
-                    // Jobs Exception Info
+                    // Job Engine Exception Info
                     CleanJobDataExceptionInfo.class,
                     JobAlreadyRunningExceptionInfo.class,
                     JobEngineExceptionInfo.class,
