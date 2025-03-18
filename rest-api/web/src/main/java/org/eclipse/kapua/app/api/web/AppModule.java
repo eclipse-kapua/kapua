@@ -123,7 +123,7 @@ public class AppModule extends AbstractKapuaModule {
     @Provides
     @Named("deviceConnectionEvtSubscriptionGroupId")
     String deviceConnectionEvtSubscriptionGroupId(ContainerIdResolver containerIdResolver) {
-        return "brk-tel-" + containerIdResolver.getContainerId();
+        return getSubscriptionId(containerIdResolver);
     }
 
     @Provides

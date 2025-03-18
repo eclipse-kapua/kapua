@@ -47,36 +47,40 @@ public class AppModule extends AbstractKapuaModule {
     @Provides
     @Named("accountEvtSubscriptionGroupId")
     String accountEvtSubscriptionGroupId(ContainerIdResolver containerIdResolver) {
-        return "console-" + containerIdResolver.getContainerId();
+        return getSubscriptionId(containerIdResolver);
     }
 
     @Provides
     @Named("authenticationEvtSubscriptionGroupId")
     String authenticationEvtSubscriptionGroupId(ContainerIdResolver containerIdResolver) {
-        return "console-" + containerIdResolver.getContainerId();
+        return getSubscriptionId(containerIdResolver);
     }
 
     @Provides
     @Named("authorizationEvtSubscriptionGroupId")
     String authorizationEvtSubscriptionGroupId(ContainerIdResolver containerIdResolver) {
-        return "console-" + containerIdResolver.getContainerId();
+        return getSubscriptionId(containerIdResolver);
     }
 
     @Provides
     @Named("deviceConnectionEvtSubscriptionGroupId")
     String deviceConnectionEvtSubscriptionGroupId(ContainerIdResolver containerIdResolver) {
-        return "brk-tel-" + containerIdResolver.getContainerId();
+        return getSubscriptionId(containerIdResolver);
     }
 
     @Provides
     @Named("deviceRegistryEvtSubscriptionGroupId")
     String deviceRegistryEvtSubscriptionGroupId(ContainerIdResolver containerIdResolver) {
-        return "console-" + containerIdResolver.getContainerId();
+        return getSubscriptionId(containerIdResolver);
     }
 
     @Provides
     @Named("userEvtSubscriptionGroupId")
     String userEvtSubscriptionGroupId(ContainerIdResolver containerIdResolver) {
+        return getSubscriptionId(containerIdResolver);
+    }
+
+    private String getSubscriptionId(ContainerIdResolver containerIdResolver) {
         return "console-" + containerIdResolver.getContainerId();
     }
 

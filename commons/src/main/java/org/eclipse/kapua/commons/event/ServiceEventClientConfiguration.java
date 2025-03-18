@@ -17,12 +17,12 @@ import org.eclipse.kapua.event.ServiceEventBusListener;
 public class ServiceEventClientConfiguration {
 
     private String address;
-    private String clientName;
+    private String subscriberGroup;
     private ServiceEventBusListener eventListener;
 
-    public ServiceEventClientConfiguration(String address, String subscriberName, ServiceEventBusListener eventListener) {
+    public ServiceEventClientConfiguration(String address, String subscriberGroup, ServiceEventBusListener eventListener) {
         this.address = address;
-        this.clientName = subscriberName;
+        this.subscriberGroup = subscriberGroup;
         this.eventListener = eventListener;
     }
 
@@ -30,8 +30,8 @@ public class ServiceEventClientConfiguration {
         return address;
     }
 
-    public String getClientName() {
-        return clientName;
+    public String getSubscriberGroup() {
+        return subscriberGroup;
     }
 
     public ServiceEventBusListener getEventListener() {
