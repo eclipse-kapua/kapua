@@ -117,10 +117,10 @@ public class JobEngineServiceClient implements JobEngineService {
     public void startJob(KapuaId scopeId, KapuaId jobId, JobStartOptions jobStartOptions) throws KapuaException {
         try {
             String path = String.format("start-with-options/%s/%s", scopeId.toCompactId(), jobId.toCompactId());
-            String jobStartOptionsJson = XmlUtil.marshalJson(jobStartOptions);
-            LOG.debug("POST {} - Content: {}", path, jobStartOptionsJson);
+            String jobStartOptionsXml = XmlUtil.marshal(jobStartOptions);
+            LOG.debug("POST {} - Content: {}", path, jobStartOptionsXml);
 
-            Response response = getPreparedRequest(path).post(Entity.json(jobStartOptionsJson));
+            Response response = getPreparedRequest(path).post(Entity.xml(jobStartOptionsXml));
 
             checkResponse("POST", path, response);
         } catch (ClientErrorException | JAXBException e) {

@@ -41,7 +41,7 @@ public class JobEngine extends AbstractKapuaResource {
 
     @POST
     @Path("{jobId}/_start")
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public void startJob(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("jobId") EntityId jobId,
