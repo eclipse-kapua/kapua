@@ -51,6 +51,7 @@ public class AuthenticationJAXBContextProvider implements JAXBContextProvider {
                     KapuaToption.class,
                     KapuaTdesignate.class,
                     KapuaTobject.class,
+
                     // Kapua Service Event
                     ServiceEvent.class,
                     EventStoreRecordCreator.class,

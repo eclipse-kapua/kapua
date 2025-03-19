@@ -12,7 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.job.engine.app.web.jaxb;
 
+import org.eclipse.kapua.commons.rest.model.IsJobRunningMultipleResponse;
 import org.eclipse.kapua.commons.rest.model.IsJobRunningResponse;
+import org.eclipse.kapua.commons.rest.model.MultipleJobIdRequest;
 import org.eclipse.kapua.commons.rest.model.errors.CleanJobDataExceptionInfo;
 import org.eclipse.kapua.commons.rest.model.errors.EntityNotFoundExceptionInfo;
 import org.eclipse.kapua.commons.rest.model.errors.ExceptionInfo;
@@ -37,7 +39,6 @@ import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordQuery;
 import org.eclipse.kapua.commons.util.xml.JAXBContextProvider;
 import org.eclipse.kapua.event.ServiceEvent;
 import org.eclipse.kapua.job.engine.JobStartOptions;
-import org.eclipse.kapua.job.engine.client.JobStartOptionsClient;
 import org.eclipse.kapua.job.engine.commons.model.JobStepPropertiesOverrides;
 import org.eclipse.kapua.job.engine.commons.model.JobTargetSublist;
 import org.eclipse.kapua.service.authentication.AuthenticationXmlRegistry;
@@ -63,21 +64,6 @@ import org.eclipse.kapua.service.device.management.packages.model.install.Device
 import org.eclipse.kapua.service.device.management.packages.model.install.DevicePackageInstallRequest;
 import org.eclipse.kapua.service.device.management.packages.model.uninstall.DevicePackageUninstallOptions;
 import org.eclipse.kapua.service.device.management.packages.model.uninstall.DevicePackageUninstallRequest;
-import org.eclipse.kapua.service.job.Job;
-import org.eclipse.kapua.service.job.JobQuery;
-import org.eclipse.kapua.service.job.JobXmlRegistry;
-import org.eclipse.kapua.service.job.execution.JobExecution;
-import org.eclipse.kapua.service.job.execution.JobExecutionListResult;
-import org.eclipse.kapua.service.job.execution.JobExecutionQuery;
-import org.eclipse.kapua.service.job.execution.JobExecutionXmlRegistry;
-import org.eclipse.kapua.service.job.step.JobStep;
-import org.eclipse.kapua.service.job.step.JobStepListResult;
-import org.eclipse.kapua.service.job.step.JobStepQuery;
-import org.eclipse.kapua.service.job.step.JobStepXmlRegistry;
-import org.eclipse.kapua.service.job.step.definition.JobStepProperty;
-import org.eclipse.kapua.service.job.targets.JobTarget;
-import org.eclipse.kapua.service.job.targets.JobTargetListResult;
-import org.eclipse.kapua.service.job.targets.JobTargetQuery;
 import org.eclipse.kapua.service.scheduler.trigger.Trigger;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerListResult;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerQuery;
@@ -113,30 +99,22 @@ public class JobEngineJAXBContextProvider implements JAXBContextProvider {
                     IllegalArgumentExceptionInfo.class,
                     IllegalNullArgumentExceptionInfo.class,
 
-                    // Job Engine
-                    JobStartOptionsClient.class,
-                    JobStartOptions.class,
-                    JobTargetSublist.class,
-                    IsJobRunningResponse.class,
-                    JobStepPropertiesOverrides.class,
-
-                    // Job Engine Client
-                    CleanJobDataExceptionInfo.class,
-                    JobAlreadyRunningExceptionInfo.class,
-                    JobEngineExceptionInfo.class,
-                    JobInvalidTargetExceptionInfo.class,
-                    JobMissingStepExceptionInfo.class,
-                    JobMissingTargetExceptionInfo.class,
-                    JobNotRunningExceptionInfo.class,
-                    JobResumingExceptionInfo.class,
-                    JobRunningExceptionInfo.class,
-                    JobScopedEngineExceptionInfo.class,
-                    JobStartingExceptionInfo.class,
-                    JobStoppingExceptionInfo.class,
-
                     // Authentication
                     AuthenticationXmlRegistry.class,
                     AccessToken.class,
+
+                    // Device Management
+                    DeviceCommandInput.class,
+                    DevicePackageDownloadRequest.class,
+                    DevicePackageDownloadOptions.class,
+                    DevicePackageInstallRequest.class,
+                    DevicePackageInstallOptions.class,
+                    DevicePackageUninstallRequest.class,
+                    DevicePackageUninstallOptions.class,
+                    DeviceAssets.class,
+                    DeviceConfiguration.class,
+
+                    KuraDeviceConfiguration.class,
 
                     // Device Management Inventory
                     DeviceInventoryContainer.class,
@@ -153,45 +131,34 @@ public class JobEngineJAXBContextProvider implements JAXBContextProvider {
                     DeviceKeystoreCSR.class,
                     DeviceKeystoreXmlRegistry.class,
 
-                    // Jobs
-                    Job.class,
-                    JobQuery.class,
-                    JobXmlRegistry.class,
+                    // Job Engine
+                    JobStartOptions.class,
+                    IsJobRunningResponse.class,
+                    IsJobRunningMultipleResponse.class,
+                    MultipleJobIdRequest.class,
 
-                    JobStep.class,
-                    JobStepListResult.class,
-                    JobStepQuery.class,
-                    JobStepXmlRegistry.class,
-                    JobStepProperty.class,
-
-                    JobExecution.class,
-                    JobExecutionListResult.class,
-                    JobExecutionQuery.class,
-                    JobExecutionXmlRegistry.class,
-
-                    JobTarget.class,
-                    JobTargetListResult.class,
-                    JobTargetQuery.class,
-                    JobExecutionXmlRegistry.class,
-
+                    // Job Engine Commons
                     JobTargetSublist.class,
+                    JobStepPropertiesOverrides.class,
 
-                    DeviceCommandInput.class,
-                    DevicePackageDownloadRequest.class,
-                    DevicePackageDownloadOptions.class,
-                    DevicePackageInstallRequest.class,
-                    DevicePackageInstallOptions.class,
-                    DevicePackageUninstallRequest.class,
-                    DevicePackageUninstallOptions.class,
-                    DeviceAssets.class,
-                    DeviceConfiguration.class,
+                    // Job Engine Exception Info
+                    CleanJobDataExceptionInfo.class,
+                    JobAlreadyRunningExceptionInfo.class,
+                    JobEngineExceptionInfo.class,
+                    JobScopedEngineExceptionInfo.class,
+                    JobInvalidTargetExceptionInfo.class,
+                    JobMissingStepExceptionInfo.class,
+                    JobMissingTargetExceptionInfo.class,
+                    JobNotRunningExceptionInfo.class,
+                    JobResumingExceptionInfo.class,
+                    JobRunningExceptionInfo.class,
+                    JobStartingExceptionInfo.class,
+                    JobStoppingExceptionInfo.class,
 
                     Trigger.class,
                     TriggerListResult.class,
                     TriggerQuery.class,
                     TriggerXmlRegistry.class,
-
-                    KuraDeviceConfiguration.class,
 
                     // KapuaEvent
                     ServiceEvent.class,
