@@ -52,12 +52,18 @@ Feature: Device Broker Integration
     Then Only 1 client of the pool called "stealing" is still connected within 10 seconds
 
   Scenario: Test the forced disconnection of a connected device
+    #repeat couple of times to be sure the event messages are received correctly by all the different subscribers group
 
     Given Client with name "client-disc-1" with client id "client-disc-1" user "kapua-broker" password "kapua-password" is connected
-    Then Device status is "CONNECTED" within 5 seconds for client id "client-disc-1"
+    Then Check device "client-disc-1" connection reports is connected within 5 seconds
     When I Force Disconnect connection with client id "client-disc-1"
-    Then Device status is "DISCONNECTED" within 10 seconds for client id "client-disc-1"
+    Then Check device "client-disc-1" connection reports is disconnected within 5 seconds
     And Client named "client-disc-1" is not connected
+    Given Client with name "client-disc-2" with client id "client-disc-2" user "kapua-broker" password "kapua-password" is connected
+    Then Check device "client-disc-2" connection reports is connected within 5 seconds
+    When I Force Disconnect connection with client id "client-disc-2"
+    Then Check device "client-disc-2" connection reports is disconnected within 5 seconds
+    And Client named "client-disc-2" is not connected
 
   Scenario: Test the stealing link handling with 2 clients with same client id but different account (they should be able to connect both)
     Given I login as user with name "kapua-sys" and password "kapua-password"
