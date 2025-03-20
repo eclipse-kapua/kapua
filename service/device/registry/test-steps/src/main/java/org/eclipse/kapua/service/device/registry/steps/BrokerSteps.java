@@ -534,6 +534,29 @@ public class BrokerSteps extends TestBase {
         stepData.put(clientName, mqttClient);
     }
 
+    @When("Check device {string} connection reports is connected within {int} seconds")
+    public void clientConnected(String clientName, int timeout) throws Exception {
+        checkClientConnection(clientName, true, timeout);
+    }
+
+    @When("Check device {string} connection reports is disconnected within {int} seconds")
+    public void clientDisconnected(String clientName, int timeout) throws Exception {
+        checkClientConnection(clientName, false, timeout);
+    }
+
+    private void checkClientConnection(String clientName, boolean connected, int timeout) throws Exception {
+        MqttClient mqttClient = (MqttClient)stepData.get(clientName);
+        if (mqttClient == null) {
+            Assert.fail("Cannot find client " + clientName);
+        }
+        primeException();
+        while(mqttClient.isConnected()!=connected && timeout-->0) {
+            Thread.sleep(1000);
+            logger.info("Device(s) connection check countdown check: {}", timeout);
+        }
+        Assert.assertEquals("Unexpected device connection. Device should be " + (connected ? "connected!" : "disconnected!"), connected, mqttClient.isConnected());
+    }
+
     @When("topic {string} content {string} is published by client named {string}")
     public void publishMessageByClient(String topic, String content, String clientName) throws Exception {
         MqttClient mqttClient = (MqttClient) stepData.get(clientName);
