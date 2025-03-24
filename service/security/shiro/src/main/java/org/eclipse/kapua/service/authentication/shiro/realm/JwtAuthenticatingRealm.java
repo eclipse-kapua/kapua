@@ -243,7 +243,10 @@ public class JwtAuthenticatingRealm extends KapuaAuthenticatingRealm implements 
     private String extractExternalUsername(JsonObject userInfo) {
         final String externalUsername;
         try {
-            externalUsername = userInfo.getString(jwtProcessor.getExternalUsernameClaimName());
+            // Using JsonObject.getString(String, null) to return 'null' when field is not present in the UserInfo JsonObject.
+            // JsonObject.getString(String) throws NPE when element is not present.
+            // See JsonObject.getString(String) javadoc.
+            externalUsername = userInfo.getString(jwtProcessor.getExternalUsernameClaimName(), null);
         } catch (Exception e) {
             throw new ShiroException("Failed to parse JWT", e);
         }
@@ -261,7 +264,7 @@ public class JwtAuthenticatingRealm extends KapuaAuthenticatingRealm implements 
      */
     private User resolveExternalUsernameWithOpenIdProvider(JwtCredentials jwtCredentials) throws KapuaException {
 
-        // Ask to the OpenId Provider the user's info
+        // Ask the OpenID Provider the user's info
         JsonObject userInfo = openIDService.getUserInfo(jwtCredentials.getAccessToken());
         String externalUsername = extractExternalUsername(userInfo);
 
