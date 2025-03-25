@@ -23,21 +23,35 @@ import org.eclipse.kapua.job.engine.JobEngineFactory;
 import org.eclipse.kapua.job.engine.JobEngineService;
 import org.eclipse.kapua.job.engine.JobStartOptions;
 import org.eclipse.kapua.locator.KapuaLocator;
+import org.eclipse.kapua.model.KapuaEntity;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.common.StepData;
+import org.eclipse.kapua.service.device.registry.DeviceAttributes;
+import org.eclipse.kapua.service.device.registry.DeviceFactory;
+import org.eclipse.kapua.service.device.registry.DeviceListResult;
+import org.eclipse.kapua.service.device.registry.DeviceQuery;
+import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.job.Job;
+import org.eclipse.kapua.service.job.targets.JobTarget;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Singleton
 public class JobEngineSteps extends JobServiceTestBase {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobEngineSteps.class);
 
+    private DeviceFactory deviceFactory;
+    private DeviceRegistryService deviceRegistryService;
     private JobEngineService jobEngineService;
     private JobEngineFactory jobEngineFactory;
 
@@ -55,6 +69,8 @@ public class JobEngineSteps extends JobServiceTestBase {
     public void setServices() {
         KapuaLocator locator = KapuaLocator.getInstance();
 
+        deviceFactory= locator.getFactory(DeviceFactory.class);
+        deviceRegistryService = locator.getService(DeviceRegistryService.class);
         jobEngineService = locator.getService(JobEngineService.class);
         jobEngineFactory = locator.getFactory(JobEngineFactory.class);
     }
@@ -65,6 +81,38 @@ public class JobEngineSteps extends JobServiceTestBase {
         KapuaId currentJobId = (KapuaId) stepData.get(CURRENT_JOB_ID);
         try {
             JobStartOptions jobStartOptions = jobEngineFactory.newJobStartOptions();
+            jobStartOptions.setEnqueue(true);
+            jobEngineService.startJob(getCurrentScopeId(), currentJobId, jobStartOptions);
+        } catch (KapuaException ke) {
+            verifyException(ke);
+        }
+    }
+
+    @When("I start a job for targets")
+    public void startJobOnPreciseTargets(List<String> clientIds) throws Exception {
+        primeException();
+        KapuaId currentJobId = (KapuaId) stepData.get(CURRENT_JOB_ID);
+        try {
+            DeviceQuery deviceQuery = deviceFactory.newQuery(getCurrentScopeId());
+            deviceQuery.setPredicate(
+                    deviceQuery.attributePredicate(DeviceAttributes.CLIENT_ID, clientIds)
+            );
+            DeviceListResult devices = deviceRegistryService.query(deviceQuery);
+            List<KapuaId> deviceIds = devices.getItems()
+                    .stream()
+                    .map(KapuaEntity::getId)
+                    .collect(Collectors.toList());
+
+            Set<KapuaId> targetIdsSublist = new HashSet<>();
+            List<JobTarget> currentJobTargets = (ArrayList<JobTarget>)stepData.get(JOB_TARGET_LIST);
+            for (JobTarget jobT : currentJobTargets) {
+                if (deviceIds.contains(jobT.getJobTargetId())) {
+                    targetIdsSublist.add(jobT.getId());
+                }
+            }
+
+            JobStartOptions jobStartOptions = jobEngineFactory.newJobStartOptions();
+            jobStartOptions.setTargetIdSublist(targetIdsSublist);
             jobStartOptions.setEnqueue(true);
             jobEngineService.startJob(getCurrentScopeId(), currentJobId, jobStartOptions);
         } catch (KapuaException ke) {
