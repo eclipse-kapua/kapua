@@ -18,6 +18,7 @@ import java.util.Map;
 import javax.xml.bind.JAXBContext;
 
 import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.commons.rest.model.IsJobRunningMultipleResponse;
 import org.eclipse.kapua.commons.rest.model.IsJobRunningResponse;
 import org.eclipse.kapua.commons.rest.model.errors.ExceptionInfo;
 import org.eclipse.kapua.commons.rest.model.errors.JobAlreadyRunningExceptionInfo;
@@ -36,9 +37,6 @@ import org.eclipse.kapua.commons.service.event.store.api.EventStoreXmlRegistry;
 import org.eclipse.kapua.commons.util.xml.JAXBContextProvider;
 import org.eclipse.kapua.event.ServiceEvent;
 import org.eclipse.kapua.job.engine.JobStartOptions;
-import org.eclipse.kapua.job.engine.client.JobStartOptionsClient;
-import org.eclipse.kapua.job.engine.commons.model.JobStepPropertiesOverrides;
-import org.eclipse.kapua.job.engine.commons.model.JobTargetSublist;
 import org.eclipse.kapua.model.config.metatype.KapuaTad;
 import org.eclipse.kapua.model.config.metatype.KapuaTdesignate;
 import org.eclipse.kapua.model.config.metatype.KapuaTicon;
@@ -97,8 +95,6 @@ import org.eclipse.kapua.service.device.management.packages.model.DevicePackages
 import org.eclipse.kapua.service.device.management.packages.model.download.DevicePackageDownloadRequest;
 import org.eclipse.kapua.service.device.management.packages.model.uninstall.DevicePackageUninstallRequest;
 import org.eclipse.kapua.service.job.Job;
-import org.eclipse.kapua.service.job.JobListResult;
-import org.eclipse.kapua.service.job.JobXmlRegistry;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserListResult;
 import org.eclipse.persistence.jaxb.JAXBContextFactory;
@@ -140,15 +136,11 @@ public class TestJAXBContextProvider implements JAXBContextProvider {
 
                     // Jobs
                     Job.class,
-                    JobListResult.class,
-                    JobXmlRegistry.class,
 
                     // Job Engine
-                    JobStartOptionsClient.class,
                     JobStartOptions.class,
-                    JobTargetSublist.class,
                     IsJobRunningResponse.class,
-                    JobStepPropertiesOverrides.class,
+                    IsJobRunningMultipleResponse.class,
 
                     // Job Engine Client
                     JobAlreadyRunningExceptionInfo.class,
