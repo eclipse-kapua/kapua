@@ -135,6 +135,29 @@ Feature: Job Engine Service - Operations
     Then I confirm that job has 2 job execution
     And I confirm that job target in job has step index 0 and status "PROCESS_OK"
 
+  Scenario: Start - job started on selected devices
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I create a device with name "rpione3"
+    And I create a job with the name "TestJob"
+    And I add device targets to job
+      | rpione3 |
+    And I create a device with name "rpione4"
+    And I add device targets to job
+      | rpione4 |
+    And I search for step definition with the name
+      | Bundle Start |
+    And I add job step to job with name "Test Step - Bundle Start" and with selected job step definition and properties
+      | name     | type              | value |
+      | bundleId | java.lang.String  | 34    |
+      | timeout  | java.lang.Long    | 5000  |
+    When I start a job for targets
+      | rpione4 |
+    And I wait job to finish its execution up to 10s
+    Then I confirm that job has 1 job execution
+    And I confirm that device job target "rpione3" in job has step index 0 and status "PROCESS_AWAITING"
+    And I confirm that device job target "rpione4" in job has step index 0 and status "PROCESS_FAILED"
+
   Scenario: Start - JobTarget failed, then "loading status" (process_awaiting), then ok
 
     Given I login as user with name "kapua-sys" and password "kapua-password"

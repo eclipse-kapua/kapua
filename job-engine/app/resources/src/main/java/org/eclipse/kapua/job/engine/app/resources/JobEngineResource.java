@@ -69,7 +69,7 @@ public class JobEngineResource {
 
     @POST
     @Path("start-with-options/{scopeId}/{jobId}")
-    @Consumes({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_XML})
     public void startJob(@PathParam("scopeId") KapuaId scopeId, @PathParam("jobId") KapuaId jobId, JobStartOptions jobStartOptions) throws KapuaException {
         jobEngineService.startJob(scopeId, jobId, jobStartOptions);
     }

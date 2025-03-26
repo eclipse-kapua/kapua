@@ -170,11 +170,12 @@ public class JobTargetServiceSteps extends JobServiceTestBase {
         JobTargetCreator jobTargetCreator = jobTargetFactory.newCreator(getCurrentScopeId());
         jobTargetCreator.setJobId(job.getId());
 
-        List<JobTarget> jobTargets = new ArrayList<>();
+        List<JobTarget> jobTargets = (ArrayList<JobTarget>) stepData.get(JOB_TARGET_LIST) == null ? new ArrayList<>() : (ArrayList<JobTarget>) stepData.get(JOB_TARGET_LIST);
         for (KapuaId deviceId : deviceIds) {
             jobTargetCreator.setJobTargetId(deviceId);
             JobTarget jobTarget = jobTargetService.create(jobTargetCreator);
             stepData.put(JOB_TARGET, jobTarget);
+            jobTargets.add(jobTarget);
         }
         stepData.put(JOB_TARGET_LIST, jobTargets);
     }
