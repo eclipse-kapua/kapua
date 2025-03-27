@@ -223,21 +223,23 @@ public abstract class AbstractOpenIDService implements OpenIDService {
     public JsonObject getTokens(final String authCode, final URI redirectUri) throws OpenIDTokenException {
         // FIXME: switch to HttpClient implementation: better performance and connection caching
 
+        URL url = null;
+        HttpURLConnection urlConnection = null;
+        List<NameValuePair> parameters = new ArrayList<>();
         try {
-            URL url = new URL(getTokenUri());
+            url = new URL(getTokenUri());
 
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("POST");
             urlConnection.setRequestProperty(HttpHeaders.CONTENT_TYPE, URLEncodedUtils.CONTENT_TYPE);
 
-            List<NameValuePair> parameters = new ArrayList<>();
             parameters.add(new BasicNameValuePair("grant_type", "authorization_code"));
             parameters.add(new BasicNameValuePair("code", authCode));
             parameters.add(new BasicNameValuePair("client_id", getClientId()));
 
             String clientSecret = getClientSecret();
             if (clientSecret != null && !clientSecret.isEmpty()) {
-                parameters.add(new BasicNameValuePair("client_secret", clientSecret));
+                parameters.add(new BasicNameValuePair("client_secret", clientSecret + "asd"));
             }
 
             parameters.add(new BasicNameValuePair("redirect_uri", redirectUri.toString()));
@@ -251,7 +253,10 @@ public abstract class AbstractOpenIDService implements OpenIDService {
             }
 
             // parse result
-            try (InputStream stream = urlConnection.getInputStream(); JsonReader jsonReader = Json.createReader(stream)) {
+            try (
+                InputStream stream = urlConnection.getInputStream();
+                JsonReader jsonReader = Json.createReader(stream)
+            ) {
                 JsonObject result = jsonReader.readObject();
                 LOG.debug("Successfully obtained tokens.");
 
@@ -261,18 +266,23 @@ public abstract class AbstractOpenIDService implements OpenIDService {
             }
         } catch (OpenIDException se) {
             LOG.error("Error while retrieving the String of the token API endpoint {}", se.getLocalizedMessage(), se);
+            logError(url, urlConnection, parameters, se.getLocalizedMessage());
             throw new OpenIDTokenException(se);
         } catch (MalformedURLException mue) {
             LOG.error("Malformed token API endpoint URL {}", mue.getLocalizedMessage(), mue);
+            logError(url, urlConnection, parameters, mue.getLocalizedMessage());
             throw new OpenIDTokenException(mue);
         } catch (ProtocolException pe) {
             LOG.error("Wrong HTTP request method {}", pe.getLocalizedMessage(), pe);
+            logError(url, urlConnection, parameters, pe.getLocalizedMessage());
             throw new OpenIDTokenException(pe);
         } catch (UnsupportedEncodingException uee) {
             LOG.error("Unsupported HTTP request default encoding {}", uee.getLocalizedMessage(), uee);
+            logError(url, urlConnection, parameters, uee.getLocalizedMessage());
             throw new OpenIDTokenException(uee);
         } catch (IOException ioe) {
             LOG.error("Error while getting the tokens {}", ioe.getLocalizedMessage(), ioe);
+            logError(url, urlConnection, parameters, ioe.getLocalizedMessage());
             throw new OpenIDTokenException(ioe);
         }
     }
@@ -282,15 +292,22 @@ public abstract class AbstractOpenIDService implements OpenIDService {
      */
     @Override
     public JsonObject getUserInfo(final String accessToken) throws OpenIDTokenException {
-        try {
-            URL url = new URL(getUserInfoUri());
 
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+        URL url = null;
+        HttpURLConnection urlConnection = null;
+        List<NameValuePair> parameters = new ArrayList<>();
+        try {
+            url = new URL(getUserInfoUri());
+
+            urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.setRequestProperty(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
 
             // parse result
-            try (InputStream stream = urlConnection.getInputStream(); JsonReader jsonReader = Json.createReader(stream)) {
+            try (
+                InputStream stream = urlConnection.getInputStream();
+                JsonReader jsonReader = Json.createReader(stream)
+            ) {
                 JsonObject result = jsonReader.readObject();
                 LOG.debug("Successfully obtained userInfo.");
 
@@ -300,23 +317,28 @@ public abstract class AbstractOpenIDService implements OpenIDService {
             }
         } catch (OpenIDException se) {
             LOG.error("Error while retrieving the String of the token API endpoint {}", se.getLocalizedMessage(), se);
+            logError(url, urlConnection, parameters, se.getLocalizedMessage());
             throw new OpenIDTokenException(se);
         } catch (MalformedURLException mue) {
             LOG.error("Malformed token API endpoint URL {}", mue.getLocalizedMessage(), mue);
+            logError(url, urlConnection, parameters, mue.getLocalizedMessage());
             throw new OpenIDTokenException(mue);
         } catch (ProtocolException pe) {
             LOG.error("Wrong HTTP request method {}", pe.getLocalizedMessage(), pe);
+            logError(url, urlConnection, parameters, pe.getLocalizedMessage());
             throw new OpenIDTokenException(pe);
         } catch (UnsupportedEncodingException uee) {
             LOG.error("Unsupported HTTP request default encoding {}", uee.getLocalizedMessage(), uee);
+            logError(url, urlConnection, parameters, uee.getLocalizedMessage());
             throw new OpenIDTokenException(uee);
         } catch (IOException ioe) {
             LOG.error("Error while getting the tokens {}", ioe.getLocalizedMessage(), ioe);
+            logError(url, urlConnection, parameters, ioe.getLocalizedMessage());
             throw new OpenIDTokenException(ioe);
         }
     }
 
-    private void logRequest(URL url, HttpURLConnection urlConnection, List<NameValuePair> parameters, JsonObject result) throws IOException {
+    private void logRequest(URL url, HttpURLConnection urlConnection, List<NameValuePair> parameters, JsonObject result) {
         // Log operation details
         ConfigurationPrinter reqLogger =
                 ConfigurationPrinter
@@ -335,7 +357,15 @@ public abstract class AbstractOpenIDService implements OpenIDService {
                             parameter.getValue());
         }
         reqLogger.closeSection();
-        reqLogger.addParameter("Response code", urlConnection.getResponseCode());
+
+        try {
+            reqLogger.addParameter("Response code", urlConnection.getResponseCode());
+        }
+        catch (IOException ioException) {
+            LOG.warn("Error while obtaining the HTTP response code to be logged in the SSO Provider log request. ");
+            reqLogger.addParameter("Response code", "Unavailable");
+        }
+
         reqLogger.openSection("Response body:");
         for (Map.Entry<String, JsonValue> entry : result.entrySet()) {
             reqLogger.addParameter(
@@ -345,6 +375,39 @@ public abstract class AbstractOpenIDService implements OpenIDService {
                             HIDDEN_SECRET :
                             entry.getValue());
         }
+
+        reqLogger.printLog();
+    }
+
+    private void logError(URL url, HttpURLConnection urlConnection, List<NameValuePair> parameters, String errorMessage) {
+        // Log operation details
+        ConfigurationPrinter reqLogger =
+                ConfigurationPrinter
+                        .create()
+                        .withLogger(LOG)
+                        .withLogLevel(ConfigurationPrinter.LogLevel.ERROR)
+                        .withTitle("OpenID HTTP request");
+        reqLogger.addParameter("URL", url);
+        reqLogger.addParameter("HTTP request method", urlConnection != null ? urlConnection.getRequestMethod() : "N/A");
+        reqLogger.openSection("Parameters:");
+        for (NameValuePair parameter : parameters) {
+            reqLogger.addParameter(
+                    parameter.getName(),
+                    (parameter.getName().equals("code") || parameter.getName().equals("client_secret")) ?
+                            HIDDEN_SECRET :
+                            parameter.getValue());
+        }
+        reqLogger.closeSection();
+
+        try {
+            reqLogger.addParameter("Response code", urlConnection != null ? urlConnection.getResponseCode() : "N/A");
+        }
+        catch (IOException ioException) {
+            LOG.warn("Error while obtaining the HTTP response code to be logged in the SSO Provider log request. ");
+            reqLogger.addParameter("Response code", "N/A");
+        }
+
+        reqLogger.addParameter("Error message", errorMessage);
 
         reqLogger.printLog();
     }
