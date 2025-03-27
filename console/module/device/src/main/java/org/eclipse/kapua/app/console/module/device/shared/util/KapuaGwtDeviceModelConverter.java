@@ -105,6 +105,7 @@ public class KapuaGwtDeviceModelConverter {
         gwtDevice.setConnectionInterface(device.getConnectionInterface());
         if (device.getConnection() != null) {
             DeviceConnection connection = device.getConnection();
+            gwtDevice.setDeviceConnectionId(KapuaGwtCommonsModelConverter.convertKapuaId(connection.getId()));
             gwtDevice.setClientIp(connection.getClientIp());
             gwtDevice.setGwtDeviceConnectionStatus(connection.getStatus().toString());
             gwtDevice.setDeviceUserId(connection.getUserId().toCompactId());
