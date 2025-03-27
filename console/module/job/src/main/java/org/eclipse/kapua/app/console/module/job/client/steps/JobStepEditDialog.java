@@ -12,13 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.job.client.steps;
 
-import com.extjs.gxt.ui.client.data.LoadEvent;
-import com.extjs.gxt.ui.client.event.LoadListener;
-import com.extjs.gxt.ui.client.widget.Component;
-import com.extjs.gxt.ui.client.widget.form.Field;
-import com.extjs.gxt.ui.client.widget.form.LabelField;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaErrorCode;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.client.util.FailureHandler;
@@ -31,9 +27,13 @@ import org.eclipse.kapua.app.console.module.job.shared.service.GwtJobStepDefinit
 import org.eclipse.kapua.app.console.module.job.shared.service.GwtJobStepDefinitionServiceAsync;
 import org.eclipse.kapua.app.console.module.job.shared.service.GwtJobStepService;
 import org.eclipse.kapua.app.console.module.job.shared.service.GwtJobStepServiceAsync;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.extjs.gxt.ui.client.data.LoadEvent;
+import com.extjs.gxt.ui.client.event.LoadListener;
+import com.extjs.gxt.ui.client.widget.Component;
+import com.extjs.gxt.ui.client.widget.form.Field;
+import com.extjs.gxt.ui.client.widget.form.LabelField;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class JobStepEditDialog extends JobStepAddDialog {
 
@@ -53,14 +53,6 @@ public class JobStepEditDialog extends JobStepAddDialog {
         jobStepIndex.setAllowBlank(false);
 
         loadJobStep();
-    }
-
-    @Override
-    protected void refreshJobStepDefinition(GwtJobStepDefinition gwtJobStepDefinition) {
-        super.refreshJobStepDefinition(gwtJobStepDefinition);
-        if (exampleButton != null) {
-            exampleButton.hide();
-        }
     }
 
     private void loadJobStep() {
