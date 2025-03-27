@@ -138,6 +138,14 @@ public class GwtDevice extends GwtUpdatableEntityModel implements Serializable {
         return get("deviceConnectionStatus");
     }
 
+    public String getDeviceConnectionId() {
+        return get("deviceConnectionId");
+    }
+
+    public void setDeviceConnectionId(String deviceConnectionId) {
+        set("deviceConnectionId", deviceConnectionId);
+    }
+
     public GwtDeviceConnectionStatus getGwtDeviceConnectionStatusEnum() {
         return get("deviceConnectionStatusEnum");
     }

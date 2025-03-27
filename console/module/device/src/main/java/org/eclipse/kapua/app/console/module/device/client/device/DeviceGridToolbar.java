@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.device.client.device;
 
+import com.extjs.gxt.ui.client.event.Events;
 import org.eclipse.kapua.app.console.module.api.client.messages.ConsoleMessages;
 import org.eclipse.kapua.app.console.module.api.client.resources.icons.IconSet;
 import org.eclipse.kapua.app.console.module.api.client.resources.icons.KapuaIcon;
@@ -22,6 +23,8 @@ import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
 import org.eclipse.kapua.app.console.module.device.shared.model.GwtDevice;
 import org.eclipse.kapua.app.console.module.device.shared.model.GwtDeviceQuery;
 import org.eclipse.kapua.app.console.module.device.shared.model.GwtDeviceQueryPredicates;
+import org.eclipse.kapua.app.console.module.device.shared.model.connection.GwtDeviceConnectionStatus;
+import org.eclipse.kapua.app.console.module.device.shared.model.permission.DeviceConnectionSessionPermission;
 import org.eclipse.kapua.app.console.module.device.shared.model.permission.DeviceSessionPermission;
 
 import com.extjs.gxt.ui.client.event.ButtonEvent;
@@ -35,6 +38,7 @@ public class DeviceGridToolbar extends EntityCRUDToolbar<GwtDevice> {
 
     private static final ConsoleMessages MSGS = GWT.create(ConsoleMessages.class);
 
+    private KapuaButton disconnectButton;
     private KapuaButton export;
 
     public DeviceGridToolbar(GwtSession currentSession) {
@@ -48,8 +52,23 @@ public class DeviceGridToolbar extends EntityCRUDToolbar<GwtDevice> {
 
     @Override
     protected void onRender(Element target, int index) {
-        export = new KapuaButton(MSGS.exportToCSV(), new KapuaIcon(IconSet.FILE_TEXT_O),
-                new SelectionListener<ButtonEvent>() {
+
+        disconnectButton = new KapuaButton("Disconnect", new KapuaIcon(IconSet.CHAIN_BROKEN), new SelectionListener<ButtonEvent>() {
+
+            @Override
+            public void componentSelected(ButtonEvent buttonEvent) {
+                DeviceDisconnectDialog dialog = new DeviceDisconnectDialog(gridSelectionModel.getSelectedItem());
+                dialog.addListener(Events.Hide, getHideDialogListener());
+                dialog.show();
+            }
+        });
+        disconnectButton.disable();
+
+        if (currentSession.hasPermission(DeviceConnectionSessionPermission.write())) {
+            addExtraButton(disconnectButton);
+        }
+
+        export = new KapuaButton(MSGS.exportToCSV(), new KapuaIcon(IconSet.FILE_TEXT_O), new SelectionListener<ButtonEvent>() {
 
                     @Override
                     public void componentSelected(ButtonEvent be) {
@@ -57,7 +76,9 @@ public class DeviceGridToolbar extends EntityCRUDToolbar<GwtDevice> {
                     }
                 });
         addExtraButton(export);
+
         super.onRender(target, index);
+
         getAddEntityButton().setEnabled(currentSession.hasPermission(DeviceSessionPermission.write()));
         getEditEntityButton().disable();
     }
@@ -78,6 +99,21 @@ public class DeviceGridToolbar extends EntityCRUDToolbar<GwtDevice> {
             dialog = new DeviceDeleteDialog(selectedEntity);
         }
         return dialog;
+    }
+
+    @Override
+    protected void updateButtonEnablement() {
+        super.updateButtonEnablement();
+
+        getAddEntityButton().setEnabled(currentSession.hasPermission(DeviceSessionPermission.write()));
+        getEditEntityButton().setEnabled(selectedEntity != null && currentSession.hasPermission(DeviceSessionPermission.write()) );
+        getDeleteEntityButton().setEnabled(selectedEntity != null && currentSession.hasPermission(DeviceSessionPermission.delete()));
+
+        disconnectButton.setEnabled(
+                selectedEntity != null &&
+                selectedEntity.getDeviceConnectionId() != null &&
+                GwtDeviceConnectionStatus.CONNECTED.equals(selectedEntity.getGwtDeviceConnectionStatusEnum()) &&
+                currentSession.hasPermission(DeviceConnectionSessionPermission.write()));
     }
 
     private void export(String format) {
