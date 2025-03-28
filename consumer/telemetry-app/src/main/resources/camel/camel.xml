@@ -21,6 +21,7 @@
             <bean ref="kapuaCamelFilter" method="bindSession"/>
             <bean ref="kapuaDataConverter" method="convertToData"/>
             <to uri="bean:dataStorageMessageProcessor?method=processMessage"/>
+            <to uri="bean:dataStorageMessageProcessor?method=updateAsset"/>
             <bean ref="kapuaCamelFilter" method="unbindSession"/>
         </pipeline>
     </route>
