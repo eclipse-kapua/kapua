@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -20,13 +20,10 @@ import org.eclipse.kapua.message.device.data.KapuaDataMessage;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.camel.message.CamelKapuaMessage;
 import org.eclipse.kapua.service.datastore.MessageStoreService;
-import org.eclipse.kapua.service.datastore.internal.MetricsDatastore;
 import org.eclipse.kapua.service.datastore.internal.mediator.DatastoreCommunicationException;
 import org.eclipse.kapua.service.device.management.asset.store.DeviceAssetStoreService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
 
 /**
  * Data storage message listener
@@ -42,20 +39,12 @@ public class DataStorageMessageProcessor {
 
     private final DeviceAssetStoreService deviceAssetStoreService = KapuaLocator.getInstance().getService(DeviceAssetStoreService.class);
 
-    private MetricsDatastore metrics;
-
-    @Inject
-    public DataStorageMessageProcessor(MetricsDatastore metricsDatastore) {
-        metrics = metricsDatastore;
-    }
-
     /**
      * Process a data message.
      *
      * @throws KapuaException
      */
     public void processMessage(CamelKapuaMessage<?> message) throws KapuaException {
-        // data messages
         LOG.debug("Received data message from device channel: client id '{}' - {}", message.getMessage().getClientId(), message.getMessage().getChannel());
         try {
             messageStoreService.store(message.getMessage(), message.getDatastoreId());
@@ -63,8 +52,14 @@ public class DataStorageMessageProcessor {
             message.setDatastoreId(e.getUuid());
             throw e;
         }
+    }
 
-        // Update asset values in AssetStoreService
+    /**
+     * Update assets
+     * @param message
+     * @throws KapuaException
+     */
+    public void updateAssets(CamelKapuaMessage<?> message) throws KapuaException {
         if (message.getMessage().getChannel().toString().startsWith("W1/A1")) {
             KapuaId scopeId = message.getMessage().getScopeId();
             KapuaId deviceId = message.getMessage().getDeviceId();
