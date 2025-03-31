@@ -156,7 +156,7 @@ public final class MessageStoreFacadeImpl extends AbstractDatastoreFacade implem
         if (!newInsert && !MessageUniquenessCheck.NONE.equals(accountServicePlan.getMessageUniquenessCheck())) {
             DatastoreMessage datastoreMessage = MessageUniquenessCheck.FULL.equals(accountServicePlan.getMessageUniquenessCheck()) ?
                     messageRepository.find(message.getScopeId(), storableIdFactory.newStorableId(messageId)) :
-                    messageRepository.find(message.getScopeId(), storableIdFactory.newStorableId(messageId), message.getCapturedOn().getTime());
+                    messageRepository.find(message.getScopeId(), storableIdFactory.newStorableId(messageId), indexedOnDate.getTime());
             if (datastoreMessage != null) {
                 LOG.debug("Message with datastore id '{}' already found", messageId);
                 metrics.getAlreadyInTheDatastore().inc();
