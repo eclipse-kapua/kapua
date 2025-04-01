@@ -57,9 +57,7 @@
         <constructor-arg name="translatorHub" ref="translatorHub"/>
         <constructor-arg name="protocolDescriptorProvider" ref="protocolDescriptorProvider"/>
     </bean>
-    <bean id="dataStorageMessageProcessor" class="org.eclipse.kapua.consumer.telemetry.listener.DataStorageMessageProcessor">
-        <constructor-arg name="metricsDatastore" ref="metricsDatastore"/>
-    </bean>
+    <bean id="dataStorageMessageProcessor" class="org.eclipse.kapua.consumer.telemetry.listener.DataStorageMessageProcessor"/>
     <bean id="objectSerializer" class="org.eclipse.kapua.service.camel.listener.error.ObjectSerializer"/>
     <bean id="errorMessageListener" class="org.eclipse.kapua.service.camel.listener.error.ErrorMessageListener">
         <constructor-arg name="objectSerializer" ref="objectSerializer"/>
