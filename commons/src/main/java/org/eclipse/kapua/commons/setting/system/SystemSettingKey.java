@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -23,10 +23,6 @@ import javax.persistence.EntityExistsException;
  */
 public enum SystemSettingKey implements SettingKey {
 
-    /**
-     * Container id (used for example to set a unique identifier for event listeners so events could be received by all the instances of a certain type)
-    */
-    CONTAINER_ID("container.id"),
     /**
      * Cluster name
      */

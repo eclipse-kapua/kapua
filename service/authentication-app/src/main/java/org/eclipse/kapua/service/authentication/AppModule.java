@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -24,8 +24,6 @@ import javax.inject.Singleton;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.ContainerIdResolver;
 import org.eclipse.kapua.commons.DefaultContainerIdResolver;
-import org.eclipse.kapua.commons.setting.system.SystemSetting;
-import org.eclipse.kapua.commons.setting.system.SystemSettingKey;
 
 public class AppModule extends AbstractKapuaModule {
     @Override
@@ -42,8 +40,8 @@ public class AppModule extends AbstractKapuaModule {
 
     @Singleton
     @Provides
-    ContainerIdResolver containerIdResolver(SystemSetting systemSetting) throws KapuaException {
-        return new DefaultContainerIdResolver(systemSetting.getString(SystemSettingKey.CONTAINER_ID));
+    ContainerIdResolver containerIdResolver() throws KapuaException {
+        return new DefaultContainerIdResolver();
     }
 
     @Provides

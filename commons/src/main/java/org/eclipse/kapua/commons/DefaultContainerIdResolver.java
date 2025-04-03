@@ -15,7 +15,6 @@ package org.eclipse.kapua.commons;
 import com.google.inject.Inject;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,17 +30,10 @@ public class DefaultContainerIdResolver implements ContainerIdResolver {
     private final String containerId;
 
     @Inject
-    public DefaultContainerIdResolver(String containerId) {
+    public DefaultContainerIdResolver() {
         logger.info("Resolving container id...");
-        if (StringUtils.isEmpty(containerId)) {
-            this.containerId = RandomStringUtils.randomAlphanumeric(8);
-            logger.info("Resolving container id. No external value received. Generating random name {}", this.containerId);
-        }
-        else {
-            this.containerId = containerId;
-            logger.info("Resolving container id. External value received {}", this.containerId);
-        }
-        logger.info("Resolving container id... DONE");
+        this.containerId = RandomStringUtils.randomAlphanumeric(8);
+        logger.info("Resolving container id. Generating random name {}", this.containerId);
     }
 
     @Override

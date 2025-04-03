@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -27,8 +27,6 @@ import org.eclipse.kapua.commons.configuration.ServiceConfigurationsFacade;
 import org.eclipse.kapua.commons.configuration.ServiceConfigurationsFacadeImpl;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.liquibase.DatabaseCheckUpdate;
-import org.eclipse.kapua.commons.setting.system.SystemSetting;
-import org.eclipse.kapua.commons.setting.system.SystemSettingKey;
 import org.eclipse.kapua.commons.util.xml.JAXBContextProvider;
 import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import org.eclipse.kapua.service.account.AccountService;
@@ -70,8 +68,8 @@ public class AppModule extends AbstractKapuaModule {
 
     @Singleton
     @Provides
-    ContainerIdResolver containerIdResolver(SystemSetting systemSetting) throws KapuaException {
-        return new DefaultContainerIdResolver(systemSetting.getString(SystemSettingKey.CONTAINER_ID));
+    ContainerIdResolver containerIdResolver() throws KapuaException {
+        return new DefaultContainerIdResolver();
     }
 
     @Provides
