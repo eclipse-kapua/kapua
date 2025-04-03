@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2020, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -17,12 +17,12 @@ import org.apache.camel.Message;
 import org.apache.camel.spi.UriEndpoint;
 import org.eclipse.kapua.commons.util.KapuaDateUtils;
 import org.eclipse.kapua.service.camel.application.MetricsCamel;
-import org.eclipse.kapua.service.camel.message.CamelKapuaMessage;
 import org.eclipse.kapua.service.client.message.MessageConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+
 import java.text.ParseException;
 import java.util.Base64;
 import java.util.Date;
@@ -41,12 +41,14 @@ public class ErrorMessageListener {
     private static final String EMPTY_ENCODED_MESSAGE = "N/A";
     private static final String EMPTY_FIELD = "N/A";
 
-    @Inject
-    public ErrorMessageListener(MetricsCamel metricsCamel) {
-        this.metrics = metricsCamel;
-    }
-
     private final MetricsCamel metrics;
+    private final ObjectSerializer objectSerializer;
+
+    @Inject
+    public ErrorMessageListener(ObjectSerializer objectSerializer, MetricsCamel metricsCamel) {
+        this.metrics = metricsCamel;
+        this.objectSerializer = objectSerializer;
+    }
 
     /**
      * Process an error condition for an elaboration of a generic message
@@ -55,10 +57,6 @@ public class ErrorMessageListener {
      * @param message
      */
     public void processMessage(Exchange exchange, Object message) {
-        logToFile(exchange, message);
-    }
-
-    public void logToFile(Exchange exchange, Object value) {
         try {
             String messageLine = getMessage(exchange);
             ERROR_MESSAGE_LOGGER.info(messageLine);
@@ -73,12 +71,16 @@ public class ErrorMessageListener {
         Message message = exchange.getIn();
         String clientId = message.getHeader(MessageConstants.HEADER_KAPUA_CLIENT_ID, String.class);
         Long timestamp = message.getHeader(MessageConstants.HEADER_KAPUA_RECEIVED_TIMESTAMP, Long.class);
+        String originalTopic = message.getHeader(MessageConstants.PROPERTY_ORIGINAL_TOPIC, String.class);
         String encodedMsg = getMessageBody(message.getBody());
-        String messageLogged = String.format("%s %s %s",
+        String messageLogged = String.format("%s %s %s %s",
                 clientId != null ? clientId : EMPTY_FIELD,
+                originalTopic,
                 getDate(timestamp),
                 encodedMsg);
+        logger.info("discarded message from: {} - client id: {}", originalTopic, clientId);
         if (logger.isDebugEnabled()) {
+            logger.debug("body: {} / headers: {}", message.getBody(), message.getHeaders());
             logger.debug(messageLogged);
         }
         return messageLogged;
@@ -93,23 +95,14 @@ public class ErrorMessageListener {
     }
 
     private String getMessageBody(Object body) {
-        if (body instanceof CamelKapuaMessage<?>) {
-            return getBody(((CamelKapuaMessage<?>) body).getMessage());
-        } else {
-            return getBody(body);
-        }
-    }
-
-    private String getBody(Object body) {
-        if (body instanceof byte[]) {
-            return Base64.getEncoder().encodeToString((byte[]) body);
-        } else if (body instanceof String) {
-            return Base64.getEncoder().encodeToString(((String) body).getBytes());
-        } else {
+        byte[] convertedBody = objectSerializer.convertToBytes(body);
+        if (convertedBody==null) {
             //something wrong happened! Anyway try to get the message to be stored
-            logger.error("Wrong message type! Cannot convert message of type {} to byte[]", body != null ? body.getClass() : "N/A");
+            logger.warn("Wrong message type! Cannot convert message of type {} to byte[]", body != null ? body.getClass() : "N/A");
             metrics.getUnknownBodyType().inc();
             return EMPTY_ENCODED_MESSAGE;
+        } else {
+            return Base64.getEncoder().encodeToString(convertedBody);
         }
     }
 

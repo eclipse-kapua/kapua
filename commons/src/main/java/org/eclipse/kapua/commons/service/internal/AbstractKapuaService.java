@@ -21,6 +21,7 @@ import org.eclipse.kapua.commons.service.internal.cache.EntityCache;
 import org.eclipse.kapua.event.ServiceEventBus;
 import org.eclipse.kapua.event.ServiceEventBusException;
 import org.eclipse.kapua.event.ServiceEventBusListener;
+import org.eclipse.kapua.event.Subscription;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.service.KapuaService;
 
@@ -103,6 +104,6 @@ public abstract class AbstractKapuaService implements KapuaService {
      * @since 1.0.0kapua-sew
      */
     protected void registerEventListener(@NotNull ServiceEventBusListener listener, @NotNull String address, @NotNull Class<? extends KapuaService> clazz) throws ServiceEventBusException {
-        serviceEventBus.subscribe(address, clazz.getName(), listener);
+        serviceEventBus.subscribe(new Subscription(address, clazz.getName(), listener));
     }
 }

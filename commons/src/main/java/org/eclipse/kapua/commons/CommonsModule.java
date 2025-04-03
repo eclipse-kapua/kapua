@@ -18,13 +18,10 @@ import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.crypto.CryptoUtil;
 import org.eclipse.kapua.commons.crypto.CryptoUtilImpl;
 import org.eclipse.kapua.commons.crypto.setting.CryptoSettings;
-import org.eclipse.kapua.commons.event.ServiceEventBusDriver;
 import org.eclipse.kapua.commons.event.ServiceEventMarshaler;
-import org.eclipse.kapua.commons.event.jms.JMSServiceEventBus;
 import org.eclipse.kapua.commons.jpa.EventStorer;
 import org.eclipse.kapua.commons.jpa.EventStorerImpl;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
-import org.eclipse.kapua.commons.metric.CommonsMetric;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.model.mappers.KapuaBaseMapper;
 import org.eclipse.kapua.commons.model.mappers.KapuaBaseMapperImpl;
@@ -36,7 +33,6 @@ import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.commons.setting.system.SystemSettingKey;
 import org.eclipse.kapua.commons.util.qr.QRCodeBuilder;
 import org.eclipse.kapua.commons.util.qr.QRCodeBuilderImpl;
-import org.eclipse.kapua.event.ServiceEventBus;
 import org.eclipse.kapua.event.ServiceEventBusException;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.domain.Domain;
@@ -81,12 +77,6 @@ public class CommonsModule extends AbstractKapuaModule {
 
     @Provides
     @Singleton
-    ServiceEventBusDriver serviceEventBusDriver(SystemSetting systemSetting, CommonsMetric commonsMetric, ServiceEventMarshaler serviceEventMarshaler) {
-        return new JMSServiceEventBus(systemSetting, commonsMetric, serviceEventMarshaler);
-    }
-
-    @Provides
-    @Singleton
     ServiceEventMarshaler serviceEventMarshaler(SystemSetting systemSetting) throws ClassNotFoundException, InstantiationException, IllegalAccessException, ServiceEventBusException {
         final String messageSerializer = SystemSetting.getInstance().getString(SystemSettingKey.EVENT_BUS_MESSAGE_SERIALIZER);
         // initialize event bus marshaler
@@ -98,9 +88,4 @@ public class CommonsModule extends AbstractKapuaModule {
         }
     }
 
-    @Provides
-    @Singleton
-    ServiceEventBus serviceEventBus(ServiceEventBusDriver serviceEventBusDriver) throws ServiceEventBusException {
-        return serviceEventBusDriver.getEventBus();
-    }
 }

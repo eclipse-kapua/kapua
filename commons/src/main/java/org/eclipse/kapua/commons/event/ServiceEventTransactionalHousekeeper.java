@@ -196,6 +196,10 @@ public class ServiceEventTransactionalHousekeeper implements Runnable {
         }
     }
 
+    public boolean isRunning() {
+        return running;
+    }
+
     private HousekeeperRun getLock(String serviceName) throws LockException, NoExecutionNeededException {
         HousekeeperRun kapuaEventHousekeeper = null;
         if (!(txContext instanceof JpaAwareTxContext)) {

@@ -26,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.core.ServiceModule;
 import org.eclipse.kapua.event.ServiceEventBus;
+import org.eclipse.kapua.event.Subscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,9 +34,7 @@ public abstract class ServiceEventTransactionalModule implements ServiceModule {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceEventTransactionalModule.class);
 
-    private static final int MAX_WAIT_LOOP_ON_SHUTDOWN = 30;
     private static final int SCHEDULED_EXECUTION_TIME_WINDOW = 30;
-    private static final long WAIT_TIME = 1000;
 
     private Set<String> subscriberNames = new HashSet<>();
 
@@ -55,11 +54,11 @@ public abstract class ServiceEventTransactionalModule implements ServiceModule {
     public ServiceEventTransactionalModule(
             ServiceEventClientConfiguration[] serviceEventClientConfigurations,
             String internalAddress,
-            String uniqueClientId,
+            String subscriptionGroupId,
             ServiceEventHouseKeeperFactory serviceEventTransactionalHousekeeperFactory,
             ServiceEventBus serviceEventBus) {
         this.serviceEventBus = serviceEventBus;
-        this.serviceEventClientConfigurations = appendClientId(uniqueClientId, serviceEventClientConfigurations);
+        this.serviceEventClientConfigurations = appendClientId(subscriptionGroupId, serviceEventClientConfigurations);
         this.internalAddress = internalAddress;
         this.houseKeeperFactory = serviceEventTransactionalHousekeeperFactory;
     }
@@ -80,7 +79,7 @@ public abstract class ServiceEventTransactionalModule implements ServiceModule {
                 }
                 // Listen to upstream service events
                 if (selc.getEventListener() != null) {
-                    serviceEventBus.subscribe(address, getSubscriptionName(address, selc.getClientName()), selc.getEventListener());
+                    serviceEventBus.subscribe(new Subscription(address, getSubscriptionName(address, selc.getClientName()), selc.getEventListener()));
                 }
                 servicesEntryList.add(new ServiceEntry(selc.getClientName(), address));
                 subscriberNames.add(selc.getClientName()); // Set because names must be unique
@@ -104,33 +103,37 @@ public abstract class ServiceEventTransactionalModule implements ServiceModule {
 
     @Override
     public void stop() throws KapuaException {
-        LOGGER.info("Stopping service event module... {}", this.getClass().getName());
+        LOGGER.info("Stopping service event module... {} / {}", this.getClass().getName(), this);
         LOGGER.info("Stopping service event module... house keeper scheduler [step 1/3]");
         if (houseKeeperJob != null) {
-            houseKeeperJob.stop();
+            if (houseKeeperJob.isRunning()) {
+                houseKeeperJob.stop();
+            }
+            else {
+                LOGGER.warn("Cannot shutdown the housekeeper scheduler [step 1/3] since it is not running (already stopped may be?)");
+            }
         } else {
             LOGGER.warn("Cannot shutdown the housekeeper scheduler [step 1/3] since it is null (initialization may not be successful)");
         }
         LOGGER.info("Stopping service event module... house keeper scheduler [step 2/3]");
-        if (houseKeeperHandler != null) {
-            int waitLoop = 0;
-            while (houseKeeperHandler.isDone()) {
-                try {
-                    Thread.sleep(WAIT_TIME);
-                } catch (InterruptedException e) {
-                    // do nothing
-                }
-                if (waitLoop++ > MAX_WAIT_LOOP_ON_SHUTDOWN) {
-                    LOGGER.warn("Cannot cancel the house keeper task afeter a while!");
-                    break;
-                }
+        if (houseKeeperScheduler != null) {
+            if (houseKeeperScheduler.isShutdown() && houseKeeperScheduler.isTerminated()) {
+                LOGGER.warn("Cannot shutdown the housekeeper scheduler [step 2/3] since it is not running (already stopped may be?)");
+            }
+            else {
+                houseKeeperScheduler.shutdown();
             }
         } else {
             LOGGER.warn("Cannot shutdown the housekeeper scheduler [step 2/3] since it is null (initialization may not be successful)");
         }
         LOGGER.info("Stopping service event module... house keeper scheduler [step 3/3]");
-        if (houseKeeperScheduler != null) {
-            houseKeeperScheduler.shutdown();
+        if (houseKeeperHandler != null) {
+            if (houseKeeperHandler.cancel(false)) {
+                LOGGER.info("House keeper handler cancelled");
+            }
+            else {
+                LOGGER.warn("Cannot cancel the house keeper handler (may be it was already cancelled)");
+            }
         } else {
             LOGGER.warn("Cannot shutdown the housekeeper scheduler [step 3/3] since it is null (initialization may not be successful)");
         }

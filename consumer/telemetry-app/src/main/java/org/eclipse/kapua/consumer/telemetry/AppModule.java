@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -21,6 +21,10 @@ import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.commons.ContainerIdResolver;
+import org.eclipse.kapua.commons.DefaultContainerIdResolver;
+
 public class AppModule extends AbstractKapuaModule {
     @Override
     protected void configureModule() {
@@ -34,10 +38,50 @@ public class AppModule extends AbstractKapuaModule {
         return MetricsTelemetry.CONSUMER_TELEMETRY;
     }
 
+    @Singleton
     @Provides
-    @Named("eventsModuleName")
-    String eventModuleName() {
-        return "telemetry";
+    ContainerIdResolver containerIdResolver() throws KapuaException {
+        return new DefaultContainerIdResolver();
+    }
+
+    @Provides
+    @Named("accountEvtSubscriptionGroupId")
+    String accountEvtSubscriptionGroupId(ContainerIdResolver containerIdResolver) {
+        return getSubscriptionId(containerIdResolver);
+    }
+
+    @Provides
+    @Named("authenticationEvtSubscriptionGroupId")
+    String authenticationEvtSubscriptionGroupId(ContainerIdResolver containerIdResolver) {
+        return getSubscriptionId(containerIdResolver);
+    }
+
+    @Provides
+    @Named("authorizationEvtSubscriptionGroupId")
+    String authorizationEvtSubscriptionGroupId(ContainerIdResolver containerIdResolver) {
+        return getSubscriptionId(containerIdResolver);
+    }
+
+    @Provides
+    @Named("deviceConnectionEvtSubscriptionGroupId")
+    String deviceConnectionEvtSubscriptionGroupId(ContainerIdResolver containerIdResolver) {
+        return getSubscriptionId(containerIdResolver);
+    }
+
+    @Provides
+    @Named("deviceRegistryEvtSubscriptionGroupId")
+    String deviceRegistryEvtSubscriptionGroupId(ContainerIdResolver containerIdResolver) {
+        return getSubscriptionId(containerIdResolver);
+    }
+
+    @Provides
+    @Named("userEvtSubscriptionGroupId")
+    String userEvtSubscriptionGroupId(ContainerIdResolver containerIdResolver) {
+        return getSubscriptionId(containerIdResolver);
+    }
+
+    private String getSubscriptionId(ContainerIdResolver containerIdResolver) {
+        return "con-tel-" + containerIdResolver.getContainerId();
     }
 
     @Provides

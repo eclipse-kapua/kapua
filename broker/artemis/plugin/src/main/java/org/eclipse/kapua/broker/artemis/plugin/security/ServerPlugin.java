@@ -26,6 +26,7 @@ import org.apache.activemq.artemis.core.transaction.Transaction;
 import org.apache.activemq.artemis.spi.core.protocol.RemotingConnection;
 import org.apache.activemq.artemis.utils.critical.CriticalComponent;
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.kapua.KapuaRuntimeException;
 import org.eclipse.kapua.broker.artemis.plugin.security.connector.AcceptorHandler;
 import org.eclipse.kapua.broker.artemis.plugin.security.event.BrokerEvent;
@@ -81,23 +82,10 @@ public class ServerPlugin implements ActiveMQServerPlugin {
         DESTROY
     }
 
-    public static enum MessageType {
-
-        Broker("BRK"),
-        Control("CTR"),
-        Telemetry("TEL"),
-        System("SYS");
-
-        private String asUrl;
-
-        MessageType(String asUrl) {
-            this.asUrl = asUrl;
-        }
-
-        public String getAsUrl() {
-            return asUrl;
-        }
-    }
+    public static final String MESSAGE_TYPE_CONTROL = "CTR";
+    public static final String MESSAGE_TYPE_TELEMETRY = "TEL";
+    public static final String MESSAGE_TYPE_SYSTEM = "SYS";
+    public static final String NOTIFICATION_PREFIX = "activemq.notifications";//standard address, if customized please change it
 
     /**
      * publish message size threshold for printing message information
@@ -243,6 +231,7 @@ public class ServerPlugin implements ActiveMQServerPlugin {
     public void beforeSend(ServerSession session, Transaction tx, Message message, boolean direct,
                            boolean noAutoCreateQueue) throws ActiveMQException {
         Context sendContext = publishMetric.getTime().time();
+        logger.info("======> {}", message.getAddress());
         try {
             String address = message.getAddress();
             int messageSize = message.getEncodeSize();
@@ -255,34 +244,26 @@ public class ServerPlugin implements ActiveMQServerPlugin {
                 throw new ActiveMQSecurityException("Operation not allowed");
             }
             logger.debug("Publishing message on address {} from clientId: {} - clientIp: {}", address, sessionContext.getClientId(), sessionContext.getClientIp());
-            message.putStringProperty(MessageConstants.HEADER_KAPUA_CLIENT_ID, sessionContext.getClientId());
-            message.putStringProperty(MessageConstants.HEADER_KAPUA_CONNECTOR_NAME, sessionContext.getConnectorName());
-            message.putStringProperty(MessageConstants.HEADER_KAPUA_SESSION, Base64.getEncoder().encodeToString(SerializationUtils.serialize(sessionContext.getKapuaSession())));
-            message.putLongProperty(MessageConstants.HEADER_KAPUA_RECEIVED_TIMESTAMP, KapuaDateUtils.getKapuaSysDate().getEpochSecond());
-            message.putStringProperty(MessageConstants.HEADER_KAPUA_MESSAGE_TYPE, getMessgeType(address));
             if (!sessionContext.isInternal()) {
                 if (isLwt(address)) {
                     //handle the missing message case
                     logger.info("Detected missing message for client {}... Flag session to tell disconnector to avoid disconnect event sending", sessionContext.getClientId());
                     sessionContext.setMissing(true);
                 }
-                // FIX #164
-                message.putStringProperty(MessageConstants.HEADER_KAPUA_CONNECTION_ID, Base64.getEncoder().encodeToString(SerializationUtils.serialize(sessionContext.getKapuaConnectionId())));
-                message.putBooleanProperty(MessageConstants.HEADER_KAPUA_BROKER_CONTEXT, false);
                 if (publishInfoMessageSizeLimit < messageSize) {
                     logger.info("Published message size over threshold. size: {} - destination: {} - account id: {} - username: {} - clientId: {}",
                             messageSize, address, sessionContext.getAccountName(), sessionContext.getUsername(), sessionContext.getClientId());
                 }
+                fillAdditionalMessagePropertiesExternal(message, sessionContext, address);
                 publishMetric.getMessageSizeAllowed().update(messageSize);
             } else {
                 if (publishInfoMessageSizeLimit < messageSize) {
                     logger.info("Published message size over threshold. size: {} - destination: {}",
                             messageSize, address);
                 }
-                message.putBooleanProperty(MessageConstants.HEADER_KAPUA_BROKER_CONTEXT, true);
+                fillAdditionalMessagePropertiesInternal(message, sessionContext, address);
                 publishMetric.getMessageSizeAllowedInternal().update(messageSize);
             }
-            message.putStringProperty(MessageConstants.PROPERTY_ORIGINAL_TOPIC, address);
             serverContext.getAddressAccessTracker().update(address);
             logger.debug("Published message on address {} from clientId: {} - clientIp: {}", address, sessionContext.getClientId(), sessionContext.getClientIp());
             ActiveMQServerPlugin.super.beforeSend(session, tx, message, direct, noAutoCreateQueue);
@@ -296,21 +277,39 @@ public class ServerPlugin implements ActiveMQServerPlugin {
         return originalTopic != null && originalTopic.endsWith(MISSING_TOPIC_SUFFIX);
     }
 
-    private String getMessgeType(String address) {
-        if (address != null) {
-            if (address.startsWith("active")) {
-                return MessageType.Broker.getAsUrl();
-            } else if (address.startsWith("$")) {
+    protected void fillAdditionalMessagePropertiesInternal(Message message, SessionContext sessionContext, String address) {
+        fillAdditionalMessageProperties(message, sessionContext, address, true);
+    }
+
+    protected void fillAdditionalMessagePropertiesExternal(Message message, SessionContext sessionContext, String address) {
+        fillAdditionalMessageProperties(message, sessionContext, address, false);
+        // FIX #164
+        message.putStringProperty(MessageConstants.HEADER_KAPUA_CONNECTION_ID, Base64.getEncoder().encodeToString(SerializationUtils.serialize(sessionContext.getKapuaConnectionId())));
+    }
+
+    protected void fillAdditionalMessageProperties(Message message, SessionContext sessionContext, String address, boolean kapuaBrokerContext) {
+        message.putStringProperty(MessageConstants.HEADER_KAPUA_CLIENT_ID, sessionContext.getClientId());
+        message.putStringProperty(MessageConstants.HEADER_KAPUA_CONNECTOR_NAME, sessionContext.getConnectorName());
+        message.putStringProperty(MessageConstants.HEADER_KAPUA_SESSION, Base64.getEncoder().encodeToString(SerializationUtils.serialize(sessionContext.getKapuaSession())));
+        message.putLongProperty(MessageConstants.HEADER_KAPUA_RECEIVED_TIMESTAMP, KapuaDateUtils.getKapuaSysDate().getEpochSecond());
+        message.putStringProperty(MessageConstants.HEADER_KAPUA_MESSAGE_TYPE, getMessageType(address));
+        message.putStringProperty(MessageConstants.PROPERTY_ORIGINAL_TOPIC, address);
+        message.putBooleanProperty(MessageConstants.HEADER_KAPUA_BROKER_CONTEXT, kapuaBrokerContext);
+    }
+
+    protected String getMessageType(String address) {
+        if (address != null && !address.startsWith(NOTIFICATION_PREFIX)) {//the plugin shouldn't receive notifications messages but to be safe
+            if (address.startsWith("$")) {
                 if (address.startsWith("$SYS")) {
-                    return MessageType.System.getAsUrl();
+                    return MESSAGE_TYPE_SYSTEM;
                 } else {
-                    return MessageType.Control.getAsUrl();
+                    return MESSAGE_TYPE_CONTROL;
                 }
             } else {
-                return MessageType.Telemetry.getAsUrl();
+                return MESSAGE_TYPE_TELEMETRY;
             }
         }
-        return "N/A";
+        return "UNK";
     }
 
     /**
@@ -433,8 +432,15 @@ public class ServerPlugin implements ActiveMQServerPlugin {
         try {
             String connectionId = pluginUtility.getConnectionId(connection);
             serverContext.getSecurityContext().updateConnectionTokenOnDisconnection(connectionId);
-            logger.info("### cleanUpConnectionData connection: {} - reason: {} - Error: {}", connectionId, reason, exception != null ? exception.getMessage() : "N/A");
-            if (exception != null && logger.isDebugEnabled()) {
+            if (exception != null) {
+                //try to find something meaningful to log (otherwise skip it!)
+                String message = extractErorMessage(exception);
+                if (!StringUtils.isEmpty(message)) {
+                    logger.info("### cleanUpConnectionData connection: {} - reason: {} - Error: {}", connectionId, reason, message);
+                }
+                else {
+                    logger.debug("### cleanUpConnectionData connection: {} - reason: {} - Error: {}", connectionId, reason, message);
+                }
                 logger.debug("### cleanUpConnectionData error", exception);
             }
             SessionContext sessionContext = serverContext.getSecurityContext().getSessionContext(connectionId);
@@ -452,7 +458,7 @@ public class ServerPlugin implements ActiveMQServerPlugin {
                     serverContext.getAuthServiceClient().brokerDisconnect(authRequest);
                 }
             } else {
-                logger.warn("Cannot find any session context for connection id: {}", connectionId);
+                logger.debug("Cannot find any session context for connection id: {}", connectionId);
                 loginMetric.getCleanupNullSessionFailure().inc();
             }
         } catch (Exception e) {
@@ -460,6 +466,15 @@ public class ServerPlugin implements ActiveMQServerPlugin {
             logger.error("Cleanup connection data error: {}", e.getMessage(), e);
         } finally {
             timeTotal.stop();
+        }
+    }
+
+    private String extractErorMessage(Exception exception) {
+        if (StringUtils.isEmpty(exception.getMessage())) {
+            return exception.getCause() != null ? exception.getCause().getMessage() : null;
+        }
+        else {
+            return exception.getMessage();
         }
     }
 

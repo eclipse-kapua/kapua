@@ -98,3 +98,84 @@ New `description` column has been added to `schdl_trigger_properties` and `schdl
 
 The column default to `null` and the migration/population procedure will be performed by the Trigger Definition Aligner at application startup.
 
+### Fixed the event subscription group handling [[#4198](https://github.com/eclipse/kapua/pull/4198)]
+
+Renamed variables from eventModuleName to subscriptionGroupId so it's more clear the meaning (since a module could have more subscriptions to the same address but different groups).
+This change had impact in other areas because now every event handler should receive, once instantiated, the appropriate subscription group name.
+For example, for the service , the generic
+@Named("eventsModuleName") String eventModuleName
+will be replaced with the correct
+@Named("userEvtSubscriptionGroupId") String subscriptionGroupId
+so instead of having the module name as group for this event subscription, the "svc-ath-" + containerIdResolver.getContainerId() string will be returned
+
+### Re-organized message headers [[#4198](https://github.com/eclipse/kapua/pull/4198)]
+
+Re-organized the broker ServerPlugin logic to set message headers and the message categorization
+
+### Improved message error handling [[#4198](https://github.com/eclipse/kapua/pull/4198)]
+
+Improved error handling to serialize messages before discarding them (to byte[]) and the abstract message converter (used more generic Camel Message instead of the JmsMessage)
+
+### Removed trusted classes check [[#4198](https://github.com/eclipse/kapua/pull/4198)]
+
+Removed trusted classed from KapuaSession "security" check. That's no security improvement on doing that, only performances impact.
+
+### Removed the client id set if null on connect [[#4198](https://github.com/eclipse/kapua/pull/4198)]
+
+Removed client id set if null on connect (it's not compliant with our use case using JMS 2.0) and modified the Camel connection factory to remove this parameter
+
+### Correct the exception thrown by Authentication service [[#4198](https://github.com/eclipse/kapua/pull/4198)]
+
+Changed the exceptions thrown by ServiceClient (the one used by AuthenticationService) to generic because the implementations could be various obviously
+
+### Changed Env Variables to set Service broker url [[#4198](https://github.com/eclipse/kapua/pull/4198)]
+
+The `SERVICE_BROKER_HOST` and `SERVICE_BROKER_PORT` are replaced by a new env variable: `SERVICE_BROKER_URL` (default value `amqp://events-broker:5672`).<br>
+Credentials are provided through `SERVICE_BROKER_USERNAME` and `SERVICE_BROKER_PASSWORD`.<br>
+In this way more complex connection strings can be defined but, also, different event/service broker protocols could be used like MQTT or JMS.
+
+### Changed Env Variables to set Event broker url [[#4198](https://github.com/eclipse/kapua/pull/4198)]
+
+Same for the event broker `where EVENT_BROKER_URL` will contain the full connection string to the event broker (see Artemis documentation for more informations).<br>
+Credentials are provided through `EVENT_BROKER_USERNAME` and `EVENT_BROKER_PASSWORD`.
+
+### Fixed the event subscription group handling [[#4198](https://github.com/eclipse/kapua/pull/4198)]
+
+Renamed variables from eventModuleName to subscriptionGroupId so it's more clear the meaning (since a module could have more subscriptions to the same address but different groups).
+This change had impact in other areas because now every event handler should receive, once instantiated, the appropriate subscription group name.
+For example, for the service , the generic
+@Named("eventsModuleName") String eventModuleName
+will be replaced with the correct
+@Named("userEvtSubscriptionGroupId") String subscriptionGroupId
+so instead of having the module name as group for this event subscription, the "svc-ath-" + containerIdResolver.getContainerId() string will be returned
+
+### Re-organized message headers [[#4198](https://github.com/eclipse/kapua/pull/4198)]
+
+Re-organized the broker ServerPlugin logic to set message headers and the message categorization
+
+### Improved message error handling [[#4198](https://github.com/eclipse/kapua/pull/4198)]
+
+Improved error handling to serialize messages before discarding them (to byte[]) and the abstract message converter (used more generic Camel Message instead of the JmsMessage)
+
+### Removed trusted classes check [[#4198](https://github.com/eclipse/kapua/pull/4198)]
+
+Removed trusted classed from KapuaSession "security" check. That's no security improvement on doing that, only performances impact.
+
+### Removed the client id set if null on connect [[#4198](https://github.com/eclipse/kapua/pull/4198)]
+
+Removed client id set if null on connect (it's not compliant with our use case using JMS 2.0) and modified the Camel connection factory to remove this parameter
+
+### Correct the exception thrown by Authentication service [[#4198](https://github.com/eclipse/kapua/pull/4198)]
+
+Changed the exceptions thrown by ServiceClient (the one used by AuthenticationService) to generic because the implementations could be various obviously
+
+### Changed Env Variables to set Service broker url [[#4198](https://github.com/eclipse/kapua/pull/4198)]
+
+The `SERVICE_BROKER_HOST` and `SERVICE_BROKER_PORT` are replaced by a new env variable: `SERVICE_BROKER_URL` (default value `amqp://events-broker:5672`).<br>
+Credentials are provided through `SERVICE_BROKER_USERNAME` and `SERVICE_BROKER_PASSWORD`.<br>
+In this way more complex connection strings can be defined but, also, different event/service broker protocols could be used like MQTT or JMS.
+
+### Changed Env Variables to set Event broker url [[#4198](https://github.com/eclipse/kapua/pull/4198)]
+
+Same for the event broker `where EVENT_BROKER_URL` will contain the full connection string to the event broker (see Artemis documentation for more informations).<br>
+Credentials are provided through `EVENT_BROKER_USERNAME` and `EVENT_BROKER_PASSWORD`.

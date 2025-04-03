@@ -59,7 +59,7 @@ objects:
                     -Dcommons.db.connection.host=$SQL_SERVICE_HOST
                     -Dcommons.db.connection.port=$SQL_PORT_3306_TCP_PORT
                     -Dcommons.db.schema.update=true
-                    -Dcommons.eventbus.url="failover:(amqp://${EVENTS_BROKER_PORT_5672_TCP_ADDR}:${EVENTS_BROKER_PORT_5672_TCP_PORT})"
+                    -Dcommons.eventbus.url="amqp://${EVENTS_BROKER_PORT_5672_TCP_ADDR}:${EVENTS_BROKER_PORT_5672_TCP_PORT}"
                     -Dcertificate.jwt.private.key=file:///var/opt/activemq/key.pk8
                     -Dcertificate.jwt.certificate=file:///var/opt/activemq/cert.pem
                     -Dbroker.host=kapua-broker.eclipse-kapua.svc
