@@ -13,6 +13,7 @@
 package org.eclipse.kapua.service.job.steps;
 
 import com.google.inject.Singleton;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
@@ -32,6 +33,10 @@ import org.eclipse.kapua.service.device.registry.DeviceListResult;
 import org.eclipse.kapua.service.device.registry.DeviceQuery;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.job.Job;
+import org.eclipse.kapua.service.job.JobFactory;
+import org.eclipse.kapua.service.job.JobListResult;
+import org.eclipse.kapua.service.job.JobQuery;
+import org.eclipse.kapua.service.job.JobService;
 import org.eclipse.kapua.service.job.targets.JobTarget;
 import org.junit.Assert;
 import org.slf4j.Logger;
@@ -39,8 +44,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -54,6 +61,8 @@ public class JobEngineSteps extends JobServiceTestBase {
     private DeviceRegistryService deviceRegistryService;
     private JobEngineService jobEngineService;
     private JobEngineFactory jobEngineFactory;
+    private JobService jobService;
+    private JobFactory jobFactory;
 
     @Inject
     public JobEngineSteps(StepData stepData) {
@@ -73,6 +82,8 @@ public class JobEngineSteps extends JobServiceTestBase {
         deviceRegistryService = locator.getService(DeviceRegistryService.class);
         jobEngineService = locator.getService(JobEngineService.class);
         jobEngineFactory = locator.getFactory(JobEngineFactory.class);
+        jobService = locator.getService(JobService.class);
+        jobFactory = locator.getFactory(JobFactory.class);
     }
 
     @When("I start a job")
@@ -224,6 +235,19 @@ public class JobEngineSteps extends JobServiceTestBase {
     }
 
     /**
+     * Checks that the given jobs are running
+     *
+     * @throws Exception
+     * @since 2.1.0
+     */
+    @And("I confirm multiple jobs have these running status")
+    public void checkJobsAreRunning(DataTable dataTable) throws Exception {
+        Map<String, String> jobNamesToRunningStatus = dataTable.asMap(String.class, String.class);
+        checkJobsAreRunning(jobNamesToRunningStatus);
+    }
+
+
+    /**
      * Looks for a {@link Job} by its {@link Job#getName()} and checks that is running
      *
      * @param jobName The {@link Job#getName()} to look for
@@ -274,6 +298,24 @@ public class JobEngineSteps extends JobServiceTestBase {
      */
     private void checkJobIsRunning(Job job, boolean expectedRunning) throws Exception {
         Assert.assertEquals(expectedRunning, jobEngineService.isRunning(job.getScopeId(), job.getId()));
+    }
+
+    private void checkJobsAreRunning(Map<String, String> jobNamesToRunningStatus) throws Exception {
+        KapuaId currentScopeId = ((Job) stepData.get(JOB)).getScopeId();
+        JobQuery query = jobFactory.newQuery(currentScopeId);
+        JobListResult allJobs = jobService.query(query); //all jobs
+
+        Map<KapuaId, Boolean> jobIdsToRunningStatus = new HashMap<>();
+        for (Job j : allJobs.getItems()) {
+            if (jobNamesToRunningStatus.containsKey(j.getName())) { //job actually queried
+                jobIdsToRunningStatus.put(j.getId(),
+                        Boolean.parseBoolean(jobNamesToRunningStatus.get(j.getName()))); //input expected running status
+            }
+        }
+
+        Map<KapuaId, Boolean> restultMap = jobEngineService.isRunning(currentScopeId, jobIdsToRunningStatus.keySet());
+
+        Assert.assertEquals(jobIdsToRunningStatus, restultMap);
     }
 
     @When("I restart a job")
