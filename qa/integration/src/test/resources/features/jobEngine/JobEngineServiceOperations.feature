@@ -237,6 +237,37 @@ Feature: Job Engine Service - Operations
     Then I confirm that job has 1 job execution
     And I confirm that job target in job has step index 0 and status "PROCESS_OK"
 
+  Scenario: Is Running - multiple Jobs - Check running status
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I start the Kura Mock
+    And Device birth message is sent
+    And Device "rpione3" is connected within 10s
+    And I create a job with the name "ThisWontRun"
+    And I create a job with the name "TestJob"
+    And I add device targets to job
+      | rpione3 |
+    And I search for step definition with the name
+      | Command Execution |
+    And I add job step to job with name "Test Step - Command Exec" and with selected job step definition and properties
+      | name         | type                                                                   | value                                                                                                                                                                                                                                           |
+      | commandInput | org.eclipse.kapua.service.device.management.command.DeviceCommandInput | <?xml version="1.0" encoding="UTF-8"?><commandInput><command>ping</command><arguments><argument>-c</argument><argument>10</argument><argument>8.8.8.8</argument></arguments><timeout>30000</timeout><runAsynch>false</runAsynch></commandInput> |
+      | timeout      | java.lang.Long                                                         | 15000                                                                                                                                                                                                                                           |
+    Then I confirm multiple jobs have these running status
+      | ThisWontRun | false |
+      | TestJob | false |
+    When I start a job
+    And I wait for 5 seconds
+    Then I confirm multiple jobs have these running status
+      | ThisWontRun | false |
+      | TestJob | true |
+    When I wait job to finish its execution up to 30s
+    Then I confirm multiple jobs have these running status
+      | ThisWontRun | false |
+      | TestJob | false |
+    Then I confirm that job has 1 job execution
+    And I confirm that job target in job has step index 0 and status "PROCESS_OK"
+
   Scenario: Stop - Not running, never run
     Given I login as user with name "kapua-sys" and password "kapua-password"
     And I create a device with name "Test Target"

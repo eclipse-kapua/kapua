@@ -20,6 +20,7 @@ import javax.xml.bind.JAXBContext;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.rest.model.IsJobRunningMultipleResponse;
 import org.eclipse.kapua.commons.rest.model.IsJobRunningResponse;
+import org.eclipse.kapua.commons.rest.model.MultipleJobIdRequest;
 import org.eclipse.kapua.commons.rest.model.errors.ExceptionInfo;
 import org.eclipse.kapua.commons.rest.model.errors.JobAlreadyRunningExceptionInfo;
 import org.eclipse.kapua.commons.rest.model.errors.JobInvalidTargetExceptionInfo;
@@ -141,6 +142,7 @@ public class TestJAXBContextProvider implements JAXBContextProvider {
                     JobStartOptions.class,
                     IsJobRunningResponse.class,
                     IsJobRunningMultipleResponse.class,
+                    MultipleJobIdRequest.class,
 
                     // Job Engine Client
                     JobAlreadyRunningExceptionInfo.class,
