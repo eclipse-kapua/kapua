@@ -33,13 +33,10 @@
         <property name="routeCount" value="2"></property>
     </bean>
 
-    <bean id="connectionFactory" class="org.eclipse.kapua.service.client.amqp.ServiceConnectionFactoryImpl">
-        <constructor-arg name="schema" type="java.lang.String" value="amqp"/>
-        <constructor-arg name="host" type="java.lang.String" value="${BROKER_HOST}"/>
-        <constructor-arg name="port" type="int" value="${BROKER_PORT}"/>
-        <constructor-arg name="username" type="java.lang.String" value="${BROKER_INTERNAL_USERNAME}"/>
+    <bean id="connectionFactory" class="org.apache.qpid.jms.JmsConnectionFactory">
+        <constructor-arg name="userName" type="java.lang.String" value="${BROKER_INTERNAL_USERNAME}"/>
         <constructor-arg name="password" type="java.lang.String" value="${BROKER_INTERNAL_PASSWORD}"/>
-        <constructor-arg name="clientId" type="java.lang.String" value="${CONSUMER_HOST}"/>
+        <constructor-arg name="remoteURI" type="java.lang.String" value="amqp://${BROKER_HOST}:${BROKER_PORT}"/>
     </bean>
     <bean id="cachingConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
         <property name="targetConnectionFactory" ref="connectionFactory"/>
@@ -72,7 +69,9 @@
         <constructor-arg name="metricsLifecycle" ref="metricsLifecycle"/>
     </bean>
     <bean id="deviceManagementNotificationMessageProcessor" class="org.eclipse.kapua.consumer.lifecycle.listener.DeviceManagementNotificationMessageProcessorSpring"/>
+    <bean id="objectSerializer" class="org.eclipse.kapua.service.camel.listener.error.ObjectSerializer"/>
     <bean id="errorMessageListener" class="org.eclipse.kapua.service.camel.listener.error.ErrorMessageListener">
+        <constructor-arg name="objectSerializer" ref="objectSerializer"/>
         <constructor-arg name="metricsCamel" ref="metricsCamel"/>
     </bean>
 

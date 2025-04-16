@@ -1044,7 +1044,7 @@ public class DockerSteps {
                 "commons.db.connection.host=db",
                 "commons.db.connection.port=3306",
                 "datastore.elasticsearch.nodes=es:9200",
-                "commons.eventbus.url=failover:(amqp://events-broker:5672)?jms.sendTimeout=1000",
+                "commons.eventbus.url=amqp://events-broker:5672?jms.sendTimeout=1000",
                 "certificate.jwt.private.key=file:///var/opt/activemq/key.pk8",
                 "certificate.jwt.certificate=file:///var/opt/activemq/cert.pem",
                 "CRYPTO_SECRET_KEY=kapuaTestsKey!!!",

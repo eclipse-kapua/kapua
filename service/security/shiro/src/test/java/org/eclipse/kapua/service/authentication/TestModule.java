@@ -14,6 +14,7 @@ package org.eclipse.kapua.service.authentication;
 
 import java.util.Collections;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.apache.activemq.artemis.spi.core.security.jaas.UserPrincipal;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
@@ -40,4 +41,47 @@ public class TestModule extends AbstractKapuaModule {
     String eventsModuleName() {
         return "test";
     }
+
+    @Provides
+    @Singleton
+    @Named("accountEvtSubscriptionGroupId")
+    String accountEvtSubscriptionGroupId() {
+        return "shiro-test";
+    }
+
+    @Provides
+    @Singleton
+    @Named("authenticationEvtSubscriptionGroupId")
+    String authenticationEvtSubscriptionGroupId() {
+        return "shiro-test";
+    }
+
+    @Provides
+    @Singleton
+    @Named("authorizationEvtSubscriptionGroupId")
+    String authorizationEvtSubscriptionGroupId() {
+        return "shiro-test";
+    }
+
+    @Provides
+    @Singleton
+    @Named("deviceConnectionEvtSubscriptionGroupId")
+    String deviceConnectionEvtSubscriptionGroupId() {
+        return "shiro-test";
+    }
+
+    @Provides
+    @Singleton
+    @Named("deviceRegistryEvtSubscriptionGroupId")
+    String deviceRegistryEvtSubscriptionGroupId() {
+        return "shiro-test";
+    }
+
+    @Provides
+    @Singleton
+    @Named("userEvtSubscriptionGroupId")
+    String userEvtSubscriptionGroupId() {
+        return "shiro-test";
+    }
+
 }

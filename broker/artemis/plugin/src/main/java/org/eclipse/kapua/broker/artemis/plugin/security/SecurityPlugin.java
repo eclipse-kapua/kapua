@@ -123,8 +123,8 @@ public class SecurityPlugin implements ActiveMQSecurityManager5 {
                         authenticateExternalConn(connectionInfo, connectionId, username, password, remotingConnection);
             }
         } catch (Exception e) {
-            //shouldn't happen but anyway, if happens, log it but return null so no disclosure
-            logger.warn("Internal error (deny login for security reason)", e);
+            //internal error. do not disclose any info about the reason. just deny the login
+            logger.error("Internal error!", e);
             return null;
         }
     }
@@ -398,7 +398,7 @@ public class SecurityPlugin implements ActiveMQSecurityManager5 {
             if (accountResponse != null) {
                 return new AccountInfo(KapuaEid.parseCompactId(accountResponse.getId()), accountResponse.getName());
             }
-        } catch (JsonProcessingException | JMSException | InterruptedException e) {
+        } catch (Exception e) {
             logger.warn("Error getting scopeId for user admin", e);
         }
         throw new SecurityException("User not authorized! Cannot get Admin Account info!");
@@ -426,7 +426,7 @@ public class SecurityPlugin implements ActiveMQSecurityManager5 {
             if (userResponse != null && userResponse.getScopeId() != null) {
                 return KapuaEid.parseCompactId(userResponse.getScopeId());
             }
-        } catch (JsonProcessingException | JMSException | InterruptedException e) {
+        } catch (Exception e) {
             logger.warn("Error getting scopeId for username {}", username, e);
         }
         throw new SecurityException("User not authorized! Cannot get scopeId for username:" + username);

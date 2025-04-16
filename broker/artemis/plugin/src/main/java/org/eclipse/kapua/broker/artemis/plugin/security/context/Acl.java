@@ -66,6 +66,9 @@ public class Acl {
                 }
             });
         }
+        else {
+            aclLog.append("no restrictions!");
+        }
         logger.info("Acl: {}", aclLog);
     }
 

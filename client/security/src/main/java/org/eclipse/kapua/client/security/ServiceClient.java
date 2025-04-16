@@ -12,14 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.client.security;
 
-import javax.jms.JMSException;
-
 import org.eclipse.kapua.client.security.bean.EntityRequest;
 import org.eclipse.kapua.client.security.bean.EntityResponse;
 import org.eclipse.kapua.client.security.bean.AuthRequest;
 import org.eclipse.kapua.client.security.bean.AuthResponse;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 /**
  * Security service
@@ -47,30 +43,24 @@ public interface ServiceClient {
      * Broker connect logic
      * @param authRequest
      * @return
-     * @throws InterruptedException
-     * @throws JMSException
-     * @throws JsonProcessingException
+     * @throws Exception
      */
-    public AuthResponse brokerConnect(AuthRequest authRequest) throws InterruptedException, JMSException, JsonProcessingException;
+    public AuthResponse brokerConnect(AuthRequest authRequest) throws Exception;
 
     /**
      * Broker disconnect logic
      * @param authRequest
      * @return
-     * @throws JMSException
-     * @throws InterruptedException
-     * @throws JsonProcessingException
+     * @throws Exception
      */
-    public AuthResponse brokerDisconnect(AuthRequest authRequest) throws JMSException, InterruptedException, JsonProcessingException;
+    public AuthResponse brokerDisconnect(AuthRequest authRequest) throws Exception;
 
     /**
      * Return the entity id and scope id giving the entity name (supported entities are user and account. which one will be chosen depends on action field)
      * @param entityRequest
      * @return
-     * @throws JMSException
-     * @throws InterruptedException
-     * @throws JsonProcessingException
+     * @throws Exception
      */
-    public EntityResponse getEntity(EntityRequest entityRequest) throws JMSException, InterruptedException, JsonProcessingException;
+    public EntityResponse getEntity(EntityRequest entityRequest) throws Exception;
 
 }

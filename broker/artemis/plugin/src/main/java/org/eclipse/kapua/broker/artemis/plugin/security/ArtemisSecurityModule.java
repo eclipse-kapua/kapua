@@ -12,26 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.broker.artemis.plugin.security;
 
-import java.util.UUID;
-
-import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.jms.JMSException;
 
-import org.eclipse.kapua.KapuaErrorCodes;
-import org.eclipse.kapua.KapuaRuntimeException;
 import org.eclipse.kapua.broker.artemis.plugin.security.context.SecurityContext;
 import org.eclipse.kapua.broker.artemis.plugin.security.metric.LoginMetric;
 import org.eclipse.kapua.broker.artemis.plugin.security.setting.BrokerSetting;
 import org.eclipse.kapua.broker.artemis.plugin.security.setting.BrokerSettingKey;
-import org.eclipse.kapua.client.security.KapuaMessageListener;
-import org.eclipse.kapua.client.security.ServiceClient;
-import org.eclipse.kapua.client.security.ServiceClientMessagingImpl;
-import org.eclipse.kapua.client.security.amqpclient.Client;
 import org.eclipse.kapua.commons.cache.LocalCache;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
-import org.eclipse.kapua.commons.setting.system.SystemSetting;
-import org.eclipse.kapua.commons.setting.system.SystemSettingKey;
 
 import com.google.inject.Provides;
 
@@ -71,34 +59,6 @@ public class ArtemisSecurityModule extends AbstractKapuaModule {
                 pluginUtility,
                 runWithLock
         );
-    }
-
-    public static final String REQUEST_QUEUE = "$SYS/SVC/auth/request";
-    public static final String RESPONSE_QUEUE_PATTERN = "$SYS/SVC/auth/response/%s_%s";
-
-    @Singleton
-    @Provides
-    ServiceClient authServiceClient(
-            KapuaMessageListener messageListener,
-            @Named("clusterName") String clusterName,
-            @Named("brokerHost") String brokerHost,
-            SystemSetting systemSetting) {
-        return new ServiceClientMessagingImpl(messageListener, buildClient(systemSetting, clusterName, brokerHost, messageListener));
-    }
-
-    public Client buildClient(SystemSetting systemSetting, String clusterName, String brokerHost, KapuaMessageListener messageListener) {
-        //TODO change configuration (use service event broker for now)
-        String clientId = "svc-ath-" + UUID.randomUUID().toString();
-        String host = systemSetting.getString(SystemSettingKey.SERVICE_BUS_HOST, "events-broker");
-        int port = systemSetting.getInt(SystemSettingKey.SERVICE_BUS_PORT, 5672);
-        String username = systemSetting.getString(SystemSettingKey.SERVICE_BUS_USERNAME, "username");
-        String password = systemSetting.getString(SystemSettingKey.SERVICE_BUS_PASSWORD, "password");
-        try {
-            return new Client(username, password, host, port, clientId,
-                    REQUEST_QUEUE, String.format(RESPONSE_QUEUE_PATTERN, clusterName, brokerHost), messageListener);
-        } catch (JMSException e) {
-            throw new KapuaRuntimeException(KapuaErrorCodes.INTERNAL_ERROR, e, (Object[]) null);
-        }
     }
 
 }

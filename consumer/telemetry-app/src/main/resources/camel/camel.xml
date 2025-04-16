@@ -20,7 +20,13 @@
             <!-- keep here the bind/unbind of the kapua session so we can avoid the null check in bind method of KapuaCamelFilter because the Artemis internal messages have no KapuaSession in their header -->
             <bean ref="kapuaCamelFilter" method="bindSession"/>
             <bean ref="kapuaDataConverter" method="convertToData"/>
-            <to uri="bean:dataStorageMessageProcessor?method=processMessage"/>
+            <choice id="checkDatastoreEnabled">
+                <when id="datstoreEnabled">
+                    <simple>${bean:telemetryService?method=isDatastoreServiceEnabled} == 'true'</simple>
+                    <to uri="bean:dataStorageMessageProcessor?method=processMessage"/>
+                </when>
+            </choice>
+            <to uri="bean:dataStorageMessageProcessor?method=updateAssets"/>
             <bean ref="kapuaCamelFilter" method="unbindSession"/>
         </pipeline>
     </route>
