@@ -72,6 +72,7 @@ public class JobEngine extends AbstractKapuaResource {
 
     @POST
     @Path("_isRunning")
+    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public IsJobRunningMultipleResponse isRunning(
             @PathParam("scopeId") ScopeId scopeId,
             MultipleJobIdRequest jobIds) throws KapuaException, JAXBException {
