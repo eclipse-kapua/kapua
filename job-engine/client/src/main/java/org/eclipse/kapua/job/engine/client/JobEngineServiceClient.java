@@ -153,12 +153,12 @@ public class JobEngineServiceClient implements JobEngineService {
         try {
             MultipleJobIdRequest multipleJobIdRequest = new MultipleJobIdRequest();
             multipleJobIdRequest.setJobIds(jobIds);
-            String requestBody = xmlUtil.marshalJson(multipleJobIdRequest);
+            String multipleJobIdRequestXml = xmlUtil.marshal(multipleJobIdRequest);
 
             String path = String.format("is-running/%s", scopeId.toCompactId());
-            LOG.debug("POST {} - Content {}", path, requestBody);
+            LOG.debug("POST {} - Content {}", path, multipleJobIdRequestXml);
 
-            Response response = getPreparedRequest(path).post(Entity.json(requestBody));
+            Response response = getPreparedRequest(path).post(Entity.xml(multipleJobIdRequestXml));
 
             String responseText = checkResponse("POST", path, response);
 
