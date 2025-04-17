@@ -51,6 +51,7 @@ public class JobEngineResource {
 
     @POST
     @Path("is-running/{scopeId}")
+    @Consumes({MediaType.APPLICATION_XML})
     public IsJobRunningMultipleResponse isRunning(@PathParam("scopeId") KapuaId scopeId, MultipleJobIdRequest jobIds) throws KapuaException {
         return new IsJobRunningMultipleResponse(jobEngineService.isRunning(scopeId, jobIds.getJobIds()));
     }
