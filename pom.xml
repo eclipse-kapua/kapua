@@ -106,7 +106,7 @@
         <jaxb-impl.version>2.3.6</jaxb-impl.version>
         <jbatch.version>1.0.2</jbatch.version>
         <jersey.version>2.47</jersey.version>
-        <jetty.version>9.4.53.v20231009</jetty.version>
+        <jetty.version>9.4.57.v20241219</jetty.version>
         <joda.version>2.9.4</joda.version>
         <jolokia-jvm.version>1.3.4</jolokia-jvm.version>
         <jose4j.version>0.7.10</jose4j.version>
