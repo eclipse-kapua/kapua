@@ -129,7 +129,7 @@
         <quartz-scheduler.version>2.3.2</quartz-scheduler.version>
         <reflections.version>0.10.2</reflections.version>
         <scada-utils.version>0.4.0</scada-utils.version>
-        <shiro.version>1.12.0</shiro.version>
+        <shiro.version>1.13.0</shiro.version>
         <slf4j.version>2.0.0</slf4j.version>
         <snakeyaml.version>2.2</snakeyaml.version>
         <spotify.version>8.15.1</spotify.version>
