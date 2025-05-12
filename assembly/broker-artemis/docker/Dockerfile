@@ -21,7 +21,6 @@ ENV BROKER_ID=broker-id
 ENV DATASTORE_ADDR es:9200
 ENV DATASTORE_CLIENT org.eclipse.kapua.service.elasticsearch.client.rest.RestElasticsearchClientProvider
 
-ENV SQL_DB_ADDR db
 ENV SQL_DB_PORT 3306
 
 ENV EVENT_BROKER_URL=${EVENT_BROKER_URL:-amqp://events-broker:5672}
@@ -39,7 +38,6 @@ RUN useradd -u 1002 -g 0 -d '/opt/artemis' -s '/sbin/nologin' artemis && \
     chmod -R +x /opt/artemis/bin
 
 ENV JAVA_ARGS "-Dcommons.db.schema.update=true \
-                   -Dcommons.db.connection.host=\${SQL_DB_ADDR} \
                    -Dcommons.db.connection.port=\${SQL_DB_PORT} \
                    -Dcommons.eventbus.url="${EVENT_BROKER_URL}" \
                    -Dcommons.eventbus.username="${EVENT_BROKER_USERNAME}" \

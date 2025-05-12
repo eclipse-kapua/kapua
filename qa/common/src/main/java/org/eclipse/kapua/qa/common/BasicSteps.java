@@ -69,7 +69,7 @@ public class BasicSteps extends TestBase {
 
     public static final String JOB_ENGINE_CONTAINER_NAME = "job-engine";
     public static final String ES_CONTAINER_NAME = "es";
-    public static final String DB_CONTAINER_NAME = "db";
+    public static final String DB_CONTAINER_NAME = "mariadb";
     public static final String EVENTS_BROKER_CONTAINER_NAME = "events-broker";
     public static final String MESSAGE_BROKER_CONTAINER_NAME = "message-broker";
     public static final String TELEMETRY_CONSUMER_CONTAINER_NAME = "telemetry-consumer";
@@ -109,15 +109,15 @@ public class BasicSteps extends TestBase {
                 "true",
                 "localhost",
                 "3306",
-                "DEFAULT",
-                "org.h2.Driver",
-                "jdbc:h2:tcp",
+                "MariaDB",
+                "org.mariadb.jdbc.Driver",
+                "jdbc:mysql",
                 "certificates/jwt/test.key",
                 "certificates/jwt/test.cert",
                 "localhost",
                 "http://job-engine:8080/v1",
                 "trusted",
-                "MODE=MySQL");
+                "allowPublicKeyRetrieval=True");
         logger.info("=====> Init parameters for docker environment... DONE");
     }
 

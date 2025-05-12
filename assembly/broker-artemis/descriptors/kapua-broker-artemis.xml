@@ -80,6 +80,7 @@
                 <include>org.liquibase:liquibase-core</include>
                 <include>org.reflections:reflections</include>
                 <include>com.h2database:h2</include>
+                <include>org.mariadb.jdbc:mariadb-java-client</include>
                 <include>com.zaxxer:HikariCP</include>
 
                 <!-- Locator dependencies -->

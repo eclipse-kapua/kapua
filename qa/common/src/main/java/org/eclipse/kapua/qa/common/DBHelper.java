@@ -26,10 +26,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Optional;
 
 /**
@@ -105,19 +107,45 @@ public class DBHelper {
 
     public void dropAll() throws SQLException {
         if (connection != null && !connection.isClosed()) {
-            String[] types = {"TABLE"};
-            ResultSet sqlResults = connection.getMetaData().getTables(null, null, "%", types);
+            DatabaseMetaData metaData = connection.getMetaData();
+            String databaseProduct = metaData.getDatabaseProductName().toLowerCase();
 
-            while (sqlResults.next()) {
-                String sqlStatement = String.format("DROP TABLE %s CASCADE", sqlResults.getString("TABLE_NAME").toUpperCase());
-                try (PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
-                    preparedStatement.execute();
+            boolean isMySQL = databaseProduct.contains("mysql") || databaseProduct.contains("mariadb");
+            boolean isH2 = databaseProduct.contains("h2");
+
+            try (Statement stmt = connection.createStatement()) {
+                // Disable FK checks
+                if (isMySQL) {
+                    stmt.execute("SET FOREIGN_KEY_CHECKS = 0");
+                }
+
+                // Fetch tables
+                String[] types = {"TABLE"};
+                ResultSet sqlResults = connection.getMetaData().getTables(null, null, "%", types);
+
+                while (sqlResults.next()) {
+                    String tableName = sqlResults.getString("TABLE_NAME");
+                    String sqlStatement = null;
+                    if (isMySQL) {
+                        sqlStatement = String.format("DROP TABLE IF EXISTS `%s`", tableName);
+                    } else if (isH2) {
+                        sqlStatement = String.format("DROP TABLE %s CASCADE", tableName.toUpperCase());
+                    }
+                    try (PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
+                        preparedStatement.execute();
+                    }
+                }
+                // Re-enable FK checks
+                if (isMySQL) {
+                    stmt.execute("SET FOREIGN_KEY_CHECKS = 1");
                 }
             }
+
             close();
         } else {
             logger.warn("================================> invoked drop all on closed connection!");
         }
+
         Optional.ofNullable(cacheManager).ifPresent(KapuaCacheManager::invalidateAll);
     }
 

@@ -21,15 +21,14 @@ ENV BROKER_PORT 1883
 
 ENV DATASTORE_ADDR es:9200
 
-ENV SQL_DB_ADDR db
 ENV SQL_DB_PORT 3306
+# ENV DB_CONNECTION_ADDITIONAL_OPTIONS=allowPublicKeyRetrieval=True
 
 ENV SERVICE_BROKER_ADDR amqp://events-broker:5672
 
 ENV JOB_ENGINE_BASE_ADDR http://job-engine:8080/v1
 
 ENV JAVA_OPTS "-Dcommons.db.schema.update=true \
-               -Dcommons.db.connection.host=\${SQL_DB_ADDR} \
                -Dcommons.db.connection.port=\${SQL_DB_PORT} \
                -Dlocator.guice.stage=PRODUCTION \
                -Dbroker.host=\${BROKER_ADDR} \

@@ -22,7 +22,6 @@ ENV BROKER_INTERNAL_USERNAME=${BROKER_INTERNAL_USERNAME:-internalUsername}
 ENV BROKER_INTERNAL_PASSWORD=${BROKER_INTERNAL_PASSWORD:-internalPassword}
 ENV CONSUMER_HOST=${CONSUMER_HOST:-lifecycle}
 
-ENV SQL_DB_ADDR db
 ENV SQL_DB_PORT 3306
 
 ENV EVENT_BROKER_URL=${EVENT_BROKER_URL:-amqp://events-broker:5672}
@@ -34,7 +33,6 @@ ENV SERVICE_BROKER_PASSWORD=${SERVICE_BROKER_PASSWORD:-kapua-password}
 ENV JOB_ENGINE_BASE_ADDR http://job-engine:8080/v1
 
 ENV JAVA_OPTS "-Dcommons.db.schema.update=true \
-              -Dcommons.db.connection.host=\${SQL_DB_ADDR} \
               -Dcommons.db.connection.port=\${SQL_DB_PORT} \
               -Dlocator.guice.stage=PRODUCTION \
               -Dbroker.host=\${BROKER_HOST} \

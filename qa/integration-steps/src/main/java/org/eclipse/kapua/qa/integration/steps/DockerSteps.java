@@ -1041,7 +1041,7 @@ public class DockerSteps {
         final HostConfig hostConfig = HostConfig.builder().portBindings(portBindings).build();
 
         List<String> envVars = Lists.newArrayList("commons.db.schema.update=true",
-                "commons.db.connection.host=db",
+                "commons.db.connection.host=mariadb",
                 "commons.db.connection.port=3306",
                 "datastore.elasticsearch.nodes=es:9200",
                 "commons.eventbus.url=amqp://events-broker:5672?jms.sendTimeout=1000",
@@ -1096,12 +1096,14 @@ public class DockerSteps {
                 .hostConfig(hostConfig)
                 .exposedPorts(ports)
                 .env(
-                        "DATABASE=kapuadb",
-                        "DB_USER=kapua",
-                        "DB_PASSWORD=kapua",
+                        "MYSQL_ROOT_PASSWORD=keepCalm123",
+                        "MYSQL_DATABASE=kapuadb",
+                        "MYSQL_USER=kapua",
+                        "MYSQL_PASSWORD=kapua",
+                        "CONNECTION_MAX",
+                        "PACKET_ALLOWED_MAX"
                         //uncomment this line to enable the H@ web console (WARNING enable it only for test and then disable it again!)
 //                        "H2_WEB_OPTS=-web -webAllowOthers -webPort 8181",
-                        "DB_PORT_3306_TCP_PORT=3306"
                 )
                 .image("kapua/kapua-sql:" + KAPUA_VERSION)
                 .build();

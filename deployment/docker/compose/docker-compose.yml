@@ -1,9 +1,19 @@
 services:
   db:
-    container_name: db
+    container_name: mariadb
     image: kapua/kapua-sql:${IMAGE_VERSION}
     ports:
+      - "8181:8181"
       - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=KeepCalm123
+      - MYSQL_DATABASE=kapuadb
+      - MYSQL_USER=kapua
+      - MYSQL_PASSWORD=kapua
+      - MW_DATABASE=${MIDDLEWARE_DB_SCHEMA}
+      - CONNECTION_MAX
+      - PACKET_ALLOWED_MAX
+    command: --lower-case-table-names=1
   es:
     container_name: es
     image: docker.elastic.co/elasticsearch/elasticsearch:7.8.1
