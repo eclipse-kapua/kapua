@@ -17,10 +17,12 @@ import org.eclipse.kapua.model.id.KapuaIdAdapter;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.HashSet;
 import java.util.Set;
 
+@XmlRootElement(name = "multipleJobIdRequest")
 public class MultipleJobIdRequest {
 
     private Set<KapuaId> jobIds = new HashSet<>();
