@@ -13,11 +13,13 @@
 package org.eclipse.kapua.app.api.core.model.job;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdAdapter;
 
+@XmlRootElement(name = "isJobRunningResponse")
 public class IsJobRunningResponse {
 
     private KapuaId jobId;
