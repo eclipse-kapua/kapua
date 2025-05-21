@@ -18,6 +18,7 @@ import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.commons.model.domains.Domains;
+import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.message.Message;
 import org.eclipse.kapua.message.device.data.KapuaDataMessage;
@@ -168,8 +169,10 @@ public class StreamServiceImpl implements StreamService {
      */
     private Device checkDeviceInfo(KapuaDataMessage dataMessage) throws KapuaException {
         Device device = null;
+
+        // If `dataMessage.deviceId` check that it exists and that the `dataMessage.clientId` matches if specified.
         if (dataMessage.getDeviceId() != null) {
-            device = deviceRegistryService.find(dataMessage.getScopeId(), dataMessage.getDeviceId());
+            device = KapuaSecurityUtils.doPrivileged(() -> deviceRegistryService.find(dataMessage.getScopeId(), dataMessage.getDeviceId()));
 
             if (device == null) {
                 throw new KapuaEntityNotFoundException(Device.TYPE, dataMessage.getDeviceId());
@@ -181,6 +184,12 @@ public class StreamServiceImpl implements StreamService {
                 }
             }
         }
+
+        // If `dataMessage.deviceId` is not present, try resolve Device from the `dataMessage.clientId`
+        if (device == null) {
+            device = KapuaSecurityUtils.doPrivileged(() -> deviceRegistryService.findByClientId(dataMessage.getScopeId(), dataMessage.getClientId()));
+        }
+
         return device;
     }
 
