@@ -1,19 +1,9 @@
 services:
   db:
-    container_name: mariadb
-    image: kapua/kapua-sql:${IMAGE_VERSION}
+    container_name: db
+    image: kapua/kapua-sql-h2:${IMAGE_VERSION}
     ports:
-      - "8181:8181"
       - "3306:3306"
-    environment:
-      - MYSQL_ROOT_PASSWORD=KeepCalm123
-      - MYSQL_DATABASE=kapuadb
-      - MYSQL_USER=kapua
-      - MYSQL_PASSWORD=kapua
-      - MW_DATABASE=${MIDDLEWARE_DB_SCHEMA}
-      - CONNECTION_MAX
-      - PACKET_ALLOWED_MAX
-    command: --lower-case-table-names=1
   es:
     container_name: es
     image: docker.elastic.co/elasticsearch/elasticsearch:7.8.1
@@ -48,6 +38,17 @@ services:
       - CRYPTO_SECRET_KEY
       - KAPUA_DISABLE_DATASTORE
       - LOGBACK_LOG_LEVEL
+      - DB_TARGET
+      - DB_HOST
+      - DB_NAME
+      - DB_PORT
+      - DB_SCHEMA_NAME
+      - DB_USERNAME
+      - DB_PASSWORD
+      - DB_CONNECTION_ADDITIONAL_OPTIONS
+      - DB_CONNECTION_SCHEME
+      - DB_RESOLVER
+      - DB_DRIVER
   service-authentication:
     image: kapua/kapua-service-authentication:${IMAGE_VERSION}
     container_name: service-auth
@@ -58,6 +59,17 @@ services:
       - events-broker
     environment:
       - LOGBACK_LOG_LEVEL
+      - DB_TARGET
+      - DB_HOST
+      - DB_NAME
+      - DB_PORT
+      - DB_SCHEMA_NAME
+      - DB_USERNAME
+      - DB_PASSWORD
+      - DB_CONNECTION_ADDITIONAL_OPTIONS
+      - DB_CONNECTION_SCHEME
+      - DB_RESOLVER
+      - DB_DRIVER
   consumer-telemetry:
     container_name: consumer-telemetry
     image: kapua/kapua-consumer-telemetry:${IMAGE_VERSION}
@@ -72,6 +84,17 @@ services:
       - BROKER_URL
       - CRYPTO_SECRET_KEY
       - LOGBACK_LOG_LEVEL
+      - DB_TARGET
+      - DB_HOST
+      - DB_NAME
+      - DB_PORT
+      - DB_SCHEMA_NAME
+      - DB_USERNAME
+      - DB_PASSWORD
+      - DB_CONNECTION_ADDITIONAL_OPTIONS
+      - DB_CONNECTION_SCHEME
+      - DB_RESOLVER
+      - DB_DRIVER
   consumer-lifecycle:
     container_name: consumer-lifecycle
     image: kapua/kapua-consumer-lifecycle:${IMAGE_VERSION}
@@ -85,6 +108,17 @@ services:
       - BROKER_URL
       - CRYPTO_SECRET_KEY
       - LOGBACK_LOG_LEVEL
+      - DB_TARGET
+      - DB_HOST
+      - DB_NAME
+      - DB_PORT
+      - DB_SCHEMA_NAME
+      - DB_USERNAME
+      - DB_PASSWORD
+      - DB_CONNECTION_ADDITIONAL_OPTIONS
+      - DB_CONNECTION_SCHEME
+      - DB_RESOLVER
+      - DB_DRIVER
   kapua-console:
     container_name: kapua-console
     image: kapua/kapua-console:${IMAGE_VERSION}
@@ -99,6 +133,17 @@ services:
       - CRYPTO_SECRET_KEY
       - KAPUA_DISABLE_DATASTORE
       - LOGBACK_LOG_LEVEL
+      - DB_TARGET
+      - DB_HOST
+      - DB_NAME
+      - DB_PORT
+      - DB_SCHEMA_NAME
+      - DB_USERNAME
+      - DB_PASSWORD
+      - DB_CONNECTION_ADDITIONAL_OPTIONS
+      - DB_CONNECTION_SCHEME
+      - DB_RESOLVER
+      - DB_DRIVER
   kapua-api:
     container_name: kapua-api
     image: kapua/kapua-api:${IMAGE_VERSION}
@@ -121,6 +166,17 @@ services:
       - CORS_ENDPOINTS_REFRESH_INTERVAL=${CORS_ENDPOINTS_REFRESH_INTERVAL:-60}
       - COMMONS_VERSION
       - COMMONS_BUILD_NUMBER
+      - DB_TARGET
+      - DB_HOST
+      - DB_NAME
+      - DB_PORT
+      - DB_SCHEMA_NAME
+      - DB_USERNAME
+      - DB_PASSWORD
+      - DB_CONNECTION_ADDITIONAL_OPTIONS
+      - DB_CONNECTION_SCHEME
+      - DB_RESOLVER
+      - DB_DRIVER
   job-engine:
     container_name: job-engine
     image: kapua/kapua-job-engine:${IMAGE_VERSION}
@@ -134,3 +190,14 @@ services:
       - CRYPTO_SECRET_KEY
       - KAPUA_DISABLE_DATASTORE
       - LOGBACK_LOG_LEVEL
+      - DB_TARGET
+      - DB_HOST
+      - DB_NAME
+      - DB_PORT
+      - DB_SCHEMA_NAME
+      - DB_USERNAME
+      - DB_PASSWORD
+      - DB_CONNECTION_ADDITIONAL_OPTIONS
+      - DB_CONNECTION_SCHEME
+      - DB_RESOLVER
+      - DB_DRIVER

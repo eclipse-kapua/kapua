@@ -81,6 +81,17 @@ docker_compose() {
     fi
     export KAPUA_SWAGGER_ENABLE=$6
 
+    # MariaDB deployment
+    if [[ "$7" == true ]]; then
+          echo "MariaDB deployment enabled!"
+          COMPOSE_FILES+=(-f "${SCRIPT_DIR}/../compose/extras/docker-compose.db-mariadb.yml")
+          export DB_TARGET="${DB_TARGET:-MySQL}"
+          export DB_CONNECTION_SCHEME="${DB_CONNECTION_SCHEME:-jdbc:mariadb}"
+          export DB_RESOLVER="${DB_RESOLVER:-MariaDB}"
+          export DB_DRIVER="${DB_DRIVER:-org.mariadb.jdbc.Driver}"
+          export DB_CONNECTION_ADDITIONAL_OPTIONS="${DB_CONNECTION_ADDITIONAL_OPTIONS:-allowPublicKeyRetrieval=True}"
+    fi
+
     docker compose -f "${SCRIPT_DIR}/../compose/docker-compose.yml" "${COMPOSE_FILES[@]}" up -d
 }
 
@@ -119,6 +130,9 @@ for option in "$@"; do
     --sso)
       SSO_MODE=true
       ;;
+    --mariadb)
+      MARIADB_MODE=true
+      ;;
     --no-swagger)
       SWAGGER=false
       ;;
@@ -140,7 +154,7 @@ if [[ ${SSL_MODE} == true ]]; then
 fi
 
 echo "Deploying Eclipse Kapua version $IMAGE_VERSION..."
-docker_compose ${DEBUG_MODE} ${JMX_MODE} ${DEV_MODE} ${SSL_MODE} ${SSO_MODE} ${SWAGGER} || {
+docker_compose ${DEBUG_MODE} ${JMX_MODE} ${DEV_MODE} ${SSL_MODE} ${SSO_MODE} ${SWAGGER} ${MARIADB_MODE} || {
     echo "Deploying Eclipse Kapua... ERROR!"
     exit 1
 }

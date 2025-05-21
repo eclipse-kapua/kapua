@@ -25,7 +25,22 @@
     <packaging>pom</packaging>
     <artifactId>kapua-assembly-sql</artifactId>
 
+    <properties>
+        <sqlDescriptor>${project.basedir}/descriptors/kapua-sql-H2.xml</sqlDescriptor>
+        <sqlDockerFile>${project.basedir}/docker/Dockerfile-H2</sqlDockerFile>
+        <sqlDockerImageName>kapua-sql-h2</sqlDockerImageName>
+    </properties>
+
+
     <profiles>
+        <profile>
+            <id>mariadb</id>
+            <properties>
+                <sqlDescriptor>${project.basedir}/descriptors/kapua-sql-mariadb.xml</sqlDescriptor>
+                <sqlDockerFile>${project.basedir}/docker/Dockerfile-mariadb</sqlDockerFile>
+                <sqlDockerImageName>kapua-sql-mariadb</sqlDockerImageName>
+            </properties>
+        </profile>
         <profile>
             <id>release</id>
             <properties>
@@ -42,15 +57,15 @@
                         <configuration>
                             <images>
                                 <image>
-                                    <name>${docker.account}/kapua-sql</name>
+                                    <name>${docker.account}/${sqlDockerImageName}</name>
                                     <build>
                                         <filter>@</filter>
                                         <assembly>
-                                            <descriptor>${project.basedir}/descriptors/kapua-sql.xml</descriptor>
+                                            <descriptor>${sqlDescriptor}</descriptor>
                                             <mode>tgz</mode>
                                             <tarLongFileMode>posix</tarLongFileMode>
                                         </assembly>
-                                        <dockerFile>${project.basedir}/docker/Dockerfile</dockerFile>
+                                        <dockerFile>${sqlDockerFile}</dockerFile>
                                     </build>
                                 </image>
                             </images>

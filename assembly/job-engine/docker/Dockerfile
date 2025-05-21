@@ -21,8 +21,6 @@ ENV BROKER_PORT 1883
 
 ENV DATASTORE_ADDR es:9200
 
-ENV SQL_DB_PORT 3306
-
 ENV EVENT_BROKER_URL=${EVENT_BROKER_URL:-amqp://events-broker:5672}
 ENV EVENT_BROKER_USERNAME=${EVENT_BROKER_USERNAME:-kapua-sys}
 ENV EVENT_BROKER_PASSWORD=${EVENT_BROKER_PASSWORD:-kapua-password}
@@ -31,7 +29,17 @@ ENV SERVICE_BROKER_USERNAME=${SERVICE_BROKER_USERNAME:-kapua-sys}
 ENV SERVICE_BROKER_PASSWORD=${SERVICE_BROKER_PASSWORD:-kapua-password}
 
 ENV JAVA_OPTS "-Dcommons.db.schema.update=true \
-               -Dcommons.db.connection.port=\${SQL_DB_PORT} \
+               -Dcommons.db.jdbc.database.target=\${DB_TARGET:-} \
+               -Dcommons.db.connection.host=\${DB_HOST:-db} \
+               -Dcommons.db.name=\${DB_NAME:-kapuadb} \
+               -Dcommons.db.connection.port=\${DB_PORT:-3306} \
+               -Dcommons.db.schema=\${DB_SCHEMA_NAME:-kapuadb} \
+               -Dcommons.db.username=\${DB_USERNAME:-kapua} \
+               -Dcommons.db.password=\${DB_PASSWORD:-kapua} \
+               -Dcommons.db.connection.scheme=\${DB_CONNECTION_SCHEME:-jdbc:h2:tcp} \
+               -Dcommons.db.jdbcConnectionUrlResolver=\${DB_RESOLVER:-DEFAULT} \
+               -Dcommons.db.jdbc.driver=\${DB_DRIVER:-org.h2.Driver} \
+               -Dcommons.db.connection.additionalOptions=\${DB_CONNECTION_ADDITIONAL_OPTIONS} \
                -Dlocator.guice.stage=PRODUCTION \
                -Dbroker.host=\${BROKER_ADDR} \
                -Ddatastore.elasticsearch.nodes=\${DATASTORE_ADDR} \

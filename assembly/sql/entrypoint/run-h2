@@ -1,0 +1,27 @@
+#!/bin/sh
+################################################################################
+#    Copyright (c) 2017, 2022 Red Hat Inc
+#
+#    This program and the accompanying materials are made
+#    available under the terms of the Eclipse Public License 2.0
+#    which is available at https://www.eclipse.org/legal/epl-2.0/
+#
+#    SPDX-License-Identifier: EPL-2.0
+#
+#    Contributors:
+#        Red Hat Inc - initial API and implementation
+#        Eurotech
+################################################################################
+
+set -e
+
+# JAVA_OPTS : Arguments to all JVMs
+# H2_OPTS   : additional arguments to the H2 server JVM
+
+# Create schema right before startup
+echo "CREATE SCHEMA IF NOT EXISTS KAPUADB;" > /tmp/backup.sql
+eval java $JAVA_OPTS -cp /opt/h2/h2.jar org.h2.tools.RunScript -url jdbc:h2:/var/opt/h2/data/kapuadb  -user kapua -password kapua -script /tmp/backup.sql
+rm /tmp/backup.sql
+
+# Exec H2
+exec /usr/bin/java $JAVA_OPTS $H2_OPTS -cp /opt/h2/h2.jar org.h2.tools.Server $H2_WEB_OPTS -tcp -tcpAllowOthers -tcpPort 3306 -baseDir /var/opt/h2/data

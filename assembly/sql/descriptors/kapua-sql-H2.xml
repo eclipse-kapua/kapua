@@ -18,23 +18,16 @@
 
     <id>kapua-sql</id>
 
-    <includeBaseDirectory>false</includeBaseDirectory>
-
     <formats>
         <format>tar.gz</format>
     </formats>
 
     <files>
         <file>
-            <source>${project.basedir}/entrypoint/entrypoint-mariadb.sh</source>
-            <outputDirectory/>
-            <fileMode>0777</fileMode>
+            <source>${project.basedir}/entrypoint/run-h2</source>
+            <outputDirectory>var/opt/h2</outputDirectory>
+            <fileMode>0755</fileMode>
         </file>
-<!--        <file>-->
-<!--            <source>${project.basedir}/init/init.sh</source>-->
-<!--            <outputDirectory>docker-entrypoint-initdb.d</outputDirectory>-->
-<!--            <fileMode>0777</fileMode>-->
-<!--        </file>-->
     </files>
 
 </assembly>

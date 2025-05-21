@@ -198,6 +198,17 @@ Following ports will be opened
 
 ---
 
+### Enabling MariaDB mode
+
+It is possible to deploy Kapua with a mariaDB instance instead of H2. to do so, provide the `--mariadb` option.
+
+Example:
+
+```bash
+./docker-deploy.sh --mariadb
+```
+---
+
 ### Building containers from scratch
 
 If you want to build containers from the code, you'll need to build the whole Kapua Project.

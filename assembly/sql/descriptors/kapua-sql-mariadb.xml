@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (c) 2017, 2022 Red Hat Inc and others
+
+    This program and the accompanying materials are made
+    available under the terms of the Eclipse Public License 2.0
+    which is available at https://www.eclipse.org/legal/epl-2.0/
+
+    SPDX-License-Identifier: EPL-2.0
+
+    Contributors:
+        Red Hat Inc - initial API and implementation
+-->
+<assembly
+        xmlns="http://maven.apache.org/ASSEMBLY/2.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
+
+    <id>kapua-sql</id>
+
+    <includeBaseDirectory>false</includeBaseDirectory>
+
+    <formats>
+        <format>tar.gz</format>
+    </formats>
+
+    <files>
+        <file>
+            <source>${project.basedir}/entrypoint/entrypoint-mariadb.sh</source>
+            <outputDirectory/>
+            <fileMode>0777</fileMode>
+        </file>
+    </files>
+
+</assembly>

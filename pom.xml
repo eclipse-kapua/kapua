@@ -83,6 +83,7 @@
         <guice.version>5.1.0</guice.version>
         <hamcrest-core.version>2.2</hamcrest-core.version>
         <h2.version>1.4.200</h2.version>
+        <mariadb.version>2.7.4</mariadb.version>
         <hibernate-jpamodelgen.version>5.5.4.Final</hibernate-jpamodelgen.version>
         <hikaricp.version>4.0.3</hikaricp.version>
         <hk2-api.version>2.6.1</hk2-api.version>
@@ -1559,7 +1560,7 @@
             <dependency>
                 <groupId>org.mariadb.jdbc</groupId>
                 <artifactId>mariadb-java-client</artifactId>
-                <version>2.7.4</version>
+                <version>${mariadb.version}</version>
             </dependency>
 
             <dependency>
