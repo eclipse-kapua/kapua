@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * Device command input entity definition.
+ * Device command input definition.
  *
  * @since 1.0
  */

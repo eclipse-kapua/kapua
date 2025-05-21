@@ -87,7 +87,7 @@ public class DeviceCommandManagementServiceImpl extends AbstractDeviceManagement
         commandRequestPayload.setStdin(commandInput.getStdin());
         commandRequestPayload.setTimeout(commandInput.getTimeout());
         commandRequestPayload.setWorkingDir(commandInput.getWorkingDir());
-        commandRequestPayload.setEnvironmentPairs(commandInput.getEnvironments());
+        commandRequestPayload.setEnvironmentPairs(commandInput.getEnvironment());
         commandRequestPayload.setRunAsync(commandInput.isRunAsynch());
         commandRequestPayload.setPassword(commandInput.getPassword());
         commandRequestPayload.setBody(commandInput.getBody());

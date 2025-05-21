@@ -309,7 +309,7 @@ public class JobEngineSteps extends JobServiceTestBase {
 
     private void checkJobsAreRunning(Map<String, String> jobNamesToRunningStatus) throws Exception {
         KapuaId currentScopeId = ((Job) stepData.get(JOB)).getScopeId();
-        JobQuery query = jobFactory.newQuery(currentScopeId);
+        JobQuery query = new JobQuery(currentScopeId);
         JobListResult allJobs = jobService.query(query); //all jobs
 
         Map<KapuaId, Boolean> jobIdsToRunningStatus = new HashMap<>();
