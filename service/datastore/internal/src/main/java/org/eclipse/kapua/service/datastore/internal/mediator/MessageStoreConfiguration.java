@@ -44,7 +44,7 @@ public class MessageStoreConfiguration {
      * Data storage enabled key.<br>
      * <b>The key must be aligned with the key used in org.eclipse.kapua.service.datastore.MessageStoreService.xml meta data configuration file).</b>
      */
-    public static final String CONFIGURATION_DATA_STORAGE_ENABLED_KEY = "messageStore.enabled";
+    public static final String CONFIGURATION_DATA_STORAGE_ENABLED_KEY = "enabled";
 
     /**
      * Data time to live key.<br>
@@ -114,7 +114,7 @@ public class MessageStoreConfiguration {
                 }
             }
             if (this.values.get(CONFIGURATION_DATA_STORAGE_ENABLED_KEY) != null) {
-                setDataStorageEnabled(Boolean.parseBoolean((String) this.values.get(CONFIGURATION_DATA_STORAGE_ENABLED_KEY)));
+                setDataStorageEnabled((Boolean) this.values.get(CONFIGURATION_DATA_STORAGE_ENABLED_KEY));
             }
             if (this.values.get(CONFIGURATION_DATA_TTL_KEY) != null) {
                 setDataTimeToLive((Integer) this.values.get(CONFIGURATION_DATA_TTL_KEY));
