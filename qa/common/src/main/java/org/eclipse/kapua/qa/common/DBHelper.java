@@ -22,16 +22,13 @@ import org.eclipse.kapua.commons.service.internal.cache.KapuaCacheManager;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.commons.setting.system.SystemSettingKey;
 import org.eclipse.kapua.locator.KapuaLocator;
+import org.eclipse.kapua.qa.common.dbms.DbmsSpecifics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Optional;
 
 /**
@@ -54,6 +51,8 @@ public class DBHelper {
 
     private Connection connection;
 
+    private DbmsSpecifics dbmsSpecifics;
+
     public void init() {
         logger.warn("########################### Called DBHelper ###########################");
         cacheManager = KapuaLocator.getInstance().getComponent(KapuaCacheManager.class);
@@ -75,6 +74,10 @@ public class DBHelper {
         }
 
         new KapuaLiquibaseClient(jdbcUrl, dbUsername, dbPassword, schema).update();
+    }
+
+    public void setDbmsSpecifics(DbmsSpecifics toSet) {
+        this.dbmsSpecifics = toSet;
     }
 
     public void close() {
@@ -107,39 +110,8 @@ public class DBHelper {
 
     public void dropAll() throws SQLException {
         if (connection != null && !connection.isClosed()) {
-            DatabaseMetaData metaData = connection.getMetaData();
-            String databaseProduct = metaData.getDatabaseProductName().toLowerCase();
 
-            boolean isMySQL = databaseProduct.contains("mysql") || databaseProduct.contains("mariadb");
-            boolean isH2 = databaseProduct.contains("h2");
-
-            try (Statement stmt = connection.createStatement()) {
-                // Disable FK checks
-                if (isMySQL) {
-                    stmt.execute("SET FOREIGN_KEY_CHECKS = 0");
-                }
-
-                // Fetch tables
-                String[] types = {"TABLE"};
-                ResultSet sqlResults = connection.getMetaData().getTables(null, null, "%", types);
-
-                while (sqlResults.next()) {
-                    String tableName = sqlResults.getString("TABLE_NAME");
-                    String sqlStatement = null;
-                    if (isMySQL) {
-                        sqlStatement = String.format("DROP TABLE IF EXISTS `%s`", tableName);
-                    } else if (isH2) {
-                        sqlStatement = String.format("DROP TABLE %s CASCADE", tableName.toUpperCase());
-                    }
-                    try (PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
-                        preparedStatement.execute();
-                    }
-                }
-                // Re-enable FK checks
-                if (isMySQL) {
-                    stmt.execute("SET FOREIGN_KEY_CHECKS = 1");
-                }
-            }
+            dbmsSpecifics.dropAllTables(connection);
 
             close();
         } else {

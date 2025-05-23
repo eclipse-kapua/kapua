@@ -44,6 +44,8 @@ import org.eclipse.kapua.qa.common.cucumber.CucTopic;
 import org.eclipse.kapua.qa.common.cucumber.CucTriggerProperty;
 import org.eclipse.kapua.qa.common.cucumber.CucUser;
 import org.eclipse.kapua.qa.common.cucumber.CucUserProfile;
+import org.eclipse.kapua.qa.common.dbms.DbmsSpecifics;
+import org.eclipse.kapua.qa.common.dbms.DbmsSpecificsFactory;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreElasticsearchClientSettings;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreElasticsearchClientSettingsKey;
 import org.eclipse.kapua.transport.message.jms.JmsTopic;
@@ -69,7 +71,7 @@ public class BasicSteps extends TestBase {
 
     public static final String JOB_ENGINE_CONTAINER_NAME = "job-engine";
     public static final String ES_CONTAINER_NAME = "es";
-    public static final String DB_CONTAINER_NAME = "mariadb";
+    public static final String DB_CONTAINER_NAME = "db";
     public static final String EVENTS_BROKER_CONTAINER_NAME = "events-broker";
     public static final String MESSAGE_BROKER_CONTAINER_NAME = "message-broker";
     public static final String TELEMETRY_CONSUMER_CONTAINER_NAME = "telemetry-consumer";
@@ -93,6 +95,7 @@ public class BasicSteps extends TestBase {
     private static final String ASSERT_ERROR_CAUGHT = "AssertErrorCaught";
 
     private final DBHelper database;
+    private DbmsSpecifics dbmsSpecifics;
 
     @Inject
     public BasicSteps(StepData stepData, DBHelper database) {
@@ -101,44 +104,16 @@ public class BasicSteps extends TestBase {
         this.database = database;
     }
 
-    @Before(value = "@setup and (@env_docker or @env_docker_base)", order = 0)
-    public void initParametersDocker(Scenario scenario) {
-        logger.info("=====> Init parameters for docker environment...");
+    @Before(value = "@setup and (@env_docker or @env_docker_base or @env_none)", order = 0)
+    public void initParametersSetup(Scenario scenario) {
         setProperties(scenario,
                 "kapuadb",
                 "true",
-                "localhost",
-                "3306",
-                "MariaDB",
-                "org.mariadb.jdbc.Driver",
-                "jdbc:mysql",
                 "certificates/jwt/test.key",
                 "certificates/jwt/test.cert",
                 "localhost",
                 "http://job-engine:8080/v1",
-                "trusted",
-                "allowPublicKeyRetrieval=True");
-        logger.info("=====> Init parameters for docker environment... DONE");
-    }
-
-    @Before(value = "@setup and @env_none", order = 0)
-    public void initParametersEmbedded(Scenario scenario) {
-        logger.info("=====> Init parameters for embedded environment...");
-        setProperties(scenario,
-                "kapuadb",
-                "true",
-                "",
-                "",
-                "H2",
-                "org.h2.Driver",
-                "jdbc:h2:mem:",
-                "certificates/jwt/test.key",
-                "certificates/jwt/test.cert",
-                "localhost",
-                "http://localhost:8080/v1",
-                "trusted",
-                null);
-        logger.info("=====> Init parameters for embedded environment... DONE");
+                "trusted");
     }
 
     @Before(value = "(@env_docker or @env_docker_base) and not (@setup or @teardown)", order = 0)
@@ -417,7 +392,7 @@ public class BasicSteps extends TestBase {
     // Parameter Types
     //
     @ParameterType(".*")
-    public org.eclipse.kapua.transport.message.jms.JmsTopic topic(String topic) {
+    public JmsTopic topic(String topic) {
         return new JmsTopic(topic);
     }
 
@@ -429,31 +404,26 @@ public class BasicSteps extends TestBase {
     private void setProperties(Scenario scenario,
            String schema,
            String updateSchema,
-           String dbHost,
-           String dbPort,
-           String dbConnResolver,
-           String dbDriver,
-           String jdbcConnection,
            String jwtKey,
            String jwtCertificate,
            String brokerHost,
            String jobEngineUrl,
-           String jobEngineAuthMode,
-           String additionalOptions) {
+           String jobEngineAuthMode) {
 
+        setDbmsSpecsForThisScenario(scenario);
+
+        logger.info("=====> Init parameters for the environment...");
         SystemSetting.resetInstance();
 
         System.setProperty(SystemSettingKey.DB_SCHEMA.key(), schema);
         System.setProperty(SystemSettingKey.DB_SCHEMA_UPDATE.key(), updateSchema);
-        System.setProperty(SystemSettingKey.DB_CONNECTION_HOST.key(), dbHost);
-        System.setProperty(SystemSettingKey.DB_CONNECTION_PORT.key(), dbPort);
-        System.setProperty(SystemSettingKey.DB_JDBC_CONNECTION_URL_RESOLVER.key(), dbConnResolver);
-        System.setProperty(SystemSettingKey.DB_JDBC_DRIVER.key(), dbDriver);
-        System.setProperty(SystemSettingKey.DB_CONNECTION_SCHEME.key(), jdbcConnection);
-        if (additionalOptions != null) {
-            System.setProperty(SystemSettingKey.DB_CONNECTION_ADDITIONAL_OPTIONS.key(), additionalOptions);
-        }
+        System.setProperty(SystemSettingKey.DB_CONNECTION_USE_SSL.key(), "false");
         System.setProperty(CryptoSettingKeys.CRYPTO_SECRET_KEY.key(), "kapuaTestsKey!!!");
+        Map<String, String> specificDbmsSettings = this.dbmsSpecifics.getClientJdbcSettings();
+        for (Map.Entry<String, String> entry : specificDbmsSettings.entrySet()) {
+            System.setProperty(entry.getKey(), entry.getValue());
+        }
+
         System.setProperty("certificate.jwt.private.key", jwtKey);
         System.setProperty("certificate.jwt.certificate", jwtCertificate);
         System.setProperty("broker.host", brokerHost);
@@ -462,6 +432,12 @@ public class BasicSteps extends TestBase {
         setSpecificProperties(scenario);
         logParameters();
         KapuaLocator.clearInstance();
+        logger.info("=====> Init parameters for the environment... DONE");
+    }
+
+    private void setDbmsSpecsForThisScenario(Scenario scenario) {
+        this.dbmsSpecifics = DbmsSpecificsFactory.createSpecifics(scenario);
+        database.setDbmsSpecifics(this.dbmsSpecifics);
     }
 
     private void logParameters() {

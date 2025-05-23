@@ -34,3 +34,9 @@ Feature: Tag tests
     Then Tag "tag-1" is assigned to device "device"
     And Tag "tag-2" is assigned to device "device"
     And Tag "tag-3" is assigned to device "device"
+
+  @teardown
+  Scenario: Stop full docker environment
+    Given Stop full docker environment
+    And Clean Locator Instance
+
