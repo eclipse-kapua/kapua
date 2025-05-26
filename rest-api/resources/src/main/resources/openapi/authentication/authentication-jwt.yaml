@@ -22,12 +22,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                jwt:
-                  $ref: './authentication.yaml#/components/schemas/jwt'
-              required:
-                - jwt
+              $ref: './authentication.yaml#/components/schemas/jwtCredentials'
       responses:
         200:
           description: The new AccessToken
