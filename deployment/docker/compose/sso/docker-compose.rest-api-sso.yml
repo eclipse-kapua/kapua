@@ -1,0 +1,14 @@
+services:
+  kapua-api:
+    image: kapua/kapua-api:${IMAGE_VERSION}-sso
+    environment:
+      - KAPUA_OPENID_JWT_ISSUER
+      - KAPUA_OPENID_CLIENT_ID
+      - KAPUA_OPENID_CLIENT_SECRET
+      - KAPUA_OPENID_JWT_AUDIENCE
+      - KAPUA_OPENID_AUTH_ENDPOINT
+      - KAPUA_OPENID_TOKEN_ENDPOINT
+      - KAPUA_OPENID_LOGOUT_ENDPOINT
+      - KEYCLOAK_URL
+      - KEYCLOAK_CLIENT_ID
+      - KEYCLOAK_REALM
