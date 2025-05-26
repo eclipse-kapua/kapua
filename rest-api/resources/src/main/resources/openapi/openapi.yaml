@@ -666,6 +666,10 @@ components:
       $ref: './authentication/authentication.yaml#/components/schemas/accessToken'
     loginInfo:
       $ref: './authentication/authentication.yaml#/components/schemas/loginInfo'
+    usernamePasswordCredentials:
+      $ref: './authentication/authentication.yaml#/components/schemas/usernamePasswordCredentials'
+    jwtCredentials:
+      $ref: './authentication/authentication.yaml#/components/schemas/jwtCredentials'
     ### Credential Entities ###
     credential:
       $ref: './credential/credential.yaml#/components/schemas/credential'
