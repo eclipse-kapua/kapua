@@ -239,7 +239,7 @@ public abstract class AbstractOpenIDService implements OpenIDService {
 
             String clientSecret = getClientSecret();
             if (clientSecret != null && !clientSecret.isEmpty()) {
-                parameters.add(new BasicNameValuePair("client_secret", clientSecret + "asd"));
+                parameters.add(new BasicNameValuePair("client_secret", clientSecret));
             }
 
             parameters.add(new BasicNameValuePair("redirect_uri", redirectUri.toString()));
