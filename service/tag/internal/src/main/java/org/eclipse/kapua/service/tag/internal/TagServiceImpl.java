@@ -89,9 +89,7 @@ public class TagServiceImpl extends KapuaConfigurableServiceBase implements TagS
                 throw new KapuaDuplicateNameException(tagCreator.getName());
             }
 
-            final TagImpl toBeCreated = new TagImpl(tagCreator.getScopeId());
-            toBeCreated.setName(tagCreator.getName());
-            toBeCreated.setDescription(tagCreator.getDescription());
+            final TagImpl toBeCreated = tagMapper.map(tagCreator);
             // Do create
             final TagImpl created = tagRepository.create(tx, toBeCreated);
             return created;
