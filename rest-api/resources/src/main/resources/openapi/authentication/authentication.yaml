@@ -114,6 +114,20 @@ components:
           trustMe:
             type: boolean
             description: Whether to generate a TrustKey or not.
+    jwtCredentials:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          pattern: '^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$'
+          description: The OpenID Connect <a href="https://auth0.com/blog/id-token-access-token-what-is-the-difference/#What-Is-an-Access-Token">accessToken</a>
+        idToken:
+          type: string
+          pattern: '^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$'
+          description: The OpenID Connect <a href="https://auth0.com/blog/id-token-access-token-what-is-the-difference/#What-Is-an-ID-Token">idToken</a>.
+      example:
+        accessToken: eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJrOUlYUlRMSm9jRlp6UzMycktnUHB2Ym9LYkJWMFNoUkNLdWxUMlBPWlRZIn0.eyJleHAiOjE3NDc5OTQ4NjEsImlhdCI6MTc0Nzk5NDU2MSwiYXV0aF90aW1lIjoxNzQ3OTk0MzA0LCJqdGkiOiI4ZTc3ZTdlNy1iZjgzLTRiMzctODQ2OC0yYTI3ZTA0YTVhMjciLCJpc3MiOiJodHRwOi8vMTkyLjE2OC4xLjY1OjkwOTAvcmVhbG1zL2VjIiwiYXVkIjpbImNvbnNvbGUiLCJhY2NvdW50Il0sInN1YiI6IjY2M2MwOGQ0LWI3Y2UtNDE5Mi1hYzU2LWMzMjU2ZjAwZDk0OCIsInR5cCI6IkJlYXJlciIsImF6cCI6ImNvbnNvbGUiLCJzZXNzaW9uX3N0YXRlIjoiMWNiYzY4NTItMDVjMy00NmZhLTgyNjQtMWYwN2U1NTIyYTgyIiwiYWNyIjoiMCIsImFsbG93ZWQtb3JpZ2lucyI6WyJodHRwOi8vbG9jYWxob3N0OjgwODMiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIm9mZmxpbmVfYWNjZXNzIiwiZGVmYXVsdC1yb2xlcy1lYyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCIsInNpZCI6IjFjYmM2ODUyLTA1YzMtNDZmYS04MjY0LTFmMDdlNTUyMmE4MiIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwicHJlZmVycmVkX3VzZXJuYW1lIjoic3NvLXVzZXIifQ.cTqJbz4U3gBUiB1FE0N02tR6SzaeaJo3LmpNz77e1IfJ8w5A5FMxrOJ45oggmvE5LdknEmDLo8ZEbFV2Yop_AzRu_F7gErTD_yE6UdpRcWTN4W_pc4-oxSVS7jxZSEXfSntGl4lKcV9sEe3tcd6r5rwQM34nkQQBhQ3yklGqngCARlzQXnKeZbBR4Zegv7CeJXweiiwNXewcrv2LltQVxBi-x5nsy6CmETuZzaes5j4TqjCKxiYuv2l4Gd6d9JMA1Bg_1-jMb5fF_YQQFNfk_BsOAH1eILH3n6agC5D1wRg3jaYHhXrFZyP8_jFcxHf2VQWCkg1o8bO6OzfsAHXuVQ
+        idToken: eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJrOUlYUlRMSm9jRlp6UzMycktnUHB2Ym9LYkJWMFNoUkNLdWxUMlBPWlRZIn0.eyJleHAiOjE3NDc5OTQ4NjEsImlhdCI6MTc0Nzk5NDU2MSwiYXV0aF90aW1lIjoxNzQ3OTk0MzA0LCJqdGkiOiI1MDAxZTM5Ny1hMWQyLTRmYWMtOTU1Zi00MWQ3MDUyZGQ5YWIiLCJpc3MiOiJodHRwOi8vMTkyLjE2OC4xLjY1OjkwOTAvcmVhbG1zL2VjIiwiYXVkIjoiY29uc29sZSIsInN1YiI6IjY2M2MwOGQ0LWI3Y2UtNDE5Mi1hYzU2LWMzMjU2ZjAwZDk0OCIsInR5cCI6IklEIiwiYXpwIjoiY29uc29sZSIsInNlc3Npb25fc3RhdGUiOiIxY2JjNjg1Mi0wNWMzLTQ2ZmEtODI2NC0xZjA3ZTU1MjJhODIiLCJhdF9oYXNoIjoiQWlEeERwWmtlbjhRMk1oUEpTT2VydyIsImFjciI6IjAiLCJzaWQiOiIxY2JjNjg1Mi0wNWMzLTQ2ZmEtODI2NC0xZjA3ZTU1MjJhODIiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsInByZWZlcnJlZF91c2VybmFtZSI6InNzby11c2VyIn0.RuC8AUvRr2eq7I1_NjowQeqSQsCy2wV6nz9kBLdDPXJFl0bNngu-tKYCuwAUaB-kAnfKYpJPDQQwHj_EXhNaXEXJBhpawDmRFBAx1yVcHe7ttLyWpjyc0btrI0AkzyrudFFolhF2briQqnlmqZma20eaxdpzG6vlb-dQZKgk5MM0Up7Ucb5oTp1M5ou2c0PWouF4z_g-191EyzwvoMsU4WGCC_mAIEs0J3aPnLwLrfVzXO1Sb86WTddnxlxdbp5nL2fbqAliHF6eneM5zyC2gecN-O5Pz7xkhIXo9L-nD6mVwmCgEdJXFEzvTZl1SNN1UWbxwnU37mLgXkD8WXOWpg
     username:
       type: string
       description: the username of the user
