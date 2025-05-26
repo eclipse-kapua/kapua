@@ -16,6 +16,7 @@ import java.math.BigInteger;
 import java.util.Optional;
 import java.util.Properties;
 
+import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdImpl;
 import org.mapstruct.Mapper;
@@ -23,6 +24,14 @@ import org.mapstruct.Mapping;
 
 @Mapper
 public interface KapuaBaseMapper {
+
+    default KapuaEid map(KapuaId kapuaId) {
+        return new KapuaEid(kapuaId);
+    }
+
+    default KapuaId map(KapuaEid kapuaeId) {
+        return new KapuaIdImpl(kapuaeId.getId());
+    }
 
     /**
      * Use this annotation for merge-mappers between dtos and KapuaEntities, to ignore all read-only fields of the target entity

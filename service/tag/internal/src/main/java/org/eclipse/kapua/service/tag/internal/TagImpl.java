@@ -16,6 +16,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import org.eclipse.kapua.commons.model.AbstractKapuaNamedEntity;
+import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.tag.Tag;
 
@@ -51,7 +52,7 @@ public class TagImpl extends AbstractKapuaNamedEntity {
      *         The scope {@link KapuaId}
      * @since 1.0.0
      */
-    public TagImpl(KapuaId scopeId) {
+    public TagImpl(KapuaEid scopeId) {
         super(scopeId);
     }
 }
