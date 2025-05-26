@@ -82,6 +82,26 @@
             <artifactId>kapua-job-engine-api</artifactId>
         </dependency>
 
+        <!-- SSO dependencies -->
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-openid-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-openid-provider</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-openid-provider-generic</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-openid-provider-keycloak</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
         <!-- re-declare as provided as our web container will provide this -->
         <dependency>
             <groupId>org.slf4j</groupId>
