@@ -13,6 +13,7 @@
 package org.eclipse.kapua.service.tag.internal;
 
 import org.eclipse.kapua.commons.model.mappers.KapuaBaseMapper;
+import org.eclipse.kapua.model.query.KapuaListResult;
 import org.eclipse.kapua.service.tag.Tag;
 import org.eclipse.kapua.service.tag.TagCreator;
 import org.eclipse.kapua.service.tag.TagListResult;
@@ -22,7 +23,11 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 
-@Mapper(uses = KapuaBaseMapper.class, componentModel = MappingConstants.ComponentModel.JSR330, injectionStrategy = InjectionStrategy.CONSTRUCTOR, collectionMappingStrategy = CollectionMappingStrategy.TARGET_IMMUTABLE)
+@Mapper(
+        uses = KapuaBaseMapper.class,
+        componentModel = MappingConstants.ComponentModel.JSR330,
+        injectionStrategy = InjectionStrategy.CONSTRUCTOR,
+        collectionMappingStrategy = CollectionMappingStrategy.TARGET_IMMUTABLE)
 public interface TagMapper {
 
     Tag map(TagImpl tag);
@@ -30,7 +35,7 @@ public interface TagMapper {
     @KapuaBaseMapper.IgnoreKapuaUpdatableEntityReadonlyFields
     TagImpl map(TagCreator tag);
 
-    TagListResult map(TagImplListResult tagImplListResult);
+    TagListResult map(KapuaListResult<TagImpl> tagImplListResult);
 
     @KapuaBaseMapper.IgnoreKapuaUpdatableEntityReadonlyFields
     void merge(@MappingTarget TagImpl existingTag, Tag tag);

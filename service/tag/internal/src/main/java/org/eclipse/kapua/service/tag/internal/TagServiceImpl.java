@@ -24,6 +24,7 @@ import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaListResult;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
@@ -160,7 +161,7 @@ public class TagServiceImpl extends KapuaConfigurableServiceBase implements TagS
         // Check Access
         authorizationService.checkPermission(new Permission(Domains.TAG, Actions.read, query.getScopeId()));
         // Do query
-        return tagMapper.map(txManager.<TagImplListResult>execute(tx -> tagRepository.query(tx, query)));
+        return tagMapper.map(txManager.<KapuaListResult<TagImpl>>execute(tx -> tagRepository.query(tx, query)));
     }
 
     @Override

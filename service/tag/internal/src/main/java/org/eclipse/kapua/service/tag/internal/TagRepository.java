@@ -12,9 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.tag.internal;
 
+import org.eclipse.kapua.model.query.KapuaListResult;
 import org.eclipse.kapua.storage.KapuaNamedEntityRepository;
 
 public interface TagRepository extends
-        KapuaNamedEntityRepository<TagImpl, TagImplListResult> {
+        KapuaNamedEntityRepository<TagImpl, KapuaListResult<TagImpl>> {
 
 }
