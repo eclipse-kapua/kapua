@@ -23,6 +23,9 @@ if [ -n "$KEYCLOAK_URL" ] ; then
   : KEYCLOAK_REALM=${KEYCLOAK_REALM:=kapua}
   : KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID:=rest-api}
 
+  echo "  Keycloak Realm: ${KEYCLOAK_REALM}"
+  echo "  OpenId ClientId: ${KEYCLOAK_CLIENT_ID}"
+
   JAVA_OPTS="$JAVA_OPTS -Dsso.openid.provider=keycloak"
   JAVA_OPTS="$JAVA_OPTS -Dsso.openid.client.id=${KEYCLOAK_CLIENT_ID}"
 
