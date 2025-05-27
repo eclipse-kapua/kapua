@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (c) 2021, 2022 Eurotech and/or its affiliates and others
+
+    This program and the accompanying materials are made
+    available under the terms of the Eclipse Public License 2.0
+    which is available at https://www.eclipse.org/legal/epl-2.0/
+
+    SPDX-License-Identifier: EPL-2.0
+
+    Contributors:
+        Eurotech - initial API and implementation
+-->
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd"
+        logicalFilePath="KapuaDB/changelog-device-2.1.0.xml">
+
+    <include relativeToChangelogFile="true" file="../common-properties.xml"/>
+
+    <changeSet id="device_alter-value-clob-to-longtext" author="eurotech" dbms="mysql,mariadb">
+        <comment>Alter value_clob to MEDIUMTEXT for MySQL/MariaDB in order to be compliant with default max length imposed on extended properties value</comment>
+        <sql>
+            ALTER TABLE dvc_device_extended_properties
+            MODIFY COLUMN value_clob MEDIUMTEXT;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
