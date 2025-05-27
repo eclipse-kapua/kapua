@@ -137,6 +137,35 @@ EOF
   echo ""
 
   #
+  # Keycloak client creation for Kapua REST API
+  echo "Creating Kapua Kapua REST API client..."
+
+  # The redirectUris allowed here is just a placeholder.
+  # It should be set to application that is performing SSO with REST API
+  $KC create clients \
+    -r ${REALM_NAME} \
+    -s clientId=rest-api \
+    -s "redirectUris=[\"*\"]" \
+    -i \
+    -f - << EOF
+    {
+        "name": "Kapua REST API",
+        "publicClient": true,
+        "protocolMappers": [ {
+          "name": "console",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+             "access.token.claim": "true",
+             "included.custom.audience": "console"
+          }
+        } ]
+    }
+EOF
+  echo "Creating Kapua REST API client... DONE! "
+  echo ""
+
+  #
   # Creating SSO user for Kapua keycloak realm
   SSO_USER="sso-user"
   SSO_USER_PASSWORD="sso-password"
