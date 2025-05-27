@@ -63,3 +63,11 @@ cp "${SSO_CRT}" . # Ugly but it works and I don't wanna change it :D
 docker build -t "${DOCKER_ACCOUNT}"/kapua-console:${IMAGE_VERSION}-sso -f "${SCRIPT_DIR_SSO_COFIG}"/console/Dockerfile .
 rm "${SSO_CERT_FILE}" # Ugly but it works and I don't wanna change it :D
 echo "Building Console with SSO certificate... DONE!"
+
+#
+# Building the kapua-api with certificates for SSO stuff
+echo "Building Rest API with SSO certificate..."
+cp "${SSO_CRT}" . # Ugly but it works and I don't wanna change it :D
+docker build -t "${DOCKER_ACCOUNT}"/kapua-api:${IMAGE_VERSION}-sso -f "${SCRIPT_DIR_SSO_COFIG}"/rest-api/Dockerfile .
+rm "${SSO_CERT_FILE}" # Ugly but it works and I don't wanna change it :D
+echo "Building Console with SSO certificate... DONE!"

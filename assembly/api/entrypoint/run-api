@@ -13,6 +13,44 @@
 #        Eurotech
 ################################################################################
 
+### SSO Configs
+
+# SSO - Keycloak OpenID Provider
+if [ -n "$KEYCLOAK_URL" ] ; then
+  echo "Activating OpenID Connect Keycloak integration..."
+  echo "  Keycloak: $KEYCLOAK_URL"
+
+  : KEYCLOAK_REALM=${KEYCLOAK_REALM:=kapua}
+  : KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID:=rest-api}
+
+  JAVA_OPTS="$JAVA_OPTS -Dsso.openid.provider=keycloak"
+  JAVA_OPTS="$JAVA_OPTS -Dsso.openid.client.id=${KEYCLOAK_CLIENT_ID}"
+
+  test -n "${KAPUA_OPENID_CLIENT_SECRET}" && JAVA_OPTS="$JAVA_OPTS -Dsso.openid.client.secret=${KAPUA_OPENID_CLIENT_SECRET}"
+
+  JAVA_OPTS="$JAVA_OPTS -Dsso.openid.keycloak.uri=${KEYCLOAK_URL}"
+  JAVA_OPTS="$JAVA_OPTS -Dsso.openid.keycloak.realm=${KEYCLOAK_REALM}"
+
+# SSO - Generic OpenID Provider
+elif [ -n "${KAPUA_OPENID_JWT_ISSUER}" ]; then
+  echo "Activating OpenID Connect Generic integration..."
+  echo "  OpenID Issuer: ${KAPUA_OPENID_JWT_ISSUER}"
+
+  JAVA_OPTS="${JAVA_OPTS} -Dsso.openid.provider=generic"
+  JAVA_OPTS="${JAVA_OPTS} -Dsso.openid.client.id=${KAPUA_OPENID_CLIENT_ID:-rest-api}"
+
+  test -n "${KAPUA_OPENID_CLIENT_SECRET}" && JAVA_OPTS="${JAVA_OPTS} -Dsso.openid.client.secret=${KAPUA_OPENID_CLIENT_SECRET}"
+
+  JAVA_OPTS="${JAVA_OPTS} -Dsso.openid.generic.jwt.audience.allowed=${KAPUA_OPENID_JWT_AUDIENCE:-rest-api}"
+  JAVA_OPTS="${JAVA_OPTS} -Dsso.openid.generic.jwt.issuer.allowed=${KAPUA_OPENID_JWT_ISSUER}"
+
+  test -n "${KAPUA_OPENID_AUTH_ENDPOINT}" && JAVA_OPTS="${JAVA_OPTS} -Dsso.openid.generic.server.endpoint.auth=${KAPUA_OPENID_AUTH_ENDPOINT}"
+  test -n "${KAPUA_OPENID_LOGOUT_ENDPOINT}" && JAVA_OPTS="${JAVA_OPTS} -Dsso.openid.generic.server.endpoint.logout=${KAPUA_OPENID_LOGOUT_ENDPOINT}"
+  test -n "${KAPUA_OPENID_TOKEN_ENDPOINT}" && JAVA_OPTS="${JAVA_OPTS} -Dsso.openid.generic.server.endpoint.token=${KAPUA_OPENID_TOKEN_ENDPOINT}"
+  test -n "${KAPUA_OPENID_USERINFO_ENDPOINT}" && JAVA_OPTS="${JAVA_OPTS} -Dsso.openid.generic.server.endpoint.userinfo=${KAPUA_OPENID_USERINFO_ENDPOINT}"
+fi
+
+# OpenAPI yaml
 openapiFile=webapps/root/doc/openapi.yaml;
 
 if [ -n "$COMMONS_VERSION" ]; then

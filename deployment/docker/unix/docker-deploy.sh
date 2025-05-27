@@ -71,6 +71,7 @@ docker_compose() {
       . "${SCRIPT_DIR}/sso/docker-sso-config.sh" "$4"
 
       COMPOSE_FILES+=(-f "${SCRIPT_DIR}/../compose/sso/docker-compose.console-sso.yml")
+      COMPOSE_FILES+=(-f "${SCRIPT_DIR}/../compose/sso/docker-compose.rest-api-sso.yml")
       COMPOSE_FILES+=(-f "${SCRIPT_DIR}/../compose/sso/docker-compose.keycloak.yml")
     fi
 
