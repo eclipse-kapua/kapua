@@ -42,7 +42,7 @@ public class MariadbSpecifics implements DbmsSpecifics {
 
     public String[] getContainerEnvVars() {
         return new String[] {
-                "DB_CONNECTION_ADDITIONAL_OPTIONS=allowPublicKeyRetrieval=True",
+                "DB_CONNECTION_ADDITIONAL_OPTIONS=",
                 "DB_CONNECTION_SCHEME=jdbc:mariadb",
                 "DB_RESOLVER=MariaDB",
                 "DB_DRIVER=org.mariadb.jdbc.Driver",
@@ -78,7 +78,6 @@ public class MariadbSpecifics implements DbmsSpecifics {
             put(SystemSettingKey.DB_CONNECTION_SCHEME.key(), "jdbc:mariadb");
             put(SystemSettingKey.DB_CONNECTION_PORT.key(), dbPort);
             put(SystemSettingKey.DB_CONNECTION_HOST.key(), "localhost");
-            put(SystemSettingKey.DB_CONNECTION_ADDITIONAL_OPTIONS.key(),"allowPublicKeyRetrieval=True");
             put(SystemSettingKey.DB_JDBC_DATABASE_TARGET.key(), "MySQL");
         }};
     }

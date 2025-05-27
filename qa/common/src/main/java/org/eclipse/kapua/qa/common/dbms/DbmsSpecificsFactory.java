@@ -23,6 +23,7 @@ public class DbmsSpecificsFactory {
     public static DbmsSpecifics createSpecifics(String type) {
         switch (type.toLowerCase()) {
             case "mariadb": return MariadbSpecifics.getInstance();
+            case "mysql": return MySQLSpecifics.getInstance();
             case "h2": return H2TcpSpecifics.getInstance();
             case "in-memory": return H2InMemorySpecifics.getInstance();
             default: throw new IllegalArgumentException("Unknown dbms deployment type: " + type);

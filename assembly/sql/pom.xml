@@ -42,6 +42,14 @@
             </properties>
         </profile>
         <profile>
+            <id>mysql</id>
+            <properties>
+                <sqlDescriptor>${project.basedir}/descriptors/kapua-sql-mariadb.xml</sqlDescriptor>
+                <sqlDockerFile>${project.basedir}/docker/Dockerfile-mysql</sqlDockerFile>
+                <sqlDockerImageName>kapua-sql-mysql</sqlDockerImageName>
+            </properties>
+        </profile>
+        <profile>
             <id>release</id>
             <properties>
                 <timestamp>latest</timestamp>
