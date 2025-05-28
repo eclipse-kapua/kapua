@@ -34,7 +34,6 @@ import javax.xml.bind.annotation.XmlType;
         "workingDir",
         "body",
         "environment",
-        "environments",
         "runAsynch",
         "stdin"
 })
