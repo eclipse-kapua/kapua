@@ -101,6 +101,28 @@ public abstract class KapuaEntityBase implements KapuaSerializable {
     }
 
     /**
+     * Sets the created on {@link Date}
+     *
+     * @param createdOn
+     *         the created on {@link Date}
+     * @since 2.1.0
+     */
+    public void setCreatedOn(Date createdOn) {
+        this.createdOn = createdOn;
+    }
+
+    /**
+     * Sets the created by {@link KapuaId}
+     *
+     * @param createdBy
+     *         the created by {@link KapuaId}
+     * @since 2.1.0
+     */
+    public void setCreatedBy(KapuaId createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    /**
      * Gets the identity {@link KapuaId} who has created this {@link KapuaEntityBase}
      *
      * @return the identity {@link KapuaId} who has created this {@link KapuaEntityBase}

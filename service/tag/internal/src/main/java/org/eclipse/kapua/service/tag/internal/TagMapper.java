@@ -20,6 +20,7 @@ import org.eclipse.kapua.service.tag.TagListResult;
 import org.mapstruct.CollectionMappingStrategy;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 
@@ -33,6 +34,7 @@ public interface TagMapper {
     Tag map(TagImpl tag);
 
     @KapuaBaseMapper.IgnoreKapuaUpdatableEntityReadonlyFields
+    @Mapping(target = "optlock", ignore = true)
     TagImpl map(TagCreator tag);
 
     TagListResult map(KapuaListResult<TagImpl> tagImplListResult);

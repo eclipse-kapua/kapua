@@ -37,7 +37,6 @@ public interface KapuaBaseMapper {
      * Use this annotation for merge-mappers between dtos and KapuaEntities, to ignore all read-only fields of the target entity
      */
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "scopeId", ignore = true)
     @Mapping(target = "createdOn", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     public @interface IgnoreKapuaEntityReadonlyFields {
@@ -49,7 +48,6 @@ public interface KapuaBaseMapper {
      */
     @Mapping(target = "modifiedOn", ignore = true)
     @Mapping(target = "modifiedBy", ignore = true)
-    @Mapping(target = "optlock", ignore = true)
     @Mapping(target = "entityProperties", ignore = true)
     @Mapping(target = "entityAttributes", ignore = true)
     @IgnoreKapuaEntityReadonlyFields

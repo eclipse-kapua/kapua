@@ -34,11 +34,13 @@ public interface AccountMapper {
     @Mapping(target = "parentAccountPath", ignore = true)
     @Mapping(target = "expirationDate", ignore = true)
     @Mapping(target = "childAccounts", ignore = true)
+    @Mapping(target = "scopeId", ignore = true)
     void merge(@MappingTarget Account account, CurrentAccountUpdateRequest request);
 
     @KapuaBaseMapper.IgnoreKapuaNamedEntityReadonlyFields
     @Mapping(target = "parentAccountPath", ignore = true)
     @Mapping(target = "childAccounts", ignore = true)
+    @Mapping(target = "scopeId", ignore = true)
     void merge(@MappingTarget Account account, AccountUpdateRequest request);
 
     default Organization createOrganisation() {
