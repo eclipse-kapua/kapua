@@ -1819,7 +1819,7 @@ public class DatastoreSteps extends TestBase {
         checkListOrder(metLst, getNamedMetricOrdering());
     }
 
-    @Given("^Dataservice config enabled (.*), dataTTL (\\d+), rxByteLimit (\\d+), dataIndexBy \"(.*)\", messageUniquenessCheck \"(.*)\"$")
+    @Given("^Dataservice config enabled \"(.*)\", dataTTL (\\d+), rxByteLimit (\\d+), dataIndexBy \"(.*)\", messageUniquenessCheck \"(.*)\"$")
     public void configureDatastoreService(String enabled, int dataTTL, int rxByteLimit, String dataIndexBy, String messageUniquenessCheck) throws Exception {
         Map<String, Object> settings = new HashMap<>();
         settings.put("enabled", enabled.equalsIgnoreCase("TRUE"));
