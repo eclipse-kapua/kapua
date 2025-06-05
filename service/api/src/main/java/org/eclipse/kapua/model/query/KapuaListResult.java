@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -150,6 +150,16 @@ public class KapuaListResult<E> implements KapuaSerializable {
      */
     public <K, V> Map<K, V> getItemsAsMap(Function<E, K> keyMapper, Function<E, V> valueMapper) {
         return getItems().stream().collect(Collectors.toMap(keyMapper, valueMapper));
+    }
+
+    /**
+     * Sets the items on the {@link KapuaListResult}
+     *
+     * @param items The items to set
+     * @since 2.1.0
+     */
+    public void setItems(List<E> items) {
+        this.items = new ArrayList<>(items);
     }
 
     /**
