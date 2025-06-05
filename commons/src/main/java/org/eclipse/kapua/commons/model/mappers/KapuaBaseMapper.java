@@ -82,13 +82,11 @@ public interface KapuaBaseMapper {
      *     <li>modifiedOn</li>
      *     <li>entityProperties</li>
      *     <li>entityAttributes</li>
-     *     <li>name</li>
      * </ul>
      *
      * @since 2.1.0
      */
     @IgnoreKapuaUpdatableEntityReadonlyFields
-    @Mapping(target = "name", ignore = true)
     @interface IgnoreKapuaNamedEntityReadonlyFields {
     }
 
