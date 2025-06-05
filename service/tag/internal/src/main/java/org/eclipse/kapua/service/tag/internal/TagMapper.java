@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2025, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -20,7 +20,6 @@ import org.eclipse.kapua.service.tag.TagListResult;
 import org.mapstruct.CollectionMappingStrategy;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 
@@ -33,8 +32,7 @@ public interface TagMapper {
 
     Tag map(TagImpl tag);
 
-    @KapuaBaseMapper.IgnoreKapuaUpdatableEntityReadonlyFields
-    @Mapping(target = "optlock", ignore = true)
+    @KapuaBaseMapper.IgnoreUpdatableEntityFieldsOnCreate
     TagImpl map(TagCreator tag);
 
     TagListResult map(KapuaListResult<TagImpl> tagImplListResult);
