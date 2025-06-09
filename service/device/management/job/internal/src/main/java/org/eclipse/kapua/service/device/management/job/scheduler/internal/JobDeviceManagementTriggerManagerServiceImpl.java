@@ -12,40 +12,35 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.job.scheduler.internal;
 
+import java.util.Date;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
-import org.eclipse.kapua.job.engine.JobEngineFactory;
 import org.eclipse.kapua.job.engine.JobEngineService;
 import org.eclipse.kapua.job.engine.JobStartOptions;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.model.query.predicate.AttributePredicate;
 import org.eclipse.kapua.service.device.management.job.scheduler.manager.JobDeviceManagementTriggerManagerService;
 import org.eclipse.kapua.service.device.management.job.scheduler.manager.exception.ProcessOnConnectException;
 import org.eclipse.kapua.service.job.step.JobStepAttributes;
-import org.eclipse.kapua.service.job.step.JobStepFactory;
-import org.eclipse.kapua.service.job.step.JobStepQuery;
 import org.eclipse.kapua.service.job.step.JobStepService;
 import org.eclipse.kapua.service.job.targets.JobTarget;
 import org.eclipse.kapua.service.job.targets.JobTargetAttributes;
-import org.eclipse.kapua.service.job.targets.JobTargetFactory;
 import org.eclipse.kapua.service.job.targets.JobTargetListResult;
-import org.eclipse.kapua.service.job.targets.JobTargetQuery;
 import org.eclipse.kapua.service.job.targets.JobTargetService;
 import org.eclipse.kapua.service.job.targets.JobTargetStatus;
 import org.eclipse.kapua.service.scheduler.trigger.Trigger;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerAttributes;
-import org.eclipse.kapua.service.scheduler.trigger.TriggerFactory;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerListResult;
-import org.eclipse.kapua.service.scheduler.trigger.TriggerQuery;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerService;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinition;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.Date;
 
 /**
  * {@link JobDeviceManagementTriggerManagerService} implementation.
@@ -58,37 +53,24 @@ public class JobDeviceManagementTriggerManagerServiceImpl implements JobDeviceMa
     private static final Logger LOG = LoggerFactory.getLogger(JobDeviceManagementTriggerManagerServiceImpl.class);
 
     private final JobEngineService jobEngineService;
-    private final JobEngineFactory jobEngineFactory;
     private final JobStepService jobStepService;
-    private final JobStepFactory jobStepFactory;
     private final JobTargetService jobTargetService;
-    private final JobTargetFactory jobTargetFactory;
     private final TriggerDefinitionService triggerDefinitionService;
     private final TriggerService triggerService;
-    private final TriggerFactory triggerFactory;
 
     @Inject
     public JobDeviceManagementTriggerManagerServiceImpl(
             JobEngineService jobEngineService,
-            JobEngineFactory jobEngineFactory,
             JobStepService jobStepService,
-            JobStepFactory jobStepFactory,
             JobTargetService jobTargetService,
-            JobTargetFactory jobTargetFactory,
             TriggerDefinitionService triggerDefinitionService,
-            TriggerService triggerService,
-            TriggerFactory triggerFactory) {
+            TriggerService triggerService) {
         this.jobEngineService = jobEngineService;
-        this.jobEngineFactory = jobEngineFactory;
         this.jobStepService = jobStepService;
-        this.jobStepFactory = jobStepFactory;
         this.jobTargetService = jobTargetService;
-        this.jobTargetFactory = jobTargetFactory;
         this.triggerDefinitionService = triggerDefinitionService;
         this.triggerService = triggerService;
-        this.triggerFactory = triggerFactory;
     }
-
 
     @Override
     public void processOnConnect(KapuaId scopeId, KapuaId deviceId) throws ProcessOnConnectException {
@@ -96,7 +78,7 @@ public class JobDeviceManagementTriggerManagerServiceImpl implements JobDeviceMa
         Date now = new Date();
 
         try {
-            JobTargetQuery jobTargetQuery = jobTargetFactory.newQuery(scopeId);
+            KapuaQuery jobTargetQuery = new KapuaQuery(scopeId);
 
             jobTargetQuery.setPredicate(
                     jobTargetQuery.attributePredicate(JobTargetAttributes.JOB_TARGET_ID, deviceId)
@@ -105,7 +87,7 @@ public class JobDeviceManagementTriggerManagerServiceImpl implements JobDeviceMa
             JobTargetListResult jobTargetListResult = KapuaSecurityUtils.doPrivileged(() -> jobTargetService.query(jobTargetQuery));
 
             for (JobTarget jt : jobTargetListResult.getItems()) {
-                JobStepQuery jobStepQuery = jobStepFactory.newQuery(jt.getScopeId());
+                KapuaQuery jobStepQuery = new KapuaQuery(jt.getScopeId());
 
                 jobStepQuery.setPredicate(
                         jobStepQuery.attributePredicate(JobStepAttributes.JOB_ID, jt.getJobId())
@@ -118,7 +100,7 @@ public class JobDeviceManagementTriggerManagerServiceImpl implements JobDeviceMa
                     continue;
                 }
 
-                TriggerQuery triggerQuery = triggerFactory.newQuery(scopeId);
+                KapuaQuery triggerQuery = new KapuaQuery(scopeId);
 
                 triggerQuery.setPredicate(
                         triggerQuery.andPredicate(
@@ -136,7 +118,7 @@ public class JobDeviceManagementTriggerManagerServiceImpl implements JobDeviceMa
                 TriggerListResult jobTriggers = KapuaSecurityUtils.doPrivileged(() -> triggerService.query(triggerQuery));
 
                 for (Trigger t : jobTriggers.getItems()) {
-                    JobStartOptions jobStartOptions = jobEngineFactory.newJobStartOptions();
+                    JobStartOptions jobStartOptions = new JobStartOptions();
 
                     jobStartOptions.addTargetIdToSublist(jt.getId());
                     jobStartOptions.setFromStepIndex(jt.getStepIndex());

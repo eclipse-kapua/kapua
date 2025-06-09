@@ -31,7 +31,8 @@ public interface TriggerService extends KapuaEntityService<Trigger, TriggerCreat
     /**
      * Returns the {@link TriggerListResult} with elements matching the provided query.
      *
-     * @param query The {@link TriggerQuery} used to filter results.
+     * @param query
+     *         The {@link KapuaQuery} used to filter results.
      * @return The {@link TriggerListResult} with elements matching the query parameter.
      * @throws KapuaException
      * @since 1.0.0

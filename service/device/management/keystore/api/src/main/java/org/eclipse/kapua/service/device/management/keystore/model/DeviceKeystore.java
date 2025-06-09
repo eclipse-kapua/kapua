@@ -27,8 +27,12 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "deviceKeystore")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DeviceKeystoreXmlRegistry.class, factoryMethod = "newDeviceKeystore")
-public interface DeviceKeystore {
+@XmlType
+public class DeviceKeystore {
+
+    private String id;
+    private String keystoreType;
+    private Integer size;
 
     /**
      * Gets the identifier.
@@ -37,15 +41,20 @@ public interface DeviceKeystore {
      * @since 1.5.0
      */
     @XmlElement(name = "id")
-    String getId();
+    public String getId() {
+        return id;
+    }
 
     /**
      * Sets the identifier.
      *
-     * @param id The identifier.
+     * @param id
+     *         The identifier.
      * @since 1.5.0
      */
-    void setId(String id);
+    public void setId(String id) {
+        this.id = id;
+    }
 
     /**
      * Gets the keystore type.
@@ -54,15 +63,20 @@ public interface DeviceKeystore {
      * @since 1.5.0
      */
     @XmlElement(name = "keystoreType")
-    String getKeystoreType();
+    public String getKeystoreType() {
+        return keystoreType;
+    }
 
     /**
      * Sets the keystore type.
      *
-     * @param keystoreType The keystore type.
+     * @param keystoreType
+     *         The keystore type.
      * @since 1.5.0
      */
-    void setKeystoreType(String keystoreType);
+    public void setKeystoreType(String keystoreType) {
+        this.keystoreType = keystoreType;
+    }
 
     /**
      * Gets the size.
@@ -71,13 +85,18 @@ public interface DeviceKeystore {
      * @since 1.5.0
      */
     @XmlElement(name = "size")
-    Integer getSize();
+    public Integer getSize() {
+        return size;
+    }
 
     /**
      * Sets the size.
      *
-     * @param size The size.
+     * @param size
+     *         The size.
      * @since 1.5.0
      */
-    void setSize(Integer size);
+    public void setSize(Integer size) {
+        this.size = size;
+    }
 }

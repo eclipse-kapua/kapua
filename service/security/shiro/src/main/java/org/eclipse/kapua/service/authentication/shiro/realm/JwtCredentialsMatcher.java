@@ -13,22 +13,21 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.shiro.realm;
 
+import javax.validation.constraints.NotNull;
+
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
+import org.eclipse.kapua.plugin.sso.openid.JwtProcessor;
 import org.eclipse.kapua.service.authentication.credential.Credential;
 import org.eclipse.kapua.service.authentication.shiro.JwtCredentialsImpl;
-import org.eclipse.kapua.plugin.sso.openid.JwtProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * {@link JwtCredentialsMatcher} credential matcher implementation
  *
  * @since 1.0
- *
  */
 public class JwtCredentialsMatcher implements CredentialsMatcher {
 

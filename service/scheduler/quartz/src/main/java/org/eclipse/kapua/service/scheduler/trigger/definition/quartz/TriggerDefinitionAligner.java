@@ -12,23 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.scheduler.trigger.definition.quartz;
 
-import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.commons.jpa.JpaAwareTxContext;
-import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
-import org.eclipse.kapua.locator.initializers.KapuaInitializingMethod;
-import org.eclipse.kapua.model.KapuaNamedEntity;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinition;
-import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionRepository;
-import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerProperty;
-import org.eclipse.kapua.storage.TxContext;
-import org.eclipse.kapua.storage.TxManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -36,6 +19,25 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.persistence.EntityManager;
+
+import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.commons.jpa.JpaAwareTxContext;
+import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
+import org.eclipse.kapua.locator.initializers.KapuaInitializingMethod;
+import org.eclipse.kapua.model.KapuaNamedEntity;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
+import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinition;
+import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionRepository;
+import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerProperty;
+import org.eclipse.kapua.storage.TxContext;
+import org.eclipse.kapua.storage.TxManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This aligner aligns the declared {@link TriggerDefinition}s in each module with the database.
@@ -90,7 +92,7 @@ public class TriggerDefinitionAligner {
             KapuaSecurityUtils.doPrivileged(() -> {
                 txManager.execute(tx -> {
                     // Retrieve all TriggerDefinition from the database
-                    List<TriggerDefinitionImpl> dbTriggerDefinitions = triggerDefinitionRepository.query(tx, new TriggerDefinitionQueryImpl(null)).getItems()
+                    List<TriggerDefinitionImpl> dbTriggerDefinitions = triggerDefinitionRepository.query(tx, new KapuaQuery((KapuaId) null)).getItems()
                             .stream()
                             .map(dbTriggrDefinition -> (TriggerDefinitionImpl) dbTriggrDefinition)
                             .collect(Collectors.toList());
@@ -242,8 +244,7 @@ public class TriggerDefinitionAligner {
                     if (triggerProperty == null) {
                         LOG.info("Database TriggerProperty '{}' is not wired... Removing from database", dbTriggerPropertyEntity.getTriggerProperty().getName());
                         return true;
-                    }
-                    else {
+                    } else {
                         return false;
                     }
                 });

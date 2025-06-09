@@ -17,6 +17,6 @@ package org.eclipse.kapua.message.device.lifecycle;
  *
  * @since 1.0.0
  */
-public interface KapuaAppsMessage extends KapuaLifecycleMessage<KapuaAppsChannel, KapuaAppsPayload> {
+public class KapuaAppsMessage extends KapuaLifecycleMessage<KapuaAppsChannel, KapuaAppsPayload> {
 
 }

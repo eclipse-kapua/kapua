@@ -19,6 +19,6 @@ import org.eclipse.kapua.model.KapuaEntityFactory;
  *
  * @since 1.1.0
  */
-public interface JobDeviceManagementOperationFactory extends KapuaEntityFactory<JobDeviceManagementOperation, JobDeviceManagementOperationCreator, JobDeviceManagementOperationQuery, JobDeviceManagementOperationListResult> {
+public interface JobDeviceManagementOperationFactory extends KapuaEntityFactory<JobDeviceManagementOperation> {
 
 }

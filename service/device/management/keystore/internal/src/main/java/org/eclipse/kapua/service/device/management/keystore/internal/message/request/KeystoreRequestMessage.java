@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.keystore.internal.message.request;
 
-import org.eclipse.kapua.message.internal.KapuaMessageImpl;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystore;
 import org.eclipse.kapua.service.device.management.message.request.KapuaRequestMessage;
 
@@ -21,8 +20,7 @@ import org.eclipse.kapua.service.device.management.message.request.KapuaRequestM
  *
  * @since 1.5.0
  */
-public abstract class KeystoreRequestMessage<M extends KeystoreRequestMessage> extends KapuaMessageImpl<KeystoreRequestChannel, KeystoreRequestPayload>
-        implements KapuaRequestMessage<KeystoreRequestChannel, KeystoreRequestPayload> {
+public abstract class KeystoreRequestMessage<M extends KeystoreRequestMessage> extends KapuaRequestMessage<KeystoreRequestChannel, KeystoreRequestPayload> {
 
     private static final long serialVersionUID = 3593350285989405174L;
 
@@ -31,7 +29,8 @@ public abstract class KeystoreRequestMessage<M extends KeystoreRequestMessage> e
     /**
      * Constructor.
      *
-     * @param requestClass The {@link KeystoreRequestMessage} sub-type
+     * @param requestClass
+     *         The {@link KeystoreRequestMessage} sub-type
      * @since 1.5.0
      */
     protected KeystoreRequestMessage(Class<M> requestClass) {

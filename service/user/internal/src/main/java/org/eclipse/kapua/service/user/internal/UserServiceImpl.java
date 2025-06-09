@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.user.internal;
 
+import java.util.Objects;
+import java.util.Optional;
+
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaDuplicateExternalIdException;
 import org.eclipse.kapua.KapuaDuplicateExternalUsernameException;
 import org.eclipse.kapua.KapuaDuplicateNameException;
@@ -34,7 +39,7 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserCreator;
 import org.eclipse.kapua.service.user.UserFactory;
@@ -47,10 +52,6 @@ import org.eclipse.kapua.service.user.UserType;
 import org.eclipse.kapua.storage.TxManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Singleton;
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * {@link UserService} implementation.
@@ -68,11 +69,10 @@ public class UserServiceImpl extends KapuaConfigurableServiceBase implements Use
     public UserServiceImpl(
             ServiceConfigurationManager serviceConfigurationManager,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             TxManager txManager,
             UserRepository userRepository, UserFactory userFactory,
             EventStorer eventStorer) {
-        super(txManager, serviceConfigurationManager, Domains.USER, authorizationService, permissionFactory);
+        super(txManager, serviceConfigurationManager, Domains.USER, authorizationService);
         this.userRepository = userRepository;
         this.userFactory = userFactory;
         this.eventStorer = eventStorer;
@@ -102,7 +102,7 @@ public class UserServiceImpl extends KapuaConfigurableServiceBase implements Use
             ArgumentValidator.isEmptyOrNull(userCreator.getExternalUsername(), "userCreator.externalUsername");
         }
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.USER, Actions.write, userCreator.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.USER, Actions.write, userCreator.getScopeId()));
 
         return txManager.execute(tx -> {
             // Check entity limit
@@ -174,7 +174,7 @@ public class UserServiceImpl extends KapuaConfigurableServiceBase implements Use
             ArgumentValidator.isEmptyOrNull(user.getExternalUsername(), "user.externalUsername");
         }
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.USER, Actions.write, user.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.USER, Actions.write, user.getScopeId()));
 
         return txManager.execute(
                 tx -> {
@@ -246,7 +246,7 @@ public class UserServiceImpl extends KapuaConfigurableServiceBase implements Use
         ArgumentValidator.notNull(scopeId.getId(), "user.scopeId");
 
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.USER, Actions.delete, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.USER, Actions.delete, scopeId));
 
         txManager.execute(
                 tx -> {
@@ -273,7 +273,7 @@ public class UserServiceImpl extends KapuaConfigurableServiceBase implements Use
         ArgumentValidator.notNull(scopeId, "scopeId");
         ArgumentValidator.notNull(userId, "userId");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.USER, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.USER, Actions.read, scopeId));
 
         // Do the find
         return txManager.execute(tx -> userRepository.find(tx, scopeId, userId))
@@ -313,7 +313,7 @@ public class UserServiceImpl extends KapuaConfigurableServiceBase implements Use
         // Argument Validation
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.USER, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.USER, Actions.read, query.getScopeId()));
         // Do query
         return txManager.execute(tx -> userRepository.query(tx, query));
     }
@@ -324,7 +324,7 @@ public class UserServiceImpl extends KapuaConfigurableServiceBase implements Use
         // Argument Validator
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.USER, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.USER, Actions.read, query.getScopeId()));
         // Do count
         return txManager.execute(tx -> userRepository.count(tx, query));
     }
@@ -335,7 +335,7 @@ public class UserServiceImpl extends KapuaConfigurableServiceBase implements Use
 
     private Optional<User> checkReadAccess(Optional<User> user) throws KapuaException {
         if (user.isPresent()) {
-            authorizationService.checkPermission(permissionFactory.newPermission(Domains.USER, Actions.read, user.get().getScopeId()));
+            authorizationService.checkPermission(new Permission(Domains.USER, Actions.read, user.get().getScopeId()));
         }
         return user;
     }
@@ -366,7 +366,7 @@ public class UserServiceImpl extends KapuaConfigurableServiceBase implements Use
     }
 
     private void deleteUserByAccountId(KapuaId scopeId, KapuaId accountId) throws KapuaException {
-        UserQuery query = new UserQueryImpl(accountId);
+        UserQuery query = new UserQuery(accountId);
         UserListResult usersToDelete = query(query);
 
         for (User u : usersToDelete.getItems()) {

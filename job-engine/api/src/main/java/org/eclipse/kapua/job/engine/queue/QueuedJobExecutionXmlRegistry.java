@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.job.engine.queue;
 
-import org.eclipse.kapua.locator.KapuaLocator;
-
 import javax.xml.bind.annotation.XmlRegistry;
+
+import org.eclipse.kapua.locator.KapuaLocator;
 
 /**
  * {@link QueuedJobExecution} xml factory class
@@ -33,27 +33,5 @@ public class QueuedJobExecutionXmlRegistry {
      */
     public QueuedJobExecution newQueuedJobExecution() {
         return queuedJobExecutionFactory.newEntity(null);
-    }
-
-    /**
-     * Creates a new job creator instance
-     *
-     * @return
-     */
-    public QueuedJobExecutionCreator newQueuedJobExecutionCreator() {
-        return queuedJobExecutionFactory.newCreator(null);
-    }
-
-    /**
-     * Creates a new job list result instance
-     *
-     * @return
-     */
-    public QueuedJobExecutionListResult newQueuedJobExecutionListResult() {
-        return queuedJobExecutionFactory.newListResult();
-    }
-
-    public QueuedJobExecutionQuery newQuery() {
-        return queuedJobExecutionFactory.newQuery(null);
     }
 }

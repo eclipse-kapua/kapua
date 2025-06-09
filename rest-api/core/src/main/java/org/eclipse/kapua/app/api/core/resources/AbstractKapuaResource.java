@@ -12,15 +12,16 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.core.resources;
 
-import org.eclipse.kapua.KapuaEntityNotFoundException;
-import org.eclipse.kapua.model.KapuaEntity;
-import org.eclipse.kapua.model.id.KapuaId;
+import java.net.URI;
 
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import java.net.URI;
+
+import org.eclipse.kapua.KapuaEntityNotFoundException;
+import org.eclipse.kapua.model.KapuaEntity;
+import org.eclipse.kapua.model.id.KapuaId;
 
 /**
  * @since 1.0.0
@@ -32,14 +33,16 @@ public abstract class AbstractKapuaResource {
      * <p>
      * If it is {@code null} a {@link NotFoundException} {@link WebApplicationException} is raised.
      * <p>
-     * For {@link KapuaEntity} {@link #returnNotNullEntity(KapuaEntity, String, KapuaId)} is recommended.
-     * This is meant for generic {@link Object}s.
+     * For {@link KapuaEntity} {@link #returnNotNullEntity(Object, String, KapuaId)} is recommended. This is meant for generic {@link Object}s.
      *
-     * @param object The {@link Object} to check.
+     * @param object
+     *         The {@link Object} to check.
+     * @param <T>
+     *         The type of the given {@link Object}
      * @return The given {@link Object} if not {@code null}
-     * @param <T> The type of the given {@link Object}
+     * @throws NotFoundException
+     *         if the given {@link Object} is {@code null}
      * @since 1.0.0
-     * @throws NotFoundException if the given {@link Object} is {@code null}
      */
     public <T> T returnNotNullEntity(T object) {
         if (object == null) {
@@ -52,15 +55,20 @@ public abstract class AbstractKapuaResource {
     /**
      * Checks id the given {@link KapuaEntity} is {@code null}.
      *
-     * @param entity The {@link KapuaEntity} to check.
-     * @param entityType The {@link KapuaEntity#getType()}
-     * @param entityId The {@link KapuaEntity#getId()}
+     * @param entity
+     *         The {@link KapuaEntity} to check.
+     * @param entityType
+     *         The {@link KapuaEntity#getType()}
+     * @param entityId
+     *         The {@link KapuaEntity#getId()}
+     * @param <T>
+     *         The {@link KapuaEntity} type.
      * @return The given entity if not {@code null}
-     * @param <T> The {@link KapuaEntity} type.
-     * @throws KapuaEntityNotFoundException if given {@link KapuaEntity} is {@code null}.
+     * @throws KapuaEntityNotFoundException
+     *         if given {@link KapuaEntity} is {@code null}.
      * @since 2.0.0
      */
-    public <T extends KapuaEntity> T returnNotNullEntity(T entity, String entityType, KapuaId entityId) throws KapuaEntityNotFoundException {
+    public <T> T returnNotNullEntity(T entity, String entityType, KapuaId entityId) throws KapuaEntityNotFoundException {
         if (entity == null) {
             throw new KapuaEntityNotFoundException(entityType, entityId);
         }
@@ -89,7 +97,8 @@ public abstract class AbstractKapuaResource {
      * return javax.ws.rs.core.Response.ok().entity(entity).build();
      * </pre>
      *
-     * @param entity The entity to return.
+     * @param entity
+     *         The entity to return.
      * @return A built {@link Response#ok()}
      * @since 1.0.0
      */
@@ -104,7 +113,8 @@ public abstract class AbstractKapuaResource {
      * return javax.ws.rs.core.Response.status(Status.CREATED).entity(entity).build();
      * </pre>
      *
-     * @param entity The entity to return.
+     * @param entity
+     *         The entity to return.
      * @return A built {@link Response#created(URI)}
      * @since 1.2.0
      */

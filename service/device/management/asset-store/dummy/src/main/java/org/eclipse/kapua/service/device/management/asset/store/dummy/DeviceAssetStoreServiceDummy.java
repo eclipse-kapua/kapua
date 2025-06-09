@@ -18,7 +18,6 @@ import javax.inject.Singleton;
 
 import org.eclipse.kapua.commons.service.internal.KapuaServiceDisabledException;
 import org.eclipse.kapua.message.device.data.KapuaDataMessage;
-import org.eclipse.kapua.model.config.metatype.EmptyTocd;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssets;
@@ -60,7 +59,7 @@ public class DeviceAssetStoreServiceDummy implements DeviceAssetStoreService {
 
     @Override
     public KapuaTocd getConfigMetadata(KapuaId scopeId) {
-        return new EmptyTocd();
+        return KapuaTocd.empty();
     }
 
     @Override

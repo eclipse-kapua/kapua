@@ -19,7 +19,6 @@ import javax.validation.constraints.NotNull;
 import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.service.device.management.commons.message.response.KapuaResponsePayloadImpl;
 import org.eclipse.kapua.service.device.management.commons.setting.DeviceManagementSetting;
 import org.eclipse.kapua.service.device.management.commons.setting.DeviceManagementSettingKey;
 import org.eclipse.kapua.service.device.management.message.response.KapuaResponsePayload;
@@ -33,7 +32,7 @@ import org.eclipse.kapua.service.device.management.packages.model.uninstall.Devi
  *
  * @since 1.0.0
  */
-public class PackageResponsePayload extends KapuaResponsePayloadImpl implements KapuaResponsePayload {
+public class PackageResponsePayload extends KapuaResponsePayload {
 
     private static final long serialVersionUID = -2100712552502696907L;
 

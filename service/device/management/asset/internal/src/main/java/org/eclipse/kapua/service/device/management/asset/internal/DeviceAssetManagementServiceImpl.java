@@ -12,14 +12,17 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.asset.internal;
 
+import java.util.Date;
+
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
-import org.eclipse.kapua.service.device.management.asset.DeviceAssetFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssetManagementService;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssets;
 import org.eclipse.kapua.service.device.management.asset.message.internal.AssetRequestChannel;
@@ -39,9 +42,6 @@ import org.eclipse.kapua.storage.TxManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Singleton;
-import java.util.Date;
-
 /**
  * {@link DeviceAssetManagementService} implementation.
  *
@@ -57,24 +57,20 @@ public class DeviceAssetManagementServiceImpl extends AbstractDeviceManagementTr
     private static final String DEVICE_ASSETS = "deviceAssets";
 
     private final DeviceAssetStoreService deviceAssetStoreService;
-    private final DeviceAssetFactory deviceAssetFactory;
 
     public DeviceAssetManagementServiceImpl(
             TxManager txManager,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             DeviceEventService deviceEventService,
             DeviceEventFactory deviceEventFactory,
             DeviceRegistryService deviceRegistryService,
-            DeviceAssetStoreService deviceAssetStoreService, DeviceAssetFactory deviceAssetFactory) {
+            DeviceAssetStoreService deviceAssetStoreService) {
         super(txManager,
                 authorizationService,
-                permissionFactory,
                 deviceEventService,
                 deviceEventFactory,
                 deviceRegistryService);
         this.deviceAssetStoreService = deviceAssetStoreService;
-        this.deviceAssetFactory = deviceAssetFactory;
     }
 
     @Override
@@ -85,7 +81,7 @@ public class DeviceAssetManagementServiceImpl extends AbstractDeviceManagementTr
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         ArgumentValidator.notNull(deviceAssets, DEVICE_ASSETS);
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
         // Prepare the request
         AssetRequestChannel assetRequestChannel = new AssetRequestChannel();
         assetRequestChannel.setAppName(DeviceAssetAppProperties.APP_NAME);
@@ -126,7 +122,7 @@ public class DeviceAssetManagementServiceImpl extends AbstractDeviceManagementTr
             // Create event
             createDeviceEvent(scopeId, deviceId, assetRequestMessage, responseMessage);
             // Check response
-            DeviceAssets onlineDeviceAssets = checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getDeviceAssets().orElse(deviceAssetFactory.newAssetListResult()));
+            DeviceAssets onlineDeviceAssets = checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getDeviceAssets().orElse(new DeviceAssets()));
             // Store value and return
             if (deviceAssetStoreService.isServiceEnabled(scopeId) &&
                     deviceAssetStoreService.isApplicationEnabled(scopeId, deviceId)) {
@@ -150,7 +146,7 @@ public class DeviceAssetManagementServiceImpl extends AbstractDeviceManagementTr
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         ArgumentValidator.notNull(deviceAssets, DEVICE_ASSETS);
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
         // Prepare the request
         AssetRequestChannel assetRequestChannel = new AssetRequestChannel();
         assetRequestChannel.setAppName(DeviceAssetAppProperties.APP_NAME);
@@ -192,7 +188,7 @@ public class DeviceAssetManagementServiceImpl extends AbstractDeviceManagementTr
             // Create event
             createDeviceEvent(scopeId, deviceId, assetRequestMessage, responseMessage);
             // Check response
-            DeviceAssets onlineDeviceAssets = checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getDeviceAssets().orElse(deviceAssetFactory.newAssetListResult()));
+            DeviceAssets onlineDeviceAssets = checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getDeviceAssets().orElse(new DeviceAssets()));
             // Store value and return
             if (deviceAssetStoreService.isServiceEnabled(scopeId) &&
                     deviceAssetStoreService.isApplicationEnabled(scopeId, deviceId)) {
@@ -217,7 +213,7 @@ public class DeviceAssetManagementServiceImpl extends AbstractDeviceManagementTr
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         ArgumentValidator.notNull(deviceAssets, DEVICE_ASSETS);
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
         // Prepare the request
         AssetRequestChannel assetRequestChannel = new AssetRequestChannel();
         assetRequestChannel.setAppName(DeviceAssetAppProperties.APP_NAME);
@@ -258,6 +254,6 @@ public class DeviceAssetManagementServiceImpl extends AbstractDeviceManagementTr
         // Create event
         createDeviceEvent(scopeId, deviceId, assetRequestMessage, responseMessage);
         // Check response
-        return checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getDeviceAssets().orElse(deviceAssetFactory.newAssetListResult()));
+        return checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getDeviceAssets().orElse(new DeviceAssets()));
     }
 }

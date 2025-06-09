@@ -20,6 +20,7 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
+import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -60,9 +61,13 @@ import javax.xml.namespace.QName;
  */
 @XmlRootElement(name = "AD", namespace = "http://www.osgi.org/xmlns/metatype/v1.2.0")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(name = "Tad", propOrder = {
+@XmlType(name = "Tad"
+        , propOrder = {
+        "id",
+        "type",
         "option",
-        "any"
+        "any",
+        "required"
 })
 public class KapuaTad {
 
@@ -133,6 +138,7 @@ public class KapuaTad {
      * </pre>
      * <p>
      */
+    @XmlAnyElement(lax = true)
     public List<Object> getAny() {
         if (any == null) {
             any = new ArrayList<Object>();
@@ -351,5 +357,4 @@ public class KapuaTad {
         getOtherAttributes().put(key,
                 value);
     }
-
 }

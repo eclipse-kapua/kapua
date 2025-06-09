@@ -20,14 +20,17 @@ import org.eclipse.kapua.model.KapuaEntityFactory;
  * @see org.eclipse.kapua.model.KapuaEntityFactory
  * @since 1.0.0
  */
-public interface DeviceManagementOperationFactory extends KapuaEntityFactory<DeviceManagementOperation, DeviceManagementOperationCreator, DeviceManagementOperationQuery, DeviceManagementOperationListResult> {
+public interface DeviceManagementOperationFactory extends KapuaEntityFactory<DeviceManagementOperation> {
 
     /**
      * Instantiates a new {@link DeviceManagementOperationProperty}.
      *
-     * @param name          The name to set in the {@link DeviceManagementOperationProperty}
-     * @param propertyType  The property type to set in the {@link DeviceManagementOperationProperty}
-     * @param propertyValue The property value to set in the {@link DeviceManagementOperationProperty}
+     * @param name
+     *         The name to set in the {@link DeviceManagementOperationProperty}
+     * @param propertyType
+     *         The property type to set in the {@link DeviceManagementOperationProperty}
+     * @param propertyValue
+     *         The property value to set in the {@link DeviceManagementOperationProperty}
      * @return The newly instantiated {@link DeviceManagementOperationProperty}
      * @since 1.0.0
      */

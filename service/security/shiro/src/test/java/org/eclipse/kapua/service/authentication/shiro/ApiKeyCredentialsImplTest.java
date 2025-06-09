@@ -14,11 +14,9 @@ package org.eclipse.kapua.service.authentication.shiro;
 
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.authentication.ApiKeyCredentials;
-import org.eclipse.kapua.service.authentication.shiro.realm.model.ApiKeyCredentialsAnotherImpl;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
 
 @Category(JUnitTests.class)
 public class ApiKeyCredentialsImplTest {
@@ -30,17 +28,7 @@ public class ApiKeyCredentialsImplTest {
 
     @Test
     public void apiKeyCredentialsImplCloneConstructorImplTest() {
-        ApiKeyCredentialsImpl first = new ApiKeyCredentialsImpl("anApiKey");
-
-        ApiKeyCredentialsImpl second = new ApiKeyCredentialsImpl(first);
-
-        Assert.assertNotEquals("ApiKeyCredentialImpl", first, second);
-        Assert.assertEquals("ApiKeyCredential.apiKey", first.getApiKey(), second.getApiKey());
-    }
-
-    @Test
-    public void apiKeyCredentialsImplCloneConstructorAnotherTest() {
-        ApiKeyCredentials first = new ApiKeyCredentialsAnotherImpl("anApiKey");
+        ApiKeyCredentials first = new ApiKeyCredentials("anApiKey");
 
         ApiKeyCredentialsImpl second = new ApiKeyCredentialsImpl(first);
 
@@ -50,7 +38,7 @@ public class ApiKeyCredentialsImplTest {
 
     @Test
     public void apiKeyCredentialsImplTest() {
-        String[] apiKeys = {null, "", "!!api key-1", "#1(API KEY.,/api key)9--99", "!$$ 1-2 KEY//", "APIkey(....)<00>"};
+        String[] apiKeys = { null, "", "!!api key-1", "#1(API KEY.,/api key)9--99", "!$$ 1-2 KEY//", "APIkey(....)<00>" };
 
         for (String apiKey : apiKeys) {
             ApiKeyCredentialsImpl apiKeyCredentialsImpl = new ApiKeyCredentialsImpl(apiKey);
@@ -62,11 +50,12 @@ public class ApiKeyCredentialsImplTest {
 
     @Test
     public void setAndGetApiKeyPrincipalAndCredentialsTest() {
-        String[] newApiKeys = {null, "", "!!api key-1NEW", "#1(new API KEY.,/api key)9--99", "!$$ 1-2 newKEY//", "NEwAPIkey(....)<00>"};
-        ApiKeyCredentialsImpl apiKeyCredentialsImpl = new ApiKeyCredentialsImpl("apiKey");
+        String[] newApiKeys = { null, "", "!!api key-1NEW", "#1(new API KEY.,/api key)9--99", "!$$ 1-2 newKEY//", "NEwAPIkey(....)<00>" };
+        ApiKeyCredentials apiKeyCredentials = new ApiKeyCredentials("apiKey");
 
         for (String newApiKey : newApiKeys) {
-            apiKeyCredentialsImpl.setApiKey(newApiKey);
+            apiKeyCredentials.setApiKey(newApiKey);
+            ApiKeyCredentialsImpl apiKeyCredentialsImpl = new ApiKeyCredentialsImpl(apiKeyCredentials);
             Assert.assertEquals("Expected and actual values should be the same.", newApiKey, apiKeyCredentialsImpl.getApiKey());
             Assert.assertEquals("Expected and actual values should be the same.", newApiKey, apiKeyCredentialsImpl.getPrincipal());
             Assert.assertEquals("Expected and actual values should be the same.", newApiKey, apiKeyCredentialsImpl.getCredentials());

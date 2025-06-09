@@ -13,14 +13,21 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.registry.steps;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.qa.common.TestBase;
 import org.eclipse.kapua.qa.common.StepData;
+import org.eclipse.kapua.qa.common.TestBase;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.authentication.AuthenticationService;
-import org.eclipse.kapua.service.authentication.CredentialsFactory;
 import org.eclipse.kapua.service.authentication.LoginCredentials;
+import org.eclipse.kapua.service.authentication.UsernamePasswordCredentials;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -42,13 +49,6 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-
-import javax.inject.Inject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Steps for testing Access Control List functionality on Broker service.
@@ -87,7 +87,6 @@ public class AclSteps extends TestBase {
     private static Map<String, String> listenerMqttMessage;
 
     private static AuthenticationService authenticationService;
-    private static CredentialsFactory credentialsFactory;
     /**
      * Helper for creating Accoutn, User and other artifacts needed in tests.
      */
@@ -98,11 +97,10 @@ public class AclSteps extends TestBase {
         super(stepData);
     }
 
-    @After(value="@setup")
+    @After(value = "@setup")
     public void setServices() {
         locator = KapuaLocator.getInstance();
         authenticationService = locator.getService(AuthenticationService.class);
-        credentialsFactory = locator.getFactory(CredentialsFactory.class);
 
         mqttDevice = new MqttDevice();
         clientMqttMessage = new HashMap<>();
@@ -111,7 +109,7 @@ public class AclSteps extends TestBase {
         aclCreator = new AclCreator();
     }
 
-    @Before(value="@env_docker or @env_docker_base or @env_none", order=10)
+    @Before(value = "@env_docker or @env_docker_base or @env_none", order = 10)
     public void beforeScenarioNone(Scenario scenario) {
         updateScenario(scenario);
     }
@@ -128,7 +126,7 @@ public class AclSteps extends TestBase {
         waitInMillis(BROKER_START_WAIT_MILLIS);
         // Login with system user
         String passwd = SYS_PASSWORD;
-        LoginCredentials credentials = credentialsFactory.newUsernamePasswordCredentials(SYS_USERNAME, passwd);
+        LoginCredentials credentials = new UsernamePasswordCredentials(SYS_USERNAME, passwd);
         authenticationService.login(credentials);
     }
 
@@ -173,8 +171,8 @@ public class AclSteps extends TestBase {
                 logger.info("Connection lost!", cause);
             }
         });
-        List<MqttClient> mqttClientList = (List<MqttClient>)stepData.get("Paho_" + deviceGroup);
-        if (mqttClientList==null) {
+        List<MqttClient> mqttClientList = (List<MqttClient>) stepData.get("Paho_" + deviceGroup);
+        if (mqttClientList == null) {
             mqttClientList = new ArrayList<>();
             stepData.put("Paho_" + deviceGroup, mqttClientList);
         }
@@ -184,8 +182,8 @@ public class AclSteps extends TestBase {
 
     @Then("Clients from group {string} are connected")
     public void checkClientConnected(String deviceGroup) throws Exception {
-        List<MqttClient> mqttDeviceList = (List<MqttClient>)stepData.get("Paho_" + deviceGroup);
-        if (mqttDeviceList!=null) {
+        List<MqttClient> mqttDeviceList = (List<MqttClient>) stepData.get("Paho_" + deviceGroup);
+        if (mqttDeviceList != null) {
             mqttDeviceList.forEach(mqttDevice -> Assert.assertTrue("Client " + mqttDevice.getClientId() + " should be connected!", mqttDevice.isConnected()));
         }
     }
@@ -213,8 +211,7 @@ public class AclSteps extends TestBase {
             String message = listenerMqttMessage.get(topic);
             if (timeout) {
                 Assert.assertEquals(payload, message);
-            }
-            else {
+            } else {
                 result = payload.equals(message);
             }
         } else {
@@ -252,8 +249,7 @@ public class AclSteps extends TestBase {
             String message = messages.get(topic);
             if (timeout) {
                 Assert.assertEquals(payload, message);
-            }
-            else {
+            } else {
                 result = payload.equals(message);
             }
         } else {
@@ -313,7 +309,7 @@ public class AclSteps extends TestBase {
 
     @And("other broker account and user are created")
     public void createOtherBrokerAccountAndUser() throws Exception {
-        Account account = aclCreator.createAccount("domino","Domino Corp.", "lisa@domino.org");
+        Account account = aclCreator.createAccount("domino", "Domino Corp.", "lisa@domino.org");
         User user = aclCreator.createUser(account, "domina");
         aclCreator.attachUserCredentials(account, user);
         aclCreator.attachBrokerPermissions(account, user);
@@ -334,7 +330,8 @@ public class AclSteps extends TestBase {
     /**
      * Simple wait implementation.
      *
-     * @param millis milli seconds
+     * @param millis
+     *         milli seconds
      */
     private void waitInMillis(long millis) {
         try {

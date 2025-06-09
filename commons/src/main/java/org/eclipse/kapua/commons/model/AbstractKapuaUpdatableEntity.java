@@ -12,14 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.model;
 
-import org.eclipse.kapua.commons.model.id.KapuaEid;
-import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
-import org.eclipse.kapua.commons.util.PropertiesUtils;
-import org.eclipse.kapua.entity.EntityPropertiesReadException;
-import org.eclipse.kapua.entity.EntityPropertiesWriteException;
-import org.eclipse.kapua.model.KapuaEntity;
-import org.eclipse.kapua.model.KapuaUpdatableEntity;
-import org.eclipse.kapua.model.id.KapuaId;
+import java.io.IOException;
+import java.util.Date;
+import java.util.Properties;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -33,9 +28,15 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Version;
-import java.io.IOException;
-import java.util.Date;
-import java.util.Properties;
+
+import org.eclipse.kapua.PropertiesUtils;
+import org.eclipse.kapua.commons.model.id.KapuaEid;
+import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
+import org.eclipse.kapua.entity.EntityPropertiesReadException;
+import org.eclipse.kapua.entity.EntityPropertiesWriteException;
+import org.eclipse.kapua.model.KapuaEntity;
+import org.eclipse.kapua.model.KapuaUpdatableEntity;
+import org.eclipse.kapua.model.id.KapuaId;
 
 /**
  * {@link KapuaUpdatableEntity} {@code abstract} implementation.
@@ -69,8 +70,7 @@ public abstract class AbstractKapuaUpdatableEntity extends AbstractKapuaEntity i
     protected String properties;
 
     /**
-     * Protected default constructor.<br>
-     * Required by JPA.
+     * Protected default constructor.<br> Required by JPA.
      *
      * @since 1.0.0
      */
@@ -81,7 +81,8 @@ public abstract class AbstractKapuaUpdatableEntity extends AbstractKapuaEntity i
     /**
      * Constructor.
      *
-     * @param scopeId The scope {@link KapuaId} to set for this {@link KapuaUpdatableEntity}
+     * @param scopeId
+     *         The scope {@link KapuaId} to set for this {@link KapuaUpdatableEntity}
      * @since 1.0.0
      */
     public AbstractKapuaUpdatableEntity(KapuaId scopeId) {
@@ -93,8 +94,10 @@ public abstract class AbstractKapuaUpdatableEntity extends AbstractKapuaEntity i
      * <p>
      * It can be used to clone the {@link KapuaUpdatableEntity}
      *
-     * @throws EntityPropertiesReadException  see {@link #getEntityProperties()} and {@link #getEntityAttributes()}
-     * @throws EntityPropertiesWriteException see {@link #setEntityProperties(Properties)} and {@link #setEntityAttributes(Properties)}
+     * @throws EntityPropertiesReadException
+     *         see {@link #getEntityProperties()} and {@link #getEntityAttributes()}
+     * @throws EntityPropertiesWriteException
+     *         see {@link #setEntityProperties(Properties)} and {@link #setEntityAttributes(Properties)}
      * @since 1.0.0
      */
     protected AbstractKapuaUpdatableEntity(KapuaUpdatableEntity entity) {
@@ -103,8 +106,8 @@ public abstract class AbstractKapuaUpdatableEntity extends AbstractKapuaEntity i
         setModifiedOn(entity.getModifiedOn());
         setModifiedBy(entity.getModifiedBy());
         setOptlock(entity.getOptlock());
-        setEntityAttributes(entity.getEntityAttributes());
-        setEntityProperties(entity.getEntityProperties());
+        //        setEntityAttributes(entity.getEntityAttributes());
+        //        setEntityProperties(entity.getEntityProperties());
     }
 
     @Override
@@ -115,7 +118,8 @@ public abstract class AbstractKapuaUpdatableEntity extends AbstractKapuaEntity i
     /**
      * Sets the date of the last update
      *
-     * @param modifiedOn The date of the last update
+     * @param modifiedOn
+     *         The date of the last update
      * @since 1.0.0
      */
     public void setModifiedOn(Date modifiedOn) {
@@ -130,7 +134,8 @@ public abstract class AbstractKapuaUpdatableEntity extends AbstractKapuaEntity i
     /**
      * Sets the identity {@link KapuaId} who has updated this {@link KapuaEntity}
      *
-     * @param modifiedBy The identity {@link KapuaId} who has updated this {@link KapuaEntity}
+     * @param modifiedBy
+     *         The identity {@link KapuaId} who has updated this {@link KapuaEntity}
      * @since 1.0.0
      */
     public void setModifiedBy(KapuaId modifiedBy) {
@@ -151,7 +156,7 @@ public abstract class AbstractKapuaUpdatableEntity extends AbstractKapuaEntity i
     // Attributes APIs
     // -------------------------------------------------
 
-    @Override
+    //    @Override
     public Properties getEntityAttributes() {
         try {
             return PropertiesUtils.readPropertiesFromString(attributes);
@@ -160,7 +165,7 @@ public abstract class AbstractKapuaUpdatableEntity extends AbstractKapuaEntity i
         }
     }
 
-    @Override
+    //    @Override
     public void setEntityAttributes(Properties entityAttributes) {
         try {
             this.attributes = PropertiesUtils.writePropertiesToString(entityAttributes);
@@ -173,7 +178,7 @@ public abstract class AbstractKapuaUpdatableEntity extends AbstractKapuaEntity i
     // Properties APIs
     // -------------------------------------------------
 
-    @Override
+    //    @Override
     public Properties getEntityProperties() {
         try {
             return PropertiesUtils.readPropertiesFromString(properties);
@@ -182,7 +187,7 @@ public abstract class AbstractKapuaUpdatableEntity extends AbstractKapuaEntity i
         }
     }
 
-    @Override
+    //    @Override
     public void setEntityProperties(Properties properties) {
         try {
             this.properties = PropertiesUtils.writePropertiesToString(properties);
@@ -192,8 +197,7 @@ public abstract class AbstractKapuaUpdatableEntity extends AbstractKapuaEntity i
     }
 
     /**
-     * Before create action invokes {@link AbstractKapuaEntity#prePersistsAction()} and
-     * sets {@link KapuaUpdatableEntity} {@link #modifiedBy} and {@link #modifiedOn}.
+     * Before create action invokes {@link AbstractKapuaEntity#prePersistsAction()} and sets {@link KapuaUpdatableEntity} {@link #modifiedBy} and {@link #modifiedOn}.
      *
      * @since 1.0.0
      */

@@ -17,7 +17,6 @@ import java.util.Map;
 import javax.inject.Singleton;
 
 import org.eclipse.kapua.commons.service.internal.KapuaServiceDisabledException;
-import org.eclipse.kapua.model.config.metatype.EmptyTocd;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.device.management.configuration.DeviceComponentConfiguration;
@@ -55,7 +54,7 @@ public class DeviceConfigurationStoreServiceDummy implements DeviceConfiguration
 
     @Override
     public KapuaTocd getConfigMetadata(KapuaId scopeId) {
-        return new EmptyTocd();
+        return KapuaTocd.empty();
     }
 
     @Override

@@ -16,7 +16,6 @@ import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.authentication.ApiKeyCredentials;
 import org.eclipse.kapua.service.authentication.exception.KapuaAuthenticationException;
 import org.eclipse.kapua.service.authentication.shiro.ApiKeyCredentialsImpl;
-import org.eclipse.kapua.service.authentication.shiro.realm.model.ApiKeyCredentialsAnotherImpl;
 import org.eclipse.kapua.service.authentication.shiro.realm.model.NotProcessableCredentials;
 import org.eclipse.kapua.service.authentication.shiro.realm.model.NotProcessableCredentialsImpl;
 import org.junit.Assert;
@@ -41,32 +40,20 @@ public class ApiKeyCredentialsConverterTest {
 
     @Test
     public void apoKeyCredentialsImplCanProcessImplTest() throws KapuaAuthenticationException {
-        ApiKeyCredentials apoKeyCredentialsImpl = new ApiKeyCredentialsImpl("anApiKey");
-        ApiKeyCredentials apoKeyCredentialsAnother = new ApiKeyCredentialsAnotherImpl("anApiKey");
+        ApiKeyCredentials apoKeyCredentials = new ApiKeyCredentials("anApiKey");
         NotProcessableCredentials notProcessableCredentials = new NotProcessableCredentialsImpl();
 
-        Assert.assertTrue(instance.canProcess(apoKeyCredentialsImpl));
-        Assert.assertTrue(instance.canProcess(apoKeyCredentialsAnother));
+        Assert.assertTrue(instance.canProcess(apoKeyCredentials));
         Assert.assertFalse(instance.canProcess(notProcessableCredentials));
     }
 
     @Test
     public void apiKeyCredentialsImplMapToShiroImplTest() throws KapuaAuthenticationException {
-        ApiKeyCredentials first = new ApiKeyCredentialsImpl("anApiKey");
+        ApiKeyCredentials first = new ApiKeyCredentials("anApiKey");
 
         ApiKeyCredentialsImpl second = (ApiKeyCredentialsImpl) instance.convertToShiro(first);
 
-        Assert.assertEquals(first, second);
-        Assert.assertEquals(first.getApiKey(), second.getApiKey());
-    }
-
-    @Test
-    public void apiKeyCredentialsImplMapToShiroAnotherTest() throws KapuaAuthenticationException {
-        ApiKeyCredentials first = new ApiKeyCredentialsAnotherImpl("anApiKey");
-
-        ApiKeyCredentialsImpl second = (ApiKeyCredentialsImpl) instance.convertToShiro(first);
-
-        Assert.assertNotNull(second);
+        Assert.assertNotEquals(first, second);
         Assert.assertNotEquals(first, second);
         Assert.assertEquals(first.getApiKey(), second.getApiKey());
     }
@@ -78,7 +65,7 @@ public class ApiKeyCredentialsConverterTest {
 
     @Test(expected = KapuaAuthenticationException.class)
     public void apiKeyCredentialsImplMapToShiroEmptyTest() throws KapuaAuthenticationException {
-        ApiKeyCredentialsImpl first = new ApiKeyCredentialsImpl((String) null);
+        ApiKeyCredentials first = new ApiKeyCredentials((String) null);
 
         Assert.assertNotNull(first);
 

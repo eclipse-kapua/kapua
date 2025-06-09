@@ -12,6 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.registry.operation.internal;
 
+import java.util.Date;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.domains.Domains;
@@ -20,7 +25,7 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.device.management.message.notification.NotifyStatus;
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperation;
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationCreator;
@@ -32,16 +37,11 @@ import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceRepository;
 import org.eclipse.kapua.storage.TxManager;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.Date;
-
 @Singleton
 public class DeviceManagementOperationRegistryServiceImpl
         implements DeviceManagementOperationRegistryService {
 
     private final AuthorizationService authorizationService;
-    private final PermissionFactory permissionFactory;
     private final DeviceRepository deviceRepository;
     private final TxManager txManager;
     private final DeviceManagementOperationRepository repository;
@@ -50,13 +50,11 @@ public class DeviceManagementOperationRegistryServiceImpl
     @Inject
     public DeviceManagementOperationRegistryServiceImpl(
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             DeviceRepository deviceRepository,
             TxManager txManager,
             DeviceManagementOperationRepository repository,
             DeviceManagementOperationFactory entityFactory) {
         this.authorizationService = authorizationService;
-        this.permissionFactory = permissionFactory;
         this.deviceRepository = deviceRepository;
         this.txManager = txManager;
         this.repository = repository;
@@ -75,7 +73,7 @@ public class DeviceManagementOperationRegistryServiceImpl
         ArgumentValidator.notNull(creator.getAppId(), "creator.appId");
         ArgumentValidator.notNull(creator.getAction(), "creator.action");
         // Check access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT_REGISTRY, Actions.write, null));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT_REGISTRY, Actions.write, null));
 
         return txManager.execute(tx -> {
             // Check device existence
@@ -111,7 +109,7 @@ public class DeviceManagementOperationRegistryServiceImpl
         ArgumentValidator.notNull(entity.getAppId(), "deviceManagementOperation.appId");
         ArgumentValidator.notNull(entity.getAction(), "deviceManagementOperation.action");
         // Check access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT_REGISTRY, Actions.write, null));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT_REGISTRY, Actions.write, null));
 
         return txManager.execute(tx -> {
             // Check device existence
@@ -133,7 +131,7 @@ public class DeviceManagementOperationRegistryServiceImpl
         ArgumentValidator.notNull(scopeId, "scopeId");
         ArgumentValidator.notNull(entityId, "deviceManagementOperationId");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT_REGISTRY, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT_REGISTRY, Actions.read, scopeId));
         // Do find
         return txManager.execute(tx -> repository.find(tx, scopeId, entityId))
                 .orElse(null);
@@ -147,7 +145,7 @@ public class DeviceManagementOperationRegistryServiceImpl
         ArgumentValidator.notNull(operationId, "operationId");
 
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT_REGISTRY, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT_REGISTRY, Actions.read, scopeId));
         // Do find
         return txManager.execute(tx -> repository.findByOperationId(tx, scopeId, operationId))
                 .orElse(null);
@@ -158,7 +156,7 @@ public class DeviceManagementOperationRegistryServiceImpl
         // Argument Validation
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT_REGISTRY, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT_REGISTRY, Actions.read, query.getScopeId()));
         // Do query
         return txManager.execute(tx -> repository.query(tx, query));
     }
@@ -179,7 +177,7 @@ public class DeviceManagementOperationRegistryServiceImpl
         // Argument Validation
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT_REGISTRY, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT_REGISTRY, Actions.read, query.getScopeId()));
         // Do count
         return txManager.execute(tx -> repository.count(tx, query));
     }
@@ -191,7 +189,7 @@ public class DeviceManagementOperationRegistryServiceImpl
         ArgumentValidator.notNull(entityId, "deviceManagementOperationId");
 
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT_REGISTRY, Actions.delete, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT_REGISTRY, Actions.delete, scopeId));
 
         // Do delete
         txManager.execute(tx -> repository.delete(tx, scopeId, entityId));

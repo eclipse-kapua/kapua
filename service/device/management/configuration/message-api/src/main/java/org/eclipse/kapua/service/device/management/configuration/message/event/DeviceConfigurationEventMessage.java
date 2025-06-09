@@ -17,10 +17,12 @@ import org.eclipse.kapua.message.KapuaMessage;
 /**
  * Device event {@link KapuaMessage} definition.
  *
- * @param <C> The type of {@link DeviceConfigurationEventChannel}
- * @param <P> The type of {@link DeviceConfigurationEventPayload}
+ * @param <C>
+ *         The type of {@link DeviceConfigurationEventChannel}
+ * @param <P>
+ *         The type of {@link DeviceConfigurationEventPayload}
  * @since 2.0.0
  */
-public interface DeviceConfigurationEventMessage<C extends DeviceConfigurationEventChannel, P extends DeviceConfigurationEventPayload> extends KapuaMessage<C, P> {
+public class DeviceConfigurationEventMessage<C extends DeviceConfigurationEventChannel, P extends DeviceConfigurationEventPayload> extends KapuaMessage<C, P> {
 
 }

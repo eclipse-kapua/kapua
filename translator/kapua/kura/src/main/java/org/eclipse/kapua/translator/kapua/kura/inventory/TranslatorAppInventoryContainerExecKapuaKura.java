@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.translator.kapua.kura.inventory;
 
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.service.device.call.kura.model.inventory.InventoryMetrics;
 import org.eclipse.kapua.service.device.call.kura.model.inventory.containers.KuraInventoryContainer;
@@ -20,7 +22,6 @@ import org.eclipse.kapua.service.device.call.message.kura.app.request.KuraReques
 import org.eclipse.kapua.service.device.call.message.kura.app.request.KuraRequestPayload;
 import org.eclipse.kapua.service.device.management.commons.setting.DeviceManagementSetting;
 import org.eclipse.kapua.service.device.management.commons.setting.DeviceManagementSettingKey;
-import org.eclipse.kapua.service.device.management.inventory.DeviceInventoryManagementFactory;
 import org.eclipse.kapua.service.device.management.inventory.internal.message.InventoryContainerExecRequestMessage;
 import org.eclipse.kapua.service.device.management.inventory.internal.message.InventoryRequestChannel;
 import org.eclipse.kapua.service.device.management.inventory.internal.message.InventoryRequestPayload;
@@ -31,8 +32,6 @@ import org.eclipse.kapua.translator.exception.InvalidPayloadException;
 import org.eclipse.kapua.translator.kapua.kura.AbstractTranslatorKapuaKura;
 import org.eclipse.kapua.translator.kapua.kura.TranslatorKapuaKuraUtils;
 
-import javax.inject.Inject;
-
 /**
  * {@link Translator} implementation from {@link InventoryContainerExecRequestMessage} to {@link KuraRequestMessage}
  *
@@ -41,11 +40,9 @@ import javax.inject.Inject;
 public class TranslatorAppInventoryContainerExecKapuaKura extends AbstractTranslatorKapuaKura<InventoryRequestChannel, InventoryRequestPayload, InventoryContainerExecRequestMessage> {
 
     private final String charEncoding;
-    private final DeviceInventoryManagementFactory deviceInventoryManagementFactory;
 
     @Inject
-    public TranslatorAppInventoryContainerExecKapuaKura(DeviceManagementSetting deviceManagementSetting, DeviceInventoryManagementFactory deviceInventoryManagementFactory) {
-        this.deviceInventoryManagementFactory = deviceInventoryManagementFactory;
+    public TranslatorAppInventoryContainerExecKapuaKura(DeviceManagementSetting deviceManagementSetting) {
         this.charEncoding = deviceManagementSetting.getString(DeviceManagementSettingKey.CHAR_ENCODING);
     }
 
@@ -55,14 +52,14 @@ public class TranslatorAppInventoryContainerExecKapuaKura extends AbstractTransl
             KuraRequestChannel kuraRequestChannel = TranslatorKapuaKuraUtils.buildBaseRequestChannel(InventoryMetrics.APP_ID, InventoryMetrics.APP_VERSION, inventoryRequestChannel.getMethod());
 
             switch (inventoryRequestChannel.getContainerAction()) {
-                case START:
-                    kuraRequestChannel.setResources(new String[]{inventoryRequestChannel.getResource(), "_start"});
-                    break;
-                case STOP:
-                    kuraRequestChannel.setResources(new String[]{inventoryRequestChannel.getResource(), "_stop"});
-                    break;
-                default:
-                    throw new KapuaIllegalArgumentException("inventoryRequestChannel.containerAction", inventoryRequestChannel.getContainerAction().name());
+            case START:
+                kuraRequestChannel.setResources(new String[] { inventoryRequestChannel.getResource(), "_start" });
+                break;
+            case STOP:
+                kuraRequestChannel.setResources(new String[] { inventoryRequestChannel.getResource(), "_stop" });
+                break;
+            default:
+                throw new KapuaIllegalArgumentException("inventoryRequestChannel.containerAction", inventoryRequestChannel.getContainerAction().name());
             }
 
             // Return Kura Channel
@@ -78,7 +75,7 @@ public class TranslatorAppInventoryContainerExecKapuaKura extends AbstractTransl
             KuraRequestPayload kuraRequestPayload = new KuraRequestPayload();
 
             if (inventoryRequestPayload.hasBody()) {
-                DeviceInventoryContainer deviceInventoryContainer = inventoryRequestPayload.getDeviceInventoryContainer().orElse(deviceInventoryManagementFactory.newDeviceInventoryContainer());
+                DeviceInventoryContainer deviceInventoryContainer = inventoryRequestPayload.getDeviceInventoryContainer().orElse(new DeviceInventoryContainer());
 
                 KuraInventoryContainer kuraInventoryContainer = new KuraInventoryContainer();
                 kuraInventoryContainer.setName(deviceInventoryContainer.getName());

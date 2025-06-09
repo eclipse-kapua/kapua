@@ -12,19 +12,18 @@
  *******************************************************************************/
 package org.eclipse.kapua.translator.kapua.kura.keystore;
 
+import javax.inject.Inject;
+
 import org.eclipse.kapua.service.device.call.kura.model.keystore.KuraKeystoreKeypair;
 import org.eclipse.kapua.service.device.call.message.kura.app.request.KuraRequestMessage;
 import org.eclipse.kapua.service.device.call.message.kura.app.request.KuraRequestPayload;
 import org.eclipse.kapua.service.device.management.commons.setting.DeviceManagementSetting;
 import org.eclipse.kapua.service.device.management.commons.setting.DeviceManagementSettingKey;
-import org.eclipse.kapua.service.device.management.keystore.DeviceKeystoreManagementFactory;
 import org.eclipse.kapua.service.device.management.keystore.internal.message.request.KeystoreKeypairRequestMessage;
 import org.eclipse.kapua.service.device.management.keystore.internal.message.request.KeystoreRequestPayload;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreKeypair;
 import org.eclipse.kapua.translator.Translator;
 import org.eclipse.kapua.translator.exception.InvalidPayloadException;
-
-import javax.inject.Inject;
 
 /**
  * {@link Translator} implementation from {@link KeystoreKeypairRequestMessage} to {@link KuraRequestMessage}
@@ -36,8 +35,7 @@ public class TranslatorAppKeystoreKeypairKapuaKura extends AbstractTranslatorApp
     private final String charEncoding;
 
     @Inject
-    public TranslatorAppKeystoreKeypairKapuaKura(DeviceManagementSetting deviceManagementSetting, DeviceKeystoreManagementFactory deviceKeystoreManagementFactory) {
-        super(deviceKeystoreManagementFactory);
+    public TranslatorAppKeystoreKeypairKapuaKura(DeviceManagementSetting deviceManagementSetting) {
         charEncoding = deviceManagementSetting.getString(DeviceManagementSettingKey.CHAR_ENCODING);
     }
 
@@ -47,7 +45,7 @@ public class TranslatorAppKeystoreKeypairKapuaKura extends AbstractTranslatorApp
             KuraRequestPayload kuraRequestPayload = new KuraRequestPayload();
 
             if (keystoreRequestPayload.hasBody()) {
-                DeviceKeystoreKeypair deviceKeystoreKeypair = keystoreRequestPayload.getKeypair().orElse(deviceKeystoreManagementFactory.newDeviceKeystoreKeypair());
+                DeviceKeystoreKeypair deviceKeystoreKeypair = keystoreRequestPayload.getKeypair().orElse(new DeviceKeystoreKeypair());
 
                 KuraKeystoreKeypair kuraKeystoreKeypair = new KuraKeystoreKeypair();
                 kuraKeystoreKeypair.setKeystoreServicePid(deviceKeystoreKeypair.getKeystoreId());

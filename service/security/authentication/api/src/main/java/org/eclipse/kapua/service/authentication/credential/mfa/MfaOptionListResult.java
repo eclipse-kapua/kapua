@@ -12,12 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.credential.mfa;
 
-import org.eclipse.kapua.model.query.KapuaListResult;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.model.query.KapuaListResult;
 
 /**
  * {@link MfaOption} {@link KapuaListResult} definition.
@@ -26,7 +26,9 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "mfaOptionListResult")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = MfaOptionXmlRegistry.class, factoryMethod = "newMfaOptionListResult")
-public interface MfaOptionListResult extends KapuaListResult<MfaOption> {
+@XmlType
+public class MfaOptionListResult extends KapuaListResult<MfaOption> {
+
+    private static final long serialVersionUID = -4204695192086365901L;
 
 }

@@ -40,7 +40,6 @@ import org.eclipse.kapua.service.job.targets.JobTarget;
 import org.eclipse.kapua.service.job.targets.JobTargetAttributes;
 import org.eclipse.kapua.service.job.targets.JobTargetFactory;
 import org.eclipse.kapua.service.job.targets.JobTargetListResult;
-import org.eclipse.kapua.service.job.targets.JobTargetQuery;
 import org.eclipse.kapua.service.job.targets.JobTargetService;
 import org.eclipse.kapua.service.job.targets.JobTargetStatus;
 import org.slf4j.Logger;
@@ -88,7 +87,7 @@ public class DefaultTargetReader extends AbstractItemReader implements TargetRea
 
         jobLogger.info("Reading target chunk. Step:{} (index:{})...", stepName, stepIndex);
         // Job Id and JobTarget status filtering
-        JobTargetQuery query = jobTargetFactory.newQuery(jobContextWrapper.getScopeId());
+        KapuaQuery query = new KapuaQuery(jobContextWrapper.getScopeId());
 
         AndPredicate andPredicate = query.andPredicate(
                 query.attributePredicate(JobTargetAttributes.JOB_ID, jobContextWrapper.getJobId())

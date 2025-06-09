@@ -12,14 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job.steps;
 
-import com.google.inject.Singleton;
-import io.cucumber.java.After;
-import io.cucumber.java.Before;
-import io.cucumber.java.Scenario;
-import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
@@ -28,15 +25,22 @@ import org.eclipse.kapua.qa.common.cucumber.CucJobStepProperty;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinition;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionCreator;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionFactory;
+import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionQuery;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinitionService;
 import org.eclipse.kapua.service.job.step.definition.JobStepProperty;
 import org.eclipse.kapua.service.job.step.definition.JobStepType;
 import org.eclipse.kapua.service.job.steps.model.TestJobStepProcessor;
 import org.junit.Assert;
 
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
+import com.google.inject.Singleton;
+
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 
 @Singleton
 public class JobStepDefinitionServiceSteps extends JobServiceTestBase {
@@ -154,7 +158,7 @@ public class JobStepDefinitionServiceSteps extends JobServiceTestBase {
         primeException();
         try {
             for (int i = 0; i < num; i++) {
-                tmpCreator = jobStepDefinitionFactory.newCreator(getCurrentScopeId());
+                tmpCreator = new JobStepDefinitionCreator(getCurrentScopeId());
                 tmpCreator.setName(String.format("TestStepDefinitionNum%d", random.nextLong()));
                 tmpCreator.setProcessorName("TestStepProcessor");
                 tmpCreator.setStepType(JobStepType.TARGET);
@@ -215,12 +219,12 @@ public class JobStepDefinitionServiceSteps extends JobServiceTestBase {
 
     @When("I count the step definition in the database")
     public void countStepDefinitionInDatabase() throws Exception {
-        updateCount(() -> (int) jobStepDefinitionService.count(jobStepDefinitionFactory.newQuery(KapuaId.ANY)));
+        updateCount(() -> (int) jobStepDefinitionService.count(new JobStepDefinitionQuery(KapuaId.ANY)));
     }
 
     @When("I query for step definitions in scope {int}")
     public void countStepDefinitijonsInScope(Integer id) throws Exception {
-        updateCount(() -> jobStepDefinitionService.query(jobStepDefinitionFactory.newQuery(KapuaId.ANY)).getSize());
+        updateCount(() -> jobStepDefinitionService.query(new JobStepDefinitionQuery(KapuaId.ANY)).getSize());
     }
 
     @When("I delete the step definition")
@@ -322,13 +326,10 @@ public class JobStepDefinitionServiceSteps extends JobServiceTestBase {
 
     @When("I test the sanity of the step definition factory")
     public void testTheStepDefinitionFactory() {
-        Assert.assertNotNull(jobStepDefinitionFactory.newCreator(SYS_SCOPE_ID));
+        Assert.assertNotNull(new JobStepDefinitionCreator(SYS_SCOPE_ID));
         Assert.assertNotNull(jobStepDefinitionFactory.newEntity(SYS_SCOPE_ID));
-        Assert.assertNotNull(jobStepDefinitionFactory.newListResult());
-        Assert.assertNotNull(jobStepDefinitionFactory.newQuery(SYS_SCOPE_ID));
         Assert.assertNotNull(jobStepDefinitionFactory.newStepProperty("TestName", "TestType", "TestValue", "TestExampleValue"));
     }
-
 
     private JobStepType getTypeFromString(String type) {
         if (type.trim().toUpperCase().equals("TARGET")) {
@@ -339,7 +340,7 @@ public class JobStepDefinitionServiceSteps extends JobServiceTestBase {
     }
 
     private JobStepDefinitionCreator prepareDefaultJobStepDefinitionCreator() {
-        JobStepDefinitionCreator tmpCr = jobStepDefinitionFactory.newCreator(getCurrentScopeId());
+        JobStepDefinitionCreator tmpCr = new JobStepDefinitionCreator(getCurrentScopeId());
         tmpCr.setName(String.format("DefinitionName_%d", random.nextInt()));
         tmpCr.setDescription("DefinitionDescription");
         tmpCr.setReaderName(null);

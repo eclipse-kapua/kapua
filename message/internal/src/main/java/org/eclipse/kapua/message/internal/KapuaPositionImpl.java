@@ -12,10 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.message.internal;
 
-import org.eclipse.kapua.message.KapuaPosition;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.persistence.Embeddable;
-import java.util.Date;
+
+import org.eclipse.kapua.commons.util.Payloads;
+import org.eclipse.kapua.message.KapuaPosition;
 
 /**
  * {@link KapuaPosition} implementation.
@@ -23,9 +27,7 @@ import java.util.Date;
  * @since 1.0.0
  */
 @Embeddable
-public class KapuaPositionImpl implements KapuaPosition {
-
-    private static final long serialVersionUID = 1L;
+public class KapuaPositionImpl {
 
     private Double longitude;
     private Double latitude;
@@ -37,100 +39,138 @@ public class KapuaPositionImpl implements KapuaPosition {
     private Integer satellites;
     private Integer status;
 
-    /**
-     * Constructor
-     */
     public KapuaPositionImpl() {
     }
 
-    @Override
+    public KapuaPositionImpl(KapuaPosition kapuaPosition) {
+        this.longitude = kapuaPosition.getLongitude();
+        this.latitude = kapuaPosition.getLatitude();
+        this.altitude = kapuaPosition.getAltitude();
+        this.precision = kapuaPosition.getPrecision();
+        this.heading = kapuaPosition.getHeading();
+        this.speed = kapuaPosition.getSpeed();
+        this.timestamp = kapuaPosition.getTimestamp();
+        this.satellites = kapuaPosition.getSatellites();
+        this.status = kapuaPosition.getStatus();
+    }
+
     public Double getLongitude() {
         return longitude;
     }
 
-    @Override
-    public void setLongitude(Double longitude) {
+    public KapuaPositionImpl setLongitude(Double longitude) {
         this.longitude = longitude;
+        return this;
     }
 
-    @Override
     public Double getLatitude() {
         return latitude;
     }
 
-    @Override
-    public void setLatitude(Double latitude) {
+    public KapuaPositionImpl setLatitude(Double latitude) {
         this.latitude = latitude;
+        return this;
     }
 
-    @Override
     public Double getAltitude() {
         return altitude;
     }
 
-    @Override
-    public void setAltitude(Double altitude) {
+    public KapuaPositionImpl setAltitude(Double altitude) {
         this.altitude = altitude;
+        return this;
     }
 
-    @Override
     public Double getPrecision() {
         return precision;
     }
 
-    @Override
-    public void setPrecision(Double precision) {
+    public KapuaPositionImpl setPrecision(Double precision) {
         this.precision = precision;
+        return this;
     }
 
-    @Override
     public Double getHeading() {
         return heading;
     }
 
-    @Override
-    public void setHeading(Double heading) {
+    public KapuaPositionImpl setHeading(Double heading) {
         this.heading = heading;
+        return this;
     }
 
-    @Override
     public Double getSpeed() {
         return speed;
     }
 
-    @Override
-    public void setSpeed(Double speed) {
+    public KapuaPositionImpl setSpeed(Double speed) {
         this.speed = speed;
+        return this;
     }
 
-    @Override
     public Date getTimestamp() {
         return timestamp;
     }
 
-    @Override
-    public void setTimestamp(Date timestamp) {
+    public KapuaPositionImpl setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
+        return this;
     }
 
-    @Override
     public Integer getSatellites() {
         return satellites;
     }
 
-    @Override
-    public void setSatellites(Integer satellites) {
+    public KapuaPositionImpl setSatellites(Integer satellites) {
         this.satellites = satellites;
+        return this;
     }
 
-    @Override
     public Integer getStatus() {
         return status;
     }
 
-    @Override
-    public void setStatus(Integer status) {
+    public KapuaPositionImpl setStatus(Integer status) {
         this.status = status;
+        return this;
     }
 
+    /**
+     * Converts the {@link KapuaPosition} attributes to a displayable {@link String}
+     *
+     * @return The displayable {@link String}
+     * @since 1.0.0
+     */
+    public String toDisplayString() {
+
+        Map<String, Object> properties = new HashMap<>();
+
+        properties.put("latitude", getLatitude());
+        properties.put("longitude", getLongitude());
+        properties.put("altitude", getAltitude());
+        properties.put("precision", getPrecision());
+        properties.put("heading", getHeading());
+        properties.put("speed", getSpeed());
+        properties.put("timestamp", getTimestamp());
+        properties.put("satellites", getSatellites());
+        properties.put("status", getStatus());
+
+        String displayString = Payloads.toDisplayString(properties);
+
+        return displayString.isEmpty() ? null : displayString;
+    }
+
+    public KapuaPosition toPosition() {
+        final KapuaPosition kapuaPosition = new KapuaPosition();
+        kapuaPosition.setLatitude(getLatitude());
+        kapuaPosition.setLongitude(getLongitude());
+        kapuaPosition.setAltitude(getAltitude());
+        kapuaPosition.setPrecision(getPrecision());
+        kapuaPosition.setHeading(getHeading());
+        kapuaPosition.setSpeed(getSpeed());
+        kapuaPosition.setTimestamp(getTimestamp());
+        kapuaPosition.setSatellites(getSatellites());
+        kapuaPosition.setStatus(getStatus());
+        return kapuaPosition;
+    }
 }

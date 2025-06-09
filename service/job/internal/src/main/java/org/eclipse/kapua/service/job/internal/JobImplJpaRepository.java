@@ -23,6 +23,6 @@ public class JobImplJpaRepository
         implements JobRepository {
 
     public JobImplJpaRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig) {
-        super(JobImpl.class, Job.TYPE, () -> new JobListResultImpl(), jpaRepoConfig);
+        super(JobImpl.class, Job.TYPE, () -> new JobListResult(), jpaRepoConfig);
     }
 }

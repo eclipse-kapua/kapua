@@ -17,16 +17,17 @@ import org.eclipse.kapua.commons.service.internal.cache.EntityCache;
 import org.eclipse.kapua.commons.storage.KapuaEntityRepositoryCachingWrapper;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.access.AccessPermission;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionAttributes;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionListResult;
-import org.eclipse.kapua.service.authorization.access.AccessPermissionQuery;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionRepository;
 import org.eclipse.kapua.storage.TxContext;
 
 public class CachingAccessPermissionRepository
         extends KapuaEntityRepositoryCachingWrapper<AccessPermission, AccessPermissionListResult>
         implements AccessPermissionRepository {
+
     private final AccessPermissionRepository wrapped;
 
     public CachingAccessPermissionRepository(AccessPermissionRepository wrapped, EntityCache entityCache) {
@@ -56,7 +57,7 @@ public class CachingAccessPermissionRepository
         AccessPermissionListResult listResult = (AccessPermissionListResult) entityCache.getList(scopeId, accessInfoId);
         if (listResult == null) {
             // Build query
-            AccessPermissionQuery query = new AccessPermissionQueryImpl(scopeId);
+            final KapuaQuery query = new KapuaQuery(scopeId);
             query.setPredicate(query.attributePredicate(AccessPermissionAttributes.ACCESS_INFO_ID, accessInfoId));
 
             listResult = wrapped.findByAccessInfoId(tx, scopeId, accessInfoId);

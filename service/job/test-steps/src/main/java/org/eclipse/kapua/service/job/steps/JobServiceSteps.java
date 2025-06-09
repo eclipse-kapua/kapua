@@ -13,14 +13,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job.steps;
 
-import com.google.inject.Singleton;
-import io.cucumber.java.After;
-import io.cucumber.java.Before;
-import io.cucumber.java.Scenario;
-import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
@@ -37,10 +35,15 @@ import org.eclipse.kapua.service.job.JobService;
 import org.eclipse.kapua.service.job.step.JobStep;
 import org.junit.Assert;
 
-import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.google.inject.Singleton;
+
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 
 @Singleton
 public class JobServiceSteps extends JobServiceTestBase {
@@ -92,7 +95,7 @@ public class JobServiceSteps extends JobServiceTestBase {
 
     @Given("A regular job creator with the name {string}")
     public void prepareARegularJobCreator(String name) {
-        JobCreator jobCreator = jobFactory.newCreator(getCurrentScopeId());
+        JobCreator jobCreator = new JobCreator(getCurrentScopeId());
         jobCreator.setName(name);
         jobCreator.setDescription(TEST_JOB);
         stepData.put(JOB_CREATOR, jobCreator);
@@ -100,7 +103,7 @@ public class JobServiceSteps extends JobServiceTestBase {
 
     @Given("A job creator with a null name")
     public void prepareAJobCreatorWithNullName() {
-        JobCreator jobCreator = jobFactory.newCreator(getCurrentScopeId());
+        JobCreator jobCreator = new JobCreator(getCurrentScopeId());
         jobCreator.setName(null);
         jobCreator.setDescription(TEST_JOB);
         stepData.put(JOB_CREATOR, jobCreator);
@@ -108,7 +111,7 @@ public class JobServiceSteps extends JobServiceTestBase {
 
     @Given("A job creator with an empty name")
     public void prepareAJobCreatorWithAnEmptyName() {
-        JobCreator jobCreator = jobFactory.newCreator(getCurrentScopeId());
+        JobCreator jobCreator = new JobCreator(getCurrentScopeId());
         jobCreator.setName("");
         jobCreator.setDescription(TEST_JOB);
         stepData.put(JOB_CREATOR, jobCreator);
@@ -135,7 +138,7 @@ public class JobServiceSteps extends JobServiceTestBase {
         primeException();
         try {
             for (int i = 0; i < num; i++) {
-                JobCreator tmpCreator = jobFactory.newCreator(getCurrentScopeId());
+                JobCreator tmpCreator = new JobCreator(getCurrentScopeId());
                 tmpCreator.setName(String.format("TestJobNum%d", i));
                 tmpCreator.setDescription("TestJobDescription");
                 jobService.create(tmpCreator);
@@ -147,7 +150,7 @@ public class JobServiceSteps extends JobServiceTestBase {
 
     @Given("I create {int} job items with the name {string}")
     public void createANumberOfJobsWithName(int num, String name) throws Exception {
-        JobCreator tmpCreator = jobFactory.newCreator(getCurrentScopeId());
+        JobCreator tmpCreator = new JobCreator(getCurrentScopeId());
         tmpCreator.setDescription("TestJobDescription");
         primeException();
         try {
@@ -260,24 +263,24 @@ public class JobServiceSteps extends JobServiceTestBase {
 
     @When("I count the jobs in the database")
     public void countJobsInDatabase() throws Exception {
-        updateCount(() -> (int) jobService.count(jobFactory.newQuery(getCurrentScopeId())));
+        updateCount(() -> (int) jobService.count(new JobQuery(getCurrentScopeId())));
     }
 
     @When("I query for jobs in scope {int}")
     public void countJobsInScope(int id) throws Exception {
-        updateCount(() -> jobService.query(jobFactory.newQuery(getKapuaId(id))).getSize());
+        updateCount(() -> jobService.query(new JobQuery(getKapuaId(id))).getSize());
     }
 
     @When("I count the jobs with the name starting with {string}")
     public void countJobsWithName(String name) throws Exception {
-        JobQuery tmpQuery = jobFactory.newQuery(getCurrentScopeId());
+        JobQuery tmpQuery = new JobQuery(getCurrentScopeId());
         tmpQuery.setPredicate(tmpQuery.attributePredicate(JobAttributes.NAME, name, Operator.STARTS_WITH));
         updateCount(() -> jobService.query(tmpQuery).getSize());
     }
 
     @When("I query for the job with the name {string}")
     public void queryForJobWithName(String name) throws Exception {
-        JobQuery tmpQuery = jobFactory.newQuery(getCurrentScopeId());
+        JobQuery tmpQuery = new JobQuery(getCurrentScopeId());
         tmpQuery.setPredicate(tmpQuery.attributePredicate(JobAttributes.NAME, name));
         primeException();
         try {
@@ -336,10 +339,9 @@ public class JobServiceSteps extends JobServiceTestBase {
     @When("I test the sanity of the job factory")
     public void testJobFactorySanity() {
         primeException();
-        Assert.assertNotNull("The job factory returned a null creator!", jobFactory.newCreator(SYS_SCOPE_ID));
+        Assert.assertNotNull("The job factory returned a null creator!", new JobCreator(SYS_SCOPE_ID));
         Assert.assertNotNull("The job factory returned a null job object!", jobFactory.newEntity(SYS_SCOPE_ID));
-        Assert.assertNotNull("The job factory returned a null job query!", jobFactory.newQuery(SYS_SCOPE_ID));
-        Assert.assertNotNull("The job factory returned a null job list result!", jobFactory.newListResult());
+        Assert.assertNotNull("The job factory returned a null job query!", new JobQuery(SYS_SCOPE_ID));
     }
 
     @Then("I find a job with name {string}")
@@ -374,10 +376,9 @@ public class JobServiceSteps extends JobServiceTestBase {
         }
     }
 
-
     @When("I query for the job with the name {string} and I find it")
     public void iQueryForTheJobWithTheNameAndIFoundIt(String jobName) throws Exception {
-        JobQuery tmpQuery = jobFactory.newQuery(getCurrentScopeId());
+        JobQuery tmpQuery = new JobQuery(getCurrentScopeId());
         tmpQuery.setPredicate(tmpQuery.attributePredicate(JobAttributes.NAME, jobName));
         primeException();
         try {
@@ -392,7 +393,7 @@ public class JobServiceSteps extends JobServiceTestBase {
 
     @When("I query for the job with term match {string}")
     public void iQueryForTheJobMatchTerm(String matchTerm) throws Exception {
-        JobQuery tmpQuery = jobFactory.newQuery(getCurrentScopeId());
+        JobQuery tmpQuery = new JobQuery(getCurrentScopeId());
 
         tmpQuery.setPredicate(tmpQuery.matchPredicate(matchTerm));
 
@@ -401,7 +402,7 @@ public class JobServiceSteps extends JobServiceTestBase {
 
     @Given("I prepare a job with name {string} and description {string}")
     public void iPrepareAJobWithNameAndDescription(String name, String description) {
-        JobCreator jobCreator = jobFactory.newCreator(SYS_SCOPE_ID);
+        JobCreator jobCreator = new JobCreator(SYS_SCOPE_ID);
         jobCreator.setName(name);
         jobCreator.setDescription(description);
         stepData.put(JOB_CREATOR, jobCreator);
@@ -436,7 +437,7 @@ public class JobServiceSteps extends JobServiceTestBase {
     @Then("I change name of job from {string} to {string}")
     public void iChangeNameOfJobFromTo(String oldName, String newName) throws Throwable {
         try {
-            JobQuery query = jobFactory.newQuery(getCurrentScopeId());
+            JobQuery query = new JobQuery(getCurrentScopeId());
             query.setPredicate(query.attributePredicate(JobAttributes.NAME, oldName, Operator.EQUAL));
             JobListResult queryResult = jobService.query(query);
             Job job = queryResult.getFirstItem();
@@ -457,7 +458,7 @@ public class JobServiceSteps extends JobServiceTestBase {
     @When("I change the job description from {string} to {string}")
     public void iChangeTheJobDescriptionFromTo(String oldDescription, String newDescription) throws Throwable {
         try {
-            JobQuery query = jobFactory.newQuery(getCurrentScopeId());
+            JobQuery query = new JobQuery(getCurrentScopeId());
             query.setPredicate(query.attributePredicate(JobAttributes.DESCRIPTION, oldDescription, Operator.EQUAL));
             JobListResult queryResult = jobService.query(query);
             Job job = queryResult.getFirstItem();
@@ -471,7 +472,7 @@ public class JobServiceSteps extends JobServiceTestBase {
     // Private methods
 
     private void tryToCreateJob(String characters) throws Exception {
-        JobCreator jobCreator = jobFactory.newCreator(getCurrentScopeId());
+        JobCreator jobCreator = new JobCreator(getCurrentScopeId());
         for (int i = 0; i < characters.length(); i++) {
             String jobName = JOB_NAME + characters.charAt(i);
             jobCreator.setName(jobName);
@@ -487,7 +488,7 @@ public class JobServiceSteps extends JobServiceTestBase {
     }
 
     private void tryToUpdateJobName(String characters) throws Exception {
-        JobCreator jobCreator = jobFactory.newCreator(getCurrentScopeId());
+        JobCreator jobCreator = new JobCreator(getCurrentScopeId());
         //are we sure works as expected with invalid characters?
         for (int i = 0; i < characters.length(); i++) {
             String jobName = JOB_NAME + characters.charAt(i);

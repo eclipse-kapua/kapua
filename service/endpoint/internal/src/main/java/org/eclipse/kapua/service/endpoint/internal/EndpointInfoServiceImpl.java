@@ -12,6 +12,15 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.endpoint.internal;
 
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaEntityUniquenessException;
 import org.eclipse.kapua.KapuaException;
@@ -29,25 +38,16 @@ import org.eclipse.kapua.model.query.predicate.QueryPredicate;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.endpoint.EndpointInfo;
 import org.eclipse.kapua.service.endpoint.EndpointInfoAttributes;
 import org.eclipse.kapua.service.endpoint.EndpointInfoCreator;
-import org.eclipse.kapua.service.endpoint.EndpointInfoFactory;
 import org.eclipse.kapua.service.endpoint.EndpointInfoListResult;
 import org.eclipse.kapua.service.endpoint.EndpointInfoQuery;
 import org.eclipse.kapua.service.endpoint.EndpointInfoRepository;
 import org.eclipse.kapua.service.endpoint.EndpointInfoService;
 import org.eclipse.kapua.storage.TxContext;
 import org.eclipse.kapua.storage.TxManager;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
 
 /**
  * {@link EndpointInfoService} implementation.
@@ -57,9 +57,8 @@ import java.util.function.Predicate;
 @Singleton
 public class EndpointInfoServiceImpl
         implements EndpointInfoService {
+
     private final AuthorizationService authorizationService;
-    private final PermissionFactory permissionFactory;
-    private final EndpointInfoFactory endpointInfoFactory;
     private final EndpointInfoRepository repository;
     private final AccountService accountService;
     private final TxManager txManager;
@@ -68,14 +67,10 @@ public class EndpointInfoServiceImpl
     public EndpointInfoServiceImpl(
             AccountService accountService,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
-            EndpointInfoFactory endpointInfoFactory,
             EndpointInfoRepository endpointInfoRepository,
             TxManager txManager) {
         this.accountService = accountService;
         this.authorizationService = authorizationService;
-        this.permissionFactory = permissionFactory;
-        this.endpointInfoFactory = endpointInfoFactory;
         this.repository = endpointInfoRepository;
         this.txManager = txManager;
     }
@@ -106,7 +101,7 @@ public class EndpointInfoServiceImpl
         KapuaId scopeIdPermission = endpointInfoCreator.getEndpointType().equals(EndpointInfo.ENDPOINT_TYPE_CORS) ?
                 endpointInfoCreator.getScopeId() : null;
         authorizationService.checkPermission(
-                permissionFactory.newPermission(Domains.ENDPOINT_INFO, Actions.write, scopeIdPermission)
+                new Permission(Domains.ENDPOINT_INFO, Actions.write, scopeIdPermission)
         );
         // Check duplicate endpoint
         checkDuplicateEndpointInfo(
@@ -148,7 +143,7 @@ public class EndpointInfoServiceImpl
         KapuaId scopeIdPermission = endpointInfo.getEndpointType().equals(EndpointInfo.ENDPOINT_TYPE_CORS) ?
                 endpointInfo.getScopeId() : null;
         authorizationService.checkPermission(
-                permissionFactory.newPermission(Domains.ENDPOINT_INFO, Actions.write, scopeIdPermission)
+                new Permission(Domains.ENDPOINT_INFO, Actions.write, scopeIdPermission)
         );
         // Check duplicate endpoint
         checkDuplicateEndpointInfo(
@@ -178,7 +173,7 @@ public class EndpointInfoServiceImpl
             }
 
             authorizationService.checkPermission(
-                    permissionFactory.newPermission(Domains.ENDPOINT_INFO, Actions.delete, scopeIdPermission)
+                    new Permission(Domains.ENDPOINT_INFO, Actions.delete, scopeIdPermission)
             );
             // Do delete
             return repository.delete(tx, scopeId, endpointInfoId);
@@ -193,7 +188,7 @@ public class EndpointInfoServiceImpl
         // Check Access
         return txManager.execute(tx -> {
             authorizationService.checkPermission(
-                    permissionFactory.newPermission(Domains.ENDPOINT_INFO, Actions.read, scopeId)
+                    new Permission(Domains.ENDPOINT_INFO, Actions.read, scopeId)
             );
             EndpointInfo endpointInfoToFind = repository.find(tx, KapuaId.ANY, endpointInfoId)
                     .orElseThrow(() -> new KapuaEntityNotFoundException(EndpointInfo.TYPE, endpointInfoId)); // search the endpoint in any scope
@@ -204,10 +199,11 @@ public class EndpointInfoServiceImpl
             //found but in another scope...is defined in the scope of the first Account that has defined endpoints? (proceeding upwards)
             String type = endpointInfoToFind.getEndpointType();
             //now find the endpoints of the search type that I can use (aka, the nearest proceeding upwards in Accounts hierarchy)
-            EndpointInfoQuery query = endpointInfoFactory.newQuery(scopeId);
+            EndpointInfoQuery query = new EndpointInfoQuery(scopeId);
             EndpointInfoListResult nearestUsableEndpoints = doQuery(tx, query, type);
 
-            if (nearestUsableEndpoints.isEmpty() || !nearestUsableEndpoints.getFirstItem().getScopeId().equals(endpointInfoToFind.getScopeId())) { //the second condition is equivalent to verify if the searched endpoint is in this list
+            if (nearestUsableEndpoints.isEmpty() || !nearestUsableEndpoints.getFirstItem().getScopeId()
+                    .equals(endpointInfoToFind.getScopeId())) { //the second condition is equivalent to verify if the searched endpoint is in this list
                 throw new KapuaEntityNotFoundException(EndpointInfo.TYPE, endpointInfoId);
             } else {
                 return endpointInfoToFind;
@@ -230,7 +226,7 @@ public class EndpointInfoServiceImpl
         ArgumentValidator.notNull(query, "query");
         // Check Access
         authorizationService.checkPermission(
-                permissionFactory.newPermission(Domains.ENDPOINT_INFO, Actions.read, query.getScopeId())
+                new Permission(Domains.ENDPOINT_INFO, Actions.read, query.getScopeId())
         );
         return traverse(
                 txContext,
@@ -255,7 +251,7 @@ public class EndpointInfoServiceImpl
         //
         // Check Access
         authorizationService.checkPermission(
-                permissionFactory.newPermission(Domains.ENDPOINT_INFO, Actions.read, query.getScopeId())
+                new Permission(Domains.ENDPOINT_INFO, Actions.read, query.getScopeId())
         );
         return traverse(
                 tx,
@@ -266,7 +262,6 @@ public class EndpointInfoServiceImpl
         );
     }
 
-
     //
     // Private methods and interfaces
     //
@@ -275,19 +270,23 @@ public class EndpointInfoServiceImpl
     //to overcome this, I created this interface which is a custom form of a Bifunction throwing the checked KapuaException
     @FunctionalInterface
     public interface kapuaBiFunction<A, B, R> {
+
         R apply(A input1, B input2) throws KapuaException;
     }
 
-
     /**
-     * Traverse the account hierarchy bottom-up to search for {@link EndpointInfo} respecting the given query,
-     * performing for each layer the given queryExecutor until the given isEmptyResult dictates to stop OR when endpoints of the same section are found in one layer
-     * In other terms, this method applies a given function to the "nearest usable endpoints", aka the ones that I see in a given scopeID
+     * Traverse the account hierarchy bottom-up to search for {@link EndpointInfo} respecting the given query, performing for each layer the given queryExecutor until the given isEmptyResult dictates
+     * to stop OR when endpoints of the same section are found in one layer In other terms, this method applies a given function to the "nearest usable endpoints", aka the ones that I see in a given
+     * scopeID
      *
-     * @param query         The query to filter the {@link EndpointInfo}s.
-     * @param section       section of {@link EndpointInfo} where we want to search the information
-     * @param queryExecutor function to apply at each layer
-     * @param isEmptyResult predicate that dictates to stop the traversal when false
+     * @param query
+     *         The query to filter the {@link EndpointInfo}s.
+     * @param section
+     *         section of {@link EndpointInfo} where we want to search the information
+     * @param queryExecutor
+     *         function to apply at each layer
+     * @param isEmptyResult
+     *         predicate that dictates to stop the traversal when false
      */
     protected <R> R traverse(
             TxContext tx,
@@ -337,18 +336,25 @@ public class EndpointInfoServiceImpl
     /**
      * Checks whether another {@link EndpointInfo} already exists with the given values.
      *
-     * @param scopeId  The ScopeId of the {@link EndpointInfo}
-     * @param entityId The entity id, if exists. On update you need to exclude the same entity.
-     * @param schema   The {@link EndpointInfo#getSchema()}  value.
-     * @param dns      The {@link EndpointInfo#getDns()}  value.
-     * @param port     The {@link EndpointInfo#getPort()} value.
-     * @param type     The {@link EndpointInfo#getEndpointType()} value.
-     * @throws KapuaException if the values provided matches another {@link EndpointInfo}
+     * @param scopeId
+     *         The ScopeId of the {@link EndpointInfo}
+     * @param entityId
+     *         The entity id, if exists. On update you need to exclude the same entity.
+     * @param schema
+     *         The {@link EndpointInfo#getSchema()}  value.
+     * @param dns
+     *         The {@link EndpointInfo#getDns()}  value.
+     * @param port
+     *         The {@link EndpointInfo#getPort()} value.
+     * @param type
+     *         The {@link EndpointInfo#getEndpointType()} value.
+     * @throws KapuaException
+     *         if the values provided matches another {@link EndpointInfo}
      * @since 1.0.0
      */
     private void checkDuplicateEndpointInfo(KapuaId scopeId, KapuaId entityId, String schema, String dns, int port, String type) throws KapuaException {
 
-        EndpointInfoQuery query = new EndpointInfoQueryImpl(scopeId);
+        EndpointInfoQuery query = new EndpointInfoQuery(scopeId);
 
         AndPredicate andPredicate = query.andPredicate(
                 query.attributePredicate(EndpointInfoAttributes.SCHEMA, schema),
@@ -375,7 +381,7 @@ public class EndpointInfoServiceImpl
     }
 
     private boolean countAllEndpointsInScope(TxContext txContext, KapuaId scopeId, String section) throws KapuaException {
-        EndpointInfoQuery totalQuery = endpointInfoFactory.newQuery(scopeId);
+        EndpointInfoQuery totalQuery = new EndpointInfoQuery(scopeId);
         addSectionToPredicate(totalQuery, section);
         long totalCount = repository.count(txContext, totalQuery);
         return totalCount != 0;

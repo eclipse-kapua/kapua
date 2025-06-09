@@ -12,9 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job.execution;
 
-import org.eclipse.kapua.model.KapuaUpdatableEntityCreator;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import java.util.Date;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -22,8 +21,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
-import java.util.Set;
+
+import org.eclipse.kapua.model.KapuaEntityCreator;
+import org.eclipse.kapua.model.KapuaUpdatableEntityCreator;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
 
 /**
  * {@link JobExecutionCreator} defintion.
@@ -32,32 +34,57 @@ import java.util.Set;
  */
 @XmlRootElement(name = "jobExecutionCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = JobExecutionXmlRegistry.class, factoryMethod = "newJobExecutionCreator")
-public interface JobExecutionCreator extends KapuaUpdatableEntityCreator<JobExecution> {
+@XmlType
+public class JobExecutionCreator extends KapuaUpdatableEntityCreator {
+
+    private static final long serialVersionUID = 3119071638220738358L;
+
+    private KapuaId jobId;
+    private Date startedOn;
+    private Set<KapuaId> targetIds;
+
+    public JobExecutionCreator() {
+    }
+
+    public JobExecutionCreator(KapuaId scopeId) {
+        super(scopeId);
+    }
+
+    public JobExecutionCreator(KapuaEntityCreator entityCreator) {
+        super(entityCreator);
+    }
 
     /**
      * @return
      * @since 1.0.0
      */
-    KapuaId getJobId();
+    public KapuaId getJobId() {
+        return jobId;
+    }
 
     /**
      * @param jobId
      * @since 1.0.0
      */
-    void setJobId(KapuaId jobId);
+    public void setJobId(KapuaId jobId) {
+        this.jobId = jobId;
+    }
 
     /**
      * @return
      * @since 1.0.0
      */
-    Date getStartedOn();
+    public Date getStartedOn() {
+        return startedOn;
+    }
 
     /**
      * @param startedOn
      * @since 1.0.0
      */
-    void setStartedOn(Date startedOn);
+    public void setStartedOn(Date startedOn) {
+        this.startedOn = startedOn;
+    }
 
     /**
      * @return
@@ -65,11 +92,15 @@ public interface JobExecutionCreator extends KapuaUpdatableEntityCreator<JobExec
      */
     @XmlElement(name = "targetIds")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
-    <I extends KapuaId> Set<I> getTargetIds();
+    public Set<KapuaId> getTargetIds() {
+        return targetIds;
+    }
 
     /**
-     * @param tagTargetIds
+     * @param targetIds
      * @since 1.1.0
      */
-    void setTargetIds(Set<KapuaId> tagTargetIds);
+    public void setTargetIds(Set<KapuaId> targetIds) {
+        this.targetIds = targetIds;
+    }
 }

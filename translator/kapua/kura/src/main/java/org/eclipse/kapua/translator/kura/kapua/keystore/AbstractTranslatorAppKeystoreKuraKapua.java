@@ -12,6 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.translator.kura.kapua.keystore;
 
+import java.util.Arrays;
+import java.util.Date;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
 import org.eclipse.kapua.service.device.call.kura.model.keystore.KeystoreMetrics;
 import org.eclipse.kapua.service.device.call.kura.model.keystore.KuraKeystore;
 import org.eclipse.kapua.service.device.call.kura.model.keystore.KuraKeystoreCSR;
@@ -19,7 +25,6 @@ import org.eclipse.kapua.service.device.call.kura.model.keystore.KuraKeystoreIte
 import org.eclipse.kapua.service.device.call.message.kura.app.response.KuraResponseChannel;
 import org.eclipse.kapua.service.device.call.message.kura.app.response.KuraResponseMessage;
 import org.eclipse.kapua.service.device.management.commons.setting.DeviceManagementSetting;
-import org.eclipse.kapua.service.device.management.keystore.DeviceKeystoreManagementFactory;
 import org.eclipse.kapua.service.device.management.keystore.internal.message.response.KeystoreResponseChannel;
 import org.eclipse.kapua.service.device.management.keystore.internal.message.response.KeystoreResponseMessage;
 import org.eclipse.kapua.service.device.management.keystore.internal.message.response.KeystoreResponsePayload;
@@ -35,11 +40,6 @@ import org.eclipse.kapua.translator.kura.kapua.AbstractSimpleTranslatorResponseK
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.stream.Collectors;
-
 /**
  * {@link Translator} {@code abstract} implementation from {@link KuraResponseMessage} to {@link KeystoreResponseMessage}
  *
@@ -49,19 +49,16 @@ public abstract class AbstractTranslatorAppKeystoreKuraKapua<M extends KeystoreR
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractTranslatorAppKeystoreKuraKapua.class);
 
-    private final DeviceKeystoreManagementFactory deviceKeystoreManagementFactory;
-
     /**
      * Constructor.
      *
-     * @param deviceKeystoreManagementFactory
-     * @param responseMessageClass            The type of the {@link KeystoreResponseMessage}.
+     * @param responseMessageClass
+     *         The type of the {@link KeystoreResponseMessage}.
      * @since 1.5.0
      */
     @Inject
-    public AbstractTranslatorAppKeystoreKuraKapua(DeviceManagementSetting deviceManagementSetting, DeviceKeystoreManagementFactory deviceKeystoreManagementFactory, Class<M> responseMessageClass) {
+    public AbstractTranslatorAppKeystoreKuraKapua(DeviceManagementSetting deviceManagementSetting, Class<M> responseMessageClass) {
         super(deviceManagementSetting, responseMessageClass, KeystoreResponsePayload.class);
-        this.deviceKeystoreManagementFactory = deviceKeystoreManagementFactory;
     }
 
     @Override
@@ -78,17 +75,18 @@ public abstract class AbstractTranslatorAppKeystoreKuraKapua<M extends KeystoreR
     /**
      * Translates a {@link KuraKeystore}[] to {@link DeviceKeystores}.
      *
-     * @param kuraKeystoreArray The {@link KuraKeystore}[] to translate.
+     * @param kuraKeystoreArray
+     *         The {@link KuraKeystore}[] to translate.
      * @return The translated {@link DeviceKeystores}.
      * @since 1.5.0
      */
     protected DeviceKeystores translate(KuraKeystore[] kuraKeystoreArray) {
 
-        DeviceKeystores deviceKeystores = deviceKeystoreManagementFactory.newDeviceKeystores();
+        DeviceKeystores deviceKeystores = new DeviceKeystores();
 
         deviceKeystores.setKeystores(
                 Arrays.stream(kuraKeystoreArray).map(kuraKeystore -> {
-                    DeviceKeystore deviceKeystore = deviceKeystoreManagementFactory.newDeviceKeystore();
+                    DeviceKeystore deviceKeystore = new DeviceKeystore();
 
                     deviceKeystore.setId(kuraKeystore.getKeystoreServicePid());
                     deviceKeystore.setKeystoreType(kuraKeystore.getType());
@@ -104,13 +102,14 @@ public abstract class AbstractTranslatorAppKeystoreKuraKapua<M extends KeystoreR
     /**
      * Translates a {@link KuraKeystoreItem}[] to {@link DeviceKeystoreItems}.
      *
-     * @param kuraKeystoreItemArray The {@link KuraKeystoreItem}[] to translate.
+     * @param kuraKeystoreItemArray
+     *         The {@link KuraKeystoreItem}[] to translate.
      * @return The translated {@link DeviceKeystoreItems}.
      * @since 1.5.0
      */
     protected DeviceKeystoreItems translate(KuraKeystoreItem[] kuraKeystoreItemArray) {
 
-        DeviceKeystoreItems deviceKeystoreItems = deviceKeystoreManagementFactory.newDeviceKeystoreItems();
+        DeviceKeystoreItems deviceKeystoreItems = new DeviceKeystoreItems();
 
         deviceKeystoreItems.setKeystoreItems(
                 Arrays.stream(kuraKeystoreItemArray)
@@ -124,13 +123,14 @@ public abstract class AbstractTranslatorAppKeystoreKuraKapua<M extends KeystoreR
     /**
      * Translates a {@link KuraKeystoreItem}to {@link DeviceKeystoreItems}.
      *
-     * @param kuraKeystoreItem The {@link KuraKeystoreItem} to translate.
+     * @param kuraKeystoreItem
+     *         The {@link KuraKeystoreItem} to translate.
      * @return The translated {@link DeviceKeystoreItems}.
      * @since 1.5.0
      */
     protected DeviceKeystoreItem translate(KuraKeystoreItem kuraKeystoreItem) {
 
-        DeviceKeystoreItem deviceKeystore = deviceKeystoreManagementFactory.newDeviceKeystoreItem();
+        DeviceKeystoreItem deviceKeystore = new DeviceKeystoreItem();
 
         deviceKeystore.setKeystoreId(kuraKeystoreItem.getKeystoreServicePid());
         deviceKeystore.setItemType(kuraKeystoreItem.getType());
@@ -143,7 +143,7 @@ public abstract class AbstractTranslatorAppKeystoreKuraKapua<M extends KeystoreR
         deviceKeystore.setCertificateChain(kuraKeystoreItem.getCertificateChain());
 
         for (String[] kuraSubjectAN : kuraKeystoreItem.getSubjectAN()) {
-            DeviceKeystoreSubjectAN deviceSubjectAN = deviceKeystoreManagementFactory.newDeviceKeystoreSubjectAN();
+            DeviceKeystoreSubjectAN deviceSubjectAN = new DeviceKeystoreSubjectAN();
 
             if (kuraSubjectAN == null || kuraSubjectAN.length != 2) {
                 LOG.warn("Invalid Subject Alternative Names provided from the device: {}", (Object) kuraSubjectAN);
@@ -170,12 +170,13 @@ public abstract class AbstractTranslatorAppKeystoreKuraKapua<M extends KeystoreR
     /**
      * Translates a {@link KuraKeystoreCSR} to {@link DeviceKeystoreCSR}.
      *
-     * @param kuraKeystoreCSR The {@link KuraKeystoreCSR} to translate.
+     * @param kuraKeystoreCSR
+     *         The {@link KuraKeystoreCSR} to translate.
      * @return The translated {@link DeviceKeystoreCSR}.
      * @since 1.5.0
      */
     protected DeviceKeystoreCSR translate(KuraKeystoreCSR kuraKeystoreCSR) {
-        DeviceKeystoreCSR deviceKeystoreCSR = deviceKeystoreManagementFactory.newDeviceKeystoreCSR();
+        DeviceKeystoreCSR deviceKeystoreCSR = new DeviceKeystoreCSR();
 
         deviceKeystoreCSR.setSigningRequest(kuraKeystoreCSR.getSigningRequest());
 

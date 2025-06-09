@@ -22,7 +22,7 @@ import org.eclipse.kapua.service.device.management.message.request.KapuaRequestC
  *
  * @since 1.0.0
  */
-public class ChannelRequestChannel extends AssetRequestChannel implements KapuaRequestChannel {
+public class ChannelRequestChannel extends AssetRequestChannel {
 
     private static final long serialVersionUID = -1578380839404848475L;
 
@@ -41,7 +41,8 @@ public class ChannelRequestChannel extends AssetRequestChannel implements KapuaR
     /**
      * Sets the {@link DeviceAsset} name.
      *
-     * @param assetName The {@link DeviceAsset} name.
+     * @param assetName
+     *         The {@link DeviceAsset} name.
      * @since 1.0.0
      */
     public void setAssetName(String assetName) {

@@ -12,6 +12,16 @@
  *******************************************************************************/
 package org.eclipse.kapua.security.registration.simple;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
@@ -24,46 +34,29 @@ import org.eclipse.kapua.security.registration.simple.setting.SimpleSetting;
 import org.eclipse.kapua.security.registration.simple.setting.SimpleSettingKeys;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountCreator;
-import org.eclipse.kapua.service.account.AccountFactory;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authentication.credential.CredentialCreator;
-import org.eclipse.kapua.service.authentication.credential.CredentialFactory;
 import org.eclipse.kapua.service.authentication.credential.CredentialService;
 import org.eclipse.kapua.service.authentication.credential.CredentialStatus;
 import org.eclipse.kapua.service.authorization.access.AccessInfoCreator;
-import org.eclipse.kapua.service.authorization.access.AccessInfoFactory;
 import org.eclipse.kapua.service.authorization.access.AccessInfoService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserCreator;
-import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserService;
 import org.eclipse.kapua.service.user.UserType;
 import org.jose4j.jwt.consumer.JwtContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-
 /**
  * A processor which creates a simple account and user setup
  * <p>
- * This processor creates a new account based on the OpenID SSO claim and creates a single
- * user for this account.
+ * This processor creates a new account based on the OpenID SSO claim and creates a single user for this account.
  * </p>
  * <p>
- * It is possible to define the root account which all accounts will be part of using
- * the {@link Settings} class.
+ * It is possible to define the root account which all accounts will be part of using the {@link Settings} class.
  * </p>
  */
 public class SimpleRegistrationProcessor implements RegistrationProcessor {
@@ -92,7 +85,8 @@ public class SimpleRegistrationProcessor implements RegistrationProcessor {
          * If this value is negative then there will be no limit on the number of child users.
          * </p>
          *
-         * @param maximumNumberOfChildUsers The number of child users to allow
+         * @param maximumNumberOfChildUsers
+         *         The number of child users to allow
          */
         public void setMaximumNumberOfUsers(int maximumNumberOfChildUsers) {
             this.maximumNumberOfUsers = maximumNumberOfChildUsers;
@@ -141,20 +135,15 @@ public class SimpleRegistrationProcessor implements RegistrationProcessor {
     }
 
     private final AccountService accountService;
-    private final AccountFactory accountFactory;
 
     private final CredentialService credentialService;
-    private final CredentialFactory credentialFactory;
 
     private final DeviceRegistryService deviceRegistryService;
 
     private final UserService userService;
-    private final UserFactory userFactory;
 
     private final AccessInfoService accessInfoService;
-    private final AccessInfoFactory accessInfoFactory;
 
-    private final PermissionFactory permissionFactory;
     private final SimpleSetting simpleSetting;
 
     private final String claimName;
@@ -164,43 +153,30 @@ public class SimpleRegistrationProcessor implements RegistrationProcessor {
      * Create a new simple registration processor
      *
      * @param accountService
-     * @param accountFactory
      * @param credentialService
-     * @param credentialFactory
      * @param deviceRegistryService
      * @param userService
-     * @param userFactory
      * @param accessInfoService
-     * @param accessInfoFactory
-     * @param permissionFactory
      * @param simpleSetting
-     * @param claimName             the claim to use as account name
-     * @param settings              the settings for the processor
+     * @param claimName
+     *         the claim to use as account name
+     * @param settings
+     *         the settings for the processor
      */
     public SimpleRegistrationProcessor(
             AccountService accountService,
-            AccountFactory accountFactory,
             CredentialService credentialService,
-            CredentialFactory credentialFactory,
             DeviceRegistryService deviceRegistryService,
             UserService userService,
-            UserFactory userFactory,
             AccessInfoService accessInfoService,
-            AccessInfoFactory accessInfoFactory,
-            PermissionFactory permissionFactory,
             SimpleSetting simpleSetting,
             String claimName,
             Settings settings) {
         this.accountService = accountService;
-        this.accountFactory = accountFactory;
         this.credentialService = credentialService;
-        this.credentialFactory = credentialFactory;
         this.deviceRegistryService = deviceRegistryService;
         this.userService = userService;
-        this.userFactory = userFactory;
         this.accessInfoService = accessInfoService;
-        this.accessInfoFactory = accessInfoFactory;
-        this.permissionFactory = permissionFactory;
         this.simpleSetting = simpleSetting;
         this.claimName = claimName;
         this.settings = settings;
@@ -241,7 +217,7 @@ public class SimpleRegistrationProcessor implements RegistrationProcessor {
 
         // define account
 
-        AccountCreator accountCreator = accountFactory.newCreator(settings.getRootAccount());
+        AccountCreator accountCreator = new AccountCreator(settings.getRootAccount());
         accountCreator.setName(name);
         accountCreator.setOrganizationEmail(email);
         accountCreator.setOrganizationName(name);
@@ -280,7 +256,7 @@ public class SimpleRegistrationProcessor implements RegistrationProcessor {
 
         // define
 
-        UserCreator userCreator = userFactory.newCreator(account.getId(), name);
+        UserCreator userCreator = new UserCreator(account.getId(), name);
         userCreator.setUserType(UserType.EXTERNAL);
         userCreator.setExternalId(subject);
         userCreator.setEmail(email);
@@ -292,22 +268,22 @@ public class SimpleRegistrationProcessor implements RegistrationProcessor {
 
         // assign login permissions
 
-        AccessInfoCreator accessInfoCreator = accessInfoFactory.newCreator(user.getScopeId());
+        AccessInfoCreator accessInfoCreator = new AccessInfoCreator(user.getScopeId());
         accessInfoCreator.setUserId(user.getId());
 
         Set<Permission> permissions = new HashSet<>();
-        permissions.add(permissionFactory.newPermission(Domains.ACCESS_INFO, Actions.read, user.getScopeId()));
+        permissions.add(new Permission(Domains.ACCESS_INFO, Actions.read, user.getScopeId()));
 
-        permissions.addAll(permissionFactory.newPermissions(Domains.ACCOUNT, user.getScopeId(), Actions.read));
-        permissions.addAll(permissionFactory.newPermissions(Domains.CREDENTIAL, user.getScopeId(), Actions.read, Actions.write, Actions.delete));
-        permissions.addAll(permissionFactory.newPermissions(Domains.DATASTORE, user.getScopeId(), Actions.read));
-        permissions.addAll(permissionFactory.newPermissions(Domains.DEVICE, user.getScopeId(), Actions.read, Actions.write, Actions.delete));
-        permissions.addAll(permissionFactory.newPermissions(Domains.DEVICE_CONNECTION, user.getScopeId(), Actions.read));
-        permissions.addAll(permissionFactory.newPermissions(Domains.DEVICE_EVENT, user.getScopeId(), Actions.read, Actions.write));
-        permissions.addAll(permissionFactory.newPermissions(Domains.DEVICE_MANAGEMENT, user.getScopeId(), Actions.read, Actions.write, Actions.execute));
-        permissions.addAll(permissionFactory.newPermissions(Domains.GROUP, user.getScopeId(), Actions.read));
-        permissions.addAll(permissionFactory.newPermissions(Domains.ROLE, user.getScopeId(), Actions.read));
-        permissions.addAll(permissionFactory.newPermissions(Domains.USER, user.getScopeId(), Actions.read));
+        permissions.addAll(Permission.newPermissions(Domains.ACCOUNT, user.getScopeId(), Actions.read));
+        permissions.addAll(Permission.newPermissions(Domains.CREDENTIAL, user.getScopeId(), Actions.read, Actions.write, Actions.delete));
+        permissions.addAll(Permission.newPermissions(Domains.DATASTORE, user.getScopeId(), Actions.read));
+        permissions.addAll(Permission.newPermissions(Domains.DEVICE, user.getScopeId(), Actions.read, Actions.write, Actions.delete));
+        permissions.addAll(Permission.newPermissions(Domains.DEVICE_CONNECTION, user.getScopeId(), Actions.read));
+        permissions.addAll(Permission.newPermissions(Domains.DEVICE_EVENT, user.getScopeId(), Actions.read, Actions.write));
+        permissions.addAll(Permission.newPermissions(Domains.DEVICE_MANAGEMENT, user.getScopeId(), Actions.read, Actions.write, Actions.execute));
+        permissions.addAll(Permission.newPermissions(Domains.GROUP, user.getScopeId(), Actions.read));
+        permissions.addAll(Permission.newPermissions(Domains.ROLE, user.getScopeId(), Actions.read));
+        permissions.addAll(Permission.newPermissions(Domains.USER, user.getScopeId(), Actions.read));
 
         accessInfoCreator.setPermissions(permissions);
 
@@ -322,7 +298,7 @@ public class SimpleRegistrationProcessor implements RegistrationProcessor {
 
         // define
 
-        UserCreator userCreator = userFactory.newCreator(account.getId(), baseName + "-broker");
+        UserCreator userCreator = new UserCreator(account.getId(), baseName + "-broker");
         userCreator.setUserType(UserType.INTERNAL); // FIXME: need to find out why this isn't DEVICE but INTERNAL
         userCreator.setDisplayName("Gateway User");
 
@@ -332,11 +308,11 @@ public class SimpleRegistrationProcessor implements RegistrationProcessor {
 
         // assign permissions
 
-        AccessInfoCreator accessInfoCreator = accessInfoFactory.newCreator(user.getScopeId());
+        AccessInfoCreator accessInfoCreator = new AccessInfoCreator(user.getScopeId());
         accessInfoCreator.setUserId(user.getId());
 
         Set<Permission> permissions = new HashSet<>();
-        permissions.add(permissionFactory.newPermission(Domains.BROKER, Actions.connect, user.getScopeId()));
+        permissions.add(new Permission(Domains.BROKER, Actions.connect, user.getScopeId()));
 
         accessInfoCreator.setPermissions(permissions);
 
@@ -344,7 +320,7 @@ public class SimpleRegistrationProcessor implements RegistrationProcessor {
 
         // Create default password
 
-        CredentialCreator credential = credentialFactory.newCreator(account.getId(), user.getId(), "PASSWORD", baseName + "-Password1!", CredentialStatus.ENABLED, null);
+        CredentialCreator credential = new CredentialCreator(account.getId(), user.getId(), "PASSWORD", baseName + "-Password1!", CredentialStatus.ENABLED, null);
         credentialService.create(credential);
 
         return user;

@@ -29,7 +29,6 @@ import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.util.xml.XmlUtil;
-import org.eclipse.kapua.service.authorization.group.GroupFactory;
 import org.eclipse.kapua.service.authorization.group.GroupRepository;
 import org.eclipse.kapua.service.authorization.group.GroupService;
 
@@ -54,7 +53,6 @@ public class GroupServiceConfigurationManagerModule extends AbstractKapuaModule 
     @Singleton
     public ServiceConfigurationManager groupServiceConfigurationManager(
             KapuaJpaTxManagerFactory jpaTxManagerFactory,
-            GroupFactory factory,
             RootUserTester rootUserTester,
             AccountRelativeFinder accountRelativeFinder,
             GroupRepository groupRepository,
@@ -74,7 +72,6 @@ public class GroupServiceConfigurationManagerModule extends AbstractKapuaModule 
                         rootUserTester,
                         accountRelativeFinder,
                         new UsedEntitiesCounterImpl(
-                                factory,
                                 groupRepository
                         ), new ResourceBasedServiceConfigurationMetadataProvider(xmlUtil)));
     }

@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.call.message;
 
-import org.eclipse.kapua.message.Position;
-
 import java.util.Date;
+
+import org.eclipse.kapua.message.Position;
 
 /**
  * {@link DevicePosition} definition.
@@ -36,7 +36,8 @@ public interface DevicePosition extends Position {
     /**
      * Sets the position longitude.
      *
-     * @param longitude The position longitude.
+     * @param longitude
+     *         The position longitude.
      * @since 1.0.0
      */
     void setLongitude(Double longitude);
@@ -52,7 +53,8 @@ public interface DevicePosition extends Position {
     /**
      * Sets the position latitude.
      *
-     * @param latitude The position latitude.
+     * @param latitude
+     *         The position latitude.
      * @since 1.0.0
      */
     void setLatitude(Double latitude);
@@ -68,7 +70,8 @@ public interface DevicePosition extends Position {
     /**
      * Sets the position altitude.
      *
-     * @param altitude The position altitude.
+     * @param altitude
+     *         The position altitude.
      * @since 1.0.0
      */
     void setAltitude(Double altitude);
@@ -84,7 +87,8 @@ public interface DevicePosition extends Position {
     /**
      * Sets the precision.
      *
-     * @param precision The precision.
+     * @param precision
+     *         The precision.
      * @since 1.0.0
      */
     void setPrecision(Double precision);
@@ -100,7 +104,8 @@ public interface DevicePosition extends Position {
     /**
      * Sets the heading.
      *
-     * @param heading The heading.
+     * @param heading
+     *         The heading.
      * @since 1.0.0
      */
     void setHeading(Double heading);
@@ -116,7 +121,8 @@ public interface DevicePosition extends Position {
     /**
      * Sets the speed.
      *
-     * @param speed The speed.
+     * @param speed
+     *         The speed.
      * @since 1.0.0
      */
     void setSpeed(Double speed);
@@ -132,7 +138,8 @@ public interface DevicePosition extends Position {
     /**
      * Sets the timestamp.
      *
-     * @param timestamp The timestamp.
+     * @param timestamp
+     *         The timestamp.
      * @since 1.0.0
      */
     void setTimestamp(Date timestamp);
@@ -148,7 +155,8 @@ public interface DevicePosition extends Position {
     /**
      * Sets the satellites count.
      *
-     * @param satellites The satellites count.
+     * @param satellites
+     *         The satellites count.
      * @since 1.0.0
      */
     void setSatellites(Integer satellites);
@@ -164,7 +172,8 @@ public interface DevicePosition extends Position {
     /**
      * Sets the status.
      *
-     * @param status The status.
+     * @param status
+     *         The status.
      * @since 1.0.0
      */
     void setStatus(Integer status);

@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.domain.shiro;
 
+import java.util.Optional;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.jpa.KapuaEntityJpaRepository;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
@@ -22,13 +24,12 @@ import org.eclipse.kapua.service.authorization.domain.DomainListResult;
 import org.eclipse.kapua.service.authorization.domain.DomainRepository;
 import org.eclipse.kapua.storage.TxContext;
 
-import java.util.Optional;
-
 public class DomainImplJpaRepository
         extends KapuaEntityJpaRepository<Domain, DomainImpl, DomainListResult>
         implements DomainRepository {
+
     public DomainImplJpaRepository(KapuaJpaRepositoryConfiguration configuration) {
-        super(DomainImpl.class, Domain.TYPE, () -> new DomainListResultImpl(), configuration);
+        super(DomainImpl.class, Domain.TYPE, () -> new DomainListResult(), configuration);
     }
 
     @Override

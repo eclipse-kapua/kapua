@@ -12,28 +12,23 @@
  *******************************************************************************/
 package org.eclipse.kapua.message.internal.device.data;
 
-import org.eclipse.kapua.locator.KapuaLocator;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.kapua.message.device.data.KapuaDataChannel;
 import org.eclipse.kapua.message.device.data.KapuaDataMessage;
-import org.eclipse.kapua.message.device.data.KapuaDataMessageFactory;
 import org.eclipse.kapua.message.device.data.KapuaDataPayload;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
 @Category(JUnitTests.class)
 public class KapuaDeviceDataTest {
 
-    private final KapuaDataMessageFactory kapuaDataMessageFactory = KapuaLocator.getInstance().getFactory(KapuaDataMessageFactory.class);
-
     @Test
     public void kapuaDataChanneltoString() throws Exception {
-        KapuaDataChannel kapuaDataChannel = kapuaDataMessageFactory.newKapuaDataChannel();
+        KapuaDataChannel kapuaDataChannel = new KapuaDataChannel();
         List<String> semanticParts = new ArrayList<>();
         semanticParts.add("part1");
         semanticParts.add("part2");
@@ -45,7 +40,7 @@ public class KapuaDeviceDataTest {
 
     @Test
     public void kapuaDataMesssageGetterSetters() {
-        KapuaDataMessage kapuaDataMessage = kapuaDataMessageFactory.newKapuaDataMessage();
+        KapuaDataMessage kapuaDataMessage = new KapuaDataMessage();
 
         kapuaDataMessage.setClientId("clientId-1");
         Assert.assertEquals("clientId-1", kapuaDataMessage.getClientId());
@@ -53,7 +48,7 @@ public class KapuaDeviceDataTest {
 
     @Test
     public void kapuaDataPayloadDefaultConstructor() {
-        KapuaDataPayload kapuaDataPayload = kapuaDataMessageFactory.newKapuaDataPayload();
+        KapuaDataPayload kapuaDataPayload = new KapuaDataPayload();
 
         Assert.assertNotNull(kapuaDataPayload);
     }

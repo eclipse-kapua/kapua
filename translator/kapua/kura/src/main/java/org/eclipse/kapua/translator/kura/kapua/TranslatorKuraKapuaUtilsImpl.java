@@ -15,7 +15,6 @@ package org.eclipse.kapua.translator.kura.kapua;
 
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
-import org.eclipse.kapua.message.KapuaMessageFactory;
 import org.eclipse.kapua.message.KapuaPosition;
 import org.eclipse.kapua.service.device.call.message.DevicePosition;
 import org.eclipse.kapua.service.device.call.message.app.DeviceAppMetrics;
@@ -26,18 +25,15 @@ import org.eclipse.kapua.translator.exception.TranslatorErrorCodes;
 import org.eclipse.kapua.translator.exception.TranslatorException;
 
 /**
- * {@link org.eclipse.kapua.translator.Translator} utilities.<br>
- * It provides helpful methods for translate {@link DevicePosition} and {@link KuraResponseCode}.
+ * {@link org.eclipse.kapua.translator.Translator} utilities.<br> It provides helpful methods for translate {@link DevicePosition} and {@link KuraResponseCode}.
  *
  * @since 1.0.0
  */
 public final class TranslatorKuraKapuaUtilsImpl implements TranslatorKuraKapuaUtils {
 
-    private final KapuaMessageFactory kapuaMessageFactory;
     private final String controlMessageClassifier;
 
-    public TranslatorKuraKapuaUtilsImpl(KapuaMessageFactory kapuaMessageFactory, String controlMessageClassifier) {
-        this.kapuaMessageFactory = kapuaMessageFactory;
+    public TranslatorKuraKapuaUtilsImpl(String controlMessageClassifier) {
         this.controlMessageClassifier = controlMessageClassifier;
     }
 
@@ -52,10 +48,14 @@ public final class TranslatorKuraKapuaUtilsImpl implements TranslatorKuraKapuaUt
      *     <li>the {@link KuraResponseChannel#getAppId()} second token matches the given application version</li>
      * </ul>
      *
-     * @param kuraResponseChannel the {@link KuraResponseChannel} to check.
-     * @param appName             the application name.
-     * @param appVersion          the application version.
-     * @throws TranslatorException The any of the constraints fails.
+     * @param kuraResponseChannel
+     *         the {@link KuraResponseChannel} to check.
+     * @param appName
+     *         the application name.
+     * @param appVersion
+     *         the application version.
+     * @throws TranslatorException
+     *         The any of the constraints fails.
      * @since 1.2.0
      */
     @Override
@@ -82,7 +82,8 @@ public final class TranslatorKuraKapuaUtilsImpl implements TranslatorKuraKapuaUt
     /**
      * Translates {@link DevicePosition} to {@link KapuaPosition}
      *
-     * @param devicePosition The {@link DevicePosition} to translate.
+     * @param devicePosition
+     *         The {@link DevicePosition} to translate.
      * @return The translated {@link KapuaPosition}.
      * @since 1.0.0
      */
@@ -91,7 +92,7 @@ public final class TranslatorKuraKapuaUtilsImpl implements TranslatorKuraKapuaUt
         KapuaPosition kapuaPosition = null;
 
         if (devicePosition != null) {
-            kapuaPosition = kapuaMessageFactory.newPosition();
+            kapuaPosition = new KapuaPosition();
 
             kapuaPosition.setAltitude(devicePosition.getAltitude());
             kapuaPosition.setHeading(devicePosition.getHeading());
@@ -110,7 +111,8 @@ public final class TranslatorKuraKapuaUtilsImpl implements TranslatorKuraKapuaUt
     /**
      * Translate {@link KuraResponseCode} to {@link KapuaResponseCode}
      *
-     * @param kuraResponseCode The {@link KuraResponseCode} to translate.
+     * @param kuraResponseCode
+     *         The {@link KuraResponseCode} to translate.
      * @return The translated {@link KapuaResponseCode}
      * @since 1.0.0
      */
@@ -122,20 +124,20 @@ public final class TranslatorKuraKapuaUtilsImpl implements TranslatorKuraKapuaUt
 
         KapuaResponseCode responseCode;
         switch (kuraResponseCode) {
-            case ACCEPTED:
-                responseCode = KapuaResponseCode.ACCEPTED;
-                break;
-            case BAD_REQUEST:
-                responseCode = KapuaResponseCode.BAD_REQUEST;
-                break;
-            case NOT_FOUND:
-                responseCode = KapuaResponseCode.NOT_FOUND;
-                break;
-            case INTERNAL_ERROR:
-                responseCode = KapuaResponseCode.INTERNAL_ERROR;
-                break;
-            default:
-                throw KapuaException.internalError("Kura Response code not mapped");
+        case ACCEPTED:
+            responseCode = KapuaResponseCode.ACCEPTED;
+            break;
+        case BAD_REQUEST:
+            responseCode = KapuaResponseCode.BAD_REQUEST;
+            break;
+        case NOT_FOUND:
+            responseCode = KapuaResponseCode.NOT_FOUND;
+            break;
+        case INTERNAL_ERROR:
+            responseCode = KapuaResponseCode.INTERNAL_ERROR;
+            break;
+        default:
+            throw KapuaException.internalError("Kura Response code not mapped");
         }
 
         return responseCode;

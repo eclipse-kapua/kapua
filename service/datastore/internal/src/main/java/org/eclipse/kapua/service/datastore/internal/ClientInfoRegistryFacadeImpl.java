@@ -12,12 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.internal;
 
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.service.datastore.internal.mediator.ClientInfoField;
 import org.eclipse.kapua.service.datastore.internal.mediator.ConfigurationException;
-import org.eclipse.kapua.service.datastore.internal.model.ClientInfoListResultImpl;
+import org.eclipse.kapua.service.datastore.internal.mediator.InfoFieldHelper;
 import org.eclipse.kapua.service.datastore.model.ClientInfo;
 import org.eclipse.kapua.service.datastore.model.ClientInfoListResult;
 import org.eclipse.kapua.service.datastore.model.query.ClientInfoQuery;
@@ -28,8 +29,6 @@ import org.eclipse.kapua.service.storable.model.id.StorableIdFactory;
 import org.eclipse.kapua.service.storable.model.query.predicate.StorablePredicateFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
 
 /**
  * Client information registry facade
@@ -86,7 +85,7 @@ public class ClientInfoRegistryFacadeImpl extends AbstractDatastoreFacade implem
         ArgumentValidator.notNull(clientInfo.getFirstMessageId(), "clientInfo.firstPublishedMessageId");
         ArgumentValidator.notNull(clientInfo.getFirstMessageOn(), "clientInfo.firstPublishedMessageTimestamp");
 
-        String clientInfoId = ClientInfoField.getOrDeriveId(clientInfo.getId(), clientInfo);
+        String clientInfoId = InfoFieldHelper.getOrDeriveId(clientInfo.getId(), clientInfo);
         StorableId storableId = storableIdFactory.newStorableId(clientInfoId);
 
         // Store channel. Look up channel in the cache, and cache it if it doesn't exist
@@ -165,7 +164,7 @@ public class ClientInfoRegistryFacadeImpl extends AbstractDatastoreFacade implem
 
         if (!isDatastoreServiceEnabled(query.getScopeId())) {
             LOG.debug("Storage not enabled for account {}, returning empty result", query.getScopeId());
-            return new ClientInfoListResultImpl();
+            return new ClientInfoListResult();
         }
 
         return repository.query(query);

@@ -12,7 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.authentication;
 
-import com.codahale.metrics.Timer.Context;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.shiro.ShiroException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaIllegalAccessException;
@@ -26,7 +28,6 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnection;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionFactory;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionService;
@@ -34,8 +35,7 @@ import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionStat
 import org.eclipse.kapua.service.device.registry.connection.option.DeviceConnectionOptionFactory;
 import org.eclipse.kapua.service.device.registry.connection.option.DeviceConnectionOptionService;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.codahale.metrics.Timer.Context;
 
 /**
  * User profile authentication logic implementation
@@ -51,9 +51,8 @@ public class UserAuthenticationLogic extends AuthenticationLogic {
             DeviceConnectionOptionService deviceConnectionOptionService,
             AuthorizationService authorizationService,
             DeviceConnectionFactory deviceConnectionFactory,
-            PermissionFactory permissionFactory,
             DeviceConnectionService deviceConnectionService) {
-        super(aclCreator, authenticationMetric, deviceConnectionOptionFactory, deviceConnectionOptionService, authorizationService, deviceConnectionFactory, permissionFactory, deviceConnectionService);
+        super(aclCreator, authenticationMetric, deviceConnectionOptionFactory, deviceConnectionOptionService, authorizationService, deviceConnectionFactory, deviceConnectionService);
     }
 
     @Override
@@ -123,15 +122,15 @@ public class UserAuthenticationLogic extends AuthenticationLogic {
     protected UserPermissions updatePermissions(AuthContext authContext) throws KapuaException {
         List<Permission> permissions = new ArrayList<>();
         KapuaId scopeId = KapuaEid.parseCompactId(authContext.getScopeId());
-        permissions.add(permissionFactory.newPermission(Domains.BROKER, Actions.connect, scopeId));
-        permissions.add(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
-        permissions.add(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
-        permissions.add(permissionFactory.newPermission(Domains.DATASTORE, Actions.read, scopeId));
-        permissions.add(permissionFactory.newPermission(Domains.DATASTORE, Actions.write, scopeId));
+        permissions.add(new Permission(Domains.BROKER, Actions.connect, scopeId));
+        permissions.add(new Permission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+        permissions.add(new Permission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
+        permissions.add(new Permission(Domains.DATASTORE, Actions.read, scopeId));
+        permissions.add(new Permission(Domains.DATASTORE, Actions.write, scopeId));
         UserPermissions userPermissions = new UserPermissions(authorizationService.isPermitted(permissions));
 
         if (!userPermissions.isBrokerConnect()) {
-            throw new KapuaIllegalAccessException(permissionFactory.newPermission(Domains.BROKER, Actions.connect, scopeId).toString());
+            throw new KapuaIllegalAccessException(new Permission(Domains.BROKER, Actions.connect, scopeId).toString());
         }
         return userPermissions;
     }

@@ -25,8 +25,11 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "bundleInfo")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DevicePackageXmlRegistry.class, factoryMethod = "newDevicePackageBundleInfo")
-public interface DevicePackageBundleInfo {
+@XmlType
+public class DevicePackageBundleInfo {
+
+    public String name;
+    public String version;
 
     /**
      * Gets the name.
@@ -35,15 +38,20 @@ public interface DevicePackageBundleInfo {
      * @since 1.0.0
      */
     @XmlElement(name = "name")
-    String getName();
+    public String getName() {
+        return name;
+    }
 
     /**
      * Sets the name.
      *
-     * @param name The name.
+     * @param name
+     *         The name.
      * @since 1.0.0
      */
-    void setName(String name);
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /**
      * Gets the version.
@@ -52,13 +60,19 @@ public interface DevicePackageBundleInfo {
      * @since 1.0.0
      */
     @XmlElement(name = "version")
-    String getVersion();
+    public String getVersion() {
+        return version;
+    }
 
     /**
      * Sets the version.
      *
-     * @param version The version.
+     * @param version
+     *         The version.
      * @since 1.0.0
      */
-    void setVersion(String version);
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
 }

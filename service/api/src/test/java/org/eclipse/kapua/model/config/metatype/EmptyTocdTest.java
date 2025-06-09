@@ -15,6 +15,10 @@ package org.eclipse.kapua.model.config.metatype;
 import java.util.Arrays;
 import java.util.List;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.junit.Assert;
 import org.junit.Before;
@@ -27,21 +31,21 @@ public class EmptyTocdTest {
     @Before
     public void createInstanceOfClass() {
 
-        Assert.assertNotNull(emptyTocd = new EmptyTocd());
+        Assert.assertNotNull(emptyTocd = KapuaTocd.empty());
     }
 
-    EmptyTocd emptyTocd;
+    KapuaTocd emptyTocd;
 
     //helper list of objects
     List<Object> objList = Arrays.asList(
-            new EmptyTocd("1", "name"),
-            new EmptyTocd("", ""),
-            new EmptyTocd("2", ""),
-            new EmptyTocd("", "name2"));
+            KapuaTocd.empty("1", "name"),
+            KapuaTocd.empty("", ""),
+            KapuaTocd.empty("2", ""),
+            KapuaTocd.empty("", "name2"));
 
     @Test
     public void emptyTocdTest() {
-        EmptyTocd emptyTocd = new EmptyTocd("49", "name");
+        KapuaTocd emptyTocd = KapuaTocd.empty("49", "name");
         Assert.assertEquals("tocd.id", "49", emptyTocd.getId());
         Assert.assertEquals("tocd.name", "name", emptyTocd.getName());
     }

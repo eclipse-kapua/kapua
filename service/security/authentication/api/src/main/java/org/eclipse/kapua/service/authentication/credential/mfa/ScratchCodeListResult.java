@@ -12,19 +12,21 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.credential.mfa;
 
-import org.eclipse.kapua.model.query.KapuaListResult;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.model.query.KapuaListResult;
 
 /**
  * {@link ScratchCode} {@link KapuaListResult} definition.
  */
 @XmlRootElement(name = "scratchCodeListResult")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = ScratchCodeXmlRegistry.class, factoryMethod = "newScratchCodeListResult")
-public interface ScratchCodeListResult extends KapuaListResult<ScratchCode> {
+@XmlType
+public class ScratchCodeListResult extends KapuaListResult<ScratchCode> {
+
+    private static final long serialVersionUID = -5154461760797879319L;
 
 }

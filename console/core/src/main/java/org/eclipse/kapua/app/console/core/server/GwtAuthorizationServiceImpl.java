@@ -12,6 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.core.server;
 
+import java.util.concurrent.Callable;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
@@ -43,7 +48,6 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authentication.AuthenticationService;
-import org.eclipse.kapua.service.authentication.CredentialsFactory;
 import org.eclipse.kapua.service.authentication.JwtCredentials;
 import org.eclipse.kapua.service.authentication.UsernamePasswordCredentials;
 import org.eclipse.kapua.service.authentication.exception.KapuaAuthenticationErrorCodes;
@@ -70,10 +74,6 @@ import org.eclipse.kapua.service.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.concurrent.Callable;
-
 public class GwtAuthorizationServiceImpl extends KapuaRemoteServiceServlet implements GwtAuthorizationService {
 
     private static final long serialVersionUID = -3919578632016541047L;
@@ -87,7 +87,6 @@ public class GwtAuthorizationServiceImpl extends KapuaRemoteServiceServlet imple
     private static final AccountService ACCOUNT_SERVICE = LOCATOR.getService(AccountService.class);
 
     private static final AuthenticationService AUTHENTICATION_SERVICE = LOCATOR.getService(AuthenticationService.class);
-    private static final CredentialsFactory CREDENTIALS_FACTORY = LOCATOR.getFactory(CredentialsFactory.class);
 
     private static final AccessInfoService ACCESS_INFO_SERVICE = LOCATOR.getService(AccessInfoService.class);
     private static final AccessPermissionService ACCESS_PERMISSION_SERVICE = LOCATOR.getService(AccessPermissionService.class);
@@ -114,7 +113,7 @@ public class GwtAuthorizationServiceImpl extends KapuaRemoteServiceServlet imple
             ArgumentValidator.notEmptyOrNull(gwtLoginCredentials.getPassword(), "loginCredentials.password");
 
             // Parse Credentials
-            UsernamePasswordCredentials usernamePasswordCredentials = CREDENTIALS_FACTORY.newUsernamePasswordCredentials(gwtLoginCredentials.getUsername(), gwtLoginCredentials.getPassword());
+            UsernamePasswordCredentials usernamePasswordCredentials = new UsernamePasswordCredentials(gwtLoginCredentials.getUsername(), gwtLoginCredentials.getPassword());
             usernamePasswordCredentials.setAuthenticationCode(gwtLoginCredentials.getAuthenticationCode());
             usernamePasswordCredentials.setTrustKey(gwtLoginCredentials.getTrustKey());
             usernamePasswordCredentials.setTrustMe(trustReq);
@@ -145,7 +144,7 @@ public class GwtAuthorizationServiceImpl extends KapuaRemoteServiceServlet imple
             ArgumentValidator.notEmptyOrNull(gwtJwtIdToken.getIdToken(), "jwtIdToken.idToken");
 
             // Parse Credentials
-            JwtCredentials jwtCredentials = CREDENTIALS_FACTORY.newJwtCredentials(gwtAccessTokenCredentials.getAccessToken(), gwtJwtIdToken.getIdToken());
+            JwtCredentials jwtCredentials = new JwtCredentials(gwtAccessTokenCredentials.getAccessToken(), gwtJwtIdToken.getIdToken());
 
             // Cleanup any previous session
             cleanupSession();

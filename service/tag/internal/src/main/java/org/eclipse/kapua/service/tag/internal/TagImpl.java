@@ -12,13 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.tag.internal;
 
-import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.commons.model.AbstractKapuaNamedEntity;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.service.tag.Tag;
-
 import javax.persistence.Entity;
 import javax.persistence.Table;
+
+import org.eclipse.kapua.commons.model.AbstractKapuaNamedEntity;
+import org.eclipse.kapua.commons.model.id.KapuaEid;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.service.tag.Tag;
 
 /**
  * {@link Tag} implementation.
@@ -27,9 +27,14 @@ import javax.persistence.Table;
  */
 @Entity(name = "Tag")
 @Table(name = "tag_tag")
-public class TagImpl extends AbstractKapuaNamedEntity implements Tag {
+public class TagImpl extends AbstractKapuaNamedEntity {
 
-    private static final long serialVersionUID = -3760818776351242930L;
+    public static final String TYPE = "tag";
+
+    @Override
+    public String getType() {
+        return TYPE;
+    }
 
     /**
      * Constructor.
@@ -43,21 +48,11 @@ public class TagImpl extends AbstractKapuaNamedEntity implements Tag {
     /**
      * Constructor.
      *
-     * @param scopeId The scope {@link KapuaId}
+     * @param scopeId
+     *         The scope {@link KapuaId}
      * @since 1.0.0
      */
-    public TagImpl(KapuaId scopeId) {
+    public TagImpl(KapuaEid scopeId) {
         super(scopeId);
-    }
-
-    /**
-     * Clone constructor.
-     *
-     * @param tag The {@link Tag} from which to create the new {@link Tag}.
-     * @throws KapuaException
-     * @since 1.0.0
-     */
-    public TagImpl(Tag tag) throws KapuaException {
-        super(tag);
     }
 }

@@ -23,7 +23,9 @@ import org.eclipse.kapua.model.query.KapuaListResult;
  * @since 1.0
  */
 @XmlRootElement(name = "users")
-@XmlType(factoryClass = UserXmlRegistry.class, factoryMethod = "newUserListResult")
-public interface UserListResult extends KapuaListResult<User> {
+@XmlType
+public class UserListResult extends KapuaListResult<User> {
+
+    private static final long serialVersionUID = 2231053707705207563L;
 
 }

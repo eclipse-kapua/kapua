@@ -12,12 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.steps;
 
-import com.google.inject.Singleton;
-import io.cucumber.java.After;
-import io.cucumber.java.Before;
-import io.cucumber.java.Scenario;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.When;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.locator.KapuaLocator;
@@ -29,26 +29,23 @@ import org.eclipse.kapua.qa.common.cucumber.CucConfig;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.authentication.credential.Credential;
 import org.eclipse.kapua.service.authentication.credential.CredentialCreator;
-import org.eclipse.kapua.service.authentication.credential.CredentialFactory;
 import org.eclipse.kapua.service.authentication.credential.CredentialService;
 import org.eclipse.kapua.service.authentication.credential.CredentialStatus;
 import org.eclipse.kapua.service.authentication.user.PasswordChangeRequest;
 import org.eclipse.kapua.service.authentication.user.PasswordResetRequest;
-import org.eclipse.kapua.service.authentication.user.UserCredentialsFactory;
 import org.eclipse.kapua.service.authentication.user.UserCredentialsService;
-import org.eclipse.kapua.service.authorization.access.AccessInfoFactory;
-import org.eclipse.kapua.service.authorization.access.AccessInfoService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserCreator;
-import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserService;
 import org.junit.Assert;
 
-import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.google.inject.Singleton;
+
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
 
 // Implementation of Gherkin steps used to test miscellaneous Shiro
 // authorization functionality.
@@ -61,17 +58,9 @@ public class AuthenticationServiceSteps extends TestBase {
     private static final String LAST_ACCOUNT = "LastAccount";
 
     private CredentialService credentialService;
-    private CredentialFactory credentialFactory;
     private UserService userService;
-    private UserFactory userFactory;
 
     private UserCredentialsService userCredentialsService;
-    private UserCredentialsFactory userCredentialsFactory;
-
-    private AccessInfoService accessInfoService;
-    private AccessInfoFactory accessInfoFactory;
-
-    private PermissionFactory permissionFactory;
 
     @Inject
     public AuthenticationServiceSteps(StepData stepData) {
@@ -87,19 +76,13 @@ public class AuthenticationServiceSteps extends TestBase {
     public void setServices() {
         locator = KapuaLocator.getInstance();
         credentialService = locator.getService(CredentialService.class);
-        credentialFactory = locator.getFactory(CredentialFactory.class);
         userService = locator.getService(UserService.class);
-        userFactory = locator.getFactory(UserFactory.class);
         userCredentialsService = locator.getService(UserCredentialsService.class);
-        userCredentialsFactory = locator.getFactory(UserCredentialsFactory.class);
-        accessInfoService = locator.getService(AccessInfoService.class);
-        accessInfoFactory = locator.getFactory(AccessInfoFactory.class);
-        permissionFactory = locator.getFactory(PermissionFactory.class);
     }
 
     @When("I create default test-user")
     public void createDefaultUser() throws KapuaException {
-        UserCreator userCreator = userFactory.newCreator(KapuaId.ONE, "test-user");
+        UserCreator userCreator = new UserCreator(KapuaId.ONE, "test-user");
         User user = userService.create(userCreator);
         stepData.put("User", user);
     }
@@ -192,7 +175,7 @@ public class AuthenticationServiceSteps extends TestBase {
         primeException();
 
         User user = (User) stepData.get("User");
-        CredentialCreator credentialCreator = credentialFactory.newCreator(user.getScopeId(), user.getId(), "PASSWORD", password, CredentialStatus.ENABLED, null);
+        CredentialCreator credentialCreator = new CredentialCreator(user.getScopeId(), user.getId(), "PASSWORD", password, CredentialStatus.ENABLED, null);
         try {
             Credential credential = credentialService.create(credentialCreator);
             stepData.put(BasicSteps.LAST_CREDENTIAL_ID, credential.getId());
@@ -201,12 +184,11 @@ public class AuthenticationServiceSteps extends TestBase {
         }
     }
 
-
     @When("I change the user credential password with old password {string} and new password {string}")
     public void changeUserPasswordCredential(String oldPassword, String newPassword) throws Exception {
         primeException();
 
-        PasswordChangeRequest passwordChangeRequest = userCredentialsFactory.newPasswordChangeRequest();
+        PasswordChangeRequest passwordChangeRequest = new PasswordChangeRequest();
         passwordChangeRequest.setCurrentPassword(oldPassword);
         passwordChangeRequest.setNewPassword(newPassword);
 
@@ -217,12 +199,11 @@ public class AuthenticationServiceSteps extends TestBase {
         }
     }
 
-
     @When("I reset the last created credential password, with the new password {string}")
     public void resetUserPasswordCredentialPassword(String newPassword) throws Exception {
         primeException();
 
-        PasswordResetRequest passwordResetRequest = userCredentialsFactory.newPasswordResetRequest();
+        PasswordResetRequest passwordResetRequest = new PasswordResetRequest();
         passwordResetRequest.setNewPassword(newPassword);
 
         KapuaId credentialId = (KapuaId) stepData.get(BasicSteps.LAST_CREDENTIAL_ID);

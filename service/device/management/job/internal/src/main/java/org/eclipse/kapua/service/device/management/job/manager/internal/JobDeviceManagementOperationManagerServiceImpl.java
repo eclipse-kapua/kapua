@@ -12,17 +12,20 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.job.manager.internal;
 
+import java.util.Date;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.job.engine.JobEngineFactory;
 import org.eclipse.kapua.job.engine.JobEngineService;
 import org.eclipse.kapua.job.engine.JobStartOptions;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperation;
 import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationAttributes;
-import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationFactory;
 import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationListResult;
-import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationQuery;
 import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationService;
 import org.eclipse.kapua.service.device.management.job.manager.JobDeviceManagementOperationManagerService;
 import org.eclipse.kapua.service.device.management.message.notification.NotifyStatus;
@@ -32,17 +35,11 @@ import org.eclipse.kapua.service.device.management.registry.operation.DeviceMana
 import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotification;
 import org.eclipse.kapua.service.job.targets.JobTarget;
 import org.eclipse.kapua.service.job.targets.JobTargetAttributes;
-import org.eclipse.kapua.service.job.targets.JobTargetFactory;
 import org.eclipse.kapua.service.job.targets.JobTargetListResult;
-import org.eclipse.kapua.service.job.targets.JobTargetQuery;
 import org.eclipse.kapua.service.job.targets.JobTargetService;
 import org.eclipse.kapua.service.job.targets.JobTargetStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.Date;
 
 /**
  * {@link JobDeviceManagementOperationManagerService} implementation.
@@ -56,28 +53,19 @@ public class JobDeviceManagementOperationManagerServiceImpl implements JobDevice
 
     private final DeviceManagementOperationRegistryService deviceManagementOperationRegistryService;
     private final JobDeviceManagementOperationService jobDeviceManagementOperationService;
-    private final JobDeviceManagementOperationFactory jobDeviceManagementOperationFactory;
     private final JobEngineService jobEngineService;
-    private final JobEngineFactory jobEngineFactory;
     private final JobTargetService jobTargetService;
-    private final JobTargetFactory jobTargetFactory;
 
     @Inject
     public JobDeviceManagementOperationManagerServiceImpl(
             DeviceManagementOperationRegistryService deviceManagementOperationRegistryService,
             JobDeviceManagementOperationService jobDeviceManagementOperationService,
-            JobDeviceManagementOperationFactory jobDeviceManagementOperationFactory,
             JobEngineService jobEngineService,
-            JobEngineFactory jobEngineFactory,
-            JobTargetService jobTargetService,
-            JobTargetFactory jobTargetFactory) {
+            JobTargetService jobTargetService) {
         this.deviceManagementOperationRegistryService = deviceManagementOperationRegistryService;
         this.jobDeviceManagementOperationService = jobDeviceManagementOperationService;
-        this.jobDeviceManagementOperationFactory = jobDeviceManagementOperationFactory;
         this.jobEngineService = jobEngineService;
-        this.jobEngineFactory = jobEngineFactory;
         this.jobTargetService = jobTargetService;
-        this.jobTargetFactory = jobTargetFactory;
     }
 
     @Override
@@ -100,7 +88,7 @@ public class JobDeviceManagementOperationManagerServiceImpl implements JobDevice
             return;
         }
 
-        JobTargetQuery jobTargetQuery = jobTargetFactory.newQuery(scopeId);
+        KapuaQuery jobTargetQuery = new KapuaQuery(scopeId);
         jobTargetQuery.setPredicate(
                 jobTargetQuery.andPredicate(
                         jobTargetQuery.attributePredicate(JobTargetAttributes.JOB_ID, jobDeviceManagementOperation.getJobId()),
@@ -118,20 +106,21 @@ public class JobDeviceManagementOperationManagerServiceImpl implements JobDevice
                 jobTarget = jobTargets.getFirstItem();
 
                 if (jobTarget == null) {
-                    LOG.warn("JobTarget with targetId {} for Job {} not found! This is something strange that happened and needs some checking! Reference JobDeviceManagementOperation: {}", deviceManagementOperation.getDeviceId(), jobDeviceManagementOperation.getJobId(), jobDeviceManagementOperation.getId());
+                    LOG.warn("JobTarget with targetId {} for Job {} not found! This is something strange that happened and needs some checking! Reference JobDeviceManagementOperation: {}",
+                            deviceManagementOperation.getDeviceId(), jobDeviceManagementOperation.getJobId(), jobDeviceManagementOperation.getId());
                     return;
                 }
 
                 switch (status) {
-                    case COMPLETED:
-                        jobTarget.setStatus(JobTargetStatus.NOTIFIED_COMPLETION);
-                        break;
-                    case FAILED:
-                        jobTarget.setStatus(JobTargetStatus.PROCESS_FAILED);
-                        break;
-                    case STALE:
-                    default:
-                        break;
+                case COMPLETED:
+                    jobTarget.setStatus(JobTargetStatus.NOTIFIED_COMPLETION);
+                    break;
+                case FAILED:
+                    jobTarget.setStatus(JobTargetStatus.PROCESS_FAILED);
+                    break;
+                case STALE:
+                default:
+                    break;
                 }
 
                 jobTargetService.update(jobTarget);
@@ -157,7 +146,7 @@ public class JobDeviceManagementOperationManagerServiceImpl implements JobDevice
             return;
         }
         // Start the job
-        JobStartOptions jobStartOptions = jobEngineFactory.newJobStartOptions();
+        JobStartOptions jobStartOptions = new JobStartOptions();
         jobStartOptions.addTargetIdToSublist(jobTarget.getId());
         jobStartOptions.setFromStepIndex(jobTarget.getStepIndex());
         jobStartOptions.setEnqueue(true);
@@ -166,14 +155,17 @@ public class JobDeviceManagementOperationManagerServiceImpl implements JobDevice
     }
 
     /**
-     * This fixes the double {@link NotifyStatus#COMPLETED} {@link ManagementOperationNotification} set from Kura
-     * when performing a Device package download with the 'install' flag is set to {@code true}.
+     * This fixes the double {@link NotifyStatus#COMPLETED} {@link ManagementOperationNotification} set from Kura when performing a Device package download with the 'install' flag is set to
+     * {@code true}.
      * <p>
      * If this is not the last {@link ManagementOperationNotification} the processing must stop.
      *
-     * @param deviceManagementOperation The current {@link DeviceManagementOperation} which the {@link ManagementOperationNotification} refers to.
-     * @param status                    The {@link ManagementOperationNotification} {@link NotifyStatus}.
-     * @param resource                  The {@link ManagementOperationNotification} resource.
+     * @param deviceManagementOperation
+     *         The current {@link DeviceManagementOperation} which the {@link ManagementOperationNotification} refers to.
+     * @param status
+     *         The {@link ManagementOperationNotification} {@link NotifyStatus}.
+     * @param resource
+     *         The {@link ManagementOperationNotification} resource.
      * @return {@code true} if this is the last {@link ManagementOperationNotification} for the {@link DeviceManagementOperation}, {@code false} otherwise.
      * @since 1.1.0
      */
@@ -199,18 +191,22 @@ public class JobDeviceManagementOperationManagerServiceImpl implements JobDevice
     /**
      * Gets the {@link JobDeviceManagementOperation} associated with the given {@link DeviceManagementOperation#getOperationId()}.
      *
-     * @param scopeId     The scope {@link KapuaId} of the {@link JobDeviceManagementOperation}.
-     * @param operationId The {@link DeviceManagementOperation#getOperationId()} to match.
+     * @param scopeId
+     *         The scope {@link KapuaId} of the {@link JobDeviceManagementOperation}.
+     * @param operationId
+     *         The {@link DeviceManagementOperation#getOperationId()} to match.
      * @return The matched {@link JobDeviceManagementOperation}
-     * @throws KapuaEntityNotFoundException if there is no {@link JobDeviceManagementOperation} with the given {@code operationId}.
-     * @throws KapuaException               If something goes bad.
+     * @throws KapuaEntityNotFoundException
+     *         if there is no {@link JobDeviceManagementOperation} with the given {@code operationId}.
+     * @throws KapuaException
+     *         If something goes bad.
      * @since 1.1.0
      */
     private JobDeviceManagementOperation getJobDeviceManagementOperation(KapuaId scopeId, KapuaId operationId) throws KapuaException {
 
         DeviceManagementOperation deviceManagementOperation = getDeviceManagementOperation(scopeId, operationId);
 
-        JobDeviceManagementOperationQuery query = jobDeviceManagementOperationFactory.newQuery(scopeId);
+        KapuaQuery query = new KapuaQuery(scopeId);
         query.setPredicate(query.attributePredicate(JobDeviceManagementOperationAttributes.DEVICE_MANAGEMENT_OPERATION_ID, deviceManagementOperation.getId()));
 
         JobDeviceManagementOperationListResult operations = jobDeviceManagementOperationService.query(query);
@@ -223,15 +219,18 @@ public class JobDeviceManagementOperationManagerServiceImpl implements JobDevice
         return jobDeviceManagementOperation;
     }
 
-
     /**
      * Gets the {@link DeviceManagementOperation} that matches the given {@code operationId}.
      *
-     * @param scopeId     The scope {@link KapuaId} of the {@link DeviceManagementOperation}.
-     * @param operationId The {@link DeviceManagementOperation#getOperationId()} to match.
+     * @param scopeId
+     *         The scope {@link KapuaId} of the {@link DeviceManagementOperation}.
+     * @param operationId
+     *         The {@link DeviceManagementOperation#getOperationId()} to match.
      * @return The matched {@link DeviceManagementOperation}.
-     * @throws KapuaEntityNotFoundException if there is no {@link DeviceManagementOperation} with the given {@code operationId}.
-     * @throws KapuaException               If something goes bad.
+     * @throws KapuaEntityNotFoundException
+     *         if there is no {@link DeviceManagementOperation} with the given {@code operationId}.
+     * @throws KapuaException
+     *         If something goes bad.
      * @since 1.1.0
      */
     private DeviceManagementOperation getDeviceManagementOperation(KapuaId scopeId, KapuaId operationId) throws KapuaException {

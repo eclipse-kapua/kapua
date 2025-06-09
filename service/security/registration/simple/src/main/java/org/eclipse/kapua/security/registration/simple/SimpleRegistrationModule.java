@@ -12,25 +12,22 @@
  *******************************************************************************/
 package org.eclipse.kapua.security.registration.simple;
 
-import com.google.inject.multibindings.ProvidesIntoSet;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.liquibase.DatabaseCheckUpdate;
 import org.eclipse.kapua.security.registration.RegistrationProcessorProvider;
 import org.eclipse.kapua.security.registration.simple.setting.SimpleSetting;
-import org.eclipse.kapua.service.account.AccountFactory;
 import org.eclipse.kapua.service.account.AccountService;
-import org.eclipse.kapua.service.authentication.credential.CredentialFactory;
 import org.eclipse.kapua.service.authentication.credential.CredentialService;
-import org.eclipse.kapua.service.authorization.access.AccessInfoFactory;
 import org.eclipse.kapua.service.authorization.access.AccessInfoService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
-import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserService;
 
-import javax.inject.Singleton;
+import com.google.inject.multibindings.ProvidesIntoSet;
 
 public class SimpleRegistrationModule extends AbstractKapuaModule {
+
     @Override
     protected void configureModule() {
         bind(SimpleSetting.class).in(Singleton.class);
@@ -41,27 +38,18 @@ public class SimpleRegistrationModule extends AbstractKapuaModule {
     RegistrationProcessorProvider simpleRegistrationProcessorProvider(
             SimpleSetting simpleSetting,
             AccountService accountService,
-            AccountFactory accountFactory,
             CredentialService credentialService,
-            CredentialFactory credentialFactory,
             DeviceRegistryService deviceRegistryService,
             UserService userService,
-            UserFactory userFactory,
             AccessInfoService accessInfoService,
-            AccessInfoFactory accessInfoFactory,
-            PermissionFactory permissionFactory,
             //Liquibase must start before this
             DatabaseCheckUpdate databaseCheckUpdate) {
         return new SimpleRegistrationProcessorProvider(simpleSetting,
                 accountService,
-                accountFactory,
                 credentialService,
-                credentialFactory,
                 deviceRegistryService,
                 userService,
-                userFactory,
-                accessInfoService,
-                accessInfoFactory,
-                permissionFactory);
+                accessInfoService
+        );
     }
 }

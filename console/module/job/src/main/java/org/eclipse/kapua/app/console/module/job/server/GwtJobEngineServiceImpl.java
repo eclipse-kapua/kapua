@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.job.server;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaErrorCode;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
@@ -21,30 +24,23 @@ import org.eclipse.kapua.app.console.module.api.shared.util.GwtKapuaCommonsModel
 import org.eclipse.kapua.app.console.module.job.shared.model.GwtJobStartOptions;
 import org.eclipse.kapua.app.console.module.job.shared.service.GwtJobEngineService;
 import org.eclipse.kapua.app.console.module.job.shared.util.GwtKapuaJobModelConverter;
-import org.eclipse.kapua.job.engine.JobEngineFactory;
 import org.eclipse.kapua.job.engine.JobEngineService;
 import org.eclipse.kapua.job.engine.JobStartOptions;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.SortOrder;
 import org.eclipse.kapua.service.job.execution.JobExecutionAttributes;
-import org.eclipse.kapua.service.job.execution.JobExecutionFactory;
 import org.eclipse.kapua.service.job.execution.JobExecutionListResult;
 import org.eclipse.kapua.service.job.execution.JobExecutionQuery;
 import org.eclipse.kapua.service.job.execution.JobExecutionService;
-
-import java.util.ArrayList;
-import java.util.Collections;
 
 public class GwtJobEngineServiceImpl extends KapuaRemoteServiceServlet implements GwtJobEngineService {
 
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
 
     private static final JobEngineService JOB_ENGINE_SERVICE = LOCATOR.getService(JobEngineService.class);
-    private static final JobEngineFactory JOB_ENGINE_FACTORY = LOCATOR.getFactory(JobEngineFactory.class);
 
     private static final JobExecutionService JOB_EXECUTION_SERVICE = LOCATOR.getService(JobExecutionService.class);
-    private static final JobExecutionFactory JOB_EXECUTION_FACTORY = LOCATOR.getFactory(JobExecutionFactory.class);
 
     @Override
     public void start(String gwtScopeId, String gwtJobId) throws GwtKapuaException {
@@ -62,7 +58,7 @@ public class GwtJobEngineServiceImpl extends KapuaRemoteServiceServlet implement
             if (gwtJobStartOptions != null) {
                 jobStartOptions = GwtKapuaJobModelConverter.convertJobStartOptions(gwtJobStartOptions);
             } else {
-                jobStartOptions = JOB_ENGINE_FACTORY.newJobStartOptions();
+                jobStartOptions = new JobStartOptions();
 
             }
 
@@ -88,7 +84,7 @@ public class GwtJobEngineServiceImpl extends KapuaRemoteServiceServlet implement
         try {
             if (jobExecutionId == null) {
                 //TODO: #LAYER_VIOLATION - job execution lookup should not be done here (horribly inefficient)
-                JobExecutionQuery query = JOB_EXECUTION_FACTORY.newQuery(scopeId);
+                JobExecutionQuery query = new JobExecutionQuery(scopeId);
 
                 query.setPredicate(
                         query.andPredicate(

@@ -12,7 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.asset;
 
-import org.eclipse.kapua.service.device.management.asset.xml.DeviceAssetChannelXmlAdapter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -21,7 +22,8 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.List;
+
+import org.eclipse.kapua.service.device.management.asset.xml.DeviceAssetChannelXmlAdapter;
 
 /**
  * {@link DeviceAsset} definition.
@@ -32,8 +34,11 @@ import java.util.List;
  */
 @XmlRootElement(name = "deviceAsset")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DeviceAssetXmlRegistry.class, factoryMethod = "newDeviceAsset")
-public interface DeviceAsset {
+@XmlType
+public class DeviceAsset {
+
+    private String name;
+    private List<DeviceAssetChannel> channels;
 
     /**
      * Gets the name.
@@ -42,15 +47,20 @@ public interface DeviceAsset {
      * @since 1.0.0
      */
     @XmlElement(name = "name")
-    String getName();
+    public String getName() {
+        return name;
+    }
 
     /**
      * Sets the name.
      *
-     * @param name The name.
+     * @param name
+     *         The name.
      * @since 1.0.0
      */
-    void setName(String name);
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /**
      * Gets the {@link DeviceAssetChannel} available.
@@ -61,13 +71,23 @@ public interface DeviceAsset {
     @XmlElementWrapper(name = "channels")
     @XmlElement(name = "channel")
     @XmlJavaTypeAdapter(DeviceAssetChannelXmlAdapter.class)
-    List<DeviceAssetChannel> getChannels();
+    public List<DeviceAssetChannel> getChannels() {
+        if (channels == null) {
+            channels = new ArrayList<>();
+        }
+
+        return channels;
+    }
 
     /**
      * Sets the {@link DeviceAssetChannel} available.
      *
-     * @param channels The {@link DeviceAssetChannel} available.
+     * @param channels
+     *         The {@link DeviceAssetChannel} available.
      * @since 1.0.0
      */
-    void setChannels(List<DeviceAssetChannel> channels);
+    public void setChannels(List<DeviceAssetChannel> channels) {
+        this.channels = channels;
+    }
+
 }

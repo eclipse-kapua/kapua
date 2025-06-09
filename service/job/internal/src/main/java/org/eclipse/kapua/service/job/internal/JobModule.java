@@ -27,7 +27,6 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.domain.Domain;
 import org.eclipse.kapua.model.domain.DomainEntry;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.job.JobFactory;
 import org.eclipse.kapua.service.job.JobRepository;
 import org.eclipse.kapua.service.job.JobService;
@@ -63,7 +62,6 @@ public class JobModule extends AbstractKapuaModule {
     JobService jobService(
             Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
             JobEngineService jobEngineService,
-            PermissionFactory permissionFactory,
             AuthorizationService authorizationService,
             @Named("jobTxManager") TxManager txManager,
             JobRepository jobRepository,
@@ -72,7 +70,6 @@ public class JobModule extends AbstractKapuaModule {
         return new JobServiceImpl(
                 serviceConfigurationManagersByServiceClass.get(JobService.class),
                 jobEngineService,
-                permissionFactory,
                 authorizationService,
                 txManager,
                 jobRepository,

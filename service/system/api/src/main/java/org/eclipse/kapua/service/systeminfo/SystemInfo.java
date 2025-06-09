@@ -27,30 +27,58 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "systemInfo")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = SystemInfoXmlRegistry.class, factoryMethod = "newSystemInfo")
-public interface SystemInfo {
-    @XmlElement(name = "version")
-    String getVersion();
+@XmlType
+public class SystemInfo {
 
-    void setVersion(String version);
+    private String version;
+    private String buildNumber;
+    private String buildDate;
+    private String buildBranch;
+    private String buildRevision;
+
+    @XmlElement(name = "version")
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     @XmlElement(name = "revision")
-    String getRevision();
+    public String getRevision() {
+        return buildRevision;
+    }
 
-    void setRevision(String revision);
+    public void setRevision(String revision) {
+        this.buildRevision = revision;
+    }
 
     @XmlElement(name = "buildDate")
-    String getBuildTimestamp();
+    public String getBuildTimestamp() {
+        return buildDate;
+    }
 
-    void setBuildTimestamp(String buildDate);
+    public void setBuildTimestamp(String buildDate) {
+        this.buildDate = buildDate;
+    }
 
     @XmlElement(name = "buildBranch")
-    String getBuildBranch();
+    public String getBuildBranch() {
+        return buildBranch;
+    }
 
-    void setBuildBranch(String buildBranch);
+    public void setBuildBranch(String buildBranch) {
+        this.buildBranch = buildBranch;
+    }
 
     @XmlElement(name = "buildNumber")
-    String getBuildNumber();
+    public String getBuildNumber() {
+        return buildNumber;
+    }
 
-    void setBuildNumber(String buildNumber);
+    public void setBuildNumber(String buildNumber) {
+        this.buildNumber = buildNumber;
+    }
+
 }

@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * Device command input entity definition.
+ * Device command input definition.
  *
  * @since 1.0
  */
@@ -34,11 +34,22 @@ import javax.xml.bind.annotation.XmlType;
         "workingDir",
         "body",
         "environment",
-        "environments",
         "runAsynch",
         "stdin"
-}, factoryClass = DeviceCommandXmlRegistry.class, factoryMethod = "newCommandInput")
-public interface DeviceCommandInput extends DeviceCommand {
+})
+public class DeviceCommandInput implements DeviceCommand {
+
+    private static final long serialVersionUID = -2141178091281947848L;
+
+    private String command;
+    private String password;
+    private String[] arguments;
+    private Integer timeout;
+    private String workingDir;
+    private byte[] body;
+    private String[] envVars;
+    private boolean runAsync;
+    private String stdIn;
 
     /**
      * Get the device command
@@ -46,14 +57,18 @@ public interface DeviceCommandInput extends DeviceCommand {
      * @return
      */
     @XmlElement(name = "command")
-    String getCommand();
+    public String getCommand() {
+        return command;
+    }
 
     /**
      * Set the device command
      *
      * @param command
      */
-    void setCommand(String command);
+    public void setCommand(String command) {
+        this.command = command;
+    }
 
     /**
      * Get the device password
@@ -61,14 +76,18 @@ public interface DeviceCommandInput extends DeviceCommand {
      * @return
      */
     @XmlElement(name = "password")
-    String getPassword();
+    public String getPassword() {
+        return password;
+    }
 
     /**
      * Set the device password
      *
      * @param password
      */
-    void setPassword(String password);
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     /**
      * Get command arguments
@@ -77,14 +96,18 @@ public interface DeviceCommandInput extends DeviceCommand {
      */
     @XmlElementWrapper(name = "arguments")
     @XmlElement(name = "argument")
-    String[] getArguments();
+    public String[] getArguments() {
+        return arguments;
+    }
 
     /**
      * Set command arguments
      *
      * @param arguments
      */
-    void setArguments(String[] arguments);
+    public void setArguments(String[] arguments) {
+        this.arguments = arguments;
+    }
 
     /**
      * Get the command timeout
@@ -92,14 +115,18 @@ public interface DeviceCommandInput extends DeviceCommand {
      * @return
      */
     @XmlElement(name = "timeout")
-    Integer getTimeout();
+    public Integer getTimeout() {
+        return timeout;
+    }
 
     /**
      * Set the command timeout
      *
      * @param timeout
      */
-    void setTimeout(Integer timeout);
+    public void setTimeout(Integer timeout) {
+        this.timeout = timeout;
+    }
 
     /**
      * Get the working directory
@@ -107,14 +134,18 @@ public interface DeviceCommandInput extends DeviceCommand {
      * @return
      */
     @XmlElement(name = "workingDir")
-    String getWorkingDir();
+    public String getWorkingDir() {
+        return workingDir;
+    }
 
     /**
      * Set the working directory
      *
      * @param workingDir
      */
-    void setWorkingDir(String workingDir);
+    public void setWorkingDir(String workingDir) {
+        this.workingDir = workingDir;
+    }
 
     /**
      * Get the command input body
@@ -122,14 +153,18 @@ public interface DeviceCommandInput extends DeviceCommand {
      * @return
      */
     @XmlElement(name = "body")
-    byte[] getBody();
+    public byte[] getBody() {
+        return body;
+    }
 
     /**
      * Set the command input body
      *
      * @param bytes
      */
-    void setBody(byte[] bytes);
+    public void setBody(byte[] bytes) {
+        this.body = bytes;
+    }
 
     /**
      * Get the environment attributes
@@ -139,17 +174,9 @@ public interface DeviceCommandInput extends DeviceCommand {
      */
     @Deprecated
     @XmlElement(name = "environment")
-    String[] getEnvironment();
-
-    /**
-     * Get the environment attributes
-     *
-     * @return
-     * @since 2.1.0
-     */
-    @XmlElementWrapper(name = "environments")
-    @XmlElement(name = "environment")
-    String[] getEnvironments();
+    public String[] getEnvironment() {
+        return envVars;
+    }
 
     /**
      * Set the environment attributes
@@ -158,15 +185,9 @@ public interface DeviceCommandInput extends DeviceCommand {
      * @deprecated Since 2.1.0
      */
     @Deprecated
-    void setEnvironment(String[] environment);
-
-    /**
-     * Set the environment attributes
-     *
-     * @param environment
-     * @since 2.1.0
-     */
-    void setEnvironments(String[] environment);
+    public void setEnvironment(String[] environment) {
+        this.envVars = environment;
+    }
 
     /**
      * Get the asynchronous run flag
@@ -174,14 +195,18 @@ public interface DeviceCommandInput extends DeviceCommand {
      * @return
      */
     @XmlElement(name = "runAsynch")
-    boolean isRunAsynch();
+    public boolean isRunAsynch() {
+        return runAsync;
+    }
 
     /**
      * Set the asynchronous run flag
      *
      * @param runAsync
      */
-    void setRunAsynch(boolean runAsync);
+    public void setRunAsynch(boolean runAsync) {
+        this.runAsync = runAsync;
+    }
 
     /**
      * Get the device standard input
@@ -189,12 +214,17 @@ public interface DeviceCommandInput extends DeviceCommand {
      * @return
      */
     @XmlElement(name = "stdin")
-    String getStdin();
+    public String getStdin() {
+        return stdIn;
+    }
 
     /**
      * Set the device standard input
      *
      * @param stdin
      */
-    void setStdin(String stdin);
+    public void setStdin(String stdin) {
+        this.stdIn = stdin;
+    }
+
 }

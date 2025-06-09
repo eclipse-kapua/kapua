@@ -21,8 +21,9 @@ import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTriggerRepository;
 public class FiredTriggerImplJpaRepository
         extends KapuaEntityJpaRepository<FiredTrigger, FiredTriggerImpl, FiredTriggerListResult>
         implements FiredTriggerRepository {
+
     public FiredTriggerImplJpaRepository(KapuaJpaRepositoryConfiguration configuration) {
-        super(FiredTriggerImpl.class, FiredTrigger.TYPE, () -> new FiredTriggerListResultImpl(), configuration);
+        super(FiredTriggerImpl.class, FiredTrigger.TYPE, () -> new FiredTriggerListResult(), configuration);
     }
 
 }

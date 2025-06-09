@@ -20,19 +20,28 @@ import javax.xml.bind.annotation.XmlType;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = UserCredentialsXmlRegistry.class, factoryMethod = "newPasswordChangeRequest")
-public interface PasswordChangeRequest {
+@XmlType
+public class PasswordChangeRequest {
+
+    private String newPassword;
+    private String currentPassword;
+
     @XmlElement(name = "currentPassword")
-    String getCurrentPassword();
+    public String getCurrentPassword() {
+        return currentPassword;
+    }
 
-
-    void setCurrentPassword(String currentPassword);
-
+    public void setCurrentPassword(String currentPassword) {
+        this.currentPassword = currentPassword;
+    }
 
     @XmlElement(name = "newPassword")
-    String getNewPassword();
+    public String getNewPassword() {
+        return newPassword;
+    }
 
-
-    void setNewPassword(String newPassword);
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
 
 }

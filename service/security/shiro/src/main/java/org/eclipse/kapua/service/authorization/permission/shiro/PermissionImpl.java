@@ -12,10 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.permission.shiro;
 
-import org.eclipse.kapua.commons.model.id.KapuaEid;
-import org.eclipse.kapua.model.domain.Actions;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.service.authorization.permission.Permission;
+import java.io.Serializable;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -25,7 +22,11 @@ import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import java.io.Serializable;
+
+import org.eclipse.kapua.commons.model.id.KapuaEid;
+import org.eclipse.kapua.model.domain.Actions;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 
 /**
  * {@link Permission} implementation.
@@ -34,22 +35,21 @@ import java.io.Serializable;
  */
 @Embeddable
 public class PermissionImpl
-//        extends
-//        WildcardPermission
+        //        extends
+        //        WildcardPermission
         implements
-        Permission
-//        , org.apache.shiro.authz.Permission
-        , Serializable {
-
+        //        , org.apache.shiro.authz.Permission
+        Serializable {
 
     private static final long serialVersionUID = 1480557438886065675L;
-//
-//    //TODO: FIXME: REMOVE: A service in a jpa class? Behaviour should not be part of a data class!
-//    @Transient
-//    private final AccountService accountService = KapuaLocator.getInstance().getService(AccountService.class);
-//    //TODO: FIXME: REMOVE: A service in a jpa class? Behaviour should not be part of a data class!
-//    @Transient
-//    private final DomainRegistryService domainService = KapuaLocator.getInstance().getService(DomainRegistryService.class);
+
+    //
+    //    //TODO: FIXME: REMOVE: A service in a jpa class? Behaviour should not be part of a data class!
+    //    @Transient
+    //    private final AccountService accountService = KapuaLocator.getInstance().getService(AccountService.class);
+    //    //TODO: FIXME: REMOVE: A service in a jpa class? Behaviour should not be part of a data class!
+    //    @Transient
+    //    private final DomainRegistryService domainService = KapuaLocator.getInstance().getService(DomainRegistryService.class);
 
     @Basic
     @Column(name = "domain", nullable = true, updatable = false)
@@ -87,7 +87,8 @@ public class PermissionImpl
     /**
      * Constructor.
      *
-     * @param permission The {@link Permission} to parse.
+     * @param permission
+     *         The {@link Permission} to parse.
      * @since 1.0.0
      */
     public PermissionImpl(Permission permission) {
@@ -101,10 +102,14 @@ public class PermissionImpl
     /**
      * Constructor.
      *
-     * @param domain        The {@link Permission#getDomain()}.
-     * @param action        The {@link Permission#getAction()}.
-     * @param targetScopeId The {@link Permission#getTargetScopeId()}.
-     * @param groupId       The {@link Permission#getGroupId()}.
+     * @param domain
+     *         The {@link Permission#getDomain()}.
+     * @param action
+     *         The {@link Permission#getAction()}.
+     * @param targetScopeId
+     *         The {@link Permission#getTargetScopeId()}.
+     * @param groupId
+     *         The {@link Permission#getGroupId()}.
      * @since 1.0.0
      */
     public PermissionImpl(String domain, Actions action, KapuaId targetScopeId, KapuaId groupId) {
@@ -114,11 +119,16 @@ public class PermissionImpl
     /**
      * Constructor.
      *
-     * @param domain        The {@link Permission#getDomain()}.
-     * @param action        The {@link Permission#getAction()}.
-     * @param targetScopeId The {@link Permission#getTargetScopeId()}.
-     * @param groupId       The {@link Permission#getGroupId()}.
-     * @param forwardable   Whether the {@link Permission} is {@link Permission#getForwardable()}
+     * @param domain
+     *         The {@link Permission#getDomain()}.
+     * @param action
+     *         The {@link Permission#getAction()}.
+     * @param targetScopeId
+     *         The {@link Permission#getTargetScopeId()}.
+     * @param groupId
+     *         The {@link Permission#getGroupId()}.
+     * @param forwardable
+     *         Whether the {@link Permission} is {@link Permission#getForwardable()}
      * @since 1.0.0
      */
     public PermissionImpl(String domain, Actions action, KapuaId targetScopeId, KapuaId groupId, boolean forwardable) {
@@ -131,52 +141,42 @@ public class PermissionImpl
 
     }
 
-    @Override
     public void setDomain(String domain) {
         this.domain = domain;
     }
 
-    @Override
     public String getDomain() {
         return domain;
     }
 
-    @Override
     public void setAction(Actions action) {
         this.action = action;
     }
 
-    @Override
     public Actions getAction() {
         return action;
     }
 
-    @Override
     public void setTargetScopeId(KapuaId targetScopeId) {
         this.targetScopeId = KapuaEid.parseKapuaId(targetScopeId);
     }
 
-    @Override
     public KapuaId getTargetScopeId() {
         return targetScopeId;
     }
 
-    @Override
     public void setGroupId(KapuaId groupId) {
         this.groupId = KapuaEid.parseKapuaId(groupId);
     }
 
-    @Override
     public KapuaId getGroupId() {
         return groupId;
     }
 
-    @Override
     public boolean getForwardable() {
         return forwardable;
     }
 
-    @Override
     public void setForwardable(boolean forwardable) {
         this.forwardable = forwardable;
     }

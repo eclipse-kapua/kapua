@@ -23,7 +23,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.access.GroupQueryHelper;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceAttributes;
 import org.eclipse.kapua.service.device.registry.DeviceCreator;
@@ -56,13 +55,12 @@ public class DeviceRegistryServiceImpl
     public DeviceRegistryServiceImpl(
             ServiceConfigurationManager serviceConfigurationManager,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             TxManager txManager,
             DeviceRepository deviceRepository,
             DeviceFactory entityFactory,
             GroupQueryHelper groupQueryHelper,
             EventStorer eventStorer, DeviceValidation deviceValidation) {
-        super(txManager, serviceConfigurationManager, Domains.DEVICE, authorizationService, permissionFactory);
+        super(txManager, serviceConfigurationManager, Domains.DEVICE, authorizationService);
         this.deviceRepository = deviceRepository;
         this.entityFactory = entityFactory;
         this.groupQueryHelper = groupQueryHelper;
@@ -79,7 +77,7 @@ public class DeviceRegistryServiceImpl
                     // Check entity limit
                     serviceConfigurationManager.checkAllowedEntities(tx, deviceCreator.getScopeId(), "Devices");
                     // Check duplicate clientId
-                    DeviceQuery query = entityFactory.newQuery(deviceCreator.getScopeId());
+                    DeviceQuery query = new DeviceQuery(deviceCreator.getScopeId());
                     query.setPredicate(query.attributePredicate(DeviceAttributes.CLIENT_ID, deviceCreator.getClientId()));
                     //TODO: check whether this is anywhere efficient
                     if (deviceRepository.count(tx, query) > 0) {
@@ -204,7 +202,7 @@ public class DeviceRegistryServiceImpl
     // Private methods
 
     private void deleteDeviceByGroupId(KapuaId scopeId, KapuaId groupId) throws KapuaException {
-        DeviceQuery query = entityFactory.newQuery(scopeId);
+        DeviceQuery query = new DeviceQuery(scopeId);
         query.setPredicate(query.attributePredicate(DeviceAttributes.GROUP_ID, groupId));
 
         txManager.<Void>execute(tx -> {
@@ -219,7 +217,7 @@ public class DeviceRegistryServiceImpl
     }
 
     private void deleteDeviceByAccountId(KapuaId scopeId, KapuaId accountId) throws KapuaException {
-        DeviceQuery query = entityFactory.newQuery(accountId);
+        DeviceQuery query = new DeviceQuery(accountId);
 
         txManager.<Void>execute(tx -> {
             DeviceListResult devicesToDelete = deviceRepository.query(tx, query);

@@ -23,7 +23,9 @@ import org.eclipse.kapua.model.query.KapuaListResult;
  * @since 1.0.0
  */
 @XmlRootElement(name = "roles")
-@XmlType(factoryClass = RoleXmlRegistry.class, factoryMethod = "newRoleListResult")
-public interface RoleListResult extends KapuaListResult<Role> {
+@XmlType
+public class RoleListResult extends KapuaListResult<Role> {
+
+    private static final long serialVersionUID = -5902522234186399802L;
 
 }

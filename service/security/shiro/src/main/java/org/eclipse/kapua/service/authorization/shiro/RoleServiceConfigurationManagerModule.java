@@ -29,7 +29,6 @@ import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.util.xml.XmlUtil;
-import org.eclipse.kapua.service.authorization.role.RoleFactory;
 import org.eclipse.kapua.service.authorization.role.RoleRepository;
 import org.eclipse.kapua.service.authorization.role.RoleService;
 
@@ -54,7 +53,6 @@ public class RoleServiceConfigurationManagerModule extends AbstractKapuaModule i
     @Singleton
     public ServiceConfigurationManager roleServiceConfigurationManager(
             KapuaJpaTxManagerFactory jpaTxManagerFactory,
-            RoleFactory roleFactory,
             RootUserTester rootUserTester,
             AccountRelativeFinder accountRelativeFinder,
             RoleRepository roleRepository,
@@ -74,7 +72,6 @@ public class RoleServiceConfigurationManagerModule extends AbstractKapuaModule i
                         rootUserTester,
                         accountRelativeFinder,
                         new UsedEntitiesCounterImpl(
-                                roleFactory,
                                 roleRepository
                         ),
                         new ResourceBasedServiceConfigurationMetadataProvider(xmlUtil)));

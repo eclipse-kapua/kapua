@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.model.config.metatype;
 
+import org.eclipse.kapua.model.config.metatype.KapuaToption;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.junit.Assert;
 import org.junit.Before;

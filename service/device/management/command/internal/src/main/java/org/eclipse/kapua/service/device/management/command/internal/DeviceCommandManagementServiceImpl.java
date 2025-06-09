@@ -13,6 +13,7 @@
 package org.eclipse.kapua.service.device.management.command.internal;
 
 import java.util.Date;
+
 import javax.inject.Singleton;
 
 import org.eclipse.kapua.KapuaException;
@@ -21,7 +22,7 @@ import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.device.management.command.DeviceCommandInput;
 import org.eclipse.kapua.service.device.management.command.DeviceCommandManagementService;
 import org.eclipse.kapua.service.device.management.command.DeviceCommandOutput;
@@ -47,16 +48,15 @@ import org.slf4j.LoggerFactory;
  */
 @Singleton
 public class DeviceCommandManagementServiceImpl extends AbstractDeviceManagementTransactionalServiceImpl implements DeviceCommandManagementService {
+
     public DeviceCommandManagementServiceImpl(
             TxManager txManager,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             DeviceEventService deviceEventService,
             DeviceEventFactory deviceEventFactory,
             DeviceRegistryService deviceRegistryService) {
         super(txManager,
                 authorizationService,
-                permissionFactory,
                 deviceEventService,
                 deviceEventFactory,
                 deviceRegistryService);
@@ -74,7 +74,7 @@ public class DeviceCommandManagementServiceImpl extends AbstractDeviceManagement
         ArgumentValidator.notNull(commandInput.getTimeout(), "commandInput.timeout");
         ArgumentValidator.notEmptyOrNull(commandInput.getCommand(), "commandInput.command");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.execute, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.execute, scopeId));
         // Prepare the request
         CommandRequestChannel commandRequestChannel = new CommandRequestChannel();
         commandRequestChannel.setAppName(CommandAppProperties.APP_NAME);
@@ -87,7 +87,7 @@ public class DeviceCommandManagementServiceImpl extends AbstractDeviceManagement
         commandRequestPayload.setStdin(commandInput.getStdin());
         commandRequestPayload.setTimeout(commandInput.getTimeout());
         commandRequestPayload.setWorkingDir(commandInput.getWorkingDir());
-        commandRequestPayload.setEnvironmentPairs(commandInput.getEnvironments());
+        commandRequestPayload.setEnvironmentPairs(commandInput.getEnvironment());
         commandRequestPayload.setRunAsync(commandInput.isRunAsynch());
         commandRequestPayload.setPassword(commandInput.getPassword());
         commandRequestPayload.setBody(commandInput.getBody());
@@ -113,7 +113,8 @@ public class DeviceCommandManagementServiceImpl extends AbstractDeviceManagement
             responseMessage = commandDeviceCallBuilder.send();
         } catch (Exception e) {
             if (commandInput.getArguments() != null) {
-                LOG.error("Error while executing DeviceCommand {} with arguments {} for Device {}. Error: {}", commandInput.getCommand(), String.join(" ", commandInput.getArguments()), deviceId, e.getMessage(), e);
+                LOG.error("Error while executing DeviceCommand {} with arguments {} for Device {}. Error: {}", commandInput.getCommand(), String.join(" ", commandInput.getArguments()), deviceId,
+                        e.getMessage(), e);
             } else {
                 LOG.error("Error while executing DeviceCommand {} for Device {}. Error: {}", commandInput.getCommand(), deviceId, e.getMessage(), e);
             }
@@ -126,7 +127,7 @@ public class DeviceCommandManagementServiceImpl extends AbstractDeviceManagement
         return checkResponseAcceptedOrThrowError(responseMessage, () -> {
             CommandResponsePayload responsePayload = responseMessage.getPayload();
 
-            DeviceCommandOutput deviceCommandOutput = new DeviceCommandOutputImpl();
+            DeviceCommandOutput deviceCommandOutput = new DeviceCommandOutput();
             deviceCommandOutput.setExceptionMessage(responsePayload.getExceptionMessage());
             deviceCommandOutput.setExceptionStack(responsePayload.getExceptionStack());
             deviceCommandOutput.setExitCode(responsePayload.getExitCode());

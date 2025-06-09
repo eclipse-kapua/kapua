@@ -12,10 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.message;
 
-import org.eclipse.kapua.commons.util.Payloads;
-import org.eclipse.kapua.message.xml.MessageXmlRegistry;
-import org.eclipse.kapua.message.xml.MetricsXmlAdapter;
-import org.eclipse.kapua.model.xml.BinaryXmlAdapter;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -24,7 +22,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Map;
+
+import org.eclipse.kapua.commons.util.Payloads;
+import org.eclipse.kapua.message.xml.MetricsXmlAdapter;
+import org.eclipse.kapua.model.xml.BinaryXmlAdapter;
 
 /**
  * {@link KapuaPayload} definition.
@@ -33,8 +34,11 @@ import java.util.Map;
  */
 @XmlRootElement(name = "payload")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(propOrder = {"metrics", "body"}, factoryClass = MessageXmlRegistry.class, factoryMethod = "newPayload")
-public interface KapuaPayload extends Payload {
+@XmlType(propOrder = { "metrics", "body" })
+public class KapuaPayload implements Payload {
+
+    private Map<String, Object> metrics;
+    private byte[] body;
 
     /**
      * Get the metrics map
@@ -44,7 +48,13 @@ public interface KapuaPayload extends Payload {
      */
     @XmlElement(name = "metrics")
     @XmlJavaTypeAdapter(MetricsXmlAdapter.class)
-    Map<String, Object> getMetrics();
+    public Map<String, Object> getMetrics() {
+        if (metrics == null) {
+            metrics = new HashMap<>();
+        }
+
+        return metrics;
+    }
 
     /**
      * Set the metrics map
@@ -52,7 +62,9 @@ public interface KapuaPayload extends Payload {
      * @param metrics
      * @since 1.0.0
      */
-    void setMetrics(Map<String, Object> metrics);
+    public void setMetrics(Map<String, Object> metrics) {
+        this.metrics = metrics;
+    }
 
     /**
      * Get the message body
@@ -62,7 +74,9 @@ public interface KapuaPayload extends Payload {
      */
     @XmlElement(name = "body")
     @XmlJavaTypeAdapter(BinaryXmlAdapter.class)
-    byte[] getBody();
+    public byte[] getBody() {
+        return body;
+    }
 
     /**
      * Set the message body
@@ -70,7 +84,9 @@ public interface KapuaPayload extends Payload {
      * @param body
      * @since 1.0.0
      */
-    void setBody(byte[] body);
+    public void setBody(byte[] body) {
+        this.body = body;
+    }
 
     /**
      * Says whether or not the {@link #getBody()} has value.
@@ -80,7 +96,7 @@ public interface KapuaPayload extends Payload {
      * @return {@code true} if {@link #getBody()} is not {@code null} and {@link #getBody()}{@code length > 0}, {@code false} otherwise.
      * @since 1.2.0
      */
-    default boolean hasBody() {
+    public boolean hasBody() {
         return getBody() != null && getBody().length > 0;
     }
 
@@ -91,7 +107,7 @@ public interface KapuaPayload extends Payload {
      * @since 1.0.0
      */
     @XmlTransient
-    default String toDisplayString() {
+    public String toDisplayString() {
         return Payloads.toDisplayString(getMetrics());
     }
 }

@@ -39,11 +39,9 @@ import org.eclipse.kapua.app.api.core.model.data.JsonMessageQuery;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
 import org.eclipse.kapua.app.api.resources.v1.resources.marker.JsonSerializationFixed;
 import org.eclipse.kapua.message.device.data.KapuaDataMessage;
-import org.eclipse.kapua.message.device.data.KapuaDataMessageFactory;
 import org.eclipse.kapua.message.device.data.KapuaDataPayload;
 import org.eclipse.kapua.model.type.ObjectValueConverter;
 import org.eclipse.kapua.service.KapuaService;
-import org.eclipse.kapua.service.datastore.MessageStoreFactory;
 import org.eclipse.kapua.service.datastore.MessageStoreService;
 import org.eclipse.kapua.service.datastore.model.DatastoreMessage;
 import org.eclipse.kapua.service.datastore.model.MessageListResult;
@@ -60,10 +58,6 @@ import org.eclipse.kapua.service.storable.model.query.XmlAdaptedSortField;
 @Path("{scopeId}/data/messages")
 public class DataMessagesJson extends AbstractKapuaResource implements JsonSerializationFixed {
 
-    @Inject
-    public KapuaDataMessageFactory kapuaDataMessageFactory;
-    @Inject
-    public MessageStoreFactory messageStoreFactory;
     @Inject
     public MessageStoreService messageStoreService;
     @Inject
@@ -111,7 +105,7 @@ public class DataMessagesJson extends AbstractKapuaResource implements JsonSeria
             @QueryParam("limit") @DefaultValue("50") int limit)
             throws KapuaException {
         MetricType<V> internalMetricType = new MetricType<>(metricType);
-        MessageQuery query = DataMessages.parametersToQuery(datastorePredicateFactory, messageStoreFactory, scopeId, clientIds, channel, strictChannel, startDateParam, endDateParam, metricName,
+        MessageQuery query = DataMessages.parametersToQuery(datastorePredicateFactory, scopeId, clientIds, channel, strictChannel, startDateParam, endDateParam, metricName,
                 internalMetricType, metricMinValue, metricMaxValue, sortDir, offset, limit);
         query.setScopeId(scopeId);
         final MessageListResult result = messageStoreService.query(query);
@@ -142,7 +136,7 @@ public class DataMessagesJson extends AbstractKapuaResource implements JsonSeria
             JsonKapuaDataMessage jsonKapuaDataMessage)
             throws KapuaException {
 
-        KapuaDataMessage kapuaDataMessage = kapuaDataMessageFactory.newKapuaDataMessage();
+        KapuaDataMessage kapuaDataMessage = new KapuaDataMessage();
 
         kapuaDataMessage.setId(jsonKapuaDataMessage.getId());
         kapuaDataMessage.setScopeId(scopeId);
@@ -154,7 +148,7 @@ public class DataMessagesJson extends AbstractKapuaResource implements JsonSeria
         kapuaDataMessage.setPosition(jsonKapuaDataMessage.getPosition());
         kapuaDataMessage.setChannel(jsonKapuaDataMessage.getChannel());
 
-        KapuaDataPayload kapuaDataPayload = kapuaDataMessageFactory.newKapuaDataPayload();
+        KapuaDataPayload kapuaDataPayload = new KapuaDataPayload();
 
         if (jsonKapuaDataMessage.getPayload() != null) {
             kapuaDataPayload.setBody(jsonKapuaDataMessage.getPayload().getBody());
@@ -229,7 +223,7 @@ public class DataMessagesJson extends AbstractKapuaResource implements JsonSeria
     }
 
     private MessageQuery convertQuery(JsonMessageQuery query) {
-        MessageQuery messageQuery = messageStoreFactory.newQuery(query.getScopeId());
+        MessageQuery messageQuery = new MessageQuery(query.getScopeId());
         messageQuery.setAskTotalCount(query.isAskTotalCount());
         messageQuery.setFetchAttributes(query.getFetchAttributes());
         messageQuery.setFetchStyle(query.getFetchStyle());

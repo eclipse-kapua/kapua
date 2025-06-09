@@ -13,14 +13,16 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.packages.model;
 
-import org.eclipse.kapua.KapuaSerializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.List;
+
+import org.eclipse.kapua.KapuaSerializable;
 
 /**
  * {@link DevicePackages} definition.
@@ -29,8 +31,12 @@ import java.util.List;
  */
 @XmlRootElement(name = "devicePackages")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DevicePackageXmlRegistry.class, factoryMethod = "newDevicePackages")
-public interface DevicePackages extends KapuaSerializable {
+@XmlType
+public class DevicePackages implements KapuaSerializable {
+
+    private static final long serialVersionUID = 2450088980495469562L;
+
+    public List<DevicePackage> deploymentPackages;
 
     /**
      * Gets the {@link DevicePackage} {@link List}
@@ -39,5 +45,11 @@ public interface DevicePackages extends KapuaSerializable {
      * @since 1.0.0
      */
     @XmlElement(name = "devicePackage")
-    List<DevicePackage> getPackages();
+    public List<DevicePackage> getPackages() {
+        if (deploymentPackages == null) {
+            deploymentPackages = new ArrayList<>();
+        }
+
+        return deploymentPackages;
+    }
 }

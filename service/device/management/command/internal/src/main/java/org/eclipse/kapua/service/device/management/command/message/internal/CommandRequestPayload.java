@@ -12,21 +12,20 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.command.message.internal;
 
-import org.eclipse.kapua.message.internal.KapuaPayloadImpl;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.kapua.service.device.management.command.DeviceCommand;
 import org.eclipse.kapua.service.device.management.command.DeviceCommandInput;
 import org.eclipse.kapua.service.device.management.command.internal.CommandAppProperties;
 import org.eclipse.kapua.service.device.management.message.request.KapuaRequestPayload;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * {@link DeviceCommand} {@link KapuaRequestPayload} implementation.
  *
  * @since 1.0.0
  */
-public class CommandRequestPayload extends KapuaPayloadImpl implements KapuaRequestPayload {
+public class CommandRequestPayload extends KapuaRequestPayload {
 
     private static final long serialVersionUID = 2272153023534866045L;
 
@@ -54,7 +53,8 @@ public class CommandRequestPayload extends KapuaPayloadImpl implements KapuaRequ
     /**
      * Sets the {@link DeviceCommandInput#getArguments()}.
      *
-     * @param arguments The {@link DeviceCommandInput#getArguments()}.
+     * @param arguments
+     *         The {@link DeviceCommandInput#getArguments()}.
      * @since 1.0.0
      */
     public void setArguments(String[] arguments) {
@@ -89,7 +89,8 @@ public class CommandRequestPayload extends KapuaPayloadImpl implements KapuaRequ
     /**
      * Sets the {@link DeviceCommandInput#getEnvironment()}.
      *
-     * @param environmentPairs The {@link DeviceCommandInput#getEnvironment()}.
+     * @param environmentPairs
+     *         The {@link DeviceCommandInput#getEnvironment()}.
      * @since 1.0.0
      */
     public void setEnvironmentPairs(String[] environmentPairs) {
@@ -113,7 +114,8 @@ public class CommandRequestPayload extends KapuaPayloadImpl implements KapuaRequ
     /**
      * Sets the {@link DeviceCommandInput#getWorkingDir()}.
      *
-     * @param workingDir The {@link DeviceCommandInput#getWorkingDir()}.
+     * @param workingDir
+     *         The {@link DeviceCommandInput#getWorkingDir()}.
      * @since 1.0.0
      */
     public void setWorkingDir(String workingDir) {
@@ -135,7 +137,8 @@ public class CommandRequestPayload extends KapuaPayloadImpl implements KapuaRequ
     /**
      * Sets the {@link DeviceCommandInput#getStdin()}.
      *
-     * @param stdin The {@link DeviceCommandInput#getStdin()}.
+     * @param stdin
+     *         The {@link DeviceCommandInput#getStdin()}.
      * @since 1.0.0
      */
     public void setStdin(String stdin) {
@@ -157,7 +160,8 @@ public class CommandRequestPayload extends KapuaPayloadImpl implements KapuaRequ
     /**
      * Sets the {@link DeviceCommandInput#getTimeout()}.
      *
-     * @param timeout The {@link DeviceCommandInput#getTimeout()}.
+     * @param timeout
+     *         The {@link DeviceCommandInput#getTimeout()}.
      * @since 1.0.0
      */
     public void setTimeout(int timeout) {
@@ -176,7 +180,8 @@ public class CommandRequestPayload extends KapuaPayloadImpl implements KapuaRequ
     /**
      * Sets the {@link DeviceCommandInput#isRunAsynch()}.
      *
-     * @param runAsync The {@link DeviceCommandInput#isRunAsynch()}.
+     * @param runAsync
+     *         The {@link DeviceCommandInput#isRunAsynch()}.
      * @since 1.0.0
      */
     public void setRunAsync(boolean runAsync) {
@@ -196,7 +201,8 @@ public class CommandRequestPayload extends KapuaPayloadImpl implements KapuaRequ
     /**
      * Sets the {@link DeviceCommandInput#getCommand()}.
      *
-     * @param command The {@link DeviceCommandInput#getCommand()}.
+     * @param command
+     *         The {@link DeviceCommandInput#getCommand()}.
      * @since 1.0.0
      */
     public void setCommand(String command) {
@@ -216,7 +222,8 @@ public class CommandRequestPayload extends KapuaPayloadImpl implements KapuaRequ
     /**
      * Sets the {@link DeviceCommandInput#getPassword()}.
      *
-     * @param password The {@link DeviceCommandInput#getPassword()}.
+     * @param password
+     *         The {@link DeviceCommandInput#getPassword()}.
      * @since 1.0.0
      */
     public void setPassword(String password) {

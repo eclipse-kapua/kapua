@@ -12,11 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.call.message.kura;
 
-import com.google.common.collect.Lists;
-import org.eclipse.kapua.service.device.call.message.DeviceChannel;
-
 import java.util.Arrays;
 import java.util.List;
+
+import org.eclipse.kapua.service.device.call.message.DeviceChannel;
+
+import com.google.common.collect.Lists;
 
 /**
  * {@link DeviceChannel} {@link org.eclipse.kapua.service.device.call.kura.Kura} implementation.
@@ -40,8 +41,10 @@ public class KuraChannel implements DeviceChannel {
     /**
      * Constructor.
      *
-     * @param scopeNamespace The scope namespace.
-     * @param clientId       The clientId.
+     * @param scopeNamespace
+     *         The scope namespace.
+     * @param clientId
+     *         The clientId.
      * @since 1.0.0
      */
     public KuraChannel(String scopeNamespace, String clientId) {
@@ -51,9 +54,12 @@ public class KuraChannel implements DeviceChannel {
     /**
      * Constructor.
      *
-     * @param messageClassification The message classification.
-     * @param scopeNamespace        The scope namespace.
-     * @param clientId              The clientId.
+     * @param messageClassification
+     *         The message classification.
+     * @param scopeNamespace
+     *         The scope namespace.
+     * @param clientId
+     *         The clientId.
      * @since 1.0.0
      */
     public KuraChannel(String messageClassification, String scopeNamespace, String clientId) {
@@ -62,32 +68,26 @@ public class KuraChannel implements DeviceChannel {
         setClientId(clientId);
     }
 
-    @Override
     public String getMessageClassification() {
         return messageClassification;
     }
 
-    @Override
     public void setMessageClassification(String messageClassification) {
         this.messageClassification = messageClassification;
     }
 
-    @Override
     public String getScope() {
         return scopeNamespace;
     }
 
-    @Override
     public void setScope(String scope) {
         this.scopeNamespace = scope;
     }
 
-    @Override
     public String getClientId() {
         return clientId;
     }
 
-    @Override
     public void setClientId(String clientId) {
         this.clientId = clientId;
     }

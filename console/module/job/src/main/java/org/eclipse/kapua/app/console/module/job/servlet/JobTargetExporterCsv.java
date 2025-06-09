@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.job.servlet;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.URLEncoder;
@@ -26,6 +24,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.lang3.CharEncoding;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
@@ -33,14 +35,12 @@ import org.eclipse.kapua.model.id.KapuaIdFactory;
 import org.eclipse.kapua.model.query.KapuaListResult;
 import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceAttributes;
-import org.eclipse.kapua.service.device.registry.DeviceFactory;
 import org.eclipse.kapua.service.device.registry.DeviceListResult;
 import org.eclipse.kapua.service.device.registry.DeviceQuery;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.job.targets.JobTarget;
 
 import com.opencsv.CSVWriter;
-import org.apache.commons.lang3.CharEncoding;
 
 public class JobTargetExporterCsv extends JobTargetExporter {
 
@@ -70,7 +70,7 @@ public class JobTargetExporterCsv extends JobTargetExporter {
         writer = new CSVWriter(outputWriter);
 
         List<String> cols = new ArrayList<String>(Arrays.asList(JOB_TARGET_PROPERTIES));
-        writer.writeNext(cols.toArray(new String[]{ }));
+        writer.writeNext(cols.toArray(new String[] {}));
     }
 
     @Override
@@ -80,8 +80,7 @@ public class JobTargetExporterCsv extends JobTargetExporter {
         KapuaLocator locator = KapuaLocator.getInstance();
         final KapuaIdFactory kapuaIdFactory = locator.getFactory(KapuaIdFactory.class);
         final DeviceRegistryService deviceRegistryService = locator.getService(DeviceRegistryService.class);
-        final DeviceFactory deviceFactory = locator.getFactory(DeviceFactory.class);
-        final DeviceQuery deviceQuery = deviceFactory.newQuery(kapuaIdFactory.newKapuaId(scopeId));
+        final DeviceQuery deviceQuery = new DeviceQuery(kapuaIdFactory.newKapuaId(scopeId));
 
         KapuaId[] targetIds = new KapuaId[jobTargets.getSize()];
         int i = 0;

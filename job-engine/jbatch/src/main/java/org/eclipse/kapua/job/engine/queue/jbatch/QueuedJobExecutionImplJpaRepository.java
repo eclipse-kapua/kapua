@@ -22,7 +22,8 @@ import org.eclipse.kapua.service.job.execution.JobExecution;
 public class QueuedJobExecutionImplJpaRepository
         extends KapuaUpdatableEntityJpaRepository<QueuedJobExecution, QueuedJobExecutionImpl, QueuedJobExecutionListResult>
         implements QueuedJobExecutionRepository {
+
     public QueuedJobExecutionImplJpaRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig) {
-        super(QueuedJobExecutionImpl.class, JobExecution.TYPE, () -> new QueuedJobExecutionListResultImpl(), jpaRepoConfig);
+        super(QueuedJobExecutionImpl.class, JobExecution.TYPE, () -> new QueuedJobExecutionListResult(), jpaRepoConfig);
     }
 }

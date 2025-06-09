@@ -12,20 +12,40 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.model;
 
-import org.eclipse.kapua.service.datastore.model.xml.MetricInfoXmlRegistry;
-import org.eclipse.kapua.service.storable.model.StorableListResult;
-
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.eclipse.kapua.service.elasticsearch.client.model.ResultList;
+import org.eclipse.kapua.service.storable.model.StorableListResult;
+
 /**
- * Metric information query result list definition.<br>
- * This object contains the list of the metric information objects retrieved by the search service.
+ * Metric information query result list definition.<br> This object contains the list of the metric information objects retrieved by the search service.
  *
  * @since 1.0
  */
 @XmlRootElement(name = "metricInfos")
-@XmlType(factoryClass = MetricInfoXmlRegistry.class, factoryMethod = "newListResult")
-public interface MetricInfoListResult extends StorableListResult<MetricInfo> {
+@XmlType
+public class MetricInfoListResult extends StorableListResult<MetricInfo> {
 
+    private static final long serialVersionUID = 9057086672566426909L;
+
+    /**
+     * Constructor.
+     *
+     * @since 1.0.0
+     */
+    public MetricInfoListResult() {
+        super();
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param resultList
+     *         The {@link ResultList} to add.
+     * @since 1.0.0
+     */
+    public MetricInfoListResult(ResultList<MetricInfo> resultList) {
+        super(resultList.getResult(), resultList.getTotalCount());
+    }
 }

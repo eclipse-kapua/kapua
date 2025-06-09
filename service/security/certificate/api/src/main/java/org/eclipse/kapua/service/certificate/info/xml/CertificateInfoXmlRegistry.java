@@ -12,14 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.certificate.info.xml;
 
+import javax.xml.bind.annotation.XmlRegistry;
+
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.service.certificate.info.CertificateInfo;
-import org.eclipse.kapua.service.certificate.info.CertificateInfoCreator;
 import org.eclipse.kapua.service.certificate.info.CertificateInfoFactory;
-import org.eclipse.kapua.service.certificate.info.CertificateInfoListResult;
-import org.eclipse.kapua.service.certificate.info.CertificateInfoQuery;
-
-import javax.xml.bind.annotation.XmlRegistry;
 
 @XmlRegistry
 public class CertificateInfoXmlRegistry {
@@ -28,17 +25,5 @@ public class CertificateInfoXmlRegistry {
 
     public CertificateInfo newCertificateInfo() {
         return certificateInfoFactory.newEntity(null);
-    }
-
-    public CertificateInfoCreator newCreator() {
-        return certificateInfoFactory.newCreator(null);
-    }
-
-    public CertificateInfoQuery newQuery() {
-        return certificateInfoFactory.newQuery(null);
-    }
-
-    public CertificateInfoListResult newListResult() {
-        return certificateInfoFactory.newListResult();
     }
 }

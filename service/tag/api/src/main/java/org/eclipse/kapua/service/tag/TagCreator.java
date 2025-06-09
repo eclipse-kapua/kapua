@@ -12,12 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.tag;
 
-import org.eclipse.kapua.model.KapuaNamedEntityCreator;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.model.KapuaNamedEntityCreator;
+import org.eclipse.kapua.model.id.KapuaId;
 
 /**
  * {@link TagCreator} definition
@@ -28,6 +29,19 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "tagCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = TagXmlRegistry.class, factoryMethod = "newTagCreator")
-public interface TagCreator extends KapuaNamedEntityCreator<Tag> {
+@XmlType
+public class TagCreator extends KapuaNamedEntityCreator {
+
+    private static final long serialVersionUID = -4676187845961673421L;
+
+    public TagCreator() {
+    }
+
+    public TagCreator(KapuaId scopeId) {
+        super(scopeId);
+    }
+
+    public TagCreator(KapuaId scopeId, String name) {
+        super(scopeId, name);
+    }
 }

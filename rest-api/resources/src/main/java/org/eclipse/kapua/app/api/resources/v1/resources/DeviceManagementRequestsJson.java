@@ -12,6 +12,16 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.resources.v1.resources;
 
+import javax.inject.Inject;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.app.api.core.model.EntityId;
 import org.eclipse.kapua.app.api.core.model.ScopeId;
@@ -28,16 +38,6 @@ import org.eclipse.kapua.service.device.management.request.message.request.Gener
 import org.eclipse.kapua.service.device.management.request.message.response.GenericResponseMessage;
 import org.eclipse.kapua.service.device.registry.Device;
 
-import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
-
 /**
  * @see JsonSerializationFixed
  */
@@ -50,20 +50,23 @@ public class DeviceManagementRequestsJson extends AbstractKapuaResource implemen
     public DeviceRequestManagementService requestService;
 
     /**
-     * Sends a request message to a device.
-     * This call is generally used to perform remote management of resources
-     * attached to the device such sensors and registries.
+     * Sends a request message to a device. This call is generally used to perform remote management of resources attached to the device such sensors and registries.
      *
-     * @param scopeId                   The {@link ScopeId} of the {@link Device}.
-     * @param deviceId                  The {@link Device} ID.
-     * @param timeout                   The timeout of the request execution
-     * @param jsonGenericRequestMessage The input request
+     * @param scopeId
+     *         The {@link ScopeId} of the {@link Device}.
+     * @param deviceId
+     *         The {@link Device} ID.
+     * @param timeout
+     *         The timeout of the request execution
+     * @param jsonGenericRequestMessage
+     *         The input request
      * @return The response output.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      */
     @POST
-    @Consumes({MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({ MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_JSON })
     public JsonGenericResponseMessage sendRequest(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,
@@ -82,7 +85,7 @@ public class DeviceManagementRequestsJson extends AbstractKapuaResource implemen
         genericRequestMessage.setPosition(jsonGenericRequestMessage.getPosition());
         genericRequestMessage.setChannel(jsonGenericRequestMessage.getChannel());
 
-        GenericRequestPayload kapuaDataPayload = genericRequestFactory.newRequestPayload();
+        GenericRequestPayload kapuaDataPayload = new GenericRequestPayload();
 
         if (jsonGenericRequestMessage.getPayload() != null) {
             kapuaDataPayload.setBody(jsonGenericRequestMessage.getPayload().getBody());

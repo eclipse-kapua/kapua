@@ -12,8 +12,28 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.user;
 
-import org.eclipse.kapua.model.query.predicate.MatchPredicate;
+import java.util.Arrays;
 
-public interface UserMatchPredicate<T> extends MatchPredicate<T> {
+import org.eclipse.kapua.model.query.predicate.AbstractMatchPredicate;
 
+public class UserMatchPredicate<T> extends AbstractMatchPredicate<T> {
+
+    /**
+     * Constructor.
+     *
+     * @param matchTerm
+     * @since 1.3.0
+     */
+    public UserMatchPredicate(T matchTerm) {
+        this.attributeNames = Arrays.asList(
+                UserAttributes.NAME,
+                UserAttributes.EMAIL,
+                UserAttributes.PHONE_NUMBER,
+                UserAttributes.DISPLAY_NAME,
+                UserAttributes.EXTERNAL_ID,
+                UserAttributes.DESCRIPTION,
+                UserAttributes.EXTERNAL_USERNAME
+        );
+        this.matchTerm = matchTerm;
+    }
 }

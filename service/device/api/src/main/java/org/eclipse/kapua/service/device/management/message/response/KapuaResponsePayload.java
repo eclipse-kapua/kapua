@@ -17,12 +17,12 @@ import org.eclipse.kapua.message.KapuaPayload;
 /**
  * Response {@link KapuaPayload} definition.
  * <p>
- * This object defines the {@link KapuaPayload} for a {@link KapuaResponseMessage}.<br>
- * The response message is used to perform interactive operations with the device (e.g. to send command to the device, to ask configurations...)
+ * This object defines the {@link KapuaPayload} for a {@link KapuaResponseMessage}.<br> The response message is used to perform interactive operations with the device (e.g. to send command to the
+ * device, to ask configurations...)
  *
  * @since 1.0.0
  */
-public interface KapuaResponsePayload extends KapuaPayload {
+public class KapuaResponsePayload extends KapuaPayload {
 
     /**
      * Gets the exception message (if present).
@@ -30,15 +30,20 @@ public interface KapuaResponsePayload extends KapuaPayload {
      * @return The exception message.
      * @since 1.0.0
      */
-    String getExceptionMessage();
+    public String getExceptionMessage() {
+        return (String) getMetrics().get(ResponseProperties.RESP_PROPERTY_EXCEPTION_MESSAGE.getValue());
+    }
 
     /**
      * Sets the exception message.
      *
-     * @param exceptionMessage The exception message.
+     * @param exceptionMessage
+     *         The exception message.
      * @since 1.0.0
      */
-    void setExceptionMessage(String exceptionMessage);
+    public void setExceptionMessage(String exceptionMessage) {
+        getMetrics().put(ResponseProperties.RESP_PROPERTY_EXCEPTION_MESSAGE.getValue(), exceptionMessage);
+    }
 
     /**
      * Gets the exception stack trace (if present).
@@ -46,13 +51,19 @@ public interface KapuaResponsePayload extends KapuaPayload {
      * @return The exception stack trace (if present).
      * @since 1.0.0
      */
-    String getExceptionStack();
+    public String getExceptionStack() {
+        return (String) getMetrics().get(ResponseProperties.RESP_PROPERTY_EXCEPTION_STACK.getValue());
+    }
 
     /**
      * Sets the exception stack trace.
      *
-     * @param setExecptionStack The exception stack trace.
+     * @param setExecptionStack
+     *         The exception stack trace.
      * @since 1.0.0
      */
-    void setExceptionStack(String setExecptionStack);
+    public void setExceptionStack(String setExecptionStack) {
+        getMetrics().put(ResponseProperties.RESP_PROPERTY_EXCEPTION_STACK.getValue(), setExecptionStack);
+    }
+
 }

@@ -20,7 +20,13 @@ import org.eclipse.kapua.model.id.KapuaId;
  *
  * @since 1.0.0
  */
-public interface KapuaNotifyPayload extends KapuaPayload {
+public class KapuaNotifyPayload extends KapuaPayload {
+
+    private KapuaId operationId;
+    private String resource;
+    private NotifyStatus status;
+    private Integer progress;
+    private String message;
 
     /**
      * Gets the operation {@link KapuaId}.
@@ -28,15 +34,20 @@ public interface KapuaNotifyPayload extends KapuaPayload {
      * @return The operation {@link KapuaId}.
      * @since 1.0.0
      */
-    KapuaId getOperationId();
+    public KapuaId getOperationId() {
+        return operationId;
+    }
 
     /**
      * Sets the operation {@link KapuaId}.
      *
-     * @param operationId The operation {@link KapuaId}.
+     * @param operationId
+     *         The operation {@link KapuaId}.
      * @since 1.0.0
      */
-    void setOperationId(KapuaId operationId);
+    public void setOperationId(KapuaId operationId) {
+        this.operationId = operationId;
+    }
 
     /**
      * Gets the resource.
@@ -46,17 +57,22 @@ public interface KapuaNotifyPayload extends KapuaPayload {
      * @deprecated Since 1.2.0. Please make use of {@link KapuaNotifyChannel#getResources()}
      */
     @Deprecated
-    String getResource();
+    public String getResource() {
+        return resource;
+    }
 
     /**
      * Sets the resource.
      *
-     * @param resource The resource.
+     * @param resource
+     *         The resource.
      * @since 1.0.0
      * @deprecated Since 1.2.0. Please make use of {@link KapuaNotifyChannel#setResources(String[])}
      */
     @Deprecated
-    void setResource(String resource);
+    public void setResource(String resource) {
+        this.resource = resource;
+    }
 
     /**
      * Gets the {@link NotifyStatus}.
@@ -64,15 +80,20 @@ public interface KapuaNotifyPayload extends KapuaPayload {
      * @return The {@link NotifyStatus}.
      * @since 1.0.0
      */
-    NotifyStatus getStatus();
+    public NotifyStatus getStatus() {
+        return status;
+    }
 
     /**
      * Sets the {@link NotifyStatus}.
      *
-     * @param status The {@link NotifyStatus}.
+     * @param status
+     *         The {@link NotifyStatus}.
      * @since 1.0.0
      */
-    void setStatus(NotifyStatus status);
+    public void setStatus(NotifyStatus status) {
+        this.status = status;
+    }
 
     /**
      * Gets the operation progress.
@@ -80,15 +101,20 @@ public interface KapuaNotifyPayload extends KapuaPayload {
      * @return The operation progress.
      * @since 1.0.0
      */
-    Integer getProgress();
+    public Integer getProgress() {
+        return progress;
+    }
 
     /**
      * Sets the operation progress.
      *
-     * @param progress The operation progress.
+     * @param progress
+     *         The operation progress.
      * @since 1.0.0
      */
-    void setProgress(Integer progress);
+    public void setProgress(Integer progress) {
+        this.progress = progress;
+    }
 
     /**
      * Gets the message.
@@ -96,13 +122,19 @@ public interface KapuaNotifyPayload extends KapuaPayload {
      * @return The message.
      * @since 1.2.0
      */
-    String getMessage();
+    public String getMessage() {
+        return message;
+    }
 
     /**
      * Gets the message.
      *
-     * @param message The message.
+     * @param message
+     *         The message.
      * @since 1.2.0
      */
-    void setMessage(String message);
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
 }

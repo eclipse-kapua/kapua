@@ -12,22 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.resources.v1.resources;
 
-import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.app.api.core.model.CountResult;
-import org.eclipse.kapua.app.api.core.model.EntityId;
-import org.eclipse.kapua.app.api.core.model.ScopeId;
-import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
-import org.eclipse.kapua.model.query.predicate.AndPredicate;
-import org.eclipse.kapua.service.KapuaService;
-import org.eclipse.kapua.service.authentication.credential.Credential;
-import org.eclipse.kapua.service.authentication.credential.CredentialAttributes;
-import org.eclipse.kapua.service.authentication.credential.CredentialCreator;
-import org.eclipse.kapua.service.authentication.credential.CredentialFactory;
-import org.eclipse.kapua.service.authentication.credential.CredentialListResult;
-import org.eclipse.kapua.service.authentication.credential.CredentialQuery;
-import org.eclipse.kapua.service.authentication.credential.CredentialService;
-import org.eclipse.kapua.service.authentication.user.PasswordResetRequest;
-
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -39,6 +23,22 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.app.api.core.model.CountResult;
+import org.eclipse.kapua.app.api.core.model.EntityId;
+import org.eclipse.kapua.app.api.core.model.ScopeId;
+import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
+import org.eclipse.kapua.model.query.KapuaQuery;
+import org.eclipse.kapua.model.query.predicate.AndPredicate;
+import org.eclipse.kapua.service.KapuaService;
+import org.eclipse.kapua.service.authentication.credential.Credential;
+import org.eclipse.kapua.service.authentication.credential.CredentialAttributes;
+import org.eclipse.kapua.service.authentication.credential.CredentialCreator;
+import org.eclipse.kapua.service.authentication.credential.CredentialFactory;
+import org.eclipse.kapua.service.authentication.credential.CredentialListResult;
+import org.eclipse.kapua.service.authentication.credential.CredentialService;
+import org.eclipse.kapua.service.authentication.user.PasswordResetRequest;
 
 /*
  @deprecated
@@ -59,22 +59,27 @@ public class UsersCredentials extends AbstractKapuaResource {
     /**
      * Gets the {@link Credential} list in the scope.
      *
-     * @param scopeId The {@link ScopeId} in which to search results.
-     * @param userId  The {@link EntityId} for which search results.
-     * @param offset  The result set offset.
-     * @param limit   The result set limit.
+     * @param scopeId
+     *         The {@link ScopeId} in which to search results.
+     * @param userId
+     *         The {@link EntityId} for which search results.
+     * @param offset
+     *         The result set offset.
+     * @param limit
+     *         The result set limit.
      * @return The {@link CredentialListResult} of all the credentials associated to the current selected scope.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @GET
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public CredentialListResult getAll(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("userId") EntityId userId,
             @QueryParam("offset") @DefaultValue("0") int offset,
             @QueryParam("limit") @DefaultValue("50") int limit) throws KapuaException {
-        CredentialQuery query = credentialFactory.newQuery(scopeId);
+        KapuaQuery query = new KapuaQuery(scopeId);
 
         AndPredicate andPredicate = query.andPredicate();
         andPredicate.and(query.attributePredicate(CredentialAttributes.USER_ID, userId));
@@ -86,25 +91,28 @@ public class UsersCredentials extends AbstractKapuaResource {
         return credentialService.query(query);
     }
 
-
     /**
-     * Counts the results with the given {@link CredentialQuery} parameter.
+     * Counts the results with the given {@link KapuaQuery} parameter.
      *
-     * @param scopeId The {@link ScopeId} in which to count results.
-     * @param userId  The {@link EntityId} for which count results.
-     * @param query   The {@link CredentialQuery} to use to filter results.
-     * @return The count of all the result matching the given {@link CredentialQuery} parameter.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @param scopeId
+     *         The {@link ScopeId} in which to count results.
+     * @param userId
+     *         The {@link EntityId} for which count results.
+     * @param query
+     *         The {@link KapuaQuery} to use to filter results.
+     * @return The count of all the result matching the given {@link KapuaQuery} parameter.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @POST
     @Path("_count")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public CountResult count(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("userId") EntityId userId,
-            CredentialQuery query) throws KapuaException {
+            KapuaQuery query) throws KapuaException {
         AndPredicate andPredicate = query.andPredicate();
         andPredicate.and(query.attributePredicate(CredentialAttributes.USER_ID, userId));
         query.setPredicate(andPredicate);
@@ -112,21 +120,23 @@ public class UsersCredentials extends AbstractKapuaResource {
         return new CountResult(credentialService.count(query));
     }
 
-
     /**
-     * Creates a new Credential based on the information provided in CredentialCreator
-     * parameter.
+     * Creates a new Credential based on the information provided in CredentialCreator parameter.
      *
-     * @param scopeId           The {@link ScopeId} in which to create the {@link Credential}.
-     * @param userId            The {@link EntityId} for which create the {@link Credential}.
-     * @param credentialCreator Provides the information for the new Credential to be created.
+     * @param scopeId
+     *         The {@link ScopeId} in which to create the {@link Credential}.
+     * @param userId
+     *         The {@link EntityId} for which create the {@link Credential}.
+     * @param credentialCreator
+     *         Provides the information for the new Credential to be created.
      * @return The newly created Credential object.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @POST
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public Response create(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("userId") EntityId userId,
@@ -140,11 +150,15 @@ public class UsersCredentials extends AbstractKapuaResource {
     /**
      * Reset the password for the specific user
      *
-     * @param scopeId              The {@link ScopeId} of the {@link Credential} to reset.
-     * @param userId               The {@link EntityId} for which to reset the password credential.
-     * @param passwordResetRequest Request for resetting credential password
+     * @param scopeId
+     *         The {@link ScopeId} of the {@link Credential} to reset.
+     * @param userId
+     *         The {@link EntityId} for which to reset the password credential.
+     * @param passwordResetRequest
+     *         Request for resetting credential password
      * @return The updated credential.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 2.0.0
      * @deprecated since 2.0.0 - use POST POST /{scopeId}/users/{userId}/password/_reset instead (see {@link UsersCredentials})
      */

@@ -12,6 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.translator.kura.kapua;
 
+import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.model.id.KapuaIdFactory;
 import org.eclipse.kapua.service.account.Account;
@@ -27,9 +33,6 @@ import org.eclipse.kapua.service.device.call.message.kura.app.notification.KuraN
 import org.eclipse.kapua.service.device.management.asset.internal.DeviceAssetAppProperties;
 import org.eclipse.kapua.service.device.management.bundle.internal.DeviceBundleAppProperties;
 import org.eclipse.kapua.service.device.management.command.internal.CommandAppProperties;
-import org.eclipse.kapua.service.device.management.commons.message.notification.KapuaNotifyChannelImpl;
-import org.eclipse.kapua.service.device.management.commons.message.notification.KapuaNotifyMessageImpl;
-import org.eclipse.kapua.service.device.management.commons.message.notification.KapuaNotifyPayloadImpl;
 import org.eclipse.kapua.service.device.management.configuration.internal.DeviceConfigurationAppProperties;
 import org.eclipse.kapua.service.device.management.message.KapuaAppProperties;
 import org.eclipse.kapua.service.device.management.message.notification.KapuaNotifyChannel;
@@ -44,11 +47,6 @@ import org.eclipse.kapua.translator.exception.InvalidChannelException;
 import org.eclipse.kapua.translator.exception.InvalidMessageException;
 import org.eclipse.kapua.translator.exception.InvalidPayloadException;
 import org.eclipse.kapua.translator.exception.TranslateException;
-
-import javax.inject.Inject;
-import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * {@link Translator} implementation from {@link KuraNotifyMessage} to {@link KapuaNotifyMessage}
@@ -91,7 +89,7 @@ public class TranslatorAppNotifyKuraKapua extends Translator<KuraNotifyMessage, 
     public KapuaNotifyMessage translate(KuraNotifyMessage kuraNotifyMessage) throws TranslateException {
 
         try {
-            KapuaNotifyMessage kapuaNotifyMessage = new KapuaNotifyMessageImpl();
+            KapuaNotifyMessage kapuaNotifyMessage = new KapuaNotifyMessage();
             kapuaNotifyMessage.setChannel(translate(kuraNotifyMessage.getChannel()));
             kapuaNotifyMessage.setPayload(translate(kuraNotifyMessage.getPayload()));
 
@@ -125,7 +123,7 @@ public class TranslatorAppNotifyKuraKapua extends Translator<KuraNotifyMessage, 
             String kuraAppIdName = kuraNotifyChannel.getAppId().split("-")[0];
             String kuraAppIdVersion = kuraNotifyChannel.getAppId().split("-")[1];
 
-            KapuaNotifyChannel kapuaNotifyChannel = new KapuaNotifyChannelImpl();
+            KapuaNotifyChannel kapuaNotifyChannel = new KapuaNotifyChannel();
             kapuaNotifyChannel.setAppName(appNameDictionary.get(kuraAppIdName));
             kapuaNotifyChannel.setVersion(appVersionDictionary.get(kuraAppIdVersion));
             kapuaNotifyChannel.setResources(kuraNotifyChannel.getResources());
@@ -138,22 +136,22 @@ public class TranslatorAppNotifyKuraKapua extends Translator<KuraNotifyMessage, 
 
     private KapuaNotifyPayload translate(KuraNotifyPayload kuraNotifyPayload) throws InvalidPayloadException {
         try {
-            KapuaNotifyPayload kapuaNotifyPayload = new KapuaNotifyPayloadImpl();
+            KapuaNotifyPayload kapuaNotifyPayload = new KapuaNotifyPayload();
 
             kapuaNotifyPayload.setOperationId(kapuaIdFactory.newKapuaId(new BigInteger(kuraNotifyPayload.getOperationId().toString())));
             kapuaNotifyPayload.setResource(kuraNotifyPayload.getResource());
             kapuaNotifyPayload.setProgress(kuraNotifyPayload.getProgress());
 
             switch (kuraNotifyPayload.getStatus()) {
-                case "IN_PROGRESS":
-                    kapuaNotifyPayload.setStatus(NotifyStatus.RUNNING);
-                    break;
-                case "COMPLETED":
-                    kapuaNotifyPayload.setStatus(NotifyStatus.COMPLETED);
-                    break;
-                case "FAILED":
-                    kapuaNotifyPayload.setStatus(NotifyStatus.FAILED);
-                    break;
+            case "IN_PROGRESS":
+                kapuaNotifyPayload.setStatus(NotifyStatus.RUNNING);
+                break;
+            case "COMPLETED":
+                kapuaNotifyPayload.setStatus(NotifyStatus.COMPLETED);
+                break;
+            case "FAILED":
+                kapuaNotifyPayload.setStatus(NotifyStatus.FAILED);
+                break;
             }
 
             kapuaNotifyPayload.setMessage(kuraNotifyPayload.getMessage());

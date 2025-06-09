@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.job;
 
-import org.eclipse.kapua.locator.KapuaLocator;
-
 import javax.xml.bind.annotation.XmlRegistry;
+
+import org.eclipse.kapua.locator.KapuaLocator;
 
 /**
  * {@link JobDeviceManagementOperation} xml factory class
@@ -28,17 +28,5 @@ public class JobDeviceManagementOperationXmlRegistry {
 
     public JobDeviceManagementOperation newJobDeviceManagementOperation() {
         return jobDeviceManagementOperationFactory.newEntity(null);
-    }
-
-    public JobDeviceManagementOperationCreator newJobDeviceManagementOperationCreator() {
-        return jobDeviceManagementOperationFactory.newCreator(null);
-    }
-
-    public JobDeviceManagementOperationListResult newJobDeviceManagementOperationListResult() {
-        return jobDeviceManagementOperationFactory.newListResult();
-    }
-
-    public JobDeviceManagementOperationQuery newQuery() {
-        return jobDeviceManagementOperationFactory.newQuery(null);
     }
 }

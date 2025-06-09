@@ -12,6 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.commons;
 
+import java.util.Optional;
+import java.util.concurrent.Callable;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
@@ -19,7 +25,6 @@ import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.commons.util.ThrowingRunnable;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.device.management.DeviceManagementService;
 import org.eclipse.kapua.service.device.management.exception.DeviceManagementResponseBadRequestException;
 import org.eclipse.kapua.service.device.management.exception.DeviceManagementResponseCodeException;
@@ -40,11 +45,6 @@ import org.eclipse.kapua.service.device.registry.event.DeviceEventFactory;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventService;
 import org.eclipse.kapua.storage.TxManager;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
-import java.util.Optional;
-import java.util.concurrent.Callable;
-
 /**
  * Utility {@code abstract} {@link Class} used to provide utility methods to all implementation of {@link DeviceManagementService}s.
  *
@@ -54,7 +54,6 @@ public abstract class AbstractDeviceManagementTransactionalServiceImpl {
 
     protected final TxManager txManager;
     protected final AuthorizationService authorizationService;
-    protected final PermissionFactory permissionFactory;
 
     protected final DeviceEventService deviceEventService;
     protected final DeviceEventFactory deviceEventFactory;
@@ -64,13 +63,11 @@ public abstract class AbstractDeviceManagementTransactionalServiceImpl {
     public AbstractDeviceManagementTransactionalServiceImpl(
             TxManager txManager,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             DeviceEventService deviceEventService,
             DeviceEventFactory deviceEventFactory,
             DeviceRegistryService deviceRegistryService) {
         this.txManager = txManager;
         this.authorizationService = authorizationService;
-        this.permissionFactory = permissionFactory;
         this.deviceEventService = deviceEventService;
         this.deviceEventFactory = deviceEventFactory;
         this.deviceRegistryService = deviceRegistryService;
@@ -83,17 +80,22 @@ public abstract class AbstractDeviceManagementTransactionalServiceImpl {
      * This operation is performed using {@link KapuaSecurityUtils#doPrivileged(ThrowingRunnable)} since {@link org.eclipse.kapua.commons.model.domains.Domains#DEVICE_EVENT} isn't a required
      * permission to use any of the Device Management Services.
      *
-     * @param scopeId         The scopeId in which to create the {@link org.eclipse.kapua.service.device.registry.event.DeviceEvent}
-     * @param deviceId        The {@link org.eclipse.kapua.service.device.registry.Device} id for which the {@link org.eclipse.kapua.service.device.registry.event.DeviceEvent} is created
-     * @param requestMessage  The {@link KapuaRequestMessage} of the DeviceManagementService operation from which to extract data.
-     * @param responseMessage The {@link KapuaResponseMessage} of the DeviceManagementService operation from which to extract data.
-     * @throws KapuaException If the creation of the {@link org.eclipse.kapua.service.device.registry.event.DeviceEvent} fails for some reasons
+     * @param scopeId
+     *         The scopeId in which to create the {@link org.eclipse.kapua.service.device.registry.event.DeviceEvent}
+     * @param deviceId
+     *         The {@link org.eclipse.kapua.service.device.registry.Device} id for which the {@link org.eclipse.kapua.service.device.registry.event.DeviceEvent} is created
+     * @param requestMessage
+     *         The {@link KapuaRequestMessage} of the DeviceManagementService operation from which to extract data.
+     * @param responseMessage
+     *         The {@link KapuaResponseMessage} of the DeviceManagementService operation from which to extract data.
+     * @throws KapuaException
+     *         If the creation of the {@link org.eclipse.kapua.service.device.registry.event.DeviceEvent} fails for some reasons
      * @since 1.0.0
      */
     protected void createDeviceEvent(KapuaId scopeId, KapuaId deviceId, KapuaRequestMessage<?, ?> requestMessage, KapuaResponseMessage<?, ?> responseMessage) throws KapuaException {
 
         DeviceEventCreator deviceEventCreator =
-                deviceEventFactory.newCreator(
+                new DeviceEventCreator(
                         scopeId,
                         deviceId,
                         responseMessage != null ? responseMessage.getReceivedOn() : requestMessage.getSentOn(),
@@ -111,9 +113,12 @@ public abstract class AbstractDeviceManagementTransactionalServiceImpl {
     /**
      * Checks whether the {@link Device} exists and if it is connected.
      *
-     * @param scopeId  The {@link Device#getScopeId()}.
-     * @param deviceId The {@link Device#getId()}.
-     * @return {@code true} if {@link Device} exists, has a {@link Device#getConnection()} and the {@link DeviceConnection#getStatus()} is {@link DeviceConnectionStatus#CONNECTED}, {@code false} otherwise.
+     * @param scopeId
+     *         The {@link Device#getScopeId()}.
+     * @param deviceId
+     *         The {@link Device#getId()}.
+     * @return {@code true} if {@link Device} exists, has a {@link Device#getConnection()} and the {@link DeviceConnection#getStatus()} is {@link DeviceConnectionStatus#CONNECTED}, {@code false}
+     *         otherwise.
      * @throws KapuaException
      */
     public boolean isDeviceConnected(KapuaId scopeId, KapuaId deviceId) throws KapuaException {
@@ -134,8 +139,10 @@ public abstract class AbstractDeviceManagementTransactionalServiceImpl {
     /**
      * Checks the {@link KapuaResponseMessage#getResponseCode()} if it is {@link KapuaResponseCode#ACCEPTED} or throws the proper {@link DeviceManagementResponseCodeException}.
      *
-     * @param responseMessage The {@link KapuaResponseMessage} to check.
-     * @throws DeviceManagementResponseCodeException if {@link KapuaResponseMessage#getResponseCode()} is not {@link KapuaResponseCode#ACCEPTED}.
+     * @param responseMessage
+     *         The {@link KapuaResponseMessage} to check.
+     * @throws DeviceManagementResponseCodeException
+     *         if {@link KapuaResponseMessage#getResponseCode()} is not {@link KapuaResponseCode#ACCEPTED}.
      * @since 1.5.0
      */
     protected void checkResponseAcceptedOrThrowError(@NotNull KapuaResponseMessage<?, ?> responseMessage) throws DeviceManagementResponseCodeException {
@@ -151,15 +158,21 @@ public abstract class AbstractDeviceManagementTransactionalServiceImpl {
      * <p>
      * If {@link Callable} is not provided the returned result will be {@code null}.
      *
-     * @param responseMessage The {@link KapuaResponseMessage} to check.
-     * @param resultGetter    The {@link Callable} that gets the result.
-     * @param <R>             The type of the result.
+     * @param responseMessage
+     *         The {@link KapuaResponseMessage} to check.
+     * @param resultGetter
+     *         The {@link Callable} that gets the result.
+     * @param <R>
+     *         The type of the result.
      * @return The result from the {@link KapuaResponseMessage} if {@link KapuaResponseMessage#getResponseCode()} is {@link KapuaResponseCode#ACCEPTED}.
-     * @throws DeviceManagementResponseCodeException    if {@link KapuaResponseMessage#getResponseCode()} is not {@link KapuaResponseCode#ACCEPTED}.
-     * @throws DeviceManagementResponseContentException if getting the result causes any {@link Exception}.
+     * @throws DeviceManagementResponseCodeException
+     *         if {@link KapuaResponseMessage#getResponseCode()} is not {@link KapuaResponseCode#ACCEPTED}.
+     * @throws DeviceManagementResponseContentException
+     *         if getting the result causes any {@link Exception}.
      * @since 1.5.0
      */
-    protected <R> R checkResponseAcceptedOrThrowError(@NotNull KapuaResponseMessage<?, ?> responseMessage, @Null Callable<R> resultGetter) throws DeviceManagementResponseCodeException, DeviceManagementResponseContentException {
+    protected <R> R checkResponseAcceptedOrThrowError(@NotNull KapuaResponseMessage<?, ?> responseMessage, @Null Callable<R> resultGetter)
+            throws DeviceManagementResponseCodeException, DeviceManagementResponseContentException {
         if (responseMessage.getResponseCode().isAccepted()) {
             if (resultGetter != null) {
                 try {
@@ -178,7 +191,8 @@ public abstract class AbstractDeviceManagementTransactionalServiceImpl {
     /**
      * Builds the {@link DeviceManagementResponseCodeException} from the {@link KapuaResponseMessage}.
      *
-     * @param kapuaResponseMessage The {@link KapuaResponseMessage} to build from.
+     * @param kapuaResponseMessage
+     *         The {@link KapuaResponseMessage} to build from.
      * @return The proper {@link DeviceManagementResponseCodeException} for the {@link KapuaResponseMessage#getResponseCode()}
      * @since 1.5.0
      */
@@ -187,15 +201,15 @@ public abstract class AbstractDeviceManagementTransactionalServiceImpl {
         KapuaResponsePayload responsePayload = kapuaResponseMessage.getPayload();
 
         switch (kapuaResponseMessage.getResponseCode()) {
-            case BAD_REQUEST:
-                return new DeviceManagementResponseBadRequestException(kapuaResponseMessage.getResponseCode(), responsePayload.getExceptionMessage(), responsePayload.getExceptionMessage());
-            case NOT_FOUND:
-                return new DeviceManagementResponseNotFoundException(kapuaResponseMessage.getResponseCode(), responsePayload.getExceptionMessage(), responsePayload.getExceptionMessage());
-            case INTERNAL_ERROR:
-                return new DeviceManagementResponseInternalErrorException(kapuaResponseMessage.getResponseCode(), responsePayload.getExceptionMessage(), responsePayload.getExceptionMessage());
-            case ACCEPTED:
-            default:
-                return new DeviceManagementResponseUnknownCodeException(kapuaResponseMessage.getResponseCode(), responsePayload.getExceptionMessage(), responsePayload.getExceptionMessage());
+        case BAD_REQUEST:
+            return new DeviceManagementResponseBadRequestException(kapuaResponseMessage.getResponseCode(), responsePayload.getExceptionMessage(), responsePayload.getExceptionMessage());
+        case NOT_FOUND:
+            return new DeviceManagementResponseNotFoundException(kapuaResponseMessage.getResponseCode(), responsePayload.getExceptionMessage(), responsePayload.getExceptionMessage());
+        case INTERNAL_ERROR:
+            return new DeviceManagementResponseInternalErrorException(kapuaResponseMessage.getResponseCode(), responsePayload.getExceptionMessage(), responsePayload.getExceptionMessage());
+        case ACCEPTED:
+        default:
+            return new DeviceManagementResponseUnknownCodeException(kapuaResponseMessage.getResponseCode(), responsePayload.getExceptionMessage(), responsePayload.getExceptionMessage());
         }
     }
 }

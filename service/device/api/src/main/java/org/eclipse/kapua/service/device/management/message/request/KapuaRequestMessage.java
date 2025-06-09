@@ -12,25 +12,23 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.message.request;
 
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+
 import org.eclipse.kapua.message.KapuaMessage;
-import org.eclipse.kapua.service.device.management.message.request.xml.RequestMessageXmlRegistry;
 import org.eclipse.kapua.service.device.management.message.response.KapuaResponseChannel;
 import org.eclipse.kapua.service.device.management.message.response.KapuaResponseMessage;
 import org.eclipse.kapua.service.device.management.message.response.KapuaResponsePayload;
 
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-
 /**
  * Request {@link KapuaMessage} definition.
  * <p>
- * This object defines the for a Kapua request message.
- * The request message is used to perform interactive operations with the device (e.g. to send command to the device, to ask configurations...)
+ * This object defines the for a Kapua request message. The request message is used to perform interactive operations with the device (e.g. to send command to the device, to ask configurations...)
  *
  * @since 1.0.0
  */
-@XmlType(factoryClass = RequestMessageXmlRegistry.class, factoryMethod = "newRequestMessage")
-public interface KapuaRequestMessage<C extends KapuaRequestChannel, P extends KapuaRequestPayload> extends KapuaMessage<C, P> {
+@XmlType
+public abstract class KapuaRequestMessage<REQ_CHN extends KapuaRequestChannel, REQ_PAY extends KapuaRequestPayload> extends KapuaMessage<REQ_CHN, REQ_PAY> {
 
     /**
      * Gets the {@link KapuaRequestMessage} {@link Class} type.
@@ -39,7 +37,7 @@ public interface KapuaRequestMessage<C extends KapuaRequestChannel, P extends Ka
      * @since 1.0.0
      */
     @XmlTransient
-    <M extends KapuaRequestMessage<C, P>> Class<M> getRequestClass();
+    public abstract <REQ extends KapuaRequestMessage<REQ_CHN, REQ_PAY>> Class<REQ> getRequestClass();
 
     /**
      * Gets the {@link KapuaResponseMessage} {@link Class} type.
@@ -48,6 +46,6 @@ public interface KapuaRequestMessage<C extends KapuaRequestChannel, P extends Ka
      * @since 1.0.0
      */
     @XmlTransient
-    <RSC extends KapuaResponseChannel, RSP extends KapuaResponsePayload, M extends KapuaResponseMessage<RSC, RSP>> Class<M> getResponseClass();
+    public abstract <RSC extends KapuaResponseChannel, RSP extends KapuaResponsePayload, RES extends KapuaResponseMessage<RSC, RSP>> Class<RES> getResponseClass();
 
 }

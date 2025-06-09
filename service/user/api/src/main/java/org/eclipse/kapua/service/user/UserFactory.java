@@ -13,7 +13,6 @@
 package org.eclipse.kapua.service.user;
 
 import org.eclipse.kapua.model.KapuaEntityFactory;
-import org.eclipse.kapua.model.id.KapuaId;
 
 /**
  * {@link UserFactory} definition.
@@ -21,16 +20,6 @@ import org.eclipse.kapua.model.id.KapuaId;
  * @see org.eclipse.kapua.model.KapuaEntityFactory
  * @since 1.0.0
  */
-public interface UserFactory extends KapuaEntityFactory<User, UserCreator, UserQuery, UserListResult> {
-
-    /**
-     * Instantiates a new {@link UserCreator}
-     *
-     * @param scopedId The scope {@link KapuaId} to set into the {@link UserCreator}.
-     * @param name     The name to set into the {@link UserCreator}.
-     * @return The newly instantiated {@link UserCreator}
-     * @since 1.0.0
-     */
-    UserCreator newCreator(KapuaId scopedId, String name);
+public interface UserFactory extends KapuaEntityFactory<User> {
 
 }

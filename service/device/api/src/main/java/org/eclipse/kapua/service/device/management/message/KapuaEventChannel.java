@@ -19,6 +19,6 @@ import org.eclipse.kapua.message.KapuaChannel;
  *
  * @since 2.0.0
  */
-public interface KapuaEventChannel extends KapuaChannel {
+public class KapuaEventChannel extends KapuaChannel {
 
 }

@@ -13,10 +13,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.integration.service.account;
 
+import org.junit.runner.RunWith;
+
 import io.cucumber.junit.Cucumber;
 import io.cucumber.junit.CucumberOptions;
-
-import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
@@ -32,7 +32,7 @@ import org.junit.runner.RunWith;
                 "classpath:features/account/AccountUserService.feature",
                 "classpath:features/account/AccountCredentialService.feature"
         },
-        glue = {"org.eclipse.kapua.qa.common",
+        glue = { "org.eclipse.kapua.qa.common",
                 "org.eclipse.kapua.service.account.steps",
                 "org.eclipse.kapua.service.user.steps",
                 "org.eclipse.kapua.service.authorization.steps",
@@ -40,10 +40,11 @@ import org.junit.runner.RunWith;
                 "org.eclipse.kapua.service.job.steps",
                 "org.eclipse.kapua.service.tag.steps"
         },
-        plugin = {"pretty",
+        plugin = { "pretty",
                 "html:target/cucumber/AccountServiceI9n",
                 "json:target/AccountServiceI9n_cucumber.json"
         },
         monochrome = true)
 public class RunAccountServiceI9nTest {
+
 }

@@ -12,16 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.registry.event.internal;
 
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.service.device.management.message.KapuaMethod;
-import org.eclipse.kapua.service.device.registry.event.DeviceEvent;
-import org.eclipse.kapua.service.device.registry.event.DeviceEventCreator;
-import org.eclipse.kapua.service.device.registry.event.DeviceEventFactory;
-import org.eclipse.kapua.service.device.registry.event.DeviceEventListResult;
-import org.eclipse.kapua.service.device.registry.event.DeviceEventQuery;
-
 import javax.inject.Singleton;
-import java.util.Date;
+
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.service.device.registry.event.DeviceEvent;
+import org.eclipse.kapua.service.device.registry.event.DeviceEventFactory;
 
 /**
  * {@link DeviceEventFactory} implementation.
@@ -32,35 +27,8 @@ import java.util.Date;
 public class DeviceEventFactoryImpl implements DeviceEventFactory {
 
     @Override
-    public DeviceEventCreator newCreator(KapuaId scopeId, KapuaId deviceId, Date receivedOn, String resource) {
-        DeviceEventCreator creator = newCreator(scopeId);
-
-        creator.setDeviceId(deviceId);
-        creator.setAction(KapuaMethod.CREATE);
-        creator.setReceivedOn(new Date(receivedOn.getTime()));
-        creator.setResource(resource);
-
-        return creator;
-    }
-
-    @Override
-    public DeviceEventQuery newQuery(KapuaId scopeId) {
-        return new DeviceEventQueryImpl(scopeId);
-    }
-
-    @Override
     public DeviceEvent newEntity(KapuaId scopeId) {
         return new DeviceEventImpl(scopeId);
-    }
-
-    @Override
-    public DeviceEventCreator newCreator(KapuaId scopeId) {
-        return new DeviceEventCreatorImpl(scopeId);
-    }
-
-    @Override
-    public DeviceEventListResult newListResult() {
-        return new DeviceEventListResultImpl();
     }
 
     @Override

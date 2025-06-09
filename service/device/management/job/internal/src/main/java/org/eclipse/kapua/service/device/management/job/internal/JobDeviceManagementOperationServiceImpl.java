@@ -12,33 +12,33 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.job.internal;
 
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityUniquenessException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.domains.Domains;
-import org.eclipse.kapua.commons.model.query.predicate.AndPredicateImpl;
-import org.eclipse.kapua.commons.model.query.predicate.AttributePredicateImpl;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
+import org.eclipse.kapua.model.query.predicate.AndPredicate;
+import org.eclipse.kapua.model.query.predicate.AttributePredicate;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperation;
 import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationAttributes;
 import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationCreator;
 import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationFactory;
 import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationListResult;
-import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationQuery;
 import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationRepository;
 import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationService;
 import org.eclipse.kapua.storage.TxManager;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * {@link JobDeviceManagementOperationService} implementation
@@ -51,7 +51,6 @@ public class JobDeviceManagementOperationServiceImpl
 
     private final JobDeviceManagementOperationFactory entityFactory;
     private final AuthorizationService authorizationService;
-    private final PermissionFactory permissionFactory;
     private final TxManager txManager;
     private final JobDeviceManagementOperationRepository repository;
 
@@ -59,12 +58,10 @@ public class JobDeviceManagementOperationServiceImpl
     public JobDeviceManagementOperationServiceImpl(
             JobDeviceManagementOperationFactory entityFactory,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             TxManager txManager,
             JobDeviceManagementOperationRepository repository) {
         this.entityFactory = entityFactory;
         this.authorizationService = authorizationService;
-        this.permissionFactory = permissionFactory;
         this.txManager = txManager;
         this.repository = repository;
     }
@@ -77,13 +74,13 @@ public class JobDeviceManagementOperationServiceImpl
         ArgumentValidator.notNull(jobDeviceManagementOperationCreator.getJobId(), "jobDeviceManagementOperationCreator.jobId");
         ArgumentValidator.notNull(jobDeviceManagementOperationCreator.getDeviceManagementOperationId(), "jobDeviceManagementOperationCreator.deviceManagementOperationId");
         // Check access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.write, null));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.write, null));
         // Check duplicate
-        JobDeviceManagementOperationQuery query = new JobDeviceManagementOperationQueryImpl(jobDeviceManagementOperationCreator.getScopeId());
+        KapuaQuery query = new KapuaQuery(jobDeviceManagementOperationCreator.getScopeId());
         query.setPredicate(
-                new AndPredicateImpl(
-                        new AttributePredicateImpl<>(JobDeviceManagementOperationAttributes.JOB_ID, jobDeviceManagementOperationCreator.getJobId()),
-                        new AttributePredicateImpl<>(JobDeviceManagementOperationAttributes.DEVICE_MANAGEMENT_OPERATION_ID, jobDeviceManagementOperationCreator.getDeviceManagementOperationId())
+                new AndPredicate(
+                        new AttributePredicate<>(JobDeviceManagementOperationAttributes.JOB_ID, jobDeviceManagementOperationCreator.getJobId()),
+                        new AttributePredicate<>(JobDeviceManagementOperationAttributes.DEVICE_MANAGEMENT_OPERATION_ID, jobDeviceManagementOperationCreator.getDeviceManagementOperationId())
                 )
         );
 
@@ -92,7 +89,8 @@ public class JobDeviceManagementOperationServiceImpl
                 List<Map.Entry<String, Object>> uniqueAttributes = new ArrayList<>();
 
                 uniqueAttributes.add(new AbstractMap.SimpleEntry<>(JobDeviceManagementOperationAttributes.JOB_ID, jobDeviceManagementOperationCreator.getJobId()));
-                uniqueAttributes.add(new AbstractMap.SimpleEntry<>(JobDeviceManagementOperationAttributes.DEVICE_MANAGEMENT_OPERATION_ID, jobDeviceManagementOperationCreator.getDeviceManagementOperationId()));
+                uniqueAttributes.add(
+                        new AbstractMap.SimpleEntry<>(JobDeviceManagementOperationAttributes.DEVICE_MANAGEMENT_OPERATION_ID, jobDeviceManagementOperationCreator.getDeviceManagementOperationId()));
 
                 throw new KapuaEntityUniquenessException(JobDeviceManagementOperation.TYPE, uniqueAttributes);
             }
@@ -112,7 +110,7 @@ public class JobDeviceManagementOperationServiceImpl
         ArgumentValidator.notNull(scopeId, "scopeId");
         ArgumentValidator.notNull(jobDeviceManagementOperationId, "jobDeviceManagementOperationId");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.write, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.write, scopeId));
         // Do find
         return txManager.execute(tx -> repository.find(tx, scopeId, jobDeviceManagementOperationId))
                 .orElse(null);
@@ -123,7 +121,7 @@ public class JobDeviceManagementOperationServiceImpl
         // Argument Validation
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.read, query.getScopeId()));
         // Do query
         return txManager.execute(tx -> repository.query(tx, query));
     }
@@ -133,7 +131,7 @@ public class JobDeviceManagementOperationServiceImpl
         // Argument Validation
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.read, query.getScopeId()));
         // Do query
         return txManager.execute(tx -> repository.count(tx, query));
     }
@@ -145,7 +143,7 @@ public class JobDeviceManagementOperationServiceImpl
         ArgumentValidator.notNull(jobDeviceManagementOperationId, "jobDeviceManagementOperationId");
 
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.delete, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.JOB, Actions.delete, scopeId));
 
         // Do delete
         txManager.execute(tx -> repository.delete(tx, scopeId, jobDeviceManagementOperationId));

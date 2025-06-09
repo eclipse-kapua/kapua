@@ -12,11 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.message.device.data;
 
-import org.eclipse.kapua.message.KapuaMessage;
-import org.eclipse.kapua.message.device.data.xml.DataMessageXmlRegistry;
-
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.message.KapuaMessage;
 
 /**
  * {@link KapuaDataMessage} definition.
@@ -24,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
  * @since 1.0.0
  */
 @XmlRootElement(name = "dataMessage")
-@XmlType(factoryClass = DataMessageXmlRegistry.class, factoryMethod = "newKapuaDataMessage")
-public interface KapuaDataMessage extends KapuaMessage<KapuaDataChannel, KapuaDataPayload> {
+@XmlType
+public class KapuaDataMessage extends KapuaMessage<KapuaDataChannel, KapuaDataPayload> {
 
 }

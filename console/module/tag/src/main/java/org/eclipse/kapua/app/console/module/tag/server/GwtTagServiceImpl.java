@@ -12,11 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.tag.server;
 
-import com.extjs.gxt.ui.client.data.BaseListLoadResult;
-import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
-import com.extjs.gxt.ui.client.data.ListLoadResult;
-import com.extjs.gxt.ui.client.data.PagingLoadConfig;
-import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.server.KapuaRemoteServiceServlet;
@@ -38,20 +39,19 @@ import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.tag.Tag;
 import org.eclipse.kapua.service.tag.TagCreator;
-import org.eclipse.kapua.service.tag.TagFactory;
 import org.eclipse.kapua.service.tag.TagListResult;
 import org.eclipse.kapua.service.tag.TagQuery;
 import org.eclipse.kapua.service.tag.TagService;
 import org.eclipse.kapua.service.user.User;
-import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserListResult;
+import org.eclipse.kapua.service.user.UserQuery;
 import org.eclipse.kapua.service.user.UserService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
+import com.extjs.gxt.ui.client.data.BaseListLoadResult;
+import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
+import com.extjs.gxt.ui.client.data.ListLoadResult;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
+import com.extjs.gxt.ui.client.data.PagingLoadResult;
 
 public class GwtTagServiceImpl extends KapuaRemoteServiceServlet implements GwtTagService {
 
@@ -62,10 +62,8 @@ public class GwtTagServiceImpl extends KapuaRemoteServiceServlet implements GwtT
     DeviceRegistryService deviceRegistryService = locator.getService(DeviceRegistryService.class);
 
     TagService tagService = locator.getService(TagService.class);
-    TagFactory tagFactory = locator.getFactory(TagFactory.class);
 
     final UserService userService = locator.getService(UserService.class);
-    final UserFactory userFactory = locator.getFactory(UserFactory.class);
 
     private static final String ENTITY_INFO = "entityInfo";
 
@@ -74,7 +72,7 @@ public class GwtTagServiceImpl extends KapuaRemoteServiceServlet implements GwtT
         GwtTag gwtTag = null;
         try {
             KapuaId scopeId = KapuaEid.parseCompactId(gwtTagCreator.getScopeId());
-            TagCreator tagCreator = tagFactory.newCreator(scopeId, gwtTagCreator.getName());
+            TagCreator tagCreator = new TagCreator(scopeId, gwtTagCreator.getName());
             tagCreator.setDescription(gwtTagCreator.getDescription());
 
             Tag tag = tagService.create(tagCreator);
@@ -141,7 +139,7 @@ public class GwtTagServiceImpl extends KapuaRemoteServiceServlet implements GwtT
 
                     @Override
                     public UserListResult call() throws Exception {
-                        return userService.query(userFactory.newQuery(null));
+                        return userService.query(new UserQuery(null));
                     }
                 });
 
@@ -186,12 +184,12 @@ public class GwtTagServiceImpl extends KapuaRemoteServiceServlet implements GwtT
 
             final Tag tag = tagService.find(scopeId, tagId);
             if (tag != null) {
-//TODO: #LAYER_VIOLATION - user lookup logic should not be done here (fetching all users is incredibly inefficient anyway)
+                //TODO: #LAYER_VIOLATION - user lookup logic should not be done here (fetching all users is incredibly inefficient anyway)
                 UserListResult userListResult = KapuaSecurityUtils.doPrivileged(new Callable<UserListResult>() {
 
                     @Override
                     public UserListResult call() throws Exception {
-                        return userService.query(userFactory.newQuery(null));
+                        return userService.query(new UserQuery(null));
                     }
                 });
 
@@ -220,7 +218,7 @@ public class GwtTagServiceImpl extends KapuaRemoteServiceServlet implements GwtT
     public List<GwtTag> findAll(String scopeId) throws GwtKapuaException {
         List<GwtTag> tagList = new ArrayList<GwtTag>();
         try {
-            TagQuery query = tagFactory.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(scopeId));
+            TagQuery query = new TagQuery(GwtKapuaCommonsModelConverter.convertKapuaId(scopeId));
 
             TagListResult result = tagService.query(query);
 

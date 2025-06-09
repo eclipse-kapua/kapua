@@ -24,28 +24,12 @@ import org.eclipse.kapua.service.device.management.message.KapuaAppProperties;
 public interface KapuaRequestMessageFactory extends KapuaObjectFactory {
 
     /**
-     * Instantiates a new {@link KapuaRequestChannel}.
-     *
-     * @return The newly instantiated {@link KapuaRequestChannel}.
-     * @since 1.0.0
-     */
-    KapuaRequestChannel newRequestChannel();
-
-    /**
      * Instantiates a new {@link KapuaRequestMessage}.
      *
      * @return The newly instantiated {@link KapuaRequestMessage}.
      * @since 1.0.0
      */
     KapuaRequestMessage<?, ?> newRequestMessage();
-
-    /**
-     * Instantiates a new {@link KapuaRequestPayload}.
-     *
-     * @return The newly instantiated {@link KapuaRequestPayload}.
-     * @since 1.0.0
-     */
-    KapuaRequestPayload newRequestPayload();
 
     /**
      * Instantiates a new {@link KapuaAppProperties}.

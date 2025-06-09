@@ -12,12 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.job;
 
-import org.eclipse.kapua.model.query.KapuaListResult;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.model.query.KapuaListResult;
 
 /**
  * {@link JobDeviceManagementOperationListResult} definition.
@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "jobDeviceManagementOperationListResult")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = JobDeviceManagementOperationXmlRegistry.class, factoryMethod = "newJobDeviceManagementOperationListResult")
-public interface JobDeviceManagementOperationListResult extends KapuaListResult<JobDeviceManagementOperation> {
+@XmlType
+public class JobDeviceManagementOperationListResult extends KapuaListResult<JobDeviceManagementOperation> {
 
 }

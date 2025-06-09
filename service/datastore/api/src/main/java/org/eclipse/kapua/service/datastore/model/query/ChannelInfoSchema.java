@@ -1,0 +1,67 @@
+/*******************************************************************************
+ * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     Eurotech - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.kapua.service.datastore.model.query;
+
+import org.eclipse.kapua.service.datastore.model.ChannelInfo;
+
+/**
+ * {@link ChannelInfo} schema definition.
+ *
+ * @since 1.0.0
+ */
+public class ChannelInfoSchema {
+
+    /**
+     * @since 1.0.0
+     */
+    private ChannelInfoSchema() {
+    }
+
+    /**
+     * Channel information schema name
+     *
+     * @since 1.0.0
+     */
+    public static final String CHANNEL_TYPE_NAME = "channel";
+    /**
+     * Channel information - channel
+     *
+     * @since 1.0.0
+     */
+    public static final String CHANNEL_NAME = "channel";
+    /**
+     * Channel information - client identifier
+     *
+     * @since 1.0.0
+     */
+    public static final String CHANNEL_CLIENT_ID = "client_id";
+    /**
+     * Channel information - scope id
+     *
+     * @since 1.0.0
+     */
+    public static final String CHANNEL_SCOPE_ID = "scope_id";
+    /**
+     * Channel information - message timestamp (of the first message published in this channel)
+     *
+     * @since 1.0.0
+     */
+    public static final String CHANNEL_TIMESTAMP = "timestamp";
+    /**
+     * Channel information - message identifier (of the first message published in this channel)
+     *
+     * @since 1.0.0
+     */
+    public static final String CHANNEL_MESSAGE_ID = "message_id";
+
+}

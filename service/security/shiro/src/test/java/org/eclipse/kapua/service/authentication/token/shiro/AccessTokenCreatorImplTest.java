@@ -12,87 +12,81 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.token.shiro;
 
+import java.util.Date;
+
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
+import org.eclipse.kapua.service.authentication.token.AccessTokenCreator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.util.Date;
-
-
 @Category(JUnitTests.class)
 public class AccessTokenCreatorImplTest {
 
-    AccessTokenCreatorImpl accessTokenCreatorImpl;
+    AccessTokenCreator accessTokenCreator;
 
     @Before
     public void initialize() {
-        accessTokenCreatorImpl = new AccessTokenCreatorImpl(KapuaId.ONE);
+        accessTokenCreator = new AccessTokenCreator(KapuaId.ONE);
     }
 
     @Test
     public void accessTokenCreatorImplTest() {
-        Assert.assertEquals("Expected and actual values should be the same.", KapuaId.ONE, accessTokenCreatorImpl.getScopeId());
-    }
-
-    @Test
-    public void accessTokenCreatorImplNullTest() {
-        AccessTokenCreatorImpl accessTokenCreatorImpl = new AccessTokenCreatorImpl(null);
-        Assert.assertNull("Null expected.", accessTokenCreatorImpl.getScopeId());
+        Assert.assertEquals("Expected and actual values should be the same.", KapuaId.ONE, accessTokenCreator.getScopeId());
     }
 
     @Test
     public void setAndGetTokenIdTest() {
-        String[] tokenIds = {null, "", "!!tokenID-1", "#1(TOKEN.,/token id)9--99", "!$$ 1-2 ID//", "id_tokeN(....)<00>"};
+        String[] tokenIds = { null, "", "!!tokenID-1", "#1(TOKEN.,/token id)9--99", "!$$ 1-2 ID//", "id_tokeN(....)<00>" };
 
-        Assert.assertNull("Null expected.", accessTokenCreatorImpl.getTokenId());
+        Assert.assertNull("Null expected.", accessTokenCreator.getTokenId());
         for (String tokenId : tokenIds) {
-            accessTokenCreatorImpl.setTokenId(tokenId);
-            Assert.assertEquals("Expected and actual values should be the same.", tokenId, accessTokenCreatorImpl.getTokenId());
+            accessTokenCreator.setTokenId(tokenId);
+            Assert.assertEquals("Expected and actual values should be the same.", tokenId, accessTokenCreator.getTokenId());
         }
     }
 
     @Test
     public void setAndGetUserIdTest() {
-        KapuaId[] userIds = {null, KapuaId.ONE};
+        KapuaId[] userIds = { null, KapuaId.ONE };
 
-        Assert.assertNull("Null expected.", accessTokenCreatorImpl.getUserId());
+        Assert.assertNull("Null expected.", accessTokenCreator.getUserId());
         for (KapuaId userId : userIds) {
-            accessTokenCreatorImpl.setUserId(userId);
-            Assert.assertEquals("Expected and actual values should be the same.", userId, accessTokenCreatorImpl.getUserId());
+            accessTokenCreator.setUserId(userId);
+            Assert.assertEquals("Expected and actual values should be the same.", userId, accessTokenCreator.getUserId());
         }
     }
 
     @Test
     public void setAndGetExpiresOnTest() {
-        Date[] expiresOnDates = {null, new Date(), new Date(1L), new Date(9999999999999L)};
-        Assert.assertNull("Null expected.", accessTokenCreatorImpl.getExpiresOn());
+        Date[] expiresOnDates = { null, new Date(), new Date(1L), new Date(9999999999999L) };
+        Assert.assertNull("Null expected.", accessTokenCreator.getExpiresOn());
         for (Date expiresOnDate : expiresOnDates) {
-            accessTokenCreatorImpl.setExpiresOn(expiresOnDate);
-            Assert.assertEquals("Expected and actual values should be the same.", expiresOnDate, accessTokenCreatorImpl.getExpiresOn());
+            accessTokenCreator.setExpiresOn(expiresOnDate);
+            Assert.assertEquals("Expected and actual values should be the same.", expiresOnDate, accessTokenCreator.getExpiresOn());
         }
     }
 
     @Test
     public void setAndGetRefreshTokenTest() {
-        String[] refreshTokens = {null, "", "!!refreshToken-1", "#1(TOKEN.,/refresh token id)9--99", "!$$ 1-2 REFREsh//", "refresh_tokeN(....)<00>"};
+        String[] refreshTokens = { null, "", "!!refreshToken-1", "#1(TOKEN.,/refresh token id)9--99", "!$$ 1-2 REFREsh//", "refresh_tokeN(....)<00>" };
 
-        Assert.assertNull("Null expected.", accessTokenCreatorImpl.getRefreshToken());
+        Assert.assertNull("Null expected.", accessTokenCreator.getRefreshToken());
         for (String refreshToken : refreshTokens) {
-            accessTokenCreatorImpl.setRefreshToken(refreshToken);
-            Assert.assertEquals("Expected and actual values should be the same.", refreshToken, accessTokenCreatorImpl.getRefreshToken());
+            accessTokenCreator.setRefreshToken(refreshToken);
+            Assert.assertEquals("Expected and actual values should be the same.", refreshToken, accessTokenCreator.getRefreshToken());
         }
     }
 
     @Test
     public void setAndGetRefreshExpiresOnTest() {
-        Date[] refreshExpiresOnDates = {null, new Date(), new Date(1L), new Date(9999999999999L)};
-        Assert.assertNull("Null expected.", accessTokenCreatorImpl.getRefreshExpiresOn());
+        Date[] refreshExpiresOnDates = { null, new Date(), new Date(1L), new Date(9999999999999L) };
+        Assert.assertNull("Null expected.", accessTokenCreator.getRefreshExpiresOn());
         for (Date refreshExpiresOnDate : refreshExpiresOnDates) {
-            accessTokenCreatorImpl.setRefreshExpiresOn(refreshExpiresOnDate);
-            Assert.assertEquals("Expected and actual values should be the same.", refreshExpiresOnDate, accessTokenCreatorImpl.getRefreshExpiresOn());
+            accessTokenCreator.setRefreshExpiresOn(refreshExpiresOnDate);
+            Assert.assertEquals("Expected and actual values should be the same.", refreshExpiresOnDate, accessTokenCreator.getRefreshExpiresOn());
         }
     }
 }

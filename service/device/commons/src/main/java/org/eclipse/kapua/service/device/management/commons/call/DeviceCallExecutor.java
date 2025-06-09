@@ -12,6 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.commons.call;
 
+import java.util.Date;
+
+import javax.validation.constraints.NotNull;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
@@ -40,18 +44,19 @@ import org.eclipse.kapua.translator.Translator;
 import org.eclipse.kapua.translator.TranslatorHub;
 import org.eclipse.kapua.transport.exception.TransportException;
 
-import javax.validation.constraints.NotNull;
-import java.util.Date;
-
 /**
  * {@link DeviceCallExecutor} definition.
  * <p>
  * Invokes and manages the {@link DeviceCall}.
  *
- * @param <C>  The {@link KapuaRequestChannel} implementation.
- * @param <P>  The {@link KapuaRequestPayload} implementation.
- * @param <RQ> The {@link KapuaRequestMessage} implementation.
- * @param <RS> The {@link KapuaResponseMessage} implementation.
+ * @param <C>
+ *         The {@link KapuaRequestChannel} implementation.
+ * @param <P>
+ *         The {@link KapuaRequestPayload} implementation.
+ * @param <RQ>
+ *         The {@link KapuaRequestMessage} implementation.
+ * @param <RS>
+ *         The {@link KapuaResponseMessage} implementation.
  * @since 1.0.0
  * @deprecated Since 1.5.0. Please use {@link DeviceCallBuilder} which supports {@link KapuaMethod#SUBMIT}, {@link KapuaMethod#CANCEL} and send request without waiting for a response
  */
@@ -72,7 +77,8 @@ public class DeviceCallExecutor<C extends KapuaRequestChannel, P extends KapuaRe
     /**
      * Constructor.
      *
-     * @param requestMessage The {@link KapuaRequestMessage}.
+     * @param requestMessage
+     *         The {@link KapuaRequestMessage}.
      * @since 1.0.0
      */
     public DeviceCallExecutor(@NotNull RQ requestMessage) {
@@ -84,8 +90,10 @@ public class DeviceCallExecutor<C extends KapuaRequestChannel, P extends KapuaRe
      * <p>
      * If the {@code timeout} parameter is not given, the default one will be used.
      *
-     * @param requestMessage The {@link KapuaRequestMessage} to send.
-     * @param timeout        The timeout of the request.
+     * @param requestMessage
+     *         The {@link KapuaRequestMessage} to send.
+     * @param timeout
+     *         The timeout of the request.
      * @since 1.0.0
      */
     public DeviceCallExecutor(@NotNull RQ requestMessage, @Nullable Long timeout) {
@@ -97,10 +105,14 @@ public class DeviceCallExecutor<C extends KapuaRequestChannel, P extends KapuaRe
      * Performs the {@link DeviceCall}.
      *
      * @return The {@link KapuaResponseMessage}.
-     * @throws KapuaEntityNotFoundException     If the {@link Device} is not found.
-     * @throws DeviceNotConnectedException      If the {@link Device} is not {@link DeviceConnectionStatus#CONNECTED}.
-     * @throws DeviceManagementTimeoutException If waiting of the {@link KapuaResponseMessage} goes on timeout.
-     * @throws DeviceManagementSendException    If sending the {@link KapuaRequestMessage} goes on error.
+     * @throws KapuaEntityNotFoundException
+     *         If the {@link Device} is not found.
+     * @throws DeviceNotConnectedException
+     *         If the {@link Device} is not {@link DeviceConnectionStatus#CONNECTED}.
+     * @throws DeviceManagementTimeoutException
+     *         If waiting of the {@link KapuaResponseMessage} goes on timeout.
+     * @throws DeviceManagementSendException
+     *         If sending the {@link KapuaRequestMessage} goes on error.
      * @since 1.0.0
      */
     public RS send() throws KapuaEntityNotFoundException, DeviceNotConnectedException, DeviceManagementTimeoutException, DeviceManagementSendException, TransportException {
@@ -132,35 +144,35 @@ public class DeviceCallExecutor<C extends KapuaRequestChannel, P extends KapuaRe
             // Send the request
             DeviceResponseMessage<?, ?> responseMessage = null;
             switch (requestMessage.getChannel().getMethod()) {
-                case CREATE:
-                case POST:
-                    responseMessage = deviceCall.create(deviceRequestMessage, timeout);
-                    break;
-                case READ:
-                case GET:
-                    responseMessage = deviceCall.read(deviceRequestMessage, timeout);
-                    break;
-                case OPTIONS:
-                    responseMessage = deviceCall.options(deviceRequestMessage, timeout);
-                    break;
-                case DELETE:
-                case DEL:
-                    responseMessage = deviceCall.delete(deviceRequestMessage, timeout);
-                    break;
-                case EXECUTE:
-                case EXEC:
-                    responseMessage = deviceCall.execute(deviceRequestMessage, timeout);
-                    break;
-                case WRITE:
-                case PUT:
-                    responseMessage = deviceCall.write(deviceRequestMessage, timeout);
-                    break;
-                default:
-                    throw new DeviceManagementRequestBadMethodException(requestMessage.getChannel().getMethod());
+            case CREATE:
+            case POST:
+                responseMessage = deviceCall.create(deviceRequestMessage, timeout);
+                break;
+            case READ:
+            case GET:
+                responseMessage = deviceCall.read(deviceRequestMessage, timeout);
+                break;
+            case OPTIONS:
+                responseMessage = deviceCall.options(deviceRequestMessage, timeout);
+                break;
+            case DELETE:
+            case DEL:
+                responseMessage = deviceCall.delete(deviceRequestMessage, timeout);
+                break;
+            case EXECUTE:
+            case EXEC:
+                responseMessage = deviceCall.execute(deviceRequestMessage, timeout);
+                break;
+            case WRITE:
+            case PUT:
+                responseMessage = deviceCall.write(deviceRequestMessage, timeout);
+                break;
+            default:
+                throw new DeviceManagementRequestBadMethodException(requestMessage.getChannel().getMethod());
             }
             // Translate the response from Device to Kapua
-            Translator<DeviceResponseMessage<?, ?>, RS> tClientToKapua = translatorHub.getTranslatorFor(deviceCall.getBaseMessageClass(), requestMessage.getResponseClass());
-            return tClientToKapua.translate(responseMessage);
+            Translator<DeviceResponseMessage<?, ?>, KapuaResponseMessage> tClientToKapua = translatorHub.getTranslatorFor(deviceCall.getBaseMessageClass(), requestMessage.getResponseClass());
+            return (RS) tClientToKapua.translate(responseMessage);
         } catch (DeviceCallTimeoutException dcte) {
             throw new DeviceManagementTimeoutException(dcte, timeout);
         } catch (TransportException te) {

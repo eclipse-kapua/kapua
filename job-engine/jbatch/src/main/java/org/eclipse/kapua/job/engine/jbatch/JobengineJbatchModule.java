@@ -16,7 +16,6 @@ import javax.batch.runtime.BatchRuntime;
 import javax.inject.Singleton;
 
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
-import org.eclipse.kapua.job.engine.JobEngineFactory;
 import org.eclipse.kapua.job.engine.JobEngineService;
 import org.eclipse.kapua.job.engine.jbatch.driver.JbatchDriver;
 import org.eclipse.kapua.job.engine.jbatch.driver.utils.JobDefinitionBuildUtils;
@@ -32,7 +31,6 @@ public class JobengineJbatchModule extends AbstractKapuaModule {
 
     @Override
     protected void configureModule() {
-        bind(JobEngineFactory.class).to(JobEngineFactoryJbatch.class).in(Singleton.class);
         bind(JobEngineService.class).to(JobEngineServiceJbatch.class).in(Singleton.class);
         bind(JobEngineSetting.class).in(Singleton.class);
     }

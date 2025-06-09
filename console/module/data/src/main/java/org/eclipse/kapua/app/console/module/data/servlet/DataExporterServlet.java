@@ -12,6 +12,16 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.data.servlet;
 
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.Collections;
+import java.util.Date;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaIllegalAccessException;
 import org.eclipse.kapua.KapuaUnauthenticatedException;
@@ -20,11 +30,10 @@ import org.eclipse.kapua.app.console.module.api.setting.ConsoleSettingKeys;
 import org.eclipse.kapua.app.console.module.api.shared.util.GwtKapuaCommonsModelConverter;
 import org.eclipse.kapua.app.console.module.data.shared.util.KapuaGwtDataModelConverter;
 import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.service.datastore.MessageStoreFactory;
 import org.eclipse.kapua.service.datastore.MessageStoreService;
-import org.eclipse.kapua.service.datastore.internal.mediator.MessageField;
 import org.eclipse.kapua.service.datastore.model.DatastoreMessage;
 import org.eclipse.kapua.service.datastore.model.MessageListResult;
+import org.eclipse.kapua.service.datastore.model.query.MessageField;
 import org.eclipse.kapua.service.datastore.model.query.MessageQuery;
 import org.eclipse.kapua.service.datastore.model.query.predicate.DatastorePredicateFactory;
 import org.eclipse.kapua.service.storable.model.query.SortDirection;
@@ -34,15 +43,6 @@ import org.eclipse.kapua.service.storable.model.query.predicate.RangePredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.Collections;
-import java.util.Date;
-
 public class DataExporterServlet extends HttpServlet {
 
     private static final long serialVersionUID = 226461063207179649L;
@@ -50,8 +50,6 @@ public class DataExporterServlet extends HttpServlet {
     private static final Logger LOG = LoggerFactory.getLogger(DataExporterServlet.class);
 
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
-
-    private static final MessageStoreFactory MESSAGE_STORE_FACTORY = LOCATOR.getFactory(MessageStoreFactory.class);
 
     private static final DatastorePredicateFactory DATASTORE_PREDICATE_FACTORY = LOCATOR.getFactory(DatastorePredicateFactory.class);
 
@@ -121,7 +119,7 @@ public class DataExporterServlet extends HttpServlet {
                 throw new IllegalArgumentException("format");
             }
             dataExporter.init(headers);
-            MessageQuery query = MESSAGE_STORE_FACTORY.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(scopeIdString));
+            MessageQuery query = new MessageQuery(GwtKapuaCommonsModelConverter.convertKapuaId(scopeIdString));
             Date start = new Date(Long.valueOf(startDate));
             Date end = new Date(Long.valueOf(endDate));
             RangePredicate datePredicate = DATASTORE_PREDICATE_FACTORY.newRangePredicate(MessageField.TIMESTAMP, start, end);

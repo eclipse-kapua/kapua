@@ -59,9 +59,10 @@ import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.domain.Domain;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.config.KapuaConfigurableService;
 import org.eclipse.kapua.storage.TxManager;
 import org.eclipse.kapua.storage.TxManagerImpl;
@@ -84,7 +85,6 @@ public abstract class AbstractKapuaConfigurableService extends AbstractKapuaServ
     private final String pid;
 
     //TODO: make final as soon as deprecated constructors are removed
-    private PermissionFactory permissionFactory;
     private AuthorizationService authorizationService;
     private RootUserTester rootUserTester;
     protected TxManager txManager;
@@ -122,8 +122,8 @@ public abstract class AbstractKapuaConfigurableService extends AbstractKapuaServ
      *         The {@link EntityManagerFactory} that handles persistence unit
      * @since 1.0.0
      * @deprecated Since 2.0.0. Please use
-     *         {@link AbstractKapuaConfigurableService#AbstractKapuaConfigurableService(String, Domain, EntityManagerFactory, EntityCacheFactory, PermissionFactory, AuthorizationService,
-     *         RootUserTester)} This constructor may be removed in a next release
+     *         {@link AbstractKapuaConfigurableService#AbstractKapuaConfigurableService(String, Domain, EntityManagerFactory, EntityCacheFactory, AuthorizationService, RootUserTester)} This
+     *         constructor may be removed in a next release
      */
     @Deprecated
     protected AbstractKapuaConfigurableService(String pid, Domain domain, EntityManagerFactory entityManagerFactory) {
@@ -134,7 +134,6 @@ public abstract class AbstractKapuaConfigurableService extends AbstractKapuaServ
                 Following service should be provided by the Locator, but in most cases when this class is instantiated through this constructor the Locator is not yet ready,
                 therefore fetching of these instances is demanded to the artificial getters introduced.
                 */
-                null,
                 null,
                 null,
                 null);
@@ -153,8 +152,8 @@ public abstract class AbstractKapuaConfigurableService extends AbstractKapuaServ
      *         The {@link CacheFactory} that handles caching of the entities
      * @since 1.2.0
      * @deprecated Since 2.0.0. Please use
-     *         {@link AbstractKapuaConfigurableService#AbstractKapuaConfigurableService(String, Domain, EntityManagerFactory, EntityCacheFactory, PermissionFactory, AuthorizationService,
-     *         RootUserTester)} This constructor may be removed in a next release
+     *         {@link AbstractKapuaConfigurableService#AbstractKapuaConfigurableService(String, Domain, EntityManagerFactory, EntityCacheFactory, AuthorizationService, RootUserTester)} This
+     *         constructor may be removed in a next release
      */
     @Deprecated
     protected AbstractKapuaConfigurableService(String pid, Domain domain, EntityManagerFactory entityManagerFactory, EntityCacheFactory abstractCacheFactory) {
@@ -166,7 +165,6 @@ public abstract class AbstractKapuaConfigurableService extends AbstractKapuaServ
                 Following service should be provided by the Locator, but in most cases when this class is instantiated through this constructor the Locator is not yet ready,
                 therefore fetching of these instances is demanded to the artificial getters introduced.
                 */
-                null,
                 null,
                 null);
     }
@@ -189,14 +187,12 @@ public abstract class AbstractKapuaConfigurableService extends AbstractKapuaServ
             Domain domain,
             EntityManagerFactory entityManagerFactory,
             EntityCacheFactory abstractCacheFactory,
-            PermissionFactory permissionFactory,
             AuthorizationService authorizationService,
             RootUserTester rootUserTester) {
         super(entityManagerFactory, abstractCacheFactory);
 
         this.pid = pid;
         this.domain = domain;
-        this.permissionFactory = permissionFactory;
         this.authorizationService = authorizationService;
         this.rootUserTester = rootUserTester;
         this.txManager = new TxManagerImpl(
@@ -457,7 +453,7 @@ public abstract class AbstractKapuaConfigurableService extends AbstractKapuaServ
             throw new KapuaServiceDisabledException(pid);
         }
         // Check access
-        getAuthorizationService().checkPermission(getPermissionFactory().newPermission(Optional.ofNullable(domain).map(d -> d.getName()).orElse(null), Actions.read, scopeId));
+        getAuthorizationService().checkPermission(new Permission(Optional.ofNullable(domain).map(d -> d.getName()).orElse(null), Actions.read, scopeId));
         // Get the Tocd
         // Keep distinct values for service PID, Scope ID and disabled properties included/excluded from AD
         Triple<String, KapuaId, Boolean> cacheKey = Triple.of(pid, scopeId, excludeDisabled);
@@ -525,9 +521,9 @@ public abstract class AbstractKapuaConfigurableService extends AbstractKapuaServ
         // Argument validation
         ArgumentValidator.notNull(scopeId, "scopeId");
         // Check access
-        getAuthorizationService().checkPermission(getPermissionFactory().newPermission(Optional.ofNullable(domain).map(d -> d.getName()).orElse(null), Actions.read, scopeId));
+        getAuthorizationService().checkPermission(new Permission(Optional.ofNullable(domain).map(d -> d.getName()).orElse(null), Actions.read, scopeId));
         // Get configuration values
-        ServiceConfigQueryImpl query = new ServiceConfigQueryImpl(scopeId);
+        KapuaQuery query = new KapuaQuery(scopeId);
 
         query.setPredicate(
                 query.andPredicate(
@@ -537,7 +533,7 @@ public abstract class AbstractKapuaConfigurableService extends AbstractKapuaServ
         );
 
         ServiceConfigListResult result = entityManagerSession.doAction(EntityManagerContainer.<ServiceConfigListResult>create()
-                .onResultHandler(em -> ServiceDAO.query(em, ServiceConfig.class, ServiceConfigImpl.class, new ServiceConfigListResultImpl(), query))
+                .onResultHandler(em -> ServiceDAO.query(em, ServiceConfig.class, ServiceConfigImpl.class, new ServiceConfigListResult(), query))
                 .onBeforeHandler(() -> (ServiceConfigListResult) PRIVATE_ENTITY_CACHE.getList(scopeId, pid))
                 .onAfterHandler(entity -> PRIVATE_ENTITY_CACHE.putList(scopeId, pid, entity)));
 
@@ -579,11 +575,11 @@ public abstract class AbstractKapuaConfigurableService extends AbstractKapuaServ
             }
         }
 
-        getAuthorizationService().checkPermission(getPermissionFactory().newPermission(Optional.ofNullable(domain).map(d -> d.getName()).orElse(null), Actions.write, scopeId));
+        getAuthorizationService().checkPermission(new Permission(Optional.ofNullable(domain).map(d -> d.getName()).orElse(null), Actions.write, scopeId));
 
         validateConfigurations(ocd, values, scopeId, parentId);
 
-        ServiceConfigQueryImpl query = new ServiceConfigQueryImpl(scopeId);
+        KapuaQuery query = new KapuaQuery(scopeId);
         query.setPredicate(
                 query.andPredicate(
                         query.attributePredicate(ServiceConfigAttributes.SERVICE_ID, pid),
@@ -592,7 +588,7 @@ public abstract class AbstractKapuaConfigurableService extends AbstractKapuaServ
         );
 
         ServiceConfigListResult result = entityManagerSession.doAction(EntityManagerContainer.<ServiceConfigListResult>create().
-                onResultHandler(em -> ServiceDAO.query(em, ServiceConfig.class, ServiceConfigImpl.class, new ServiceConfigListResultImpl(), query))
+                onResultHandler(em -> ServiceDAO.query(em, ServiceConfig.class, ServiceConfigImpl.class, new ServiceConfigListResult(), query))
         );
 
         Properties props = toProperties(values);
@@ -636,20 +632,6 @@ public abstract class AbstractKapuaConfigurableService extends AbstractKapuaServ
      */
     public String getServicePid() {
         return pid;
-    }
-
-    /**
-     * PermissionFactory should be provided by the Locator, but in most cases when this class is instantiated through this constructor the Locator is not yet ready, therefore fetching of the required
-     * instance is demanded to this artificial getter.
-     *
-     * @return The instantiated (hopefully) {@link PermissionFactory} instance
-     */
-    //TODO: Remove as soon as deprecated constructors are removed, use field directly instead.
-    protected PermissionFactory getPermissionFactory() {
-        if (permissionFactory == null) {
-            permissionFactory = KapuaLocator.getInstance().getFactory(PermissionFactory.class);
-        }
-        return permissionFactory;
     }
 
     /**

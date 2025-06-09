@@ -31,7 +31,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.exception.SubjectUnauthorizedException;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 
 /**
  * {@link AuthorizationService} implementation.
@@ -41,16 +40,13 @@ import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 @Singleton
 public class AuthorizationServiceImpl implements AuthorizationService {
 
-    private final PermissionFactory permissionFactory;
     private final Set<Domain> knownDomains;
     private final PermissionMapper permissionMapper;
 
     @Inject
     public AuthorizationServiceImpl(
-            PermissionFactory permissionFactory,
             Set<Domain> knownDomains,
             PermissionMapper permissionMapper) {
-        this.permissionFactory = permissionFactory;
         this.knownDomains = knownDomains;
         this.permissionMapper = permissionMapper;
     }
@@ -82,7 +78,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
                             .stream()
                             .filter(action -> {
                                 try {
-                                    final Permission permission = permissionFactory.newPermission(domain.getName(), action, inScope);
+                                    final Permission permission = new Permission(domain.getName(), action, inScope);
                                     return this.isPermitted(permission);
                                 } catch (KapuaException e) {
                                     return false;

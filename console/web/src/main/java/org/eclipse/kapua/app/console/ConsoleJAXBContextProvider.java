@@ -39,7 +39,6 @@ import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordQuery;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreXmlRegistry;
 import org.eclipse.kapua.commons.util.xml.JAXBContextProvider;
 import org.eclipse.kapua.event.ServiceEvent;
-import org.eclipse.kapua.job.engine.JobEngineXmlRegistry;
 import org.eclipse.kapua.job.engine.JobStartOptions;
 import org.eclipse.kapua.job.engine.commons.model.JobTargetSublist;
 import org.eclipse.kapua.model.config.metatype.KapuaTad;
@@ -47,6 +46,7 @@ import org.eclipse.kapua.model.config.metatype.KapuaTicon;
 import org.eclipse.kapua.model.config.metatype.KapuaTmetadata;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 import org.eclipse.kapua.model.config.metatype.KapuaToption;
+import org.eclipse.kapua.model.config.metatype.KapuaTscalar;
 import org.eclipse.kapua.service.device.call.kura.model.bundle.KuraBundle;
 import org.eclipse.kapua.service.device.call.kura.model.bundle.KuraBundles;
 import org.eclipse.kapua.service.device.call.kura.model.configuration.KuraDeviceComponentConfiguration;
@@ -65,7 +65,6 @@ import org.eclipse.kapua.service.device.call.kura.model.inventory.packages.KuraI
 import org.eclipse.kapua.service.device.call.kura.model.inventory.system.KuraInventorySystemPackage;
 import org.eclipse.kapua.service.device.call.kura.model.inventory.system.KuraInventorySystemPackages;
 import org.eclipse.kapua.service.device.call.kura.model.snapshot.KuraSnapshotIds;
-import org.eclipse.kapua.service.device.management.asset.DeviceAssetXmlRegistry;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssets;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundle;
 import org.eclipse.kapua.service.device.management.bundle.DeviceBundles;
@@ -79,7 +78,6 @@ import org.eclipse.kapua.service.device.management.inventory.model.container.Dev
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainers;
 import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventory;
 import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventoryItem;
-import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventoryXmlRegistry;
 import org.eclipse.kapua.service.device.management.inventory.model.packages.DeviceInventoryPackage;
 import org.eclipse.kapua.service.device.management.inventory.model.packages.DeviceInventoryPackages;
 import org.eclipse.kapua.service.device.management.inventory.model.system.DeviceInventorySystemPackage;
@@ -92,7 +90,6 @@ import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystore
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreItemQuery;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreItems;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreKeypair;
-import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreXmlRegistry;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystores;
 import org.eclipse.kapua.service.device.management.packages.model.DevicePackages;
 import org.eclipse.kapua.service.device.management.packages.model.download.DevicePackageDownloadRequest;
@@ -175,7 +172,6 @@ public class ConsoleJAXBContextProvider implements JAXBContextProvider {
                         DeviceInventorySystemPackage.class,
                         KuraInventorySystemPackages.class,
                         KuraInventorySystemPackage.class,
-                        DeviceInventoryXmlRegistry.class,
 
                         // Device Management Keystore
                         DeviceKeystores.class,
@@ -188,7 +184,6 @@ public class ConsoleJAXBContextProvider implements JAXBContextProvider {
                         DeviceKeystoreKeypair.class,
                         DeviceKeystoreCSRInfo.class,
                         DeviceKeystoreCSR.class,
-                        DeviceKeystoreXmlRegistry.class,
 
                         // Device Management Packages
                         DevicePackageDownloadRequest.class,
@@ -203,10 +198,10 @@ public class ConsoleJAXBContextProvider implements JAXBContextProvider {
                         KapuaTicon.class,
                         KapuaToption.class,
                         KapuaTmetadata.class,
+                        KapuaTscalar.class,
 
                         // Device Management Assets
                         DeviceAssets.class,
-                        DeviceAssetXmlRegistry.class,
 
                         // Job
                         JobTargetSublist.class,
@@ -215,7 +210,6 @@ public class ConsoleJAXBContextProvider implements JAXBContextProvider {
                         JobListResult.class,
                         JobQuery.class,
                         JobXmlRegistry.class,
-                        JobEngineXmlRegistry.class,
 
                         // KapuaEvent
                         ServiceEvent.class,

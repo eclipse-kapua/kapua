@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.configuration;
 
-import org.eclipse.kapua.model.config.metatype.KapuaTocd;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -21,7 +21,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Map;
+
+import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 
 /**
  * Device component configuration entity definition.
@@ -30,8 +31,32 @@ import java.util.Map;
  */
 @XmlRootElement(name = "configuration")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DeviceConfigurationXmlRegistry.class, factoryMethod = "newComponentConfiguration")
-public interface DeviceComponentConfiguration {
+@XmlType
+public class DeviceComponentConfiguration {
+
+    private String id;
+    private String name;
+    private KapuaTocd definition;
+    private Map<String, Object> properties;
+
+    /**
+     * Constructor.
+     *
+     * @since 1.0.0
+     */
+    public DeviceComponentConfiguration() {
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param id
+     *         The {@link DeviceComponentConfiguration#getId()}
+     * @since 1.0.0
+     */
+    public DeviceComponentConfiguration(String id) {
+        this.id = id;
+    }
 
     /**
      * Get device configuration component identifier
@@ -39,14 +64,18 @@ public interface DeviceComponentConfiguration {
      * @return
      */
     @XmlElement(name = "id")
-    String getId();
+    public String getId() {
+        return id;
+    }
 
     /**
      * Set device configuration component identifier
      *
      * @param id
      */
-    void setId(String id);
+    public void setId(String id) {
+        this.id = id;
+    }
 
     /**
      * Get device configuration component name
@@ -54,14 +83,18 @@ public interface DeviceComponentConfiguration {
      * @return
      */
     @XmlAttribute(name = "name")
-    String getName();
+    public String getName() {
+        return name;
+    }
 
     /**
      * Set device configuration component name
      *
      * @param name
      */
-    void setName(String name);
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /**
      * Get device configuration component definition
@@ -69,14 +102,18 @@ public interface DeviceComponentConfiguration {
      * @return
      */
     @XmlElement(name = "definition")
-    KapuaTocd getDefinition();
+    public KapuaTocd getDefinition() {
+        return definition;
+    }
 
     /**
      * Set device configuration component definition
      *
      * @param definition
      */
-    void setDefinition(KapuaTocd definition);
+    public void setDefinition(KapuaTocd definition) {
+        this.definition = definition;
+    }
 
     /**
      * Get device configuration component properties
@@ -85,12 +122,17 @@ public interface DeviceComponentConfiguration {
      */
     @XmlElement(name = "properties")
     @XmlJavaTypeAdapter(DeviceXmlConfigPropertiesAdapter.class)
-    Map<String, Object> getProperties();
+    public Map<String, Object> getProperties() {
+        return properties;
+    }
 
     /**
      * Set device configuration component properties
      *
      * @param properties
      */
-    void setProperties(Map<String, Object> properties);
+    public void setProperties(Map<String, Object> properties) {
+        this.properties = properties;
+    }
+
 }

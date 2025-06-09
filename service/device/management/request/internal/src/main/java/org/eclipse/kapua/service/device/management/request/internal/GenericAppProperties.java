@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.request.internal;
 
-import org.eclipse.kapua.service.device.management.commons.KapuaAppPropertiesImpl;
+import org.eclipse.kapua.service.device.management.message.KapuaAppPropertiesImpl;
 
 public class GenericAppProperties extends KapuaAppPropertiesImpl {
 

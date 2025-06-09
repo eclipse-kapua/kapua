@@ -29,7 +29,6 @@ import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.model.mappers.KapuaBaseMapper;
 import org.eclipse.kapua.commons.model.mappers.KapuaBaseMapperImpl;
-import org.eclipse.kapua.commons.model.query.QueryFactoryImpl;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordCreator;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordRepository;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreService;
@@ -44,7 +43,6 @@ import org.eclipse.kapua.event.ServiceEventBusException;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.domain.Domain;
 import org.eclipse.kapua.model.domain.DomainEntry;
-import org.eclipse.kapua.model.query.QueryFactory;
 
 import com.google.inject.Provides;
 import com.google.inject.multibindings.Multibinder;
@@ -59,7 +57,6 @@ public class CommonsModule extends AbstractKapuaModule {
 
     @Override
     protected void configureModule() {
-        bind(QueryFactory.class).to(QueryFactoryImpl.class).in(Singleton.class);
         bind(CryptoSettings.class).toInstance(new CryptoSettings());
         bind(CryptoUtil.class).to(CryptoUtilImpl.class).in(Singleton.class);
         bind(QRCodeBuilder.class).to(QRCodeBuilderImpl.class).in(Singleton.class);

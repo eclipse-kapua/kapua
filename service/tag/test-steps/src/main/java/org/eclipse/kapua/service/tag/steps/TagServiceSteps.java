@@ -12,14 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.tag.steps;
 
-import com.google.inject.Singleton;
-import io.cucumber.java.After;
-import io.cucumber.java.Before;
-import io.cucumber.java.Scenario;
-import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
@@ -32,17 +31,20 @@ import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.tag.Tag;
 import org.eclipse.kapua.service.tag.TagAttributes;
 import org.eclipse.kapua.service.tag.TagCreator;
-import org.eclipse.kapua.service.tag.TagFactory;
 import org.eclipse.kapua.service.tag.TagListResult;
 import org.eclipse.kapua.service.tag.TagQuery;
 import org.eclipse.kapua.service.tag.TagService;
 import org.junit.Assert;
 
-import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.google.inject.Singleton;
+
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 
 /**
  * Implementation of Gherkin steps used in TagService.feature scenarios.
@@ -54,7 +56,6 @@ public class TagServiceSteps extends TestBase {
      * Tag service.
      */
     private TagService tagService;
-    private TagFactory tagFactory;
 
     @Inject
     public TagServiceSteps(StepData stepData) {
@@ -65,7 +66,6 @@ public class TagServiceSteps extends TestBase {
     public void setServices() {
         KapuaLocator locator = KapuaLocator.getInstance();
         tagService = locator.getService(TagService.class);
-        tagFactory = locator.getFactory(TagFactory.class);
     }
 
     // *************************************
@@ -170,7 +170,7 @@ public class TagServiceSteps extends TestBase {
         try {
             stepData.remove("tag");
             primeException();
-            TagQuery query = tagFactory.newQuery(SYS_SCOPE_ID);
+            TagQuery query = new TagQuery(SYS_SCOPE_ID);
             query.setPredicate(query.attributePredicate(TagAttributes.NAME, tagName, AttributePredicate.Operator.EQUAL));
             //TODO: #LAYER_VIOLATION - isn't this a find by name?
             TagListResult queryResult = tagService.query(query);
@@ -186,7 +186,7 @@ public class TagServiceSteps extends TestBase {
     public void deleteTagWithName(String tagName) throws Throwable {
         try {
             primeException();
-            TagQuery query = tagFactory.newQuery(getCurrentScopeId());
+            TagQuery query = new TagQuery(getCurrentScopeId());
             query.setPredicate(query.attributePredicate(TagAttributes.NAME, tagName, AttributePredicate.Operator.EQUAL));
             //TODO: #LAYER_VIOLATION - isn't this a find by name?
             TagListResult queryResult = tagService.query(query);
@@ -232,17 +232,18 @@ public class TagServiceSteps extends TestBase {
     /**
      * Create TagCreator for creating tag with specified name.
      *
-     * @param tagName name of tag
+     * @param tagName
+     *         name of tag
      * @return tag creator for tag with specified name
      */
     private TagCreator tagCreatorCreatorWithoutDescription(String tagName) {
-        TagCreator tagCreator = tagFactory.newCreator(getCurrentScopeId());
+        TagCreator tagCreator = new TagCreator(getCurrentScopeId());
         tagCreator.setName(tagName);
         return tagCreator;
     }
 
     public TagCreator tagCreatorCreatorWithDescription(String tagName, String tagDescription) {
-        TagCreator tagCreator = tagFactory.newCreator(SYS_SCOPE_ID);
+        TagCreator tagCreator = new TagCreator(SYS_SCOPE_ID);
         tagCreator.setName(tagName);
         tagCreator.setDescription(tagDescription);
         return tagCreator;
@@ -266,7 +267,7 @@ public class TagServiceSteps extends TestBase {
     public void nameOfTagIsChangedInto(String tagName, String newTagName) throws Exception {
         try {
             primeException();
-            TagQuery query = tagFactory.newQuery(getCurrentScopeId());
+            TagQuery query = new TagQuery(getCurrentScopeId());
             query.setPredicate(query.attributePredicate(TagAttributes.NAME, tagName, AttributePredicate.Operator.EQUAL));
             TagListResult queryResult = tagService.query(query);
             Tag foundTag = queryResult.getFirstItem();
@@ -296,7 +297,7 @@ public class TagServiceSteps extends TestBase {
     @And("Description of tag {string} is changed into {string}")
     public void descriptionOfTagIsChangedInto(String tagName, String newDescription) throws Exception {
         try {
-            TagQuery query = tagFactory.newQuery(getCurrentScopeId());
+            TagQuery query = new TagQuery(getCurrentScopeId());
             query.setPredicate(query.attributePredicate(TagAttributes.NAME, tagName, AttributePredicate.Operator.EQUAL));
             TagListResult queryResult = tagService.query(query);
             Tag foundTag = queryResult.getFirstItem();

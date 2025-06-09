@@ -23,7 +23,7 @@ public class JobStepDefinitionImplJpaRepository
         implements JobStepDefinitionRepository {
 
     public JobStepDefinitionImplJpaRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig) {
-        super(JobStepDefinitionImpl.class, JobStepDefinition.TYPE, () -> new JobStepDefinitionListResultImpl(), jpaRepoConfig);
+        super(JobStepDefinitionImpl.class, JobStepDefinition.TYPE, () -> new JobStepDefinitionListResult(), jpaRepoConfig);
     }
 
 }

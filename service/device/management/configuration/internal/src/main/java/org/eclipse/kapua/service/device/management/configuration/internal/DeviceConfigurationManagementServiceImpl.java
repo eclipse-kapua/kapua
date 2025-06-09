@@ -25,12 +25,11 @@ import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.device.management.commons.AbstractDeviceManagementTransactionalServiceImpl;
 import org.eclipse.kapua.service.device.management.commons.call.DeviceCallBuilder;
 import org.eclipse.kapua.service.device.management.configuration.DeviceComponentConfiguration;
 import org.eclipse.kapua.service.device.management.configuration.DeviceConfiguration;
-import org.eclipse.kapua.service.device.management.configuration.DeviceConfigurationFactory;
 import org.eclipse.kapua.service.device.management.configuration.DeviceConfigurationManagementService;
 import org.eclipse.kapua.service.device.management.configuration.message.internal.ConfigurationRequestChannel;
 import org.eclipse.kapua.service.device.management.configuration.message.internal.ConfigurationRequestMessage;
@@ -59,7 +58,6 @@ import com.google.common.base.Strings;
 public class DeviceConfigurationManagementServiceImpl extends AbstractDeviceManagementTransactionalServiceImpl implements DeviceConfigurationManagementService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DeviceConfigurationManagementServiceImpl.class);
-    private final DeviceConfigurationFactory deviceConfigurationFactory;
 
     private static final String SCOPE_ID = "scopeId";
     private static final String DEVICE_ID = "deviceId";
@@ -69,21 +67,17 @@ public class DeviceConfigurationManagementServiceImpl extends AbstractDeviceMana
 
     public DeviceConfigurationManagementServiceImpl(TxManager txManager,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             DeviceEventService deviceEventService,
             DeviceEventFactory deviceEventFactory,
             DeviceRegistryService deviceRegistryService,
-            DeviceConfigurationFactory deviceConfigurationFactory,
             DeviceConfigurationStoreService deviceConfigurationStoreService,
             XmlUtil xmlUtil) {
         super(txManager,
                 authorizationService,
-                permissionFactory,
                 deviceEventService,
                 deviceEventFactory,
                 deviceRegistryService
         );
-        this.deviceConfigurationFactory = deviceConfigurationFactory;
         this.deviceConfigurationStoreService = deviceConfigurationStoreService;
         this.xmlUtil = xmlUtil;
     }
@@ -95,7 +89,7 @@ public class DeviceConfigurationManagementServiceImpl extends AbstractDeviceMana
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
         // Prepare the request
         ConfigurationRequestChannel configurationRequestChannel = new ConfigurationRequestChannel();
         configurationRequestChannel.setAppName(DeviceConfigurationAppProperties.APP_NAME);
@@ -135,7 +129,7 @@ public class DeviceConfigurationManagementServiceImpl extends AbstractDeviceMana
             createDeviceEvent(scopeId, deviceId, configurationRequestMessage, responseMessage);
             // Check response
             DeviceConfiguration onlineDeviceConfiguration = checkResponseAcceptedOrThrowError(responseMessage,
-                    () -> responseMessage.getPayload().getDeviceConfigurations().orElse(deviceConfigurationFactory.newConfigurationInstance()));
+                    () -> responseMessage.getPayload().getDeviceConfigurations().orElse(new DeviceConfiguration()));
             // Store config and return
             if (deviceConfigurationStoreService.isServiceEnabled(scopeId) &&
                     deviceConfigurationStoreService.isApplicationEnabled(scopeId, deviceId)) {
@@ -155,7 +149,7 @@ public class DeviceConfigurationManagementServiceImpl extends AbstractDeviceMana
                 if (configurationComponentPid == null) {
                     return deviceConfigurationStoreService.getConfigurations(scopeId, deviceId);
                 } else {
-                    DeviceConfiguration deviceConfigurationReturned = deviceConfigurationFactory.newConfigurationInstance();
+                    DeviceConfiguration deviceConfigurationReturned = new DeviceConfiguration();
                     DeviceComponentConfiguration componentConfiguration = deviceConfigurationStoreService.getConfigurations(scopeId, deviceId, configurationComponentPid);
                     deviceConfigurationReturned.addComponentConfiguration(componentConfiguration);
                     return deviceConfigurationReturned;
@@ -175,7 +169,7 @@ public class DeviceConfigurationManagementServiceImpl extends AbstractDeviceMana
         ArgumentValidator.notNull(deviceComponentConfiguration, "componentConfiguration");
         ArgumentValidator.notEmptyOrNull(deviceComponentConfiguration.getId(), "componentConfiguration.componentId");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
         // Prepare the request
         ConfigurationRequestChannel configurationRequestChannel = new ConfigurationRequestChannel();
         configurationRequestChannel.setAppName(DeviceConfigurationAppProperties.APP_NAME);
@@ -185,7 +179,7 @@ public class DeviceConfigurationManagementServiceImpl extends AbstractDeviceMana
 
         ConfigurationRequestPayload configurationRequestPayload = new ConfigurationRequestPayload();
 
-        DeviceConfiguration deviceConfiguration = deviceConfigurationFactory.newConfigurationInstance();
+        DeviceConfiguration deviceConfiguration = new DeviceConfiguration();
         try {
             deviceConfiguration.getComponentConfigurations().add(deviceComponentConfiguration);
 
@@ -229,7 +223,7 @@ public class DeviceConfigurationManagementServiceImpl extends AbstractDeviceMana
         try {
             put(scopeId,
                     deviceId,
-                    xmlUtil.unmarshal(xmlDeviceConfig, DeviceConfigurationImpl.class),
+                    xmlUtil.unmarshal(xmlDeviceConfig, DeviceConfiguration.class),
                     timeout);
         } catch (JAXBException | SAXException e) {
             throw new KapuaIllegalArgumentException("xmlDeviceConfig", xmlDeviceConfig);
@@ -244,7 +238,7 @@ public class DeviceConfigurationManagementServiceImpl extends AbstractDeviceMana
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         ArgumentValidator.notNull(deviceConfiguration, "componentConfiguration");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
         // Prepare the request
         ConfigurationRequestChannel configurationRequestChannel = new ConfigurationRequestChannel();
         configurationRequestChannel.setAppName(DeviceConfigurationAppProperties.APP_NAME);

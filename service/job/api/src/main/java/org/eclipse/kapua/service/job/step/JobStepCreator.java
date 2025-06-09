@@ -12,10 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job.step;
 
-import org.eclipse.kapua.model.KapuaNamedEntityCreator;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.service.job.step.definition.JobStepProperty;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -24,7 +22,11 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.List;
+
+import org.eclipse.kapua.model.KapuaNamedEntityCreator;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import org.eclipse.kapua.service.job.step.definition.JobStepProperty;
 
 /**
  * {@link JobStepCreator} {@link org.eclipse.kapua.model.KapuaEntityCreator} definition
@@ -33,56 +35,93 @@ import java.util.List;
  */
 @XmlRootElement(name = "jobStepCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = JobStepXmlRegistry.class, factoryMethod = "newJobStepCreator")
-public interface JobStepCreator extends KapuaNamedEntityCreator<JobStep> {
+@XmlType
+public class JobStepCreator extends KapuaNamedEntityCreator {
+
+    private static final long serialVersionUID = 3119071638220738358L;
+
+    private KapuaId jobId;
+    private Integer stepIndex;
+    private KapuaId jobStepDefinitionId;
+    private List<JobStepProperty> jobStepProperty;
+
+    public JobStepCreator() {
+    }
+
+    public JobStepCreator(KapuaId scopeId) {
+        super(scopeId);
+    }
+
+    public JobStepCreator(KapuaId scopeId, String name) {
+        super(scopeId, name);
+    }
 
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
-    KapuaId getJobId();
+    public KapuaId getJobId() {
+        return jobId;
+    }
 
-    void setJobId(KapuaId jobId);
+    public void setJobId(KapuaId jobId) {
+        this.jobId = jobId;
+    }
 
-    Integer getStepIndex();
+    public Integer getStepIndex() {
+        return stepIndex;
+    }
 
-    void setStepIndex(Integer stepIndex);
+    public void setStepIndex(Integer stepIndex) {
+        this.stepIndex = stepIndex;
+    }
 
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
-    KapuaId getJobStepDefinitionId();
+    public KapuaId getJobStepDefinitionId() {
+        return jobStepDefinitionId;
+    }
 
-    void setJobStepDefinitionId(KapuaId jobStepDefinitionId);
+    public void setJobStepDefinitionId(KapuaId jobStepDefinitionId) {
+        this.jobStepDefinitionId = jobStepDefinitionId;
+    }
 
     @XmlElementWrapper(name = "stepProperties")
     @XmlElement(name = "stepProperty")
-    <P extends JobStepProperty> List<P> getStepProperties();
+    public List<JobStepProperty> getStepProperties() {
+        if (jobStepProperty == null) {
+            jobStepProperty = new ArrayList<>();
+        }
 
-    void setStepProperties(List<JobStepProperty> jobStepProperties);
+        return jobStepProperty;
+    }
+
+    public void setStepProperties(List<JobStepProperty> jobStepProperty) {
+        this.jobStepProperty = jobStepProperty;
+    }
 
     /**
-     * @deprecated since 2.0.0. Please make use of {@link #getStepProperties()}. This method is deprecated
-     * because of issue #3580 (i.e. the step properties' field is called different depending on what request are you using).
+     * @deprecated since 2.0.0. Please make use of {@link #getStepProperties()}. This method is deprecated because of issue #3580 (i.e. the step properties' field is called different depending on what
+     *         request are you using).
      */
     @Deprecated
     @XmlElementWrapper(name = "jobStepProperties")
     @XmlElement(name = "jobStepProperty")
-    default <P extends JobStepProperty> List<P> getJobStepPropertiesDeprecated() {
+    public List<JobStepProperty> getJobStepPropertiesDeprecated() {
         return getStepProperties();
     }
 
     /**
-     * @deprecated since 2.0.0. Please make use of {@link #setStepProperties(List)}. This method is deprecated
-     * because of issue #3580 (i.e. the step properties' field is called different depending on what request are you using).
+     * @deprecated since 2.0.0. Please make use of {@link #setStepProperties(List)}. This method is deprecated because of issue #3580 (i.e. the step properties' field is called different depending on
+     *         what request are you using).
      */
     @Deprecated
-    default void setJobStepProperties(List<JobStepProperty> jobStepProperties) {
+    public void setJobStepProperties(List<JobStepProperty> jobStepProperties) {
         setStepProperties(jobStepProperties);
     }
 
-
     /**
-     * @deprecated since 2.0.0. Please make use of {@link #setStepProperties(List)}. This method is deprecated
-     * because of issue #3580 (i.e. the step properties' field is called different depending on what request are you using).
+     * @deprecated since 2.0.0. Please make use of {@link #setStepProperties(List)}. This method is deprecated because of issue #3580 (i.e. the step properties' field is called different depending on
+     *         what request are you using).
      */
     @Deprecated
-    default void setJobStepPropertiesDeprecated(List<JobStepProperty> jobStepProperties) {
+    public void setJobStepPropertiesDeprecated(List<JobStepProperty> jobStepProperties) {
         setStepProperties(jobStepProperties);
     }
 }

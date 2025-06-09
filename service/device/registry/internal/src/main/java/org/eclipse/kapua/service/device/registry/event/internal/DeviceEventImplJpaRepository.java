@@ -21,7 +21,8 @@ import org.eclipse.kapua.service.device.registry.event.DeviceEventRepository;
 public class DeviceEventImplJpaRepository
         extends KapuaEntityJpaRepository<DeviceEvent, DeviceEventImpl, DeviceEventListResult>
         implements DeviceEventRepository {
+
     public DeviceEventImplJpaRepository(KapuaJpaRepositoryConfiguration configuration) {
-        super(DeviceEventImpl.class, DeviceEvent.TYPE, () -> new DeviceEventListResultImpl(), configuration);
+        super(DeviceEventImpl.class, DeviceEvent.TYPE, () -> new DeviceEventListResult(), configuration);
     }
 }

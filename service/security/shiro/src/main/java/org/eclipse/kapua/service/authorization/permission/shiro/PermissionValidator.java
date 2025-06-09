@@ -12,9 +12,15 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.permission.shiro;
 
-import com.google.common.collect.Sets;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaIllegalArgumentException;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.domain.Domain;
 import org.eclipse.kapua.service.authorization.domain.DomainFactory;
 import org.eclipse.kapua.service.authorization.domain.DomainListResult;
@@ -22,9 +28,7 @@ import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionAttributes;
 
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-import java.util.Set;
+import com.google.common.collect.Sets;
 
 public class PermissionValidator {
 
@@ -43,7 +47,7 @@ public class PermissionValidator {
 
     public void validatePermissions(@NotNull Set<Permission> permissions) throws KapuaException {
         if (!permissions.isEmpty()) {
-            DomainListResult domains = domainService.query(domainFactory.newQuery(null));
+            DomainListResult domains = domainService.query(new KapuaQuery((KapuaId) null));
 
             for (Permission p : permissions) {
                 if (p.getDomain() != null) {

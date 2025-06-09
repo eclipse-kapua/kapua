@@ -12,22 +12,19 @@
  *******************************************************************************/
 package org.eclipse.kapua.integration.misc;
 
+import java.util.Date;
+
+import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
-import org.eclipse.kapua.service.authorization.permission.shiro.PermissionImpl;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.role.RolePermission;
-import org.eclipse.kapua.service.authorization.role.RolePermissionCreator;
-import org.eclipse.kapua.service.authorization.role.RolePermissionListResult;
-import org.eclipse.kapua.service.authorization.role.RolePermissionQuery;
 import org.eclipse.kapua.service.authorization.role.shiro.RolePermissionFactoryImpl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
-
-import java.util.Date;
-
 
 @Category(JUnitTests.class)
 public class RolePermissionFactoryTest {
@@ -36,7 +33,7 @@ public class RolePermissionFactoryTest {
     KapuaId scopeId;
     RolePermission rolePermission;
     Date createdOn, modifiedOn;
-    PermissionImpl permission;
+    Permission permission;
 
     @Before
     public void initialize() {
@@ -45,7 +42,7 @@ public class RolePermissionFactoryTest {
         createdOn = new Date();
         modifiedOn = new Date();
         rolePermission = Mockito.mock(RolePermission.class);
-        permission = Mockito.mock(PermissionImpl.class);
+        permission = new Permission("domain", Actions.connect, KapuaId.ONE);
 
         Mockito.when(rolePermission.getId()).thenReturn(KapuaId.ANY);
         Mockito.when(rolePermission.getRoleId()).thenReturn(KapuaId.ONE);
@@ -65,36 +62,6 @@ public class RolePermissionFactoryTest {
     public void newEntityNullTest() {
         Assert.assertTrue("True expected.", rolePermissionFactoryImpl.newEntity(null) instanceof RolePermission);
         Assert.assertNull("Null expected.", rolePermissionFactoryImpl.newEntity(null).getScopeId());
-    }
-
-    @Test
-    public void newCreatorTest() {
-        Assert.assertTrue("True expected.", rolePermissionFactoryImpl.newCreator(scopeId) instanceof RolePermissionCreator);
-        Assert.assertEquals("Expected and actual values should be the same.", scopeId, rolePermissionFactoryImpl.newCreator(scopeId).getScopeId());
-    }
-
-    @Test
-    public void newCreatorNullTest() {
-        Assert.assertTrue("True expected.", rolePermissionFactoryImpl.newCreator(null) instanceof RolePermissionCreator);
-        Assert.assertNull("Null expected.", rolePermissionFactoryImpl.newCreator(null).getScopeId());
-    }
-
-    @Test
-    public void newQueryTest() {
-        Assert.assertTrue("True expected.", rolePermissionFactoryImpl.newQuery(scopeId) instanceof RolePermissionQuery);
-        Assert.assertEquals("Expected and actual values should be the same.", scopeId, rolePermissionFactoryImpl.newQuery(scopeId).getScopeId());
-    }
-
-    @Test
-    public void newQueryNullTest() {
-        Assert.assertTrue("True expected.", rolePermissionFactoryImpl.newQuery(null) instanceof RolePermissionQuery);
-        Assert.assertNull("Null expected.", rolePermissionFactoryImpl.newQuery(null).getScopeId());
-    }
-
-    @Test
-    public void newListResultTest() {
-        Assert.assertTrue("True expected.", rolePermissionFactoryImpl.newListResult() instanceof RolePermissionListResult);
-        Assert.assertTrue("True expected.", rolePermissionFactoryImpl.newListResult().isEmpty());
     }
 
     @Test

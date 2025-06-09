@@ -14,7 +14,6 @@
 package org.eclipse.kapua.service.device.management.asset.message.internal;
 
 import org.eclipse.kapua.service.device.management.asset.DeviceAsset;
-import org.eclipse.kapua.service.device.management.commons.message.response.KapuaResponseMessageImpl;
 import org.eclipse.kapua.service.device.management.message.response.KapuaResponseMessage;
 
 /**
@@ -22,8 +21,7 @@ import org.eclipse.kapua.service.device.management.message.response.KapuaRespons
  *
  * @since 1.0.0
  */
-public class AssetResponseMessage extends KapuaResponseMessageImpl<AssetResponseChannel, AssetResponsePayload>
-        implements KapuaResponseMessage<AssetResponseChannel, AssetResponsePayload> {
+public class AssetResponseMessage extends KapuaResponseMessage<AssetResponseChannel, AssetResponsePayload> {
 
     private static final long serialVersionUID = -2842458086421864159L;
 }

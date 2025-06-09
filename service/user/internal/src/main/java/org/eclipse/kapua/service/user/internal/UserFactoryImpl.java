@@ -12,15 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.user.internal;
 
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.user.User;
-import org.eclipse.kapua.service.user.UserCreator;
 import org.eclipse.kapua.service.user.UserFactory;
-import org.eclipse.kapua.service.user.UserListResult;
-import org.eclipse.kapua.service.user.UserQuery;
-
-import javax.inject.Singleton;
 
 /**
  * {@link UserFactory} implementation.
@@ -31,32 +28,8 @@ import javax.inject.Singleton;
 public class UserFactoryImpl implements UserFactory {
 
     @Override
-    public UserCreator newCreator(KapuaId scopeId, String name) {
-        UserCreator creator = newCreator(scopeId);
-
-        creator.setName(name);
-
-        return creator;
-    }
-
-    @Override
-    public UserQuery newQuery(KapuaId scopeId) {
-        return new UserQueryImpl(scopeId);
-    }
-
-    @Override
-    public UserListResult newListResult() {
-        return new UserListResultImpl();
-    }
-
-    @Override
     public User newEntity(KapuaId scopeId) {
         return new UserImpl(scopeId);
-    }
-
-    @Override
-    public UserCreator newCreator(KapuaId scopeId) {
-        return new UserCreatorImpl(scopeId);
     }
 
     @Override

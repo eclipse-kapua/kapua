@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.registry.operation.notification.internal;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.domains.Domains;
@@ -20,7 +23,7 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperation;
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationRepository;
 import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotification;
@@ -31,14 +34,10 @@ import org.eclipse.kapua.service.device.management.registry.operation.notificati
 import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotificationService;
 import org.eclipse.kapua.storage.TxManager;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 @Singleton
 public class ManagementOperationNotificationServiceImpl implements ManagementOperationNotificationService {
 
     private final AuthorizationService authorizationService;
-    private final PermissionFactory permissionFactory;
     private final ManagementOperationNotificationFactory entityFactory;
     private final TxManager txManager;
     private final ManagementOperationNotificationRepository repository;
@@ -47,13 +46,11 @@ public class ManagementOperationNotificationServiceImpl implements ManagementOpe
     @Inject
     public ManagementOperationNotificationServiceImpl(
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             ManagementOperationNotificationFactory entityFactory,
             TxManager txManager,
             ManagementOperationNotificationRepository repository,
             DeviceManagementOperationRepository deviceManagementOperationRepository) {
         this.authorizationService = authorizationService;
-        this.permissionFactory = permissionFactory;
         this.entityFactory = entityFactory;
         this.txManager = txManager;
         this.repository = repository;
@@ -71,7 +68,7 @@ public class ManagementOperationNotificationServiceImpl implements ManagementOpe
         ArgumentValidator.notNull(creator.getProgress(), "managementOperationNotificationCreator.progress");
         ArgumentValidator.notNegative(creator.getProgress(), "managementOperationNotificationCreator.progress");
         // Check access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT_REGISTRY, Actions.write, null));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT_REGISTRY, Actions.write, null));
 
         return txManager.execute(tx -> {
             // Check operation existence
@@ -97,7 +94,7 @@ public class ManagementOperationNotificationServiceImpl implements ManagementOpe
         ArgumentValidator.notNull(scopeId, "scopeId");
         ArgumentValidator.notNull(entityId, "managementOperationNotificationId");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT_REGISTRY, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT_REGISTRY, Actions.read, scopeId));
         // Do find
         return txManager.execute(tx -> repository.find(tx, scopeId, entityId))
                 .orElse(null);
@@ -108,7 +105,7 @@ public class ManagementOperationNotificationServiceImpl implements ManagementOpe
         // Argument Validation
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT_REGISTRY, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT_REGISTRY, Actions.read, query.getScopeId()));
         // Do query
         return txManager.execute(tx -> repository.query(tx, query));
     }
@@ -118,7 +115,7 @@ public class ManagementOperationNotificationServiceImpl implements ManagementOpe
         // Argument Validation
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT_REGISTRY, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT_REGISTRY, Actions.read, query.getScopeId()));
         // Do count
         return txManager.execute(tx -> repository.count(tx, query));
     }
@@ -130,7 +127,7 @@ public class ManagementOperationNotificationServiceImpl implements ManagementOpe
         ArgumentValidator.notNull(entityId, "managementOperationNotificationId");
 
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT_REGISTRY, Actions.delete, null));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT_REGISTRY, Actions.delete, null));
 
         // Do delete
         txManager.execute(tx -> repository.delete(tx, scopeId, entityId));

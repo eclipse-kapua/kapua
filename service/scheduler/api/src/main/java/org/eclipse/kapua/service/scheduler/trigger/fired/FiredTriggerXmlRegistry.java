@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.scheduler.trigger.fired;
 
-import org.eclipse.kapua.locator.KapuaLocator;
-
 import javax.xml.bind.annotation.XmlRegistry;
+
+import org.eclipse.kapua.locator.KapuaLocator;
 
 /**
  * {@link FiredTrigger} xml factory class.
@@ -30,15 +30,4 @@ public class FiredTriggerXmlRegistry {
         return firedTriggerFactory.newEntity(null);
     }
 
-    public FiredTriggerCreator newCreator() {
-        return firedTriggerFactory.newCreator(null);
-    }
-
-    public FiredTriggerListResult newListResult() {
-        return firedTriggerFactory.newListResult();
-    }
-
-    public FiredTriggerQuery newQuery() {
-        return firedTriggerFactory.newQuery(null);
-    }
 }

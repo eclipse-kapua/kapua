@@ -40,7 +40,6 @@ import org.eclipse.kapua.commons.util.xml.JAXBContextProvider;
 import org.eclipse.kapua.job.engine.JobStartOptions;
 import org.eclipse.kapua.job.engine.commons.model.JobStepPropertiesOverrides;
 import org.eclipse.kapua.job.engine.commons.model.JobTargetSublist;
-import org.eclipse.kapua.service.authentication.AuthenticationXmlRegistry;
 import org.eclipse.kapua.service.authentication.token.AccessToken;
 import org.eclipse.kapua.service.device.call.kura.model.configuration.KuraDeviceConfiguration;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssets;
@@ -54,7 +53,6 @@ import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystore
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreItemQuery;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreItems;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreKeypair;
-import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreXmlRegistry;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystores;
 import org.eclipse.kapua.service.device.management.packages.model.download.DevicePackageDownloadOptions;
 import org.eclipse.kapua.service.device.management.packages.model.download.DevicePackageDownloadRequest;
@@ -71,15 +69,12 @@ import org.eclipse.kapua.service.job.execution.JobExecutionQuery;
 import org.eclipse.kapua.service.job.execution.JobExecutionXmlRegistry;
 import org.eclipse.kapua.service.job.step.JobStep;
 import org.eclipse.kapua.service.job.step.JobStepListResult;
-import org.eclipse.kapua.service.job.step.JobStepQuery;
 import org.eclipse.kapua.service.job.step.JobStepXmlRegistry;
 import org.eclipse.kapua.service.job.step.definition.JobStepProperty;
 import org.eclipse.kapua.service.job.targets.JobTarget;
 import org.eclipse.kapua.service.job.targets.JobTargetListResult;
-import org.eclipse.kapua.service.job.targets.JobTargetQuery;
 import org.eclipse.kapua.service.scheduler.trigger.Trigger;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerListResult;
-import org.eclipse.kapua.service.scheduler.trigger.TriggerQuery;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerXmlRegistry;
 import org.eclipse.persistence.jaxb.JAXBContextFactory;
 import org.eclipse.persistence.jaxb.MarshallerProperties;
@@ -132,7 +127,6 @@ public class JobEngineJAXBContextProvider implements JAXBContextProvider {
                     JobStoppingExceptionInfo.class,
 
                     // Authentication
-                    AuthenticationXmlRegistry.class,
                     AccessToken.class,
 
                     // Device Management Keystore
@@ -145,7 +139,6 @@ public class JobEngineJAXBContextProvider implements JAXBContextProvider {
                     DeviceKeystoreKeypair.class,
                     DeviceKeystoreCSRInfo.class,
                     DeviceKeystoreCSR.class,
-                    DeviceKeystoreXmlRegistry.class,
 
                     // Jobs
                     Job.class,
@@ -154,7 +147,6 @@ public class JobEngineJAXBContextProvider implements JAXBContextProvider {
 
                     JobStep.class,
                     JobStepListResult.class,
-                    JobStepQuery.class,
                     JobStepXmlRegistry.class,
                     JobStepProperty.class,
 
@@ -165,7 +157,6 @@ public class JobEngineJAXBContextProvider implements JAXBContextProvider {
 
                     JobTarget.class,
                     JobTargetListResult.class,
-                    JobTargetQuery.class,
                     JobExecutionXmlRegistry.class,
 
                     JobTargetSublist.class,
@@ -182,7 +173,6 @@ public class JobEngineJAXBContextProvider implements JAXBContextProvider {
 
                     Trigger.class,
                     TriggerListResult.class,
-                    TriggerQuery.class,
                     TriggerXmlRegistry.class,
 
                     KuraDeviceConfiguration.class

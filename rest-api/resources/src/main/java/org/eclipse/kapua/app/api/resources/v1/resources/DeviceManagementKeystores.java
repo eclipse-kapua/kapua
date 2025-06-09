@@ -12,24 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.resources.v1.resources;
 
-import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.app.api.core.model.EntityId;
-import org.eclipse.kapua.app.api.core.model.ScopeId;
-import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
-import org.eclipse.kapua.app.api.resources.v1.resources.model.device.management.keystore.DeviceKeystoreCertificateInfo;
-import org.eclipse.kapua.service.KapuaService;
-import org.eclipse.kapua.service.device.management.keystore.DeviceKeystoreManagementFactory;
-import org.eclipse.kapua.service.device.management.keystore.DeviceKeystoreManagementService;
-import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreCSR;
-import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreCSRInfo;
-import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreCertificate;
-import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreItem;
-import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreItemQuery;
-import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreItems;
-import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreKeypair;
-import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystores;
-import org.eclipse.kapua.service.device.registry.Device;
-
 import javax.inject.Inject;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -42,6 +24,23 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.app.api.core.model.EntityId;
+import org.eclipse.kapua.app.api.core.model.ScopeId;
+import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
+import org.eclipse.kapua.app.api.resources.v1.resources.model.device.management.keystore.DeviceKeystoreCertificateInfo;
+import org.eclipse.kapua.service.KapuaService;
+import org.eclipse.kapua.service.device.management.keystore.DeviceKeystoreManagementService;
+import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreCSR;
+import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreCSRInfo;
+import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreCertificate;
+import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreItem;
+import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreItemQuery;
+import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreItems;
+import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreKeypair;
+import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystores;
+import org.eclipse.kapua.service.device.registry.Device;
+
 /**
  * {@link DeviceKeystoreManagementService} {@link AbstractKapuaResource}
  *
@@ -52,21 +51,23 @@ public class DeviceManagementKeystores extends AbstractKapuaResource {
 
     @Inject
     public DeviceKeystoreManagementService deviceKeystoreManagementService;
-    @Inject
-    public DeviceKeystoreManagementFactory deviceKeystoreManagementFactory;
 
     /**
      * Gets the {@link DeviceKeystores} present on the {@link Device}.
      *
-     * @param scopeId  The {@link Device#getScopeId()}.
-     * @param deviceId The {@link Device#getId()}.
-     * @param timeout  The timeout of the operation in milliseconds
+     * @param scopeId
+     *         The {@link Device#getScopeId()}.
+     * @param deviceId
+     *         The {@link Device#getId()}.
+     * @param timeout
+     *         The timeout of the operation in milliseconds
      * @return The {@link DeviceKeystores}.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.5.0
      */
     @GET
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public DeviceKeystores getKeystores(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,
@@ -77,16 +78,20 @@ public class DeviceManagementKeystores extends AbstractKapuaResource {
     /**
      * Gets the {@link DeviceKeystoreItems} present on the {@link Device}.
      *
-     * @param scopeId  The {@link Device#getScopeId()}.
-     * @param deviceId The {@link Device#getId()}.
-     * @param timeout  The timeout of the operation in milliseconds
+     * @param scopeId
+     *         The {@link Device#getScopeId()}.
+     * @param deviceId
+     *         The {@link Device#getId()}.
+     * @param timeout
+     *         The timeout of the operation in milliseconds
      * @return The {@link DeviceKeystoreItems}.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.5.0
      */
     @GET
     @Path("items")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public DeviceKeystoreItems getKeystoreItems(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,
@@ -94,7 +99,7 @@ public class DeviceManagementKeystores extends AbstractKapuaResource {
             @QueryParam("alias") String alias,
             @QueryParam("timeout") @DefaultValue("30000") Long timeout) throws KapuaException {
 
-        DeviceKeystoreItemQuery itemQuery = deviceKeystoreManagementFactory.newDeviceKeystoreItemQuery();
+        DeviceKeystoreItemQuery itemQuery = new DeviceKeystoreItemQuery();
         itemQuery.setKeystoreId(keystoreId);
         itemQuery.setAlias(alias);
 
@@ -104,16 +109,20 @@ public class DeviceManagementKeystores extends AbstractKapuaResource {
     /**
      * Gets the {@link DeviceKeystoreItem} present on the {@link Device}.
      *
-     * @param scopeId  The {@link Device#getScopeId()}.
-     * @param deviceId The {@link Device#getId()}.
-     * @param timeout  The timeout of the operation in milliseconds
+     * @param scopeId
+     *         The {@link Device#getScopeId()}.
+     * @param deviceId
+     *         The {@link Device#getId()}.
+     * @param timeout
+     *         The timeout of the operation in milliseconds
      * @return The {@link DeviceKeystoreItem}.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.5.0
      */
     @GET
     @Path("item")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public DeviceKeystoreItem getKeystoreItem(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,
@@ -127,17 +136,22 @@ public class DeviceManagementKeystores extends AbstractKapuaResource {
     /**
      * Creates a {@link DeviceKeystoreCertificate} into the {@link Device}.
      *
-     * @param scopeId                 The {@link Device#getScopeId()}.
-     * @param deviceId                The {@link Device#getId()}.
-     * @param keystoreCertificateInfo The {@link DeviceKeystoreCertificateInfo} to create.
-     * @param timeout                 The timeout of the operation in milliseconds
+     * @param scopeId
+     *         The {@link Device#getScopeId()}.
+     * @param deviceId
+     *         The {@link Device#getId()}.
+     * @param keystoreCertificateInfo
+     *         The {@link DeviceKeystoreCertificateInfo} to create.
+     * @param timeout
+     *         The timeout of the operation in milliseconds
      * @return HTTP {@link Response#noContent()} code.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.5.0
      */
     @POST
     @Path("items/certificateInfo")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public Response createDeviceKeystoreCertificate(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,
@@ -158,17 +172,22 @@ public class DeviceManagementKeystores extends AbstractKapuaResource {
     /**
      * Creates a {@link DeviceKeystoreCertificate} into the {@link Device}.
      *
-     * @param scopeId             The {@link Device#getScopeId()}.
-     * @param deviceId            The {@link Device#getId()}.
-     * @param keystoreCertificate The {@link DeviceKeystoreCertificate} to create.
-     * @param timeout             The timeout of the operation in milliseconds
+     * @param scopeId
+     *         The {@link Device#getScopeId()}.
+     * @param deviceId
+     *         The {@link Device#getId()}.
+     * @param keystoreCertificate
+     *         The {@link DeviceKeystoreCertificate} to create.
+     * @param timeout
+     *         The timeout of the operation in milliseconds
      * @return HTTP {@link Response#noContent()} code.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.5.0
      */
     @POST
     @Path("items/certificateRaw")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public Response createDeviceKeystoreCertificate(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,
@@ -180,21 +199,25 @@ public class DeviceManagementKeystores extends AbstractKapuaResource {
         return returnNoContent();
     }
 
-
     /**
      * Creates a {@link DeviceKeystoreKeypair} into the {@link Device}.
      *
-     * @param scopeId               The {@link Device#getScopeId()}.
-     * @param deviceId              The {@link Device#getId()}.
-     * @param deviceKeystoreKeypair The {@link DeviceKeystoreKeypair} to create.
-     * @param timeout               The timeout of the operation in milliseconds
+     * @param scopeId
+     *         The {@link Device#getScopeId()}.
+     * @param deviceId
+     *         The {@link Device#getId()}.
+     * @param deviceKeystoreKeypair
+     *         The {@link DeviceKeystoreKeypair} to create.
+     * @param timeout
+     *         The timeout of the operation in milliseconds
      * @return HTTP {@link Response#noContent()} code.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.5.0
      */
     @POST
     @Path("items/keypair")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public Response createDeviceKeystoreKeypair(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,
@@ -209,17 +232,22 @@ public class DeviceManagementKeystores extends AbstractKapuaResource {
     /**
      * Sends a {@link DeviceKeystoreCSRInfo} into the {@link Device}.
      *
-     * @param scopeId               The {@link Device#getScopeId()}.
-     * @param deviceId              The {@link Device#getId()}.
-     * @param deviceKeystoreCSRInfo The {@link DeviceKeystoreCSRInfo} to create.
-     * @param timeout               The timeout of the operation in milliseconds
+     * @param scopeId
+     *         The {@link Device#getScopeId()}.
+     * @param deviceId
+     *         The {@link Device#getId()}.
+     * @param deviceKeystoreCSRInfo
+     *         The {@link DeviceKeystoreCSRInfo} to create.
+     * @param timeout
+     *         The timeout of the operation in milliseconds
      * @return The {@link DeviceKeystoreCSR}.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.5.0
      */
     @POST
     @Path("items/csr")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public DeviceKeystoreCSR createDeviceKeystoreCSR(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,
@@ -232,16 +260,20 @@ public class DeviceManagementKeystores extends AbstractKapuaResource {
     /**
      * Gets the {@link DeviceKeystoreItem} present on the {@link Device}.
      *
-     * @param scopeId  The {@link Device#getScopeId()}.
-     * @param deviceId The {@link Device#getId()}.
-     * @param timeout  The timeout of the operation in milliseconds
+     * @param scopeId
+     *         The {@link Device#getScopeId()}.
+     * @param deviceId
+     *         The {@link Device#getId()}.
+     * @param timeout
+     *         The timeout of the operation in milliseconds
      * @return HTTP {@link Response#noContent()} code.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.5.0
      */
     @DELETE
     @Path("item")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public Response deleteKeystoreItem(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,

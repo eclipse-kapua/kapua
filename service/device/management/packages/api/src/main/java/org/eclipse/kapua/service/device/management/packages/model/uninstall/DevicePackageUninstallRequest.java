@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.packages.model.uninstall;
 
-import org.eclipse.kapua.service.device.management.packages.model.DevicePackageXmlRegistry;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -31,10 +29,14 @@ import javax.xml.bind.annotation.XmlType;
         "name",
         "version",
         "reboot",
-        "rebootDelay" },
-        factoryClass = DevicePackageXmlRegistry.class,
-        factoryMethod = "newDevicePackageUninstallRequest")
-public interface DevicePackageUninstallRequest {
+        "rebootDelay" })
+public class DevicePackageUninstallRequest {
+
+    public String name;
+    public String version;
+
+    public Boolean reboot;
+    public Integer rebootDelay;
 
     /**
      * Get package name
@@ -42,14 +44,18 @@ public interface DevicePackageUninstallRequest {
      * @return
      */
     @XmlElement(name = "name")
-    String getName();
+    public String getName() {
+        return name;
+    }
 
     /**
      * Set package name
      *
      * @param name
      */
-    void setName(String name);
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /**
      * Get package version
@@ -57,14 +63,18 @@ public interface DevicePackageUninstallRequest {
      * @return
      */
     @XmlElement(name = "version")
-    String getVersion();
+    public String getVersion() {
+        return version;
+    }
 
     /**
      * Set package version
      *
      * @param version
      */
-    void setVersion(String version);
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     /**
      * Get the device reboot flag
@@ -72,14 +82,18 @@ public interface DevicePackageUninstallRequest {
      * @return
      */
     @XmlElement(name = "reboot")
-    Boolean isReboot();
+    public Boolean isReboot() {
+        return reboot;
+    }
 
     /**
      * Set the device reboot flag
      *
      * @param reboot
      */
-    void setReboot(Boolean reboot);
+    public void setReboot(Boolean reboot) {
+        this.reboot = reboot;
+    }
 
     /**
      * Get the reboot delay
@@ -87,12 +101,17 @@ public interface DevicePackageUninstallRequest {
      * @return
      */
     @XmlElement(name = "rebootDelay")
-    Integer getRebootDelay();
+    public Integer getRebootDelay() {
+        return rebootDelay;
+    }
 
     /**
      * Set the reboot delay
      *
      * @param rebootDelay
      */
-    void setRebootDelay(Integer rebootDelay);
+    public void setRebootDelay(Integer rebootDelay) {
+        this.rebootDelay = rebootDelay;
+    }
+
 }

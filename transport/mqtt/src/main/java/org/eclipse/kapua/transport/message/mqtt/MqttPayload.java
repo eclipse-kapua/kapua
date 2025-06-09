@@ -12,13 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.transport.message.mqtt;
 
+import java.util.Arrays;
+import java.util.Base64;
+
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.kapua.transport.message.TransportPayload;
 import org.eclipse.kapua.transport.mqtt.setting.MqttClientSetting;
 import org.eclipse.kapua.transport.mqtt.setting.MqttClientSettingKeys;
-
-import java.util.Arrays;
-import java.util.Base64;
 
 /**
  * Implementation of {@link TransportPayload} API for {@link org.eclipse.kapua.transport.mqtt.MqttFacade}.
@@ -49,7 +49,8 @@ public class MqttPayload implements TransportPayload {
     /**
      * Constructor.
      *
-     * @param body The raw body to set for this {@link MqttPayload}.
+     * @param body
+     *         The raw body to set for this {@link MqttPayload}.
      * @since 1.0.0
      */
     public MqttPayload(byte[] body) {
@@ -69,7 +70,8 @@ public class MqttPayload implements TransportPayload {
     /**
      * Sets the raw body set for this {@link MqttPayload}.
      *
-     * @param body the raw body set for this {@link MqttPayload}.
+     * @param body
+     *         the raw body set for this {@link MqttPayload}.
      * @since 1.0.0
      */
     public void setBody(byte[] body) {
@@ -88,12 +90,11 @@ public class MqttPayload implements TransportPayload {
         return getBody() != null && getBody().length > 0;
     }
 
-
     /**
      * Gets the {@link Base64} encoded value of {@link #getBody()} as a user-friendly value.
      * <p>
-     * If {@link #hasBody()} the {@link #getBody()} will be shortened if longer that a configurable parameter named: {@code transport.mqtt.payload.body.toString.length}.
-     * Else {@link StringUtils#EMPTY} will be used.
+     * If {@link #hasBody()} the {@link #getBody()} will be shortened if longer that a configurable parameter named: {@code transport.mqtt.payload.body.toString.length}. Else {@link StringUtils#EMPTY}
+     * will be used.
      *
      * @return The {@link Base64} encoded value of {@link #getBody()}.
      * @since 1.2.0

@@ -13,7 +13,6 @@
 package org.eclipse.kapua.service.device.registry;
 
 import org.eclipse.kapua.model.KapuaEntityFactory;
-import org.eclipse.kapua.model.id.KapuaId;
 
 /**
  * {@link Device} {@link KapuaEntityFactory} definition.
@@ -21,26 +20,17 @@ import org.eclipse.kapua.model.id.KapuaId;
  * @see org.eclipse.kapua.model.KapuaEntityFactory
  * @since 1.0.0
  */
-public interface DeviceFactory extends KapuaEntityFactory<Device, DeviceCreator, DeviceQuery, DeviceListResult> {
-
-    /**
-     * Instantiates a new {@link DeviceCreator}
-     *
-     * @param scopeId  The scope {@link KapuaId} to set into the {@link DeviceCreator}
-     * @param clientId The client id to set into the {@link DeviceCreator}
-     * @return The newly instantiated {@link DeviceCreator}.
-     * @since 1.0.0
-     * @deprecated Since 1.5.0. Please use {@link #newCreator(KapuaId)}.
-     */
-    @Deprecated
-    DeviceCreator newCreator(KapuaId scopeId, String clientId);
+public interface DeviceFactory extends KapuaEntityFactory<Device> {
 
     /**
      * Instantiates a new {@link DeviceExtendedProperty}.
      *
-     * @param groupName The {@link DeviceExtendedProperty#getGroupName()}.
-     * @param name      The {@link DeviceExtendedProperty#getName()}.
-     * @param value     The {@link DeviceExtendedProperty#getValue()}.
+     * @param groupName
+     *         The {@link DeviceExtendedProperty#getGroupName()}.
+     * @param name
+     *         The {@link DeviceExtendedProperty#getName()}.
+     * @param value
+     *         The {@link DeviceExtendedProperty#getValue()}.
      * @return The newly instantiated {@link DeviceExtendedProperty}.
      * @since 1.5.0
      */

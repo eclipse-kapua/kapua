@@ -12,9 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.authentication.shared.util;
 
-import com.extjs.gxt.ui.client.Style.SortDir;
-import com.extjs.gxt.ui.client.data.BaseModel;
-import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.kapua.app.console.module.api.shared.util.GwtKapuaCommonsModelConverter;
 import org.eclipse.kapua.app.console.module.authentication.shared.model.GwtCredential;
@@ -26,16 +23,19 @@ import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.KapuaEntity;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.FieldSortCriteria;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.model.query.SortOrder;
 import org.eclipse.kapua.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.service.authentication.credential.Credential;
 import org.eclipse.kapua.service.authentication.credential.CredentialAttributes;
 import org.eclipse.kapua.service.authentication.credential.CredentialCreator;
 import org.eclipse.kapua.service.authentication.credential.CredentialFactory;
-import org.eclipse.kapua.service.authentication.credential.CredentialQuery;
 import org.eclipse.kapua.service.authentication.credential.CredentialStatus;
 import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionCreator;
-import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionFactory;
+
+import com.extjs.gxt.ui.client.Style.SortDir;
+import com.extjs.gxt.ui.client.data.BaseModel;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 
 /**
  * Utility class for convertKapuaId {@link BaseModel}s to {@link KapuaEntity}ies and other Kapua models
@@ -45,22 +45,23 @@ public class GwtKapuaAuthenticationModelConverter {
     // Get Services
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
     private static final CredentialFactory CREDENTIAL_FACTORY = LOCATOR.getFactory(CredentialFactory.class);
-    private static final MfaOptionFactory MFA_OPTION_FACTORY = LOCATOR.getFactory(MfaOptionFactory.class);
 
     private GwtKapuaAuthenticationModelConverter() {
     }
 
     /**
-     * Converts a {@link GwtCredentialQuery} into a {@link CredentialQuery} object for backend usage
+     * Converts a {@link GwtCredentialQuery} into a {@link KapuaQuery} object for backend usage
      *
-     * @param loadConfig         the load configuration
-     * @param gwtCredentialQuery the {@link GwtCredentialQuery} to convertKapuaId
-     * @return the converted {@link CredentialQuery}
+     * @param loadConfig
+     *         the load configuration
+     * @param gwtCredentialQuery
+     *         the {@link GwtCredentialQuery} to convertKapuaId
+     * @return the converted {@link KapuaQuery}
      */
-    public static CredentialQuery convertCredentialQuery(PagingLoadConfig loadConfig, GwtCredentialQuery gwtCredentialQuery) {
+    public static KapuaQuery convertCredentialQuery(PagingLoadConfig loadConfig, GwtCredentialQuery gwtCredentialQuery) {
 
         // Convert query
-        CredentialQuery query = CREDENTIAL_FACTORY.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(gwtCredentialQuery.getScopeId()));
+        KapuaQuery query = new KapuaQuery(GwtKapuaCommonsModelConverter.convertKapuaId(gwtCredentialQuery.getScopeId()));
         AndPredicate andPredicate = query.andPredicate();
 
         if (gwtCredentialQuery.getUserId() != null && !gwtCredentialQuery.getUserId().trim().isEmpty()) {
@@ -93,20 +94,20 @@ public class GwtKapuaAuthenticationModelConverter {
     /**
      * Converts a {@link GwtCredentialCreator} into a {@link CredentialCreator} object for backend usage
      *
-     * @param gwtCredentialCreator the {@link GwtCredentialCreator} to convertKapuaId
+     * @param gwtCredentialCreator
+     *         the {@link GwtCredentialCreator} to convertKapuaId
      * @return the converted {@link CredentialCreator}
      */
     public static CredentialCreator convertCredentialCreator(GwtCredentialCreator gwtCredentialCreator) {
 
         // Convert scopeId
         KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(gwtCredentialCreator.getScopeId());
-        CredentialCreator credentialCreator = CREDENTIAL_FACTORY
-                .newCreator(scopeId,
-                        GwtKapuaCommonsModelConverter.convertKapuaId(gwtCredentialCreator.getUserId()),
-                        gwtCredentialCreator.getCredentialType(),
-                        gwtCredentialCreator.getCredentialPlainKey(),
-                        convertCredentialStatus(gwtCredentialCreator.getCredentialStatus()),
-                        gwtCredentialCreator.getExpirationDate());
+        CredentialCreator credentialCreator = new CredentialCreator(scopeId,
+                GwtKapuaCommonsModelConverter.convertKapuaId(gwtCredentialCreator.getUserId()),
+                gwtCredentialCreator.getCredentialType(),
+                gwtCredentialCreator.getCredentialPlainKey(),
+                convertCredentialStatus(gwtCredentialCreator.getCredentialStatus()),
+                gwtCredentialCreator.getExpirationDate());
         // Return converted
         return credentialCreator;
     }
@@ -114,7 +115,8 @@ public class GwtKapuaAuthenticationModelConverter {
     /**
      * Converts a {@link GwtCredential} into a {@link Credential} object for backend usage
      *
-     * @param gwtCredential the {@link GwtCredential} to convertKapuaId
+     * @param gwtCredential
+     *         the {@link GwtCredential} to convertKapuaId
      * @return the converted {@link Credential}
      */
     public static Credential convertCredential(GwtCredential gwtCredential) {
@@ -146,7 +148,7 @@ public class GwtKapuaAuthenticationModelConverter {
     public static MfaOptionCreator convertMfaCredentialOptionsCreator(GwtMfaCredentialOptionsCreator gwtMfaCredentialOptionsCreator) {
         KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(gwtMfaCredentialOptionsCreator.getScopeId());
         KapuaId userId = GwtKapuaCommonsModelConverter.convertKapuaId(gwtMfaCredentialOptionsCreator.getUserId());
-        return MFA_OPTION_FACTORY.newCreator(scopeId, userId);
+        return new MfaOptionCreator(scopeId, userId);
     }
 
 }

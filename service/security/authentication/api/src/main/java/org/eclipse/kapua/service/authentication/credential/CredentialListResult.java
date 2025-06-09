@@ -26,7 +26,9 @@ import org.eclipse.kapua.model.query.KapuaListResult;
  */
 @XmlRootElement(name = "credentialListResult")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = CredentialXmlRegistry.class, factoryMethod = "newCredentialListResult")
-public interface CredentialListResult extends KapuaListResult<Credential> {
+@XmlType
+public class CredentialListResult extends KapuaListResult<Credential> {
+
+    static final long serialVersionUID = -7949012585401032274L;
 
 }

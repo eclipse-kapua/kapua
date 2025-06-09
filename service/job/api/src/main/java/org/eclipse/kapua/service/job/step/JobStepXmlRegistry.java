@@ -12,10 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job.step;
 
+import javax.xml.bind.annotation.XmlRegistry;
+
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.service.job.step.definition.JobStepProperty;
-
-import javax.xml.bind.annotation.XmlRegistry;
 
 /**
  * {@link JobStep} xml factory class
@@ -34,28 +34,6 @@ public class JobStepXmlRegistry {
      */
     public JobStep newJobStep() {
         return jobStepFactory.newEntity(null);
-    }
-
-    /**
-     * Creates a new job creator instance
-     *
-     * @return
-     */
-    public JobStepCreator newJobStepCreator() {
-        return jobStepFactory.newCreator(null);
-    }
-
-    /**
-     * Creates a new job list result instance
-     *
-     * @return
-     */
-    public JobStepListResult newJobStepListResult() {
-        return jobStepFactory.newListResult();
-    }
-
-    public JobStepQuery newQuery() {
-        return jobStepFactory.newQuery(null);
     }
 
     public JobStepProperty newJobStepProperty() {

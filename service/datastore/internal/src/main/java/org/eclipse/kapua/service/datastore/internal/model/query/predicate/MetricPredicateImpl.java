@@ -12,14 +12,15 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.internal.model.query.predicate;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.eclipse.kapua.service.datastore.internal.mediator.DatastoreUtils;
-import org.eclipse.kapua.service.datastore.internal.mediator.MessageField;
+import org.eclipse.kapua.service.datastore.model.query.MessageField;
 import org.eclipse.kapua.service.datastore.model.query.predicate.MetricPredicate;
 import org.eclipse.kapua.service.storable.exception.MappingException;
 import org.eclipse.kapua.service.storable.model.query.predicate.PredicateConstants;
 import org.eclipse.kapua.service.storable.model.query.predicate.RangePredicateImpl;
 import org.eclipse.kapua.service.storable.model.utils.MappingUtils;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * {@link MetricPredicate} implementation

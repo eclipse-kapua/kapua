@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.keystore.internal.message.response;
 
-import org.eclipse.kapua.service.device.management.commons.message.response.KapuaResponseChannelImpl;
 import org.eclipse.kapua.service.device.management.keystore.internal.DeviceKeystoreAppProperties;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystore;
 import org.eclipse.kapua.service.device.management.message.response.KapuaResponseChannel;
@@ -22,7 +21,7 @@ import org.eclipse.kapua.service.device.management.message.response.KapuaRespons
  *
  * @since 1.5.0
  */
-public class KeystoreResponseChannel extends KapuaResponseChannelImpl implements KapuaResponseChannel {
+public class KeystoreResponseChannel extends KapuaResponseChannel {
 
     private static final long serialVersionUID = 6073193292259010928L;
 

@@ -14,7 +14,6 @@ package org.eclipse.kapua.service.device.management.command.message.internal;
 
 import org.eclipse.kapua.service.device.management.command.DeviceCommand;
 import org.eclipse.kapua.service.device.management.command.internal.CommandAppProperties;
-import org.eclipse.kapua.service.device.management.commons.message.response.KapuaResponseChannelImpl;
 import org.eclipse.kapua.service.device.management.message.response.KapuaResponseChannel;
 
 /**
@@ -22,7 +21,7 @@ import org.eclipse.kapua.service.device.management.message.response.KapuaRespons
  *
  * @since 1.0.0
  */
-public class CommandResponseChannel extends KapuaResponseChannelImpl implements KapuaResponseChannel {
+public class CommandResponseChannel extends KapuaResponseChannel {
 
     private static final long serialVersionUID = 1788983749020930113L;
 

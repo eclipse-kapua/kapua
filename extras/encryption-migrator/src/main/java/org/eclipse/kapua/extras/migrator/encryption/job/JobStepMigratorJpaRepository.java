@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.extras.migrator.encryption.job;
 
+import java.util.Optional;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.jpa.KapuaNamedEntityJpaRepository;
@@ -22,14 +24,12 @@ import org.eclipse.kapua.service.job.step.JobStepRepository;
 import org.eclipse.kapua.service.job.step.definition.JobStepProperty;
 import org.eclipse.kapua.storage.TxContext;
 
-import java.util.Optional;
-
 public class JobStepMigratorJpaRepository
         extends KapuaNamedEntityJpaRepository<JobStep, JobStepMigrator, JobStepListResult>
         implements JobStepRepository {
 
     public JobStepMigratorJpaRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig) {
-        super(JobStepMigrator.class, JobStep.TYPE, () -> new JobStepMigratorListResultImpl(), jpaRepoConfig);
+        super(JobStepMigrator.class, JobStep.TYPE, () -> new JobStepListResult(), jpaRepoConfig);
     }
 
     @Override

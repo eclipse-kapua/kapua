@@ -21,7 +21,8 @@ import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionR
 public class TriggerDefinitionImplJpaRepository
         extends KapuaNamedEntityJpaRepository<TriggerDefinition, TriggerDefinitionImpl, TriggerDefinitionListResult>
         implements TriggerDefinitionRepository {
+
     public TriggerDefinitionImplJpaRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig) {
-        super(TriggerDefinitionImpl.class, TriggerDefinition.TYPE, () -> new TriggerDefinitionListResultImpl(), jpaRepoConfig);
+        super(TriggerDefinitionImpl.class, TriggerDefinition.TYPE, () -> new TriggerDefinitionListResult(), jpaRepoConfig);
     }
 }

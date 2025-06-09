@@ -12,6 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.certificate.info.internal;
 
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.model.id.KapuaId;
@@ -24,11 +29,6 @@ import org.eclipse.kapua.service.certificate.info.CertificateInfoCreator;
 import org.eclipse.kapua.service.certificate.info.CertificateInfoListResult;
 import org.eclipse.kapua.service.certificate.info.CertificateInfoQuery;
 import org.eclipse.kapua.service.certificate.info.CertificateInfoService;
-import org.eclipse.kapua.service.certificate.internal.CertificateQueryImpl;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.List;
 
 @Singleton
 public class CertificateInfoServiceImpl implements CertificateInfoService {
@@ -54,9 +54,9 @@ public class CertificateInfoServiceImpl implements CertificateInfoService {
     public CertificateInfoListResult query(KapuaQuery query) throws KapuaException {
         ArgumentValidator.notNull(query, "query");
 
-        CertificateQuery certificateQuery = new CertificateQueryImpl(query);
+        CertificateQuery certificateQuery = new CertificateQuery(query);
 
-        CertificateInfoListResult publicCertificates = new CertificateInfoListResultImpl();
+        CertificateInfoListResult publicCertificates = new CertificateInfoListResult();
         publicCertificates.addItem(certificateService.query(certificateQuery).getFirstItem());
 
         return publicCertificates;
@@ -66,7 +66,7 @@ public class CertificateInfoServiceImpl implements CertificateInfoService {
     public long count(KapuaQuery query) throws KapuaException {
         ArgumentValidator.notNull(query, "query");
 
-        CertificateQuery privateQuery = new CertificateQueryImpl(query);
+        CertificateQuery privateQuery = new CertificateQuery(query);
         privateQuery.setIncludeInherited(((CertificateInfoQuery) query).getIncludeInherited());
 
         return certificateService.count(privateQuery);

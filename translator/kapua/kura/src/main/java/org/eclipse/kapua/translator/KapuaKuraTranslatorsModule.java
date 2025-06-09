@@ -13,15 +13,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.translator;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import com.google.inject.multibindings.Multibinder;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
-import org.eclipse.kapua.message.KapuaMessageFactory;
 import org.eclipse.kapua.translator.kapua.kura.TranslatorAppAssetKapuaKura;
 import org.eclipse.kapua.translator.kapua.kura.TranslatorAppBundleKapuaKura;
 import org.eclipse.kapua.translator.kapua.kura.TranslatorAppCommandKapuaKura;
@@ -66,7 +59,15 @@ import org.eclipse.kapua.translator.kura.kapua.keystore.TranslatorAppKeystoreNoC
 import org.eclipse.kapua.translator.kura.kapua.keystore.TranslatorAppKeystoresKuraKapua;
 import org.eclipse.kapua.translator.setting.TranslatorKapuaKuraSettings;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
+import com.google.inject.multibindings.Multibinder;
+
 public class KapuaKuraTranslatorsModule extends AbstractKapuaModule {
+
     @Override
     protected void configureModule() {
         final Multibinder<Translator> translatorMultibinder = Multibinder.newSetBinder(binder(), Translator.class);
@@ -128,7 +129,7 @@ public class KapuaKuraTranslatorsModule extends AbstractKapuaModule {
 
     @Provides
     @Singleton
-    public TranslatorKuraKapuaUtils translatorKuraKapuaUtils(KapuaMessageFactory kapuaMessageFactory) {
-        return new TranslatorKuraKapuaUtilsImpl(kapuaMessageFactory, SystemSetting.getInstance().getMessageClassifier());
+    public TranslatorKuraKapuaUtils translatorKuraKapuaUtils() {
+        return new TranslatorKuraKapuaUtilsImpl(SystemSetting.getInstance().getMessageClassifier());
     }
 }

@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.call.message;
 
-import org.eclipse.kapua.message.Channel;
-
 import java.util.List;
+
+import org.eclipse.kapua.message.Channel;
 
 /**
  * {@link DeviceChannel} definition.
@@ -26,8 +26,7 @@ public interface DeviceChannel extends Channel {
     /**
      * Gets the {@link DeviceMessage} classification.
      * <p>
-     * This field it is used to distinguish between command messages and "standard" messages such as telemetry messages.
-     * The domain values can be customized via configuration parameter.
+     * This field it is used to distinguish between command messages and "standard" messages such as telemetry messages. The domain values can be customized via configuration parameter.
      *
      * @return The {@link DeviceMessage} classification.
      * @since 1.0.0
@@ -37,7 +36,8 @@ public interface DeviceChannel extends Channel {
     /**
      * Sets the {@link DeviceMessage} classification.
      *
-     * @param messageClassification The {@link DeviceMessage} classification.
+     * @param messageClassification
+     *         The {@link DeviceMessage} classification.
      * @see #getMessageClassification()
      * @since 1.0.0
      */
@@ -54,7 +54,8 @@ public interface DeviceChannel extends Channel {
     /**
      * Sets the scope
      *
-     * @param scope The scope
+     * @param scope
+     *         The scope
      * @since 1.0.0
      */
     void setScope(String scope);
@@ -70,7 +71,8 @@ public interface DeviceChannel extends Channel {
     /**
      * Sets the client identifier.
      *
-     * @param clientId The client identifier.
+     * @param clientId
+     *         The client identifier.
      * @since 1.0.0
      */
     void setClientId(String clientId);

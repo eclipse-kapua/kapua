@@ -12,15 +12,16 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.internal.model.query.predicate;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.eclipse.kapua.service.datastore.internal.mediator.DatastoreUtils;
-import org.eclipse.kapua.service.datastore.internal.mediator.MessageField;
+import org.eclipse.kapua.service.datastore.model.query.MessageField;
 import org.eclipse.kapua.service.datastore.model.query.predicate.MetricExistsPredicate;
 import org.eclipse.kapua.service.storable.exception.MappingException;
 import org.eclipse.kapua.service.storable.model.query.predicate.ExistsPredicateImpl;
 import org.eclipse.kapua.service.storable.model.query.predicate.PredicateConstants;
 import org.eclipse.kapua.service.storable.model.utils.KeyValueEntry;
 import org.eclipse.kapua.service.storable.model.utils.MappingUtils;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * {@link MetricExistsPredicate} implementation.
@@ -76,7 +77,7 @@ public class MetricExistsPredicateImpl extends ExistsPredicateImpl implements Me
                     .append(datastoreUtils.getClientMetricFromAcronym(type.getSimpleName().toLowerCase()));
         }
 
-        ObjectNode termNode = MappingUtils.newObjectNode(new KeyValueEntry[]{new KeyValueEntry(PredicateConstants.FIELD_KEY, fieldNameSb.toString())});
+        ObjectNode termNode = MappingUtils.newObjectNode(new KeyValueEntry[] { new KeyValueEntry(PredicateConstants.FIELD_KEY, fieldNameSb.toString()) });
 
         ObjectNode rootNode = MappingUtils.newObjectNode();
         rootNode.set(PredicateConstants.EXISTS_KEY, termNode);

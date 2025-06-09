@@ -12,14 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.registry.operation.notification.internal;
 
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotification;
-import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotificationCreator;
 import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotificationFactory;
-import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotificationListResult;
-import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotificationQuery;
-
-import javax.inject.Singleton;
 
 /**
  * {@link ManagementOperationNotificationFactory} implementation.
@@ -32,21 +29,6 @@ public class ManagementOperationNotificationFactoryImpl implements ManagementOpe
     @Override
     public ManagementOperationNotification newEntity(KapuaId scopeId) {
         return new ManagementOperationNotificationImpl(scopeId);
-    }
-
-    @Override
-    public ManagementOperationNotificationCreator newCreator(KapuaId scopeId) {
-        return new ManagementOperationNotificationCreatorImpl(scopeId);
-    }
-
-    @Override
-    public ManagementOperationNotificationQuery newQuery(KapuaId scopeId) {
-        return new ManagementOperationNotificationQueryImpl(scopeId);
-    }
-
-    @Override
-    public ManagementOperationNotificationListResult newListResult() {
-        return new ManagementOperationNotificationListResultImpl();
     }
 
     @Override

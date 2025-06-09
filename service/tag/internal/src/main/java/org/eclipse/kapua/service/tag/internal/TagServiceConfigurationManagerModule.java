@@ -29,8 +29,6 @@ import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.util.xml.XmlUtil;
-import org.eclipse.kapua.service.tag.TagFactory;
-import org.eclipse.kapua.service.tag.TagRepository;
 import org.eclipse.kapua.service.tag.TagService;
 
 import com.google.inject.Module;
@@ -54,7 +52,6 @@ public class TagServiceConfigurationManagerModule extends AbstractKapuaModule im
     @Singleton
     ServiceConfigurationManager tagServiceConfigurationManager(
             KapuaJpaTxManagerFactory jpaTxManagerFactory,
-            TagFactory factory,
             RootUserTester rootUserTester,
             AccountRelativeFinder accountRelativeFinder,
             TagRepository tagRepository,
@@ -73,7 +70,6 @@ public class TagServiceConfigurationManagerModule extends AbstractKapuaModule im
                         rootUserTester,
                         accountRelativeFinder,
                         new UsedEntitiesCounterImpl(
-                                factory,
                                 tagRepository
                         ),
                         new ResourceBasedServiceConfigurationMetadataProvider(xmlUtil)));

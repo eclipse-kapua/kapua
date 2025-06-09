@@ -20,5 +20,6 @@ import org.eclipse.kapua.model.KapuaEntityFactory;
  * @see KapuaEntityFactory
  * @since 1.5.0
  */
-public interface FiredTriggerFactory extends KapuaEntityFactory<FiredTrigger, FiredTriggerCreator, FiredTriggerQuery, FiredTriggerListResult> {
+public interface FiredTriggerFactory extends KapuaEntityFactory<FiredTrigger> {
+
 }

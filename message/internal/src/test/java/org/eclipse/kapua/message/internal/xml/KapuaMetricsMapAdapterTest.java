@@ -18,7 +18,6 @@ import java.util.Map;
 
 import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import org.eclipse.kapua.message.KapuaPayload;
-import org.eclipse.kapua.message.internal.KapuaPayloadImpl;
 import org.eclipse.kapua.message.internal.MessageJAXBContextProvider;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.junit.Assert;
@@ -52,7 +51,7 @@ public class KapuaMetricsMapAdapterTest {
 
     @Test
     public void marshalWithAdapter() throws Exception {
-        KapuaPayload metricsMap = new KapuaPayloadImpl();
+        KapuaPayload metricsMap = new KapuaPayload();
 
         Map<String, Object> metrics = new HashMap<>();
         metrics.put("key1", "value1");
@@ -65,7 +64,7 @@ public class KapuaMetricsMapAdapterTest {
 
     @Test
     public void unmarshalWithAdapter() throws Exception {
-        KapuaPayload metricsMap = new KapuaPayloadImpl();
+        KapuaPayload metricsMap = new KapuaPayload();
         Map<String, Object> metrics = new HashMap<>();
         metrics.put(String.valueOf("key1"), String.valueOf("value1"));
         metricsMap.setMetrics(metrics);

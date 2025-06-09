@@ -12,13 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.jpa;
 
-import org.eclipse.kapua.KapuaEntityExistsException;
-import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.commons.util.KapuaExceptionUtils;
-import org.eclipse.kapua.storage.TxContext;
-import org.eclipse.persistence.exceptions.DatabaseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
@@ -27,11 +23,17 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.OptimisticLockException;
 import javax.persistence.PessimisticLockException;
 import javax.persistence.RollbackException;
-import java.io.IOException;
-import java.util.Optional;
-import java.util.function.Predicate;
+
+import org.eclipse.kapua.KapuaEntityExistsException;
+import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.commons.util.KapuaExceptionUtils;
+import org.eclipse.kapua.storage.TxContext;
+import org.eclipse.persistence.exceptions.DatabaseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JpaTxContext implements JpaAwareTxContext, TxContext {
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     public final EntityManagerFactory entityManagerFactory;
     Optional<EntityManager> entityManager = Optional.empty();
@@ -97,7 +99,7 @@ public class JpaTxContext implements JpaAwareTxContext, TxContext {
     public boolean isRecoverableException(Exception ex) {
         if (ex instanceof KapuaEntityExistsException || ex instanceof EntityExistsException) {
             /*
-             * Most KapuaEntities inherit from AbstractKapuaEntity, which auto-generates ids via a method marked with @PrePersist and the use of
+             * Most KapuaEntities inherit from KapuaEntityBase, which auto-generates ids via a method marked with @PrePersist and the use of
              * a org.eclipse.kapua.commons.model.id.IdGenerator. Ids are pseudo-randomic. To deal with potential conflicts, a number of retries
              * is allowed. The entity needs to be detached in order for the @PrePersist method to be invoked once more, generating a new id
              * */

@@ -25,12 +25,13 @@ import org.eclipse.kapua.service.KapuaEntityService;
 public interface DomainRegistryService extends KapuaEntityService<Domain, DomainCreator> {
 
     /**
-     * Creates a new {@link Domain} based on the parameters provided in the {@link DomainCreator}.<br>
-     * {@link Domain} must have a unique name.
+     * Creates a new {@link Domain} based on the parameters provided in the {@link DomainCreator}.<br> {@link Domain} must have a unique name.
      *
-     * @param domainCreator The creator object from which to create the {@link Domain}.
+     * @param domainCreator
+     *         The creator object from which to create the {@link Domain}.
      * @return The created {@link Domain}
-     * @throws KapuaException When there is an oeror22
+     * @throws KapuaException
+     *         When there is an oeror22
      * @since 1.0.0
      */
     @Override
@@ -39,8 +40,10 @@ public interface DomainRegistryService extends KapuaEntityService<Domain, Domain
     /**
      * Finds the {@link Domain} by scope identifier and {@link Domain} id.
      *
-     * @param scopeId  The scope id in which to search.
-     * @param domainId The {@link Domain} id to search.
+     * @param scopeId
+     *         The scope id in which to search.
+     * @param domainId
+     *         The {@link Domain} id to search.
      * @return The {@link Domain} found or {@code null} if no entity was found.
      * @throws KapuaException
      * @since 1.0.0
@@ -51,7 +54,8 @@ public interface DomainRegistryService extends KapuaEntityService<Domain, Domain
     /**
      * Returns the {@link DomainListResult} with elements matching the provided query.
      *
-     * @param query The {@link DomainQuery} used to filter results.
+     * @param query
+     *         The {@link KapuaQuery} used to filter results.
      * @return The {@link DomainListResult} with elements matching the query parameter.
      * @throws KapuaException
      * @since 1.0.0
@@ -62,7 +66,8 @@ public interface DomainRegistryService extends KapuaEntityService<Domain, Domain
     /**
      * Returns the count of the {@link Domain} elements matching the provided query.
      *
-     * @param query The {@link DomainQuery} used to filter results.
+     * @param query
+     *         The {@link KapuaQuery} used to filter results.
      * @return The count of the {@link Domain} elements matching the provided query.
      * @throws KapuaException
      * @since 1.0.0
@@ -73,8 +78,10 @@ public interface DomainRegistryService extends KapuaEntityService<Domain, Domain
     /**
      * Delete the {@link Domain} by scope id and {@link Domain} id.
      *
-     * @param scopeId The scope id in which to delete.
-     * @param roleId  The {@link Domain} id to delete.
+     * @param scopeId
+     *         The scope id in which to delete.
+     * @param roleId
+     *         The {@link Domain} id to delete.
      * @throws KapuaException
      * @since 1.0.0
      */

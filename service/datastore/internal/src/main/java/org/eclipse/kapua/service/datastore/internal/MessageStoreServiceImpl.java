@@ -12,7 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.internal;
 
-import com.codahale.metrics.Timer.Context;
+import java.util.Optional;
+import java.util.UUID;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaErrorCodes;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaIllegalArgumentException;
@@ -25,7 +30,6 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.datastore.MessageStoreService;
 import org.eclipse.kapua.service.datastore.internal.mediator.ConfigurationException;
 import org.eclipse.kapua.service.datastore.internal.mediator.DatastoreCommunicationException;
@@ -43,10 +47,7 @@ import org.eclipse.kapua.storage.TxManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.Optional;
-import java.util.UUID;
+import com.codahale.metrics.Timer.Context;
 
 /**
  * Message store service implementation.
@@ -60,7 +61,6 @@ public class MessageStoreServiceImpl extends KapuaConfigurableServiceBase implem
 
     private MetricsDatastore metrics;
     protected AuthorizationService authorizationService;
-    protected PermissionFactory permissionFactory;
 
     protected final Integer maxEntriesOnDelete;
     protected final Integer maxResultWindowValue;
@@ -69,15 +69,13 @@ public class MessageStoreServiceImpl extends KapuaConfigurableServiceBase implem
     @Inject
     public MessageStoreServiceImpl(
             TxManager txManager,
-            PermissionFactory permissionFactory,
             AuthorizationService authorizationService,
             ServiceConfigurationManager serviceConfigurationManager,
             MessageStoreFacade messageStoreFacade,
             MetricsDatastore metricsDatastore,
             DatastoreSettings datastoreSettings
     ) {
-        super(txManager, serviceConfigurationManager, Domains.DATASTORE, authorizationService, permissionFactory);
-        this.permissionFactory = permissionFactory;
+        super(txManager, serviceConfigurationManager, Domains.DATASTORE, authorizationService);
         this.authorizationService = authorizationService;
         this.metrics = metricsDatastore;
         this.messageStoreFacade = messageStoreFacade;
@@ -185,7 +183,8 @@ public class MessageStoreServiceImpl extends KapuaConfigurableServiceBase implem
         } catch (Exception e) {
             logException(e);
             throw new DatastoreException(KapuaErrorCodes.INTERNAL_ERROR,
-                    e.getCause() != null && (e.getCause() instanceof ClientException) ? e.getCause() : e, //in case where there is a ClientException I just want this as a cause and not the runtime exception
+                    e.getCause() != null && (e.getCause() instanceof ClientException) ? e.getCause() : e,
+                    //in case where there is a ClientException I just want this as a cause and not the runtime exception
                     e.getMessage());
         }
     }
@@ -218,7 +217,7 @@ public class MessageStoreServiceImpl extends KapuaConfigurableServiceBase implem
 
     protected void checkDataAccess(KapuaId scopeId, Actions action)
             throws KapuaException {
-        Permission permission = permissionFactory.newPermission(Domains.DATASTORE, action, scopeId);
+        Permission permission = new Permission(Domains.DATASTORE, action, scopeId);
         authorizationService.checkPermission(permission);
     }
 

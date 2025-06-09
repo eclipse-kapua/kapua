@@ -12,22 +12,22 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.scheduler.trigger.fired.quartz;
 
-import com.google.inject.Provides;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
-import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerRepository;
 import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTriggerFactory;
 import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTriggerRepository;
 import org.eclipse.kapua.service.scheduler.trigger.fired.FiredTriggerService;
 import org.eclipse.kapua.storage.TxManager;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import com.google.inject.Provides;
 
 public class SchedulerTriggerFiredModule extends AbstractKapuaModule {
+
     @Override
     protected void configureModule() {
         bind(FiredTriggerFactory.class).to(FiredTriggerFactoryImpl.class);
@@ -37,15 +37,12 @@ public class SchedulerTriggerFiredModule extends AbstractKapuaModule {
     @Singleton
     FiredTriggerService firedTriggerService(
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             @Named("schedulerTxManager") TxManager txManager,
             FiredTriggerRepository firedTriggerRepository,
             FiredTriggerFactory firedTriggerFactory,
-            TriggerRepository triggerRepository,
-            KapuaJpaTxManagerFactory jpaTxManagerFactory) {
+            TriggerRepository triggerRepository) {
         return new FiredTriggerServiceImpl(
                 authorizationService,
-                permissionFactory,
                 txManager,
                 firedTriggerRepository,
                 firedTriggerFactory,

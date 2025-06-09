@@ -19,11 +19,9 @@ import org.eclipse.kapua.commons.crypto.setting.CryptoSettings;
 import org.eclipse.kapua.commons.metric.CommonsMetric;
 import org.eclipse.kapua.commons.metric.MetricsService;
 import org.eclipse.kapua.commons.metric.MetricsServiceImpl;
-import org.eclipse.kapua.commons.model.query.QueryFactoryImpl;
 import org.eclipse.kapua.commons.service.internal.cache.CacheManagerProvider;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.model.query.QueryFactory;
 import org.eclipse.kapua.qa.common.MockedLocator;
 import org.eclipse.kapua.service.account.AccountFactory;
 import org.eclipse.kapua.service.account.AccountService;
@@ -34,10 +32,7 @@ import org.eclipse.kapua.service.authentication.shiro.setting.KapuaAuthenticatio
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
-import org.eclipse.kapua.service.systeminfo.SystemInfoFactory;
 import org.eclipse.kapua.service.systeminfo.SystemInfoService;
-import org.eclipse.kapua.service.systeminfo.internal.SystemInfoFactoryImpl;
 import org.eclipse.kapua.service.systeminfo.internal.SystemInfoServiceImpl;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
@@ -85,20 +80,14 @@ public class SystemInfoLocatorConfiguration {
                     // skip
                 }
 
-                bind(QueryFactory.class).toInstance(new QueryFactoryImpl());
-
                 bind(AuthorizationService.class).toInstance(mockedAuthorization);
-                // Inject mocked Permission Factory
-                bind(PermissionFactory.class).toInstance(Mockito.mock(PermissionFactory.class));
 
                 // binding Account related services
                 bind(AccountService.class).toInstance(Mockito.mock(AccountService.class));
                 bind(AccountFactory.class).toInstance(Mockito.spy(new AccountFactoryImpl()));
 
                 // Inject actual System Info service related services
-                bind(SystemInfoService.class).toInstance(new SystemInfoServiceImpl(new SystemInfoFactoryImpl(), SystemSetting.getInstance()));
-                bind(SystemInfoFactory.class).toInstance(new SystemInfoFactoryImpl());
-
+                bind(SystemInfoService.class).toInstance(new SystemInfoServiceImpl(SystemSetting.getInstance()));
             }
         };
 

@@ -14,7 +14,42 @@ package org.eclipse.kapua.model.query;
 
 import javax.xml.bind.annotation.XmlElement;
 
-public interface KapuaForwardableEntityQuery extends KapuaQuery {
+import org.eclipse.kapua.model.id.KapuaId;
+
+public class KapuaForwardableEntityQuery extends KapuaQuery {
+
+    protected Boolean includeInherited = Boolean.FALSE;
+
+    /**
+     * Constructor.
+     */
+    public KapuaForwardableEntityQuery() {
+        super();
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param scopeId
+     *         The {@link #getScopeId()}.
+     */
+    public KapuaForwardableEntityQuery(KapuaId scopeId) {
+        super(scopeId);
+    }
+
+    /**
+     * Clone constructor.
+     *
+     * @param query
+     *         The {@link KapuaForwardableEntityQuery} to clone.
+     */
+    public KapuaForwardableEntityQuery(KapuaQuery query) {
+        super(query);
+        if (query instanceof KapuaForwardableEntityQuery) {
+            this.includeInherited = ((KapuaForwardableEntityQuery) query).getIncludeInherited();
+        }
+    }
+
     /**
      * Gets whether to query for inherited entities
      *
@@ -22,14 +57,18 @@ public interface KapuaForwardableEntityQuery extends KapuaQuery {
      * @since 2.0.0
      */
     @XmlElement(name = "includeInherited")
-    Boolean getIncludeInherited();
+    public Boolean getIncludeInherited() {
+        return includeInherited;
+    }
 
     /**
      * Sets whether to query for inherited entities
      *
-     * @param includeInherited {@code true} to query for inherited entities, {@code false} otherwise.
+     * @param includeInherited
+     *         {@code true} to query for inherited entities, {@code false} otherwise.
      * @since 2.0.0
      */
-    void setIncludeInherited(Boolean includeInherited);
-
+    public void setIncludeInherited(Boolean includeInherited) {
+        this.includeInherited = includeInherited;
+    }
 }

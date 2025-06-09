@@ -13,7 +13,6 @@
 package org.eclipse.kapua.service.device.management.command.message.internal;
 
 import org.eclipse.kapua.service.device.management.command.DeviceCommand;
-import org.eclipse.kapua.service.device.management.commons.message.response.KapuaResponsePayloadImpl;
 import org.eclipse.kapua.service.device.management.message.response.KapuaResponsePayload;
 
 /**
@@ -21,7 +20,7 @@ import org.eclipse.kapua.service.device.management.message.response.KapuaRespons
  *
  * @since 1.0.0
  */
-public class CommandResponsePayload extends KapuaResponsePayloadImpl implements KapuaResponsePayload {
+public class CommandResponsePayload extends KapuaResponsePayload {
 
     private static final long serialVersionUID = -7611654604657980851L;
 
@@ -66,7 +65,8 @@ public class CommandResponsePayload extends KapuaResponsePayloadImpl implements 
     /**
      * Sets the command standard error.
      *
-     * @param stderr The command standard error.
+     * @param stderr
+     *         The command standard error.
      * @since 1.0.0
      */
     public void setStderr(String stderr) {
@@ -86,7 +86,8 @@ public class CommandResponsePayload extends KapuaResponsePayloadImpl implements 
     /**
      * Sets the command standard output.
      *
-     * @param stdout The command standard output.
+     * @param stdout
+     *         The command standard output.
      */
     public void setStdout(String stdout) {
         getMetrics().put(APP_PROPERTY_STDOUT, stdout);

@@ -12,11 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.request.message.request;
 
-import org.eclipse.kapua.service.device.management.message.request.KapuaRequestMessage;
-import org.eclipse.kapua.service.device.management.request.GenericRequestXmlRegistry;
-
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.service.device.management.message.request.KapuaRequestMessage;
+import org.eclipse.kapua.service.device.management.request.message.response.GenericResponseMessage;
 
 /**
  * Generic {@link KapuaRequestMessage} definition.
@@ -24,7 +24,18 @@ import javax.xml.bind.annotation.XmlType;
  * @since 1.0.0
  */
 @XmlRootElement(name = "genericRequestMessage")
-@XmlType(factoryClass = GenericRequestXmlRegistry.class, factoryMethod = "newRequestMessage")
-public interface GenericRequestMessage extends KapuaRequestMessage<GenericRequestChannel, GenericRequestPayload> {
+@XmlType
+public class GenericRequestMessage extends KapuaRequestMessage<GenericRequestChannel, GenericRequestPayload> {
 
+    private static final long serialVersionUID = -8491427803023664571L;
+
+    @Override
+    public Class<GenericRequestMessage> getRequestClass() {
+        return GenericRequestMessage.class;
+    }
+
+    @Override
+    public Class<GenericResponseMessage> getResponseClass() {
+        return GenericResponseMessage.class;
+    }
 }

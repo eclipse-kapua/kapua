@@ -12,8 +12,24 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job;
 
-import org.eclipse.kapua.model.query.predicate.MatchPredicate;
+import java.util.Arrays;
 
-public interface JobMatchPredicate<T> extends MatchPredicate<T> {
+import org.eclipse.kapua.model.query.predicate.AbstractMatchPredicate;
+
+public class JobMatchPredicate<T> extends AbstractMatchPredicate<T> {
+
+    /**
+     * Constructor.
+     *
+     * @param matchTerm
+     * @since 2.0.0
+     */
+    public JobMatchPredicate(T matchTerm) {
+        this.attributeNames = Arrays.asList(
+                JobAttributes.NAME,
+                JobAttributes.DESCRIPTION
+        );
+        this.matchTerm = matchTerm;
+    }
 
 }

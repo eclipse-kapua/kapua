@@ -12,20 +12,21 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job.execution.internal;
 
-import com.google.inject.Provides;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.job.execution.JobExecutionFactory;
 import org.eclipse.kapua.service.job.execution.JobExecutionRepository;
 import org.eclipse.kapua.service.job.execution.JobExecutionService;
 import org.eclipse.kapua.storage.TxManager;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import com.google.inject.Provides;
 
 public class JobExecutionModule extends AbstractKapuaModule {
+
     @Override
     protected void configureModule() {
         bind(JobExecutionFactory.class).to(JobExecutionFactoryImpl.class);
@@ -35,12 +36,10 @@ public class JobExecutionModule extends AbstractKapuaModule {
     @Singleton
     JobExecutionService jobExecutionService(
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             @Named("jobTxManager") TxManager txManager,
             JobExecutionRepository jobExecutionRepository) {
         return new JobExecutionServiceImpl(
                 authorizationService,
-                permissionFactory,
                 txManager,
                 jobExecutionRepository);
     }

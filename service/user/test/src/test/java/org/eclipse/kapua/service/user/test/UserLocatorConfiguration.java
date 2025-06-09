@@ -29,13 +29,11 @@ import org.eclipse.kapua.commons.metric.CommonsMetric;
 import org.eclipse.kapua.commons.metric.MetricsService;
 import org.eclipse.kapua.commons.metric.MetricsServiceImpl;
 import org.eclipse.kapua.commons.model.domains.Domains;
-import org.eclipse.kapua.commons.model.query.QueryFactoryImpl;
 import org.eclipse.kapua.commons.service.event.store.internal.EventStoreRecordImplJpaRepository;
 import org.eclipse.kapua.commons.service.internal.cache.CacheManagerProvider;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.model.query.QueryFactory;
 import org.eclipse.kapua.qa.common.MockedLocator;
 import org.eclipse.kapua.qa.common.TestJAXBContextProvider;
 import org.eclipse.kapua.service.account.AccountService;
@@ -45,7 +43,6 @@ import org.eclipse.kapua.service.authentication.shiro.setting.KapuaAuthenticatio
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserRepository;
 import org.eclipse.kapua.service.user.UserService;
@@ -102,12 +99,7 @@ public class UserLocatorConfiguration {
                     // skip
                 }
 
-                bind(QueryFactory.class).toInstance(new QueryFactoryImpl());
-
                 bind(AuthorizationService.class).toInstance(mockedAuthorization);
-                // Inject mocked Permission Factory
-                PermissionFactory mockPermissionFactory = Mockito.mock(PermissionFactory.class);
-                bind(PermissionFactory.class).toInstance(mockPermissionFactory);
 
                 // binding Account related services
                 final AccountRelativeFinder accountRelativeFinder = Mockito.mock(AccountRelativeFinder.class);
@@ -129,7 +121,6 @@ public class UserLocatorConfiguration {
                         Mockito.mock(RootUserTester.class),
                         accountRelativeFinder,
                         new UsedEntitiesCounterImpl(
-                                userFactory,
                                 userRepository),
                         new ResourceBasedServiceConfigurationMetadataProvider(new XmlUtil(new TestJAXBContextProvider()))
                 );
@@ -137,7 +128,6 @@ public class UserLocatorConfiguration {
                         new UserServiceImpl(
                                 userConfigurationManager,
                                 mockedAuthorization,
-                                mockPermissionFactory,
                                 txManager,
                                 new UserImplJpaRepository(jpaRepoConfig),
                                 userFactory,

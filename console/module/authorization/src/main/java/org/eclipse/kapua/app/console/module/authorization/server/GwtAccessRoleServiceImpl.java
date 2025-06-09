@@ -12,10 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.authorization.server;
 
-import com.extjs.gxt.ui.client.Style.SortDir;
-import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
-import com.extjs.gxt.ui.client.data.PagingLoadConfig;
-import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
+
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.server.KapuaRemoteServiceServlet;
@@ -31,6 +31,7 @@ import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.FieldSortCriteria;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.model.query.SortOrder;
 import org.eclipse.kapua.service.authorization.access.AccessInfo;
 import org.eclipse.kapua.service.authorization.access.AccessInfoService;
@@ -38,18 +39,17 @@ import org.eclipse.kapua.service.authorization.access.AccessPermissionAttributes
 import org.eclipse.kapua.service.authorization.access.AccessRole;
 import org.eclipse.kapua.service.authorization.access.AccessRoleAttributes;
 import org.eclipse.kapua.service.authorization.access.AccessRoleCreator;
-import org.eclipse.kapua.service.authorization.access.AccessRoleFactory;
 import org.eclipse.kapua.service.authorization.access.AccessRoleListResult;
-import org.eclipse.kapua.service.authorization.access.AccessRoleQuery;
 import org.eclipse.kapua.service.authorization.access.AccessRoleService;
 import org.eclipse.kapua.service.authorization.role.Role;
 import org.eclipse.kapua.service.authorization.role.RoleService;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserService;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
+import com.extjs.gxt.ui.client.Style.SortDir;
+import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
+import com.extjs.gxt.ui.client.data.PagingLoadResult;
 
 public class GwtAccessRoleServiceImpl extends KapuaRemoteServiceServlet implements GwtAccessRoleService {
 
@@ -111,7 +111,6 @@ public class GwtAccessRoleServiceImpl extends KapuaRemoteServiceServlet implemen
                 RoleService roleService = locator.getService(RoleService.class);
                 AccessInfoService accessInfoService = locator.getService(AccessInfoService.class);
                 AccessRoleService accessRoleService = locator.getService(AccessRoleService.class);
-                AccessRoleFactory accessRoleFactory = locator.getFactory(AccessRoleFactory.class);
                 final UserService userService = locator.getService(UserService.class);
 
                 final KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(scopeShortId);
@@ -120,7 +119,7 @@ public class GwtAccessRoleServiceImpl extends KapuaRemoteServiceServlet implemen
                 AccessInfo accessInfo = accessInfoService.findByUserId(scopeId, userId);
 
                 if (accessInfo != null) {
-                    AccessRoleQuery query = accessRoleFactory.newQuery(scopeId);
+                    KapuaQuery query = new KapuaQuery(scopeId);
                     query.setPredicate(query.attributePredicate(AccessPermissionAttributes.ACCESS_INFO_ID, accessInfo.getId()));
                     query.setLimit(loadConfig.getLimit());
                     query.setOffset(loadConfig.getOffset());

@@ -13,12 +13,11 @@
 package org.eclipse.kapua.app.api.core.model.data;
 
 import org.eclipse.kapua.service.elasticsearch.client.model.ResultList;
-import org.eclipse.kapua.service.storable.model.AbstractStorableListResult;
 
 /**
  * @since 1.0.0
  */
-public class JsonMessageListResult extends AbstractStorableListResult<JsonDatastoreMessage> {
+public class JsonMessageListResult extends org.eclipse.kapua.service.storable.model.StorableListResult<JsonDatastoreMessage> {
 
     /**
      * Construct a message result list

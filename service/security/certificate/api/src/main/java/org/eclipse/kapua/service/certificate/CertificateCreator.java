@@ -12,10 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.certificate;
 
-import org.eclipse.kapua.model.KapuaNamedEntityCreator;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.service.certificate.xml.CertificateXmlRegistry;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -24,7 +22,10 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Set;
+
+import org.eclipse.kapua.model.KapuaNamedEntityCreator;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
 
 /**
  * {@link Certificate} {@link org.eclipse.kapua.model.KapuaEntityCreator}encapsulates all the information needed to create a new {@link Certificate} in the system.
@@ -33,43 +34,97 @@ import java.util.Set;
  */
 @XmlRootElement(name = "certificateCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = CertificateXmlRegistry.class, factoryMethod = "newCreator")
-public interface CertificateCreator extends KapuaNamedEntityCreator<Certificate> {
+@XmlType
+public class CertificateCreator extends KapuaNamedEntityCreator {
+
+    private String certificate;
+    private CertificateStatus status;
+    private String privateKey;
+    private KapuaId caId;
+    private String password;
+    private Set<CertificateUsage> certificateUsages;
+    private Boolean forwardable;
+
+    public CertificateCreator() {
+    }
+
+    public CertificateCreator(KapuaId scopeId) {
+        super(scopeId);
+    }
+
+    public CertificateCreator(KapuaId scopeId, String name) {
+        super(scopeId, name);
+    }
 
     @XmlElement(name = "certificate")
-    String getCertificate();
+    public String getCertificate() {
+        return certificate;
+    }
 
-    void setCertificate(String certificate);
+    public void setCertificate(String certificate) {
+        this.certificate = certificate;
+    }
 
     @XmlElement(name = "status")
-    CertificateStatus getStatus();
+    public CertificateStatus getStatus() {
+        //Kind hackish, but the database does not allow nulls here.
+        //default value was previously set in the constructor, but that only works if the field is not present in the "dto" (request payload for rest apis), and not when the field is passed as null, and changing the field to be required would break back-compatibility.
+        return status == null ? CertificateStatus.VALID : status;
+    }
 
-    void setStatus(CertificateStatus status);
+    public void setStatus(CertificateStatus status) {
+        this.status = status;
+    }
 
     @XmlElement(name = "privateKey")
-    String getPrivateKey();
+    public String getPrivateKey() {
+        return privateKey;
+    }
 
-    void setPrivateKey(String privateKey);
+    public void setPrivateKey(String privateKey) {
+        this.privateKey = privateKey;
+    }
 
     @XmlElement(name = "caId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
-    KapuaId getCaId();
+    public KapuaId getCaId() {
+        return caId;
+    }
 
-    void setCaId(KapuaId caId);
+    public void setCaId(KapuaId caId) {
+        this.caId = caId;
+    }
 
     @XmlElement(name = "password")
-    String getPassword();
+    public String getPassword() {
+        return password;
+    }
 
-    void setPassword(String password);
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     @XmlElementWrapper(name = "certificateUsages")
     @XmlElement(name = "certificateUsage")
-    <C extends CertificateUsage> Set<C> getCertificateUsages();
+    public Set<CertificateUsage> getCertificateUsages() {
+        return certificateUsages;
+    }
 
-    void setCertificateUsages(Set<CertificateUsage> certificateUsages);
+    public void setCertificateUsages(Set<CertificateUsage> set) {
+        Set<CertificateUsage> newSet = new HashSet<>();
+        for (CertificateUsage certificateUsage : set) {
+            newSet.add(certificateUsage);
+        }
+        certificateUsages = newSet;
+    }
 
     @XmlElement(name = "forwardable")
-    Boolean getForwardable();
+    public Boolean getForwardable() {
+        return forwardable;
+    }
 
-    void setForwardable(Boolean forwardable);
+    public void setForwardable(Boolean forwardable) {
+        this.forwardable = forwardable;
+    }
+
 }

@@ -13,13 +13,17 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.request.internal;
 
+import java.util.Date;
+
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.device.management.commons.AbstractDeviceManagementTransactionalServiceImpl;
 import org.eclipse.kapua.service.device.management.commons.call.DeviceCallBuilder;
 import org.eclipse.kapua.service.device.management.exception.DeviceManagementRequestBadMethodException;
@@ -36,9 +40,6 @@ import org.eclipse.kapua.storage.TxManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Singleton;
-import java.util.Date;
-
 /**
  * {@link DeviceRequestManagementService} implementation.
  *
@@ -54,14 +55,12 @@ public class DeviceRequestManagementServiceImpl extends AbstractDeviceManagement
     public DeviceRequestManagementServiceImpl(
             TxManager txManager,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             DeviceEventService deviceEventService,
             DeviceEventFactory deviceEventFactory,
             DeviceRegistryService deviceRegistryService,
             GenericRequestFactory genericRequestFactory) {
         super(txManager,
                 authorizationService,
-                permissionFactory,
                 deviceEventService,
                 deviceEventFactory,
                 deviceRegistryService);
@@ -80,32 +79,32 @@ public class DeviceRequestManagementServiceImpl extends AbstractDeviceManagement
         // Check Access
         Actions action;
         switch (requestInput.getChannel().getMethod()) {
-            case EXECUTE:
-                action = Actions.execute;
-                break;
-            case READ:
-            case OPTIONS:
-                action = Actions.read;
-                break;
-            case CREATE:
-            case WRITE:
-                action = Actions.write;
-                break;
-            case DELETE:
-                action = Actions.delete;
-                break;
-            default:
-                throw new DeviceManagementRequestBadMethodException(requestInput.getChannel().getMethod());
+        case EXECUTE:
+            action = Actions.execute;
+            break;
+        case READ:
+        case OPTIONS:
+            action = Actions.read;
+            break;
+        case CREATE:
+        case WRITE:
+            action = Actions.write;
+            break;
+        case DELETE:
+            action = Actions.delete;
+            break;
+        default:
+            throw new DeviceManagementRequestBadMethodException(requestInput.getChannel().getMethod());
         }
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, action, requestInput.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.DEVICE_MANAGEMENT, action, requestInput.getScopeId()));
         // Prepare the request
-        GenericRequestChannel genericRequestChannel = genericRequestFactory.newRequestChannel();
+        GenericRequestChannel genericRequestChannel = new GenericRequestChannel();
         genericRequestChannel.setAppName(requestInput.getChannel().getAppName());
         genericRequestChannel.setVersion(requestInput.getChannel().getVersion());
         genericRequestChannel.setMethod(requestInput.getChannel().getMethod());
         genericRequestChannel.setResources(requestInput.getChannel().getResources());
 
-        GenericRequestPayload genericRequestPayload = genericRequestFactory.newRequestPayload();
+        GenericRequestPayload genericRequestPayload = new GenericRequestPayload();
         genericRequestPayload.setMetrics(requestInput.getPayload().getMetrics());
         genericRequestPayload.setBody(requestInput.getPayload().getBody());
 

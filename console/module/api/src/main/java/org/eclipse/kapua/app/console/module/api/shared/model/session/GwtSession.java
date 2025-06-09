@@ -12,14 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.api.shared.model.session;
 
-import org.eclipse.kapua.app.console.module.api.shared.model.KapuaBaseModel;
-import org.eclipse.kapua.service.authorization.permission.Permission;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.eclipse.kapua.app.console.module.api.shared.model.KapuaBaseModel;
 
 public class GwtSession extends KapuaBaseModel implements Serializable {
 
@@ -229,7 +228,8 @@ public class GwtSession extends KapuaBaseModel implements Serializable {
      *     <li>/1/1234 = level 1</li>
      * </ul>
      *
-     * @param level The level to check against
+     * @param level
+     *         The level to check against
      * @return {@code true} if it is, {@code false} otherwise
      * @since 2.0.0
      */
@@ -304,12 +304,14 @@ public class GwtSession extends KapuaBaseModel implements Serializable {
     }
 
     /**
-     * Checks that the current {@link GwtSession} has the given session.
-     * This methods uses {@link #hasPermission(GwtSessionPermission)} instantiating the actual {@link GwtSessionPermission}.
+     * Checks that the current {@link GwtSession} has the given session. This methods uses {@link #hasPermission(GwtSessionPermission)} instantiating the actual {@link GwtSessionPermission}.
      *
-     * @param domain      The domain to check
-     * @param action      The {@link GwtSessionPermissionAction} to check
-     * @param targetScope The {@link GwtSessionPermissionScope} to check
+     * @param domain
+     *         The domain to check
+     * @param action
+     *         The {@link GwtSessionPermissionAction} to check
+     * @param targetScope
+     *         The {@link GwtSessionPermissionScope} to check
      * @return {@code true} if the current {@link GwtSession} has the permission, {@code false} otherwise
      * @since 1.0.0
      */
@@ -320,13 +322,14 @@ public class GwtSession extends KapuaBaseModel implements Serializable {
     /**
      * Checks that the current {@link GwtSession} has the given {@link GwtSessionPermission}.
      * <p>
-     * This check is done simulating the permission check performed by the {@link org.eclipse.kapua.service.authorization.AuthorizationService#isPermitted(Permission)}.
-     * This does not introduces any security risk, since it will only allow to see/have access to certain elements of the UI while service access check is still performed on each call.
+     * This check is done simulating the permission check performed by the {@link org.eclipse.kapua.service.authorization.AuthorizationService#isPermitted(Permission)}. This does not introduces any
+     * security risk, since it will only allow to see/have access to certain elements of the UI while service access check is still performed on each call.
      * <p>
      * After the check, the result is cached to allow faster check for subsequent check for the same permission.
      * </p>
      *
-     * @param permissionToCheck The {@link GwtSessionPermission} to check
+     * @param permissionToCheck
+     *         The {@link GwtSessionPermission} to check
      * @return {@code true} if the current {@link GwtSession} has the permission, {@code false} otherwise
      * @since 1.0.0
      */
@@ -348,10 +351,11 @@ public class GwtSession extends KapuaBaseModel implements Serializable {
     }
 
     /**
-     * This methods simulates the check that is performed by the {@link org.eclipse.kapua.service.authorization.AuthorizationService#isPermitted(Permission)}.
-     * {@link Permission#getForwardable()} property is supported in a different way, but produces the same results.
+     * This methods simulates the check that is performed by the {@link org.eclipse.kapua.service.authorization.AuthorizationService#isPermitted(Permission)}. {@link Permission#getForwardable()}
+     * property is supported in a different way, but produces the same results.
      *
-     * @param permissionToCheck The {@link GwtSessionPermission} to check
+     * @param permissionToCheck
+     *         The {@link GwtSessionPermission} to check
      * @return {@code true} if the current {@link GwtSession} has the permission, {@code false} otherwise
      * @since 1.0.0
      */
@@ -365,16 +369,16 @@ public class GwtSession extends KapuaBaseModel implements Serializable {
 
                     boolean check = false;
                     switch (gsp.getPermissionScope()) {
-                        case ALL:
-                            check = true;
-                            break;
-                        case CHILDREN:
-                            check = (GwtSessionPermissionScope.CHILDREN.equals(permissionToCheckScope) ||
-                                    GwtSessionPermissionScope.SELF.equals(permissionToCheckScope));
-                            break;
-                        case SELF:
-                            check = GwtSessionPermissionScope.SELF.equals(permissionToCheckScope);
-                            break;
+                    case ALL:
+                        check = true;
+                        break;
+                    case CHILDREN:
+                        check = (GwtSessionPermissionScope.CHILDREN.equals(permissionToCheckScope) ||
+                                GwtSessionPermissionScope.SELF.equals(permissionToCheckScope));
+                        break;
+                    case SELF:
+                        check = GwtSessionPermissionScope.SELF.equals(permissionToCheckScope);
+                        break;
                     }
 
                     if (check) {
@@ -401,11 +405,11 @@ public class GwtSession extends KapuaBaseModel implements Serializable {
     /**
      * Set user interface into dirty state.
      *
-     * @param formDirty true if user will need to confirm menu change.
+     * @param formDirty
+     *         true if user will need to confirm menu change.
      */
     public void setFormDirty(boolean formDirty) {
         this.formDirty = formDirty;
     }
-
 
 }

@@ -12,16 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.role.shiro;
 
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.role.Role;
-import org.eclipse.kapua.service.authorization.role.RoleCreator;
 import org.eclipse.kapua.service.authorization.role.RoleFactory;
-import org.eclipse.kapua.service.authorization.role.RoleListResult;
 import org.eclipse.kapua.service.authorization.role.RolePermission;
-import org.eclipse.kapua.service.authorization.role.RoleQuery;
-
-import javax.inject.Singleton;
 
 /**
  * {@link RoleFactory} implementation.
@@ -34,21 +31,6 @@ public class RoleFactoryImpl implements RoleFactory {
     @Override
     public Role newEntity(KapuaId scopeId) {
         return new RoleImpl(scopeId);
-    }
-
-    @Override
-    public RoleCreator newCreator(KapuaId scopeId) {
-        return new RoleCreatorImpl(scopeId);
-    }
-
-    @Override
-    public RoleQuery newQuery(KapuaId scopeId) {
-        return new RoleQueryImpl(scopeId);
-    }
-
-    @Override
-    public RoleListResult newListResult() {
-        return new RoleListResultImpl();
     }
 
     @Override

@@ -23,11 +23,12 @@ import org.eclipse.kapua.model.query.KapuaListResult;
  * {@link JobStepDefinitionListResult} definition.
  *
  * @since 1.0.0
- *
  */
 @XmlRootElement(name = "jobStepDefinitionListResult")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = JobStepDefinitionXmlRegistry.class, factoryMethod = "newJobStepDefinitionListResult")
-public interface JobStepDefinitionListResult extends KapuaListResult<JobStepDefinition> {
+@XmlType
+public class JobStepDefinitionListResult extends KapuaListResult<JobStepDefinition> {
+
+    private static final long serialVersionUID = 977813250632719295L;
 
 }

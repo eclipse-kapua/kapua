@@ -12,18 +12,44 @@
  *******************************************************************************/
 package org.eclipse.kapua.model.query;
 
-public interface FieldSortCriteria extends KapuaSortCriteria{
+public class FieldSortCriteria implements KapuaSortCriteria {
+
+    /**
+     * Field attribute name
+     */
+    private String attributeName;
+
+    /**
+     * Field sort order
+     */
+    private SortOrder sortOrder;
+
+    /**
+     * Constructor
+     *
+     * @param attributeName
+     * @param sortOrder
+     */
+    public FieldSortCriteria(String attributeName, SortOrder sortOrder) {
+        this.attributeName = attributeName;
+        this.sortOrder = sortOrder;
+    }
+
     /**
      * Get the sort attribute name
      *
      * @return
      */
-    public String getAttributeName();
+    public String getAttributeName() {
+        return attributeName;
+    }
 
     /**
      * Get the sort attribute order
      *
      * @return
      */
-    public SortOrder getSortOrder();
+    public SortOrder getSortOrder() {
+        return sortOrder;
+    }
 }

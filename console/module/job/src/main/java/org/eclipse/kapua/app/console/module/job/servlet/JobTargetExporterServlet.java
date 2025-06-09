@@ -12,25 +12,26 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.job.servlet;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaIllegalAccessException;
 import org.eclipse.kapua.KapuaUnauthenticatedException;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaIdFactory;
 import org.eclipse.kapua.model.query.KapuaListResult;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.job.targets.JobTarget;
 import org.eclipse.kapua.service.job.targets.JobTargetAttributes;
-import org.eclipse.kapua.service.job.targets.JobTargetFactory;
-import org.eclipse.kapua.service.job.targets.JobTargetQuery;
+import org.eclipse.kapua.service.job.targets.JobTargetListResult;
 import org.eclipse.kapua.service.job.targets.JobTargetService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 public class JobTargetExporterServlet extends HttpServlet {
 
@@ -76,18 +77,17 @@ public class JobTargetExporterServlet extends HttpServlet {
             KapuaLocator locator = KapuaLocator.getInstance();
             KapuaIdFactory kapuaIdFactory = locator.getFactory(KapuaIdFactory.class);
             JobTargetService jobTargetService = locator.getService(JobTargetService.class);
-            JobTargetFactory jobTargetFactory = locator.getFactory(JobTargetFactory.class);
 
             jobTargetExporter.init(scopeId, jobId);
 
             int offset = 0;
 
-            JobTargetQuery jobTargetQuery = jobTargetFactory.newQuery(kapuaIdFactory.newKapuaId(scopeId));
+            KapuaQuery jobTargetQuery = new KapuaQuery(kapuaIdFactory.newKapuaId(scopeId));
             jobTargetQuery.setPredicate(jobTargetQuery.attributePredicate(JobTargetAttributes.JOB_ID, kapuaIdFactory.newKapuaId(jobId)));
             // paginate through the matching message
             jobTargetQuery.setLimit(250);
 
-            KapuaListResult<JobTarget> totalJobTargets = jobTargetFactory.newListResult();
+            KapuaListResult<JobTarget> totalJobTargets = new JobTargetListResult();
             KapuaListResult<JobTarget> results;
             do {
                 jobTargetQuery.setOffset(offset);

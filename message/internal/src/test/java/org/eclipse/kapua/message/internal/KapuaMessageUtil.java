@@ -30,8 +30,7 @@ import org.eclipse.kapua.message.KapuaPayload;
 import org.eclipse.kapua.message.KapuaPosition;
 
 /**
- * Test Utility for repeating parts of code in Message module.
- * Mostly for populating structures with random / semi random test data.
+ * Test Utility for repeating parts of code in Message module. Mostly for populating structures with random / semi random test data.
  */
 public class KapuaMessageUtil {
 
@@ -42,7 +41,7 @@ public class KapuaMessageUtil {
      * Prepare payload data that contains two metrics and simple byte payload.
      *
      * @param kapuaPayload
-     *            payload reference to fill with test data
+     *         payload reference to fill with test data
      */
     public static void populatePayload(KapuaPayload kapuaPayload) {
         Map<String, Object> metrics = new HashMap<>();
@@ -57,7 +56,7 @@ public class KapuaMessageUtil {
      * Prepare payload data that contains metrics with all available types.
      *
      * @param kapuaPayload
-     *            payload reference to fill with test data
+     *         payload reference to fill with test data
      */
     public static void populatePayloadWithAllTypesOfMetrics(KapuaPayload kapuaPayload) {
         Map<String, Object> metrics = new HashMap<>();
@@ -76,7 +75,7 @@ public class KapuaMessageUtil {
      * Prepare channel semantic parts with three part metric.
      *
      * @param kapuaChannel
-     *            channel reference to fill with test data
+     *         channel reference to fill with test data
      */
     public static void populateChannel(KapuaChannel kapuaChannel) {
         List<String> semanticParts = new ArrayList<>();
@@ -87,13 +86,12 @@ public class KapuaMessageUtil {
     }
 
     /**
-     * Prepare full KapuaMessage with fixed data. Data is not semantically correct, just
-     * tokens that fill all necessary fields.
+     * Prepare full KapuaMessage with fixed data. Data is not semantically correct, just tokens that fill all necessary fields.
      *
      * @param kapuaMessage
-     *            KapuaMessage reference to fill with test data
+     *         KapuaMessage reference to fill with test data
      * @param referenceDate
-     *            reference date on which all date fields are based
+     *         reference date on which all date fields are based
      */
     public static void populateKapuaMessage(KapuaMessage<?, ?> kapuaMessage, ZonedDateTime referenceDate) {
         kapuaMessage.setId(UUID.fromString("11111111-2222-3333-4444-555555555555"));
@@ -102,7 +100,7 @@ public class KapuaMessageUtil {
         kapuaMessage.setReceivedOn(Date.from(referenceDate.plusMinutes(1).toInstant()));
         kapuaMessage.setSentOn(Date.from(referenceDate.plusSeconds(10).toInstant()));
         kapuaMessage.setCapturedOn(Date.from(referenceDate.toInstant()));
-        KapuaPosition position = new KapuaPositionImpl();
+        KapuaPosition position = new KapuaPosition();
         populatePosition(position, referenceDate);
         kapuaMessage.setPosition(position);
     }
@@ -111,9 +109,9 @@ public class KapuaMessageUtil {
      * Prepare position data with fixed values. Values are semantically correct.
      *
      * @param position
-     *            reference to position object that is filled with test data
+     *         reference to position object that is filled with test data
      * @param referenceDate
-     *            reference date on which all date fields are based
+     *         reference date on which all date fields are based
      */
     public static void populatePosition(KapuaPosition position, ZonedDateTime referenceDate) {
         position.setLongitude(Double.valueOf("45.1111"));

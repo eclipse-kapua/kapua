@@ -12,11 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.job.server;
 
-import com.extjs.gxt.ui.client.data.BaseListLoadResult;
-import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
-import com.extjs.gxt.ui.client.data.ListLoadResult;
-import com.extjs.gxt.ui.client.data.PagingLoadConfig;
-import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.server.KapuaRemoteServiceServlet;
 import org.eclipse.kapua.app.console.module.api.server.util.KapuaExceptionHandler;
@@ -35,30 +36,27 @@ import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.job.Job;
 import org.eclipse.kapua.service.job.JobCreator;
-import org.eclipse.kapua.service.job.JobFactory;
 import org.eclipse.kapua.service.job.JobListResult;
 import org.eclipse.kapua.service.job.JobQuery;
 import org.eclipse.kapua.service.job.JobService;
 import org.eclipse.kapua.service.user.User;
-import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserListResult;
+import org.eclipse.kapua.service.user.UserQuery;
 import org.eclipse.kapua.service.user.UserService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
+import com.extjs.gxt.ui.client.data.BaseListLoadResult;
+import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
+import com.extjs.gxt.ui.client.data.ListLoadResult;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
+import com.extjs.gxt.ui.client.data.PagingLoadResult;
 
 public class GwtJobServiceImpl extends KapuaRemoteServiceServlet implements GwtJobService {
 
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
 
     private static final JobService JOB_SERVICE = LOCATOR.getService(JobService.class);
-    private static final JobFactory JOB_FACTORY = LOCATOR.getFactory(JobFactory.class);
 
     private static final UserService USER_SERVICE = LOCATOR.getService(UserService.class);
-    private static final UserFactory USER_FACTORY = LOCATOR.getFactory(UserFactory.class);
 
     private static final String ENTITY_INFO = "entityInfo";
 
@@ -83,7 +81,7 @@ public class GwtJobServiceImpl extends KapuaRemoteServiceServlet implements GwtJ
 
                     @Override
                     public UserListResult call() throws Exception {
-                        return USER_SERVICE.query(USER_FACTORY.newQuery(null));
+                        return USER_SERVICE.query(new UserQuery(null));
                     }
                 });
 
@@ -114,7 +112,7 @@ public class GwtJobServiceImpl extends KapuaRemoteServiceServlet implements GwtJ
         GwtJob gwtJob = null;
         try {
             KapuaId scopeId = KapuaEid.parseCompactId(gwtJobCreator.getScopeId());
-            JobCreator jobCreator = JOB_FACTORY.newCreator(scopeId);
+            JobCreator jobCreator = new JobCreator(scopeId);
             jobCreator.setName(gwtJobCreator.getName());
             jobCreator.setDescription(gwtJobCreator.getDescription());
             // Create the Job
@@ -207,7 +205,7 @@ public class GwtJobServiceImpl extends KapuaRemoteServiceServlet implements GwtJ
 
     @Override
     public ListLoadResult<GwtGroupedNVPair> findJobDescription(String gwtScopeId,
-                                                               String gwtJobId) throws GwtKapuaException {
+            String gwtJobId) throws GwtKapuaException {
         List<GwtGroupedNVPair> gwtJobDescription = new ArrayList<GwtGroupedNVPair>();
         try {
             KapuaId scopeId = KapuaEid.parseCompactId(gwtScopeId);
@@ -219,7 +217,7 @@ public class GwtJobServiceImpl extends KapuaRemoteServiceServlet implements GwtJ
 
                 @Override
                 public UserListResult call() throws Exception {
-                    return USER_SERVICE.query(USER_FACTORY.newQuery(null));
+                    return USER_SERVICE.query(new UserQuery(null));
                 }
             });
 

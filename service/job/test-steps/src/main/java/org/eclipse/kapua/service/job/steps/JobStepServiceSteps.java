@@ -12,17 +12,18 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job.steps;
 
-import com.google.inject.Singleton;
-import io.cucumber.java.After;
-import io.cucumber.java.Before;
-import io.cucumber.java.Scenario;
-import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.model.query.predicate.AttributePredicate;
 import org.eclipse.kapua.qa.common.StepData;
 import org.eclipse.kapua.qa.common.cucumber.CucJobStepProperty;
@@ -32,7 +33,6 @@ import org.eclipse.kapua.service.job.step.JobStepAttributes;
 import org.eclipse.kapua.service.job.step.JobStepCreator;
 import org.eclipse.kapua.service.job.step.JobStepFactory;
 import org.eclipse.kapua.service.job.step.JobStepListResult;
-import org.eclipse.kapua.service.job.step.JobStepQuery;
 import org.eclipse.kapua.service.job.step.JobStepService;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinition;
 import org.eclipse.kapua.service.job.step.definition.JobStepProperty;
@@ -40,12 +40,15 @@ import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.google.inject.Singleton;
+
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 
 @Singleton
 public class JobStepServiceSteps extends JobServiceTestBase {
@@ -106,28 +109,30 @@ public class JobStepServiceSteps extends JobServiceTestBase {
     /**
      * Adds a {@link JobStep} to the {@link Job} in context with the {@link JobStepDefinition} in context with the given {@link JobStepProperty}es
      *
-     * @param jobStepName The {@link JobStepCreator#getName()}
-     * @param cucJobStepProperties The {@link JobStepCreator#getStepProperties()}
+     * @param jobStepName
+     *         The {@link JobStepCreator#getName()}
+     * @param cucJobStepProperties
+     *         The {@link JobStepCreator#getStepProperties()}
      * @throws Exception
      * @since 2.1.0
      */
     @And("I add job step to job with name {string} and with selected job step definition and properties")
-    public void iAddJobStepToJobWithSelectedJobStepDefinitionAndFollowingJobStepProperties(String jobStepName, List<CucJobStepProperty> cucJobStepProperties) throws Exception{
+    public void iAddJobStepToJobWithSelectedJobStepDefinitionAndFollowingJobStepProperties(String jobStepName, List<CucJobStepProperty> cucJobStepProperties) throws Exception {
         Job job = (Job) stepData.get(JOB);
         JobStepDefinition jobStepDefinition = (JobStepDefinition) stepData.get(JOB_STEP_DEFINITION);
 
-        JobStepCreator jobStepCreator = jobStepFactory.newCreator(job.getScopeId());
+        JobStepCreator jobStepCreator = new JobStepCreator(job.getScopeId());
         jobStepCreator.setJobId(job.getId());
         jobStepCreator.setName(jobStepName);
         jobStepCreator.setJobStepDefinitionId(jobStepDefinition.getId());
         jobStepCreator.setStepProperties(
                 cucJobStepProperties.stream()
                         .map(
-                            (cucJobStepProperty) -> jobStepFactory.newStepProperty(
-                                cucJobStepProperty.getName(),
-                                cucJobStepProperty.getType(),
-                                cucJobStepProperty.getValue()
-                            )
+                                (cucJobStepProperty) -> jobStepFactory.newStepProperty(
+                                        cucJobStepProperty.getName(),
+                                        cucJobStepProperty.getType(),
+                                        cucJobStepProperty.getValue()
+                                )
                         )
                         .collect(Collectors.toList())
         );
@@ -266,7 +271,7 @@ public class JobStepServiceSteps extends JobServiceTestBase {
 
     @When("I look for the JobStep with name {string}")
     public void iLookForJobStepWithName(String name) throws Exception {
-        JobStepQuery tmpQuery = jobStepFactory.newQuery(getCurrentScopeId());
+        KapuaQuery tmpQuery = new KapuaQuery(getCurrentScopeId());
         tmpQuery.setPredicate(tmpQuery.attributePredicate(JobStepAttributes.NAME, name));
 
         primeException();
@@ -281,7 +286,7 @@ public class JobStepServiceSteps extends JobServiceTestBase {
 
     @When("I query for a JobStep with the name {string}")
     public void iQueryForJobStepWithName(String name) throws Exception {
-        JobStepQuery tmpQuery = jobStepFactory.newQuery(getCurrentScopeId());
+        KapuaQuery tmpQuery = new KapuaQuery(getCurrentScopeId());
         tmpQuery.setPredicate(tmpQuery.attributePredicate(JobStepAttributes.NAME, name));
 
         primeException();
@@ -320,7 +325,7 @@ public class JobStepServiceSteps extends JobServiceTestBase {
     }
 
     private JobStepListResult getJobStepListResult(KapuaId currentJobId) throws KapuaException {
-        JobStepQuery jobStepQuery = jobStepFactory.newQuery(getCurrentScopeId());
+        KapuaQuery jobStepQuery = new KapuaQuery(getCurrentScopeId());
         jobStepQuery.setPredicate(jobStepQuery.attributePredicate(JobStepAttributes.JOB_ID, currentJobId, AttributePredicate.Operator.EQUAL));
 
         return jobStepService.query(jobStepQuery);
@@ -328,7 +333,7 @@ public class JobStepServiceSteps extends JobServiceTestBase {
 
     @When("I count the JobSteps in the current scope")
     public void iCountJobStepInCurrentScope() throws Exception {
-        updateCount(() -> (int) jobStepService.count(jobStepFactory.newQuery(getCurrentScopeId())));
+        updateCount(() -> (int) jobStepService.count(new KapuaQuery(getCurrentScopeId())));
     }
     // Delete
 
@@ -373,16 +378,15 @@ public class JobStepServiceSteps extends JobServiceTestBase {
 
     @When("I test the JobStepFactory")
     public void testTheStepFactory() {
-        Assert.assertNotNull(jobStepFactory.newCreator(SYS_SCOPE_ID));
+        Assert.assertNotNull(new JobStepCreator(SYS_SCOPE_ID));
         Assert.assertNotNull(jobStepFactory.newEntity(SYS_SCOPE_ID));
-        Assert.assertNotNull(jobStepFactory.newListResult());
-        Assert.assertNotNull(jobStepFactory.newQuery(SYS_SCOPE_ID));
+        Assert.assertNotNull(new KapuaQuery(SYS_SCOPE_ID));
         Assert.assertNotNull(jobStepFactory.newStepProperty("TestName", "TestType", "TestValue"));
     }
     // Private methods
 
     private JobStepCreator prepareDefaultJobStepCreator() {
-        JobStepCreator tmpCr = jobStepFactory.newCreator(getCurrentScopeId());
+        JobStepCreator tmpCr = new JobStepCreator(getCurrentScopeId());
         tmpCr.setName(String.format("StepName_%d", random.nextInt()));
         tmpCr.setDescription("StepDescription");
         return tmpCr;

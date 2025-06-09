@@ -12,8 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.translator.kapua.kura;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.Date;
+
+import javax.inject.Inject;
+import javax.xml.bind.JAXBException;
+
 import org.eclipse.kapua.service.device.call.kura.model.asset.AssetMetrics;
 import org.eclipse.kapua.service.device.call.kura.model.asset.KuraAsset;
 import org.eclipse.kapua.service.device.call.kura.model.asset.KuraAssetChannel;
@@ -21,7 +27,6 @@ import org.eclipse.kapua.service.device.call.kura.model.asset.KuraAssets;
 import org.eclipse.kapua.service.device.call.message.kura.app.request.KuraRequestChannel;
 import org.eclipse.kapua.service.device.call.message.kura.app.request.KuraRequestMessage;
 import org.eclipse.kapua.service.device.call.message.kura.app.request.KuraRequestPayload;
-import org.eclipse.kapua.service.device.management.asset.DeviceAssetFactory;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssets;
 import org.eclipse.kapua.service.device.management.asset.message.internal.AssetRequestChannel;
 import org.eclipse.kapua.service.device.management.asset.message.internal.AssetRequestMessage;
@@ -30,12 +35,8 @@ import org.eclipse.kapua.translator.exception.InvalidChannelException;
 import org.eclipse.kapua.translator.exception.InvalidPayloadException;
 import org.xml.sax.SAXException;
 
-import javax.inject.Inject;
-import javax.xml.bind.JAXBException;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.util.Date;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * {@link org.eclipse.kapua.translator.Translator} implementation from {@link AssetRequestMessage} to {@link KuraRequestMessage}
@@ -44,11 +45,8 @@ import java.util.Date;
  */
 public class TranslatorAppAssetKapuaKura extends AbstractTranslatorKapuaKura<AssetRequestChannel, AssetRequestPayload, AssetRequestMessage> {
 
-    private final DeviceAssetFactory deviceAssetFactory;
-
     @Inject
-    public TranslatorAppAssetKapuaKura(DeviceAssetFactory deviceAssetFactory) {
-        this.deviceAssetFactory = deviceAssetFactory;
+    public TranslatorAppAssetKapuaKura() {
     }
 
     @Override
@@ -79,7 +77,7 @@ public class TranslatorAppAssetKapuaKura extends AbstractTranslatorKapuaKura<Ass
         try {
             DeviceAssets deviceAssets;
             try {
-                deviceAssets = kapuaPayload.getDeviceAssets().orElse(deviceAssetFactory.newAssetListResult());
+                deviceAssets = kapuaPayload.getDeviceAssets().orElse(new DeviceAssets());
             } catch (UnsupportedEncodingException | JAXBException | SAXException e) {
                 throw new InvalidPayloadException(e, kapuaPayload);
             }

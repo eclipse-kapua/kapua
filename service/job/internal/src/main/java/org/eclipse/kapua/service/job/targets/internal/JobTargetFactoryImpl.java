@@ -12,15 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job.targets.internal;
 
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.job.targets.JobTarget;
-import org.eclipse.kapua.service.job.targets.JobTargetCreator;
 import org.eclipse.kapua.service.job.targets.JobTargetFactory;
-import org.eclipse.kapua.service.job.targets.JobTargetListResult;
-import org.eclipse.kapua.service.job.targets.JobTargetQuery;
-
-import javax.inject.Singleton;
 
 /**
  * {@link JobTargetFactory} implementation.
@@ -33,21 +30,6 @@ public class JobTargetFactoryImpl implements JobTargetFactory {
     @Override
     public JobTarget newEntity(KapuaId scopeId) {
         return new JobTargetImpl(scopeId);
-    }
-
-    @Override
-    public JobTargetCreator newCreator(KapuaId scopeId) {
-        return new JobTargetCreatorImpl(scopeId);
-    }
-
-    @Override
-    public JobTargetQuery newQuery(KapuaId scopeId) {
-        return new JobTargetQueryImpl(scopeId);
-    }
-
-    @Override
-    public JobTargetListResult newListResult() {
-        return new JobTargetListResultImpl();
     }
 
     @Override

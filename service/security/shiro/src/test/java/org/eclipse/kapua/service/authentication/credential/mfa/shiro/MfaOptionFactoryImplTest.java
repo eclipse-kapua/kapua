@@ -12,22 +12,19 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.credential.mfa.shiro;
 
+import java.util.Date;
+
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.authentication.credential.mfa.MfaOption;
 import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionCreator;
-import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionListResult;
-import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionQuery;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
-
-import java.util.Date;
-
 
 @Category(JUnitTests.class)
 public class MfaOptionFactoryImplTest {
@@ -42,27 +39,11 @@ public class MfaOptionFactoryImplTest {
     @Before
     public void initialize() {
         mfaOptionFactoryImpl = new MfaOptionFactoryImpl();
-        scopeIds = new KapuaId[]{null, KapuaId.ONE};
-        userIds = new KapuaEid[]{null, new KapuaEid()};
+        scopeIds = new KapuaId[] { null, KapuaId.ONE };
+        userIds = new KapuaEid[] { null, new KapuaEid() };
         mfaOption = Mockito.mock(MfaOption.class);
         trustExpirationDate = new Date();
         modifiedOn = new Date();
-    }
-
-    @Test
-    public void newCreatorScopeIdUserIdMfaSecretKeyParametersTest() {
-        for (KapuaId scopeId : scopeIds) {
-            for (KapuaEid userId : userIds) {
-                MfaOptionCreator mfaOptionCreatorImpl = mfaOptionFactoryImpl.newCreator(scopeId, userId);
-                Assert.assertEquals("Expected and actual values should be the same.", scopeId, mfaOptionCreatorImpl.getScopeId());
-                Assert.assertEquals("Expected and actual values should be the same.", userId, mfaOptionCreatorImpl.getUserId());
-            }
-        }
-    }
-
-    @Test
-    public void newListResultTest() {
-        Assert.assertTrue("Instance of MfaOptionListResult expected.", mfaOptionFactoryImpl.newListResult() instanceof MfaOptionListResult);
     }
 
     @Test
@@ -74,17 +55,9 @@ public class MfaOptionFactoryImplTest {
     }
 
     @Test
-    public void newQueryTest() {
-        for (KapuaId scopeId : scopeIds) {
-            MfaOptionQuery mfaOptionQuery = mfaOptionFactoryImpl.newQuery(scopeId);
-            Assert.assertEquals("Expected and actual values should be the same.", scopeId, mfaOptionQuery.getScopeId());
-        }
-    }
-
-    @Test
     public void newCreatorScopeIdParameterTest() {
         for (KapuaId scopeId : scopeIds) {
-            MfaOptionCreator mfaOptionCreator = mfaOptionFactoryImpl.newCreator(scopeId);
+            MfaOptionCreator mfaOptionCreator = new MfaOptionCreator(scopeId);
             Assert.assertEquals("Expected and actual values should be the same.", scopeId, mfaOptionCreator.getScopeId());
         }
     }

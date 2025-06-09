@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job;
 
-import org.eclipse.kapua.locator.KapuaLocator;
-
 import javax.xml.bind.annotation.XmlRegistry;
+
+import org.eclipse.kapua.locator.KapuaLocator;
 
 /**
  * {@link Job} xml factory class
@@ -35,25 +35,7 @@ public class JobXmlRegistry {
         return jobFactory.newEntity(null);
     }
 
-    /**
-     * Creates a new job creator instance
-     *
-     * @return
-     */
-    public JobCreator newJobCreator() {
-        return jobFactory.newCreator(null);
-    }
-
-    /**
-     * Creates a new job list result instance
-     *
-     * @return
-     */
-    public JobListResult newJobListResult() {
-        return jobFactory.newListResult();
-    }
-
     public JobQuery newQuery() {
-        return jobFactory.newQuery(null);
+        return new JobQuery(null);
     }
 }

@@ -12,17 +12,15 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.commons;
 
-import org.eclipse.kapua.commons.core.AbstractKapuaModule;
-import org.eclipse.kapua.service.device.management.commons.message.KapuaRequestMessageFactoryImpl;
-import org.eclipse.kapua.service.device.management.commons.setting.DeviceManagementSetting;
-import org.eclipse.kapua.service.device.management.message.request.KapuaRequestMessageFactory;
-
 import javax.inject.Singleton;
 
+import org.eclipse.kapua.commons.core.AbstractKapuaModule;
+import org.eclipse.kapua.service.device.management.commons.setting.DeviceManagementSetting;
+
 public class DeviceCommonsModule extends AbstractKapuaModule {
+
     @Override
     protected void configureModule() {
-        bind(KapuaRequestMessageFactory.class).to(KapuaRequestMessageFactoryImpl.class).in(Singleton.class);
         bind(DeviceManagementSetting.class).in(Singleton.class);
     }
 }

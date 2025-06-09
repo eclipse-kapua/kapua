@@ -19,10 +19,20 @@ import org.eclipse.kapua.model.id.KapuaId;
  * <p>
  * It is the base {@code interface} for all {@link Object} creators that are {@link Storable}.
  *
- * @param <E> The {@link Storable} for which this is a {@link StorableCreator} for.
+ * @param <E>
+ *         The {@link Storable} for which this is a {@link StorableCreator} for.
  * @since 1.0.0
  */
-public interface StorableCreator<E extends Storable> {
+public class StorableCreator<E extends Storable> {
+
+    private KapuaId scopeId;
+
+    public StorableCreator() {
+    }
+
+    public StorableCreator(KapuaId scopeId) {
+        this.scopeId = scopeId;
+    }
 
     /**
      * Gets the scope {@link KapuaId}.
@@ -30,13 +40,18 @@ public interface StorableCreator<E extends Storable> {
      * @return The scope {@link KapuaId}.
      * @since 1.0.0
      */
-    KapuaId getScopeId();
+    public KapuaId getScopeId() {
+        return scopeId;
+    }
 
     /**
      * Sets the scope {@link KapuaId}.
      *
-     * @param scopeId The scope {@link KapuaId}.
+     * @param scopeId
+     *         The scope {@link KapuaId}.
      * @since 1.3.0
      */
-    void setScopeId(KapuaId scopeId);
+    public void setScopeId(KapuaId scopeId) {
+        this.scopeId = scopeId;
+    }
 }

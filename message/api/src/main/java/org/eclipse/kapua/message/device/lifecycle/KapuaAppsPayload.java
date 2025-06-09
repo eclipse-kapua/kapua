@@ -17,6 +17,85 @@ package org.eclipse.kapua.message.device.lifecycle;
  *
  * @since 1.0.0
  */
-public interface KapuaAppsPayload extends KapuaBirthPayload {
+public class KapuaAppsPayload extends KapuaBirthPayload {
 
+    private static final long serialVersionUID = -918081814625264739L;
+
+    /**
+     * Constructor.
+     *
+     * @since 1.1.0
+     */
+    public KapuaAppsPayload() {
+        super();
+    }
+
+    /**
+     * Constructor.
+     *
+     * @see KapuaBirthPayload
+     */
+    public KapuaAppsPayload(String uptime,
+            String displayName,
+            String modelName,
+            String modelId,
+            String partNumber,
+            String serialNumber,
+            String firmware,
+            String firmwareVersion,
+            String bios,
+            String biosVersion,
+            String os,
+            String osVersion,
+            String jvm,
+            String jvmVersion,
+            String jvmProfile,
+            String containerFramework,
+            String containerFrameworkVersion,
+            String applicationFramework,
+            String applicationFrameworkVersion,
+            String connectionInterface,
+            String connectionIp,
+            String acceptEncoding,
+            String applicationIdentifiers,
+            String availableProcessors,
+            String totalMemory,
+            String osArch,
+            String modemImei,
+            String modemImsi,
+            String modemIccid,
+            String extendedProperties,
+            String tamperStatus) {
+        super(uptime,
+                displayName,
+                modelName,
+                modelId,
+                partNumber,
+                serialNumber,
+                firmware,
+                firmwareVersion,
+                bios,
+                biosVersion,
+                os,
+                osVersion,
+                jvm,
+                jvmVersion,
+                jvmProfile,
+                containerFramework,
+                containerFrameworkVersion,
+                applicationFramework,
+                applicationFrameworkVersion,
+                connectionInterface,
+                connectionIp,
+                acceptEncoding,
+                applicationIdentifiers,
+                availableProcessors,
+                totalMemory,
+                osArch,
+                modemImei,
+                modemImsi,
+                modemIccid,
+                extendedProperties,
+                tamperStatus);
+    }
 }

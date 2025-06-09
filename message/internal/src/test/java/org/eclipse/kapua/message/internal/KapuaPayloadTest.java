@@ -40,12 +40,12 @@ public class KapuaPayloadTest {
 
     @Test
     public void neverGetNull() {
-        Assert.assertNotNull(new KapuaPayloadImpl().getMetrics());
+        Assert.assertNotNull(new KapuaPayload().getMetrics());
     }
 
     @Test
     public void payloadGetterSetters() throws Exception {
-        KapuaPayload kapuaPayload = new KapuaPayloadImpl();
+        KapuaPayload kapuaPayload = new KapuaPayload();
         KapuaMessageUtil.populatePayload(kapuaPayload);
 
         Map<String, Object> properties = kapuaPayload.getMetrics();
@@ -57,13 +57,13 @@ public class KapuaPayloadTest {
 
     @Test
     public void displayStringEmpty() throws Exception {
-        final KapuaPayload kapuaPayload = new KapuaPayloadImpl();
+        final KapuaPayload kapuaPayload = new KapuaPayload();
         Assert.assertEquals("", kapuaPayload.toDisplayString());
     }
 
     @Test
     public void displayString() throws Exception {
-        final KapuaPayload kapuaPayload = new KapuaPayloadImpl();
+        final KapuaPayload kapuaPayload = new KapuaPayload();
 
         KapuaMessageUtil.populatePayloadWithAllTypesOfMetrics(kapuaPayload);
         kapuaPayload.getMetrics().put("null", null);
@@ -75,7 +75,7 @@ public class KapuaPayloadTest {
     @Test
     @Ignore("KapuaPayload marshaling not working")
     public void marshallPayload() throws Exception {
-        KapuaPayload kapuaPayload = new KapuaPayloadImpl();
+        KapuaPayload kapuaPayload = new KapuaPayload();
         KapuaMessageUtil.populatePayload(kapuaPayload);
 
         StringWriter strWriter = new StringWriter();

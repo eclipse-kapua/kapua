@@ -19,5 +19,6 @@ import org.eclipse.kapua.service.device.management.packages.model.DevicePackageO
  *
  * @since 1.1.0
  */
-public interface DevicePackageDownloadOptions extends DevicePackageOptions {
+public class DevicePackageDownloadOptions extends DevicePackageOptions {
+
 }

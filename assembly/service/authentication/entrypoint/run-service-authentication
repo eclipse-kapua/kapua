@@ -11,4 +11,4 @@
 #        Eurotech
 ################################################################################
 
-java ${JAVA_OPTS} ${DEBUG_OPTS} ${JMX_OPTS} -jar kapua-service-authentication-2.1.0-SNAPSHOT-app.jar
+java ${JAVA_OPTS} ${DEBUG_OPTS} ${JMX_OPTS} -jar kapua-service-authentication-2.1.0-FALSE_EXTENSIONS-SNAPSHOT-app.jar

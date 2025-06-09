@@ -12,20 +12,21 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.registry.operation.notification.internal;
 
-import com.google.inject.Provides;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationRepository;
 import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotificationFactory;
 import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotificationRepository;
 import org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotificationService;
 
-import javax.inject.Singleton;
+import com.google.inject.Provides;
 
 public class DeviceManagementRegistryNotificationModule extends AbstractKapuaModule {
+
     @Override
     protected void configureModule() {
         bind(ManagementOperationNotificationFactory.class).to(ManagementOperationNotificationFactoryImpl.class);
@@ -35,14 +36,12 @@ public class DeviceManagementRegistryNotificationModule extends AbstractKapuaMod
     @Singleton
     ManagementOperationNotificationService managementOperationNotificationService(
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             ManagementOperationNotificationFactory entityFactory,
             ManagementOperationNotificationRepository repository,
             DeviceManagementOperationRepository deviceManagementOperationRepository,
             KapuaJpaTxManagerFactory jpaTxManagerFactory) {
         return new ManagementOperationNotificationServiceImpl(
                 authorizationService,
-                permissionFactory,
                 entityFactory,
                 jpaTxManagerFactory.create("kapua-device_management_operation_registry"),
                 repository,

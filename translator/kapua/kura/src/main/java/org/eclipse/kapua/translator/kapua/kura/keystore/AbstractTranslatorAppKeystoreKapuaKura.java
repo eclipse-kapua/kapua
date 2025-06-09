@@ -15,7 +15,6 @@ package org.eclipse.kapua.translator.kapua.kura.keystore;
 import org.eclipse.kapua.service.device.call.kura.model.keystore.KeystoreMetrics;
 import org.eclipse.kapua.service.device.call.message.kura.app.request.KuraRequestChannel;
 import org.eclipse.kapua.service.device.call.message.kura.app.request.KuraRequestMessage;
-import org.eclipse.kapua.service.device.management.keystore.DeviceKeystoreManagementFactory;
 import org.eclipse.kapua.service.device.management.keystore.internal.message.request.KeystoreRequestChannel;
 import org.eclipse.kapua.service.device.management.keystore.internal.message.request.KeystoreRequestMessage;
 import org.eclipse.kapua.service.device.management.keystore.internal.message.request.KeystoreRequestPayload;
@@ -30,11 +29,6 @@ import org.eclipse.kapua.translator.kapua.kura.TranslatorKapuaKuraUtils;
  * @since 1.5.0
  */
 public abstract class AbstractTranslatorAppKeystoreKapuaKura<M extends KeystoreRequestMessage<M>> extends AbstractTranslatorKapuaKura<KeystoreRequestChannel, KeystoreRequestPayload, M> {
-    protected final DeviceKeystoreManagementFactory deviceKeystoreManagementFactory;
-
-    public AbstractTranslatorAppKeystoreKapuaKura(DeviceKeystoreManagementFactory deviceKeystoreManagementFactory) {
-        this.deviceKeystoreManagementFactory = deviceKeystoreManagementFactory;
-    }
 
     @Override
     protected KuraRequestChannel translateChannel(KeystoreRequestChannel kapuaChannel) throws InvalidChannelException {
@@ -43,18 +37,18 @@ public abstract class AbstractTranslatorAppKeystoreKapuaKura<M extends KeystoreR
 
             if (kapuaChannel.getResource() != null) {
                 if ("items".equals(kapuaChannel.getResource())) {
-                    kuraRequestChannel.setResources(new String[]{"keystores", "entries"});
+                    kuraRequestChannel.setResources(new String[] { "keystores", "entries" });
                 } else if ("item".equals(kapuaChannel.getResource())) {
-                    kuraRequestChannel.setResources(new String[]{"keystores", "entries", "entry"});
+                    kuraRequestChannel.setResources(new String[] { "keystores", "entries", "entry" });
                 } else if ("certificate".equals(kapuaChannel.getResource())) {
-                    kuraRequestChannel.setResources(new String[]{"keystores", "entries", "certificate"});
+                    kuraRequestChannel.setResources(new String[] { "keystores", "entries", "certificate" });
                 } else if ("keypair".equals(kapuaChannel.getResource())) {
-                    kuraRequestChannel.setResources(new String[]{"keystores", "entries", "keypair"});
+                    kuraRequestChannel.setResources(new String[] { "keystores", "entries", "keypair" });
                 } else if ("csr".equals(kapuaChannel.getResource())) {
-                    kuraRequestChannel.setResources(new String[]{"keystores", "entries", "csr"});
+                    kuraRequestChannel.setResources(new String[] { "keystores", "entries", "csr" });
                 }
             } else {
-                kuraRequestChannel.setResources(new String[]{"keystores"});
+                kuraRequestChannel.setResources(new String[] { "keystores" });
             }
 
             // Return Kura Channel

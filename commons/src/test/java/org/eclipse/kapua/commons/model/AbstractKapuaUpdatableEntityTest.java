@@ -12,6 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.model;
 
+import java.math.BigInteger;
+import java.util.Date;
+import java.util.Random;
+
 import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.security.KapuaSession;
@@ -23,12 +27,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
-
-import java.math.BigInteger;
-import java.util.Date;
-import java.util.Properties;
-import java.util.Random;
-
 
 @Category(JUnitTests.class)
 public class AbstractKapuaUpdatableEntityTest {
@@ -65,8 +63,8 @@ public class AbstractKapuaUpdatableEntityTest {
     @Test
     public void abstractKapuaUpdatableEntityEntityIdTest() {
         KapuaUpdatableEntity entity = new ActualKapuaUpdatableEntity();
-        entity.setEntityAttributes(new Properties());
-        entity.setEntityProperties(new Properties());
+        //        entity.setEntityAttributes(new Properties());
+        //        entity.setEntityProperties(new Properties());
         entity.setOptlock(10);
         AbstractKapuaUpdatableEntity updatableEntity = new ActualKapuaUpdatableEntity(entity);
         updatableEntity.setModifiedOn(new Date());

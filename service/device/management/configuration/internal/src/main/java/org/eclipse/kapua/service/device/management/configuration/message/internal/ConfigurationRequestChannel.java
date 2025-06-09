@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.configuration.message.internal;
 
-import org.eclipse.kapua.service.device.management.commons.message.request.KapuaRequestChannelImpl;
 import org.eclipse.kapua.service.device.management.configuration.DeviceComponentConfiguration;
 import org.eclipse.kapua.service.device.management.configuration.DeviceConfiguration;
 import org.eclipse.kapua.service.device.management.message.request.KapuaRequestChannel;
@@ -22,7 +21,7 @@ import org.eclipse.kapua.service.device.management.message.request.KapuaRequestC
  *
  * @since 1.0.0
  */
-public class ConfigurationRequestChannel extends KapuaRequestChannelImpl implements KapuaRequestChannel {
+public class ConfigurationRequestChannel extends KapuaRequestChannel {
 
     private static final long serialVersionUID = 4679870909531884966L;
 
@@ -42,7 +41,8 @@ public class ConfigurationRequestChannel extends KapuaRequestChannelImpl impleme
     /**
      * Sets the {@link DeviceConfiguration} identifier.
      *
-     * @param configurationId The {@link DeviceConfiguration} identifier.
+     * @param configurationId
+     *         The {@link DeviceConfiguration} identifier.
      * @since 1.0.0
      */
     public void setConfigurationId(String configurationId) {
@@ -62,7 +62,8 @@ public class ConfigurationRequestChannel extends KapuaRequestChannelImpl impleme
     /**
      * Sets the {@link DeviceComponentConfiguration#getId()}.
      *
-     * @param componentId The {@link DeviceComponentConfiguration#getId()}.
+     * @param componentId
+     *         The {@link DeviceComponentConfiguration#getId()}.
      * @since 1.0.0
      */
     public void setComponentId(String componentId) {

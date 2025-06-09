@@ -25,8 +25,24 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "subjectAN")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DeviceKeystoreXmlRegistry.class, factoryMethod = "newDeviceKeystoreSubjectAN")
-public interface DeviceKeystoreSubjectAN {
+@XmlType
+public class DeviceKeystoreSubjectAN {
+
+    private String anType;
+    private String value;
+
+    public DeviceKeystoreSubjectAN() {
+    }
+
+    /**
+     * Constructor.
+     *
+     * @since 1.5.0
+     */
+    public DeviceKeystoreSubjectAN(String anType, String anValue) {
+        setANType(anType);
+        setValue(anValue);
+    }
 
     /**
      * The type of the subject alternative name.
@@ -35,15 +51,20 @@ public interface DeviceKeystoreSubjectAN {
      * @since 1.5.0
      */
     @XmlElement(name = "anType")
-    String getANType();
+    public String getANType() {
+        return anType;
+    }
 
     /**
      * Sets the type of the subject alternative name.
      *
-     * @param anType The type of the subject alternative name.
+     * @param anType
+     *         The type of the subject alternative name.
      * @since 1.5.0
      */
-    void setANType(String anType);
+    public void setANType(String anType) {
+        this.anType = anType;
+    }
 
     /**
      * Gets the alternative name value.
@@ -52,13 +73,19 @@ public interface DeviceKeystoreSubjectAN {
      * @since 1.5.0
      */
     @XmlElement(name = "value")
-    String getValue();
+    public String getValue() {
+        return value;
+    }
 
     /**
      * Sets the alternative name value.
      *
-     * @param value The alternative name value.
+     * @param value
+     *         The alternative name value.
      * @since 1.5.0
      */
-    void setValue(String value);
+    public void setValue(String value) {
+        this.value = value;
+    }
+
 }

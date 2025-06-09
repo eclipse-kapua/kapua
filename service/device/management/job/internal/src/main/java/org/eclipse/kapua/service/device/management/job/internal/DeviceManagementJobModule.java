@@ -12,19 +12,20 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.job.internal;
 
-import com.google.inject.Provides;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationFactory;
 import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationRepository;
 import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationService;
 
-import javax.inject.Singleton;
+import com.google.inject.Provides;
 
 public class DeviceManagementJobModule extends AbstractKapuaModule {
+
     @Override
     protected void configureModule() {
         bind(JobDeviceManagementOperationFactory.class).to(JobDeviceManagementOperationFactoryImpl.class);
@@ -35,12 +36,10 @@ public class DeviceManagementJobModule extends AbstractKapuaModule {
     public JobDeviceManagementOperationService jobDeviceManagementOperationService(
             JobDeviceManagementOperationFactory entityFactory,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             JobDeviceManagementOperationRepository repository,
             KapuaJpaTxManagerFactory jpaTxManagerFactory) {
         return new JobDeviceManagementOperationServiceImpl(entityFactory,
                 authorizationService,
-                permissionFactory,
                 jpaTxManagerFactory.create("kapua-job-device-management-operation"),
                 repository);
     }

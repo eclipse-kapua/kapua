@@ -12,19 +12,18 @@
  *******************************************************************************/
 package org.eclipse.kapua.translator.kapua.kura.keystore;
 
+import javax.inject.Inject;
+
 import org.eclipse.kapua.service.device.call.kura.model.keystore.KuraKeystoreItemQuery;
 import org.eclipse.kapua.service.device.call.message.kura.app.request.KuraRequestMessage;
 import org.eclipse.kapua.service.device.call.message.kura.app.request.KuraRequestPayload;
 import org.eclipse.kapua.service.device.management.commons.setting.DeviceManagementSetting;
 import org.eclipse.kapua.service.device.management.commons.setting.DeviceManagementSettingKey;
-import org.eclipse.kapua.service.device.management.keystore.DeviceKeystoreManagementFactory;
 import org.eclipse.kapua.service.device.management.keystore.internal.message.request.KeystoreQueryRequestMessage;
 import org.eclipse.kapua.service.device.management.keystore.internal.message.request.KeystoreRequestPayload;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreItemQuery;
 import org.eclipse.kapua.translator.Translator;
 import org.eclipse.kapua.translator.exception.InvalidPayloadException;
-
-import javax.inject.Inject;
 
 /**
  * {@link Translator} implementation from {@link KeystoreQueryRequestMessage} to {@link KuraRequestMessage}
@@ -36,8 +35,7 @@ public class TranslatorAppKeystoreQueryKapuaKura extends AbstractTranslatorAppKe
     private final String charEncoding;
 
     @Inject
-    public TranslatorAppKeystoreQueryKapuaKura(DeviceManagementSetting deviceManagementSetting, DeviceKeystoreManagementFactory deviceKeystoreManagementFactory) {
-        super(deviceKeystoreManagementFactory);
+    public TranslatorAppKeystoreQueryKapuaKura(DeviceManagementSetting deviceManagementSetting) {
         charEncoding = deviceManagementSetting.getString(DeviceManagementSettingKey.CHAR_ENCODING);
     }
 
@@ -47,7 +45,7 @@ public class TranslatorAppKeystoreQueryKapuaKura extends AbstractTranslatorAppKe
             KuraRequestPayload kuraRequestPayload = new KuraRequestPayload();
 
             if (kapuaPayload.hasBody()) {
-                DeviceKeystoreItemQuery deviceKeystoreItemQuery = kapuaPayload.getItemQuery().orElse(deviceKeystoreManagementFactory.newDeviceKeystoreItemQuery());
+                DeviceKeystoreItemQuery deviceKeystoreItemQuery = kapuaPayload.getItemQuery().orElse(new DeviceKeystoreItemQuery());
 
                 if (deviceKeystoreItemQuery.hasFilters()) {
 

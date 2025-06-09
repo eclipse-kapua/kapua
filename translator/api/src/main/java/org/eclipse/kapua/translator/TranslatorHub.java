@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.translator;
 
-import org.eclipse.kapua.message.Message;
-
 import javax.validation.constraints.NotNull;
+
+import org.eclipse.kapua.message.Message;
 
 public interface TranslatorHub {
 

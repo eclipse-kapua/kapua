@@ -12,16 +12,15 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.packages.model.download;
 
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.service.device.management.packages.model.DevicePackageXmlRegistry;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
 
 /**
  * Device download package operation entity definition.
@@ -30,8 +29,13 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  */
 @XmlRootElement(name = "packageDownloadOperation")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DevicePackageXmlRegistry.class, factoryMethod = "newDevicePackageDownloadOperation")
-public interface DevicePackageDownloadOperation {
+@XmlType
+public class DevicePackageDownloadOperation {
+
+    private KapuaId id;
+    private Integer size;
+    private Integer progress;
+    private DevicePackageDownloadStatus status;
 
     /**
      * Get the download package identifier
@@ -40,14 +44,18 @@ public interface DevicePackageDownloadOperation {
      */
     @XmlElement(name = "id")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
-    KapuaId getId();
+    public KapuaId getId() {
+        return id;
+    }
 
     /**
      * Set the download package identifier
      *
      * @param id
      */
-    void setId(KapuaId id);
+    public void setId(KapuaId id) {
+        this.id = id;
+    }
 
     /**
      * Get the package size
@@ -55,14 +63,18 @@ public interface DevicePackageDownloadOperation {
      * @return
      */
     @XmlElement(name = "size")
-    Integer getSize();
+    public Integer getSize() {
+        return size;
+    }
 
     /**
      * Set the package size
      *
      * @param downloadSize
      */
-    void setSize(Integer downloadSize);
+    public void setSize(Integer downloadSize) {
+        this.size = downloadSize;
+    }
 
     /**
      * Get the download progress
@@ -70,14 +82,18 @@ public interface DevicePackageDownloadOperation {
      * @return
      */
     @XmlElement(name = "progress")
-    Integer getProgress();
+    public Integer getProgress() {
+        return progress;
+    }
 
     /**
      * Set the download progress
      *
      * @param downloadProgress
      */
-    void setProgress(Integer downloadProgress);
+    public void setProgress(Integer downloadProgress) {
+        this.progress = downloadProgress;
+    }
 
     /**
      * Get the download status
@@ -85,13 +101,17 @@ public interface DevicePackageDownloadOperation {
      * @return
      */
     @XmlElement(name = "status")
-    DevicePackageDownloadStatus getStatus();
+    public DevicePackageDownloadStatus getStatus() {
+        return status;
+    }
 
     /**
      * Set the download status
      *
      * @param status
      */
-    void setStatus(DevicePackageDownloadStatus status);
+    public void setStatus(DevicePackageDownloadStatus status) {
+        this.status = status;
+    }
 
 }

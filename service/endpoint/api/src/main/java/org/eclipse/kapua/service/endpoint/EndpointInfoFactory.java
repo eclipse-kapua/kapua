@@ -19,14 +19,16 @@ import org.eclipse.kapua.model.KapuaEntityFactory;
  *
  * @since 1.0.0
  */
-public interface EndpointInfoFactory extends KapuaEntityFactory<EndpointInfo, EndpointInfoCreator, EndpointInfoQuery, EndpointInfoListResult> {
+public interface EndpointInfoFactory extends KapuaEntityFactory<EndpointInfo> {
 
     /**
      * Instantiates a new {@link EndpointUsage}.
      *
-     * @param name The name to set into the {@link EndpointUsage}.
+     * @param name
+     *         The name to set into the {@link EndpointUsage}.
      * @return The newly instantiated {@link EndpointUsage}.
      * @since 1.0.0
      */
     EndpointUsage newEndpointUsage(String name);
+
 }

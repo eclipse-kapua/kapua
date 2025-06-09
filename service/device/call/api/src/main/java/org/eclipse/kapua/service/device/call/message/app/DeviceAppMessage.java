@@ -17,8 +17,10 @@ import org.eclipse.kapua.service.device.call.message.DeviceMessage;
 /**
  * {@link DeviceAppMessage} definition.
  *
- * @param <C> The {@link DeviceAppChannel} type
- * @param <P> The {@link DeviceAppPayload} type
+ * @param <C>
+ *         The {@link DeviceAppChannel} type
+ * @param <P>
+ *         The {@link DeviceAppPayload} type
  * @since 1.0.0
  */
 public interface DeviceAppMessage<C extends DeviceAppChannel, P extends DeviceAppPayload> extends DeviceMessage<C, P> {

@@ -12,18 +12,19 @@
  *******************************************************************************/
 package org.eclipse.kapua.model;
 
-import org.eclipse.kapua.entity.EntityPropertiesReadException;
-import org.eclipse.kapua.entity.EntityPropertiesWriteException;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.model.xml.DateXmlAdapter;
+import java.util.Date;
+import java.util.Properties;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
-import java.util.Properties;
+
+import org.eclipse.kapua.entity.EntityPropertiesReadException;
+import org.eclipse.kapua.entity.EntityPropertiesWriteException;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import org.eclipse.kapua.model.xml.DateXmlAdapter;
 
 /**
  * {@link KapuaUpdatableEntity} definition.
@@ -69,7 +70,8 @@ public interface KapuaUpdatableEntity extends KapuaEntity {
     /**
      * Sets the optlock
      *
-     * @param optlock the optlock
+     * @param optlock
+     *         the optlock
      * @since 1.0.0
      */
     void setOptlock(int optlock);
@@ -78,7 +80,8 @@ public interface KapuaUpdatableEntity extends KapuaEntity {
      * Gets the attributes
      *
      * @return the attributes
-     * @throws EntityPropertiesReadException If there are error while reading {@link Properties}
+     * @throws EntityPropertiesReadException
+     *         If there are error while reading {@link Properties}
      */
     @XmlTransient
     Properties getEntityAttributes() throws EntityPropertiesReadException;
@@ -86,8 +89,10 @@ public interface KapuaUpdatableEntity extends KapuaEntity {
     /**
      * Sets the attributes
      *
-     * @param props the attributes
-     * @throws EntityPropertiesWriteException If there are error while writing {@link Properties}
+     * @param props
+     *         the attributes
+     * @throws EntityPropertiesWriteException
+     *         If there are error while writing {@link Properties}
      * @since 1.0.0
      */
     void setEntityAttributes(Properties props) throws EntityPropertiesWriteException;
@@ -96,7 +101,8 @@ public interface KapuaUpdatableEntity extends KapuaEntity {
      * Gets the property entities
      *
      * @return the property entities
-     * @throws EntityPropertiesReadException If there are error while reading {@link Properties}
+     * @throws EntityPropertiesReadException
+     *         If there are error while reading {@link Properties}
      * @since 1.0.0
      */
     @XmlTransient
@@ -105,8 +111,10 @@ public interface KapuaUpdatableEntity extends KapuaEntity {
     /**
      * Sets the property entities
      *
-     * @param props the property entities
-     * @throws EntityPropertiesWriteException If there are error while writing {@link Properties}
+     * @param props
+     *         the property entities
+     * @throws EntityPropertiesWriteException
+     *         If there are error while writing {@link Properties}
      * @since 1.0.0
      */
     void setEntityProperties(Properties props) throws EntityPropertiesWriteException;

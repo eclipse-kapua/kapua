@@ -18,7 +18,6 @@ import org.eclipse.kapua.service.authentication.exception.KapuaAuthenticationExc
 import org.eclipse.kapua.service.authentication.shiro.UsernamePasswordCredentialsImpl;
 import org.eclipse.kapua.service.authentication.shiro.realm.model.NotProcessableCredentials;
 import org.eclipse.kapua.service.authentication.shiro.realm.model.NotProcessableCredentialsImpl;
-import org.eclipse.kapua.service.authentication.shiro.realm.model.UsernamePasswordCredentialsAnotherImpl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,36 +40,16 @@ public class UserPassCredentialsConverterTest {
 
     @Test
     public void usernamePasswordCredentialsImplCanProcessImplTest() throws KapuaAuthenticationException {
-        UsernamePasswordCredentials usernamePasswordCredentialsImpl = new UsernamePasswordCredentialsImpl("aUsernamePassword", "anIdToken");
-        UsernamePasswordCredentials usernamePasswordCredentialsAnother = new UsernamePasswordCredentialsAnotherImpl("aUsernamePassword", "anIdToken");
+        UsernamePasswordCredentials usernamePasswordCredentialsImpl = new UsernamePasswordCredentials("aUsernamePassword", "anIdToken");
         NotProcessableCredentials notProcessableCredentials = new NotProcessableCredentialsImpl();
 
         Assert.assertTrue(instance.canProcess(usernamePasswordCredentialsImpl));
-        Assert.assertTrue(instance.canProcess(usernamePasswordCredentialsAnother));
         Assert.assertFalse(instance.canProcess(notProcessableCredentials));
     }
 
     @Test
     public void usernamePasswordCredentialsImplMapToShiroImplTest() throws KapuaAuthenticationException {
-        UsernamePasswordCredentialsImpl first = new UsernamePasswordCredentialsImpl("aUsername", "aPassword");
-        first.setAuthenticationCode("123456");
-        first.setTrustKey("aTrustKey");
-        first.setTrustMe(true);
-
-        UsernamePasswordCredentialsImpl second = (UsernamePasswordCredentialsImpl) instance.convertToShiro(first);
-
-        Assert.assertNotNull(second);
-        Assert.assertEquals(first, second);
-        Assert.assertEquals(first.getUsername(), second.getUsername());
-        Assert.assertEquals(first.getPassword(), second.getPassword());
-        Assert.assertEquals(first.getAuthenticationCode(), second.getAuthenticationCode());
-        Assert.assertEquals(first.getTrustKey(), second.getTrustKey());
-        Assert.assertEquals(first.getTrustMe(), second.getTrustMe());
-    }
-
-    @Test
-    public void usernamePasswordCredentialsImplMapToShiroAnotherTest() throws KapuaAuthenticationException {
-        UsernamePasswordCredentials first = new UsernamePasswordCredentialsAnotherImpl("aAccessToken", "anIdToken");
+        UsernamePasswordCredentials first = new UsernamePasswordCredentials("aUsername", "aPassword");
         first.setAuthenticationCode("123456");
         first.setTrustKey("aTrustKey");
         first.setTrustMe(true);
@@ -81,9 +60,22 @@ public class UserPassCredentialsConverterTest {
         Assert.assertNotEquals(first, second);
         Assert.assertEquals(first.getUsername(), second.getUsername());
         Assert.assertEquals(first.getPassword(), second.getPassword());
-        Assert.assertEquals(first.getAuthenticationCode(), second.getAuthenticationCode());
-        Assert.assertEquals(first.getTrustKey(), second.getTrustKey());
-        Assert.assertEquals(first.getTrustMe(), second.getTrustMe());
+        Assert.assertEquals(first.getAuthenticationCode(), first.getAuthenticationCode());
+    }
+
+    @Test
+    public void usernamePasswordCredentialsImplMapToShiroAnotherTest() throws KapuaAuthenticationException {
+        UsernamePasswordCredentials first = new UsernamePasswordCredentials("aAccessToken", "anIdToken");
+        first.setAuthenticationCode("123456");
+        first.setTrustKey("aTrustKey");
+        first.setTrustMe(true);
+
+        UsernamePasswordCredentialsImpl second = (UsernamePasswordCredentialsImpl) instance.convertToShiro(first);
+
+        Assert.assertNotNull(second);
+        Assert.assertNotEquals(first, second);
+        Assert.assertEquals(first.getUsername(), second.getUsername());
+        Assert.assertEquals(first.getPassword(), second.getPassword());
     }
 
     @Test(expected = NullPointerException.class)
@@ -93,7 +85,7 @@ public class UserPassCredentialsConverterTest {
 
     @Test(expected = KapuaAuthenticationException.class)
     public void usernamePasswordCredentialsImplMapToShiroEmptyTest() throws KapuaAuthenticationException {
-        UsernamePasswordCredentialsImpl first = new UsernamePasswordCredentialsImpl(null, null);
+        UsernamePasswordCredentials first = new UsernamePasswordCredentials(null, null);
 
         Assert.assertNotNull(first);
 

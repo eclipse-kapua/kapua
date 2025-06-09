@@ -12,7 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.inventory.model.container;
 
-import org.eclipse.kapua.KapuaSerializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -20,7 +21,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import java.util.List;
+
+import org.eclipse.kapua.KapuaSerializable;
 
 /**
  * {@link DeviceInventoryContainers} definition.
@@ -29,8 +31,12 @@ import java.util.List;
  */
 @XmlRootElement(name = "deviceInventoryContainers")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DeviceInventoryContainersXmlRegistry.class, factoryMethod = "newDeviceInventoryContainers")
-public interface DeviceInventoryContainers extends KapuaSerializable {
+@XmlType
+public class DeviceInventoryContainers implements KapuaSerializable {
+
+    private static final long serialVersionUID = 5229149965375932561L;
+
+    private List<DeviceInventoryContainer> inventoryContainers;
 
     /**
      * Gets the {@link List} of {@link DeviceInventoryContainer}s
@@ -39,22 +45,35 @@ public interface DeviceInventoryContainers extends KapuaSerializable {
      * @since 2.0.0
      */
     @XmlElement(name = "inventoryContainers")
-    List<DeviceInventoryContainer> getInventoryContainers();
+    public List<DeviceInventoryContainer> getInventoryContainers() {
+        if (inventoryContainers == null) {
+            inventoryContainers = new ArrayList<>();
+        }
+
+        return inventoryContainers;
+    }
 
     /**
      * Adds a {@link DeviceInventoryContainer} to the {@link List}
      *
-     * @param inventoryContainer The {@link DeviceInventoryContainer} to add.
+     * @param inventoryContainer
+     *         The {@link DeviceInventoryContainer} to add.
      * @since 2.0.0
      */
     @XmlTransient
-    void addInventoryContainer(DeviceInventoryContainer inventoryContainer);
+    public void addInventoryContainer(DeviceInventoryContainer inventoryContainer) {
+        getInventoryContainers().add(inventoryContainer);
+    }
 
     /**
      * Sets the {@link List} of {@link DeviceInventoryContainer}s
      *
-     * @param inventoryContainers The {@link List} of {@link DeviceInventoryContainer}s
+     * @param inventoryContainers
+     *         The {@link List} of {@link DeviceInventoryContainer}s
      * @since 2.0.0
      */
-    void setInventoryContainers(List<DeviceInventoryContainer> inventoryContainers);
+    public void setInventoryContainers(List<DeviceInventoryContainer> inventoryContainers) {
+        this.inventoryContainers = inventoryContainers;
+    }
+
 }

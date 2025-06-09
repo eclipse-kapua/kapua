@@ -12,11 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.authentication;
 
+import org.eclipse.kapua.commons.core.AbstractKapuaModule;
+import org.eclipse.kapua.service.device.authentication.api.DeviceConnectionCredentialAdapter;
+
 import com.google.inject.multibindings.ProvidesIntoMap;
 import com.google.inject.multibindings.StringMapKey;
-import org.eclipse.kapua.commons.core.AbstractKapuaModule;
-import org.eclipse.kapua.service.authentication.CredentialsFactory;
-import org.eclipse.kapua.service.device.authentication.api.DeviceConnectionCredentialAdapter;
 
 /**
  * kapua-device-authentication {@link AbstractKapuaModule}.
@@ -31,7 +31,7 @@ public class DeviceAuthenticationModule extends AbstractKapuaModule {
 
     @ProvidesIntoMap
     @StringMapKey("USER_PASS")
-    public DeviceConnectionCredentialAdapter userPassDeviceConnectionAuthHandler(CredentialsFactory credentialFactory) {
-        return new UserPassDeviceConnectionCredentialAdapter(credentialFactory);
+    public DeviceConnectionCredentialAdapter userPassDeviceConnectionAuthHandler() {
+        return new UserPassDeviceConnectionCredentialAdapter();
     }
 }

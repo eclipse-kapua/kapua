@@ -25,7 +25,6 @@ import org.eclipse.kapua.commons.jpa.EventStorer;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.commons.model.domains.Domains;
-import org.eclipse.kapua.commons.service.event.store.api.EventStoreFactory;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordRepository;
 import org.eclipse.kapua.commons.service.event.store.internal.EventStoreServiceImpl;
 import org.eclipse.kapua.event.ServiceEventBus;
@@ -36,7 +35,6 @@ import org.eclipse.kapua.model.domain.DomainEntry;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.access.GroupQueryHelper;
 import org.eclipse.kapua.service.authorization.group.GroupService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.device.authentication.api.DeviceConnectionCredentialAdapter;
 import org.eclipse.kapua.service.device.registry.common.DeviceValidation;
 import org.eclipse.kapua.service.device.registry.common.DeviceValidationImpl;
@@ -121,9 +119,6 @@ public class DeviceRegistryModule extends AbstractKapuaModule {
     ServiceModule deviceRegistryModule(DeviceConnectionService deviceConnectionService,
             DeviceRegistryService deviceRegistryService,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
-            KapuaJpaTxManagerFactory txManagerFactory,
-            EventStoreFactory eventStoreFactory,
             EventStoreRecordRepository eventStoreRecordRepository,
             ServiceEventBus serviceEventBus,
             KapuaDeviceRegistrySettings kapuaDeviceRegistrySettings,
@@ -137,9 +132,7 @@ public class DeviceRegistryModule extends AbstractKapuaModule {
                 new ServiceEventHouseKeeperFactoryImpl(
                         new EventStoreServiceImpl(
                                 authorizationService,
-                                permissionFactory,
                                 jpaTxManagerFactory.create("kapua-device"),
-                                eventStoreFactory,
                                 eventStoreRecordRepository
                         ),
                         jpaTxManagerFactory.create("kapua-device"),
@@ -153,22 +146,18 @@ public class DeviceRegistryModule extends AbstractKapuaModule {
     @Singleton
     DeviceValidation deviceValidation(KapuaDeviceRegistrySettings deviceRegistrySettings,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             GroupService groupService,
             DeviceConnectionService deviceConnectionService,
             DeviceEventService deviceEventService,
             DeviceRepository deviceRepository,
-            DeviceFactory deviceFactory,
             TagService tagService) {
         return new DeviceValidationImpl(deviceRegistrySettings.getInt(KapuaDeviceRegistrySettingKeys.DEVICE_LIFECYCLE_BIRTH_VAR_FIELDS_LENGTH_MAX),
                 deviceRegistrySettings.getInt(KapuaDeviceRegistrySettingKeys.DEVICE_LIFECYCLE_BIRTH_EXTENDED_PROPERTIES_LENGTH_MAX),
                 authorizationService,
-                permissionFactory,
                 groupService,
                 deviceConnectionService,
                 deviceEventService,
                 deviceRepository,
-                deviceFactory,
                 tagService);
     }
 
@@ -177,7 +166,6 @@ public class DeviceRegistryModule extends AbstractKapuaModule {
     DeviceRegistryService deviceRegistryService(
             Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             DeviceRepository deviceRepository,
             DeviceFactory deviceFactory,
             GroupQueryHelper groupQueryHelper,
@@ -187,7 +175,6 @@ public class DeviceRegistryModule extends AbstractKapuaModule {
         return new DeviceRegistryServiceImpl(
                 serviceConfigurationManagersByServiceClass.get(DeviceRegistryService.class),
                 authorizationService,
-                permissionFactory,
                 deviceRegistryTxManager,
                 deviceRepository,
                 deviceFactory,
@@ -233,7 +220,6 @@ public class DeviceRegistryModule extends AbstractKapuaModule {
     @Singleton
     protected DeviceConnectionOptionService deviceConnectionOptionService(
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             DeviceConnectionRepository deviceConnectionRepository,
             DeviceConnectionFactory entityFactory,
             DeviceConnectionOptionRepository repository,
@@ -241,7 +227,6 @@ public class DeviceRegistryModule extends AbstractKapuaModule {
             Map<String, DeviceConnectionCredentialAdapter> availableDeviceConnectionAdapters) {
         return new DeviceConnectionOptionServiceImpl(
                 authorizationService,
-                permissionFactory,
                 txManager,
                 deviceConnectionRepository,
                 entityFactory,
@@ -259,14 +244,12 @@ public class DeviceRegistryModule extends AbstractKapuaModule {
     @Singleton
     protected DeviceEventService deviceEventService(
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             DeviceRepository deviceRepository,
             DeviceEventFactory entityFactory,
             DeviceEventRepository deviceEventRepository,
             @Named("DeviceRegistryTransactionManager") TxManager txManager) {
         return new DeviceEventServiceImpl(
                 authorizationService,
-                permissionFactory,
                 txManager,
                 deviceRepository,
                 entityFactory,

@@ -12,8 +12,15 @@
  *******************************************************************************/
 package org.eclipse.kapua.translator.kura.kapua.event;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountService;
@@ -31,12 +38,10 @@ import org.eclipse.kapua.service.device.management.bundle.internal.DeviceBundleA
 import org.eclipse.kapua.service.device.management.command.internal.CommandAppProperties;
 import org.eclipse.kapua.service.device.management.configuration.DeviceComponentConfiguration;
 import org.eclipse.kapua.service.device.management.configuration.DeviceConfiguration;
-import org.eclipse.kapua.service.device.management.configuration.DeviceConfigurationFactory;
 import org.eclipse.kapua.service.device.management.configuration.internal.DeviceConfigurationAppProperties;
+import org.eclipse.kapua.service.device.management.configuration.message.event.DeviceConfigurationEventChannel;
 import org.eclipse.kapua.service.device.management.configuration.message.event.DeviceConfigurationEventMessage;
-import org.eclipse.kapua.service.device.management.configuration.message.event.internal.DeviceConfigurationEventChannelImpl;
-import org.eclipse.kapua.service.device.management.configuration.message.event.internal.DeviceConfigurationEventMessageImpl;
-import org.eclipse.kapua.service.device.management.configuration.message.event.internal.DeviceConfigurationEventPayloadImpl;
+import org.eclipse.kapua.service.device.management.configuration.message.event.DeviceConfigurationEventPayload;
 import org.eclipse.kapua.service.device.management.message.KapuaAppProperties;
 import org.eclipse.kapua.service.device.management.packages.message.internal.PackageAppProperties;
 import org.eclipse.kapua.service.device.registry.Device;
@@ -51,16 +56,11 @@ import org.eclipse.kapua.translator.exception.InvalidPayloadException;
 import org.eclipse.kapua.translator.exception.TranslateException;
 import org.eclipse.kapua.translator.kura.kapua.TranslatorKuraKapuaUtils;
 
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * {@link Translator} implementation from {@link KuraConfigurationEventMessage} to {@link DeviceConfigurationEventMessageImpl}
+ * {@link Translator} implementation from {@link KuraConfigurationEventMessage} to {@link DeviceConfigurationEventMessage}
  *
  * @since 2.0.0
  */
@@ -70,8 +70,6 @@ public class TranslatorEventConfigurationKuraKapua extends Translator<KuraConfig
     private AccountService accountService;
     @Inject
     private DeviceRegistryService deviceRegistryService;
-    @Inject
-    private DeviceConfigurationFactory deviceConfigurationFactory;
     @Inject
     private TranslatorKuraKapuaUtils translatorKuraKapuaUtils;
 
@@ -98,7 +96,7 @@ public class TranslatorEventConfigurationKuraKapua extends Translator<KuraConfig
     @Override
     public DeviceConfigurationEventMessage translate(KuraConfigurationEventMessage kuraNotifyMessage) throws TranslateException {
         try {
-            DeviceConfigurationEventMessage deviceConfigurationEventMessage = new DeviceConfigurationEventMessageImpl();
+            DeviceConfigurationEventMessage deviceConfigurationEventMessage = new DeviceConfigurationEventMessage();
             deviceConfigurationEventMessage.setChannel(translate(kuraNotifyMessage.getChannel()));
             deviceConfigurationEventMessage.setPayload(translate(kuraNotifyMessage.getPayload()));
 
@@ -127,12 +125,12 @@ public class TranslatorEventConfigurationKuraKapua extends Translator<KuraConfig
         }
     }
 
-    private DeviceConfigurationEventChannelImpl translate(KuraConfigurationEventChannel kuraConfigurationEventChannel) throws InvalidChannelException {
+    private DeviceConfigurationEventChannel translate(KuraConfigurationEventChannel kuraConfigurationEventChannel) throws InvalidChannelException {
         try {
             String kuraAppIdName = kuraConfigurationEventChannel.getAppName();
             String kuraAppIdVersion = kuraConfigurationEventChannel.getAppVersion();
 
-            DeviceConfigurationEventChannelImpl configurationEventChannel = new DeviceConfigurationEventChannelImpl();
+            DeviceConfigurationEventChannel configurationEventChannel = new DeviceConfigurationEventChannel();
             configurationEventChannel.setAppName(kuraAppIdName);
             configurationEventChannel.setAppVersion(kuraAppIdVersion);
             configurationEventChannel.setResources(kuraConfigurationEventChannel.getResources());
@@ -143,9 +141,9 @@ public class TranslatorEventConfigurationKuraKapua extends Translator<KuraConfig
         }
     }
 
-    private DeviceConfigurationEventPayloadImpl translate(KuraConfigurationEventPayload kuraConfigurationEventPayload) throws InvalidPayloadException {
+    private DeviceConfigurationEventPayload translate(KuraConfigurationEventPayload kuraConfigurationEventPayload) throws InvalidPayloadException {
         try {
-            DeviceConfigurationEventPayloadImpl configurationEventPayload = new DeviceConfigurationEventPayloadImpl();
+            DeviceConfigurationEventPayload configurationEventPayload = new DeviceConfigurationEventPayload();
 
             if (kuraConfigurationEventPayload.hasBody()) {
                 KuraDeviceComponentConfiguration[] kuraDeviceComponentConfigurations = readJsonBodyAs(kuraConfigurationEventPayload.getBody(), KuraDeviceComponentConfiguration[].class);
@@ -155,7 +153,7 @@ public class TranslatorEventConfigurationKuraKapua extends Translator<KuraConfig
 
                     deviceComponentConfigurations.add(translate(kuraDeviceComponentConfiguration));
                 }
-                final DeviceConfiguration deviceConfiguration = deviceConfigurationFactory.newConfigurationInstance();
+                final DeviceConfiguration deviceConfiguration = new DeviceConfiguration();
                 deviceConfiguration.setComponentConfigurations(deviceComponentConfigurations);
                 configurationEventPayload.setDeviceComponentConfigurations(deviceConfiguration);
             }
@@ -171,12 +169,13 @@ public class TranslatorEventConfigurationKuraKapua extends Translator<KuraConfig
      * <p>
      * It currently translates only {@link DeviceComponentConfiguration#getId()}
      *
-     * @param kuraDeviceComponentConfiguration The {@link KuraDeviceComponentConfiguration} to translate.
+     * @param kuraDeviceComponentConfiguration
+     *         The {@link KuraDeviceComponentConfiguration} to translate.
      * @return The translated {@link DeviceComponentConfiguration}.
      * @since 2.0.0
      */
     private DeviceComponentConfiguration translate(KuraDeviceComponentConfiguration kuraDeviceComponentConfiguration) {
-        return deviceConfigurationFactory.newComponentConfigurationInstance(kuraDeviceComponentConfiguration.getComponentId());
+        return new DeviceComponentConfiguration(kuraDeviceComponentConfiguration.getComponentId());
     }
 
     @Override

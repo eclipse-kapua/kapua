@@ -12,17 +12,16 @@
  *******************************************************************************/
 package org.eclipse.kapua.translator.kura.kapua.inventory;
 
+import javax.inject.Inject;
+
 import org.eclipse.kapua.service.device.call.kura.model.inventory.containers.KuraInventoryContainers;
 import org.eclipse.kapua.service.device.call.message.kura.app.response.KuraResponseMessage;
 import org.eclipse.kapua.service.device.call.message.kura.app.response.KuraResponsePayload;
 import org.eclipse.kapua.service.device.management.commons.setting.DeviceManagementSetting;
-import org.eclipse.kapua.service.device.management.inventory.DeviceInventoryManagementFactory;
 import org.eclipse.kapua.service.device.management.inventory.internal.message.InventoryContainersResponseMessage;
 import org.eclipse.kapua.service.device.management.inventory.internal.message.InventoryResponsePayload;
 import org.eclipse.kapua.translator.Translator;
 import org.eclipse.kapua.translator.exception.InvalidPayloadException;
-
-import javax.inject.Inject;
 
 /**
  * {@link Translator} implementation from {@link KuraResponseMessage} to {@link InventoryContainersResponseMessage}
@@ -37,8 +36,8 @@ public class TranslatorAppInventoryContainersKuraKapua extends AbstractTranslato
      * @since 2.0.0
      */
     @Inject
-    public TranslatorAppInventoryContainersKuraKapua(DeviceManagementSetting deviceManagementSetting, DeviceInventoryManagementFactory deviceInventoryManagementFactory) {
-        super(deviceManagementSetting, deviceInventoryManagementFactory, InventoryContainersResponseMessage.class);
+    public TranslatorAppInventoryContainersKuraKapua(DeviceManagementSetting deviceManagementSetting) {
+        super(deviceManagementSetting, InventoryContainersResponseMessage.class);
     }
 
     @Override

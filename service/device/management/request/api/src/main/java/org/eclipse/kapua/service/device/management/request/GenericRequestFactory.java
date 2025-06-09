@@ -13,24 +13,12 @@
 package org.eclipse.kapua.service.device.management.request;
 
 import org.eclipse.kapua.model.KapuaObjectFactory;
-import org.eclipse.kapua.service.device.management.request.message.request.GenericRequestChannel;
 import org.eclipse.kapua.service.device.management.request.message.request.GenericRequestMessage;
-import org.eclipse.kapua.service.device.management.request.message.request.GenericRequestPayload;
-import org.eclipse.kapua.service.device.management.request.message.response.GenericResponseChannel;
 import org.eclipse.kapua.service.device.management.request.message.response.GenericResponseMessage;
-import org.eclipse.kapua.service.device.management.request.message.response.GenericResponsePayload;
 
 public interface GenericRequestFactory extends KapuaObjectFactory {
 
-    GenericRequestChannel newRequestChannel();
-
-    GenericRequestPayload newRequestPayload();
-
     GenericRequestMessage newRequestMessage();
-
-    GenericResponseChannel newResponseChannel();
-
-    GenericResponsePayload newResponsePayload();
 
     GenericResponseMessage newResponseMessage();
 }

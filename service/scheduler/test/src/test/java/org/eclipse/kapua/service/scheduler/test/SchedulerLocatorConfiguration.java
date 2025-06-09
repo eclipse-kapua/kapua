@@ -24,14 +24,12 @@ import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.commons.metric.CommonsMetric;
 import org.eclipse.kapua.commons.metric.MetricsService;
 import org.eclipse.kapua.commons.metric.MetricsServiceImpl;
-import org.eclipse.kapua.commons.model.query.QueryFactoryImpl;
 import org.eclipse.kapua.commons.service.internal.cache.CacheManagerProvider;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import org.eclipse.kapua.job.engine.client.JobEngineServiceClient;
 import org.eclipse.kapua.job.engine.client.settings.JobEngineClientSetting;
 import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.model.query.QueryFactory;
 import org.eclipse.kapua.qa.common.MockedLocator;
 import org.eclipse.kapua.qa.common.TestJAXBContextProvider;
 import org.eclipse.kapua.service.account.AccountFactory;
@@ -43,7 +41,6 @@ import org.eclipse.kapua.service.authentication.shiro.setting.KapuaAuthenticatio
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.job.JobFactory;
 import org.eclipse.kapua.service.job.JobService;
 import org.eclipse.kapua.service.job.internal.JobFactoryImpl;
@@ -106,10 +103,6 @@ public class SchedulerLocatorConfiguration {
                 bind(AuthorizationService.class).toInstance(mockedAuthorization);
                 bind(KapuaJpaRepositoryConfiguration.class).toInstance(new KapuaJpaRepositoryConfiguration());
 
-                // Inject mocked Permission Factory
-                final PermissionFactory permissionFactory = Mockito.mock(PermissionFactory.class);
-                bind(PermissionFactory.class).toInstance(permissionFactory);
-
                 // binding Account related services
                 bind(AccountRelativeFinder.class).toInstance(Mockito.mock(AccountRelativeFinder.class));
                 bind(AccountService.class).toInstance(Mockito.mock(AccountService.class));
@@ -129,7 +122,6 @@ public class SchedulerLocatorConfiguration {
                 final TriggerFactoryImpl triggerFactory = new TriggerFactoryImpl();
                 final TriggerServiceImpl triggerService = new TriggerServiceImpl(
                         mockedAuthorization,
-                        permissionFactory,
                         schedulerTxManager,
                         triggerRepository,
                         triggerFactory,
@@ -139,7 +131,6 @@ public class SchedulerLocatorConfiguration {
                 bind(JobService.class).toInstance(new JobServiceImpl(
                         Mockito.mock(ServiceConfigurationManager.class),
                         new JobEngineServiceClient(new JobEngineClientSetting(), new XmlUtil(new TestJAXBContextProvider())),
-                        permissionFactory,
                         mockedAuthorization,
                         new KapuaJpaTxManagerFactory(maxInsertAttempts).create("kapua-job"),
                         jobRepository,
@@ -149,14 +140,10 @@ public class SchedulerLocatorConfiguration {
                 bind(TriggerFactory.class).toInstance(triggerFactory);
                 bind(TriggerDefinitionService.class).toInstance(new TriggerDefinitionServiceImpl(
                         mockedAuthorization,
-                        permissionFactory,
                         schedulerTxManager,
                         triggerDefinitionRepository,
                         triggerDefinitionFactory));
                 bind(TriggerDefinitionFactory.class).toInstance(triggerDefinitionFactory);
-
-                // bind Query related services
-                bind(QueryFactory.class).toInstance(new QueryFactoryImpl());
             }
         };
 

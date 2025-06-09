@@ -12,52 +12,47 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.user.steps;
 
-import io.cucumber.java.After;
-import io.cucumber.java.Before;
-import io.cucumber.java.Scenario;
-import io.cucumber.java.en.Then;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.qa.common.StepData;
 import org.eclipse.kapua.qa.common.TestBase;
 import org.eclipse.kapua.qa.common.cucumber.CucUserProfile;
 import org.eclipse.kapua.service.user.profile.UserProfile;
-import org.eclipse.kapua.service.user.profile.UserProfileFactory;
 import org.eclipse.kapua.service.user.profile.UserProfileService;
 import org.junit.Assert;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
+import io.cucumber.java.en.Then;
 
 @Singleton
 public class UserProfileServiceTest extends TestBase {
-    private UserProfileService userProfileService;
-    private UserProfileFactory userProfileFactory;
 
+    private UserProfileService userProfileService;
 
     @Inject
     public UserProfileServiceTest(StepData stepData) {
         super(stepData);
     }
 
-
     @After(value = "@setup")
     public void setServices() {
         KapuaLocator locator = KapuaLocator.getInstance();
         userProfileService = locator.getService(UserProfileService.class);
-        userProfileFactory = locator.getFactory(UserProfileFactory.class);
     }
-
 
     @Before
     public void beforeScenario(Scenario scenario) {
         updateScenario(scenario);
     }
 
-
     @Then("I change the profile to the following")
     public void iChangeTheUserProfileToTheFollowing(CucUserProfile cucUserProfile) throws Exception {
-        UserProfile userProfile = userProfileFactory.newUserProfile();
+        UserProfile userProfile = new UserProfile();
         userProfile.setDisplayName(cucUserProfile.getDisplayName());
         userProfile.setEmail(cucUserProfile.getEmail());
         userProfile.setPhoneNumber(cucUserProfile.getPhoneNumber());
@@ -67,7 +62,6 @@ public class UserProfileServiceTest extends TestBase {
             verifyException(e);
         }
     }
-
 
     @Then("I read the following user profile")
     public void iReadTheFollowingUserProfile(CucUserProfile expectedUserProfile) throws KapuaException {

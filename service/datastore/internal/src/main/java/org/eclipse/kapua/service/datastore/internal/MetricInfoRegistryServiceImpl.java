@@ -13,6 +13,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.internal;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.service.internal.KapuaServiceDisabledException;
@@ -21,19 +29,17 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.datastore.MetricInfoRegistryService;
-import org.eclipse.kapua.service.datastore.internal.mediator.MessageField;
-import org.eclipse.kapua.service.datastore.internal.mediator.MetricInfoField;
-import org.eclipse.kapua.service.datastore.internal.model.query.MessageQueryImpl;
-import org.eclipse.kapua.service.datastore.internal.schema.MessageSchema;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettingsKey;
 import org.eclipse.kapua.service.datastore.model.DatastoreMessage;
 import org.eclipse.kapua.service.datastore.model.MessageListResult;
 import org.eclipse.kapua.service.datastore.model.MetricInfo;
 import org.eclipse.kapua.service.datastore.model.MetricInfoListResult;
+import org.eclipse.kapua.service.datastore.model.query.MessageField;
 import org.eclipse.kapua.service.datastore.model.query.MessageQuery;
+import org.eclipse.kapua.service.datastore.model.query.MessageSchema;
+import org.eclipse.kapua.service.datastore.model.query.MetricInfoField;
 import org.eclipse.kapua.service.datastore.model.query.MetricInfoQuery;
 import org.eclipse.kapua.service.datastore.model.query.predicate.DatastorePredicateFactory;
 import org.eclipse.kapua.service.storable.model.id.StorableId;
@@ -46,13 +52,6 @@ import org.eclipse.kapua.service.storable.model.query.predicate.StorablePredicat
 import org.eclipse.kapua.service.storable.model.query.predicate.TermPredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Metric information registry implementation.
@@ -67,7 +66,6 @@ public class MetricInfoRegistryServiceImpl implements MetricInfoRegistryService 
     private final StorablePredicateFactory storablePredicateFactory;
 
     private final AuthorizationService authorizationService;
-    private final PermissionFactory permissionFactory;
     private final MetricInfoRegistryFacade metricInfoRegistryFacade;
     private final DatastorePredicateFactory datastorePredicateFactory;
     private final MessageRepository messageRepository;
@@ -81,14 +79,12 @@ public class MetricInfoRegistryServiceImpl implements MetricInfoRegistryService 
     public MetricInfoRegistryServiceImpl(
             StorablePredicateFactory storablePredicateFactory,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             DatastorePredicateFactory datastorePredicateFactory,
             MetricInfoRegistryFacade metricInfoRegistryFacade,
             MessageRepository messageRepository,
             DatastoreSettings datastoreSettings) {
         this.storablePredicateFactory = storablePredicateFactory;
         this.authorizationService = authorizationService;
-        this.permissionFactory = permissionFactory;
         this.datastorePredicateFactory = datastorePredicateFactory;
         this.metricInfoRegistryFacade = metricInfoRegistryFacade;
         this.messageRepository = messageRepository;
@@ -211,7 +207,7 @@ public class MetricInfoRegistryServiceImpl implements MetricInfoRegistryService 
 
     private void checkDataAccess(KapuaId scopeId, Actions action)
             throws KapuaException {
-        Permission permission = permissionFactory.newPermission(Domains.DATASTORE, action, scopeId);
+        Permission permission = new Permission(Domains.DATASTORE, action, scopeId);
         authorizationService.checkPermission(permission);
     }
 
@@ -225,7 +221,7 @@ public class MetricInfoRegistryServiceImpl implements MetricInfoRegistryService 
         List<SortField> sort = new ArrayList<>();
         sort.add(SortField.descending(MessageSchema.MESSAGE_TIMESTAMP));
 
-        MessageQuery messageQuery = new MessageQueryImpl(metricInfo.getScopeId());
+        MessageQuery messageQuery = new MessageQuery(metricInfo.getScopeId());
         messageQuery.setAskTotalCount(true);
         messageQuery.setFetchStyle(StorableFetchStyle.FIELDS);
         messageQuery.setLimit(1);

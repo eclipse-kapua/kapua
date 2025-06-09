@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.inject.Inject;
 
@@ -45,16 +44,13 @@ import org.eclipse.kapua.qa.common.cucumber.CucConfig;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountAttributes;
 import org.eclipse.kapua.service.account.AccountCreator;
-import org.eclipse.kapua.service.account.AccountFactory;
 import org.eclipse.kapua.service.account.AccountListResult;
-import org.eclipse.kapua.service.account.AccountQuery;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.account.Organization;
 import org.junit.Assert;
 
 import com.google.inject.Singleton;
 
-import io.cucumber.datatable.DataTable;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
@@ -82,7 +78,6 @@ public class AccountServiceSteps extends TestBase {
 
     // Account creator object used for creating new accounts.
     private AccountService accountService;
-    private AccountFactory accountFactory;
 
     // Default constructor
     @Inject
@@ -93,7 +88,6 @@ public class AccountServiceSteps extends TestBase {
     @After(value = "@setup")
     public void setServices() {
         locator = KapuaLocator.getInstance();
-        accountFactory = locator.getFactory(AccountFactory.class);
         accountService = locator.getService(AccountService.class);
     }
 
@@ -462,26 +456,6 @@ public class AccountServiceSteps extends TestBase {
         }
     }
 
-    @When("I set the following parameters")
-    public void setAccountParameters(DataTable dataTable) throws Exception {
-        Assert.assertEquals("Wrong test setup. Bad parameters size!", 2, dataTable.width());
-        Account account = (Account) stepData.get(LAST_ACCOUNT);
-        Properties accProps = account.getEntityProperties();
-
-        for (List<String> row : dataTable.asLists()) {
-            accProps.setProperty(row.get(0), row.get(1));
-        }
-        account.setEntityProperties(accProps);
-
-        try {
-            primeException();
-            account = accountService.update(account);
-            stepData.put(LAST_ACCOUNT, account);
-        } catch (KapuaException ex) {
-            verifyException(ex);
-        }
-    }
-
     @When("I configure {string} item {string} to {string}")
     public void setConfigurationValue(String type, String name, String value) throws Exception {
         Map<String, Object> valueMap = new HashMap<>();
@@ -523,7 +497,7 @@ public class AccountServiceSteps extends TestBase {
 
     @When("I query for all accounts that have the system account as parent")
     public void queryForNumberOfTopLevelAccounts() throws Exception {
-        AccountQuery query = accountFactory.newQuery(SYS_SCOPE_ID);
+        KapuaQuery query = new KapuaQuery(SYS_SCOPE_ID);
         stepData.remove(INT_VALUE);
         try {
             primeException();
@@ -593,7 +567,7 @@ public class AccountServiceSteps extends TestBase {
 
     @Then("The account with name {string} has {int} subaccount(s)")
     public void checkNumberOfAccounts(String accountName, int num) throws KapuaException {
-        KapuaQuery query = accountFactory.newQuery(getCurrentScopeId());
+        final KapuaQuery query = new KapuaQuery(getCurrentScopeId());
         Account account = accountService.find(getCurrentScopeId());
         Assert.assertEquals(accountName, account.getName());
 
@@ -606,7 +580,7 @@ public class AccountServiceSteps extends TestBase {
         try {
             primeException();
             Account tmpAcc = accountService.findByName(name);
-            KapuaQuery query = accountFactory.newQuery(tmpAcc.getId());
+            final KapuaQuery query = new KapuaQuery(tmpAcc.getId());
             long accountCnt = accountService.count(query);
 
             Assert.assertEquals(num, accountCnt);
@@ -626,17 +600,6 @@ public class AccountServiceSteps extends TestBase {
         String adminUserName = SystemSetting.getInstance().getString(SystemSettingKey.SYS_ADMIN_USERNAME);
         Account tmpAcc = accountService.findByName(adminUserName);
         Assert.assertNotNull(tmpAcc);
-    }
-
-    @Then("The account has the following parameters")
-    public void checkAccountParameters(DataTable dataTable) throws KapuaException {
-        Assert.assertEquals("Wrong test setup. Bad parameters size!", 2, dataTable.width());
-        Account account = (Account) stepData.get(LAST_ACCOUNT);
-        Properties accProps = account.getEntityProperties();
-
-        for (List<String> row : dataTable.asLists()) {
-            Assert.assertEquals(row.get(1), accProps.getProperty(row.get(0)));
-        }
     }
 
     @Then("The account has metadata")
@@ -715,7 +678,7 @@ public class AccountServiceSteps extends TestBase {
      * @return The newly created account creator object.
      */
     private AccountCreator prepareRegularAccountCreator(KapuaId parentId, String name) {
-        AccountCreator tmpAccCreator = accountFactory.newCreator(parentId);
+        AccountCreator tmpAccCreator = new AccountCreator(parentId);
 
         tmpAccCreator.setName(name);
         tmpAccCreator.setOrganizationName("org_" + name);
@@ -769,7 +732,7 @@ public class AccountServiceSteps extends TestBase {
      */
     private AccountCreator accountCreatorCreator(String name, BigInteger scopeId, Date expiration) {
 
-        AccountCreator accountCreator = accountFactory.newCreator(new KapuaEid(scopeId));
+        AccountCreator accountCreator = new AccountCreator(new KapuaEid(scopeId));
         accountCreator.setName(name);
         accountCreator.setOrganizationName("ACME Inc.");
         accountCreator.setOrganizationEmail("some@one.com");
@@ -783,7 +746,7 @@ public class AccountServiceSteps extends TestBase {
 
     @And("I find account with name {string}")
     public void iFindAccountWithName(String accountName) throws Exception {
-        AccountQuery accountQuery = accountFactory.newQuery(getCurrentScopeId());
+        final KapuaQuery accountQuery = new KapuaQuery(getCurrentScopeId());
         accountQuery.setPredicate(accountQuery.attributePredicate(AccountAttributes.NAME, accountName));
         AccountListResult accountListResult = accountService.query(accountQuery);
         Assert.assertTrue(accountListResult.getSize() > 0);
@@ -804,7 +767,7 @@ public class AccountServiceSteps extends TestBase {
 
     @And("I create an account with name {string}, organization name {string} and email address {string}")
     public void iCreateAAccountWithNameOrganizationNameAndEmailaddress(String accountName, String organizationName, String email) throws Exception {
-        AccountCreator accountCreator = accountFactory.newCreator(getCurrentScopeId());
+        AccountCreator accountCreator = new AccountCreator(getCurrentScopeId());
         accountCreator.setName(accountName);
         accountCreator.setOrganizationName(organizationName);
         accountCreator.setOrganizationEmail(email);
@@ -851,7 +814,7 @@ public class AccountServiceSteps extends TestBase {
     public void iCreateAccountWithNameOrganizationNameAndEmailaddressAndChildAccount(String accountName, String organizationName, String email) throws Exception {
         Account lastAccount = (Account) stepData.get(LAST_ACCOUNT);
 
-        AccountCreator accountCreator = accountFactory.newCreator(lastAccount.getId());
+        AccountCreator accountCreator = new AccountCreator(lastAccount.getId());
         accountCreator.setName(accountName);
         accountCreator.setOrganizationName(organizationName);
         accountCreator.setOrganizationEmail(email);
@@ -869,7 +832,7 @@ public class AccountServiceSteps extends TestBase {
     @When("I query for all sub-accounts in {string}")
     public void queryForAllAccountsInCurrentScopeId(String accountName) throws Exception {
         Account tmpAccount = accountService.findByName(accountName);
-        AccountQuery query = accountFactory.newQuery(tmpAccount.getId());
+        final KapuaQuery query = new KapuaQuery(tmpAccount.getId());
         try {
             primeException();
             AccountListResult accList = accountService.query(query);

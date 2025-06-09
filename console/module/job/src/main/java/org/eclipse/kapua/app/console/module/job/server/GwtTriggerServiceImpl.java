@@ -12,10 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.job.server;
 
-import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
-import com.extjs.gxt.ui.client.data.PagingLoadConfig;
-import com.extjs.gxt.ui.client.data.PagingLoadResult;
-import com.google.common.base.Strings;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
+
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaErrorCode;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.server.KapuaRemoteServiceServlet;
@@ -33,23 +34,22 @@ import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.scheduler.trigger.Trigger;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerCreator;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerFactory;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerListResult;
-import org.eclipse.kapua.service.scheduler.trigger.TriggerQuery;
 import org.eclipse.kapua.service.scheduler.trigger.TriggerService;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinition;
-import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionFactory;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionListResult;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionQuery;
 import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerDefinitionService;
 import org.quartz.CronExpression;
 
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
+import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
+import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.google.common.base.Strings;
 
 public class GwtTriggerServiceImpl extends KapuaRemoteServiceServlet implements GwtTriggerService {
 
@@ -59,7 +59,6 @@ public class GwtTriggerServiceImpl extends KapuaRemoteServiceServlet implements 
     private static final TriggerFactory TRIGGER_FACTORY = LOCATOR.getFactory(TriggerFactory.class);
 
     private static final TriggerDefinitionService TRIGGER_DEFINITION_SERVICE = LOCATOR.getService(TriggerDefinitionService.class);
-    private static final TriggerDefinitionFactory TRIGGER_DEFINITION_FACTORY = LOCATOR.getFactory(TriggerDefinitionFactory.class);
 
     private static final String TRIGGER_DEFINITION_INTERVAL_NAME = "Interval Job";
     private static final TriggerDefinition TRIGGER_DEFINITION_INTERVAL;
@@ -80,7 +79,7 @@ public class GwtTriggerServiceImpl extends KapuaRemoteServiceServlet implements 
 
                 @Override
                 public TriggerDefinitionListResult call() throws Exception {
-                    TriggerDefinitionQuery query = TRIGGER_DEFINITION_FACTORY.newQuery(null);
+                    TriggerDefinitionQuery query = new TriggerDefinitionQuery((KapuaId) null);
                     return TRIGGER_DEFINITION_SERVICE.query(query);
                 }
             });
@@ -115,7 +114,7 @@ public class GwtTriggerServiceImpl extends KapuaRemoteServiceServlet implements 
             gwtTriggerQuery.setScopeId(gwtScopeId);
             gwtTriggerQuery.setJobId(gwtJobId);
 
-            TriggerQuery triggerQuery = GwtKapuaJobModelConverter.convertTriggerQuery(gwtTriggerQuery, loadConfig);
+            KapuaQuery triggerQuery = GwtKapuaJobModelConverter.convertTriggerQuery(gwtTriggerQuery, loadConfig);
 
             // query
             TriggerListResult triggerListResult = TRIGGER_SERVICE.query(triggerQuery);
@@ -151,7 +150,7 @@ public class GwtTriggerServiceImpl extends KapuaRemoteServiceServlet implements 
         try {
             KapuaId scopeId = KapuaEid.parseCompactId(gwtTriggerCreator.getScopeId());
 
-            TriggerCreator triggerCreator = TRIGGER_FACTORY.newCreator(scopeId);
+            TriggerCreator triggerCreator = new TriggerCreator(scopeId);
             triggerCreator.setName(gwtTriggerCreator.getTriggerName());
             triggerCreator.setStartsOn(gwtTriggerCreator.getStartsOn());
             triggerCreator.setEndsOn(gwtTriggerCreator.getEndsOn());

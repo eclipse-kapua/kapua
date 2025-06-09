@@ -12,15 +12,18 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job.steps;
 
-import com.google.inject.Singleton;
-import io.cucumber.datatable.DataTable;
-import io.cucumber.java.After;
-import io.cucumber.java.Before;
-import io.cucumber.java.Scenario;
-import io.cucumber.java.en.And;
-import io.cucumber.java.en.When;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.job.engine.JobEngineFactory;
 import org.eclipse.kapua.job.engine.JobEngineService;
 import org.eclipse.kapua.job.engine.JobStartOptions;
 import org.eclipse.kapua.locator.KapuaLocator;
@@ -42,15 +45,14 @@ import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+import com.google.inject.Singleton;
+
+import io.cucumber.datatable.DataTable;
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.When;
 
 @Singleton
 public class JobEngineSteps extends JobServiceTestBase {
@@ -60,7 +62,6 @@ public class JobEngineSteps extends JobServiceTestBase {
     private DeviceFactory deviceFactory;
     private DeviceRegistryService deviceRegistryService;
     private JobEngineService jobEngineService;
-    private JobEngineFactory jobEngineFactory;
     private JobService jobService;
     private JobFactory jobFactory;
 
@@ -78,10 +79,9 @@ public class JobEngineSteps extends JobServiceTestBase {
     public void setServices() {
         KapuaLocator locator = KapuaLocator.getInstance();
 
-        deviceFactory= locator.getFactory(DeviceFactory.class);
+        deviceFactory = locator.getFactory(DeviceFactory.class);
         deviceRegistryService = locator.getService(DeviceRegistryService.class);
         jobEngineService = locator.getService(JobEngineService.class);
-        jobEngineFactory = locator.getFactory(JobEngineFactory.class);
         jobService = locator.getService(JobService.class);
         jobFactory = locator.getFactory(JobFactory.class);
     }
@@ -91,7 +91,7 @@ public class JobEngineSteps extends JobServiceTestBase {
         primeException();
         KapuaId currentJobId = (KapuaId) stepData.get(CURRENT_JOB_ID);
         try {
-            JobStartOptions jobStartOptions = jobEngineFactory.newJobStartOptions();
+            JobStartOptions jobStartOptions = new JobStartOptions();
             jobStartOptions.setEnqueue(true);
             jobEngineService.startJob(getCurrentScopeId(), currentJobId, jobStartOptions);
         } catch (KapuaException ke) {
@@ -104,7 +104,7 @@ public class JobEngineSteps extends JobServiceTestBase {
         primeException();
         KapuaId currentJobId = (KapuaId) stepData.get(CURRENT_JOB_ID);
         try {
-            DeviceQuery deviceQuery = deviceFactory.newQuery(getCurrentScopeId());
+            DeviceQuery deviceQuery = new DeviceQuery(getCurrentScopeId());
             deviceQuery.setPredicate(
                     deviceQuery.attributePredicate(DeviceAttributes.CLIENT_ID, clientIds)
             );
@@ -115,14 +115,14 @@ public class JobEngineSteps extends JobServiceTestBase {
                     .collect(Collectors.toList());
 
             Set<KapuaId> targetIdsSublist = new HashSet<>();
-            List<JobTarget> currentJobTargets = (ArrayList<JobTarget>)stepData.get(JOB_TARGET_LIST);
+            List<JobTarget> currentJobTargets = (ArrayList<JobTarget>) stepData.get(JOB_TARGET_LIST);
             for (JobTarget jobT : currentJobTargets) {
                 if (deviceIds.contains(jobT.getJobTargetId())) {
                     targetIdsSublist.add(jobT.getId());
                 }
             }
 
-            JobStartOptions jobStartOptions = jobEngineFactory.newJobStartOptions();
+            JobStartOptions jobStartOptions = new JobStartOptions();
             jobStartOptions.setTargetIdSublist(targetIdsSublist);
             jobStartOptions.setEnqueue(true);
             jobEngineService.startJob(getCurrentScopeId(), currentJobId, jobStartOptions);
@@ -136,7 +136,8 @@ public class JobEngineSteps extends JobServiceTestBase {
     /**
      * Waits the {@link Job} in context to start.
      *
-     * @param waitSeconds The max time to wait
+     * @param waitSeconds
+     *         The max time to wait
      * @throws Exception
      * @since 2.1.0
      */
@@ -150,8 +151,7 @@ public class JobEngineSteps extends JobServiceTestBase {
                 if (jobEngineService.isRunning(job.getScopeId(), job.getId())) {
                     return;
                 }
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 LOG.warn("Error while checking running status for Job {}. Ignoring... Error: {}", job.getName(), e.getMessage());
             }
 
@@ -167,7 +167,8 @@ public class JobEngineSteps extends JobServiceTestBase {
     /**
      * Waits the last {@link Job} in context to finish it execution up the given wait time
      *
-     * @param waitSeconds The max time to wait
+     * @param waitSeconds
+     *         The max time to wait
      * @throws Exception
      * @since 2.1.0
      */
@@ -181,8 +182,10 @@ public class JobEngineSteps extends JobServiceTestBase {
     /**
      * Looks for a {@link Job} by its {@link Job#getName()} and waits to finish it execution up the given wait time
      *
-     * @param jobName The {@link Job#getName()} to look for
-     * @param waitSeconds The max time to wait
+     * @param jobName
+     *         The {@link Job#getName()} to look for
+     * @param waitSeconds
+     *         The max time to wait
      * @throws Exception
      * @since 2.1.0
      */
@@ -196,8 +199,10 @@ public class JobEngineSteps extends JobServiceTestBase {
     /**
      * Wait the given {@link Job} to finish its execution up the given wait time
      *
-     * @param job The {@link Job} to monitor
-     * @param waitSeconds The max time to wait
+     * @param job
+     *         The {@link Job} to monitor
+     * @param waitSeconds
+     *         The max time to wait
      * @throws Exception
      * @since 2.1.0
      */
@@ -205,11 +210,10 @@ public class JobEngineSteps extends JobServiceTestBase {
         long now = System.currentTimeMillis();
         while ((System.currentTimeMillis() - now) < (waitSeconds * 1000L)) {
             try {
-                    if (!jobEngineService.isRunning(job.getScopeId(), job.getId())) {
+                if (!jobEngineService.isRunning(job.getScopeId(), job.getId())) {
                     return;
                 }
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 LOG.warn("Error while checking running status for Job {}. Ignoring... Error: {}", job.getName(), e.getMessage());
             }
 
@@ -246,11 +250,11 @@ public class JobEngineSteps extends JobServiceTestBase {
         checkJobsAreRunning(jobNamesToRunningStatus);
     }
 
-
     /**
      * Looks for a {@link Job} by its {@link Job#getName()} and checks that is running
      *
-     * @param jobName The {@link Job#getName()} to look for
+     * @param jobName
+     *         The {@link Job#getName()} to look for
      * @throws Exception
      * @since 2.1.0
      */
@@ -277,7 +281,8 @@ public class JobEngineSteps extends JobServiceTestBase {
     /**
      * Looks for a {@link Job} by its {@link Job#getName()} and checks that is not running
      *
-     * @param jobName The {@link Job#getName()} to look for
+     * @param jobName
+     *         The {@link Job#getName()} to look for
      * @throws Exception
      * @since 2.1.0
      */
@@ -291,8 +296,10 @@ public class JobEngineSteps extends JobServiceTestBase {
     /**
      * Checks the running status of the given {@link Job}
      *
-     * @param job The {@link Job} to check
-     * @param expectedRunning Whether expecting running or not
+     * @param job
+     *         The {@link Job} to check
+     * @param expectedRunning
+     *         Whether expecting running or not
      * @throws Exception
      * @since 2.1.0
      */
@@ -302,7 +309,7 @@ public class JobEngineSteps extends JobServiceTestBase {
 
     private void checkJobsAreRunning(Map<String, String> jobNamesToRunningStatus) throws Exception {
         KapuaId currentScopeId = ((Job) stepData.get(JOB)).getScopeId();
-        JobQuery query = jobFactory.newQuery(currentScopeId);
+        JobQuery query = new JobQuery(currentScopeId);
         JobListResult allJobs = jobService.query(query); //all jobs
 
         Map<KapuaId, Boolean> jobIdsToRunningStatus = new HashMap<>();
@@ -323,7 +330,7 @@ public class JobEngineSteps extends JobServiceTestBase {
         primeException();
         KapuaId currentJobId = (KapuaId) stepData.get(CURRENT_JOB_ID);
         try {
-            JobStartOptions jobStartOptions = jobEngineFactory.newJobStartOptions();
+            JobStartOptions jobStartOptions = new JobStartOptions();
             jobStartOptions.setResetStepIndex(true);
             jobStartOptions.setFromStepIndex(0);
             jobStartOptions.setEnqueue(true);

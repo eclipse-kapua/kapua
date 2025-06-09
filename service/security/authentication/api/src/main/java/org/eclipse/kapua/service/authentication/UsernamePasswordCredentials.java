@@ -24,8 +24,24 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "usernamePasswordCredentials")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = AuthenticationXmlRegistry.class, factoryMethod = "newUsernamePasswordCredentials")
-public interface UsernamePasswordCredentials extends LoginCredentials {
+@XmlType
+public class UsernamePasswordCredentials implements LoginCredentials {
+
+    private static final long serialVersionUID = -7549848672967689716L;
+
+    private String username;
+    private String password;
+    private String authenticationCode;
+    private String trustKey;
+    private boolean trustMe;
+
+    public UsernamePasswordCredentials() {
+    }
+
+    public UsernamePasswordCredentials(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
 
     /**
      * Gets the username.
@@ -33,15 +49,20 @@ public interface UsernamePasswordCredentials extends LoginCredentials {
      * @return The username.
      * @since 1.0.0
      */
-    String getUsername();
+    public String getUsername() {
+        return username;
+    }
 
     /**
      * Sets the username.
      *
-     * @param username The username.
+     * @param username
+     *         The username.
      * @since 1.0.0
      */
-    void setUsername(String username);
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     /**
      * Gets the password.
@@ -49,15 +70,20 @@ public interface UsernamePasswordCredentials extends LoginCredentials {
      * @return The password.
      * @since 1.0.0
      */
-    String getPassword();
+    public String getPassword() {
+        return password;
+    }
 
     /**
      * Sets the password.
      *
-     * @param password The password.
+     * @param password
+     *         The password.
      * @since 1.0.0
      */
-    void setPassword(String password);
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     /**
      * Gets the MFA authentication code.
@@ -65,15 +91,20 @@ public interface UsernamePasswordCredentials extends LoginCredentials {
      * @return The MFA authentication code.
      * @since 1.3.0
      */
-    String getAuthenticationCode();
+    public String getAuthenticationCode() {
+        return authenticationCode;
+    }
 
     /**
      * Sets the MFA authentication code.
      *
-     * @param authenticationCode The MFA authentication code.
+     * @param authenticationCode
+     *         The MFA authentication code.
      * @since 1.3.0
      */
-    void setAuthenticationCode(String authenticationCode);
+    public void setAuthenticationCode(String authenticationCode) {
+        this.authenticationCode = authenticationCode;
+    }
 
     /**
      * Gets the trust key.
@@ -81,15 +112,20 @@ public interface UsernamePasswordCredentials extends LoginCredentials {
      * @return The trust key.
      * @since 1.3.0
      */
-    String getTrustKey();
+    public String getTrustKey() {
+        return trustKey;
+    }
 
     /**
      * Sets the trust key.
      *
-     * @param trustKey The trust key.
+     * @param trustKey
+     *         The trust key.
      * @since 1.3.0
      */
-    void setTrustKey(String trustKey);
+    public void setTrustKey(String trustKey) {
+        this.trustKey = trustKey;
+    }
 
     /**
      * Gets whether create a trust key or not.
@@ -97,13 +133,19 @@ public interface UsernamePasswordCredentials extends LoginCredentials {
      * @return {@code true} if to be created, {@code false} otherwise
      * @since 2.0.0
      */
-    boolean getTrustMe();
+    public boolean getTrustMe() {
+        return trustMe;
+    }
 
     /**
      * Sets whether create a trust key or not.
      *
-     * @param trustMe {@code true} if to be created, {@code false} if not.
+     * @param trustMe
+     *         {@code true} if to be created, {@code false} if not.
      * @since 2.0.0
      */
-    void setTrustMe(boolean trustMe);
+    public void setTrustMe(boolean trustMe) {
+        this.trustMe = trustMe;
+    }
+
 }

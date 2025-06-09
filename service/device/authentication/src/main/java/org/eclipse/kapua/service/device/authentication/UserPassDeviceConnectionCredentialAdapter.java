@@ -13,12 +13,9 @@
 package org.eclipse.kapua.service.device.authentication;
 
 import org.eclipse.kapua.client.security.bean.AuthRequest;
-import org.eclipse.kapua.service.authentication.CredentialsFactory;
 import org.eclipse.kapua.service.authentication.LoginCredentials;
 import org.eclipse.kapua.service.authentication.UsernamePasswordCredentials;
 import org.eclipse.kapua.service.device.authentication.api.DeviceConnectionCredentialAdapter;
-
-import javax.inject.Inject;
 
 /**
  * {@link UsernamePasswordCredentials} {@link DeviceConnectionCredentialAdapter}
@@ -27,16 +24,9 @@ import javax.inject.Inject;
  */
 public class UserPassDeviceConnectionCredentialAdapter implements DeviceConnectionCredentialAdapter {
 
-    private CredentialsFactory credentialsFactory;
-
-    @Inject
-    public UserPassDeviceConnectionCredentialAdapter(CredentialsFactory credentialsFactory) {
-        this.credentialsFactory = credentialsFactory;
-    }
-
     @Override
     public LoginCredentials mapToCredential(AuthRequest authRequest) {
-        return credentialsFactory.newUsernamePasswordCredentials(
+        return new UsernamePasswordCredentials(
                 authRequest.getUsername(),
                 authRequest.getPassword());
     }

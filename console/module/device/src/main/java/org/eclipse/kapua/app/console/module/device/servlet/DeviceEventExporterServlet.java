@@ -12,6 +12,15 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.device.servlet;
 
+import java.io.IOException;
+import java.util.Date;
+import java.util.concurrent.Callable;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaIllegalAccessException;
 import org.eclipse.kapua.KapuaUnauthenticatedException;
@@ -28,19 +37,10 @@ import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.device.registry.event.DeviceEvent;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventAttributes;
-import org.eclipse.kapua.service.device.registry.event.DeviceEventFactory;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventQuery;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Date;
-import java.util.concurrent.Callable;
 
 public class DeviceEventExporterServlet extends HttpServlet {
 
@@ -87,13 +87,13 @@ public class DeviceEventExporterServlet extends HttpServlet {
             // get the devices and append them to the exporter
             KapuaLocator locator = KapuaLocator.getInstance();
             DeviceEventService des = locator.getService(DeviceEventService.class);
-            DeviceEventFactory def = locator.getFactory(DeviceEventFactory.class);
 
             final AccountService as = locator.getService(AccountService.class);
             final DeviceRegistryService deviceRegistryService = locator.getService(DeviceRegistryService.class);
             final KapuaIdFactory kif = locator.getFactory(KapuaIdFactory.class);
 
             Device device = KapuaSecurityUtils.doPrivileged(new Callable<Device>() {
+
                 @Override
                 public Device call() throws Exception {
                     return deviceRegistryService.find(KapuaEid.parseCompactId(scopeId), KapuaEid.parseCompactId(deviceId));
@@ -113,7 +113,7 @@ public class DeviceEventExporterServlet extends HttpServlet {
             int offset = 0;
 
             // paginate through the matching message
-            DeviceEventQuery query = def.newQuery(KapuaEid.parseCompactId(scopeId));
+            DeviceEventQuery query = new DeviceEventQuery(KapuaEid.parseCompactId(scopeId));
             query.setLimit(250);
 
             // Inserting filter parameter if specified

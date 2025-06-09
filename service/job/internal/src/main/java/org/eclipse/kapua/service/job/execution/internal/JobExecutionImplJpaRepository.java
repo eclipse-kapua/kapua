@@ -25,13 +25,14 @@ import org.eclipse.kapua.storage.TxContext;
 public class JobExecutionImplJpaRepository
         extends KapuaUpdatableEntityJpaRepository<JobExecution, JobExecutionImpl, JobExecutionListResult>
         implements JobExecutionRepository {
+
     public JobExecutionImplJpaRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig) {
-        super(JobExecutionImpl.class, JobExecution.TYPE, () -> new JobExecutionListResultImpl(), jpaRepoConfig);
+        super(JobExecutionImpl.class, JobExecution.TYPE, () -> new JobExecutionListResult(), jpaRepoConfig);
     }
 
     @Override
     public long countByJobId(TxContext tx, KapuaId scopeId, KapuaId jobId) throws KapuaException {
-        final JobExecutionQuery jobExecutionQuery = new JobExecutionQueryImpl(scopeId);
+        final JobExecutionQuery jobExecutionQuery = new JobExecutionQuery(scopeId);
         jobExecutionQuery.setPredicate(
                 jobExecutionQuery.attributePredicate(JobExecutionImpl_.JOB_ID, jobId)
         );

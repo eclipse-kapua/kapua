@@ -27,10 +27,10 @@ import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaListResult;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.access.AccessInfo;
 import org.eclipse.kapua.service.authorization.access.AccessInfoAttributes;
 import org.eclipse.kapua.service.authorization.access.AccessInfoFactory;
-import org.eclipse.kapua.service.authorization.access.AccessInfoQuery;
 import org.eclipse.kapua.service.authorization.access.AccessInfoService;
 import org.eclipse.kapua.service.authorization.access.AccessPermission;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionListResult;
@@ -38,7 +38,7 @@ import org.eclipse.kapua.service.authorization.access.AccessPermissionService;
 import org.eclipse.kapua.service.authorization.access.AccessRole;
 import org.eclipse.kapua.service.authorization.access.AccessRoleListResult;
 import org.eclipse.kapua.service.authorization.access.AccessRoleService;
-import org.eclipse.kapua.service.authorization.permission.shiro.PermissionImpl;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.role.Role;
 import org.eclipse.kapua.service.authorization.role.RolePermission;
 import org.eclipse.kapua.service.authorization.role.RolePermissionListResult;
@@ -97,7 +97,7 @@ public class KapuaAuthorizingRealm extends AuthorizingRealm {
             throw new AuthenticationException();
         }
         // Get user access infos
-        AccessInfoQuery accessInfoQuery = accessInfoFactory.newQuery(user.getScopeId());
+        KapuaQuery accessInfoQuery = new KapuaQuery(user.getScopeId());
         accessInfoQuery.setPredicate(accessInfoQuery.attributePredicate(AccessInfoAttributes.USER_ID, user.getId()));
 
         final KapuaListResult<AccessInfo> accessInfos;
@@ -130,7 +130,7 @@ public class KapuaAuthorizingRealm extends AuthorizingRealm {
             }
 
             for (AccessPermission accessPermission : accessPermissions.getItems()) {
-                PermissionImpl p = accessPermission.getPermission();
+                Permission p = accessPermission.getPermission();
                 logger.trace("User: {} has permission: {}", username, p);
                 info.addObjectPermission(permissionMapper.mapPermission(p));
             }
@@ -171,7 +171,7 @@ public class KapuaAuthorizingRealm extends AuthorizingRealm {
 
                 for (RolePermission rolePermission : rolePermissions.getItems()) {
 
-                    PermissionImpl p = rolePermission.getPermission();
+                    Permission p = rolePermission.getPermission();
                     logger.trace("Role: {} has permission: {}", role, p);
                     info.addObjectPermission(permissionMapper.mapPermission(p));
                 }

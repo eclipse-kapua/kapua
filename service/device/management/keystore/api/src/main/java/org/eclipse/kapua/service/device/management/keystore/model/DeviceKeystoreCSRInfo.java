@@ -12,14 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.keystore.model;
 
-import org.eclipse.kapua.KapuaSerializable;
-import org.eclipse.kapua.service.device.registry.Device;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.KapuaSerializable;
+import org.eclipse.kapua.service.device.registry.Device;
 
 /**
  * {@link DeviceKeystoreCSRInfo} definition.
@@ -30,8 +30,13 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "deviceKeystoreCSRInfo")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DeviceKeystoreXmlRegistry.class, factoryMethod = "newDeviceKeystoreCSRInfo")
-public interface DeviceKeystoreCSRInfo extends KapuaSerializable {
+@XmlType
+public class DeviceKeystoreCSRInfo implements KapuaSerializable {
+
+    private String keystoreId;
+    private String alias;
+    private String signatureAlgorithm;
+    private String attributes;
 
     /**
      * Gets the {@link DeviceKeystoreItem#getKeystoreId()} target to be used for signing.
@@ -40,15 +45,20 @@ public interface DeviceKeystoreCSRInfo extends KapuaSerializable {
      * @since 1.5.0
      */
     @XmlElement(name = "keystoreId")
-    String getKeystoreId();
+    public String getKeystoreId() {
+        return keystoreId;
+    }
 
     /**
      * Sets the {@link DeviceKeystoreItem#getKeystoreId()} target to be used for signing.
      *
-     * @param keystoreId The {@link DeviceKeystoreItem#getKeystoreId()} target to be used for signing.
+     * @param keystoreId
+     *         The {@link DeviceKeystoreItem#getKeystoreId()} target to be used for signing.
      * @since 1.5.0
      */
-    void setKeystoreId(String keystoreId);
+    public void setKeystoreId(String keystoreId) {
+        this.keystoreId = keystoreId;
+    }
 
     /**
      * Gets the {@link DeviceKeystoreItem#getAlias()} target to be used for signing.
@@ -57,15 +67,20 @@ public interface DeviceKeystoreCSRInfo extends KapuaSerializable {
      * @since 1.5.0
      */
     @XmlElement(name = "alias")
-    String getAlias();
+    public String getAlias() {
+        return alias;
+    }
 
     /**
      * Sets the {@link DeviceKeystoreItem#getAlias()} target to be used for signing.
      *
-     * @param alias The {@link DeviceKeystoreItem#getAlias()} target to be used for signing.
+     * @param alias
+     *         The {@link DeviceKeystoreItem#getAlias()} target to be used for signing.
      * @since 1.5.0
      */
-    void setAlias(String alias);
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
 
     /**
      * Gets the signature algorithm.
@@ -74,15 +89,20 @@ public interface DeviceKeystoreCSRInfo extends KapuaSerializable {
      * @since 1.5.0
      */
     @XmlElement(name = "signatureAlgorithm")
-    String getSignatureAlgorithm();
+    public String getSignatureAlgorithm() {
+        return signatureAlgorithm;
+    }
 
     /**
      * Sets the signature algorithm.
      *
-     * @param signatureAlgorithm The signature algorithm.
+     * @param signatureAlgorithm
+     *         The signature algorithm.
      * @since 1.5.0
      */
-    void setSignatureAlgorithm(String signatureAlgorithm);
+    public void setSignatureAlgorithm(String signatureAlgorithm) {
+        this.signatureAlgorithm = signatureAlgorithm;
+    }
 
     /**
      * Gets the attributes to sign.
@@ -91,13 +111,19 @@ public interface DeviceKeystoreCSRInfo extends KapuaSerializable {
      * @since 1.5.0
      */
     @XmlElement(name = "attributes")
-    String getAttributes();
+    public String getAttributes() {
+        return attributes;
+    }
 
     /**
      * Sets the attributes to sign.
      *
-     * @param attributes The attributes to sign.
+     * @param attributes
+     *         The attributes to sign.
      * @since 1.5.0
      */
-    void setAttributes(String attributes);
+    public void setAttributes(String attributes) {
+        this.attributes = attributes;
+    }
+
 }

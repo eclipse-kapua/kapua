@@ -12,21 +12,18 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.access.shiro;
 
+import java.util.Date;
+
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.authorization.access.AccessRole;
 import org.eclipse.kapua.service.authorization.access.AccessRoleCreator;
-import org.eclipse.kapua.service.authorization.access.AccessRoleListResult;
-import org.eclipse.kapua.service.authorization.access.AccessRoleQuery;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
-
-import java.util.Date;
-
 
 @Category(JUnitTests.class)
 public class AccessRoleFactoryImplTest {
@@ -63,32 +60,14 @@ public class AccessRoleFactoryImplTest {
 
     @Test
     public void newCreatorTest() {
-        AccessRoleCreator accessRoleCreator = accessRoleFactoryImpl.newCreator(KapuaId.ONE);
+        AccessRoleCreator accessRoleCreator = new AccessRoleCreator(KapuaId.ONE);
         Assert.assertEquals("Expected and actual values should be the same.", KapuaId.ONE, accessRoleCreator.getScopeId());
     }
 
     @Test
     public void newCreatorNullTest() {
-        AccessRoleCreator accessRoleCreator = accessRoleFactoryImpl.newCreator(null);
+        AccessRoleCreator accessRoleCreator = new AccessRoleCreator(null);
         Assert.assertNull("Null expected.", accessRoleCreator.getScopeId());
-    }
-
-    @Test
-    public void newQueryTest() {
-        AccessRoleQuery accessRoleQuery = accessRoleFactoryImpl.newQuery(KapuaId.ONE);
-        Assert.assertEquals("Expected and actual values should be the same.", KapuaId.ONE, accessRoleQuery.getScopeId());
-    }
-
-    @Test
-    public void newQueryNullTest() {
-        AccessRoleQuery accessRoleQuery = accessRoleFactoryImpl.newQuery(null);
-        Assert.assertNull("Null expected.", accessRoleQuery.getScopeId());
-    }
-
-    @Test
-    public void newListResultTest() {
-        AccessRoleListResult accessRoleListResult = accessRoleFactoryImpl.newListResult();
-        Assert.assertTrue("True expected.", accessRoleListResult.isEmpty());
     }
 
     @Test

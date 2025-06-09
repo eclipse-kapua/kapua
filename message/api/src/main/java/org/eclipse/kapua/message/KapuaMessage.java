@@ -12,26 +12,37 @@
  *******************************************************************************/
 package org.eclipse.kapua.message;
 
-import org.eclipse.kapua.message.device.data.KapuaDataMessage;
-import org.eclipse.kapua.message.xml.MessageXmlRegistry;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import java.util.Date;
+import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
-import java.util.UUID;
+
+import org.eclipse.kapua.message.device.data.KapuaDataMessage;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
 
 /**
- * {@link KapuaMessage} definition.
+ * {@link KapuaMessage} provides an abstraction over the {@link org.eclipse.kapua.message.Message}s sent in and out of the Kapua platform.
+ * <p>
+ * It encapsulates all the information regarding the message: the topic it was addressed to, the timestamp when it was received by the platform, and the payload contained in the message.
+ * <p>
+ * The payload can be represented by a raw binary array or by an {@link KapuaPayload} object if it was formatted as such when the message was composed and sent. Refer to the {@link KapuaPayload}
+ * documentation for more details on how {@link KapuaPayload} are modelled and how they can be constructed.
+ * <p>
+ * The {@link KapuaMessage} class is used both by the messages/search API to return message results from the platform, as well as by messages/store and messages/publish API to send messages to the
+ * platform.
  *
- * @param <C> channel type
- * @param <P> payload type
+ * @param <C>
+ *         channel type
+ * @param <P>
+ *         payload type
  * @since 1.0.0
  */
 @XmlRootElement(name = "message")
@@ -47,9 +58,53 @@ import java.util.UUID;
         "position", //
         "channel", //
         "payload", //
-}, factoryClass = MessageXmlRegistry.class, factoryMethod = "newKapuaMessage")
+})
 @XmlSeeAlso(KapuaDataMessage.class)
-public interface KapuaMessage<C extends KapuaChannel, P extends KapuaPayload> extends Message<C, P> { //TODO : CODE SMELL HERE
+@XmlTransient
+public class KapuaMessage<C extends KapuaChannel, P extends KapuaPayload>
+        implements
+        Comparable<KapuaMessage<C, P>>, Message<C, P> {
+
+    private static final long serialVersionUID = 1L;
+
+    private UUID id;
+
+    private KapuaId scopeId;
+    private KapuaId deviceId;
+    private String clientId;
+
+    private Date receivedOn;
+    private Date sentOn;
+    private Date capturedOn;
+
+    private KapuaPosition position;
+
+    private C channel;
+
+    private P payload;
+
+    /**
+     * Constructor
+     */
+    public KapuaMessage() {
+        super();
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param channel
+     *         The {@link KapuaChannel} of the {@link KapuaMessage}
+     * @param payload
+     *         The {@link KapuaPayload} of the {@link KapuaMessage}
+     * @since 1.0.0
+     */
+    public KapuaMessage(C channel, P payload) {
+        this();
+
+        this.channel = channel;
+        this.payload = payload;
+    }
 
     /**
      * Gets the unique identifier.
@@ -58,15 +113,20 @@ public interface KapuaMessage<C extends KapuaChannel, P extends KapuaPayload> ex
      * @since 1.0.0
      */
     @XmlElement(name = "id")
-    UUID getId();
+    public UUID getId() {
+        return id;
+    }
 
     /**
      * Sets the unique identifier.
      *
-     * @param id The unique identifier.
+     * @param id
+     *         The unique identifier.
      * @since 1.0.0
      */
-    void setId(UUID id);
+    public void setId(UUID id) {
+        this.id = id;
+    }
 
     /**
      * Gets the scope {@link KapuaId}
@@ -76,15 +136,20 @@ public interface KapuaMessage<C extends KapuaChannel, P extends KapuaPayload> ex
      */
     @XmlElement(name = "scopeId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
-    KapuaId getScopeId();
+    public KapuaId getScopeId() {
+        return scopeId;
+    }
 
     /**
      * Sets the scope {@link KapuaId}.
      *
-     * @param scopeId The scope {@link KapuaId}
+     * @param scopeId
+     *         The scope {@link KapuaId}
      * @since 1.0.0
      */
-    void setScopeId(KapuaId scopeId);
+    public void setScopeId(KapuaId scopeId) {
+        this.scopeId = scopeId;
+    }
 
     /**
      * Gets the device client identifier
@@ -93,15 +158,20 @@ public interface KapuaMessage<C extends KapuaChannel, P extends KapuaPayload> ex
      * @since 1.0.0
      */
     @XmlElement(name = "clientId")
-    String getClientId();
+    public String getClientId() {
+        return clientId;
+    }
 
     /**
      * Sets the device client identifier.
      *
-     * @param clientId The device client identifier.
+     * @param clientId
+     *         The device client identifier.
      * @since 1.0.0
      */
-    void setClientId(String clientId);
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
 
     /**
      * Gets the device {@link KapuaId}.
@@ -111,15 +181,20 @@ public interface KapuaMessage<C extends KapuaChannel, P extends KapuaPayload> ex
      */
     @XmlElement(name = "deviceId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
-    KapuaId getDeviceId();
+    public KapuaId getDeviceId() {
+        return deviceId;
+    }
 
     /**
      * Sets the device {@link KapuaId}.
      *
-     * @param deviceId The device {@link KapuaId}.
+     * @param deviceId
+     *         The device {@link KapuaId}.
      * @since 1.0.0
      */
-    void setDeviceId(KapuaId deviceId);
+    public void setDeviceId(KapuaId deviceId) {
+        this.deviceId = deviceId;
+    }
 
     /**
      * Gets the received on {@link Date}.
@@ -128,15 +203,20 @@ public interface KapuaMessage<C extends KapuaChannel, P extends KapuaPayload> ex
      * @since 1.0.0
      */
     @XmlElement(name = "receivedOn")
-    Date getReceivedOn();
+    public Date getReceivedOn() {
+        return receivedOn;
+    }
 
     /**
      * Sets the received on {@link Date}.
      *
-     * @param receivedOn The received on {@link Date}.
+     * @param receivedOn
+     *         The received on {@link Date}.
      * @since 1.0.0
      */
-    void setReceivedOn(Date receivedOn);
+    public void setReceivedOn(Date receivedOn) {
+        this.receivedOn = receivedOn;
+    }
 
     /**
      * Gets the sent on {@link Date}.
@@ -145,15 +225,20 @@ public interface KapuaMessage<C extends KapuaChannel, P extends KapuaPayload> ex
      * @since 1.0.0
      */
     @XmlElement(name = "sentOn")
-    Date getSentOn();
+    public Date getSentOn() {
+        return sentOn;
+    }
 
     /**
      * Sets the sent on {@link Date}.
      *
-     * @param sentOn The sent on {@link Date}.
+     * @param sentOn
+     *         The sent on {@link Date}.
      * @since 1.0.0
      */
-    void setSentOn(Date sentOn);
+    public void setSentOn(Date sentOn) {
+        this.sentOn = sentOn;
+    }
 
     /**
      * Gets the captured on {@link Date}.
@@ -162,15 +247,20 @@ public interface KapuaMessage<C extends KapuaChannel, P extends KapuaPayload> ex
      * @since 1.0.0
      */
     @XmlElement(name = "capturedOn")
-    Date getCapturedOn();
+    public Date getCapturedOn() {
+        return capturedOn;
+    }
 
     /**
      * Sets the captured on {@link Date}.
      *
-     * @param capturedOn The captured on {@link Date}.
+     * @param capturedOn
+     *         The captured on {@link Date}.
      * @since 1.0.0
      */
-    void setCapturedOn(Date capturedOn);
+    public void setCapturedOn(Date capturedOn) {
+        this.capturedOn = capturedOn;
+    }
 
     /**
      * Gets the device {@link KapuaPosition}.
@@ -179,15 +269,20 @@ public interface KapuaMessage<C extends KapuaChannel, P extends KapuaPayload> ex
      * @since 1.0.0
      */
     @XmlElement(name = "position")
-    KapuaPosition getPosition();
+    public KapuaPosition getPosition() {
+        return position;
+    }
 
     /**
      * Sets the device {@link KapuaPosition}.
      *
-     * @param position The device {@link KapuaPosition}.
+     * @param position
+     *         The device {@link KapuaPosition}.
      * @since 1.0.0
      */
-    void setPosition(KapuaPosition position);
+    public void setPosition(KapuaPosition position) {
+        this.position = position;
+    }
 
     /**
      * Gets the {@link KapuaChannel}.
@@ -196,15 +291,20 @@ public interface KapuaMessage<C extends KapuaChannel, P extends KapuaPayload> ex
      * @since 1.0.0
      */
     @XmlElement(name = "channel")
-    C getChannel();
+    public C getChannel() {
+        return channel;
+    }
 
     /**
      * Sets the {@link KapuaChannel}.
      *
-     * @param semanticChannel The {@link KapuaChannel}.
+     * @param semanticChannel
+     *         The {@link KapuaChannel}.
      * @since 1.0.0
      */
-    void setChannel(C semanticChannel);
+    public void setChannel(C semanticChannel) {
+        this.channel = semanticChannel;
+    }
 
     /**
      * Gets the {@link KapuaPayload}.
@@ -213,14 +313,23 @@ public interface KapuaMessage<C extends KapuaChannel, P extends KapuaPayload> ex
      * @since 1.0.0
      */
     @XmlElement(name = "payload")
-    P getPayload();
+    public P getPayload() {
+        return payload;
+    }
 
     /**
      * Sets the {@link KapuaPayload}.
      *
-     * @param payload The {@link KapuaPayload}.
+     * @param payload
+     *         The {@link KapuaPayload}.
      * @since 1.0.0
      */
-    void setPayload(P payload);
+    public void setPayload(P payload) {
+        this.payload = payload;
+    }
+
+    public int compareTo(KapuaMessage<C, P> msg) {
+        return (receivedOn.compareTo(msg.getReceivedOn()) * (-1));
+    }
 
 }

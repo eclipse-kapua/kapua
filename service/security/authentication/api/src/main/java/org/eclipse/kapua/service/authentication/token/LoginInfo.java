@@ -12,13 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.token;
 
+import java.util.Set;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
-import java.util.Set;
 
 import org.eclipse.kapua.KapuaSerializable;
 import org.eclipse.kapua.service.authorization.access.AccessPermission;
@@ -26,21 +26,38 @@ import org.eclipse.kapua.service.authorization.role.RolePermission;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = AccessTokenXmlRegistry.class, factoryMethod = "newAccessToken")
-public interface LoginInfo extends KapuaSerializable {
+@XmlType
+public class LoginInfo implements KapuaSerializable {
+
+    private AccessToken accessToken;
+    private Set<RolePermission> rolePermissions;
+    private Set<AccessPermission> accessPermissions;
 
     @XmlElement(name = "accessToken")
-    AccessToken getAccessToken();
+    public AccessToken getAccessToken() {
+        return accessToken;
+    }
 
-    void setAccessToken(AccessToken accessToken);
+    public void setAccessToken(AccessToken accessToken) {
+        this.accessToken = accessToken;
+    }
 
     @XmlElement(name = "rolePermission")
-    Set<RolePermission> getRolePermission();
+    public Set<RolePermission> getRolePermission() {
+        return rolePermissions;
+    }
 
-    void setRolePermission(Set<RolePermission> rolePermissions);
+    public void setRolePermission(Set<RolePermission> rolePermissions) {
+        this.rolePermissions = rolePermissions;
+    }
 
     @XmlElement(name = "accessPermission")
-    Set<AccessPermission> getAccessPermission();
+    public Set<AccessPermission> getAccessPermission() {
+        return accessPermissions;
+    }
 
-    void setAccessPermission(Set<AccessPermission> accessPermissions);
+    public void setAccessPermission(Set<AccessPermission> accessPermissions) {
+        this.accessPermissions = accessPermissions;
+    }
+
 }

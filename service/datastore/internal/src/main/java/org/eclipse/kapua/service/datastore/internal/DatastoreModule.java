@@ -25,14 +25,9 @@ import org.eclipse.kapua.model.domain.Domain;
 import org.eclipse.kapua.model.domain.DomainEntry;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
-import org.eclipse.kapua.service.datastore.ChannelInfoFactory;
 import org.eclipse.kapua.service.datastore.ChannelInfoRegistryService;
-import org.eclipse.kapua.service.datastore.ClientInfoFactory;
 import org.eclipse.kapua.service.datastore.ClientInfoRegistryService;
-import org.eclipse.kapua.service.datastore.MessageStoreFactory;
 import org.eclipse.kapua.service.datastore.MessageStoreService;
-import org.eclipse.kapua.service.datastore.MetricInfoFactory;
 import org.eclipse.kapua.service.datastore.MetricInfoRegistryService;
 import org.eclipse.kapua.service.datastore.internal.client.DatastoreElasticsearchClientConfiguration;
 import org.eclipse.kapua.service.datastore.internal.converter.ModelContextImpl;
@@ -53,22 +48,18 @@ public class DatastoreModule extends AbstractKapuaModule {
     @Override
     protected void configureModule() {
         bind(DatastoreSettings.class).in(Singleton.class);
-        bind(ClientInfoFactory.class).to(ClientInfoFactoryImpl.class).in(Singleton.class);
         bind(ClientInfoRepository.class).to(ClientInfoElasticsearchRepository.class).in(Singleton.class);
         bind(ClientInfoRegistryFacade.class).to(ClientInfoRegistryFacadeImpl.class).in(Singleton.class);
         bind(ClientInfoRegistryService.class).to(ClientInfoRegistryServiceImpl.class).in(Singleton.class);
 
-        bind(MetricInfoFactory.class).to(MetricInfoFactoryImpl.class).in(Singleton.class);
         bind(MetricInfoRepository.class).to(MetricInfoRepositoryImpl.class).in(Singleton.class);
         bind(MetricInfoRegistryFacade.class).to(MetricInfoRegistryFacadeImpl.class).in(Singleton.class);
         bind(MetricInfoRegistryService.class).to(MetricInfoRegistryServiceImpl.class).in(Singleton.class);
 
-        bind(ChannelInfoFactory.class).to(ChannelInfoFactoryImpl.class).in(Singleton.class);
         bind(ChannelInfoRepository.class).to(ChannelInfoElasticsearchRepository.class).in(Singleton.class);
         bind(ChannelInfoRegistryFacade.class).to(ChannelInfoRegistryFacadeImpl.class).in(Singleton.class);
         bind(ChannelInfoRegistryService.class).to(ChannelInfoRegistryServiceImpl.class).in(Singleton.class);
 
-        bind(MessageStoreFactory.class).to(MessageStoreFactoryImpl.class).in(Singleton.class);
         bind(MessageRepository.class).to(MessageElasticsearchRepository.class).in(Singleton.class);
         bind(MessageStoreFacade.class).to(MessageStoreFacadeImpl.class).in(Singleton.class);
         bind(MetricsDatastore.class).in(Singleton.class);
@@ -107,7 +98,6 @@ public class DatastoreModule extends AbstractKapuaModule {
     @Provides
     @Singleton
     MessageStoreService messageStoreService(
-            PermissionFactory permissionFactory,
             AuthorizationService authorizationService,
             Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
             KapuaJpaTxManagerFactory jpaTxManagerFactory,
@@ -116,7 +106,6 @@ public class DatastoreModule extends AbstractKapuaModule {
             DatastoreSettings datastoreSettings) {
         return new MessageStoreServiceImpl(
                 jpaTxManagerFactory.create("kapua-datastore"),
-                permissionFactory,
                 authorizationService,
                 serviceConfigurationManagersByServiceClass.get(MessageStoreService.class),
                 messageStoreFacade,

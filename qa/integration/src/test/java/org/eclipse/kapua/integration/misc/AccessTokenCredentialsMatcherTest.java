@@ -23,7 +23,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
 
-
 @Category(JUnitTests.class)
 public class AccessTokenCredentialsMatcherTest {
 

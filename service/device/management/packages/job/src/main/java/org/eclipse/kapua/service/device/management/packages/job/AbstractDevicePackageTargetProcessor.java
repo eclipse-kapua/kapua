@@ -12,10 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.packages.job;
 
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
-import org.eclipse.kapua.job.engine.JobEngineFactory;
 import org.eclipse.kapua.job.engine.JobEngineService;
 import org.eclipse.kapua.job.engine.JobStartOptions;
 import org.eclipse.kapua.job.engine.commons.operation.AbstractDeviceTargetProcessor;
@@ -32,8 +33,6 @@ import org.eclipse.kapua.service.job.operation.TargetProcessor;
 import org.eclipse.kapua.service.job.targets.JobTarget;
 import org.eclipse.kapua.service.job.targets.JobTargetStatus;
 
-import javax.inject.Inject;
-
 /**
  * {@link AbstractDevicePackageTargetProcessor} for {@link DevicePackageManagementService} operations.
  *
@@ -49,12 +48,10 @@ public abstract class AbstractDevicePackageTargetProcessor extends AbstractDevic
     JobDeviceManagementOperationFactory jobDeviceManagementOperationFactory;
     @Inject
     JobEngineService jobEngineService;
-    @Inject
-    JobEngineFactory jobEngineFactory;
 
     protected void createJobDeviceManagementOperation(KapuaId scopeId, KapuaId jobId, JobTarget jobTarget, KapuaId operationId) throws KapuaException {
         // Save the jobId-deviceManagementOperationId pair to track resuming
-        JobDeviceManagementOperationCreator jobDeviceManagementOperationCreator = jobDeviceManagementOperationFactory.newCreator(scopeId);
+        JobDeviceManagementOperationCreator jobDeviceManagementOperationCreator = new JobDeviceManagementOperationCreator(scopeId);
         jobDeviceManagementOperationCreator.setJobId(jobId);
         jobDeviceManagementOperationCreator.setDeviceManagementOperationId(operationId);
 
@@ -82,7 +79,7 @@ public abstract class AbstractDevicePackageTargetProcessor extends AbstractDevic
                 return;
             }
             // Enqueue the job
-            JobStartOptions jobStartOptions = jobEngineFactory.newJobStartOptions();
+            JobStartOptions jobStartOptions = new JobStartOptions();
             jobStartOptions.addTargetIdToSublist(jobTarget.getId());
             jobStartOptions.setFromStepIndex(jobTarget.getStepIndex());
             jobStartOptions.setEnqueue(true);

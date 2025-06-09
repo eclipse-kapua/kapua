@@ -13,6 +13,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.internal;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.service.internal.KapuaServiceDisabledException;
@@ -22,20 +30,18 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.datastore.ChannelInfoRegistryService;
-import org.eclipse.kapua.service.datastore.internal.mediator.ChannelInfoField;
-import org.eclipse.kapua.service.datastore.internal.mediator.MessageField;
-import org.eclipse.kapua.service.datastore.internal.model.query.MessageQueryImpl;
-import org.eclipse.kapua.service.datastore.internal.schema.MessageSchema;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettingsKey;
 import org.eclipse.kapua.service.datastore.model.ChannelInfo;
 import org.eclipse.kapua.service.datastore.model.ChannelInfoListResult;
 import org.eclipse.kapua.service.datastore.model.DatastoreMessage;
 import org.eclipse.kapua.service.datastore.model.MessageListResult;
+import org.eclipse.kapua.service.datastore.model.query.ChannelInfoField;
 import org.eclipse.kapua.service.datastore.model.query.ChannelInfoQuery;
+import org.eclipse.kapua.service.datastore.model.query.MessageField;
 import org.eclipse.kapua.service.datastore.model.query.MessageQuery;
+import org.eclipse.kapua.service.datastore.model.query.MessageSchema;
 import org.eclipse.kapua.service.datastore.model.query.predicate.DatastorePredicateFactory;
 import org.eclipse.kapua.service.storable.model.id.StorableId;
 import org.eclipse.kapua.service.storable.model.query.SortField;
@@ -45,13 +51,6 @@ import org.eclipse.kapua.service.storable.model.query.predicate.RangePredicate;
 import org.eclipse.kapua.service.storable.model.query.predicate.TermPredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Channel info registry implementation
@@ -64,9 +63,7 @@ public class ChannelInfoRegistryServiceImpl implements ChannelInfoRegistryServic
     private static final Logger LOG = LoggerFactory.getLogger(ChannelInfoRegistryServiceImpl.class);
     private final DatastorePredicateFactory datastorePredicateFactory;
     protected final Integer maxResultWindowValue;
-    private final AccountService accountService;
     private final AuthorizationService authorizationService;
-    private final PermissionFactory permissionFactory;
     private final ChannelInfoRegistryFacade channelInfoRegistryFacade;
     private final MessageRepository messageRepository;
     private final DatastoreSettings datastoreSettings;
@@ -83,17 +80,14 @@ public class ChannelInfoRegistryServiceImpl implements ChannelInfoRegistryServic
             DatastorePredicateFactory datastorePredicateFactory,
             AccountService accountService,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             MessageRepository messageStoreService,
             ChannelInfoRegistryFacade channelInfoRegistryFacade,
             DatastoreSettings datastoreSettings) {
         this.datastorePredicateFactory = datastorePredicateFactory;
         this.authorizationService = authorizationService;
-        this.permissionFactory = permissionFactory;
         this.messageRepository = messageStoreService;
         this.channelInfoRegistryFacade = channelInfoRegistryFacade;
         this.datastoreSettings = datastoreSettings;
-        this.accountService = accountService;
         this.maxResultWindowValue = datastoreSettings.getInt(DatastoreSettingsKey.MAX_RESULT_WINDOW_VALUE);
     }
 
@@ -211,14 +205,13 @@ public class ChannelInfoRegistryServiceImpl implements ChannelInfoRegistryServic
 
     private void checkDataAccess(KapuaId scopeId, Actions action)
             throws KapuaException {
-        Permission permission = permissionFactory.newPermission(Domains.DATASTORE, action, scopeId);
+        Permission permission = new Permission(Domains.DATASTORE, action, scopeId);
         authorizationService.checkPermission(permission);
     }
 
     /**
      * Update the last published date and last published message identifier for the specified channel info, so it gets the timestamp and the message id of the last published message for the
-     * account/clientId in the
-     * channel info
+     * account/clientId in the channel info
      *
      * @param channelInfo
      * @throws KapuaException
@@ -228,7 +221,7 @@ public class ChannelInfoRegistryServiceImpl implements ChannelInfoRegistryServic
         List<SortField> sort = new ArrayList<>();
         sort.add(SortField.descending(MessageSchema.MESSAGE_TIMESTAMP));
 
-        MessageQuery messageQuery = new MessageQueryImpl(channelInfo.getScopeId());
+        MessageQuery messageQuery = new MessageQuery(channelInfo.getScopeId());
         messageQuery.setAskTotalCount(true);
         messageQuery.setFetchStyle(StorableFetchStyle.FIELDS);
         messageQuery.setLimit(1);

@@ -17,5 +17,6 @@ package org.eclipse.kapua.message.device.lifecycle;
  *
  * @since 1.0.0
  */
-public interface KapuaMissingChannel extends KapuaLifecycleChannel {
+public class KapuaMissingChannel extends KapuaLifecycleChannel {
+
 }

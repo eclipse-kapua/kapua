@@ -12,6 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.service.internal.cache;
 
+import java.io.Serializable;
+
+import javax.cache.Cache;
+
 import org.eclipse.kapua.commons.metric.CommonsMetric;
 import org.eclipse.kapua.model.KapuaEntity;
 import org.eclipse.kapua.model.id.KapuaId;
@@ -19,12 +23,8 @@ import org.eclipse.kapua.model.query.KapuaListResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.cache.Cache;
-import java.io.Serializable;
-
 /**
- * The basic cache class, it contains two {@link Cache} objects.
- * The {@code idCache} cache contains {@link KapuaEntity} objects, while the {@code listsCache} contains {@link KapuaListResult} objects.
+ * The basic cache class, it contains two {@link Cache} objects. The {@code idCache} cache contains {@link KapuaEntity} objects, while the {@code listsCache} contains {@link KapuaListResult} objects.
  */
 public class EntityCache {
 
@@ -134,11 +134,13 @@ public class EntityCache {
     }
 
     /**
-     * Checks that the scopeId of the entity matches the provided one.
-     * This mimics the checks that are performed in the 'find' method of the {@link org.eclipse.kapua.commons.jpa.KapuaEntityJpaRepository} class.
+     * Checks that the scopeId of the entity matches the provided one. This mimics the checks that are performed in the 'find' method of the
+     * {@link org.eclipse.kapua.commons.jpa.KapuaEntityJpaRepository} class.
      *
-     * @param scopeId a {@link KapuaId} representing the scopeId
-     * @param entity  the {@link KapuaEntity} to be checked
+     * @param scopeId
+     *         a {@link KapuaId} representing the scopeId
+     * @param entity
+     *         the {@link KapuaEntity} to be checked
      * @return the provided entity if it has the required scopeId, null otherwise
      */
     protected KapuaEntity checkResult(KapuaId scopeId, KapuaEntity entity) {
@@ -158,14 +160,16 @@ public class EntityCache {
     }
 
     /**
-     * Checks that the scopeId of the entity matches the provided one.
-     * This mimics the checks that are performed in the 'find' method of the {@link org.eclipse.kapua.commons.jpa.KapuaEntityJpaRepository} class.
+     * Checks that the scopeId of the entity matches the provided one. This mimics the checks that are performed in the 'find' method of the
+     * {@link org.eclipse.kapua.commons.jpa.KapuaEntityJpaRepository} class.
      *
-     * @param scopeId a {@link KapuaId} representing the scopeId
-     * @param entity  the {@link KapuaListResult} entity to be checked
+     * @param scopeId
+     *         a {@link KapuaId} representing the scopeId
+     * @param entity
+     *         the {@link KapuaListResult} entity to be checked
      * @return the provided entity if it has the required scopeId, null otherwise
      */
-    protected KapuaListResult checkResult(KapuaId scopeId, KapuaListResult entity) {
+    protected <E extends KapuaEntity> KapuaListResult<E> checkResult(KapuaId scopeId, KapuaListResult<E> entity) {
         if (entity != null) {
             if (entity.getSize() == 0) {
                 return entity;  // If the list is empty, I want to return the empty list
@@ -186,10 +190,14 @@ public class EntityCache {
     /**
      * Handles logging for cache exceptions.
      *
-     * @param operation the name of the method/operation
-     * @param cacheName the name of the cache in which the operation is performed
-     * @param keyId     the Id of the entry's key in the cache
-     * @param t         the exception
+     * @param operation
+     *         the name of the method/operation
+     * @param cacheName
+     *         the name of the cache in which the operation is performed
+     * @param keyId
+     *         the Id of the entry's key in the cache
+     * @param t
+     *         the exception
      */
     protected void cacheErrorLogger(String operation, String cacheName, Serializable keyId, Throwable t) {
         commonsMetric.getCacheError().inc();

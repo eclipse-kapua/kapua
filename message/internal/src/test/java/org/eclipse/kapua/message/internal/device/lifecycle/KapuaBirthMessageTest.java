@@ -20,7 +20,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-
 @Category(JUnitTests.class)
 public class KapuaBirthMessageTest {
 
@@ -89,7 +88,8 @@ public class KapuaBirthMessageTest {
         Assert.assertEquals("49-015420-323751", kapuaBirthPayload.getModemImei());
         Assert.assertEquals("359881234567890", kapuaBirthPayload.getModemImsi());
         Assert.assertEquals("8991101200003204510", kapuaBirthPayload.getModemIccid());
-        Assert.assertEquals("{\n  \"version\": \"1.0\",\n  \"properties\": {\n    \"GroupName\": {\n      \"propertyName\": \"propertyValue\"\n    }\n  }\n}", kapuaBirthPayload.getExtendedProperties());
+        Assert.assertEquals("{\n  \"version\": \"1.0\",\n  \"properties\": {\n    \"GroupName\": {\n      \"propertyName\": \"propertyValue\"\n    }\n  }\n}",
+                kapuaBirthPayload.getExtendedProperties());
     }
 
     @Test
@@ -102,14 +102,14 @@ public class KapuaBirthMessageTest {
 
     @Test
     public void kapuaBirthMessageConstructor() throws Exception {
-        KapuaBirthMessageImpl kapuaBirthMessage = new KapuaBirthMessageImpl();
+        KapuaBirthMessage kapuaBirthMessage = new KapuaBirthMessage();
 
         Assert.assertNotNull(kapuaBirthMessage);
     }
 
     @Test
     public void kapuaBirthMessageGetterSetters() throws Exception {
-        KapuaBirthMessage kapuaBirthMessage = new KapuaBirthMessageImpl();
+        KapuaBirthMessage kapuaBirthMessage = new KapuaBirthMessage();
 
         kapuaBirthMessage.setClientId("clientId-1");
         Assert.assertEquals("clientId-1", kapuaBirthMessage.getClientId());
@@ -117,7 +117,7 @@ public class KapuaBirthMessageTest {
 
     @Test
     public void kapuaBirthChannelGetterSetters() throws Exception {
-        KapuaBirthChannel kapuaBirthChannel = new KapuaBirthChannelImpl();
+        KapuaBirthChannel kapuaBirthChannel = new KapuaBirthChannel();
 
         kapuaBirthChannel.setClientId("clientId-1");
         Assert.assertEquals("clientId-1", kapuaBirthChannel.getClientId());
@@ -129,7 +129,7 @@ public class KapuaBirthMessageTest {
      * @return all KapuaBirthPayload fields populated with data.
      */
     private static KapuaBirthPayload populateKapuaBirthPayload() {
-        return new KapuaBirthPayloadImpl(
+        return new KapuaBirthPayload(
                 "12",
                 "Display Name",
                 "Model Name",

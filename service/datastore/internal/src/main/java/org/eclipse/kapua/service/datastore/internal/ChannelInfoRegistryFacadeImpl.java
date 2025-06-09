@@ -12,13 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.internal;
 
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.service.datastore.internal.mediator.ChannelInfoField;
 import org.eclipse.kapua.service.datastore.internal.mediator.ConfigurationException;
-import org.eclipse.kapua.service.datastore.internal.model.ChannelInfoListResultImpl;
-import org.eclipse.kapua.service.datastore.internal.model.query.ChannelInfoQueryImpl;
+import org.eclipse.kapua.service.datastore.internal.mediator.InfoFieldHelper;
 import org.eclipse.kapua.service.datastore.model.ChannelInfo;
 import org.eclipse.kapua.service.datastore.model.ChannelInfoListResult;
 import org.eclipse.kapua.service.datastore.model.query.ChannelInfoQuery;
@@ -30,8 +30,6 @@ import org.eclipse.kapua.service.storable.model.query.predicate.IdsPredicate;
 import org.eclipse.kapua.service.storable.model.query.predicate.StorablePredicateFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
 
 /**
  * Channel information registry facade
@@ -88,7 +86,7 @@ public class ChannelInfoRegistryFacadeImpl extends AbstractDatastoreFacade imple
         ArgumentValidator.notNull(channelInfo.getFirstMessageId(), "channelInfo.messageId");
         ArgumentValidator.notNull(channelInfo.getFirstMessageOn(), "channelInfo.messageTimestamp");
 
-        String channelInfoId = ChannelInfoField.getOrDeriveId(channelInfo.getId(), channelInfo);
+        String channelInfoId = InfoFieldHelper.getOrDeriveId(channelInfo.getId(), channelInfo);
         StorableId storableId = storableIdFactory.newStorableId(channelInfoId);
 
         // Store channel. Look up channel in the cache, and cache it if it doesn't exist
@@ -155,7 +153,7 @@ public class ChannelInfoRegistryFacadeImpl extends AbstractDatastoreFacade imple
     }
 
     private ChannelInfo doFind(KapuaId scopeId, StorableId id) throws KapuaIllegalArgumentException, ConfigurationException, ClientException {
-        ChannelInfoQueryImpl idsQuery = new ChannelInfoQueryImpl(scopeId);
+        ChannelInfoQuery idsQuery = new ChannelInfoQuery(scopeId);
         idsQuery.setLimit(1);
 
         IdsPredicate idsPredicate = storablePredicateFactory.newIdsPredicate();
@@ -182,7 +180,7 @@ public class ChannelInfoRegistryFacadeImpl extends AbstractDatastoreFacade imple
 
         if (!isDatastoreServiceEnabled(query.getScopeId())) {
             LOG.debug("Storage not enabled for account {}, returning empty result", query.getScopeId());
-            return new ChannelInfoListResultImpl();
+            return new ChannelInfoListResult();
         }
 
         return repository.query(query);

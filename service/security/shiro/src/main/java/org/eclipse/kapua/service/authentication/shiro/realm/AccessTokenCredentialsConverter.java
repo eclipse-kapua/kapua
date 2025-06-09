@@ -12,15 +12,15 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.shiro.realm;
 
-import com.google.common.base.Strings;
-import org.eclipse.kapua.service.authentication.AccessTokenCredentials;
 import org.eclipse.kapua.service.authentication.AuthenticationCredentials;
 import org.eclipse.kapua.service.authentication.exception.KapuaAuthenticationErrorCodes;
 import org.eclipse.kapua.service.authentication.exception.KapuaAuthenticationException;
 import org.eclipse.kapua.service.authentication.shiro.AccessTokenCredentialsImpl;
 
+import com.google.common.base.Strings;
+
 /**
- * {@link AccessTokenCredentials} {@link CredentialsConverter} implementation.
+ * {@link AccessTokenCredentialsImpl} {@link CredentialsConverter} implementation.
  *
  * @since 2.0.0
  */
@@ -28,7 +28,7 @@ public class AccessTokenCredentialsConverter implements CredentialsConverter {
 
     @Override
     public boolean canProcess(AuthenticationCredentials authenticationCredentials) {
-        return authenticationCredentials instanceof AccessTokenCredentials;
+        return authenticationCredentials instanceof AccessTokenCredentialsImpl;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class AccessTokenCredentialsConverter implements CredentialsConverter {
 
         AccessTokenCredentialsImpl accessTokenCredentials = authenticationCredentials instanceof AccessTokenCredentialsImpl ?
                 (AccessTokenCredentialsImpl) authenticationCredentials :
-                new AccessTokenCredentialsImpl((AccessTokenCredentials) authenticationCredentials);
+                new AccessTokenCredentialsImpl((AccessTokenCredentialsImpl) authenticationCredentials);
 
         if (Strings.isNullOrEmpty(accessTokenCredentials.getTokenId())) {
             throw new KapuaAuthenticationException(KapuaAuthenticationErrorCodes.INVALID_SESSION_CREDENTIALS);

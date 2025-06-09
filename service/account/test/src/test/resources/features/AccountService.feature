@@ -125,21 +125,6 @@ Feature: User Account Service
     When I delete a random account
     Then An exception was thrown
 
-  Scenario: Check account properties
-  It must be possible to set arbitrary account properties.
-
-    Given I create a generic account with name "test_acc_11"
-    When I set the following parameters
-      | name | value  |
-      | key1 | value1 |
-      | key2 | value2 |
-      | key3 | value3 |
-    Then The account has the following parameters
-      | name | value  |
-      | key1 | value1 |
-      | key2 | value2 |
-      | key3 | value3 |
-
   Scenario: Every account must have the default configuration items
   Create a new account and check whether it has the default configuration items set.
 

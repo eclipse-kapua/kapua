@@ -12,22 +12,21 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.keystore.job;
 
+import javax.batch.runtime.context.JobContext;
+import javax.batch.runtime.context.StepContext;
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.job.engine.commons.operation.AbstractDeviceTargetProcessor;
 import org.eclipse.kapua.job.engine.commons.wrappers.JobTargetWrapper;
 import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.service.device.management.keystore.DeviceKeystoreManagementFactory;
 import org.eclipse.kapua.service.device.management.keystore.DeviceKeystoreManagementService;
 import org.eclipse.kapua.service.device.management.keystore.job.definition.DeviceKeystoreKeypairCreatePropertyKeys;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreCertificate;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreKeypair;
 import org.eclipse.kapua.service.job.operation.TargetProcessor;
 import org.eclipse.kapua.service.job.targets.JobTarget;
-
-import javax.batch.runtime.context.JobContext;
-import javax.batch.runtime.context.StepContext;
-import javax.inject.Inject;
 
 /**
  * {@link TargetProcessor} for {@link DeviceKeystoreManagementService#createKeystoreCertificate(KapuaId, KapuaId, DeviceKeystoreCertificate, Long)}.
@@ -38,8 +37,6 @@ public class DeviceKeystoreKeypairCreateTargetProcessor extends AbstractDeviceTa
 
     @Inject
     DeviceKeystoreManagementService deviceKeystoreManagementService;
-    @Inject
-    DeviceKeystoreManagementFactory deviceKeystoreManagementFactory;
     @Inject
     JobContext jobContext;
     @Inject
@@ -61,7 +58,7 @@ public class DeviceKeystoreKeypairCreateTargetProcessor extends AbstractDeviceTa
         String attributes = stepContextWrapper.getStepProperty(DeviceKeystoreKeypairCreatePropertyKeys.ATTRIBUTES, String.class);
         Long timeout = stepContextWrapper.getStepProperty(DeviceKeystoreKeypairCreatePropertyKeys.TIMEOUT, Long.class);
 
-        DeviceKeystoreKeypair deviceKeystoreKeypair = deviceKeystoreManagementFactory.newDeviceKeystoreKeypair();
+        DeviceKeystoreKeypair deviceKeystoreKeypair = new DeviceKeystoreKeypair();
 
         deviceKeystoreKeypair.setKeystoreId(keystoreId);
         deviceKeystoreKeypair.setAlias(alias);

@@ -45,6 +45,7 @@ import org.eclipse.kapua.model.config.metatype.KapuaTmetadata;
 import org.eclipse.kapua.model.config.metatype.KapuaTobject;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 import org.eclipse.kapua.model.config.metatype.KapuaToption;
+import org.eclipse.kapua.model.config.metatype.KapuaTscalar;
 import org.eclipse.kapua.service.authentication.token.AccessToken;
 import org.eclipse.kapua.service.device.call.kura.model.bundle.KuraBundle;
 import org.eclipse.kapua.service.device.call.kura.model.bundle.KuraBundles;
@@ -77,7 +78,6 @@ import org.eclipse.kapua.service.device.management.inventory.model.container.Dev
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainers;
 import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventory;
 import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventoryItem;
-import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventoryXmlRegistry;
 import org.eclipse.kapua.service.device.management.inventory.model.packages.DeviceInventoryPackage;
 import org.eclipse.kapua.service.device.management.inventory.model.packages.DeviceInventoryPackages;
 import org.eclipse.kapua.service.device.management.inventory.model.system.DeviceInventorySystemPackage;
@@ -90,7 +90,6 @@ import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystore
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreItemQuery;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreItems;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreKeypair;
-import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystoreXmlRegistry;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystores;
 import org.eclipse.kapua.service.device.management.packages.model.DevicePackages;
 import org.eclipse.kapua.service.device.management.packages.model.download.DevicePackageDownloadRequest;
@@ -104,8 +103,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * JAXB context provided for proper (un)marshalling of interface annotated classes.
- * This particular implementation is used only in unit and integration tests.
+ * JAXB context provided for proper (un)marshalling of interface annotated classes. This particular implementation is used only in unit and integration tests.
  * <p>
  * Application and interfaces have their own implementation of provider.
  */
@@ -123,6 +121,7 @@ public class TestJAXBContextProvider implements JAXBContextProvider {
                     KapuaTocd.class,
                     KapuaTad.class,
                     KapuaTicon.class,
+                    KapuaTscalar.class,
                     KapuaToption.class,
                     KapuaTdesignate.class,
                     KapuaTobject.class,
@@ -180,7 +179,6 @@ public class TestJAXBContextProvider implements JAXBContextProvider {
                     DeviceInventorySystemPackage.class,
                     KuraInventorySystemPackages.class,
                     KuraInventorySystemPackage.class,
-                    DeviceInventoryXmlRegistry.class,
 
                     // Device Management Keystore
                     DeviceKeystore.class,
@@ -191,7 +189,6 @@ public class TestJAXBContextProvider implements JAXBContextProvider {
                     DeviceKeystoreItemQuery.class,
                     DeviceKeystoreItems.class,
                     DeviceKeystoreKeypair.class,
-                    DeviceKeystoreXmlRegistry.class,
                     DeviceKeystores.class,
 
                     KuraDeviceComponentConfiguration.class,

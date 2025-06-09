@@ -12,21 +12,18 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.group.shiro;
 
+import java.util.Date;
+
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.authorization.group.Group;
 import org.eclipse.kapua.service.authorization.group.GroupCreator;
-import org.eclipse.kapua.service.authorization.group.GroupListResult;
-import org.eclipse.kapua.service.authorization.group.GroupQuery;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
-
-import java.util.Date;
-
 
 @Category(JUnitTests.class)
 public class GroupFactoryImplTest {
@@ -41,7 +38,8 @@ public class GroupFactoryImplTest {
     public void initialize() {
         groupFactoryImpl = new GroupFactoryImpl();
         scopeId = KapuaId.ONE;
-        names = new String[]{"", "  na123)(&*^&NAME  <>", "Na-,,..,,Me name ---", "-&^454536 na___,,12 NAME name    ", "! 2#@ na     meNEMA 2323", "12&^%4   ,,,. '|<>*(", "       ,,123name;;'", "12#name--765   ,.aaa!!#$%^<> "};
+        names = new String[] { "", "  na123)(&*^&NAME  <>", "Na-,,..,,Me name ---", "-&^454536 na___,,12 NAME name    ", "! 2#@ na     meNEMA 2323", "12&^%4   ,,,. '|<>*(", "       ,,123name;;'",
+                "12#name--765   ,.aaa!!#$%^<> " };
         group = Mockito.mock(Group.class);
         createdOn = new Date();
         modifiedOn = new Date();
@@ -60,7 +58,7 @@ public class GroupFactoryImplTest {
     @Test
     public void newCreatorScopeIdNameParametersTest() {
         for (String name : names) {
-            GroupCreator groupCreator = groupFactoryImpl.newCreator(scopeId, name);
+            GroupCreator groupCreator = new GroupCreator(scopeId, name);
             Assert.assertEquals("Expected and actual values should be the same.", name, groupCreator.getName());
             Assert.assertEquals("Expected and actual values should be the same.", scopeId, groupCreator.getScopeId());
         }
@@ -69,7 +67,7 @@ public class GroupFactoryImplTest {
     @Test
     public void newCreatorNullScopeIdNameParametersTest() {
         for (String name : names) {
-            GroupCreator groupCreator = groupFactoryImpl.newCreator(null, name);
+            GroupCreator groupCreator = new GroupCreator(null, name);
             Assert.assertEquals("Expected and actual values should be the same.", name, groupCreator.getName());
             Assert.assertNull("Null expected.", groupCreator.getScopeId());
         }
@@ -77,7 +75,7 @@ public class GroupFactoryImplTest {
 
     @Test
     public void newCreatorScopeIdNullNameParametersTest() {
-        GroupCreator groupCreator = groupFactoryImpl.newCreator(scopeId, null);
+        GroupCreator groupCreator = new GroupCreator(scopeId, null);
         Assert.assertNull("Null expected.", groupCreator.getName());
         Assert.assertEquals("Expected and actual values should be the same.", scopeId, groupCreator.getScopeId());
     }
@@ -95,32 +93,14 @@ public class GroupFactoryImplTest {
     }
 
     @Test
-    public void newListResultTest() {
-        GroupListResult groupListResult = groupFactoryImpl.newListResult();
-        Assert.assertTrue("True expected.", groupListResult.isEmpty());
-    }
-
-    @Test
-    public void newQueryTest() {
-        GroupQuery groupQuery = groupFactoryImpl.newQuery(scopeId);
-        Assert.assertEquals("Expected and actual values should be the same.", scopeId, groupQuery.getScopeId());
-    }
-
-    @Test
-    public void newQueryNullTest() {
-        GroupQuery groupQuery = groupFactoryImpl.newQuery(null);
-        Assert.assertNull("Null expected.", groupQuery.getScopeId());
-    }
-
-    @Test
     public void newCreatorTest() {
-        GroupCreator groupCreator = groupFactoryImpl.newCreator(scopeId);
+        GroupCreator groupCreator = new GroupCreator(scopeId);
         Assert.assertEquals("Expected and actual values should be the same.", scopeId, groupCreator.getScopeId());
     }
 
     @Test
     public void newCreatorNullTest() {
-        GroupCreator groupCreator = groupFactoryImpl.newCreator(null);
+        GroupCreator groupCreator = new GroupCreator(null);
         Assert.assertNull("Null expected.", groupCreator.getScopeId());
     }
 

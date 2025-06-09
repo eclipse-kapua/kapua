@@ -12,10 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.endpoint;
 
-import org.eclipse.kapua.model.query.KapuaListResult;
-
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.model.query.KapuaListResult;
 
 /**
  * {@link EndpointInfo} list result definition.
@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
  * @since 1.0.0
  */
 @XmlRootElement(name = "endpointInfos")
-@XmlType(factoryClass = EndpointInfoXmlRegistry.class, factoryMethod = "newListResult")
-public interface EndpointInfoListResult extends KapuaListResult<EndpointInfo> {
+@XmlType
+public class EndpointInfoListResult extends KapuaListResult<EndpointInfo> {
 
 }

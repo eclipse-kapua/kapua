@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.token;
 
-import org.eclipse.kapua.locator.KapuaLocator;
-
 import javax.xml.bind.annotation.XmlRegistry;
+
+import org.eclipse.kapua.locator.KapuaLocator;
 
 @XmlRegistry
 public class AccessTokenXmlRegistry {
@@ -23,9 +23,5 @@ public class AccessTokenXmlRegistry {
 
     public AccessToken newAccessToken() {
         return accessTokenFactory.newEntity(null);
-    }
-
-    public AccessTokenCreator newAccessTokenCreator() {
-        return accessTokenFactory.newCreator(null, null, null, null, null, null, null);
     }
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2021, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2024, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -27,18 +27,27 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
-@Mapper(uses = KapuaBaseMapper.class, componentModel = MappingConstants.ComponentModel.JSR330, injectionStrategy = InjectionStrategy.CONSTRUCTOR, collectionMappingStrategy = CollectionMappingStrategy.TARGET_IMMUTABLE)
+@Mapper(uses = KapuaBaseMapper.class,
+        componentModel = MappingConstants.ComponentModel.JSR330,
+        injectionStrategy = InjectionStrategy.CONSTRUCTOR,
+        collectionMappingStrategy = CollectionMappingStrategy.TARGET_IMMUTABLE)
 public interface AccountMapper {
 
     @KapuaBaseMapper.IgnoreKapuaNamedEntityReadonlyFields
     @Mapping(target = "parentAccountPath", ignore = true)
     @Mapping(target = "expirationDate", ignore = true)
     @Mapping(target = "childAccounts", ignore = true)
+    @Mapping(target = "scopeId", ignore = true)
+    // Name is not updatable
+    @Mapping(target = "name", ignore = true)
     void merge(@MappingTarget Account account, CurrentAccountUpdateRequest request);
 
     @KapuaBaseMapper.IgnoreKapuaNamedEntityReadonlyFields
     @Mapping(target = "parentAccountPath", ignore = true)
     @Mapping(target = "childAccounts", ignore = true)
+    @Mapping(target = "scopeId", ignore = true)
+    // Name is not updatable
+    @Mapping(target = "name", ignore = true)
     void merge(@MappingTarget Account account, AccountUpdateRequest request);
 
     default Organization createOrganisation() {
@@ -50,7 +59,11 @@ public interface AccountMapper {
     void merge(@MappingTarget Organization account, Organization request);
 
     //For backward compatibility only
+    @Mapping(target = "entityAttributes", ignore = true)
+    @Mapping(target = "entityProperties", ignore = true)
     AccountUpdateRequest mapChildUpdate(Account account);
 
+    @Mapping(target = "entityAttributes", ignore = true)
+    @Mapping(target = "entityProperties", ignore = true)
     CurrentAccountUpdateRequest mapCurrentUpdate(Account account);
 }

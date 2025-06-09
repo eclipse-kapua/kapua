@@ -32,8 +32,7 @@ public interface StorableField {
     String field();
 
     /**
-     * Watch out using this to get the {@link StorableField} actual name.
-     * Maybe {@link #field()} is what you are looking for!
+     * Watch out using this to get the {@link StorableField} actual name. Maybe {@link #field()} is what you are looking for!
      *
      * @return The {@link Enum#name()}
      * @since 1.3.0
@@ -41,4 +40,5 @@ public interface StorableField {
      */
     @Deprecated
     String name();
+
 }

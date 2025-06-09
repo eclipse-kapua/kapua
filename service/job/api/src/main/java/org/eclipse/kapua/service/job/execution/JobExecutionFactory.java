@@ -20,6 +20,6 @@ import org.eclipse.kapua.model.KapuaEntityFactory;
  * @see org.eclipse.kapua.model.KapuaEntityFactory
  * @since 1.0.0
  */
-public interface JobExecutionFactory extends KapuaEntityFactory<JobExecution, JobExecutionCreator, JobExecutionQuery, JobExecutionListResult> {
+public interface JobExecutionFactory extends KapuaEntityFactory<JobExecution> {
 
 }

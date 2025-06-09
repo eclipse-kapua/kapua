@@ -12,16 +12,16 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.util;
 
+import java.lang.reflect.Constructor;
+import java.util.Date;
+import java.util.Properties;
+
+import org.eclipse.kapua.PropertiesUtils;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.junit.Assert;
 import org.junit.ComparisonFailure;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-
-import java.lang.reflect.Constructor;
-import java.util.Date;
-import java.util.Properties;
-
 
 @Category(JUnitTests.class)
 public class PropertiesUtilsTest {
@@ -35,8 +35,9 @@ public class PropertiesUtilsTest {
 
     @Test
     public void readPropertiesFromStringTest() throws Exception {
-        String[] inputString = new String[]{"StringString", "!string\n !string", "   #string\n String=S123", "     string!     Strin=g     ", "strin#g   :  string", "string         str1, \\\nstr2, \\\nstr3", "string\\ String 12 34", "123\\:\\=12%#34:String", "Str\ting String", "Strin\fg=String", "string\n "};
-        String[] emptyOrNullString = new String[]{null, ""};
+        String[] inputString = new String[] { "StringString", "!string\n !string", "   #string\n String=S123", "     string!     Strin=g     ", "strin#g   :  string",
+                "string         str1, \\\nstr2, \\\nstr3", "string\\ String 12 34", "123\\:\\=12%#34:String", "Str\ting String", "Strin\fg=String", "string\n " };
+        String[] emptyOrNullString = new String[] { null, "" };
 
         Properties prop1 = new Properties();
         prop1.setProperty("StringString", "");
@@ -87,8 +88,9 @@ public class PropertiesUtilsTest {
         Properties emptyProp2 = new Properties();
         emptyProp2.setProperty("", "");
 
-        Properties[] validPropArray = new Properties[]{prop1, prop2, prop3, prop4, prop5, prop6, prop7, prop8, prop9, prop10, prop11};
-        Properties[] invalidPropArray = new Properties[]{invalidProp1, invalidProp2, invalidProp3, invalidProp4, invalidProp5, invalidProp6, invalidProp7, invalidProp8, invalidProp9, invalidProp10, invalidProp11};
+        Properties[] validPropArray = new Properties[] { prop1, prop2, prop3, prop4, prop5, prop6, prop7, prop8, prop9, prop10, prop11 };
+        Properties[] invalidPropArray = new Properties[] { invalidProp1, invalidProp2, invalidProp3, invalidProp4, invalidProp5, invalidProp6, invalidProp7, invalidProp8, invalidProp9, invalidProp10,
+                invalidProp11 };
 
         //Positive tests
         for (int i = 0; i < inputString.length; i++) {
@@ -156,9 +158,9 @@ public class PropertiesUtilsTest {
         String invalidString4 = "#" + new Date().toString() + lineSeparator + "st ring#a=StriNG aaa';" + lineSeparator;
         String invalidString5 = "#" + new Date().toString() + "\\ String=ssss12_ ;;     " + lineSeparator;
 
-        String[] validOutputString = new String[]{str1, str2, str3, str4, str5};
-        String[] invalidOutputString = new String[]{invalidString1, invalidString2, invalidString3, invalidString4, invalidString5};
-        Properties[] propArray = new Properties[]{prop1, prop2, prop3, prop4, prop5};
+        String[] validOutputString = new String[] { str1, str2, str3, str4, str5 };
+        String[] invalidOutputString = new String[] { invalidString1, invalidString2, invalidString3, invalidString4, invalidString5 };
+        Properties[] propArray = new Properties[] { prop1, prop2, prop3, prop4, prop5 };
 
         //Positive tests
         for (int i = 0; i < propArray.length; i++) {

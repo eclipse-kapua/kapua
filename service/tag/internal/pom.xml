@@ -17,7 +17,7 @@
     <parent>
         <groupId>org.eclipse.kapua</groupId>
         <artifactId>kapua-tag</artifactId>
-        <version>2.1.0-SNAPSHOT</version>
+        <version>2.1.0-FALSE_EXTENSIONS-SNAPSHOT</version>
     </parent>
 
     <artifactId>kapua-tag-internal</artifactId>
@@ -56,4 +56,34 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
+                        </path>
+                        <!-- other annotation processors -->
+                        <path>
+                            <groupId>org.hibernate</groupId>
+                            <artifactId>hibernate-jpamodelgen</artifactId>
+                            <version>${hibernate-jpamodelgen.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                    <compilerArgs>
+                        <compilerArg>-Amapstruct.unmappedTargetPolicy=ERROR</compilerArg>
+                        <compilerArg>-Amapstruct.unmappedSourcePolicy=WARN</compilerArg>
+                        <compilerArg>-Amapstruct.suppressGeneratorTimestamp=true</compilerArg>
+                        <compilerArg>-Amapstruct.suppressGeneratorVersionInfoComment=true</compilerArg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

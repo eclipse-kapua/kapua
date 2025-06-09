@@ -12,9 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.authentication.server;
 
-import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
-import com.extjs.gxt.ui.client.data.PagingLoadConfig;
-import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.Callable;
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.eclipse.kapua.KapuaException;
@@ -32,30 +35,25 @@ import org.eclipse.kapua.app.console.module.authentication.shared.util.KapuaGwtA
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authentication.AuthenticationService;
-import org.eclipse.kapua.service.authentication.CredentialsFactory;
 import org.eclipse.kapua.service.authentication.UsernamePasswordCredentials;
 import org.eclipse.kapua.service.authentication.credential.Credential;
 import org.eclipse.kapua.service.authentication.credential.CredentialCreator;
-import org.eclipse.kapua.service.authentication.credential.CredentialFactory;
 import org.eclipse.kapua.service.authentication.credential.CredentialListResult;
-import org.eclipse.kapua.service.authentication.credential.CredentialQuery;
 import org.eclipse.kapua.service.authentication.credential.CredentialService;
 import org.eclipse.kapua.service.authentication.shiro.utils.AuthenticationUtils;
 import org.eclipse.kapua.service.authentication.user.PasswordChangeRequest;
 import org.eclipse.kapua.service.authentication.user.PasswordResetRequest;
-import org.eclipse.kapua.service.authentication.user.UserCredentialsFactory;
 import org.eclipse.kapua.service.authentication.user.UserCredentialsService;
 import org.eclipse.kapua.service.user.User;
-import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserListResult;
+import org.eclipse.kapua.service.user.UserQuery;
 import org.eclipse.kapua.service.user.UserService;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.Callable;
+import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
+import com.extjs.gxt.ui.client.data.PagingLoadResult;
 
 public class GwtCredentialServiceImpl extends KapuaRemoteServiceServlet implements GwtCredentialService {
 
@@ -66,15 +64,10 @@ public class GwtCredentialServiceImpl extends KapuaRemoteServiceServlet implemen
     private static final AuthenticationService AUTHENTICATION_SERVICE = LOCATOR.getService(AuthenticationService.class);
 
     private static final CredentialService CREDENTIAL_SERVICE = LOCATOR.getService(CredentialService.class);
-    private static final CredentialFactory CREDENTIAL_FACTORY = LOCATOR.getFactory(CredentialFactory.class);
-
-    private static final CredentialsFactory CREDENTIALS_FACTORY = LOCATOR.getFactory(CredentialsFactory.class);
 
     private static final UserService USER_SERVICE = LOCATOR.getService(UserService.class);
-    private static final UserFactory USER_FACTORY = LOCATOR.getFactory(UserFactory.class);
 
     private static final UserCredentialsService USER_CREDENTIALS_SERVICE = LOCATOR.getService(UserCredentialsService.class);
-    private static final UserCredentialsFactory USER_CREDENTIALS_FACTORY = LOCATOR.getFactory(UserCredentialsFactory.class);
     private static final AuthenticationUtils AUTHENTICATION_UTILS = LOCATOR.getComponent(AuthenticationUtils.class);
 
     // this should be removed due to the refactoring in fixPasswordValidationBypass method
@@ -87,7 +80,7 @@ public class GwtCredentialServiceImpl extends KapuaRemoteServiceServlet implemen
         try {
 
             // Convert from GWT entity
-            CredentialQuery credentialQuery = GwtKapuaAuthenticationModelConverter.convertCredentialQuery(loadConfig, gwtCredentialQuery);
+            KapuaQuery credentialQuery = GwtKapuaAuthenticationModelConverter.convertCredentialQuery(loadConfig, gwtCredentialQuery);
 
             // query
             CredentialListResult credentials = CREDENTIAL_SERVICE.query(credentialQuery);
@@ -101,7 +94,7 @@ public class GwtCredentialServiceImpl extends KapuaRemoteServiceServlet implemen
 
                     @Override
                     public UserListResult call() throws Exception {
-                        return USER_SERVICE.query(USER_FACTORY.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(gwtCredentialQuery.getScopeId())));
+                        return USER_SERVICE.query(new UserQuery(GwtKapuaCommonsModelConverter.convertKapuaId(gwtCredentialQuery.getScopeId())));
                     }
                 });
 
@@ -209,11 +202,11 @@ public class GwtCredentialServiceImpl extends KapuaRemoteServiceServlet implemen
             }
             username = user.getName();
             final String finalUsername = username;
-            UsernamePasswordCredentials loginCredentials = CREDENTIALS_FACTORY.newUsernamePasswordCredentials(finalUsername, oldPassword);
+            UsernamePasswordCredentials loginCredentials = new UsernamePasswordCredentials(finalUsername, oldPassword);
             loginCredentials.setAuthenticationCode(mfaCode);
             AUTHENTICATION_SERVICE.verifyCredentials(loginCredentials);
 
-            PasswordChangeRequest passwordChangeRequest = USER_CREDENTIALS_FACTORY.newPasswordChangeRequest();
+            PasswordChangeRequest passwordChangeRequest = new PasswordChangeRequest();
             passwordChangeRequest.setCurrentPassword(oldPassword);
             passwordChangeRequest.setNewPassword(newPassword);
             USER_CREDENTIALS_SERVICE.changePassword(scopeId, userId, passwordChangeRequest);
@@ -223,7 +216,6 @@ public class GwtCredentialServiceImpl extends KapuaRemoteServiceServlet implemen
         }
     }
 
-
     @Override
     public void resetPassword(GwtXSRFToken gwtXsrfToken, String stringScopeId, String gwtCredentialId, final String newPassword) throws GwtKapuaException {
         checkXSRFToken(gwtXsrfToken);
@@ -232,14 +224,13 @@ public class GwtCredentialServiceImpl extends KapuaRemoteServiceServlet implemen
             final KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(stringScopeId);
             final KapuaId credentialId = GwtKapuaCommonsModelConverter.convertKapuaId(gwtCredentialId);
 
-            PasswordResetRequest passwordResetRequest = USER_CREDENTIALS_FACTORY.newPasswordResetRequest();
+            PasswordResetRequest passwordResetRequest = new PasswordResetRequest();
             passwordResetRequest.setNewPassword(newPassword);
             USER_CREDENTIALS_SERVICE.resetPassword(scopeId, credentialId, passwordResetRequest);
         } catch (KapuaException e) {
             throw KapuaExceptionHandler.buildExceptionFromError(e);
         }
     }
-
 
     @Override
     public void unlock(GwtXSRFToken xsrfToken, String stringScopeId, String gwtCredentialId) throws GwtKapuaException {

@@ -52,7 +52,6 @@ public class DeviceRegistryServiceConfigurationManagerModule extends AbstractKap
     @Singleton
     protected ServiceConfigurationManager deviceRegistryServiceConfigurationManager(
             @Named("DeviceRegistryTransactionManager") TxManager txManager,
-            DeviceFactory factory,
             RootUserTester rootUserTester,
             AccountRelativeFinder accountRelativeFinder,
             DeviceRepository deviceRepository,
@@ -72,7 +71,6 @@ public class DeviceRegistryServiceConfigurationManagerModule extends AbstractKap
                         rootUserTester,
                         accountRelativeFinder,
                         new UsedEntitiesCounterImpl(
-                                factory,
                                 deviceRepository),
                         new ResourceBasedServiceConfigurationMetadataProvider(xmlUtil)
                 ));

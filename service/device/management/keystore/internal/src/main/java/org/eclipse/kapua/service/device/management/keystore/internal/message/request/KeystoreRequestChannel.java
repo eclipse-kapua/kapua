@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.keystore.internal.message.request;
 
-import org.eclipse.kapua.service.device.management.commons.message.request.KapuaRequestChannelImpl;
 import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystore;
 import org.eclipse.kapua.service.device.management.message.request.KapuaRequestChannel;
 
@@ -21,7 +20,7 @@ import org.eclipse.kapua.service.device.management.message.request.KapuaRequestC
  *
  * @since 1.5.0
  */
-public class KeystoreRequestChannel extends KapuaRequestChannelImpl implements KapuaRequestChannel {
+public class KeystoreRequestChannel extends KapuaRequestChannel {
 
     private static final long serialVersionUID = 9127157971609776985L;
 }

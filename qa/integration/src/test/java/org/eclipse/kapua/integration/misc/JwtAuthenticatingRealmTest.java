@@ -15,6 +15,7 @@ package org.eclipse.kapua.integration.misc;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
+import org.eclipse.kapua.service.authentication.JwtCredentials;
 import org.eclipse.kapua.service.authentication.shiro.JwtCredentialsImpl;
 import org.eclipse.kapua.service.authentication.shiro.realm.JwtAuthenticatingRealm;
 import org.junit.Assert;
@@ -22,7 +23,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
-
 
 @Category(JUnitTests.class)
 public class JwtAuthenticatingRealmTest {
@@ -50,8 +50,8 @@ public class JwtAuthenticatingRealmTest {
 
     @Test
     public void supportsTrueTest() {
-        JwtCredentialsImpl authenticationToken = new JwtCredentialsImpl("jwt", "token id");
-        Assert.assertTrue("True expected.", jwtAuthenticatingRealm.supports(authenticationToken));
+        JwtCredentials authenticationToken = new JwtCredentials("jwt", "token id");
+        Assert.assertTrue("True expected.", jwtAuthenticatingRealm.supports(new JwtCredentialsImpl(authenticationToken)));
     }
 
     @Test

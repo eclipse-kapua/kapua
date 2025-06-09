@@ -32,6 +32,7 @@ import org.eclipse.kapua.app.api.core.model.CountResult;
 import org.eclipse.kapua.app.api.core.model.ScopeId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
 import org.eclipse.kapua.model.KapuaNamedEntityAttributes;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.model.query.SortOrder;
 import org.eclipse.kapua.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.model.query.predicate.MatchPredicate;
@@ -39,9 +40,7 @@ import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountAttributes;
 import org.eclipse.kapua.service.account.AccountCreator;
-import org.eclipse.kapua.service.account.AccountFactory;
 import org.eclipse.kapua.service.account.AccountListResult;
-import org.eclipse.kapua.service.account.AccountQuery;
 import org.eclipse.kapua.service.account.AccountService;
 
 import com.google.common.base.Strings;
@@ -51,8 +50,6 @@ public class Accounts extends AbstractKapuaResource {
 
     @Inject
     public AccountService accountService;
-    @Inject
-    public AccountFactory accountFactory;
 
     /**
      * Gets the {@link Account} list in the scope.
@@ -93,7 +90,7 @@ public class Accounts extends AbstractKapuaResource {
             return accountService.findChildrenRecursively(scopeId);
         }
 
-        AccountQuery query = accountFactory.newQuery(scopeId);
+        final KapuaQuery query = new KapuaQuery(scopeId);
         query.setAskTotalCount(askTotalCount);
 
         AndPredicate andPredicate = query.andPredicate();
@@ -126,13 +123,13 @@ public class Accounts extends AbstractKapuaResource {
     }
 
     /**
-     * Queries the results with the given {@link AccountQuery} parameter.
+     * Queries the results with the given {@link KapuaQuery} parameter.
      *
      * @param scopeId
      *         The {@link ScopeId} in which to search results.
      * @param query
-     *         The {@link AccountQuery} to use to filter results.
-     * @return The {@link AccountListResult} of all the result matching the given {@link AccountQuery} parameter.
+     *         The {@link KapuaQuery} to use to filter results.
+     * @return The {@link AccountListResult} of all the result matching the given {@link KapuaQuery} parameter.
      * @throws KapuaException
      *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
@@ -143,20 +140,20 @@ public class Accounts extends AbstractKapuaResource {
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public AccountListResult query(
             @PathParam("scopeId") ScopeId scopeId, //
-            AccountQuery query) throws KapuaException {
+            KapuaQuery query) throws KapuaException {
         query.setScopeId(scopeId);
 
         return accountService.query(query);
     }
 
     /**
-     * Counts the results with the given {@link AccountQuery} parameter.
+     * Counts the results with the given {@link KapuaQuery} parameter.
      *
      * @param scopeId
      *         The {@link ScopeId} in which to count results.
      * @param query
-     *         The {@link AccountQuery} to use to filter results.
-     * @return The count of all the result matching the given {@link AccountQuery} parameter.
+     *         The {@link KapuaQuery} to use to filter results.
+     * @return The count of all the result matching the given {@link KapuaQuery} parameter.
      * @throws KapuaException
      *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
@@ -168,7 +165,7 @@ public class Accounts extends AbstractKapuaResource {
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public CountResult count(
             @PathParam("scopeId") ScopeId scopeId, //
-            AccountQuery query) throws KapuaException {
+            KapuaQuery query) throws KapuaException {
         query.setScopeId(scopeId);
 
         return new CountResult(accountService.count(query));

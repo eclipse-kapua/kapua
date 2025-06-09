@@ -12,13 +12,17 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.model.query;
 
-import org.eclipse.kapua.service.datastore.model.xml.ClientInfoXmlRegistry;
-import org.eclipse.kapua.service.storable.model.query.StorableQuery;
+import java.util.Collections;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.service.storable.model.query.SortField;
+import org.eclipse.kapua.service.storable.model.query.StorableFetchStyle;
+import org.eclipse.kapua.service.storable.model.query.StorableQuery;
 
 /**
  * Client information schema query definition
@@ -27,7 +31,34 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "query")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = ClientInfoXmlRegistry.class, factoryMethod = "newQuery")
-public interface ClientInfoQuery extends StorableQuery {
+@XmlType
+public class ClientInfoQuery extends StorableQuery {
 
+    public ClientInfoQuery() {
+        setSortFields(Collections.singletonList(SortField.ascending(ClientInfoSchema.CLIENT_ID)));
+    }
+
+    public ClientInfoQuery(KapuaId scopeId) {
+        super(scopeId);
+        setSortFields(Collections.singletonList(SortField.ascending(ClientInfoSchema.CLIENT_ID)));
+    }
+
+    @Override
+    public String[] getIncludes(StorableFetchStyle fetchStyle) {
+        return new String[] { "*" };
+    }
+
+    @Override
+    public String[] getExcludes(StorableFetchStyle fetchStyle) {
+        return new String[] { "" };
+    }
+
+    @Override
+    public String[] getFields() {
+        return new String[] { ClientInfoField.SCOPE_ID.field(),
+                ClientInfoField.CLIENT_ID.field(),
+                ClientInfoField.TIMESTAMP.field(),
+                ClientInfoField.MESSAGE_ID.field() };
+    }
 }
+

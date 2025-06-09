@@ -39,11 +39,10 @@ import org.eclipse.kapua.commons.util.xml.XmlRootAnnotatedJaxbClassesScanner;
 import org.eclipse.kapua.locator.LocatorConfig;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.scheduler.trigger.definition.quartz.TriggerDefinitionAligner;
 
 import com.google.inject.Provides;
 import com.google.inject.multibindings.ProvidesIntoSet;
-import org.eclipse.kapua.service.scheduler.trigger.definition.quartz.TriggerDefinitionAligner;
 
 public class AppModule extends AbstractKapuaModule {
 
@@ -63,8 +62,8 @@ public class AppModule extends AbstractKapuaModule {
     @Singleton
     ServiceConfigurationsFacade serviceConfigurationsFacade(
             Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass, AuthorizationService authorizationService,
-            PermissionFactory permissionFactory, AccountService accountService) {
-        return new ServiceConfigurationsFacadeImpl(serviceConfigurationManagersByServiceClass, authorizationService, permissionFactory, accountService);
+            AccountService accountService) {
+        return new ServiceConfigurationsFacadeImpl(serviceConfigurationManagersByServiceClass, authorizationService, accountService);
     }
 
     @ProvidesIntoSet

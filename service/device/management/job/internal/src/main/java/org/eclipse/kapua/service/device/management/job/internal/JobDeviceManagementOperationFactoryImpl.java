@@ -12,15 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.job.internal;
 
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperation;
-import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationCreator;
 import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationFactory;
-import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationListResult;
-import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperationQuery;
-
-import javax.inject.Singleton;
 
 /**
  * {@link JobDeviceManagementOperationFactory} implementation.
@@ -33,21 +30,6 @@ public class JobDeviceManagementOperationFactoryImpl implements JobDeviceManagem
     @Override
     public JobDeviceManagementOperation newEntity(KapuaId scopeId) {
         return new JobDeviceManagementOperationImpl(scopeId);
-    }
-
-    @Override
-    public JobDeviceManagementOperationCreator newCreator(KapuaId scopeId) {
-        return new JobDeviceManagementOperationCreatorImpl(scopeId);
-    }
-
-    @Override
-    public JobDeviceManagementOperationQuery newQuery(KapuaId scopeId) {
-        return new JobDeviceManagementOperationQueryImpl(scopeId);
-    }
-
-    @Override
-    public JobDeviceManagementOperationListResult newListResult() {
-        return new JobDeviceManagementOperationListResultImpl();
     }
 
     @Override

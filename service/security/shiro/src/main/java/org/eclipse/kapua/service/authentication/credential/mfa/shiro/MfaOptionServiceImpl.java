@@ -56,7 +56,7 @@ import org.eclipse.kapua.service.authentication.shiro.utils.CryptAlgorithm;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.exception.InternalUserOnlyException;
 import org.eclipse.kapua.service.authorization.exception.SelfManagedOnlyException;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserService;
 import org.eclipse.kapua.service.user.UserType;
@@ -82,7 +82,6 @@ public class MfaOptionServiceImpl implements MfaOptionService {
     private final AccountService accountService;
     private final ScratchCodeRepository scratchCodeRepository;
     private final AuthorizationService authorizationService;
-    private final PermissionFactory permissionFactory;
     private final UserService userService;
     private final AuthenticationUtils authenticationUtils;
     private final QRCodeBuilder qrCodeBuilder;
@@ -94,7 +93,6 @@ public class MfaOptionServiceImpl implements MfaOptionService {
             AccountService accountService,
             ScratchCodeRepository scratchCodeRepository,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             UserService userService,
             AuthenticationUtils authenticationUtils, QRCodeBuilder qrCodeBuilder) {
         this.trustKeyDuration = trustKeyDuration;
@@ -104,7 +102,6 @@ public class MfaOptionServiceImpl implements MfaOptionService {
         this.accountService = accountService;
         this.scratchCodeRepository = scratchCodeRepository;
         this.authorizationService = authorizationService;
-        this.permissionFactory = permissionFactory;
         this.userService = userService;
         this.authenticationUtils = authenticationUtils;
         this.qrCodeBuilder = qrCodeBuilder;
@@ -117,7 +114,7 @@ public class MfaOptionServiceImpl implements MfaOptionService {
         ArgumentValidator.notNull(mfaOptionCreator.getScopeId(), "mfaOptionCreator.scopeId");
         ArgumentValidator.notNull(mfaOptionCreator.getUserId(), "mfaOptionCreator.userId");
         // Check access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.CREDENTIAL, Actions.write, mfaOptionCreator.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.CREDENTIAL, Actions.write, mfaOptionCreator.getScopeId()));
         // Check that the operation is carried by the user itself
         final KapuaSession session = KapuaSecurityUtils.getSession();
         final KapuaId expectedUser = session.getUserId();
@@ -178,9 +175,8 @@ public class MfaOptionServiceImpl implements MfaOptionService {
     }
 
     /**
-     * Generates all the scratch codes.
-     * The number of generated scratch codes is decided through the {@link org.eclipse.kapua.service.authentication.mfa.MfaAuthenticator} service.
-     * The scratch code provided within the scratchCodeCreator parameter is ignored.
+     * Generates all the scratch codes. The number of generated scratch codes is decided through the {@link org.eclipse.kapua.service.authentication.mfa.MfaAuthenticator} service. The scratch code
+     * provided within the scratchCodeCreator parameter is ignored.
      *
      * @return
      * @throws KapuaException
@@ -213,7 +209,7 @@ public class MfaOptionServiceImpl implements MfaOptionService {
         ArgumentValidator.notNull(scopeId, KapuaEntityAttributes.SCOPE_ID);
         ArgumentValidator.notNull(mfaOptionId, "mfaOptionId");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.CREDENTIAL, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.CREDENTIAL, Actions.read, scopeId));
 
         return txManager.execute(tx -> mfaOptionRepository.find(tx, scopeId, mfaOptionId))
                 .map(this::clearSecuritySensibleFields)
@@ -221,7 +217,7 @@ public class MfaOptionServiceImpl implements MfaOptionService {
     }
 
     private MfaOption clearSecuritySensibleFields(MfaOption mfaOption) {
-// Set the mfa secret key to null before returning the mfaOption, because they should never be seen again
+        // Set the mfa secret key to null before returning the mfaOption, because they should never be seen again
         mfaOption.setMfaSecretKey(null);
         mfaOption.setTrustKey(null);
         mfaOption.setScratchCodes(null);
@@ -234,11 +230,11 @@ public class MfaOptionServiceImpl implements MfaOptionService {
         // Argument Validation
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.CREDENTIAL, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.CREDENTIAL, Actions.read, query.getScopeId()));
 
         final MfaOptionListResult res = txManager.execute(tx -> mfaOptionRepository.query(tx, query));
         if (res.isEmpty() == false) {
-            final MfaOptionListResultImpl cleanedRes = new MfaOptionListResultImpl();
+            final MfaOptionListResult cleanedRes = new MfaOptionListResult();
             cleanedRes.setLimitExceeded(res.isLimitExceeded());
             cleanedRes.setTotalCount(res.getTotalCount());
             cleanedRes.addItems(res.getItems()
@@ -255,7 +251,7 @@ public class MfaOptionServiceImpl implements MfaOptionService {
         // Argument Validation
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.CREDENTIAL, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.CREDENTIAL, Actions.read, query.getScopeId()));
 
         return txManager.execute(tx -> mfaOptionRepository.count(tx, query));
     }
@@ -266,7 +262,7 @@ public class MfaOptionServiceImpl implements MfaOptionService {
         ArgumentValidator.notNull(mfaOptionId, "mfaOptionId");
         ArgumentValidator.notNull(scopeId, "scopeId");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.CREDENTIAL, Actions.delete, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.CREDENTIAL, Actions.delete, scopeId));
 
         txManager.execute(tx -> mfaOptionRepository.delete(tx, scopeId, mfaOptionId));
     }
@@ -277,7 +273,7 @@ public class MfaOptionServiceImpl implements MfaOptionService {
         ArgumentValidator.notNull(scopeId, "scopeId");
         ArgumentValidator.notNull(userId, "userId");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.CREDENTIAL, Actions.delete, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.CREDENTIAL, Actions.delete, scopeId));
 
         txManager.execute(tx -> mfaOptionRepository
                 .findByUserId(tx, scopeId, userId)
@@ -395,7 +391,7 @@ public class MfaOptionServiceImpl implements MfaOptionService {
         ArgumentValidator.notNull(scopeId, KapuaEntityAttributes.SCOPE_ID);
         ArgumentValidator.notNull(userId, MfaOptionAttributes.USER_ID);
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.CREDENTIAL, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.CREDENTIAL, Actions.read, scopeId));
 
         return txManager.execute(tx -> mfaOptionRepository.findByUserId(tx, scopeId, userId))
                 .map(this::clearSecuritySensibleFields)
@@ -408,8 +404,8 @@ public class MfaOptionServiceImpl implements MfaOptionService {
         ArgumentValidator.notNull(scopeId, "scopeId");
         ArgumentValidator.notNull(userId, "userId");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.CREDENTIAL, Actions.read, scopeId));
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.CREDENTIAL, Actions.write, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.CREDENTIAL, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.CREDENTIAL, Actions.write, scopeId));
 
         return txManager.execute(tx -> {
             // Checking existence
@@ -438,7 +434,7 @@ public class MfaOptionServiceImpl implements MfaOptionService {
         // Argument Validation
         ArgumentValidator.notNull(mfaOptionId, "mfaOptionId");
         ArgumentValidator.notNull(scopeId, "scopeId");
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.CREDENTIAL, Actions.write, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.CREDENTIAL, Actions.write, scopeId));
         txManager.execute(tx -> {
             // extracting the MfaOption
             MfaOption mfaOption = mfaOptionRepository.find(tx, scopeId, mfaOptionId)
@@ -471,7 +467,6 @@ public class MfaOptionServiceImpl implements MfaOptionService {
         return mfaOptionRepository.update(tx, mfaOption);
     }
 
-
     /**
      * Generate the trust key string.
      *
@@ -483,13 +478,17 @@ public class MfaOptionServiceImpl implements MfaOptionService {
     }
 
     /**
-     * Produce a QR code in base64 format for the authenticator app.
-     * This QR code generator follows the spec detailed here for the URI format: https://github.com/google/google-authenticator/wiki/Key-Uri-Format
+     * Produce a QR code in base64 format for the authenticator app. This QR code generator follows the spec detailed here for the URI format:
+     * https://github.com/google/google-authenticator/wiki/Key-Uri-Format
      *
-     * @param organizationName the organization name to be used as issuer in the QR code
-     * @param accountName      the account name of the account to which the user belongs
-     * @param username         the username
-     * @param key              the Mfa secret key in plain text
+     * @param organizationName
+     *         the organization name to be used as issuer in the QR code
+     * @param accountName
+     *         the account name of the account to which the user belongs
+     * @param username
+     *         the username
+     * @param key
+     *         the Mfa secret key in plain text
      * @return the QR code image in base64 format
      * @since 1.3.0
      */

@@ -34,11 +34,10 @@ import org.eclipse.kapua.app.api.core.model.ScopeId;
 import org.eclipse.kapua.app.api.core.model.StorableEntityId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
 import org.eclipse.kapua.service.KapuaService;
-import org.eclipse.kapua.service.datastore.ClientInfoFactory;
 import org.eclipse.kapua.service.datastore.ClientInfoRegistryService;
-import org.eclipse.kapua.service.datastore.internal.mediator.ClientInfoField;
 import org.eclipse.kapua.service.datastore.model.ClientInfo;
 import org.eclipse.kapua.service.datastore.model.ClientInfoListResult;
+import org.eclipse.kapua.service.datastore.model.query.ClientInfoField;
 import org.eclipse.kapua.service.datastore.model.query.ClientInfoQuery;
 import org.eclipse.kapua.service.datastore.model.query.predicate.DatastorePredicateFactory;
 import org.eclipse.kapua.service.storable.model.query.predicate.AndPredicate;
@@ -52,8 +51,6 @@ public class DataClients extends AbstractKapuaResource {
 
     @Inject
     public ClientInfoRegistryService clientInfoRegistryService;
-    @Inject
-    public ClientInfoFactory clientInfoFactory;
     @Inject
     public DatastorePredicateFactory datastorePredicateFactory;
 
@@ -94,7 +91,7 @@ public class DataClients extends AbstractKapuaResource {
             andPredicate.addPredicate(orPredicate);
         }
 
-        ClientInfoQuery query = clientInfoFactory.newQuery(scopeId);
+        ClientInfoQuery query = new ClientInfoQuery(scopeId);
 
         query.setPredicate(andPredicate);
 

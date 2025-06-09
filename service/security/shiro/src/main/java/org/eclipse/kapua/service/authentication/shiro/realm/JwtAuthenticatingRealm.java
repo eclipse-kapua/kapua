@@ -13,7 +13,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.shiro.realm;
 
-import com.google.common.base.Strings;
+import javax.json.JsonObject;
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.ShiroException;
 import org.apache.shiro.authc.AuthenticationException;
@@ -44,7 +45,7 @@ import org.jose4j.jwt.consumer.JwtContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.json.JsonObject;
+import com.google.common.base.Strings;
 
 /**
  * {@link ApiKeyCredentials} based {@link AuthenticatingRealm} implementation.
@@ -193,9 +194,11 @@ public class JwtAuthenticatingRealm extends KapuaAuthenticatingRealm implements 
     /**
      * Extract the subject information
      *
-     * @param jwt the token to use
+     * @param jwt
+     *         the token to use
      * @return the subject, never returns {@code null}
-     * @throws ShiroException in case the subject could not be extracted
+     * @throws ShiroException
+     *         in case the subject could not be extracted
      * @since 1.0.0
      */
     private String extractExternalId(String jwt) {
@@ -217,7 +220,8 @@ public class JwtAuthenticatingRealm extends KapuaAuthenticatingRealm implements 
     /**
      * Extract the external username information
      *
-     * @param jwt the token to use.
+     * @param jwt
+     *         the token to use.
      * @return the external username.
      * @since 2.0.0
      */
@@ -236,7 +240,8 @@ public class JwtAuthenticatingRealm extends KapuaAuthenticatingRealm implements 
     /**
      * Extract the external username
      *
-     * @param userInfo the userInfo to use.
+     * @param userInfo
+     *         the userInfo to use.
      * @return the external username.
      * @since 2.0.0
      */
@@ -257,12 +262,13 @@ public class JwtAuthenticatingRealm extends KapuaAuthenticatingRealm implements 
     /**
      * Tries to resolve {@link User#getExternalUsername()} using the {@link OpenIDService#getUserInfo(String)} resource.
      *
-     * @param jwtCredentials The {@link JwtCredentials}.
+     * @param jwtCredentials
+     *         The {@link JwtCredentials}.
      * @return The updated user.
      * @throws KapuaException
      * @since 2.0.0
      */
-    private User resolveExternalUsernameWithOpenIdProvider(JwtCredentials jwtCredentials) throws KapuaException {
+    private User resolveExternalUsernameWithOpenIdProvider(JwtCredentialsImpl jwtCredentials) throws KapuaException {
 
         // Ask the OpenID Provider the user's info
         JsonObject userInfo = openIDService.getUserInfo(jwtCredentials.getAccessToken());
@@ -290,7 +296,8 @@ public class JwtAuthenticatingRealm extends KapuaAuthenticatingRealm implements 
     /**
      * Updates the given {@link User}.
      *
-     * @param user The user to update.
+     * @param user
+     *         The user to update.
      * @return The updated user.
      * @throws KapuaException
      * @since 2.0.0

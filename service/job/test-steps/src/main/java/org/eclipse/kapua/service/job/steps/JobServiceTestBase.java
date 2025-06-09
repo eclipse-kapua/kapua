@@ -18,7 +18,6 @@ import org.eclipse.kapua.qa.common.StepData;
 import org.eclipse.kapua.qa.common.TestBase;
 import org.eclipse.kapua.service.job.Job;
 import org.eclipse.kapua.service.job.JobAttributes;
-import org.eclipse.kapua.service.job.JobFactory;
 import org.eclipse.kapua.service.job.JobQuery;
 import org.eclipse.kapua.service.job.JobService;
 
@@ -55,19 +54,16 @@ public class JobServiceTestBase extends TestBase {
 
     private JobService jobService;
 
-    private JobFactory jobFactory;
-
     protected JobServiceTestBase(StepData stepData) {
         super(stepData);
 
         KapuaLocator locator = KapuaLocator.getInstance();
 
         jobService = locator.getService(JobService.class);
-        jobFactory = locator.getFactory(JobFactory.class);
     }
 
     public Job findJob(String jobName) throws Exception {
-        JobQuery jobQuery = jobFactory.newQuery(getCurrentScopeId());
+        JobQuery jobQuery = new JobQuery(getCurrentScopeId());
         jobQuery.setPredicate(
                 jobQuery.attributePredicate(JobAttributes.NAME, jobName)
         );

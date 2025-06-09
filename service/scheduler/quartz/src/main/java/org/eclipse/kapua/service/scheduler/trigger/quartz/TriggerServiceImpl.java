@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 
@@ -31,7 +32,7 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.scheduler.exception.TriggerInvalidDatesException;
 import org.eclipse.kapua.service.scheduler.exception.TriggerInvalidSchedulingException;
 import org.eclipse.kapua.service.scheduler.quartz.driver.QuartzTriggerDriver;
@@ -76,7 +77,6 @@ public class TriggerServiceImpl implements TriggerService {
     private TriggerDefinition cronJobTriggerDefinition;
 
     private final AuthorizationService authorizationService;
-    private final PermissionFactory permissionFactory;
     private final TxManager txManager;
     private final TriggerRepository triggerRepository;
     private final TriggerFactory triggerFactory;
@@ -85,14 +85,12 @@ public class TriggerServiceImpl implements TriggerService {
 
     public TriggerServiceImpl(
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             TxManager txManager,
             TriggerRepository triggerRepository,
             TriggerFactory triggerFactory,
             TriggerDefinitionRepository triggerDefinitionRepository,
             TriggerDefinitionFactory triggerDefinitionFactory) {
         this.authorizationService = authorizationService;
-        this.permissionFactory = permissionFactory;
         this.txManager = txManager;
         this.triggerRepository = triggerRepository;
         this.triggerFactory = triggerFactory;
@@ -109,7 +107,7 @@ public class TriggerServiceImpl implements TriggerService {
         ArgumentValidator.notNull(triggerCreator.getStartsOn(), "triggerCreator.startsOn");
 
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.SCHEDULER, Actions.write, triggerCreator.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.SCHEDULER, Actions.write, triggerCreator.getScopeId()));
 
         // Convert creator to new model.
         // To be removed after removing of TriggerCreator.cronScheduling and TriggerCreator.retryInterval
@@ -122,7 +120,8 @@ public class TriggerServiceImpl implements TriggerService {
             TriggerDefinition triggerDefinition = triggerDefinitionRepository.find(tx, KapuaId.ANY, triggerCreator.getTriggerDefinitionId())
                     .orElseThrow(() -> new KapuaEntityNotFoundException(TriggerDefinition.TYPE, triggerCreator.getTriggerDefinitionId()));
 
-            final Map<String, TriggerProperty> triggerDefinitionPropertiesByName = triggerDefinition.getTriggerProperties().stream().collect(Collectors.toMap(jsdp -> jsdp.getName(), Function.identity()));
+            final Map<String, TriggerProperty> triggerDefinitionPropertiesByName = triggerDefinition.getTriggerProperties().stream()
+                    .collect(Collectors.toMap(jsdp -> jsdp.getName(), Function.identity()));
             for (TriggerProperty jsp : triggerCreator.getTriggerProperties()) {
                 final TriggerProperty jsdp = triggerDefinitionPropertiesByName.get(jsp.getName());
                 if (jsdp == null) {
@@ -196,7 +195,7 @@ public class TriggerServiceImpl implements TriggerService {
         ArgumentValidator.validateEntityName(trigger.getName(), "trigger.name");
 
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.SCHEDULER, Actions.write, trigger.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.SCHEDULER, Actions.write, trigger.getScopeId()));
 
         return txManager.execute(tx -> {
             // Check existence
@@ -276,7 +275,7 @@ public class TriggerServiceImpl implements TriggerService {
         ArgumentValidator.notNull(triggerId, "scopeId");
         ArgumentValidator.notNull(scopeId, "triggerId");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.SCHEDULER, Actions.delete, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.SCHEDULER, Actions.delete, scopeId));
 
         // Do delete
         QuartzTriggerDriver.deleteTrigger(txManager.execute(tx -> {
@@ -291,7 +290,7 @@ public class TriggerServiceImpl implements TriggerService {
         ArgumentValidator.notNull(triggerId, "triggerId");
 
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.SCHEDULER, Actions.read, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.SCHEDULER, Actions.read, scopeId));
 
         // Do find
         return txManager.execute(tx -> {
@@ -308,11 +307,11 @@ public class TriggerServiceImpl implements TriggerService {
         // Argument validation
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.SCHEDULER, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.SCHEDULER, Actions.read, query.getScopeId()));
         return txManager.execute(tx -> {
             // Do query
             TriggerListResult triggers = triggerRepository.query(tx, query);
-            final TriggerListResult res = triggerFactory.newListResult();
+            final TriggerListResult res = new TriggerListResult();
             for (Trigger trigger : triggers.getItems()) {
                 res.addItem(adaptTrigger(tx, trigger));
             }
@@ -327,7 +326,7 @@ public class TriggerServiceImpl implements TriggerService {
         ArgumentValidator.notNull(scopeId, "scopeId");
         ArgumentValidator.notNull(jobId, "jobId");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.SCHEDULER, Actions.delete, scopeId));
+        authorizationService.checkPermission(new Permission(Domains.SCHEDULER, Actions.delete, scopeId));
         txManager.execute(tx -> {
             triggerRepository.deleteAllByJobId(tx, scopeId, jobId);
             return null;
@@ -339,7 +338,7 @@ public class TriggerServiceImpl implements TriggerService {
         // Argument validation
         ArgumentValidator.notNull(query, "query");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.SCHEDULER, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(new Permission(Domains.SCHEDULER, Actions.read, query.getScopeId()));
         // Do count
         return txManager.execute(tx -> triggerRepository.count(tx, query));
     }
@@ -349,7 +348,8 @@ public class TriggerServiceImpl implements TriggerService {
      * Gets the {@link TriggerDefinition} named 'Interval Job'
      *
      * @return he {@link TriggerDefinition} named 'Interval Job'
-     * @throws KapuaException In case is not found.
+     * @throws KapuaException
+     *         In case is not found.
      * @since 1.1.0
      */
     private synchronized TriggerDefinition getIntervalJobTriggerDefinition() throws KapuaException {
@@ -364,7 +364,8 @@ public class TriggerServiceImpl implements TriggerService {
      * Gets the {@link TriggerDefinition} named 'Cron Job'
      *
      * @return he {@link TriggerDefinition} named 'Cron Job'
-     * @throws KapuaException In case is not found.
+     * @throws KapuaException
+     *         In case is not found.
      * @since 1.1.0
      */
     private synchronized TriggerDefinition getCronJobTriggerDefinition() throws KapuaException {
@@ -378,9 +379,11 @@ public class TriggerServiceImpl implements TriggerService {
     /**
      * Gets the {@link TriggerDefinition} by the given name.
      *
-     * @param triggerDefinitionName The {@link TriggerDefinition#getName()} to look for.
+     * @param triggerDefinitionName
+     *         The {@link TriggerDefinition#getName()} to look for.
      * @return The {@link TriggerDefinition} by the given name.
-     * @throws KapuaException In case nothing is found.
+     * @throws KapuaException
+     *         In case nothing is found.
      * @since 1.1.0
      */
     private synchronized TriggerDefinition getTriggerDefinition(String triggerDefinitionName) throws KapuaException {
@@ -390,11 +393,12 @@ public class TriggerServiceImpl implements TriggerService {
     }
 
     /**
-     * Adapts {@link TriggerCreator#getRetryInterval()} and {@link TriggerCreator#getCronScheduling()}  to the new model
-     * which make use of {@link TriggerDefinition}s
+     * Adapts {@link TriggerCreator#getRetryInterval()} and {@link TriggerCreator#getCronScheduling()}  to the new model which make use of {@link TriggerDefinition}s
      *
-     * @param triggerCreator The {@link TriggerCreator} to adapt.
-     * @throws KapuaException In case that {@link TriggerDefinition} is not found.
+     * @param triggerCreator
+     *         The {@link TriggerCreator} to adapt.
+     * @throws KapuaException
+     *         In case that {@link TriggerDefinition} is not found.
      * @since 1.1.0
      */
     private void adaptTriggerCreator(TriggerCreator triggerCreator) throws KapuaException {
@@ -408,12 +412,13 @@ public class TriggerServiceImpl implements TriggerService {
     }
 
     /**
-     * Adapts {@link Trigger#getRetryInterval()} and {@link Trigger#getCronScheduling()} to the new model
-     * which make use of {@link TriggerDefinition}s
+     * Adapts {@link Trigger#getRetryInterval()} and {@link Trigger#getCronScheduling()} to the new model which make use of {@link TriggerDefinition}s
      *
-     * @param trigger The {@link Trigger} to adapt.
+     * @param trigger
+     *         The {@link Trigger} to adapt.
      * @return
-     * @throws KapuaException In case that {@link TriggerDefinition} is not found.
+     * @throws KapuaException
+     *         In case that {@link TriggerDefinition} is not found.
      * @since 1.1.0
      */
     private @NotNull Trigger adaptTrigger(TxContext tx, @NotNull Trigger trigger) throws KapuaException {

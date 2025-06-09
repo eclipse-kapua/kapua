@@ -12,9 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.job.server;
 
-import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
-import com.extjs.gxt.ui.client.data.PagingLoadConfig;
-import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.kapua.KapuaErrorCodes;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
@@ -31,23 +33,20 @@ import org.eclipse.kapua.app.console.module.job.shared.util.KapuaGwtJobModelConv
 import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceAttributes;
-import org.eclipse.kapua.service.device.registry.DeviceFactory;
 import org.eclipse.kapua.service.device.registry.DeviceListResult;
 import org.eclipse.kapua.service.device.registry.DeviceQuery;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.job.targets.JobTarget;
 import org.eclipse.kapua.service.job.targets.JobTargetCreator;
-import org.eclipse.kapua.service.job.targets.JobTargetFactory;
 import org.eclipse.kapua.service.job.targets.JobTargetListResult;
-import org.eclipse.kapua.service.job.targets.JobTargetQuery;
 import org.eclipse.kapua.service.job.targets.JobTargetService;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
+import com.extjs.gxt.ui.client.data.PagingLoadResult;
 
 public class GwtJobTargetServiceImpl extends KapuaRemoteServiceServlet implements GwtJobTargetService {
 
@@ -58,10 +57,8 @@ public class GwtJobTargetServiceImpl extends KapuaRemoteServiceServlet implement
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
 
     private static final JobTargetService JOB_TARGET_SERVICE = LOCATOR.getService(JobTargetService.class);
-    private static final JobTargetFactory JOB_TARGET_FACTORY = LOCATOR.getFactory(JobTargetFactory.class);
 
     private static final DeviceRegistryService DEVICE_REGISTRY_SERVICE = LOCATOR.getService(DeviceRegistryService.class);
-    private static final DeviceFactory DEVICE_FACTORY = LOCATOR.getFactory(DeviceFactory.class);
 
     @Override
     public PagingLoadResult<GwtJobTarget> query(PagingLoadConfig loadConfig, GwtJobTargetQuery gwtJobTargetQuery) throws GwtKapuaException {
@@ -70,7 +67,7 @@ public class GwtJobTargetServiceImpl extends KapuaRemoteServiceServlet implement
         List<GwtJobTarget> gwtJobTargetList = new ArrayList<GwtJobTarget>();
         try {
             // Convert from GWT entity
-            JobTargetQuery jobTargetQuery = GwtKapuaJobModelConverter.convertJobTargetQuery(gwtJobTargetQuery, loadConfig);
+            KapuaQuery jobTargetQuery = GwtKapuaJobModelConverter.convertJobTargetQuery(gwtJobTargetQuery, loadConfig);
 
             // query
             JobTargetListResult jobTargetList = JOB_TARGET_SERVICE.query(jobTargetQuery);
@@ -83,7 +80,7 @@ public class GwtJobTargetServiceImpl extends KapuaRemoteServiceServlet implement
 
             //TODO: #LAYER_VIOLATION - manual device lookup
 
-            DeviceQuery query = DEVICE_FACTORY.newQuery(jobTargetQuery.getScopeId());
+            DeviceQuery query = new DeviceQuery(jobTargetQuery.getScopeId());
             query.setPredicate(query.attributePredicate(DeviceAttributes.ENTITY_ID, deviceIds));
             DeviceListResult deviceListResult = DEVICE_REGISTRY_SERVICE.query(query);
 
@@ -146,7 +143,7 @@ public class GwtJobTargetServiceImpl extends KapuaRemoteServiceServlet implement
                     devices.add(device);
                 }
                 KapuaId creatorScopeId = KapuaEid.parseCompactId(gwtJobTargetCreator.getScopeId());
-                JobTargetCreator jobTargetCreator = JOB_TARGET_FACTORY.newCreator(creatorScopeId);
+                JobTargetCreator jobTargetCreator = new JobTargetCreator(creatorScopeId);
                 jobTargetCreator.setJobId(GwtKapuaCommonsModelConverter.convertKapuaId(gwtJobTargetCreator.getJobId()));
                 jobTargetCreator.setJobTargetId(GwtKapuaCommonsModelConverter.convertKapuaId(gwtJobTargetCreator.getJobTargetId()));
 
@@ -192,8 +189,10 @@ public class GwtJobTargetServiceImpl extends KapuaRemoteServiceServlet implement
     /**
      * For each item query clientId by its foreign key and insert it into existing list.
      *
-     * @param gwtJobTarget existing target that is updated
-     * @param device       existing device
+     * @param gwtJobTarget
+     *         existing target that is updated
+     * @param device
+     *         existing device
      * @throws KapuaException
      */
     private void insertClientId(GwtJobTarget gwtJobTarget, Device device) {

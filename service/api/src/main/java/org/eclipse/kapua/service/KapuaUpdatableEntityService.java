@@ -12,24 +12,26 @@
  *******************************************************************************/
 package org.eclipse.kapua.service;
 
+import javax.validation.constraints.NotNull;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.model.KapuaEntity;
 import org.eclipse.kapua.model.KapuaUpdatableEntity;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * Base {@code interface} for all {@link KapuaService}s that are managing {@link KapuaUpdatableEntity}es.
  *
- * @param <E> Type of the {@link KapuaEntity} being managed.
+ * @param <E>
+ *         Type of the {@link KapuaEntity} being managed.
  * @since 1.0
  */
-public interface KapuaUpdatableEntityService<E extends KapuaUpdatableEntity> extends KapuaService {
+public interface KapuaUpdatableEntityService<E> extends KapuaService {
 
     /**
      * Updates the given {@link KapuaUpdatableEntity}.
      *
-     * @param entity The {@link KapuaUpdatableEntity}.
+     * @param entity
+     *         The {@link KapuaUpdatableEntity}.
      * @return The updated {@link KapuaUpdatableEntity}.
      * @throws KapuaException
      * @since 1.0.0

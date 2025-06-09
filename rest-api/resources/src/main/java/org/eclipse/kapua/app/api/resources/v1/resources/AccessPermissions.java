@@ -12,25 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.resources.v1.resources;
 
-import com.google.common.base.Strings;
-import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.app.api.core.model.CountResult;
-import org.eclipse.kapua.app.api.core.model.EntityId;
-import org.eclipse.kapua.app.api.core.model.ScopeId;
-import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
-import org.eclipse.kapua.model.KapuaEntityAttributes;
-import org.eclipse.kapua.model.query.SortOrder;
-import org.eclipse.kapua.model.query.predicate.AndPredicate;
-import org.eclipse.kapua.service.KapuaService;
-import org.eclipse.kapua.service.authorization.access.AccessInfo;
-import org.eclipse.kapua.service.authorization.access.AccessPermission;
-import org.eclipse.kapua.service.authorization.access.AccessPermissionAttributes;
-import org.eclipse.kapua.service.authorization.access.AccessPermissionCreator;
-import org.eclipse.kapua.service.authorization.access.AccessPermissionFactory;
-import org.eclipse.kapua.service.authorization.access.AccessPermissionListResult;
-import org.eclipse.kapua.service.authorization.access.AccessPermissionQuery;
-import org.eclipse.kapua.service.authorization.access.AccessPermissionService;
-
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -44,6 +25,25 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.app.api.core.model.CountResult;
+import org.eclipse.kapua.app.api.core.model.EntityId;
+import org.eclipse.kapua.app.api.core.model.ScopeId;
+import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
+import org.eclipse.kapua.model.KapuaEntityAttributes;
+import org.eclipse.kapua.model.query.KapuaQuery;
+import org.eclipse.kapua.model.query.SortOrder;
+import org.eclipse.kapua.model.query.predicate.AndPredicate;
+import org.eclipse.kapua.service.KapuaService;
+import org.eclipse.kapua.service.authorization.access.AccessInfo;
+import org.eclipse.kapua.service.authorization.access.AccessPermission;
+import org.eclipse.kapua.service.authorization.access.AccessPermissionAttributes;
+import org.eclipse.kapua.service.authorization.access.AccessPermissionCreator;
+import org.eclipse.kapua.service.authorization.access.AccessPermissionListResult;
+import org.eclipse.kapua.service.authorization.access.AccessPermissionService;
+
+import com.google.common.base.Strings;
+
 /**
  * {@link AccessPermission} REST API resource.
  *
@@ -54,24 +54,29 @@ public class AccessPermissions extends AbstractKapuaResource {
 
     @Inject
     public AccessPermissionService accessPermissionService;
-    @Inject
-    public AccessPermissionFactory accessPermissionFactory;
 
     /**
      * Gets the {@link AccessPermission} list in the scope.
      *
-     * @param scopeId      The {@link ScopeId} in which to search results.
-     * @param accessInfoId The optional {@link AccessInfo} id to filter results.
-     * @param offset       The result set offset.
-     * @param limit        The result set limit.
-     * @param sortParam    The name of the parameter that will be used as a sorting key
-     * @param sortDir      The sort direction. Can be ASCENDING (default), DESCENDING. Case-insensitive.
+     * @param scopeId
+     *         The {@link ScopeId} in which to search results.
+     * @param accessInfoId
+     *         The optional {@link AccessInfo} id to filter results.
+     * @param offset
+     *         The result set offset.
+     * @param limit
+     *         The result set limit.
+     * @param sortParam
+     *         The name of the parameter that will be used as a sorting key
+     * @param sortDir
+     *         The sort direction. Can be ASCENDING (default), DESCENDING. Case-insensitive.
      * @return The {@link AccessPermissionListResult} of all the {@link AccessPermission}s associated to the current selected scope.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @GET
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public AccessPermissionListResult simpleQuery(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("accessInfoId") EntityId accessInfoId,
@@ -80,7 +85,7 @@ public class AccessPermissions extends AbstractKapuaResource {
             @QueryParam("sortDir") @DefaultValue("ASCENDING") SortOrder sortDir,
             @QueryParam("offset") @DefaultValue("0") int offset,
             @QueryParam("limit") @DefaultValue("50") int limit) throws KapuaException {
-        AccessPermissionQuery query = accessPermissionFactory.newQuery(scopeId);
+        KapuaQuery query = new KapuaQuery(scopeId);
 
         query.setPredicate(query.attributePredicate(AccessPermissionAttributes.ACCESS_INFO_ID, accessInfoId));
         if (!Strings.isNullOrEmpty(sortParam)) {
@@ -95,23 +100,27 @@ public class AccessPermissions extends AbstractKapuaResource {
     }
 
     /**
-     * Queries the {@link AccessPermission}s with the given {@link AccessPermissionQuery} parameter.
+     * Queries the {@link AccessPermission}s with the given {@link KapuaQuery} parameter.
      *
-     * @param scopeId      The {@link ScopeId} in which to search results.
-     * @param accessInfoId The {@link AccessInfo} id in which to search results.
-     * @param query        The {@link AccessPermissionQuery} to use to filter results.
-     * @return The {@link AccessPermissionListResult} of all the result matching the given {@link AccessPermissionQuery} parameter.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @param scopeId
+     *         The {@link ScopeId} in which to search results.
+     * @param accessInfoId
+     *         The {@link AccessInfo} id in which to search results.
+     * @param query
+     *         The {@link KapuaQuery} to use to filter results.
+     * @return The {@link AccessPermissionListResult} of all the result matching the given {@link KapuaQuery} parameter.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @POST
     @Path("_query")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public AccessPermissionListResult query(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("accessInfoId") EntityId accessInfoId,
-            AccessPermissionQuery query) throws KapuaException {
+            KapuaQuery query) throws KapuaException {
 
         query.setScopeId(scopeId);
 
@@ -121,23 +130,27 @@ public class AccessPermissions extends AbstractKapuaResource {
     }
 
     /**
-     * Counts the {@link AccessPermission}s with the given {@link AccessPermissionQuery} parameter.
+     * Counts the {@link AccessPermission}s with the given {@link KapuaQuery} parameter.
      *
-     * @param scopeId      The {@link ScopeId} in which to count results.
-     * @param accessInfoId The {@link AccessInfo} id in which to count results.
-     * @param query        The {@link AccessPermissionQuery} to use to filter count results.
-     * @return The count of all the result matching the given {@link AccessPermissionQuery} parameter.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @param scopeId
+     *         The {@link ScopeId} in which to count results.
+     * @param accessInfoId
+     *         The {@link AccessInfo} id in which to count results.
+     * @param query
+     *         The {@link KapuaQuery} to use to filter count results.
+     * @return The count of all the result matching the given {@link KapuaQuery} parameter.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @POST
     @Path("_count")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public CountResult count(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("accessInfoId") EntityId accessInfoId,
-            AccessPermissionQuery query) throws KapuaException {
+            KapuaQuery query) throws KapuaException {
         query.setScopeId(scopeId);
 
         query.setPredicate(query.attributePredicate(AccessPermissionAttributes.ACCESS_INFO_ID, accessInfoId));
@@ -146,19 +159,22 @@ public class AccessPermissions extends AbstractKapuaResource {
     }
 
     /**
-     * Creates a new {@link AccessPermission} based on the information provided in {@link AccessPermissionCreator}
-     * parameter.
+     * Creates a new {@link AccessPermission} based on the information provided in {@link AccessPermissionCreator} parameter.
      *
-     * @param scopeId                 The {@link ScopeId} in which to create the AccessPermission.
-     * @param accessInfoId            The {@link AccessInfo} id in which to create the AccessPermission.
-     * @param accessPermissionCreator Provides the information for the new {@link AccessPermission} to be created.
+     * @param scopeId
+     *         The {@link ScopeId} in which to create the AccessPermission.
+     * @param accessInfoId
+     *         The {@link AccessInfo} id in which to create the AccessPermission.
+     * @param accessPermissionCreator
+     *         Provides the information for the new {@link AccessPermission} to be created.
      * @return The newly created {@link AccessPermission} object.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @POST
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public Response create(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("accessInfoId") EntityId accessInfoId,
@@ -172,21 +188,25 @@ public class AccessPermissions extends AbstractKapuaResource {
     /**
      * Returns the AccessPermission specified by the "accessPermissionId" path parameter.
      *
-     * @param scopeId            The {@link ScopeId} of the requested {@link AccessPermission}.
-     * @param accessInfoId       The {@link AccessInfo} id of the requested {@link AccessPermission}.
-     * @param accessPermissionId The id of the requested AccessPermission.
+     * @param scopeId
+     *         The {@link ScopeId} of the requested {@link AccessPermission}.
+     * @param accessInfoId
+     *         The {@link AccessInfo} id of the requested {@link AccessPermission}.
+     * @param accessPermissionId
+     *         The id of the requested AccessPermission.
      * @return The requested AccessPermission object.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @GET
     @Path("{accessPermissionId}")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public AccessPermission find(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("accessInfoId") EntityId accessInfoId,
             @PathParam("accessPermissionId") EntityId accessPermissionId) throws KapuaException {
-        AccessPermissionQuery query = accessPermissionFactory.newQuery(scopeId);
+        final KapuaQuery query = new KapuaQuery(scopeId);
 
         AndPredicate andPredicate = query.andPredicate(
                 query.attributePredicate(AccessPermissionAttributes.ACCESS_INFO_ID, accessInfoId),
@@ -205,11 +225,15 @@ public class AccessPermissions extends AbstractKapuaResource {
     /**
      * Deletes the {@link AccessPermission} specified by the "accessPermissionId" path parameter.
      *
-     * @param scopeId            The {@link ScopeId} of the {@link AccessPermission} to delete.
-     * @param accessInfoId       The {@link AccessInfo} id of the {@link AccessPermission} to delete.
-     * @param accessPermissionId The id of the AccessPermission to be deleted.
+     * @param scopeId
+     *         The {@link ScopeId} of the {@link AccessPermission} to delete.
+     * @param accessInfoId
+     *         The {@link AccessInfo} id of the {@link AccessPermission} to delete.
+     * @param accessPermissionId
+     *         The id of the AccessPermission to be deleted.
      * @return HTTP 200 if operation has completed successfully.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @DELETE

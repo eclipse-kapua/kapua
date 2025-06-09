@@ -21,8 +21,9 @@ import org.eclipse.kapua.service.authorization.role.RoleRepository;
 public class RoleImplJpaRepository
         extends KapuaNamedEntityJpaRepository<Role, RoleImpl, RoleListResult>
         implements RoleRepository {
+
     public RoleImplJpaRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig) {
-        super(RoleImpl.class, Role.TYPE, () -> new RoleListResultImpl(), jpaRepoConfig);
+        super(RoleImpl.class, Role.TYPE, () -> new RoleListResult(), jpaRepoConfig);
     }
 
 }

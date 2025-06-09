@@ -12,10 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.integration.misc;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
+import java.util.Date;
+
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.shiro.PermissionImpl;
 import org.eclipse.kapua.service.authorization.role.RolePermission;
 import org.eclipse.kapua.service.authorization.role.shiro.RolePermissionImpl;
 import org.junit.Assert;
@@ -23,11 +26,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
-import java.util.Date;
-
 
 @Category(JUnitTests.class)
 public class RolePermissionImplTest {
@@ -40,9 +38,9 @@ public class RolePermissionImplTest {
 
     @Before
     public void initialize() {
-        scopeIds = new KapuaId[]{null, KapuaId.ONE};
-        permission1 = Mockito.mock(Permission.class);
-        permission2 = Mockito.mock(PermissionImpl.class);
+        scopeIds = new KapuaId[] { null, KapuaId.ONE };
+        permission1 = new Permission(null, null, null);
+        permission2 = new Permission(null, null, null);
         rolePermissionImpl1 = new RolePermissionImpl(KapuaId.ONE);
         rolePermissionImpl2 = new RolePermissionImpl(KapuaId.ANY);
         rolePermission = Mockito.mock(RolePermission.class);
@@ -69,7 +67,7 @@ public class RolePermissionImplTest {
         for (KapuaId scopeId : scopeIds) {
             RolePermissionImpl rolePermissionImpl = new RolePermissionImpl(scopeId);
             Assert.assertEquals("Expected and actual values should be the same.", scopeId, rolePermissionImpl.getScopeId());
-            Assert.assertEquals("Expected and actual values should be the same.", new PermissionImpl(null, null, null, null), rolePermissionImpl.getPermission());
+            Assert.assertEquals("Expected and actual values should be the same.", new Permission(null, null, null), rolePermissionImpl.getPermission());
             Assert.assertNull("Null expected.", rolePermissionImpl.getRoleId());
         }
     }
@@ -89,7 +87,7 @@ public class RolePermissionImplTest {
         for (KapuaId scopeId : scopeIds) {
             RolePermissionImpl rolePermissionImpl = new RolePermissionImpl(scopeId, null);
             Assert.assertEquals("Expected and actual values should be the same.", scopeId, rolePermissionImpl.getScopeId());
-            Assert.assertEquals("Expected and actual values should be the same.", new PermissionImpl(null, null, null, null), rolePermissionImpl.getPermission());
+            Assert.assertEquals("Expected and actual values should be the same.", new Permission(null, null, null), rolePermissionImpl.getPermission());
         }
     }
 
@@ -112,7 +110,7 @@ public class RolePermissionImplTest {
 
     @Test
     public void setAndGetRoleIdTest() {
-        KapuaId[] roleIds = {null, KapuaId.ONE};
+        KapuaId[] roleIds = { null, KapuaId.ONE };
 
         RolePermissionImpl rolePermissionImpl1 = new RolePermissionImpl(KapuaId.ONE);
         RolePermissionImpl rolePermissionImpl2 = new RolePermissionImpl(KapuaId.ANY, permission2);
@@ -135,8 +133,8 @@ public class RolePermissionImplTest {
         RolePermissionImpl rolePermissionImpl1 = new RolePermissionImpl(KapuaId.ONE);
         RolePermissionImpl rolePermissionImpl2 = new RolePermissionImpl(KapuaId.ANY, permission2);
         RolePermissionImpl rolePermissionImpl3 = new RolePermissionImpl(rolePermission);
-        Permission[] permissions = {null, permission1, permission2};
-        Permission[] expectedPermissions = {new PermissionImpl(null, null, null, null), new PermissionImpl(null, null, null, null), permission2};
+        Permission[] permissions = { null, permission1, permission2 };
+        Permission[] expectedPermissions = { new Permission(null, null, null), new Permission(null, null, null), permission2 };
 
         for (int i = 0; i < permissions.length; i++) {
             rolePermissionImpl1.setPermission(permissions[i]);

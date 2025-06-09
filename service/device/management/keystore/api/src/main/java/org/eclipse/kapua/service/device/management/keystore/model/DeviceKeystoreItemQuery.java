@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.keystore.model;
 
-import org.eclipse.kapua.KapuaSerializable;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -21,18 +19,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import org.eclipse.kapua.KapuaSerializable;
+
+import com.google.common.base.Strings;
+
 /**
  * {@link DeviceKeystoreItemQuery} definition.
  * <p>
- * Is used to filter result from the keystore.
- * Only one of the filter can be used at a time.
+ * Is used to filter result from the keystore. Only one of the filter can be used at a time.
  *
  * @since 1.5.0
  */
 @XmlRootElement(name = "deviceKeystoreItemQuery")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DeviceKeystoreXmlRegistry.class, factoryMethod = "newDeviceKeystoreItemQuery")
-public interface DeviceKeystoreItemQuery extends KapuaSerializable {
+@XmlType
+public class DeviceKeystoreItemQuery implements KapuaSerializable {
+
+    private String keystoreId;
+    private String alias;
 
     /**
      * Gets the keystore id.
@@ -41,15 +45,20 @@ public interface DeviceKeystoreItemQuery extends KapuaSerializable {
      * @since 1.5.0
      */
     @XmlElement(name = "keystoreId")
-    String getKeystoreId();
+    public String getKeystoreId() {
+        return keystoreId;
+    }
 
     /**
      * Sets the keystore id.
      *
-     * @param keystoreId The keystore id.
+     * @param keystoreId
+     *         The keystore id.
      * @since 1.5.0
      */
-    void setKeystoreId(String keystoreId);
+    public void setKeystoreId(String keystoreId) {
+        this.keystoreId = keystoreId;
+    }
 
     /**
      * Gets the alias.
@@ -58,15 +67,20 @@ public interface DeviceKeystoreItemQuery extends KapuaSerializable {
      * @since 1.5.0
      */
     @XmlElement(name = "alias")
-    String getAlias();
+    public String getAlias() {
+        return alias;
+    }
 
     /**
      * Sets the alias.
      *
-     * @param alias The alias.
+     * @param alias
+     *         The alias.
      * @since 1.5.0
      */
-    void setAlias(String alias);
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
 
     /**
      * Gets whether or not there is a filter specified.
@@ -75,5 +89,8 @@ public interface DeviceKeystoreItemQuery extends KapuaSerializable {
      * @since 1.5.0
      */
     @XmlTransient
-    boolean hasFilters();
+    public boolean hasFilters() {
+        return !Strings.isNullOrEmpty(getKeystoreId()) ||
+                !Strings.isNullOrEmpty(getAlias());
+    }
 }

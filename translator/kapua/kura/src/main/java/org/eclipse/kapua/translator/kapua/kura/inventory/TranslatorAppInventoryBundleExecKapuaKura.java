@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.translator.kapua.kura.inventory;
 
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.service.device.call.kura.model.inventory.InventoryMetrics;
 import org.eclipse.kapua.service.device.call.kura.model.inventory.bundles.KuraInventoryBundle;
@@ -20,7 +22,6 @@ import org.eclipse.kapua.service.device.call.message.kura.app.request.KuraReques
 import org.eclipse.kapua.service.device.call.message.kura.app.request.KuraRequestPayload;
 import org.eclipse.kapua.service.device.management.commons.setting.DeviceManagementSetting;
 import org.eclipse.kapua.service.device.management.commons.setting.DeviceManagementSettingKey;
-import org.eclipse.kapua.service.device.management.inventory.DeviceInventoryManagementFactory;
 import org.eclipse.kapua.service.device.management.inventory.internal.message.InventoryBundleExecRequestMessage;
 import org.eclipse.kapua.service.device.management.inventory.internal.message.InventoryRequestChannel;
 import org.eclipse.kapua.service.device.management.inventory.internal.message.InventoryRequestPayload;
@@ -31,8 +32,6 @@ import org.eclipse.kapua.translator.exception.InvalidPayloadException;
 import org.eclipse.kapua.translator.kapua.kura.AbstractTranslatorKapuaKura;
 import org.eclipse.kapua.translator.kapua.kura.TranslatorKapuaKuraUtils;
 
-import javax.inject.Inject;
-
 /**
  * {@link Translator} implementation from {@link InventoryBundleExecRequestMessage} to {@link KuraRequestMessage}
  *
@@ -41,12 +40,9 @@ import javax.inject.Inject;
 public class TranslatorAppInventoryBundleExecKapuaKura extends AbstractTranslatorKapuaKura<InventoryRequestChannel, InventoryRequestPayload, InventoryBundleExecRequestMessage> {
 
     private final String charEncoding;
-    private final DeviceInventoryManagementFactory deviceInventoryManagementFactory;
 
     @Inject
-    public TranslatorAppInventoryBundleExecKapuaKura(DeviceManagementSetting deviceManagementSetting,
-                                                     DeviceInventoryManagementFactory deviceInventoryManagementFactory) {
-        this.deviceInventoryManagementFactory = deviceInventoryManagementFactory;
+    public TranslatorAppInventoryBundleExecKapuaKura(DeviceManagementSetting deviceManagementSetting) {
         charEncoding = deviceManagementSetting.getString(DeviceManagementSettingKey.CHAR_ENCODING);
     }
 
@@ -56,14 +52,14 @@ public class TranslatorAppInventoryBundleExecKapuaKura extends AbstractTranslato
             KuraRequestChannel kuraRequestChannel = TranslatorKapuaKuraUtils.buildBaseRequestChannel(InventoryMetrics.APP_ID, InventoryMetrics.APP_VERSION, inventoryRequestChannel.getMethod());
 
             switch (inventoryRequestChannel.getBundleAction()) {
-                case START:
-                    kuraRequestChannel.setResources(new String[]{inventoryRequestChannel.getResource(), "_start"});
-                    break;
-                case STOP:
-                    kuraRequestChannel.setResources(new String[]{inventoryRequestChannel.getResource(), "_stop"});
-                    break;
-                default:
-                    throw new KapuaIllegalArgumentException("inventoryRequestChannel.bundleAction", inventoryRequestChannel.getBundleAction().name());
+            case START:
+                kuraRequestChannel.setResources(new String[] { inventoryRequestChannel.getResource(), "_start" });
+                break;
+            case STOP:
+                kuraRequestChannel.setResources(new String[] { inventoryRequestChannel.getResource(), "_stop" });
+                break;
+            default:
+                throw new KapuaIllegalArgumentException("inventoryRequestChannel.bundleAction", inventoryRequestChannel.getBundleAction().name());
             }
 
             // Return Kura Channel
@@ -79,7 +75,7 @@ public class TranslatorAppInventoryBundleExecKapuaKura extends AbstractTranslato
             KuraRequestPayload kuraRequestPayload = new KuraRequestPayload();
 
             if (inventoryRequestPayload.hasBody()) {
-                DeviceInventoryBundle deviceInventoryBundle = inventoryRequestPayload.getDeviceInventoryBundle().orElse(deviceInventoryManagementFactory.newDeviceInventoryBundle());
+                DeviceInventoryBundle deviceInventoryBundle = inventoryRequestPayload.getDeviceInventoryBundle().orElse(new DeviceInventoryBundle());
 
                 KuraInventoryBundle kuraInventoryBundle = new KuraInventoryBundle();
                 kuraInventoryBundle.setId(Integer.valueOf(deviceInventoryBundle.getId()));

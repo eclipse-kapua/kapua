@@ -12,6 +12,16 @@
  *******************************************************************************/
 package org.eclipse.kapua.integration.service.datastoreJunit;
 
+import java.text.ParseException;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.id.KapuaEid;
@@ -19,23 +29,20 @@ import org.eclipse.kapua.commons.util.KapuaDateUtils;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.message.device.data.KapuaDataChannel;
 import org.eclipse.kapua.message.device.data.KapuaDataMessage;
-import org.eclipse.kapua.message.device.data.KapuaDataMessageFactory;
 import org.eclipse.kapua.message.device.data.KapuaDataPayload;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountService;
-import org.eclipse.kapua.service.datastore.MessageStoreFactory;
 import org.eclipse.kapua.service.datastore.MessageStoreService;
 import org.eclipse.kapua.service.datastore.internal.MessageStoreFacade;
 import org.eclipse.kapua.service.datastore.internal.mediator.DatastoreException;
-import org.eclipse.kapua.service.datastore.internal.mediator.MessageField;
-import org.eclipse.kapua.service.datastore.internal.schema.MessageSchema;
+import org.eclipse.kapua.service.datastore.model.query.MessageField;
 import org.eclipse.kapua.service.datastore.model.query.MessageQuery;
+import org.eclipse.kapua.service.datastore.model.query.MessageSchema;
 import org.eclipse.kapua.service.datastore.model.query.predicate.DatastorePredicateFactory;
 import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceCreator;
-import org.eclipse.kapua.service.device.registry.DeviceFactory;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientProvider;
 import org.eclipse.kapua.service.elasticsearch.client.exception.ClientException;
@@ -52,16 +59,6 @@ import org.junit.experimental.categories.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.ParseException;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 @Category(JUnitTests.class)
 public class MessageStoreServiceSslTest extends AbstractMessageStoreServiceTest {
 
@@ -70,23 +67,20 @@ public class MessageStoreServiceSslTest extends AbstractMessageStoreServiceTest 
     private final KapuaLocator locator = KapuaLocator.getInstance();
 
     private final DeviceRegistryService deviceRegistryService = locator.getService(DeviceRegistryService.class);
-    private final DeviceFactory deviceFactory = locator.getFactory(DeviceFactory.class);
 
     private final DatastorePredicateFactory datastorePredicateFactory = locator.getFactory(DatastorePredicateFactory.class);
     private final MessageStoreService messageStoreService = locator.getService(MessageStoreService.class);
     private final MessageStoreFacade messageStoreFacade = locator.getComponent(MessageStoreFacade.class);
-    private final MessageStoreFactory messageStoreFactory = locator.getFactory(MessageStoreFactory.class);
-    private final KapuaDataMessageFactory dataMessageFactory = locator.getFactory(KapuaDataMessageFactory.class);
     private final ElasticsearchClientProvider elasticsearchClientProvider = locator.getComponent(ElasticsearchClientProvider.class);
 
     /**
      * This method deletes all indices of the current ES instance
      * <p>
-     * The method deletes all indices and resets the Kapua internal singleton state.
-     * This is required to ensure that each unit test, as it currently expects, starts with an empty ES setup
+     * The method deletes all indices and resets the Kapua internal singleton state. This is required to ensure that each unit test, as it currently expects, starts with an empty ES setup
      * </p>
      *
-     * @throws Exception any case anything goes wrong
+     * @throws Exception
+     *         any case anything goes wrong
      */
     // @Before
     // public void deleteAllIndices() throws Exception {
@@ -192,7 +186,7 @@ public class MessageStoreServiceSslTest extends AbstractMessageStoreServiceTest 
         Account account = getTestAccountCreator(adminScopeId);
 
         String clientId = String.format("device-%d", new Date().getTime());
-        DeviceCreator deviceCreator = deviceFactory.newCreator(account.getId(), clientId);
+        DeviceCreator deviceCreator = new DeviceCreator(account.getId(), clientId);
         Device device = deviceRegistryService.create(deviceCreator);
 
         // leave the message index by as default (DEVICE_TIMESTAMP)
@@ -214,7 +208,7 @@ public class MessageStoreServiceSslTest extends AbstractMessageStoreServiceTest 
     }
 
     private KapuaDataMessage insertMessage(Account account, String clientId, KapuaId deviceId, String semanticTopic, byte[] payload, Date sentOn) throws InterruptedException, KapuaException {
-        KapuaDataPayload messagePayload = dataMessageFactory.newKapuaDataPayload();
+        KapuaDataPayload messagePayload = new KapuaDataPayload();
         Map<String, Object> metrics = new HashMap<>();
         metrics.put("float", new Float((float) 0.01));
         messagePayload.setMetrics(metrics);
@@ -255,11 +249,11 @@ public class MessageStoreServiceSslTest extends AbstractMessageStoreServiceTest 
      * @return
      */
     private KapuaDataMessage createMessage(String clientId, KapuaId scopeId, KapuaId deviceId, Date receivedOn, Date capturedOn, Date sentOn) {
-        KapuaDataMessage message = dataMessageFactory.newKapuaDataMessage();
+        KapuaDataMessage message = new KapuaDataMessage();
         message.setReceivedOn(receivedOn);
         message.setCapturedOn(capturedOn);
         message.setSentOn(sentOn);
-        message.setChannel(dataMessageFactory.newKapuaDataChannel());
+        message.setChannel(new KapuaDataChannel());
         message.setClientId(clientId);
         message.setDeviceId(deviceId);
         message.setScopeId(scopeId);
@@ -273,7 +267,7 @@ public class MessageStoreServiceSslTest extends AbstractMessageStoreServiceTest 
      * @param semanticPart
      */
     private void setChannel(KapuaDataMessage message, String semanticPart) {
-        KapuaDataChannel channel = dataMessageFactory.newKapuaDataChannel();
+        KapuaDataChannel channel = new KapuaDataChannel();
         channel.setSemanticParts(new ArrayList<>(Arrays.asList(semanticPart.split("/"))));
 
         message.setChannel(channel);
@@ -296,7 +290,7 @@ public class MessageStoreServiceSslTest extends AbstractMessageStoreServiceTest 
      * @return
      */
     private MessageQuery getBaseMessageQuery(KapuaId scopeId, int limit) {
-        MessageQuery query = messageStoreFactory.newQuery(scopeId);
+        MessageQuery query = new MessageQuery(scopeId);
 
         query.setAskTotalCount(true);
         query.setFetchStyle(StorableFetchStyle.SOURCE_FULL);

@@ -21,7 +21,8 @@ import org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperat
 public class JobDeviceManagementOperationImplJpaRepository
         extends KapuaUpdatableEntityJpaRepository<JobDeviceManagementOperation, JobDeviceManagementOperationImpl, JobDeviceManagementOperationListResult>
         implements JobDeviceManagementOperationRepository {
+
     public JobDeviceManagementOperationImplJpaRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig) {
-        super(JobDeviceManagementOperationImpl.class, JobDeviceManagementOperation.TYPE, () -> new JobDeviceManagementOperationListResultImpl(), jpaRepoConfig);
+        super(JobDeviceManagementOperationImpl.class, JobDeviceManagementOperation.TYPE, () -> new JobDeviceManagementOperationListResult(), jpaRepoConfig);
     }
 }

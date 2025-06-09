@@ -42,6 +42,7 @@ import org.eclipse.kapua.job.engine.queue.QueuedJobExecutionFactory;
 import org.eclipse.kapua.job.engine.queue.QueuedJobExecutionService;
 import org.eclipse.kapua.job.engine.queue.QueuedJobExecutionStatus;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.model.query.SortOrder;
 import org.eclipse.kapua.model.query.predicate.AttributePredicate;
 import org.eclipse.kapua.service.job.Job;
@@ -56,7 +57,6 @@ import org.eclipse.kapua.service.job.targets.JobTarget;
 import org.eclipse.kapua.service.job.targets.JobTargetAttributes;
 import org.eclipse.kapua.service.job.targets.JobTargetFactory;
 import org.eclipse.kapua.service.job.targets.JobTargetListResult;
-import org.eclipse.kapua.service.job.targets.JobTargetQuery;
 import org.eclipse.kapua.service.job.targets.JobTargetService;
 import org.eclipse.kapua.service.job.targets.JobTargetStatus;
 import org.slf4j.Logger;
@@ -288,14 +288,14 @@ public class KapuaJobListener extends AbstractJobListener implements JobListener
         Properties jobExecutionProperties = new Properties();
         jobExecutionProperties.put(JBATCH_EXECUTION_ID, Long.toString(jBatchExecutionId));
 
-        JobExecutionCreator jobExecutionCreator = jobExecutionFactory.newCreator(scopeId);
+        JobExecutionCreator jobExecutionCreator = new JobExecutionCreator(scopeId);
 
         jobExecutionCreator.setJobId(jobId);
         jobExecutionCreator.setStartedOn(new Date());
         jobExecutionCreator.setEntityAttributes(jobExecutionProperties);
 
         if (jobTargetSublist.isEmpty()) {
-            JobTargetQuery jobTargetQuery = jobTargetFactory.newQuery(scopeId);
+            KapuaQuery jobTargetQuery = new KapuaQuery(scopeId);
 
             jobTargetQuery.setPredicate(
                     jobTargetQuery.andPredicate(
@@ -348,7 +348,7 @@ public class KapuaJobListener extends AbstractJobListener implements JobListener
         List<Long> runningExecutionsIds = BatchRuntime.getJobOperator().getRunningExecutions(jobName);
         if (runningExecutionsIds.size() > 1) {
 
-            JobExecutionQuery jobExecutionQuery = jobExecutionFactory.newQuery(scopeId);
+            JobExecutionQuery jobExecutionQuery = new JobExecutionQuery(scopeId);
 
             jobExecutionQuery.setPredicate(
                     jobExecutionQuery.andPredicate(
@@ -387,7 +387,7 @@ public class KapuaJobListener extends AbstractJobListener implements JobListener
      */
     private QueuedJobExecution enqueueJobExecution(KapuaId scopeId, KapuaId jobId, KapuaId jobExecutionId, KapuaId runningJobExecutionId) throws KapuaException {
 
-        QueuedJobExecutionCreator queuedJobExecutionCreator = queuedJobExecutionFactory.newCreator(scopeId);
+        QueuedJobExecutionCreator queuedJobExecutionCreator = new QueuedJobExecutionCreator(scopeId);
         queuedJobExecutionCreator.setJobId(jobId);
         queuedJobExecutionCreator.setJobExecutionId(jobExecutionId);
         queuedJobExecutionCreator.setWaitForJobExecutionId(runningJobExecutionId);

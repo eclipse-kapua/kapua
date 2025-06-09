@@ -17,5 +17,19 @@ package org.eclipse.kapua.message.device.lifecycle;
  *
  * @since 1.0.0
  */
-public interface KapuaBirthMessage extends KapuaLifecycleMessage<KapuaBirthChannel, KapuaBirthPayload> {
+public class KapuaBirthMessage extends KapuaLifecycleMessage<KapuaBirthChannel, KapuaBirthPayload> {
+
+    private static final long serialVersionUID = 1L;
+
+    private String clientId;
+
+    @Override
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    @Override
+    public String getClientId() {
+        return clientId;
+    }
 }

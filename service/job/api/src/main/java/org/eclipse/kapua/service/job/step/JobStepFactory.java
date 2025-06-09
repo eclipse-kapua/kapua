@@ -21,14 +21,17 @@ import org.eclipse.kapua.service.job.step.definition.JobStepProperty;
  * @see org.eclipse.kapua.model.KapuaEntityFactory
  * @since 1.0.0
  */
-public interface JobStepFactory extends KapuaEntityFactory<JobStep, JobStepCreator, JobStepQuery, JobStepListResult> {
+public interface JobStepFactory extends KapuaEntityFactory<JobStep> {
 
     /**
      * Instantiates a new {@link JobStepProperty}.
      *
-     * @param name          The name to set into the {@link JobStepProperty}.
-     * @param propertyType  The type to set into the {@link JobStepProperty}.
-     * @param propertyValue The value to set into the {@link JobStepProperty}.
+     * @param name
+     *         The name to set into the {@link JobStepProperty}.
+     * @param propertyType
+     *         The type to set into the {@link JobStepProperty}.
+     * @param propertyValue
+     *         The value to set into the {@link JobStepProperty}.
      * @return The newly instantiated {@link JobStepProperty}
      * @since 1.0.0
      */

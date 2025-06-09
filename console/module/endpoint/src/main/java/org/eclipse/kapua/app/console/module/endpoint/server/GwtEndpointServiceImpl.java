@@ -12,11 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.endpoint.server;
 
-import com.extjs.gxt.ui.client.data.BaseListLoadResult;
-import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
-import com.extjs.gxt.ui.client.data.ListLoadResult;
-import com.extjs.gxt.ui.client.data.PagingLoadConfig;
-import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.server.KapuaRemoteServiceServlet;
@@ -37,23 +40,20 @@ import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.endpoint.EndpointInfo;
 import org.eclipse.kapua.service.endpoint.EndpointInfoCreator;
-import org.eclipse.kapua.service.endpoint.EndpointInfoFactory;
 import org.eclipse.kapua.service.endpoint.EndpointInfoListResult;
 import org.eclipse.kapua.service.endpoint.EndpointInfoQuery;
 import org.eclipse.kapua.service.endpoint.EndpointInfoService;
 import org.eclipse.kapua.service.endpoint.EndpointUsage;
 import org.eclipse.kapua.service.user.User;
-import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserListResult;
+import org.eclipse.kapua.service.user.UserQuery;
 import org.eclipse.kapua.service.user.UserService;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
+import com.extjs.gxt.ui.client.data.BaseListLoadResult;
+import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
+import com.extjs.gxt.ui.client.data.ListLoadResult;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
+import com.extjs.gxt.ui.client.data.PagingLoadResult;
 
 public class GwtEndpointServiceImpl extends KapuaRemoteServiceServlet implements GwtEndpointService {
 
@@ -62,10 +62,8 @@ public class GwtEndpointServiceImpl extends KapuaRemoteServiceServlet implements
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
 
     private static final EndpointInfoService ENDPOINT_INFO_SERVICE = LOCATOR.getService(EndpointInfoService.class);
-    private static final EndpointInfoFactory ENDPOINT_INFO_FACTORY = LOCATOR.getFactory(EndpointInfoFactory.class);
 
     private static final UserService USER_SERVICE = LOCATOR.getService(UserService.class);
-    private static final UserFactory USER_FACTORY = LOCATOR.getFactory(UserFactory.class);
 
     private static final String ENDPOINT_INFO = "endpointInfo";
     private static final String ENTITY_INFO = "entityInfo";
@@ -77,7 +75,7 @@ public class GwtEndpointServiceImpl extends KapuaRemoteServiceServlet implements
         try {
             KapuaId scopeId = KapuaEid.parseCompactId(gwtEndpointCreator.getScopeId());
 
-            EndpointInfoCreator endpointCreator = ENDPOINT_INFO_FACTORY.newCreator(scopeId);
+            EndpointInfoCreator endpointCreator = new EndpointInfoCreator(scopeId);
             endpointCreator.setSchema(gwtEndpointCreator.getSchema());
             endpointCreator.setDns(gwtEndpointCreator.getDns());
             endpointCreator.setPort(gwtEndpointCreator.getPort().intValue());
@@ -153,7 +151,7 @@ public class GwtEndpointServiceImpl extends KapuaRemoteServiceServlet implements
 
                     @Override
                     public UserListResult call() throws Exception {
-                        return USER_SERVICE.query(USER_FACTORY.newQuery(null));
+                        return USER_SERVICE.query(new UserQuery(null));
                     }
                 });
 
@@ -205,7 +203,7 @@ public class GwtEndpointServiceImpl extends KapuaRemoteServiceServlet implements
 
                     @Override
                     public UserListResult call() throws Exception {
-                        return USER_SERVICE.query(USER_FACTORY.newQuery(null));
+                        return USER_SERVICE.query(new UserQuery(null));
                     }
                 });
 
@@ -244,7 +242,7 @@ public class GwtEndpointServiceImpl extends KapuaRemoteServiceServlet implements
         List<GwtEndpoint> endpointList = new ArrayList<GwtEndpoint>();
 
         try {
-            EndpointInfoQuery query = ENDPOINT_INFO_FACTORY.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(scopeId));
+            EndpointInfoQuery query = new EndpointInfoQuery(GwtKapuaCommonsModelConverter.convertKapuaId(scopeId));
             EndpointInfoListResult result = ENDPOINT_INFO_SERVICE.query(query);
 
             for (EndpointInfo endpoint : result.getItems()) {

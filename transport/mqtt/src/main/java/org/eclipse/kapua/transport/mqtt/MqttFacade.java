@@ -12,6 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.transport.mqtt;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.validation.constraints.NotNull;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.kapua.transport.TransportFacade;
 import org.eclipse.kapua.transport.exception.TransportClientGetException;
@@ -26,10 +31,6 @@ import org.eclipse.kapua.transport.mqtt.exception.MqttClientSubscribeException;
 import org.eclipse.kapua.transport.mqtt.pooling.MqttClientPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Implementation of {@link TransportFacade} API for MQTT transport facade.
@@ -55,7 +56,8 @@ public class MqttFacade implements TransportFacade<MqttTopic, MqttPayload, MqttM
     /**
      * Initializes a {@link MqttFacade} to be used to send requests to devices.
      *
-     * @throws TransportClientGetException When {@link MqttClient} is not available for the given node URI.
+     * @throws TransportClientGetException
+     *         When {@link MqttClient} is not available for the given node URI.
      * @since 1.0.0
      */
     public MqttFacade(@NotNull String nodeUri) throws TransportException {
@@ -63,7 +65,7 @@ public class MqttFacade implements TransportFacade<MqttTopic, MqttPayload, MqttM
         // Get the client form the pool
         try {
             MqttClientPool perBrokerMqttClientPool = MqttClientPool.getInstance(nodeUri);
-            Long maxBorrowTimeout = maxBorrowTimeout = perBrokerMqttClientPool.getMaxWaitMillis();
+            Long maxBorrowTimeout = perBrokerMqttClientPool.getMaxWaitMillis();
 
             long borrowTimerStart = System.nanoTime();
             borrowedClient = perBrokerMqttClientPool.borrowObject();
@@ -108,12 +110,15 @@ public class MqttFacade implements TransportFacade<MqttTopic, MqttPayload, MqttM
      * According to the parameters given, it will make a sync or async request.
      * </p>
      *
-     * @param mqttMessage The request to send.
-     * @param responses   The container in which load responses received from the device
-     * @param timeout     The timeout of waiting the response from the device.
-     *                    If {@code null} request will be fired without waiting for the response.
-     *                    If mqttMessage has no response message set, timeout will be ignore even if set.
-     * @throws TransportSendException if sending the request produces any error.
+     * @param mqttMessage
+     *         The request to send.
+     * @param responses
+     *         The container in which load responses received from the device
+     * @param timeout
+     *         The timeout of waiting the response from the device. If {@code null} request will be fired without waiting for the response. If mqttMessage has no response message set, timeout will be
+     *         ignore even if set.
+     * @throws TransportSendException
+     *         if sending the request produces any error.
      * @see MqttMessage#getResponseTopic()
      * @since 1.0.0
      */
@@ -162,8 +167,10 @@ public class MqttFacade implements TransportFacade<MqttTopic, MqttPayload, MqttM
     /**
      * Publish the given {@link MqttMessage} using the {@link MqttClient}.
      *
-     * @param mqttMessage The {@link MqttMessage} to publish.
-     * @throws TransportSendException if error occurs while publishing the given {@link MqttMessage}
+     * @param mqttMessage
+     *         The {@link MqttMessage} to publish.
+     * @throws TransportSendException
+     *         if error occurs while publishing the given {@link MqttMessage}
      * @since 1.1.0
      */
     private void publishMessage(@NotNull MqttMessage mqttMessage) throws TransportSendException {
@@ -177,11 +184,15 @@ public class MqttFacade implements TransportFacade<MqttTopic, MqttPayload, MqttM
     /**
      * Subscribe to response topic and adds the response messages to the given {@code responses} container.
      *
-     * @param responseTopic The {@link MqttTopic} to subscribe to receive the response.
-     * @param responses     The container of the received responses
+     * @param responseTopic
+     *         The {@link MqttTopic} to subscribe to receive the response.
+     * @param responses
+     *         The container of the received responses
      * @return The {@link MqttResponseCallback} which handles the received responses.
-     * @throws MqttClientCallbackSetException if {@link MqttClient#setCallback(MqttResponseCallback)} fails.
-     * @throws MqttClientSubscribeException   if the {@link MqttClient#subscribe(MqttTopic)} fails.
+     * @throws MqttClientCallbackSetException
+     *         if {@link MqttClient#setCallback(MqttResponseCallback)} fails.
+     * @throws MqttClientSubscribeException
+     *         if the {@link MqttClient#subscribe(MqttTopic)} fails.
      * @since 1.1.0
      */
     private MqttResponseCallback subscribeToResponse(MqttTopic responseTopic, List<MqttMessage> responses) throws MqttClientCallbackSetException, MqttClientSubscribeException {
@@ -195,8 +206,10 @@ public class MqttFacade implements TransportFacade<MqttTopic, MqttPayload, MqttM
     /**
      * Waits for the response.
      *
-     * @param timeout            The timeout time of waiting the message response.
-     * @param mqttClientCallback The {@link MqttResponseCallback} which handles the received responses.
+     * @param timeout
+     *         The timeout time of waiting the message response.
+     * @param mqttClientCallback
+     *         The {@link MqttResponseCallback} which handles the received responses.
      * @since 1.1.0
      */
     private void waitResponse(long timeout, MqttResponseCallback mqttClientCallback) {

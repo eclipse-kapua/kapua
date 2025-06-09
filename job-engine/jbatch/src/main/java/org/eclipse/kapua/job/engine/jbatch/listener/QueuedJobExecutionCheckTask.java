@@ -12,8 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.job.engine.jbatch.listener;
 
-import org.eclipse.kapua.commons.model.query.predicate.AndPredicateImpl;
-import org.eclipse.kapua.commons.model.query.predicate.AttributePredicateImpl;
+import java.util.TimerTask;
+
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.job.engine.JobEngineService;
 import org.eclipse.kapua.job.engine.jbatch.setting.JobEngineSetting;
@@ -22,14 +22,14 @@ import org.eclipse.kapua.job.engine.queue.QueuedJobExecution;
 import org.eclipse.kapua.job.engine.queue.QueuedJobExecutionAttributes;
 import org.eclipse.kapua.job.engine.queue.QueuedJobExecutionFactory;
 import org.eclipse.kapua.job.engine.queue.QueuedJobExecutionListResult;
-import org.eclipse.kapua.job.engine.queue.QueuedJobExecutionQuery;
 import org.eclipse.kapua.job.engine.queue.QueuedJobExecutionService;
 import org.eclipse.kapua.job.engine.queue.QueuedJobExecutionStatus;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
+import org.eclipse.kapua.model.query.predicate.AndPredicate;
+import org.eclipse.kapua.model.query.predicate.AttributePredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.TimerTask;
 
 public class QueuedJobExecutionCheckTask extends TimerTask {
 
@@ -64,12 +64,12 @@ public class QueuedJobExecutionCheckTask extends TimerTask {
         LOG.info("Checking Job Execution queue for: {}...", jobExecutionId);
 
         try {
-            QueuedJobExecutionQuery query = queuedJobExecutionFactory.newQuery(scopeId);
+            KapuaQuery query = new KapuaQuery(scopeId);
 
             query.setPredicate(
-                    new AndPredicateImpl(
-                            new AttributePredicateImpl<>(QueuedJobExecutionAttributes.JOB_ID, jobId),
-                            new AttributePredicateImpl<>(QueuedJobExecutionAttributes.WAIT_FOR_JOB_EXECUTION_ID, jobExecutionId)
+                    new AndPredicate(
+                            new AttributePredicate<>(QueuedJobExecutionAttributes.JOB_ID, jobId),
+                            new AttributePredicate<>(QueuedJobExecutionAttributes.WAIT_FOR_JOB_EXECUTION_ID, jobExecutionId)
                     )
             );
 

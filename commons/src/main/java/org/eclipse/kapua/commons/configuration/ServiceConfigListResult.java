@@ -18,7 +18,9 @@ import org.eclipse.kapua.model.query.KapuaListResult;
  * Service configuration result list definition.
  *
  * @since 1.0
- *
  */
-public interface ServiceConfigListResult extends KapuaListResult<ServiceConfig> {
+public class ServiceConfigListResult extends KapuaListResult<ServiceConfig> {
+
+    private static final long serialVersionUID = -2550359084026132096L;
+
 }

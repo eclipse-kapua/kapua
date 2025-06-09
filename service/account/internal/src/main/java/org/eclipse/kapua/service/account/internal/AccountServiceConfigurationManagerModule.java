@@ -29,7 +29,6 @@ import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.util.xml.XmlUtil;
-import org.eclipse.kapua.service.account.AccountFactory;
 import org.eclipse.kapua.service.account.AccountRepository;
 import org.eclipse.kapua.service.account.AccountService;
 
@@ -54,7 +53,6 @@ public class AccountServiceConfigurationManagerModule extends AbstractKapuaModul
     @Singleton
     ServiceConfigurationManager accountServiceConfigurationManager(
             KapuaJpaTxManagerFactory txManagerFactory,
-            AccountFactory factory,
             RootUserTester rootUserTester,
             AccountRelativeFinder accountRelativeFinder,
             AccountRepository accountRepository,
@@ -74,7 +72,6 @@ public class AccountServiceConfigurationManagerModule extends AbstractKapuaModul
                         rootUserTester,
                         accountRelativeFinder,
                         new UsedEntitiesCounterImpl(
-                                factory,
                                 accountRepository),
                         new ResourceBasedServiceConfigurationMetadataProvider(xmlUtil)
                 ));

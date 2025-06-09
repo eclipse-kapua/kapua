@@ -19,7 +19,9 @@ import org.eclipse.kapua.message.KapuaChannel;
  *
  * @since 1.1.0
  */
-public interface KapuaLifecycleChannel extends KapuaChannel {
+public abstract class KapuaLifecycleChannel extends KapuaChannel {
+
+    private String clientId;
 
     /**
      * Gets client id
@@ -27,13 +29,19 @@ public interface KapuaLifecycleChannel extends KapuaChannel {
      * @return The client id
      * @since 1.1.0
      */
-    String getClientId();
+    public String getClientId() {
+        return clientId;
+    }
 
     /**
      * Sets client id
      *
-     * @param clientId The client id
+     * @param clientId
+     *         The client id
      * @since 1.1.0
      */
-    void setClientId(String clientId);
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
 }

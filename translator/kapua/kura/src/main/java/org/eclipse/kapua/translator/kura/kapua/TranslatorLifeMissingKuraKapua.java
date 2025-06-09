@@ -12,13 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.translator.kura.kapua;
 
+import javax.inject.Inject;
+
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.message.device.lifecycle.KapuaMissingChannel;
 import org.eclipse.kapua.message.device.lifecycle.KapuaMissingMessage;
 import org.eclipse.kapua.message.device.lifecycle.KapuaMissingPayload;
-import org.eclipse.kapua.message.internal.device.lifecycle.KapuaMissingChannelImpl;
-import org.eclipse.kapua.message.internal.device.lifecycle.KapuaMissingMessageImpl;
-import org.eclipse.kapua.message.internal.device.lifecycle.KapuaMissingPayloadImpl;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.device.call.message.kura.lifecycle.KuraMissingChannel;
@@ -31,8 +30,6 @@ import org.eclipse.kapua.translator.exception.InvalidChannelException;
 import org.eclipse.kapua.translator.exception.InvalidMessageException;
 import org.eclipse.kapua.translator.exception.InvalidPayloadException;
 import org.eclipse.kapua.translator.exception.TranslateException;
-
-import javax.inject.Inject;
 
 /**
  * {@link Translator} implementation from {@link KuraMissingMessage} to {@link KapuaMissingMessage}
@@ -51,7 +48,7 @@ public class TranslatorLifeMissingKuraKapua extends Translator<KuraMissingMessag
     @Override
     public KapuaMissingMessage translate(KuraMissingMessage kuraMissingMessage) throws TranslateException {
         try {
-            KapuaMissingMessage kapuaMissingMessage = new KapuaMissingMessageImpl();
+            KapuaMissingMessage kapuaMissingMessage = new KapuaMissingMessage();
             kapuaMissingMessage.setChannel(translate(kuraMissingMessage.getChannel()));
             kapuaMissingMessage.setPayload(translate(kuraMissingMessage.getPayload()));
 
@@ -81,13 +78,13 @@ public class TranslatorLifeMissingKuraKapua extends Translator<KuraMissingMessag
     }
 
     private KapuaMissingChannel translate(KuraMissingChannel kuraMissingChannel) {
-        KapuaMissingChannel kapuaMissingChannel = new KapuaMissingChannelImpl();
+        KapuaMissingChannel kapuaMissingChannel = new KapuaMissingChannel();
         kapuaMissingChannel.setClientId(kuraMissingChannel.getClientId());
         return kapuaMissingChannel;
     }
 
     private KapuaMissingPayload translate(KuraMissingPayload kuraMissingPayload) {
-        KapuaMissingPayload kapuaMissingPayload = new KapuaMissingPayloadImpl();
+        KapuaMissingPayload kapuaMissingPayload = new KapuaMissingPayload();
         kapuaMissingPayload.setBody(kuraMissingPayload.getBody());
         kapuaMissingPayload.setMetrics(kuraMissingPayload.getMetrics());
         return kapuaMissingPayload;

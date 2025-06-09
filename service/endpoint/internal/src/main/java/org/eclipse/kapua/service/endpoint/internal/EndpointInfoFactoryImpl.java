@@ -12,16 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.endpoint.internal;
 
+import javax.inject.Singleton;
+
 import org.eclipse.kapua.KapuaEntityCloneException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.endpoint.EndpointInfo;
-import org.eclipse.kapua.service.endpoint.EndpointInfoCreator;
 import org.eclipse.kapua.service.endpoint.EndpointInfoFactory;
-import org.eclipse.kapua.service.endpoint.EndpointInfoListResult;
-import org.eclipse.kapua.service.endpoint.EndpointInfoQuery;
 import org.eclipse.kapua.service.endpoint.EndpointUsage;
-
-import javax.inject.Singleton;
 
 /**
  * {@link EndpointInfoFactory} implementation.
@@ -34,21 +31,6 @@ public class EndpointInfoFactoryImpl implements EndpointInfoFactory {
     @Override
     public EndpointInfo newEntity(KapuaId scopeId) {
         return new EndpointInfoImpl(scopeId);
-    }
-
-    @Override
-    public EndpointInfoListResult newListResult() {
-        return new EndpointInfoListResultImpl();
-    }
-
-    @Override
-    public EndpointInfoQuery newQuery(KapuaId scopeId) {
-        return new EndpointInfoQueryImpl(scopeId);
-    }
-
-    @Override
-    public EndpointInfoCreator newCreator(KapuaId scopeId) {
-        return new EndpointInfoCreatorImpl(scopeId);
     }
 
     @Override

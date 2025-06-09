@@ -12,21 +12,17 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.role.shiro;
 
+import java.util.Date;
+
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.eclipse.kapua.service.authorization.role.Role;
-import org.eclipse.kapua.service.authorization.role.RoleCreator;
-import org.eclipse.kapua.service.authorization.role.RoleQuery;
-import org.eclipse.kapua.service.authorization.role.RoleListResult;
 import org.eclipse.kapua.service.authorization.role.RolePermission;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
-
-import java.util.Date;
-
 
 @Category(JUnitTests.class)
 public class RoleFactoryImplTest {
@@ -65,36 +61,6 @@ public class RoleFactoryImplTest {
     public void newEntityNullTest() {
         Assert.assertTrue("True expected.", roleFactoryImpl.newEntity(null) instanceof Role);
         Assert.assertNull("Null expected.", roleFactoryImpl.newEntity(null).getScopeId());
-    }
-
-    @Test
-    public void newCreatorTest() {
-        Assert.assertTrue("True expected.", roleFactoryImpl.newCreator(scopeId) instanceof RoleCreator);
-        Assert.assertEquals("Expected and actual values should be the same.", scopeId, roleFactoryImpl.newCreator(scopeId).getScopeId());
-    }
-
-    @Test
-    public void newCreatorNullTest() {
-        Assert.assertTrue("True expected.", roleFactoryImpl.newCreator(null) instanceof RoleCreator);
-        Assert.assertNull("Null expected.", roleFactoryImpl.newCreator(null).getScopeId());
-    }
-
-    @Test
-    public void newQueryTest() {
-        Assert.assertTrue("True expected.", roleFactoryImpl.newQuery(scopeId) instanceof RoleQuery);
-        Assert.assertEquals("Expected and actual values should be the same.", scopeId, roleFactoryImpl.newQuery(scopeId).getScopeId());
-    }
-
-    @Test
-    public void newQueryNullTest() {
-        Assert.assertTrue("True expected.", roleFactoryImpl.newQuery(null) instanceof RoleQuery);
-        Assert.assertNull("Null expected.", roleFactoryImpl.newQuery(null).getScopeId());
-    }
-
-    @Test
-    public void newListResultTest() {
-        Assert.assertTrue("True expected.", roleFactoryImpl.newListResult() instanceof RoleListResult);
-        Assert.assertTrue("True expected.", roleFactoryImpl.newListResult().isEmpty());
     }
 
     @Test

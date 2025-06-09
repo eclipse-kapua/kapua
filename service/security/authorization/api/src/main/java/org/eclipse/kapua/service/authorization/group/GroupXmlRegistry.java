@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.group;
 
-import org.eclipse.kapua.locator.KapuaLocator;
-
 import javax.xml.bind.annotation.XmlRegistry;
+
+import org.eclipse.kapua.locator.KapuaLocator;
 
 @XmlRegistry
 public class GroupXmlRegistry {
@@ -29,35 +29,5 @@ public class GroupXmlRegistry {
      */
     public Group newGroup() {
         return groupFactory.newEntity(null);
-    }
-
-    /**
-     * Creates a new {@link GroupCreator} instance.
-     *
-     * @return The newly created {@link GroupCreator} instance.
-     * @since 1.0.0
-     */
-    public GroupCreator newGroupCreator() {
-        return groupFactory.newCreator(null, null);
-    }
-
-    /**
-     * Creates a new {@link GroupListResult} instance.
-     *
-     * @return The newly created {@link GroupListResult} instance.
-     * @since 1.0.0
-     */
-    public GroupListResult newGroupListResult() {
-        return groupFactory.newListResult();
-    }
-
-    /**
-     * Creates a new {@link GroupQuery} instance.
-     *
-     * @return The newly created {@link GroupQuery} instance.
-     * @since 1.0.0
-     */
-    public GroupQuery newQuery() {
-        return groupFactory.newQuery(null);
     }
 }

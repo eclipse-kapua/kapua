@@ -24,7 +24,6 @@ import org.eclipse.kapua.locator.guice.GuiceLocatorImpl;
 import org.eclipse.kapua.service.authentication.credential.handler.CredentialTypeHandler;
 import org.eclipse.kapua.service.authentication.setting.ServiceAuthenticationSetting;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.camel.application.MetricsCamel;
 import org.eclipse.kapua.service.client.protocol.ProtocolDescriptorProvider;
 import org.eclipse.kapua.service.device.authentication.api.DeviceConnectionCredentialAdapter;
@@ -109,11 +108,6 @@ public class SpringBridge {
     @Bean
     DeviceConnectionFactory deviceConnectionFactory() {
         return KapuaLocator.getInstance().getComponent(DeviceConnectionFactory.class);
-    }
-
-    @Bean
-    PermissionFactory permissionFactory() {
-        return KapuaLocator.getInstance().getComponent(PermissionFactory.class);
     }
 
     @Bean

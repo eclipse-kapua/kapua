@@ -12,13 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.transport.message.jms;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
+import java.util.regex.Pattern;
+
 import org.eclipse.kapua.transport.jms.setting.JmsClientSetting;
 import org.eclipse.kapua.transport.jms.setting.JmsClientSettingKeys;
 import org.eclipse.kapua.transport.message.TransportChannel;
 
-import java.util.regex.Pattern;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 /**
  * Implementation of {@link TransportChannel} API for JMS transport facade
@@ -52,7 +53,8 @@ public class JmsTopic implements TransportChannel {
     /**
      * Construct a {@link JmsTopic} with the given parameter
      *
-     * @param topic The topic to set for this {@link JmsTopic}
+     * @param topic
+     *         The topic to set for this {@link JmsTopic}
      * @since 1.0.0
      */
     public JmsTopic(String topic) {
@@ -62,11 +64,12 @@ public class JmsTopic implements TransportChannel {
     /**
      * Construct a {@link JmsTopic} with the given parameters.
      * <p>
-     * Topic is built by concatenating all {@link String}[] token following the array order,
-     * separating each token with the topic separator configured in {@link JmsClientSetting}.{@link JmsClientSettingKeys#TRANSPORT_TOPIC_SEPARATOR}
+     * Topic is built by concatenating all {@link String}[] token following the array order, separating each token with the topic separator configured in
+     * {@link JmsClientSetting}.{@link JmsClientSettingKeys#TRANSPORT_TOPIC_SEPARATOR}
      * </p>
      *
-     * @param topicParts The {@link String}[] from which build the full topic.
+     * @param topicParts
+     *         The {@link String}[] from which build the full topic.
      * @since 1.0.0
      */
     public JmsTopic(String[] topicParts) {
@@ -89,7 +92,8 @@ public class JmsTopic implements TransportChannel {
     /**
      * Sets the full topic for this {@link JmsTopic}
      *
-     * @param topic The full topic to set for this {@link JmsTopic}
+     * @param topic
+     *         The full topic to set for this {@link JmsTopic}
      * @since 1.0.0
      */
     public void setTopic(String topic) {

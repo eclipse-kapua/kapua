@@ -12,18 +12,17 @@
  *******************************************************************************/
 package org.eclipse.kapua.translator.kura.kapua.keystore;
 
+import javax.inject.Inject;
+
 import org.eclipse.kapua.service.device.call.kura.model.keystore.KuraKeystoreCSR;
 import org.eclipse.kapua.service.device.call.message.kura.app.response.KuraResponsePayload;
 import org.eclipse.kapua.service.device.management.commons.setting.DeviceManagementSetting;
-import org.eclipse.kapua.service.device.management.keystore.DeviceKeystoreManagementFactory;
 import org.eclipse.kapua.service.device.management.keystore.internal.message.response.KeystoreCsrResponseMessage;
 import org.eclipse.kapua.service.device.management.keystore.internal.message.response.KeystoreResponsePayload;
 import org.eclipse.kapua.translator.Translator;
 import org.eclipse.kapua.translator.exception.InvalidPayloadException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
 
 /**
  * {@link Translator} implementation from {@link KeystoreCsrResponseMessage} to {@link KeystoreCsrResponseMessage}
@@ -40,8 +39,8 @@ public class TranslatorAppKeystoreCsrKuraKapua extends AbstractTranslatorAppKeys
      * @since 1.5.0
      */
     @Inject
-    public TranslatorAppKeystoreCsrKuraKapua(DeviceManagementSetting deviceManagementSetting, DeviceKeystoreManagementFactory deviceKeystoreManagementFactory) {
-        super(deviceManagementSetting, deviceKeystoreManagementFactory, KeystoreCsrResponseMessage.class);
+    public TranslatorAppKeystoreCsrKuraKapua(DeviceManagementSetting deviceManagementSetting) {
+        super(deviceManagementSetting, KeystoreCsrResponseMessage.class);
     }
 
     @Override
@@ -71,7 +70,8 @@ public class TranslatorAppKeystoreCsrKuraKapua extends AbstractTranslatorAppKeys
      * <p>
      * See https://github.com/eclipse/kura/issues/3387 for more info.
      *
-     * @param kuraResponsePayload The {@link KuraKeystoreCSR} that cannot be {@link #readJsonBodyAs(byte[], Class)} {@link KuraKeystoreCSR}.
+     * @param kuraResponsePayload
+     *         The {@link KuraKeystoreCSR} that cannot be {@link #readJsonBodyAs(byte[], Class)} {@link KuraKeystoreCSR}.
      * @return The {@link KuraKeystoreCSR} parsed with the alternative format.
      * @since 1.5.0
      */

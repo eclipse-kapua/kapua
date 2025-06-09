@@ -27,7 +27,6 @@ import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.commons.jpa.NamedCacheFactory;
 import org.eclipse.kapua.commons.model.domains.Domains;
-import org.eclipse.kapua.commons.service.event.store.api.EventStoreFactory;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordRepository;
 import org.eclipse.kapua.commons.service.event.store.internal.EventStoreServiceImpl;
 import org.eclipse.kapua.commons.service.internal.cache.NamedEntityCache;
@@ -41,7 +40,6 @@ import org.eclipse.kapua.service.account.AccountRepository;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.account.internal.setting.KapuaAccountSetting;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 
 import com.google.inject.Module;
 import com.google.inject.Provides;
@@ -70,19 +68,15 @@ public class AccountModule extends AbstractKapuaModule implements Module {
     @Provides
     @Singleton
     AccountRelativeFinder accountRelativeFinder(
-            AccountFactory accountFactory,
             AccountService accountService) {
         return new AccountRelativeFinderImpl(
-                accountFactory,
                 accountService);
     }
 
     @ProvidesIntoSet
     ServiceModule accountServiceModule(AccountService accountService,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             KapuaJpaTxManagerFactory txManagerFactory,
-            EventStoreFactory eventStoreFactory,
             EventStoreRecordRepository eventStoreRecordRepository,
             ServiceEventBus serviceEventBus,
             KapuaAccountSetting kapuaAccountSetting,
@@ -94,9 +88,7 @@ public class AccountModule extends AbstractKapuaModule implements Module {
                 new ServiceEventHouseKeeperFactoryImpl(
                         new EventStoreServiceImpl(
                                 authorizationService,
-                                permissionFactory,
                                 txManagerFactory.create("kapua-account"),
-                                eventStoreFactory,
                                 eventStoreRecordRepository
                         ),
                         txManagerFactory.create("kapua-account"),
@@ -109,8 +101,6 @@ public class AccountModule extends AbstractKapuaModule implements Module {
     @Provides
     @Singleton
     AccountService accountService(AccountRepository accountRepository,
-            AccountFactory accountFactory,
-            PermissionFactory permissionFactory,
             AuthorizationService authorizationService,
             Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
             EventStorer eventStorer,
@@ -119,7 +109,6 @@ public class AccountModule extends AbstractKapuaModule implements Module {
         return new AccountServiceImpl(
                 jpaTxManagerFactory.create("kapua-account"),
                 accountRepository,
-                permissionFactory,
                 authorizationService,
                 serviceConfigurationManagersByServiceClass.get(AccountService.class),
                 eventStorer,

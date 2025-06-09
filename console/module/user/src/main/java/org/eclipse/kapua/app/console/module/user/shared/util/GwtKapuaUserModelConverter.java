@@ -12,25 +12,24 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.user.shared.util;
 
-import com.extjs.gxt.ui.client.Style.SortDir;
-import com.extjs.gxt.ui.client.data.BaseModel;
-import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.kapua.app.console.module.api.shared.util.GwtKapuaCommonsModelConverter;
 import org.eclipse.kapua.app.console.module.user.shared.model.GwtUser.GwtUserStatus;
 import org.eclipse.kapua.app.console.module.user.shared.model.GwtUser.GwtUserType;
 import org.eclipse.kapua.app.console.module.user.shared.model.GwtUserQuery;
-import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.KapuaEntity;
 import org.eclipse.kapua.model.query.FieldSortCriteria;
 import org.eclipse.kapua.model.query.SortOrder;
 import org.eclipse.kapua.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.model.query.predicate.AttributePredicate.Operator;
 import org.eclipse.kapua.service.user.UserAttributes;
-import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserQuery;
 import org.eclipse.kapua.service.user.UserStatus;
 import org.eclipse.kapua.service.user.UserType;
+
+import com.extjs.gxt.ui.client.Style.SortDir;
+import com.extjs.gxt.ui.client.data.BaseModel;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 
 /**
  * Utility class for convertKapuaId {@link BaseModel}s to {@link KapuaEntity}ies and other Kapua models
@@ -43,17 +42,15 @@ public class GwtKapuaUserModelConverter {
     /**
      * Converts a {@link GwtUserQuery} into a {@link UserQuery} object for backend usage
      *
-     * @param loadConfig   the load configuration
-     * @param gwtUserQuery the {@link GwtUserQuery} to convertKapuaId
+     * @param loadConfig
+     *         the load configuration
+     * @param gwtUserQuery
+     *         the {@link GwtUserQuery} to convertKapuaId
      * @return the converted {@link UserQuery}
      */
     public static UserQuery convertUserQuery(PagingLoadConfig loadConfig, GwtUserQuery gwtUserQuery) {
 
-        // Get Services
-        KapuaLocator locator = KapuaLocator.getInstance();
-        UserFactory userFactory = locator.getFactory(UserFactory.class);
-
-        UserQuery query = userFactory.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(gwtUserQuery.getScopeId()));
+        UserQuery query = new UserQuery(GwtKapuaCommonsModelConverter.convertKapuaId(gwtUserQuery.getScopeId()));
 
         AndPredicate predicate = query.andPredicate();
         if (gwtUserQuery.getName() != null && !gwtUserQuery.getName().isEmpty()) {

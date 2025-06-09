@@ -14,14 +14,12 @@ package org.eclipse.kapua.commons.model.misc;
 
 import org.eclipse.kapua.commons.jpa.KapuaEntityJpaRepository;
 import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
-import org.eclipse.kapua.commons.model.query.KapuaListResultImpl;
 import org.eclipse.kapua.model.query.KapuaListResult;
-
 
 public class CollisionEntityJpaRepository extends KapuaEntityJpaRepository<CollisionEntity, CollisionEntity, KapuaListResult<CollisionEntity>> {
 
     public CollisionEntityJpaRepository(KapuaJpaRepositoryConfiguration configuration) {
-        super(CollisionEntity.class, CollisionEntity.TYPE, () -> new KapuaListResultImpl<>(), configuration);
+        super(CollisionEntity.class, CollisionEntity.TYPE, () -> new KapuaListResult<>(), configuration);
     }
 
 }

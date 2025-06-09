@@ -17,8 +17,6 @@ import org.eclipse.kapua.commons.core.JaxbClassProvider;
 import org.eclipse.kapua.commons.core.SimpleJaxbClassProvider;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
-import org.eclipse.kapua.service.device.management.asset.DeviceAssetFactory;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssetManagementService;
 import org.eclipse.kapua.service.device.management.asset.store.DeviceAssetStoreService;
 import org.eclipse.kapua.service.device.management.message.request.KapuaRequestMessage;
@@ -36,7 +34,6 @@ public class DeviceManagementAssetModule extends AbstractKapuaModule {
 
     @Override
     protected void configureModule() {
-        bind(DeviceAssetFactory.class).to(DeviceAssetFactoryImpl.class);
         final Multibinder<JaxbClassProvider> jaxbClassProviderMultibinder = Multibinder.newSetBinder(binder(), JaxbClassProvider.class);
         jaxbClassProviderMultibinder.addBinding()
                 .toInstance(new SimpleJaxbClassProvider(
@@ -50,21 +47,17 @@ public class DeviceManagementAssetModule extends AbstractKapuaModule {
     @Provides
     @Singleton
     DeviceAssetManagementService deviceAssetManagementService(AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             DeviceEventService deviceEventService,
             DeviceEventFactory deviceEventFactory,
             DeviceRegistryService deviceRegistryService,
             DeviceAssetStoreService deviceAssetStoreService,
-            KapuaJpaTxManagerFactory jpaTxManagerFactory,
-            DeviceAssetFactory deviceAssetFactory) {
+            KapuaJpaTxManagerFactory jpaTxManagerFactory) {
         return new DeviceAssetManagementServiceImpl(
                 jpaTxManagerFactory.create("kapua-device_management_operation_registry"),
                 authorizationService,
-                permissionFactory,
                 deviceEventService,
                 deviceEventFactory,
                 deviceRegistryService,
-                deviceAssetStoreService,
-                deviceAssetFactory);
+                deviceAssetStoreService);
     }
 }

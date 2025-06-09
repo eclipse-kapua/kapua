@@ -12,47 +12,100 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.endpoint;
 
-import org.eclipse.kapua.model.KapuaEntityCreator;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.Set;
+
+import org.eclipse.kapua.model.KapuaEntityCreator;
+import org.eclipse.kapua.model.id.KapuaId;
 
 /**
- * {@link EndpointInfo} creator definition.<br>
- * It is used to create a new {@link EndpointInfo}.
+ * {@link EndpointInfo} creator definition.<br> It is used to create a new {@link EndpointInfo}.
  *
  * @since 1.0.0
  */
 @XmlRootElement(name = "endpointInfoCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = EndpointInfoXmlRegistry.class, factoryMethod = "newCreator")
-public interface EndpointInfoCreator extends KapuaEntityCreator<EndpointInfo> {
+@XmlType
+public class EndpointInfoCreator extends KapuaEntityCreator {
 
-    String getSchema();
+    private String schema;
+    private String dns;
+    private int port;
+    private boolean secure;
+    private Set<EndpointUsage> usages;
+    private String endpointType;
 
-    void setSchema(String schema);
+    public EndpointInfoCreator() {
+    }
 
-    String getDns();
+    public EndpointInfoCreator(KapuaId scopeId) {
+        super(scopeId);
+    }
 
-    void setDns(String dns);
+    public EndpointInfoCreator(KapuaEntityCreator entityCreator) {
+        super(entityCreator);
+    }
 
-    int getPort();
+    public String getSchema() {
+        return schema;
+    }
 
-    void setPort(int port);
+    public EndpointInfoCreator setSchema(String schema) {
+        this.schema = schema;
+        return this;
+    }
 
-    boolean getSecure();
+    public String getDns() {
+        return dns;
+    }
 
-    void setSecure(boolean secure);
+    public EndpointInfoCreator setDns(String dns) {
+        this.dns = dns;
+        return this;
+    }
 
-    Set<EndpointUsage> getUsages();
+    public int getPort() {
+        return port;
+    }
 
-    void setUsages(Set<EndpointUsage> usages);
+    public EndpointInfoCreator setPort(int port) {
+        this.port = port;
+        return this;
+    }
 
-    String getEndpointType();
+    public boolean getSecure() {
+        return secure;
+    }
 
-    void setEndpointType(String endpointType);
+    public EndpointInfoCreator setSecure(boolean secure) {
+        this.secure = secure;
+        return this;
+    }
 
+    public Set<EndpointUsage> getUsages() {
+        if (usages == null) {
+            usages = new HashSet<>();
+        }
+
+        return usages;
+    }
+
+    public EndpointInfoCreator setUsages(Set<EndpointUsage> usages) {
+        this.usages = usages;
+        return this;
+    }
+
+    public String getEndpointType() {
+        return endpointType;
+    }
+
+    public EndpointInfoCreator setEndpointType(String endpointType) {
+        this.endpointType = endpointType;
+        return this;
+    }
 }

@@ -12,11 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.shiro;
 
-import org.eclipse.kapua.service.authentication.ApiKeyCredentials;
-import org.eclipse.kapua.service.authentication.shiro.realm.KapuaAuthenticationToken;
+import java.util.Optional;
 
 import javax.validation.constraints.NotNull;
-import java.util.Optional;
+
+import org.eclipse.kapua.service.authentication.ApiKeyCredentials;
+import org.eclipse.kapua.service.authentication.shiro.realm.KapuaAuthenticationToken;
 
 /**
  * {@link ApiKeyCredentials} implementation.
@@ -25,7 +26,7 @@ import java.util.Optional;
  *
  * @since 1.0.0
  */
-public class ApiKeyCredentialsImpl implements ApiKeyCredentials, KapuaAuthenticationToken {
+public class ApiKeyCredentialsImpl implements KapuaAuthenticationToken {
 
     private static final long serialVersionUID = -5920944517814926028L;
 
@@ -34,31 +35,27 @@ public class ApiKeyCredentialsImpl implements ApiKeyCredentials, KapuaAuthentica
     /**
      * Constructor.
      *
-     * @param apiKey The Api Key.
+     * @param apiKey
+     *         The Api Key.
      * @since 1.0.0
      */
     public ApiKeyCredentialsImpl(String apiKey) {
-        setApiKey(apiKey);
+        this.apiKey = apiKey;
     }
 
     /**
      * Clone constructor.
      *
-     * @param apiKeyCredentials The {@link ApiKeyCredentials} to clone.
+     * @param apiKeyCredentials
+     *         The {@link ApiKeyCredentials} to clone.
      * @since 1.5.0
      */
     public ApiKeyCredentialsImpl(@NotNull ApiKeyCredentials apiKeyCredentials) {
-        setApiKey(apiKeyCredentials.getApiKey());
+        this.apiKey = apiKeyCredentials.getApiKey();
     }
 
-    @Override
     public String getApiKey() {
         return apiKey;
-    }
-
-    @Override
-    public void setApiKey(String apiKey) {
-        this.apiKey = apiKey;
     }
 
     @Override

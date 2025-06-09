@@ -10,7 +10,7 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.model.config.metatype;
+package org.eclipse.kapua.commons.configuration.metatype;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,6 +19,9 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.eclipse.kapua.model.config.metatype.KapuaTad;
+import org.eclipse.kapua.model.config.metatype.KapuaTicon;
+import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.junit.Assert;
 import org.junit.Before;
@@ -32,7 +35,7 @@ public class KapuaTocdTest {
     public void createInstanceOfClasses() {
 
         kapuaTocd = new KapuaTocd();
-        kapuaTad1 = new KapuaTad();
+        kapuaTad = new KapuaTad();
         kapuaTad2 = new KapuaTad();
         kapuaTad3 = new KapuaTad();
         ticon = new KapuaTicon();
@@ -40,7 +43,7 @@ public class KapuaTocdTest {
     }
 
     KapuaTocd kapuaTocd;
-    KapuaTad kapuaTad1;
+    KapuaTad kapuaTad;
     KapuaTad kapuaTad2;
     KapuaTad kapuaTad3;
     KapuaTicon ticon;
@@ -54,9 +57,9 @@ public class KapuaTocdTest {
     @Test
     public void setAndGetADTest() {
         List<KapuaTad> expectedValues = new ArrayList<>();
-        expectedValues.add(kapuaTad1);
+        expectedValues.add(kapuaTad);
         kapuaTocd.setAD(expectedValues);
-        Assert.assertEquals("tocdImpl.ad", expectedValues, kapuaTocd.getAD());
+        Assert.assertEquals("kapuaTocd.ad", expectedValues, kapuaTocd.getAD());
     }
 
     @Test
@@ -77,7 +80,7 @@ public class KapuaTocdTest {
         List<KapuaTicon> listOfObj = new ArrayList<>();
         listOfObj.add(ticon);
         kapuaTocd.setIcon(listOfObj);
-        Assert.assertEquals("tocdImpl.icon", listOfObj, kapuaTocd.getIcon());
+        Assert.assertEquals("kapuaTocd.icon", listOfObj, kapuaTocd.getIcon());
     }
 
     @Test
@@ -99,7 +102,7 @@ public class KapuaTocdTest {
         options.add(ticon);
         options.add(ticon2);
         kapuaTocd.setAny(options);
-        Assert.assertEquals("tocdImpl.any", options, kapuaTocd.getAny());
+        Assert.assertEquals("kapuaTocd.any", options, kapuaTocd.getAny());
     }
 
     @Test
@@ -166,7 +169,7 @@ public class KapuaTocdTest {
         kapuaTocd.putOtherAttribute(QName.valueOf("2"), "b");
         kapuaTocd.putOtherAttribute(QName.valueOf("3"), "c");
 
-        Assert.assertEquals("tocdImpl.otherAttributes", expectedValues, kapuaTocd.getOtherAttributes());
+        Assert.assertEquals("kapuaTocd.otherAttributes", expectedValues, kapuaTocd.getOtherAttributes());
     }
 
     @Test
@@ -183,6 +186,6 @@ public class KapuaTocdTest {
         values.put(QName.valueOf("3"), "c");
 
         kapuaTocd.setOtherAttributes(values);
-        Assert.assertEquals("tocdImpl.otherAttributes", values, kapuaTocd.getOtherAttributes());
+        Assert.assertEquals("kapuaTocd.otherAttributes", values, kapuaTocd.getOtherAttributes());
     }
 }

@@ -12,12 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.user;
 
-import org.eclipse.kapua.model.query.KapuaQuery;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaQuery;
 
 /**
  * {@link User} {@link KapuaQuery} definition.
@@ -27,17 +28,41 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "query")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = UserXmlRegistry.class, factoryMethod = "newQuery")
-public interface UserQuery extends KapuaQuery {
+@XmlType
+public class UserQuery extends KapuaQuery {
+
+    /**
+     * Constructor.
+     *
+     * @since 1.0.0
+     */
+    private UserQuery() {
+        super();
+    }
+
+    /**
+     * Constructor
+     *
+     * @param scopeId
+     *         The {@link #getScopeId()}.
+     * @since 1.0.0
+     */
+    public UserQuery(KapuaId scopeId) {
+        this();
+        setScopeId(scopeId);
+    }
 
     /**
      * Instantiates a new {@link UserMatchPredicate}.
      *
-     * @param matchTerm The term to use to match.
-     * @param <T>       The type of the term
+     * @param matchTerm
+     *         The term to use to match.
+     * @param <T>
+     *         The type of the term
      * @return The newly instantiated {@link UserMatchPredicate}.
      * @since 1.3.0
      */
-    <T> UserMatchPredicate<T> matchPredicate(T matchTerm);
-
+    public <T> UserMatchPredicate<T> matchPredicate(T matchTerm) {
+        return new UserMatchPredicate<>(matchTerm);
+    }
 }

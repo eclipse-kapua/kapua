@@ -30,13 +30,11 @@ import org.eclipse.kapua.commons.metric.MetricsService;
 import org.eclipse.kapua.commons.metric.MetricsServiceImpl;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.model.mappers.KapuaBaseMapperImpl;
-import org.eclipse.kapua.commons.model.query.QueryFactoryImpl;
 import org.eclipse.kapua.commons.service.event.store.internal.EventStoreRecordImplJpaRepository;
 import org.eclipse.kapua.commons.service.internal.cache.CacheManagerProvider;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.model.query.QueryFactory;
 import org.eclipse.kapua.qa.common.MockedLocator;
 import org.eclipse.kapua.qa.common.TestJAXBContextProvider;
 import org.eclipse.kapua.service.account.AccountFactory;
@@ -52,7 +50,6 @@ import org.eclipse.kapua.service.authentication.shiro.setting.KapuaAuthenticatio
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.storage.TxManager;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
@@ -99,19 +96,15 @@ public class AccountLocatorConfiguration {
                 } catch (KapuaException e) {
                     // skip
                 }
+                try {
+                    Mockito.when(mockedAuthorization.isPermitted(Matchers.any(Permission.class))).thenReturn(true);
+                } catch (KapuaException e) {
+                    // skip
+                }
 
-                bind(QueryFactory.class).toInstance(new QueryFactoryImpl());
                 bind(KapuaJpaRepositoryConfiguration.class).toInstance(new KapuaJpaRepositoryConfiguration());
 
                 bind(AuthorizationService.class).toInstance(mockedAuthorization);
-                // Inject mocked Permission Factory
-                final PermissionFactory mockPermissionFactory = Mockito.mock(PermissionFactory.class);
-                try {
-                    Mockito.when(mockedAuthorization.isPermitted(Mockito.any(Permission.class))).thenReturn(true);
-                } catch (KapuaException e) {
-                    throw new RuntimeException(e);
-                }
-                bind(PermissionFactory.class).toInstance(mockPermissionFactory);
                 // Inject actual account related services
                 //                final AccountEntityManagerFactory entityManagerFactory = AccountEntityManagerFactory.getInstance();
                 //                bind(AccountEntityManagerFactory.class).toInstance(entityManagerFactory);
@@ -125,7 +118,6 @@ public class AccountLocatorConfiguration {
                 bind(AccountService.class).toInstance(new AccountServiceImpl(
                         txManager,
                         new AccountImplJpaRepository(jpaRepoConfig),
-                        mockPermissionFactory,
                         mockedAuthorization,
                         new ResourceLimitedServiceConfigurationManagerImpl(
                                 AccountService.class.getName(),
@@ -135,7 +127,6 @@ public class AccountLocatorConfiguration {
                                 Mockito.mock(RootUserTester.class),
                                 Mockito.mock(AccountRelativeFinder.class),
                                 new UsedEntitiesCounterImpl(
-                                        accountFactory,
                                         accountRepository),
                                 new ResourceBasedServiceConfigurationMetadataProvider(new XmlUtil(new TestJAXBContextProvider()))
                         ),

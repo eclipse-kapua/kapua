@@ -14,6 +14,11 @@ package org.eclipse.kapua.model.config.metatype;
 
 import java.util.ArrayList;
 
+import java.util.ArrayList;
+
+import org.eclipse.kapua.model.config.metatype.KapuaTdesignate;
+import org.eclipse.kapua.model.config.metatype.KapuaTobject;
+import org.eclipse.kapua.model.config.metatype.KapuaToption;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.junit.Assert;
 import org.junit.Before;

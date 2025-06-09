@@ -23,25 +23,25 @@ public class KapuaTobjectTest {
 
     @Before
     public void createInstanceOfClasses() {
-        tobjectImpl = new KapuaTobject();
+        kapuaTobject = new KapuaTobject();
     }
 
-    KapuaTobject tobjectImpl;
+    KapuaTobject kapuaTobject;
 
     @Test
     public void getAttributeTest() {
-        Assert.assertTrue(tobjectImpl.getAttribute().isEmpty());
+        Assert.assertTrue(kapuaTobject.getAttribute().isEmpty());
     }
 
     @Test
     public void getAnyTest() {
-        Assert.assertTrue(tobjectImpl.getAny().isEmpty());
+        Assert.assertTrue(kapuaTobject.getAny().isEmpty());
     }
 
     @Test
     public void setAndGetOcdrefToNullTest() {
-        tobjectImpl.setOcdref(null);
-        Assert.assertNull(tobjectImpl.getOcdref());
+        kapuaTobject.setOcdref(null);
+        Assert.assertNull(kapuaTobject.getOcdref());
     }
 
     @Test
@@ -49,13 +49,13 @@ public class KapuaTobjectTest {
         String[] permittedValues = { "", "!@#$%^^&**(-()_)+/|", "regularOcdref", "regular Ocdref", "49", "regularOcdref49", "OCDREF",
                 "246465494135646120009090049684646496468456468496846464968496844" };
         for (String value : permittedValues) {
-            tobjectImpl.setOcdref(value);
-            Assert.assertTrue(tobjectImpl.getOcdref().contains(value));
+            kapuaTobject.setOcdref(value);
+            Assert.assertTrue(kapuaTobject.getOcdref().contains(value));
         }
     }
 
     @Test
     public void testGetOtherAttributes() {
-        Assert.assertTrue(tobjectImpl.getOtherAttributes().isEmpty());
+        Assert.assertTrue(kapuaTobject.getOtherAttributes().isEmpty());
     }
 }

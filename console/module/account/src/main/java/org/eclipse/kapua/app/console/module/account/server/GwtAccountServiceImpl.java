@@ -58,7 +58,6 @@ import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.service.internal.KapuaServiceDisabledException;
 import org.eclipse.kapua.commons.util.ThrowingRunnable;
 import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.model.config.metatype.EmptyTocd;
 import org.eclipse.kapua.model.config.metatype.KapuaTad;
 import org.eclipse.kapua.model.config.metatype.KapuaTicon;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
@@ -66,27 +65,24 @@ import org.eclipse.kapua.model.config.metatype.KapuaToption;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaListResult;
+import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountCreator;
-import org.eclipse.kapua.service.account.AccountFactory;
-import org.eclipse.kapua.service.account.AccountQuery;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.exception.SubjectUnauthorizedException;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.authorization.role.RoleCreator;
-import org.eclipse.kapua.service.authorization.role.RoleFactory;
 import org.eclipse.kapua.service.authorization.role.RoleService;
 import org.eclipse.kapua.service.config.KapuaConfigurableService;
 import org.eclipse.kapua.service.endpoint.EndpointInfo;
-import org.eclipse.kapua.service.endpoint.EndpointInfoFactory;
 import org.eclipse.kapua.service.endpoint.EndpointInfoListResult;
+import org.eclipse.kapua.service.endpoint.EndpointInfoQuery;
 import org.eclipse.kapua.service.endpoint.EndpointInfoService;
 import org.eclipse.kapua.service.user.User;
-import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserListResult;
+import org.eclipse.kapua.service.user.UserQuery;
 import org.eclipse.kapua.service.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,19 +106,13 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
 
     private static final AccountService ACCOUNT_SERVICE = LOCATOR.getService(AccountService.class);
-    private static final AccountFactory ACCOUNT_FACTORY = LOCATOR.getFactory(AccountFactory.class);
 
     private static final EndpointInfoService ENDPOINT_INFO_SERVICE = LOCATOR.getService(EndpointInfoService.class);
-    private static final EndpointInfoFactory ENDPOINT_INFO_FACTORY = LOCATOR.getFactory(EndpointInfoFactory.class);
     private static final AuthorizationService AUTHORIZATION_SERVICE = LOCATOR.getService(AuthorizationService.class);
 
-    private static final PermissionFactory PERMISSION_FACTORY = LOCATOR.getFactory(PermissionFactory.class);
-
     private static final RoleService ROLE_SERVICE = LOCATOR.getService(RoleService.class);
-    private static final RoleFactory ROLE_FACTORY = LOCATOR.getFactory(RoleFactory.class);
 
     private static final UserService USER_SERVICE = LOCATOR.getService(UserService.class);
-    private static final UserFactory USER_FACTORY = LOCATOR.getFactory(UserFactory.class);
 
     @Override
     public GwtAccount create(GwtXSRFToken xsrfToken, GwtAccountCreator gwtAccountCreator)
@@ -133,7 +123,7 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
         GwtAccount gwtAccount = null;
         KapuaId parentAccountId = KapuaEid.parseCompactId(gwtAccountCreator.getParentAccountId());
         try {
-            AccountCreator accountCreator = ACCOUNT_FACTORY.newCreator(parentAccountId);
+            AccountCreator accountCreator = new AccountCreator(parentAccountId);
 
             accountCreator.setName(gwtAccountCreator.getAccountName());
             accountCreator.setOrganizationName(gwtAccountCreator.getOrganizationName());
@@ -156,9 +146,9 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
                 @Override
                 public void run() throws Exception {
                     // Admin
-                    Permission adminPermission = PERMISSION_FACTORY.newPermission((String) null, null, account.getId(), null, true);
+                    Permission adminPermission = new Permission((String) null, null, account.getId(), null, true);
 
-                    RoleCreator adminRoleCreator = ROLE_FACTORY.newCreator(account.getId());
+                    RoleCreator adminRoleCreator = new RoleCreator(account.getId());
                     adminRoleCreator.setName("Admin");
                     adminRoleCreator.setScopeId(account.getId());
                     adminRoleCreator.setPermissions(Sets.newHashSet(adminPermission));
@@ -166,9 +156,9 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
                     ROLE_SERVICE.create(adminRoleCreator);
 
                     // Thing
-                    Permission thingPermission = PERMISSION_FACTORY.newPermission(Domains.BROKER, Actions.connect, account.getId(), null, false);
+                    Permission thingPermission = new Permission(Domains.BROKER, Actions.connect, account.getId(), null, false);
 
-                    RoleCreator thingRoleCreator = ROLE_FACTORY.newCreator(account.getId());
+                    RoleCreator thingRoleCreator = new RoleCreator(account.getId());
                     thingRoleCreator.setName("Thing");
                     thingRoleCreator.setScopeId(account.getId());
                     thingRoleCreator.setPermissions(Sets.newHashSet(thingPermission));
@@ -214,7 +204,7 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
 
                 @Override
                 public UserListResult call() throws Exception {
-                    return USER_SERVICE.query(USER_FACTORY.newQuery(null));
+                    return USER_SERVICE.query(new UserQuery(null));
                 }
             });
 
@@ -244,14 +234,14 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
             }
             accountPropertiesPairs.add(new GwtGroupedNVPair("accountInfo", "accountName", account.getName()));
 
-            if (AUTHORIZATION_SERVICE.isPermitted(PERMISSION_FACTORY.newPermission(Domains.ENDPOINT_INFO, Actions.read, scopeId))) {
+            if (AUTHORIZATION_SERVICE.isPermitted(new Permission(Domains.ENDPOINT_INFO, Actions.read, scopeId))) {
                 //TODO: #LAYER_VIOLATION - related entities lookup should not be done here
 
                 EndpointInfoListResult endpointInfos = KapuaSecurityUtils.doPrivileged(new Callable<EndpointInfoListResult>() {
 
                     @Override
                     public EndpointInfoListResult call() throws Exception {
-                        return ENDPOINT_INFO_SERVICE.query(ENDPOINT_INFO_FACTORY.newQuery(account.getId()));
+                        return ENDPOINT_INFO_SERVICE.query(new EndpointInfoQuery(account.getId()));
                     }
                 });
 
@@ -368,7 +358,7 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
         List<GwtAccount> gwtAccountList = new ArrayList<GwtAccount>();
         KapuaId scopeId = KapuaEid.parseCompactId(scopeIdString);
         try {
-            AccountQuery query = ACCOUNT_FACTORY.newQuery(scopeId);
+            KapuaQuery query = new KapuaQuery(scopeId);
 
             KapuaListResult<Account> list = ACCOUNT_SERVICE.query(query);
             for (Account account : list.getItems()) {
@@ -391,7 +381,7 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
             if (includeSelf) {
                 gwtAccountList.add(find(parentAccountId));
             }
-            AccountQuery query = ACCOUNT_FACTORY.newQuery(scopeId);
+            KapuaQuery query = new KapuaQuery(scopeId);
 
             KapuaListResult<Account> list = ACCOUNT_SERVICE.query(query);
             for (Account account : list.getItems()) {
@@ -436,7 +426,7 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
                     } catch (KapuaServiceDisabledException ex) {
                         continue;
                     }
-                    if (tocd != null && !(tocd instanceof EmptyTocd)) {
+                    if (tocd != null && !tocd.isEmpty()) {
                         GwtConfigComponent gwtConfig = new GwtConfigComponent();
                         gwtConfig.setId(tocd.getId());
                         gwtConfig.setName(tocd.getName());
@@ -668,7 +658,7 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
         int totalLength = 0;
         List<GwtAccount> gwtAccounts = new ArrayList<GwtAccount>();
         try {
-            AccountQuery query = GwtKapuaAccountModelConverter.convertAccountQuery(loadConfig, gwtAccountQuery);
+            KapuaQuery query = GwtKapuaAccountModelConverter.convertAccountQuery(loadConfig, gwtAccountQuery);
 
             KapuaListResult<Account> accounts = ACCOUNT_SERVICE.query(query);
             totalLength = accounts.getTotalCount().intValue();
@@ -678,7 +668,7 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
 
                     @Override
                     public UserListResult call() throws Exception {
-                        return USER_SERVICE.query(USER_FACTORY.newQuery(null));
+                        return USER_SERVICE.query(new UserQuery(null));
                     }
                 });
 

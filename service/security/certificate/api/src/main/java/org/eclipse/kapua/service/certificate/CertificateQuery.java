@@ -12,15 +12,15 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.certificate;
 
-import org.eclipse.kapua.model.query.KapuaForwardableEntityQuery;
-import org.eclipse.kapua.model.query.KapuaQuery;
-import org.eclipse.kapua.service.certificate.xml.CertificateXmlRegistry;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.query.KapuaForwardableEntityQuery;
+import org.eclipse.kapua.model.query.KapuaQuery;
 
 /**
  * {@link Certificate} {@link KapuaQuery} definition.
@@ -30,25 +30,40 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "query")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = CertificateXmlRegistry.class, factoryMethod = "newQuery")
-public interface CertificateQuery extends KapuaForwardableEntityQuery {
+@XmlType
+public class CertificateQuery extends KapuaForwardableEntityQuery {
+
+    public CertificateQuery() {
+    }
+
+    public CertificateQuery(KapuaId scopeId) {
+        super(scopeId);
+    }
+
+    public CertificateQuery(KapuaQuery query) {
+        super(query);
+    }
 
     @Override
     /**
-     * Gets whether or not to get also inherited {@link CertificateInfo}s
+     * Gets whether or not to get also inherited {@link Certificate}s
      *
-     * @return {@code true} if set to get inherited {@link CertificateInfo}s, {@code false} otherwise.
+     * @return {@code true} if set to get inherited {@link Certificate}s, {@code false} otherwise.
      * @since 1.0.0
      */
     @XmlElement(name = "includeInherited")
-    Boolean getIncludeInherited();
+    public Boolean getIncludeInherited() {
+        return includeInherited;
+    }
 
     @Override
     /**
-     * Sets whether or not to get also inherited {@link CertificateInfo}s
+     * Sets whether or not to get also inherited {@link Certificate}s
      *
-     * @param includeInherited {@code true} to get inherited {@link CertificateInfo}s, {@code false} otherwise.
+     * @param includeInherited {@code true} to get inherited {@link Certificate}s, {@code false} otherwise.
      * @since 1.0.0
      */
-    void setIncludeInherited(Boolean includeInherited);
+    public void setIncludeInherited(Boolean includeInherited) {
+        this.includeInherited = includeInherited;
+    }
 }

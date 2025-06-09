@@ -12,17 +12,37 @@
  *******************************************************************************/
 package org.eclipse.kapua.message.device.data;
 
-import org.eclipse.kapua.message.KapuaChannel;
-import org.eclipse.kapua.message.device.data.xml.DataMessageXmlRegistry;
-
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.message.KapuaChannel;
 
 /**
  * {@link KapuaDataChannel} definition
  *
  * @since 1.0.0
  */
-@XmlType(factoryClass = DataMessageXmlRegistry.class, factoryMethod = "newKapuaDataChannel")
-public interface KapuaDataChannel extends KapuaChannel {
+@XmlType
+public class KapuaDataChannel extends KapuaChannel {
 
+    private String clientId;
+
+    /**
+     * Gets the client identifier
+     *
+     * @return
+     * @since 1.0.0
+     */
+    public String getClientId() {
+        return clientId;
+    }
+
+    /**
+     * Sets the client identifier
+     *
+     * @param clientId
+     * @since 1.0.0
+     */
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
 }

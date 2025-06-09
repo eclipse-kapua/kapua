@@ -27,8 +27,14 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "deviceInventoryContainer")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DeviceInventoryContainersXmlRegistry.class, factoryMethod = "newDeviceInventoryContainer")
-public interface DeviceInventoryContainer {
+@XmlType
+public class DeviceInventoryContainer {
+
+    private String name;
+    private String version;
+    private String containerType;
+
+    private DeviceInventoryContainerState state;
 
     /**
      * Gets the name.
@@ -37,15 +43,20 @@ public interface DeviceInventoryContainer {
      * @since 2.0.0
      */
     @XmlElement(name = "name")
-    String getName();
+    public String getName() {
+        return name;
+    }
 
     /**
      * Sets the name.
      *
-     * @param name The name.
+     * @param name
+     *         The name.
      * @since 2.0.0
      */
-    void setName(String name);
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /**
      * Gets the container version.
@@ -54,15 +65,20 @@ public interface DeviceInventoryContainer {
      * @since 2.0.0
      */
     @XmlElement(name = "version")
-    String getVersion();
+    public String getVersion() {
+        return version;
+    }
 
     /**
      * Sets the version.
      *
-     * @param version The version.
+     * @param version
+     *         The version.
      * @since 2.0.0
      */
-    void setVersion(String version);
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     /**
      * Gets the type.
@@ -71,15 +87,20 @@ public interface DeviceInventoryContainer {
      * @since 2.0.0
      */
     @XmlElement(name = "containerType")
-    String getContainerType();
+    public String getContainerType() {
+        return containerType;
+    }
 
     /**
      * Sets the container type.
      *
-     * @param containerType The container type.
+     * @param containerType
+     *         The container type.
      * @since 2.0.0
      */
-    void setContainerType(String containerType);
+    public void setContainerType(String containerType) {
+        this.containerType = containerType;
+    }
 
     /**
      * Gets the {@link DeviceInventoryContainerState}.
@@ -87,14 +108,19 @@ public interface DeviceInventoryContainer {
      * @return The {@link DeviceInventoryContainerState}.
      * @since 2.0.0
      */
-    DeviceInventoryContainerState getState();
+    public DeviceInventoryContainerState getState() {
+        return state;
+    }
 
     /**
      * Sets the {@link DeviceInventoryContainerState}.
      *
-     * @param state The {@link DeviceInventoryContainerState}.
+     * @param state
+     *         The {@link DeviceInventoryContainerState}.
      * @since 2.0.0
      */
-    void setState(DeviceInventoryContainerState state);
+    public void setState(DeviceInventoryContainerState state) {
+        this.state = state;
+    }
 
 }

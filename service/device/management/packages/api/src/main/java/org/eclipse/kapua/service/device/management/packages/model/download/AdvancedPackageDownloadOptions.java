@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.packages.model.download;
 
-import org.eclipse.kapua.service.device.management.packages.model.DevicePackageXmlRegistry;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -25,8 +23,41 @@ import javax.xml.bind.annotation.XmlType;
  * @since 1.1.0
  */
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DevicePackageXmlRegistry.class, factoryMethod = "newAdvancedPackageDownloadOptions")
-public interface AdvancedPackageDownloadOptions {
+@XmlType
+public class AdvancedPackageDownloadOptions {
+
+    private Boolean restart;
+    private Integer blockSize;
+    private Integer blockDelay;
+    private Integer blockTimeout;
+    private Integer notifyBlockSize;
+    private String installVerifierURI;
+
+    /**
+     * Constructor.
+     *
+     * @since 1.1.0
+     */
+    public AdvancedPackageDownloadOptions() {
+    }
+
+    /**
+     * Clone Constructor.
+     *
+     * @param advancedPackageDownloadOptions
+     *         The {@link AdvancedPackageDownloadOptions} to clone.
+     * @since 1.1.0
+     */
+    public AdvancedPackageDownloadOptions(AdvancedPackageDownloadOptions advancedPackageDownloadOptions) {
+        super();
+
+        setRestart(advancedPackageDownloadOptions.getRestart());
+        setBlockSize(advancedPackageDownloadOptions.getBlockSize());
+        setBlockDelay(advancedPackageDownloadOptions.getBlockDelay());
+        setBlockTimeout(advancedPackageDownloadOptions.getBlockTimeout());
+        setNotifyBlockSize(advancedPackageDownloadOptions.getNotifyBlockSize());
+        setInstallVerifierURI(advancedPackageDownloadOptions.getInstallVerifierURI());
+    }
 
     /**
      * Gets whether or not to restart the download from the beginning.
@@ -34,15 +65,20 @@ public interface AdvancedPackageDownloadOptions {
      * @return {@code true} if the download must be restarted from the beginning, {@code false} otherwise.
      * @since 1.2.0
      */
-    Boolean getRestart();
+    public Boolean getRestart() {
+        return restart;
+    }
 
     /**
      * Sets whether or not to restart the download from the beginning.
      *
-     * @param restart {@code true} if the download must be restarted from the beginning, {@code false} otherwise.
+     * @param restart
+     *         {@code true} if the download must be restarted from the beginning, {@code false} otherwise.
      * @since 1.2.0
      */
-    void setRestart(Boolean restart);
+    public void setRestart(Boolean restart) {
+        this.restart = restart;
+    }
 
     /**
      * Gets the size in {@code Byte}s of the blocks to transfer from the URI.
@@ -51,15 +87,20 @@ public interface AdvancedPackageDownloadOptions {
      * @since 1.1.0
      */
     @XmlElement(name = "blockSize")
-    Integer getBlockSize();
+    public Integer getBlockSize() {
+        return blockSize;
+    }
 
     /**
      * Sets the size in {@code Byte}s of the blocks to transfer from the URI.
      *
-     * @param blockSize The size in {@code Byte}s of the blocks to transfer from the URI.
+     * @param blockSize
+     *         The size in {@code Byte}s of the blocks to transfer from the URI.
      * @since 1.1.0
      */
-    void setBlockSize(Integer blockSize);
+    public void setBlockSize(Integer blockSize) {
+        this.blockSize = blockSize;
+    }
 
     /**
      * Gets the delay between each block transfer from the URI.
@@ -68,15 +109,20 @@ public interface AdvancedPackageDownloadOptions {
      * @since 1.1.0
      */
     @XmlElement(name = "blockDelay")
-    Integer getBlockDelay();
+    public Integer getBlockDelay() {
+        return blockDelay;
+    }
 
     /**
      * Sets the delay between each block transfer from the URI.
      *
-     * @param blockDelay The delay between each block transfer from the URI.
+     * @param blockDelay
+     *         The delay between each block transfer from the URI.
      * @since 1.1.0
      */
-    void setBlockDelay(Integer blockDelay);
+    public void setBlockDelay(Integer blockDelay) {
+        this.blockDelay = blockDelay;
+    }
 
     /**
      * Gets the timeout for transferring a block from the URI.
@@ -85,32 +131,44 @@ public interface AdvancedPackageDownloadOptions {
      * @since 1.1.0
      */
     @XmlElement(name = "blockTimeout")
-    Integer getBlockTimeout();
+    public Integer getBlockTimeout() {
+        return blockTimeout;
+    }
 
     /**
      * Sets the timeout for transferring a block from the URI.
      *
-     * @param blockTimeout The timeout for transferring a block from the URI.
+     * @param blockTimeout
+     *         The timeout for transferring a block from the URI.
      * @since 1.1.0
      */
-    void setBlockTimeout(Integer blockTimeout);
+    public void setBlockTimeout(Integer blockTimeout) {
+        this.blockTimeout = blockTimeout;
+    }
 
     /**
-     * Gets the size in {@code Byte}s of the blocks to be transfer to cause a {@link org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotification} to be sent from the {@link org.eclipse.kapua.service.device.registry.Device}.
+     * Gets the size in {@code Byte}s of the blocks to be transfer to cause a {@link org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotification} to be
+     * sent from the {@link org.eclipse.kapua.service.device.registry.Device}.
      *
      * @return The size in {@code Byte}s of the blocks to be transfer to cause a {@link org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotification}.
      * @since 1.1.0
      */
     @XmlElement(name = "notifyBlockSize")
-    Integer getNotifyBlockSize();
+    public Integer getNotifyBlockSize() {
+        return notifyBlockSize;
+    }
 
     /**
-     * Sets the size in {@code Byte}s of the blocks to be transfer to cause a {@link org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotification} to be sent from the {@link org.eclipse.kapua.service.device.registry.Device}.
+     * Sets the size in {@code Byte}s of the blocks to be transfer to cause a {@link org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotification} to be
+     * sent from the {@link org.eclipse.kapua.service.device.registry.Device}.
      *
-     * @param notifyBlockSize The size in {@code Byte}s of the blocks to be transfer to cause a {@link org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotification}.
+     * @param notifyBlockSize
+     *         The size in {@code Byte}s of the blocks to be transfer to cause a {@link org.eclipse.kapua.service.device.management.registry.operation.notification.ManagementOperationNotification}.
      * @since 1.1.0
      */
-    void setNotifyBlockSize(Integer notifyBlockSize);
+    public void setNotifyBlockSize(Integer notifyBlockSize) {
+        this.notifyBlockSize = notifyBlockSize;
+    }
 
     /**
      * Gets the URI for the executable shell script to verify the installing of the downloaded file.
@@ -119,13 +177,18 @@ public interface AdvancedPackageDownloadOptions {
      * @since 1.1.0
      */
     @XmlElement(name = "installVerifierURI")
-    String getInstallVerifierURI();
+    public String getInstallVerifierURI() {
+        return installVerifierURI;
+    }
 
     /**
      * Sets the URI for the executable shell script to verify the installing of the downloaded file.
      *
-     * @param installVerifiesURI The URI for the executable shell script to verify the installing of the downloaded file.
+     * @param installVerifiesURI
+     *         The URI for the executable shell script to verify the installing of the downloaded file.
      * @since 1.1.0
      */
-    void setInstallVerifierURI(String installVerifiesURI);
+    public void setInstallVerifierURI(String installVerifiesURI) {
+        this.installVerifierURI = installVerifiesURI;
+    }
 }

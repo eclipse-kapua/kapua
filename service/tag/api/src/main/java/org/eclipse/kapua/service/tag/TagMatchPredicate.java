@@ -12,7 +12,24 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.tag;
 
-import org.eclipse.kapua.model.query.predicate.MatchPredicate;
-public interface TagMatchPredicate<T> extends MatchPredicate<T> {
+import java.util.Arrays;
+
+import org.eclipse.kapua.model.query.predicate.AbstractMatchPredicate;
+
+public class TagMatchPredicate<T> extends AbstractMatchPredicate<T> {
+
+    /**
+     * Constructor.
+     *
+     * @param matchTerm
+     * @since 2.1.0
+     */
+    public TagMatchPredicate(T matchTerm) {
+        this.attributeNames = Arrays.asList(
+                TagAttributes.DESCRIPTION,
+                TagAttributes.NAME
+        );
+        this.matchTerm = matchTerm;
+    }
 
 }

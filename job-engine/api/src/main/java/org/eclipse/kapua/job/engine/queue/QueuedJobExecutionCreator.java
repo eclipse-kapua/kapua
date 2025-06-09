@@ -12,13 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.job.engine.queue;
 
-import org.eclipse.kapua.model.KapuaUpdatableEntityCreator;
-import org.eclipse.kapua.model.id.KapuaId;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.model.KapuaEntityCreator;
+import org.eclipse.kapua.model.KapuaUpdatableEntityCreator;
+import org.eclipse.kapua.model.id.KapuaId;
 
 /**
  * {@link QueuedJobExecutionCreator} definition.
@@ -27,8 +28,26 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "queuedJobExecutionCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = QueuedJobExecutionXmlRegistry.class, factoryMethod = "newQueuedJobExecutionCreator")
-public interface QueuedJobExecutionCreator extends KapuaUpdatableEntityCreator<QueuedJobExecution> {
+@XmlType
+public class QueuedJobExecutionCreator extends KapuaUpdatableEntityCreator {
+
+    private static final long serialVersionUID = 3119071638220738358L;
+
+    private KapuaId jobId;
+    private KapuaId jobExecutionId;
+    private KapuaId waitForJobExecutionId;
+    private QueuedJobExecutionStatus status;
+
+    public QueuedJobExecutionCreator() {
+    }
+
+    public QueuedJobExecutionCreator(KapuaId scopeId) {
+        super(scopeId);
+    }
+
+    public QueuedJobExecutionCreator(KapuaEntityCreator entityCreator) {
+        super(entityCreator);
+    }
 
     /**
      * Gets the {@link org.eclipse.kapua.service.job.Job} {@link KapuaId}.
@@ -36,15 +55,20 @@ public interface QueuedJobExecutionCreator extends KapuaUpdatableEntityCreator<Q
      * @return The {@link org.eclipse.kapua.service.job.Job} {@link KapuaId}.
      * @since 1.1.0
      */
-    KapuaId getJobId();
+    public KapuaId getJobId() {
+        return jobId;
+    }
 
     /**
      * Sets the {@link org.eclipse.kapua.service.job.Job} {@link KapuaId}.
      *
-     * @param jobId The {@link org.eclipse.kapua.service.job.Job} {@link KapuaId}.
+     * @param jobId
+     *         The {@link org.eclipse.kapua.service.job.Job} {@link KapuaId}.
      * @since 1.1.0
      */
-    void setJobId(KapuaId jobId);
+    public void setJobId(KapuaId jobId) {
+        this.jobId = jobId;
+    }
 
     /**
      * Gets the {@link org.eclipse.kapua.service.job.execution.JobExecution} {@link KapuaId}.
@@ -52,15 +76,20 @@ public interface QueuedJobExecutionCreator extends KapuaUpdatableEntityCreator<Q
      * @return The {@link org.eclipse.kapua.service.job.execution.JobExecution} {@link KapuaId}.
      * @since 1.1.0
      */
-    KapuaId getJobExecutionId();
+    public KapuaId getJobExecutionId() {
+        return jobExecutionId;
+    }
 
     /**
      * Sets the {@link org.eclipse.kapua.service.job.execution.JobExecution} {@link KapuaId}.
      *
-     * @param jobExecutionId The {@link org.eclipse.kapua.service.job.execution.JobExecution} {@link KapuaId}.
+     * @param jobExecutionId
+     *         The {@link org.eclipse.kapua.service.job.execution.JobExecution} {@link KapuaId}.
      * @since 1.1.0
      */
-    void setJobExecutionId(KapuaId jobExecutionId);
+    public void setJobExecutionId(KapuaId jobExecutionId) {
+        this.jobExecutionId = jobExecutionId;
+    }
 
     /**
      * Gets the {@link org.eclipse.kapua.service.job.execution.JobExecution} {@link KapuaId} that needs to complete.
@@ -68,15 +97,20 @@ public interface QueuedJobExecutionCreator extends KapuaUpdatableEntityCreator<Q
      * @return The {@link org.eclipse.kapua.service.job.execution.JobExecution} {@link KapuaId} that needs to complete.
      * @since 1.1.0
      */
-    KapuaId getWaitForJobExecutionId();
+    public KapuaId getWaitForJobExecutionId() {
+        return waitForJobExecutionId;
+    }
 
     /**
      * Sets the {@link org.eclipse.kapua.service.job.execution.JobExecution} {@link KapuaId} that needs to complete.
      *
-     * @param waitForJobExecutionId The {@link org.eclipse.kapua.service.job.execution.JobExecution} {@link KapuaId} that needs to complete.
+     * @param waitForJobExecutionId
+     *         The {@link org.eclipse.kapua.service.job.execution.JobExecution} {@link KapuaId} that needs to complete.
      * @since 1.1.0
      */
-    void setWaitForJobExecutionId(KapuaId waitForJobExecutionId);
+    public void setWaitForJobExecutionId(KapuaId waitForJobExecutionId) {
+        this.waitForJobExecutionId = waitForJobExecutionId;
+    }
 
     /**
      * Gets the {@link QueuedJobExecutionStatus}.
@@ -84,13 +118,19 @@ public interface QueuedJobExecutionCreator extends KapuaUpdatableEntityCreator<Q
      * @return The {@link QueuedJobExecutionStatus}.
      * @since 1.1.0
      */
-    QueuedJobExecutionStatus getStatus();
+    public QueuedJobExecutionStatus getStatus() {
+        return status;
+    }
 
     /**
      * Sets the {@link QueuedJobExecutionStatus}.
      *
-     * @param status The {@link QueuedJobExecutionStatus}.
+     * @param status
+     *         The {@link QueuedJobExecutionStatus}.
      * @since 1.1.0
      */
-    void setStatus(QueuedJobExecutionStatus status);
+    public void setStatus(QueuedJobExecutionStatus status) {
+        this.status = status;
+    }
+
 }

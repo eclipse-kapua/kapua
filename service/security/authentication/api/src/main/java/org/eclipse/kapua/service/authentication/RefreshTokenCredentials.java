@@ -12,13 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication;
 
-import org.eclipse.kapua.service.authentication.token.AccessToken;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.service.authentication.token.AccessToken;
 
 /**
  * {@link AccessToken#getRefreshToken()} {@link LoginCredentials} definition.
@@ -27,8 +27,28 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name = "refreshTokenCredentials")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = AuthenticationXmlRegistry.class, factoryMethod = "newRefreshTokenCredentials")
-public interface RefreshTokenCredentials extends LoginCredentials {
+@XmlType
+public class RefreshTokenCredentials implements LoginCredentials {
+
+    private String tokenId;
+    private String refreshToken;
+
+    public RefreshTokenCredentials() {
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param tokenId
+     *         The {@link AccessToken#getTokenId()}
+     * @param refreshToken
+     *         TThe {@link AccessToken#getRefreshToken()}
+     * @since 1.0.0
+     */
+    public RefreshTokenCredentials(String tokenId, String refreshToken) {
+        this.tokenId = tokenId;
+        this.refreshToken = refreshToken;
+    }
 
     /**
      * Gets the {@link AccessToken#getTokenId()} to authenticate.
@@ -37,15 +57,20 @@ public interface RefreshTokenCredentials extends LoginCredentials {
      * @since 1.0.0
      */
     @XmlElement(name = "tokenId")
-    String getTokenId();
+    public String getTokenId() {
+        return tokenId;
+    }
 
     /**
      * Set the {@link AccessToken#getTokenId()} to authenticate.
      *
-     * @param tokenId The {@link AccessToken#getTokenId()} to authenticate.
+     * @param tokenId
+     *         The {@link AccessToken#getTokenId()} to authenticate.
      * @since 1.0.0
      */
-    void setTokenId(String tokenId);
+    public void setTokenId(String tokenId) {
+        this.tokenId = tokenId;
+    }
 
     /**
      * Gets the AccessToken#getRefreshToken()} to authenticate.
@@ -54,13 +79,19 @@ public interface RefreshTokenCredentials extends LoginCredentials {
      * @since 1.0.0
      */
     @XmlElement(name = "refreshToken")
-    String getRefreshToken();
+    public String getRefreshToken() {
+        return refreshToken;
+    }
 
     /**
      * Set the {@link AccessToken#getRefreshToken()} to authenticate.
      *
-     * @param refreshToken The AccessToken#getRefreshToken()} to authenticate.
+     * @param refreshToken
+     *         The AccessToken#getRefreshToken()} to authenticate.
      * @since 1.0.0
      */
-    void setRefreshToken(String refreshToken);
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
 }

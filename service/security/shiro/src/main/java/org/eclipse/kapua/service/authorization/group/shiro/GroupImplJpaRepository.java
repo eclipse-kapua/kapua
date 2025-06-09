@@ -21,8 +21,9 @@ import org.eclipse.kapua.service.authorization.group.GroupRepository;
 public class GroupImplJpaRepository
         extends KapuaNamedEntityJpaRepository<Group, GroupImpl, GroupListResult>
         implements GroupRepository {
+
     public GroupImplJpaRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig) {
-        super(GroupImpl.class, Group.TYPE, () -> new GroupListResultImpl(), jpaRepoConfig);
+        super(GroupImpl.class, Group.TYPE, () -> new GroupListResult(), jpaRepoConfig);
     }
 
 }

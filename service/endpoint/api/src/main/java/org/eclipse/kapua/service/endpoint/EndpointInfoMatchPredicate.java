@@ -12,8 +12,23 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.endpoint;
 
-import org.eclipse.kapua.model.query.predicate.MatchPredicate;
+import java.util.Arrays;
 
-public interface EndpointInfoMatchPredicate<T> extends MatchPredicate<T> {
+import org.eclipse.kapua.model.query.predicate.AbstractMatchPredicate;
 
+public class EndpointInfoMatchPredicate<T> extends AbstractMatchPredicate<T> {
+
+    /**
+     * Constructor.
+     *
+     * @param matchTerm
+     * @since 2.1.0
+     */
+    public EndpointInfoMatchPredicate(T matchTerm) {
+        this.attributeNames = Arrays.asList(
+                EndpointInfoAttributes.SCHEMA,
+                EndpointInfoAttributes.DNS
+        );
+        this.matchTerm = matchTerm;
+    }
 }

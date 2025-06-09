@@ -28,7 +28,6 @@ import org.eclipse.kapua.commons.jpa.KapuaJpaRepositoryConfiguration;
 import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.commons.jpa.NamedCacheFactory;
 import org.eclipse.kapua.commons.model.domains.Domains;
-import org.eclipse.kapua.commons.service.event.store.api.EventStoreFactory;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordRepository;
 import org.eclipse.kapua.commons.service.event.store.internal.EventStoreServiceImpl;
 import org.eclipse.kapua.event.ServiceEventBus;
@@ -37,7 +36,6 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.domain.Domain;
 import org.eclipse.kapua.model.domain.DomainEntry;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserRepository;
 import org.eclipse.kapua.service.user.UserService;
@@ -72,7 +70,6 @@ public class UserModule extends AbstractKapuaModule {
     public UserService userService(
             Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             UserRepository userRepository,
             UserFactory userFactory,
             EventStorer eventStorer,
@@ -80,7 +77,6 @@ public class UserModule extends AbstractKapuaModule {
         return new UserServiceImpl(
                 serviceConfigurationManagersByServiceClass.get(UserService.class),
                 authorizationService,
-                permissionFactory,
                 jpaTxManagerFactory.create("kapua-user"),
                 userRepository,
                 userFactory,
@@ -90,9 +86,7 @@ public class UserModule extends AbstractKapuaModule {
     @ProvidesIntoSet
     public ServiceModule userServiceModule(UserService userService,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
             KapuaJpaTxManagerFactory txManagerFactory,
-            EventStoreFactory eventStoreFactory,
             EventStoreRecordRepository eventStoreRecordRepository,
             ServiceEventBus serviceEventBus,
             KapuaUserSetting kapuaUserSetting,
@@ -104,9 +98,7 @@ public class UserModule extends AbstractKapuaModule {
                 new ServiceEventHouseKeeperFactoryImpl(
                         new EventStoreServiceImpl(
                                 authorizationService,
-                                permissionFactory,
                                 txManagerFactory.create("kapua-user"),
-                                eventStoreFactory,
                                 eventStoreRecordRepository
                         ),
                         txManagerFactory.create("kapua-user"),

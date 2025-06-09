@@ -12,13 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.scheduler.trigger.definition;
 
-import org.eclipse.kapua.entity.EntityPropertiesReadException;
-import org.eclipse.kapua.entity.EntityPropertiesWriteException;
-import org.eclipse.kapua.model.id.KapuaId;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+
+import org.eclipse.kapua.entity.EntityPropertiesReadException;
+import org.eclipse.kapua.entity.EntityPropertiesWriteException;
+import org.eclipse.kapua.model.id.KapuaId;
 
 public class TriggerDefinitionRecord implements TriggerDefinition {
 
@@ -33,11 +33,11 @@ public class TriggerDefinitionRecord implements TriggerDefinition {
     private List<TriggerProperty> triggerProperties;
 
     public TriggerDefinitionRecord(KapuaId scopeId,
-                                    String name,
-                                    String description,
-                                    TriggerType triggerType,
-                                    String processorName,
-                                    List<TriggerProperty> triggerProperties) {
+            String name,
+            String description,
+            TriggerType triggerType,
+            String processorName,
+            List<TriggerProperty> triggerProperties) {
         this.scopeId = scopeId;
         this.name = name;
         this.description = description;

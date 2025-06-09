@@ -12,12 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.packages.model;
 
+import java.util.Date;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.Date;
 
 /**
  * {@link DevicePackage} definition.
@@ -26,8 +27,13 @@ import java.util.Date;
  */
 @XmlRootElement(name = "devicePackage")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DevicePackageXmlRegistry.class, factoryMethod = "newDevicePackage")
-public interface DevicePackage {
+@XmlType
+public class DevicePackage {
+
+    private String name;
+    private String version;
+    private DevicePackageBundleInfos bundleInfos;
+    private Date installDate;
 
     /**
      * Gets the name.
@@ -36,15 +42,20 @@ public interface DevicePackage {
      * @since 1.0.0
      */
     @XmlElement(name = "name")
-    String getName();
+    public String getName() {
+        return name;
+    }
 
     /**
      * Sets the name.
      *
-     * @param name The name.
+     * @param name
+     *         The name.
      * @since 1.0.0
      */
-    void setName(String name);
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /**
      * Gets the version.
@@ -53,15 +64,20 @@ public interface DevicePackage {
      * @since 1.0.0
      */
     @XmlElement(name = "version")
-    String getVersion();
+    public String getVersion() {
+        return version;
+    }
 
     /**
      * Sets the version.
      *
-     * @param version The version.
+     * @param version
+     *         The version.
      * @since 1.0.0
      */
-    void setVersion(String version);
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
     /**
      * Gets the {@link DevicePackageBundleInfos}.
@@ -70,15 +86,24 @@ public interface DevicePackage {
      * @since 1.0.0
      */
     @XmlElement(name = "bundleInfos")
-    DevicePackageBundleInfos getBundleInfos();
+    public DevicePackageBundleInfos getBundleInfos() {
+        if (bundleInfos == null) {
+            bundleInfos = new DevicePackageBundleInfos();
+        }
+
+        return bundleInfos;
+    }
 
     /**
      * Sets the {@link DevicePackageBundleInfos}.
      *
-     * @param bundleInfos The {@link DevicePackageBundleInfos}.
+     * @param bundleInfos
+     *         The {@link DevicePackageBundleInfos}.
      * @since 1.0.0
      */
-    void setBundleInfos(DevicePackageBundleInfos bundleInfos);
+    public void setBundleInfos(DevicePackageBundleInfos bundleInfos) {
+        this.bundleInfos = bundleInfos;
+    }
 
     /**
      * Gets the installation date.
@@ -87,13 +112,18 @@ public interface DevicePackage {
      * @since 1.0.0
      */
     @XmlElement(name = "installDate")
-    Date getInstallDate();
+    public Date getInstallDate() {
+        return installDate;
+    }
 
     /**
      * Sets the installation date.
      *
-     * @param installDate The installation date.
+     * @param installDate
+     *         The installation date.
      * @since 1.0.0
      */
-    void setInstallDate(Date installDate);
+    public void setInstallDate(Date installDate) {
+        this.installDate = installDate;
+    }
 }

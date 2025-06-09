@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.credential;
 
-import org.eclipse.kapua.locator.KapuaLocator;
-
 import javax.xml.bind.annotation.XmlRegistry;
+
+import org.eclipse.kapua.locator.KapuaLocator;
 
 /**
  * The {@link Credential} {@link XmlRegistry}
@@ -34,35 +34,5 @@ public class CredentialXmlRegistry {
      */
     public Credential newCredential() {
         return credentialFactory.newEntity(null);
-    }
-
-    /**
-     * Instantiates a new {@link CredentialCreator}.
-     *
-     * @return The newly instantiated {@link CredentialCreator}
-     * @since 1.0.0
-     */
-    public CredentialCreator newCredentialCreator() {
-        return credentialFactory.newCreator(null, null, null, null, null, null);
-    }
-
-    /**
-     * Instantiates a new {@link CredentialListResult}.
-     *
-     * @return The newly instantiated {@link CredentialListResult}
-     * @since 1.0.0
-     */
-    public CredentialListResult newCredentialListResult() {
-        return credentialFactory.newListResult();
-    }
-
-    /**
-     * Instantiates a new {@link CredentialQuery}.
-     *
-     * @return The newly instantiated {@link CredentialQuery}
-     * @since 1.0.0
-     */
-    public CredentialQuery newCredentialQuery() {
-        return credentialFactory.newQuery(null);
     }
 }

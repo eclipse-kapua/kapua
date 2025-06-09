@@ -85,6 +85,7 @@ public enum KapuaTscalar {
      *
      * @return possible object is {@link String } with restricted values
      */
+
     public String value() {
         return value;
     }

@@ -12,14 +12,16 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.inventory.model.system;
 
-import org.eclipse.kapua.KapuaSerializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.List;
+
+import org.eclipse.kapua.KapuaSerializable;
 
 /**
  * {@link DeviceInventorySystemPackages} definition.
@@ -28,8 +30,12 @@ import java.util.List;
  */
 @XmlRootElement(name = "deviceInventorySystemPackages")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(factoryClass = DeviceInventorySystemPackagesXmlRegistry.class, factoryMethod = "newDeviceInventorySystemPackages")
-public interface DeviceInventorySystemPackages extends KapuaSerializable {
+@XmlType
+public class DeviceInventorySystemPackages implements KapuaSerializable {
+
+    private static final long serialVersionUID = -3824464082139248997L;
+
+    private List<DeviceInventorySystemPackage> systemPackages;
 
     /**
      * Gets the {@link List} of {@link DeviceInventorySystemPackage}s
@@ -38,21 +44,33 @@ public interface DeviceInventorySystemPackages extends KapuaSerializable {
      * @since 1.5.0
      */
     @XmlElement(name = "systemPackages")
-    List<DeviceInventorySystemPackage> getSystemPackages();
+    public List<DeviceInventorySystemPackage> getSystemPackages() {
+        if (systemPackages == null) {
+            systemPackages = new ArrayList<>();
+        }
+
+        return systemPackages;
+    }
 
     /**
      * Adds a {@link DeviceInventorySystemPackage} to the {@link List}
      *
-     * @param inventorySystemPackage The {@link DeviceInventorySystemPackage} to add.
+     * @param inventorySystemPackage
+     *         The {@link DeviceInventorySystemPackage} to add.
      * @since 1.5.0
      */
-    void addSystemPackage(DeviceInventorySystemPackage inventorySystemPackage);
+    public void addSystemPackage(DeviceInventorySystemPackage inventorySystemPackage) {
+        getSystemPackages().add(inventorySystemPackage);
+    }
 
     /**
      * Sets the {@link List} of {@link DeviceInventorySystemPackage}s
      *
-     * @param inventorySystemPackages The {@link List} of {@link DeviceInventorySystemPackage}s
+     * @param inventorySystemPackages
+     *         The {@link List} of {@link DeviceInventorySystemPackage}s
      * @since 1.5.0
      */
-    void setSystemPackages(List<DeviceInventorySystemPackage> inventorySystemPackages);
+    public void setSystemPackages(List<DeviceInventorySystemPackage> inventorySystemPackages) {
+        this.systemPackages = inventorySystemPackages;
+    }
 }
