@@ -53,8 +53,9 @@ import java.util.concurrent.TimeUnit;
 public final class SecurityContext {
 
     protected static Logger logger = LoggerFactory.getLogger(SecurityContext.class);
-    private static final String REPORT_HEADER = "################################################################################################";
-    private static final String REPORT_SEPARATOR = "------------------------------------------------------------------------------------------------";
+
+    private static final String REPORT_HEADER = "############ Security Context ############";
+    private static final String REPORT_SEPARATOR = "------------ Security Context ------------";
 
     private PluginUtility pluginUtility;
 
@@ -355,17 +356,17 @@ public final class SecurityContext {
     }
 
     private void appendServerContextReport(StringBuilder builder, ActiveMQServer server) {
-        builder.append("## Session count: ").append(server.getSessions().size()).
-                append(" - Connection count: ").append(server.getConnectionCount()).
-                append(" - Broker connections: ").append(server.getBrokerConnections().size()).append("\n");
-        builder.append("## session context: ").append(sessionContextMap.size()).append("\n");
-        builder.append("## session context by client: ").append(sessionContextMapByClient.size()).append("\n");
-        builder.append("## acl: ").append(aclMap.size()).append("\n");
-        builder.append("## connection: ").append(activeConnections.size()).append("\n");
+        builder.append(">>>     Session count: ").append(server.getSessions().size()).
+                append("        Connection count: ").append(server.getConnectionCount()).
+                append("        Broker connections: ").append(server.getBrokerConnections().size()).append("\n");
+        builder.append(">>>     Session context: ").append(sessionContextMap.size())
+               .append("        Session context by client: ").append(sessionContextMapByClient.size()).append("\n");
+        builder.append(">>>     Acl: ").append(aclMap.size())
+               .append("        Connection: ").append(activeConnections.size()).append("\n");
     }
 
     private void appendSessionInfoReport(StringBuilder builder, ActiveMQServer server) {
-        builder.append("## Sessions:").append("\n");
+        builder.append("        Sessions:").append("\n");
         Map<Object, Integer> sessionById = new HashMap<>();
         server.getSessions().forEach(session -> {
             Integer tmp = sessionById.get(session.getConnectionID());
@@ -375,24 +376,33 @@ public final class SecurityContext {
                 sessionById.put(session.getConnectionID(), new Integer(tmp.intValue() + 1));
             }
         });
-        sessionById.forEach((id, count) -> builder.append("##\tid:count ").append(id).append(":").append(count.intValue()).append("\n"));
+        sessionById.forEach((id, count) -> builder.append("        id:count ").append(id).append(":").append(count.intValue()).append("\n"));
     }
 
     private void appendDetailedServerContextReport(StringBuilder builder, String caller, ActiveMQServer server) {
-        builder.append("## Security context: (caller: ").append(caller).append(")\n");
-        builder.append("## connection info by client id\n");
-        sessionContextMapByClient.forEach((key, sessionContext) -> builder.append("##\tclientId: ").append(key).append(" - ip: ").append(sessionContext.getClientIp()).append(" - conId: ").append(sessionContext.getConnectionId()).append("\tinternal: ").append(sessionContext.isInternal()).append("\n"));
-        builder.append("## connection info by connection id\n");
-        sessionContextMap.forEach((key, sessionContext) -> builder.append("##\tconId: ").append(key).append(" - clientId: ").append(sessionContext.getClientId()).append(" - ip: ").append(sessionContext.getClientIp()).append("\tinternal: ").append(sessionContext.isInternal()).append("\n"));
-        builder.append("## acl by connection id\n");
-        aclMap.forEach((key, acl) -> builder.append("##\tconnId: ").append(key).append("\n"));
-        builder.append("## connection::");
+        builder.append(">>>     Security context: (caller: ").append(caller).append(")\n");
+        builder.append(">>>     Connection info by client id\n");
+        sessionContextMapByClient.forEach((key, sessionContext) ->
+            builder.append("                clientId: ").append(key).
+                append(" - ip: ").append(sessionContext.getClientIp()).
+                append(" - conId: ").append(sessionContext.getConnectionId()).
+                append("        internal: ").append(sessionContext.isInternal()).append("\n"));
+        builder.append("     Connection info by connection id\n");
+        sessionContextMap.forEach((key, sessionContext) ->
+            builder.append("                conId: ").append(key).
+                append(" - clientId: ").append(sessionContext.getClientId()).
+                append(" - ip: ").append(sessionContext.getClientIp()).
+                append("        internal: ").append(sessionContext.isInternal()).append("\n"));
+        builder.append("        Acl by connection id\n");
+        aclMap.forEach((key, acl) ->
+            builder.append("                connId: ").append(key).append("\n"));
+        builder.append("        Connection:");
         server.getSessions().stream().forEach(session -> {
             RemotingConnection remotingConnection = session.getRemotingConnection();
             String connectionId = pluginUtility.getConnectionId(remotingConnection);
             SessionContext sessionContext = getSessionContextByClientId(connectionId);
             String connectionFullClientId = sessionContext != null ? Utils.getFullClientId(sessionContext) : "N/A";
-            builder.append("\n\t\t\tconnection id: ").append(connectionId).append(" - client Id: ").append(connectionFullClientId);
+            builder.append("\n                Connection id: ").append(connectionId).append("        client Id: ").append(connectionFullClientId);
         });
     }
 
