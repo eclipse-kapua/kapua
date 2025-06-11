@@ -12,18 +12,19 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.registry.connection.option;
 
-import org.eclipse.kapua.model.KapuaUpdatableEntity;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.service.device.registry.ConnectionUserCouplingMode;
-import org.eclipse.kapua.service.device.registry.connection.DeviceConnection;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import org.eclipse.kapua.model.KapuaUpdatableEntity;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import org.eclipse.kapua.service.device.registry.ConnectionUserCouplingMode;
+import org.eclipse.kapua.service.device.registry.connection.DeviceConnection;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Device connection options entity definition.
@@ -38,6 +39,7 @@ public interface DeviceConnectionOption extends KapuaUpdatableEntity {
     String TYPE = "deviceConnectionOption";
 
     @Override
+    @Schema(example = "deviceConnectionOption")
     default String getType() {
         return TYPE;
     }
@@ -63,6 +65,7 @@ public interface DeviceConnectionOption extends KapuaUpdatableEntity {
      * @return
      */
     @XmlElement(name = "userCouplingMode")
+    @Schema(example = "INHERITED")
     ConnectionUserCouplingMode getUserCouplingMode();
 
     /**
@@ -94,6 +97,7 @@ public interface DeviceConnectionOption extends KapuaUpdatableEntity {
      * @return The allowed authentication type.
      * @since 2.0.0
      */
+    @Schema(example = "USER_PASS")
     String getAuthenticationType();
 
     /**

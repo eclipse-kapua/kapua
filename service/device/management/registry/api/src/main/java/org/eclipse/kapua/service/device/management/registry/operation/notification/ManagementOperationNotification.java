@@ -12,6 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.registry.operation.notification;
 
+import java.util.Date;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.eclipse.kapua.model.KapuaEntity;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdAdapter;
@@ -19,14 +27,7 @@ import org.eclipse.kapua.model.xml.DateXmlAdapter;
 import org.eclipse.kapua.service.device.management.message.notification.NotifyStatus;
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperation;
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationStatus;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link ManagementOperationNotification} definition.
@@ -41,6 +42,7 @@ public interface ManagementOperationNotification extends KapuaEntity {
     static final String TYPE = "managementOperationNotification";
 
     @Override
+    @Schema(example = "managementOperationNotification")
     default String getType() {
         return TYPE;
     }
@@ -53,6 +55,7 @@ public interface ManagementOperationNotification extends KapuaEntity {
      */
     @XmlElement(name = "operationId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(example = "cjmXXKvLUY8")
     KapuaId getOperationId();
 
     /**
@@ -105,6 +108,7 @@ public interface ManagementOperationNotification extends KapuaEntity {
      * @since 1.0.0
      */
     @XmlElement(name = "resource")
+    @Schema(example = "download")
     String getResource();
 
     /**

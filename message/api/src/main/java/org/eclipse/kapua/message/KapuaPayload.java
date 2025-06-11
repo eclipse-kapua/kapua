@@ -12,11 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.message;
 
-import org.eclipse.kapua.commons.util.Payloads;
-import org.eclipse.kapua.message.xml.MessageXmlRegistry;
-import org.eclipse.kapua.message.xml.MetricsXmlAdapter;
-import org.eclipse.kapua.model.xml.BinaryXmlAdapter;
-
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -24,7 +20,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Map;
+
+import org.eclipse.kapua.commons.util.Payloads;
+import org.eclipse.kapua.message.xml.MessageXmlRegistry;
+import org.eclipse.kapua.message.xml.MetricsXmlAdapter;
+import org.eclipse.kapua.model.xml.BinaryXmlAdapter;
 
 /**
  * {@link KapuaPayload} definition.

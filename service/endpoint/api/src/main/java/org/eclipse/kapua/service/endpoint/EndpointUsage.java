@@ -17,13 +17,16 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @XmlRootElement(name = "endpointUsage")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(factoryClass = EndpointInfoXmlRegistry.class, factoryMethod = "newEndpointUsage")
 public interface EndpointUsage {
 
-    public String getName();
+    @Schema(example = "MESSAGE_BROKER")
+    String getName();
 
-    public void setName(String name);
+    void setName(String name);
 
 }

@@ -12,12 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.shiro;
 
+import java.util.Optional;
+import javax.validation.constraints.NotNull;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.eclipse.kapua.service.authentication.UsernamePasswordCredentials;
 import org.eclipse.kapua.service.authentication.shiro.realm.KapuaAuthenticationToken;
-
-import javax.validation.constraints.NotNull;
-import java.util.Optional;
 
 /**
  * {@link UsernamePasswordCredentials} implementation.

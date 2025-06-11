@@ -18,6 +18,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * Api key {@link LoginCredentials} definition.
  *
@@ -35,6 +37,7 @@ public interface ApiKeyCredentials extends LoginCredentials {
      * @since 1.0.0
      */
     @XmlElement(name = "apiKey")
+    @Schema(example = "z8PEVr4XdBS/KKEKbVG9tJzj6DNNpSVCDpW53CWm")
     String getApiKey();
 
     /**

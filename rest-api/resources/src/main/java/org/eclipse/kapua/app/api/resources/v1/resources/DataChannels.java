@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -34,6 +33,9 @@ import org.eclipse.kapua.app.api.core.model.CountResult;
 import org.eclipse.kapua.app.api.core.model.ScopeId;
 import org.eclipse.kapua.app.api.core.model.StorableEntityId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
+import org.eclipse.kapua.commons.rest.model.errors.ExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.IllegalArgumentExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.SubjectUnauthorizedExceptionInfo;
 import org.eclipse.kapua.model.query.SortOrder;
 import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.datastore.ChannelInfoFactory;
@@ -50,8 +52,13 @@ import org.eclipse.kapua.service.storable.model.query.SortField;
 import org.eclipse.kapua.service.storable.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.service.storable.model.query.predicate.OrPredicate;
 import org.eclipse.kapua.service.storable.model.query.predicate.StorablePredicate;
-
 import com.google.common.base.Strings;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @Path("{scopeId}/data/channels")
 public class DataChannels extends AbstractKapuaResource {
@@ -87,12 +94,45 @@ public class DataChannels extends AbstractKapuaResource {
      */
     @GET
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    @Operation(summary = "Query the Data Channels")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The result of the query",
+            content = @Content(schema = @Schema(implementation = ChannelInfoListResult.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public ChannelInfoListResult simpleQuery(@PathParam("scopeId") ScopeId scopeId,
+            @Parameter(description = "The ClientID to filter results")
             @QueryParam("clientId") List<String> clientIds,
+            @Parameter(description = "The channel name to filter results. It allows '#' wildcard in last channel level")
             @QueryParam("name") String name,
+            @Parameter(description = "The sort parameter")
             @QueryParam("sortParam") String sortParam,
+            @Parameter(description = "The sort direction. Can be ascending (default) or descending.")
             @QueryParam("sortDir") @DefaultValue("ASCENDING") SortOrder sortDir,
+            @Parameter(description = "An Offset on the result size. Used to skip the first `n` items of a result set, with `n` equal to the value of `offset`")
             @QueryParam("offset") @DefaultValue("0") int offset,
+            @Parameter(description = "A Limit on the result size. The result set will not contain more items than this number")
             @QueryParam("limit") @DefaultValue("50") int limit)
             throws KapuaException {
         AndPredicate andPredicate = datastorePredicateFactory.newAndPredicate();
@@ -163,9 +203,38 @@ public class DataChannels extends AbstractKapuaResource {
      */
     @POST
     @Path("_count")
+    @Operation(summary = "Count the ChannelInfos")
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    public CountResult count(@PathParam("scopeId") ScopeId scopeId,
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The count of the available Entities",
+            content = @Content(schema = @Schema(implementation = CountResult.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
+    public CountResult count(
+        @Parameter(description = "The ID of the Scope where to perform the operation.")
+        @PathParam("scopeId") ScopeId scopeId,
             ChannelInfoQuery query)
             throws KapuaException {
         query.setScopeId(scopeId);
@@ -186,7 +255,35 @@ public class DataChannels extends AbstractKapuaResource {
     @GET
     @Path("{channelInfoId}")
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    @Operation(summary = "Get a single ChannelInfo")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The details of the desired ChannelInfo",
+            content = @Content(schema = @Schema(implementation = ChannelInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public ChannelInfo find(@PathParam("scopeId") ScopeId scopeId,
+            @Parameter(description = "The ID of the ChannelInfo on which to perform the operation")
             @PathParam("channelInfoId") StorableEntityId channelInfoId)
             throws KapuaException {
         ChannelInfo channelInfo = channelInfoRegistryService.find(scopeId, channelInfoId);

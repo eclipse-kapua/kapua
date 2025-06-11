@@ -12,13 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.role;
 
-import org.eclipse.kapua.model.KapuaNamedEntity;
-import org.eclipse.kapua.service.authorization.access.AccessInfo;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.model.KapuaNamedEntity;
+import org.eclipse.kapua.service.authorization.access.AccessInfo;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link Role} {@link org.eclipse.kapua.model.KapuaEntity} definition.
@@ -35,6 +36,7 @@ public interface Role extends KapuaNamedEntity {
     String TYPE = "role";
 
     @Override
+    @Schema(example = "role")
     default String getType() {
         return TYPE;
     }

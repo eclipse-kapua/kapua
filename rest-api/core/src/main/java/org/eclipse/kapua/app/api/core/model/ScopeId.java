@@ -12,12 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.core.model;
 
+import java.math.BigInteger;
+import javax.ws.rs.PathParam;
+
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.security.KapuaSession;
 import org.eclipse.kapua.model.id.KapuaId;
-
-import javax.ws.rs.PathParam;
-import java.math.BigInteger;
 
 /**
  * {@link KapuaId} implementation to be used on REST API to parse the {@link PathParam} scopeId.

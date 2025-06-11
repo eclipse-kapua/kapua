@@ -18,6 +18,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * {@link DeviceKeystore} definition.
  * <p>
@@ -37,6 +39,7 @@ public interface DeviceKeystore {
      * @since 1.5.0
      */
     @XmlElement(name = "id")
+    @Schema(example = "SSLKeystore")
     String getId();
 
     /**
@@ -54,6 +57,7 @@ public interface DeviceKeystore {
      * @since 1.5.0
      */
     @XmlElement(name = "keystoreType")
+    @Schema(example = "jks")
     String getKeystoreType();
 
     /**
@@ -71,6 +75,7 @@ public interface DeviceKeystore {
      * @since 1.5.0
      */
     @XmlElement(name = "size")
+    @Schema(example = "3")
     Integer getSize();
 
     /**

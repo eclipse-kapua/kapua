@@ -12,19 +12,20 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job.execution;
 
-import org.eclipse.kapua.model.KapuaUpdatableEntity;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.model.xml.DateXmlAdapter;
-
+import java.util.Date;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
-import java.util.Set;
+
+import org.eclipse.kapua.model.KapuaUpdatableEntity;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import org.eclipse.kapua.model.xml.DateXmlAdapter;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link JobExecution} definition.
@@ -39,6 +40,7 @@ public interface JobExecution extends KapuaUpdatableEntity {
     String TYPE = "jobExecution";
 
     @Override
+    @Schema(example = "jobExecution")
     default String getType() {
         return TYPE;
     }
@@ -48,6 +50,7 @@ public interface JobExecution extends KapuaUpdatableEntity {
      * @since 1.0.0
      */
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(example = "GTh9xBWezHY")
     KapuaId getJobId();
 
     /**
@@ -88,6 +91,7 @@ public interface JobExecution extends KapuaUpdatableEntity {
      */
     @XmlElement(name = "targetIds")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(example = "[\"Y-vYl9TKaf8\"]")
     <I extends KapuaId> Set<I> getTargetIds();
 
     /**
@@ -100,6 +104,24 @@ public interface JobExecution extends KapuaUpdatableEntity {
      * @return
      * @since 1.1.0
      */
+    @Schema(
+        example = "[INFO] 12/6/19 11:00 AM - Running before job...\\n[INFO] 12/6/19 11:00 AM - Run " +
+                      "configuration:\\n[INFO] 12/6/19 11:00 AM - \\tTarget count:           all\\n[INFO] 12/6/19 " +
+                      "11:00 AM - \\tReset step index:       false\\n[INFO] 12/6/19 11:00 AM - \\tFrom step index:   " +
+                      "     0\\n[INFO] 12/6/19 11:00 AM - \\tResuming job execution: none\\n[INFO] 12/6/19 11:00 AM -" +
+                      " \\tEnqueue:                false\\n[INFO] 12/6/19 11:00 AM - Creating job execution.." +
+                      ".\\n[INFO] 12/6/19 11:00 AM - Creating job execution... DONE!\\n[INFO] 12/6/19 11:00 AM - " +
+                      "Running before job... DONE!\\n[INFO] 12/6/19 11:00 AM - Reading step: download package (index:" +
+                      " 0)...\\n[INFO] 12/6/19 11:00 AM - Reading step: download package (index: 0)... DONE!\\n[INFO]" +
+                      " 12/6/19 11:00 AM - RReading target: pahoClient (id: SbQbzB6oOOo)...\\n[INFO] 12/6/19 11:00 AM" +
+                      " - Reading target:pahoClient (id:SbQbzB6oOOo)... DONE!\\n[INFO] 12/6/19 11:00 AM - Processing " +
+                      "target: pahoClient (id: SbQbzB6oOOo)\\n[INFO] 12/6/19 11:01 AM - Processing target: pahoClient" +
+                      " (id: SbQbzB6oOOo) - DONE!\\n[INFO] 12/6/19 11:01 AM - Reading target: client2 (id: " +
+                      "A4QbzB6oZZo)...\\n[INFO] 12/6/19 11:01 AM - Reading target: client2 (id: A4QbzB6oZZo)... " +
+                      "DONE!\\n[INFO] 12/6/19 11:01 AM - Writing target processing results...\\n[INFO] 12/6/19 11:01 " +
+                      "AM - Writing target processing results... DONE!\\n[INFO] 12/6/19 11:01 AM - Running after job." +
+                      "..\\n"
+    )
     String getLog();
 
     /**

@@ -12,12 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.job.engine;
 
-import org.eclipse.kapua.KapuaSerializable;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.service.job.step.definition.JobStepProperty;
-import org.eclipse.kapua.service.job.targets.JobTarget;
-
+import java.util.List;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -26,8 +22,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.List;
-import java.util.Set;
+
+import org.eclipse.kapua.KapuaSerializable;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import org.eclipse.kapua.service.job.step.definition.JobStepProperty;
+import org.eclipse.kapua.service.job.targets.JobTarget;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link JobStartOptions} definition.
@@ -48,6 +50,7 @@ public interface JobStartOptions extends KapuaSerializable {
     @XmlElementWrapper(name = "targetIdSublist")
     @XmlElement(name = "targetId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(example = "[\"mJxQbZThhXg_De2PkLKKlvzrrReAiRcsuurpgTOylUzbd0\"]")
     Set<KapuaId> getTargetIdSublist();
 
     /**
@@ -65,6 +68,7 @@ public interface JobStartOptions extends KapuaSerializable {
      * @since 1.0.0
      */
     @XmlTransient
+    @JsonIgnore
     void removeTargetIdToSublist(KapuaId targetId);
 
     /**
@@ -74,6 +78,7 @@ public interface JobStartOptions extends KapuaSerializable {
      * @since 1.0.0
      */
     @XmlTransient
+    @JsonIgnore
     void addTargetIdToSublist(KapuaId targetId);
 
     List<JobStepProperty> getStepPropertiesOverrides();
@@ -88,6 +93,7 @@ public interface JobStartOptions extends KapuaSerializable {
      * @return {@code true} if the {@link JobTarget#getStepIndex()} needs to be reset to the given {@link #getFromStepIndex()}, {@code false} otherwise.
      * @since 1.1.0
      */
+    @Schema(example = "true")
     boolean getResetStepIndex();
 
     /**
@@ -104,6 +110,7 @@ public interface JobStartOptions extends KapuaSerializable {
      * @return The starting {@link org.eclipse.kapua.service.job.step.JobStep} index.
      * @since 1.0.0
      */
+    @Schema(example = "0")
     Integer getFromStepIndex();
 
     /**

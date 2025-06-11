@@ -12,6 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.registry.event;
 
+import java.util.Date;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.eclipse.kapua.message.KapuaPosition;
 import org.eclipse.kapua.model.KapuaEntity;
 import org.eclipse.kapua.model.id.KapuaId;
@@ -19,14 +27,7 @@ import org.eclipse.kapua.model.id.KapuaIdAdapter;
 import org.eclipse.kapua.model.xml.DateXmlAdapter;
 import org.eclipse.kapua.service.device.management.message.KapuaMethod;
 import org.eclipse.kapua.service.device.management.message.response.KapuaResponseCode;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link DeviceEvent} entity definition.
@@ -64,6 +65,7 @@ public interface DeviceEvent extends KapuaEntity {
      */
     @XmlElement(name = "deviceId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(example = "WyczTs_GuDM")
     KapuaId getDeviceId();
 
     /**
@@ -134,6 +136,7 @@ public interface DeviceEvent extends KapuaEntity {
      * @since 1.0.0
      */
     @XmlElement(name = "resource")
+    @Schema(example = "BIRTH")
     String getResource();
 
     /**
@@ -184,6 +187,18 @@ public interface DeviceEvent extends KapuaEntity {
      * @since 1.0.0
      */
     @XmlElement(name = "eventMessage")
+    @Schema(
+        example = "acceptEncoding=gzip~~applicationFramework=Kura~~applicationFrameworkVersion=ESF_6.0" +
+                      ".0~~applicationIdentifiers=heaterPROV-V2DEPLOY-V2VPNCLIENT-V2CONF-V1CERT-V1ASSET-V1CMD-V1" +
+                      "~~availableProcessors=4~~bios=N/A~~biosVersion=N/A~~connectionInterface=lo (00:00:00:00:00:00)" +
+                      "~~connectionIp=127.0.0.1~~containerFramework=Eclipse~~containerFrameworkVersion=1.8" +
+                      ".0~~displayName=~~firmware=N/A~~firmwareVersion=N/A~~jvm=Java HotSpot(TM) 64-Bit Server " +
+                      "VM~~jvmProfile=Java(TM) SE Runtime Environment 1.8.0_161-b12~~jvmVersion=25.161-b12 mixed " +
+                      "mode~~modelId=ESF-Docker-RHEL~~modelName=ESF-Docker-RHEL~~os=Linux~~osArch=amd64~~osVersion=4" +
+                      ".9.184-linuxkit #1 SMP Tue Jul 2 22:58:16 UTC " +
+                      "2019~~partNumber=ESF-Docker-RHEL~~serialNumber=ESF-Docker-RHEL~~totalMemory=1023488~~uptime" +
+                      "=187894320"
+    )
     String getEventMessage();
 
     /**

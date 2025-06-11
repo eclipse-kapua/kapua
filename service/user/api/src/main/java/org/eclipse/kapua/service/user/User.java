@@ -12,17 +12,18 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.user;
 
-import org.eclipse.kapua.model.KapuaEntity;
-import org.eclipse.kapua.model.KapuaNamedEntity;
-import org.eclipse.kapua.model.xml.DateXmlAdapter;
-
+import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
+
+import org.eclipse.kapua.model.KapuaEntity;
+import org.eclipse.kapua.model.KapuaNamedEntity;
+import org.eclipse.kapua.model.xml.DateXmlAdapter;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link User} {@link KapuaEntity} definition.
@@ -38,6 +39,7 @@ public interface User extends KapuaNamedEntity {
     String TYPE = "user";
 
     @Override
+    @Schema(example = "user")
     default String getType() {
         return TYPE;
     }
@@ -49,6 +51,7 @@ public interface User extends KapuaNamedEntity {
      * @since 1.0.0
      */
     @XmlElement(name = "status")
+    @Schema(example = "ENABLED")
     UserStatus getStatus();
 
     /**
@@ -66,6 +69,7 @@ public interface User extends KapuaNamedEntity {
      * @since 1.0.0
      */
     @XmlElement(name = "displayName")
+    @Schema(example = "Donald Duck")
     String getDisplayName();
 
     /**
@@ -83,6 +87,7 @@ public interface User extends KapuaNamedEntity {
      * @since 1.0.0
      */
     @XmlElement(name = "email")
+    @Schema(example = "donald.duck@duckburg.org")
     String getEmail();
 
     /**
@@ -100,6 +105,7 @@ public interface User extends KapuaNamedEntity {
      * @since 1.0.0
      */
     @XmlElement(name = "phoneNumber")
+    @Schema(example = "+1 (555) 816 1851")
     String getPhoneNumber();
 
     /**
@@ -117,6 +123,7 @@ public interface User extends KapuaNamedEntity {
      * @since 1.0.0
      */
     @XmlElement(name = "userType")
+    @Schema(example = "INTERNAL")
     UserType getUserType();
 
     /**

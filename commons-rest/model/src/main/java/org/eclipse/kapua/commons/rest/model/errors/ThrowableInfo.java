@@ -12,12 +12,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.rest.model.errors;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @XmlRootElement(name = "throwableInfo")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -65,9 +67,13 @@ public class ThrowableInfo {
     /**
      * Gets the http status code of the response containing this info.
      *
-     * @return The the http status code of the response containing this info.
+     * @return The http status code of the response containing this info.
      * @since 1.0.0
      */
+    @Schema(
+        description = "The http error code for this response",
+        example = "400"
+    )
     public int getHttpErrorCode() {
         return httpErrorCode;
     }
@@ -88,6 +94,10 @@ public class ThrowableInfo {
      * @return The {@link Throwable#getMessage()}.
      * @since 1.0.0
      */
+    @Schema(
+        description = "An extended description of the error that occurred when performing the operation",
+        example = "An illegal value was provided for the argument user.email: thisIsNotAnEmailAtAll"
+    )
     public String getMessage() {
         return message;
     }

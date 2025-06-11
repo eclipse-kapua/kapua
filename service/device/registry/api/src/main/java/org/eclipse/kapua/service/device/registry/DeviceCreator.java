@@ -27,6 +27,7 @@ import org.eclipse.kapua.model.id.KapuaIdAdapter;
 import org.eclipse.kapua.service.authorization.group.Group;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnection;
 import org.eclipse.kapua.service.device.registry.event.DeviceEvent;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link DeviceCreator} encapsulates all the information needed to create a new {@link Device} in the system.<br>
@@ -82,6 +83,7 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      */
     @XmlElement(name = "groupId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(description = "The ID of the Access Group to which this Device is assigned to")
     KapuaId getGroupId();
 
     /**
@@ -99,6 +101,7 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      * @since 1.0.0
      */
     @XmlElement(name = "clientId")
+    @Schema(example = "testDevice")
     String getClientId();
 
     /**
@@ -151,6 +154,10 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      * @since 1.0.0
      */
     @XmlElement(name = "displayName")
+    @Schema(
+        description = "The Kura Display Name of this Device",
+        example = "Test Device"
+    )
     String getDisplayName();
 
     /**
@@ -186,6 +193,10 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      * @since 1.0.0
      */
     @XmlElement(name = "serialNumber")
+    @Schema(
+        description = "The Serial Number of this Device",
+        example = "1234567890"
+    )
     String getSerialNumber();
 
     /**
@@ -203,6 +214,10 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      * @since 1.0.0
      */
     @XmlElement(name = "modelId")
+    @Schema(
+        description = "The Model ID (not an Kapua ID) of this Device",
+        example = "Test Model"
+    )
     String getModelId();
 
     /**
@@ -220,6 +235,7 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      * @since 1.0.0
      */
     @XmlElement(name = "modelName")
+    @Schema(description = "The Model Name of this Device")
     String getModelName();
 
     /**
@@ -237,6 +253,7 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      * @since 1.0.0
      */
     @XmlElement(name = "imei")
+    @Schema(description = "The IMEI Code of this Device")
     String getImei();
 
     /**
@@ -254,6 +271,7 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      * @since 1.0.0
      */
     @XmlElement(name = "imsi")
+    @Schema(description = "The IMSI Code of this Device")
     String getImsi();
 
     /**
@@ -271,6 +289,7 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      * @since 1.0.0
      */
     @XmlElement(name = "iccid")
+    @Schema(description = "The ICCID Code of this Device")
     String getIccid();
 
     /**
@@ -288,6 +307,10 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      * @since 1.0.0
      */
     @XmlElement(name = "biosVersion")
+    @Schema(
+        description = "The BIOS Version running on this Device",
+        example = "N/A"
+    )
     String getBiosVersion();
 
     /**
@@ -305,6 +328,10 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      * @since 1.0.0
      */
     @XmlElement(name = "firmwareVersion")
+    @Schema(
+        description = "The Firmware Version of this Device",
+        example = "N/A"
+    )
     String getFirmwareVersion();
 
     /**
@@ -322,6 +349,10 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      * @since 1.0.0
      */
     @XmlElement(name = "osVersion")
+    @Schema(
+        description = "The OS Version running on this Device",
+        example = "3.13.0-93-generic"
+    )
     String getOsVersion();
 
     /**
@@ -339,6 +370,10 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      * @since 1.0.0
      */
     @XmlElement(name = "jvmVersion")
+    @Schema(
+        description = "The JVM Version running on this Device",
+        example = "24.111-b01 mixed mode"
+    )
     String getJvmVersion();
 
     /**
@@ -356,6 +391,10 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      * @since 1.0.0
      */
     @XmlElement(name = "osgiFrameworkVersion")
+    @Schema(
+        description = "The OSGi Framework Version running on this Device",
+        example = "1.7.0"
+    )
     String getOsgiFrameworkVersion();
 
     /**
@@ -373,6 +412,7 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      * @since 1.0.0
      */
     @XmlElement(name = "applicationFrameworkVersion")
+    @Schema(description = "The Application Framework Version running on this Device")
     String getApplicationFrameworkVersion();
 
     /**
@@ -390,6 +430,7 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      * @since 1.0.0
      */
     @XmlElement(name = "connectionInterface")
+    @Schema(description = "The Primary Connection Interface Name of this Device")
     String getConnectionInterface();
 
     /**
@@ -407,6 +448,7 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      * @since 1.0.0
      */
     @XmlElement(name = "connectionIp")
+    @Schema(description = "The IP Address of the Primary Connection Interface on this Device")
     String getConnectionIp();
 
     /**
@@ -424,6 +466,7 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      * @since 1.0.0
      */
     @XmlElement(name = "applicationIdentifiers")
+    @Schema(description = "A string listing all the Kura Applications running on this Device")
     String getApplicationIdentifiers();
 
     /**
@@ -441,6 +484,10 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      * @since 1.0.0
      */
     @XmlElement(name = "acceptEncoding")
+    @Schema(
+        description = "The MIME Encoding accepted by this Device",
+        example = "gzip"
+    )
     String getAcceptEncoding();
 
     /**
@@ -458,6 +505,7 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      * @since 1.0.0
      */
     @XmlElement(name = "customAttribute1")
+    @Schema(description = "A Custom Attribute of this Device - 1")
     String getCustomAttribute1();
 
     /**
@@ -475,6 +523,7 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      * @since 1.0.0
      */
     @XmlElement(name = "customAttribute2")
+    @Schema(description = "A Custom Attribute of this Device - 2")
     String getCustomAttribute2();
 
     /**
@@ -492,6 +541,7 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      * @since 1.0.0
      */
     @XmlElement(name = "customAttribute3")
+    @Schema(description = "A Custom Attribute of this Device - 3")
     String getCustomAttribute3();
 
     /**
@@ -509,6 +559,7 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      * @since 1.0.0
      */
     @XmlElement(name = "customAttribute4")
+    @Schema(description = "A Custom Attribute of this Device - 4")
     String getCustomAttribute4();
 
     /**
@@ -526,6 +577,7 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      * @since 1.0.0
      */
     @XmlElement(name = "customAttribute5")
+    @Schema(description = "A Custom Attribute of this Device - 5")
     String getCustomAttribute5();
 
     /**
@@ -568,6 +620,10 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      * @since 2.0.0
      */
     @XmlElement(name = "tamperStatus")
+    @Schema(
+        description = "The tamper status of the Device",
+        example = "NOT_TAMPERED"
+    )
     String getTamperStatus();
 
     /**
@@ -587,6 +643,7 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      */
     @XmlElement(name = "tagIds")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(description = "A list of tag ID to link to the Device")
     Set<KapuaId> getTagIds();
 
     /**

@@ -34,5 +34,9 @@
             <groupId>org.eclipse.kapua</groupId>
             <artifactId>kapua-service-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
+        </dependency>
     </dependencies>
 </project>

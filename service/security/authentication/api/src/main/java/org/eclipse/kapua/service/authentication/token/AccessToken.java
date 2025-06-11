@@ -12,12 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.token;
 
-import org.eclipse.kapua.model.KapuaUpdatableEntity;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.model.xml.DateXmlAdapter;
-import org.eclipse.kapua.service.user.User;
-
+import java.io.Serializable;
+import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -25,8 +21,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.Serializable;
-import java.util.Date;
+
+import org.eclipse.kapua.model.KapuaUpdatableEntity;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import org.eclipse.kapua.model.xml.DateXmlAdapter;
+import org.eclipse.kapua.service.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link AccessToken} entity.
@@ -46,11 +48,16 @@ import java.util.Date;
 }, //
         factoryClass = AccessTokenXmlRegistry.class, //
         factoryMethod = "newAccessToken")
+@Schema(
+    name = "AccessToken",
+    description = "Represents an authentication token with details such as expiry, refresh, and user information."
+)
 public interface AccessToken extends KapuaUpdatableEntity, Serializable {
 
     String TYPE = "accessToken";
 
     @Override
+    @Schema(example = "accessToken")
     default String getType() {
         return TYPE;
     }
@@ -63,6 +70,8 @@ public interface AccessToken extends KapuaUpdatableEntity, Serializable {
      * @since 1.0.0
      */
     @XmlElement(name = "tokenId")
+    @Schema(description = "Unique identifier of the user associated with this token.",
+        example = "S6=enLL9P1OcwJNFDjme.FhOsKfDxOxxfb87c_RLkChyTpesYTLfnRWXfZlXmu=yN7EDT3LGxQiZ1KeztF2F8.bYPI_grbdsES8wkzki4T52d0-")
     String getTokenId();
 
     /**
@@ -81,6 +90,8 @@ public interface AccessToken extends KapuaUpdatableEntity, Serializable {
      */
     @XmlElement(name = "userId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(description = "Unique identifier of the user associated with this token.", type = "string",
+        example = "QwrHirFy3OMS849giOq7fglzI-aHneW_NFoBgiUChO_csBO927AeP6q1ZC5bD0HcgVH8OcvhY")
     KapuaId getUserId();
 
     /**
@@ -99,6 +110,8 @@ public interface AccessToken extends KapuaUpdatableEntity, Serializable {
      */
     @XmlElement(name = "expiresOn")
     @XmlJavaTypeAdapter(DateXmlAdapter.class)
+    @Schema(description = "The date and time when the token will expire.",
+        example = "2024-11-21T08:51:44.355Z")
     Date getExpiresOn();
 
     /**
@@ -116,6 +129,8 @@ public interface AccessToken extends KapuaUpdatableEntity, Serializable {
      * @since 1.0.0
      */
     @XmlElement(name = "refreshToken")
+    @Schema(description = "The refresh token used to obtain a new access token.",
+        example = "3fa85f64-5717-4562-b3fc-2c963f66afa6")
     String getRefreshToken();
 
     /**
@@ -134,6 +149,8 @@ public interface AccessToken extends KapuaUpdatableEntity, Serializable {
      */
     @XmlElement(name = "refreshExpiresOn")
     @XmlJavaTypeAdapter(DateXmlAdapter.class)
+    @Schema(description = "The date and time when the refresh token will expire.",
+        example = "2024-11-21T08:51:44.355Z")
     Date getRefreshExpiresOn();
 
     /**
@@ -154,6 +171,8 @@ public interface AccessToken extends KapuaUpdatableEntity, Serializable {
      */
     @XmlElement(name = "invalidatedOn")
     @XmlJavaTypeAdapter(DateXmlAdapter.class)
+    @Schema(description = "The date and time when the token was invalidated, if applicable.",
+        example = "2024-11-21T08:51:44.355Z", nullable = true)
     Date getInvalidatedOn();
 
     /**
@@ -173,6 +192,8 @@ public interface AccessToken extends KapuaUpdatableEntity, Serializable {
      * @since 1.4.0
      */
     @XmlElement(name = "trustKey")
+    @Schema(description = "The trust key associated with this token, used for additional security.",
+        example = "wnMaCRrbFBGOA9mibCNd=.5jHQ4igCusVIXbsJsNUO7kii2jidtg0L-0jt7ElE2A3OKq1t3=qW5.2KQyKXoYSgkC+eU3mPFnKr.fMMNa6fY+bt6=FJWmF.=29r5kk9hqKXlAKAy")
     String getTrustKey();
 
     /**
@@ -191,6 +212,7 @@ public interface AccessToken extends KapuaUpdatableEntity, Serializable {
      * @since 2.0
      */
     @XmlTransient
+    @JsonIgnore
     String getTokenIdentifier();
 
     /**

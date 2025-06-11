@@ -12,16 +12,17 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.user;
 
-import org.eclipse.kapua.model.KapuaNamedEntityCreator;
-import org.eclipse.kapua.model.xml.DateXmlAdapter;
-
+import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
+
+import org.eclipse.kapua.model.KapuaNamedEntityCreator;
+import org.eclipse.kapua.model.xml.DateXmlAdapter;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link UserCreator} {@link org.eclipse.kapua.model.KapuaEntityCreator} definition
@@ -31,6 +32,7 @@ import java.util.Date;
 @XmlRootElement(name = "userCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(factoryClass = UserXmlRegistry.class, factoryMethod = "newUserCreator")
+@Schema(description = "An object containing the properties for the new User to be created")
 public interface UserCreator extends KapuaNamedEntityCreator<User> {
 
     /**
@@ -39,6 +41,7 @@ public interface UserCreator extends KapuaNamedEntityCreator<User> {
      * @return
      */
     @XmlElement(name = "displayName")
+    @Schema(example = "new-user")
     String getDisplayName();
 
     /**
@@ -54,6 +57,7 @@ public interface UserCreator extends KapuaNamedEntityCreator<User> {
      * @return
      */
     @XmlElement(name = "email")
+    @Schema(example = "foo@bar.com")
     String getEmail();
 
     /**
@@ -69,6 +73,7 @@ public interface UserCreator extends KapuaNamedEntityCreator<User> {
      * @return
      */
     @XmlElement(name = "phoneNumber")
+    @Schema(example = "424202424")
     String getPhoneNumber();
 
     /**

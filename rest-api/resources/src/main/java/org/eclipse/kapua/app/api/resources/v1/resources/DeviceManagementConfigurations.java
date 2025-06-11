@@ -12,18 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.resources.v1.resources;
 
-import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.app.api.core.model.EntityId;
-import org.eclipse.kapua.app.api.core.model.ScopeId;
-import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
-import org.eclipse.kapua.service.KapuaService;
-import org.eclipse.kapua.service.device.management.configuration.DeviceComponentConfiguration;
-import org.eclipse.kapua.service.device.management.configuration.DeviceConfiguration;
-import org.eclipse.kapua.service.device.management.configuration.DeviceConfigurationManagementService;
-import org.eclipse.kapua.service.device.management.configuration.store.DeviceConfigurationStoreService;
-import org.eclipse.kapua.service.device.management.configuration.store.settings.DeviceConfigurationStoreSettings;
-import org.eclipse.kapua.service.device.registry.Device;
-
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -36,7 +24,32 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.app.api.core.model.EntityId;
+import org.eclipse.kapua.app.api.core.model.ScopeId;
+import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
+import org.eclipse.kapua.commons.rest.model.errors.DeviceNotConnectedExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.EntityNotFoundExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.ExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.IllegalArgumentExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.SubjectUnauthorizedExceptionInfo;
+import org.eclipse.kapua.service.KapuaService;
+import org.eclipse.kapua.service.device.management.configuration.DeviceComponentConfiguration;
+import org.eclipse.kapua.service.device.management.configuration.DeviceConfiguration;
+import org.eclipse.kapua.service.device.management.configuration.DeviceConfigurationManagementService;
+import org.eclipse.kapua.service.device.management.configuration.store.DeviceConfigurationStoreService;
+import org.eclipse.kapua.service.device.management.configuration.store.settings.DeviceConfigurationStoreSettings;
+import org.eclipse.kapua.service.device.registry.Device;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @Path("{scopeId}/devices/{deviceId}/configurations")
+@Tag(name = "Device Management - Configuration")
 public class DeviceManagementConfigurations extends AbstractKapuaResource {
 
     @Inject
@@ -56,9 +69,39 @@ public class DeviceManagementConfigurations extends AbstractKapuaResource {
      */
     @GET
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Operation(summary = "Read multiple Configurations")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The list of the Configurations on a single Device",
+            content = @Content(schema = @Schema(implementation = DeviceConfiguration.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public DeviceConfiguration get(
+            @Parameter(description = "The ID of the Scope where to perform the operation.")
             @PathParam("scopeId") ScopeId scopeId,
+            @Parameter(description = "The ID of the Device on which to perform the operation")
             @PathParam("deviceId") EntityId deviceId,
+            @Parameter(description = "The timeout for the request in milliseconds")
             @QueryParam("timeout") @DefaultValue("30000") Long timeout) throws KapuaException {
         return getComponent(scopeId, deviceId, null, timeout);
     }
@@ -76,9 +119,43 @@ public class DeviceManagementConfigurations extends AbstractKapuaResource {
      */
     @PUT
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Operation(summary = "Update multiple Configurations")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "204",
+            description = "The updated list of Configurations on a single Device"
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "The desired entity could not be found",
+            content = @Content(schema = @Schema(implementation = EntityNotFoundExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public Response update(
+            @Parameter(description = "The ID of the Scope where to perform the operation.")
             @PathParam("scopeId") ScopeId scopeId,
+            @Parameter(description = "The ID of the Device on which to perform the operation")
             @PathParam("deviceId") EntityId deviceId,
+            @Parameter(description = "The timeout for the request in milliseconds")
             @QueryParam("timeout") @DefaultValue("30000") Long timeout,
             DeviceConfiguration deviceConfiguration) throws KapuaException {
         configurationService.put(scopeId, deviceId, deviceConfiguration, timeout);
@@ -104,10 +181,41 @@ public class DeviceManagementConfigurations extends AbstractKapuaResource {
     @GET
     @Path("{componentId}")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Operation(summary = "Read a single Configuration")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The Configuration details of a single Service on a single Device",
+            content = @Content(schema = @Schema(implementation = DeviceConfiguration.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public DeviceConfiguration getComponent(
+            @Parameter(description = "The ID of the Scope where to perform the operation.")
             @PathParam("scopeId") ScopeId scopeId,
+            @Parameter(description = "The ID of the Device on which to perform the operation")
             @PathParam("deviceId") EntityId deviceId,
+            @Parameter(description = "The ID of the Component on which to perform the operation")
             @PathParam("componentId") String componentId,
+            @Parameter(description = "The timeout for the request in milliseconds")
             @QueryParam("timeout") @DefaultValue("30000") Long timeout) throws KapuaException {
         return configurationService.get(scopeId, deviceId, null, componentId, timeout);
     }
@@ -131,10 +239,50 @@ public class DeviceManagementConfigurations extends AbstractKapuaResource {
     @PUT
     @Path("{componentId}")
     @Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Operation(summary = "Update a single Configuration")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "204",
+            description = "The updated Configuration details of a single Service on a single Device"
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "A conflict in the request - the device is disconnected and the request cannot be accomplished",
+            content = @Content(schema = @Schema(implementation = DeviceNotConnectedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "409",
+            description = "The desired entity could not be found",
+            content = @Content(schema = @Schema(implementation = EntityNotFoundExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public Response updateComponent(
+            @Parameter(description = "The ID of the Scope where to perform the operation.")
             @PathParam("scopeId") ScopeId scopeId,
+            @Parameter(description = "The ID of the Device on which to perform the operation")
             @PathParam("deviceId") EntityId deviceId,
+            @Parameter(description = "The ID of the Component on which to perform the operation")
             @PathParam("componentId") String componentId,
+            @Parameter(description = "The timeout for the request in milliseconds")
             @QueryParam("timeout") @DefaultValue("30000") Long timeout,
             DeviceComponentConfiguration deviceComponentConfiguration) throws KapuaException {
         deviceComponentConfiguration.setId(componentId);
@@ -147,8 +295,42 @@ public class DeviceManagementConfigurations extends AbstractKapuaResource {
     @GET
     @Path("_settings")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Operation(description = "Gets the settings of the Device Configurations Store settings of this Device")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The Device Management Settings retrieved",
+            content = @Content(schema = @Schema(implementation = DeviceConfigurationStoreSettings.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "The desired entity could not be found",
+            content = @Content(schema = @Schema(implementation = EntityNotFoundExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public DeviceConfigurationStoreSettings getSettings(
+            @Parameter(description = "The ID of the Scope where to perform the operation.")
             @PathParam("scopeId") ScopeId scopeId,
+            @Parameter(description = "The ID of the Device on which to perform the operation")
             @PathParam("deviceId") EntityId deviceId)
             throws KapuaException {
         return deviceConfigurationStoreService.getApplicationSettings(scopeId, deviceId);
@@ -157,9 +339,44 @@ public class DeviceManagementConfigurations extends AbstractKapuaResource {
     @PUT
     @Path("_settings")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Operation(description = "Applies the given settings to the Device Configurations Store settings of this Device")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "204",
+            description = "The Device Management Settings have been applied",
+            content = @Content(schema = @Schema(implementation = DeviceConfigurationStoreSettings.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "The desired entity could not be found",
+            content = @Content(schema = @Schema(implementation = EntityNotFoundExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public Response postSettings(
+            @Parameter(description = "The ID of the Scope where to perform the operation.")
             @PathParam("scopeId") ScopeId scopeId,
+            @Parameter(description = "The ID of the Device on which to perform the operation")
             @PathParam("deviceId") EntityId deviceId,
+            @Parameter(description = "The Device Configurations Store Settings for this Device")
             DeviceConfigurationStoreSettings deviceConfigurationStoreSettings) throws KapuaException {
         deviceConfigurationStoreService.setApplicationSettings(scopeId, deviceId, deviceConfigurationStoreSettings);
         return returnNoContent();

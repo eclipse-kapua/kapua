@@ -12,17 +12,19 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.core.model;
 
-import org.eclipse.kapua.model.id.KapuaId;
-
-import javax.ws.rs.PathParam;
 import java.math.BigInteger;
 import java.util.Base64;
+import javax.ws.rs.PathParam;
+
+import org.eclipse.kapua.model.id.KapuaId;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link KapuaId} implementation to be used on REST API to parse the {@link PathParam} entityId.
  *
  * @since 1.0.0
  */
+@Schema(type = "string")
 public class EntityId implements KapuaId {
 
     private static final long serialVersionUID = 6893262093856905182L;
@@ -41,6 +43,7 @@ public class EntityId implements KapuaId {
     }
 
     @Override
+    @Schema(hidden = true)
     public BigInteger getId() {
         return id;
     }

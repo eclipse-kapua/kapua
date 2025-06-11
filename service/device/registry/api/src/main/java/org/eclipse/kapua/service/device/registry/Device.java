@@ -28,6 +28,7 @@ import org.eclipse.kapua.model.id.KapuaIdAdapter;
 import org.eclipse.kapua.service.authorization.group.Group;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnection;
 import org.eclipse.kapua.service.device.registry.event.DeviceEvent;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link Device} is an object representing a device or gateway connected to the Kapua platform.<br>
@@ -77,6 +78,7 @@ public interface Device extends KapuaUpdatableEntity {
     String TYPE = "device";
 
     @Override
+    @Schema(example = "device")
     default String getType() {
         return TYPE;
     }
@@ -125,6 +127,7 @@ public interface Device extends KapuaUpdatableEntity {
      * @since 1.0.0
      */
     @XmlElement(name = "clientId")
+    @Schema(example = "testDevice")
     String getClientId();
 
     /**
@@ -186,6 +189,7 @@ public interface Device extends KapuaUpdatableEntity {
      * @since 1.0.0
      */
     @XmlElement(name = "displayName")
+    @Schema(example = "Test Device")
     String getDisplayName();
 
     /**
@@ -230,6 +234,7 @@ public interface Device extends KapuaUpdatableEntity {
      * @since 1.0.0
      */
     @XmlElement(name = "serialNumber")
+    @Schema(example = "1234567890")
     String getSerialNumber();
 
     /**
@@ -247,6 +252,7 @@ public interface Device extends KapuaUpdatableEntity {
      * @since 1.0.0
      */
     @XmlElement(name = "modelId")
+    @Schema(example = "Test Model")
     String getModelId();
 
     /**
@@ -332,6 +338,7 @@ public interface Device extends KapuaUpdatableEntity {
      * @since 1.0.0
      */
     @XmlElement(name = "biosVersion")
+    @Schema(example = "N/A")
     String getBiosVersion();
 
     /**
@@ -349,6 +356,7 @@ public interface Device extends KapuaUpdatableEntity {
      * @since 1.0.0
      */
     @XmlElement(name = "firmwareVersion")
+    @Schema(example = "N/A")
     String getFirmwareVersion();
 
     /**
@@ -366,6 +374,7 @@ public interface Device extends KapuaUpdatableEntity {
      * @since 1.0.0
      */
     @XmlElement(name = "osVersion")
+    @Schema(example = "3.13.0-93-generic")
     String getOsVersion();
 
     /**
@@ -383,6 +392,7 @@ public interface Device extends KapuaUpdatableEntity {
      * @since 1.0.0
      */
     @XmlElement(name = "jvmVersion")
+    @Schema(example = "24.111-b01 mixed mode")
     String getJvmVersion();
 
     /**
@@ -400,6 +410,7 @@ public interface Device extends KapuaUpdatableEntity {
      * @since 1.0.0
      */
     @XmlElement(name = "osgiFrameworkVersion")
+    @Schema(example = "1.7.0")
     String getOsgiFrameworkVersion();
 
     /**
@@ -612,6 +623,7 @@ public interface Device extends KapuaUpdatableEntity {
      * @since 2.0.0
      */
     @XmlElement(name = "tamperStatus")
+    @Schema(example = "NOT_TAMPERED")
     String getTamperStatus();
 
     /**

@@ -13,12 +13,14 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.packages.model;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.util.List;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link DevicePackageBundleInfos} implementation.
@@ -28,6 +30,7 @@ import java.util.List;
 @XmlRootElement(name = "bundleInfos")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(factoryClass = DevicePackageXmlRegistry.class, factoryMethod = "newDevicePackageBundleInfos")
+@Schema(description = "The bundles of this package")
 public interface DevicePackageBundleInfos {
 
     /**

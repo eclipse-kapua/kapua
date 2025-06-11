@@ -12,19 +12,20 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.credential;
 
-import org.eclipse.kapua.model.KapuaEntityCreator;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.model.xml.DateXmlAdapter;
-import org.eclipse.kapua.service.user.User;
-
+import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
+
+import org.eclipse.kapua.model.KapuaEntityCreator;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import org.eclipse.kapua.model.xml.DateXmlAdapter;
+import org.eclipse.kapua.service.user.User;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link Credential} {@link KapuaEntityCreator}
@@ -34,6 +35,7 @@ import java.util.Date;
 @XmlRootElement(name = "credentialCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(factoryClass = CredentialXmlRegistry.class, factoryMethod = "newCredentialCreator")
+@Schema(description = "An object containing the properties for the new Credential to be created")
 public interface CredentialCreator extends KapuaEntityCreator<Credential> {
 
     /**
@@ -44,6 +46,7 @@ public interface CredentialCreator extends KapuaEntityCreator<Credential> {
      */
     @XmlElement(name = "userId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(example = "AQ")
     KapuaId getUserId();
 
     /**
@@ -61,6 +64,7 @@ public interface CredentialCreator extends KapuaEntityCreator<Credential> {
      * @since 1.0.0
      */
     @XmlElement(name = "credentialType")
+    @Schema(example = "PASSWORD")
     String getCredentialType();
 
     /**
@@ -113,6 +117,7 @@ public interface CredentialCreator extends KapuaEntityCreator<Credential> {
      * @since 1.0.0
      */
     @XmlElement(name = "credentialStatus")
+    @Schema(example = "ENABLED")
     CredentialStatus getCredentialStatus();
 
     /**

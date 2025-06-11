@@ -12,15 +12,16 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.job.targets;
 
-import org.eclipse.kapua.model.KapuaUpdatableEntityCreator;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import org.eclipse.kapua.model.KapuaUpdatableEntityCreator;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link JobTargetCreator} encapsulates all the information needed to create a new JobTarget in the system.<br>
@@ -31,14 +32,17 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @XmlRootElement(name = "jobTargetCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(factoryClass = JobTargetXmlRegistry.class, factoryMethod = "newJobTargetCreator")
+@Schema(description = "An object containing the properties for the new Job Target to be created")
 public interface JobTargetCreator extends KapuaUpdatableEntityCreator<JobTarget> {
 
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(example = "auSoU2ph1bY")
     KapuaId getJobId();
 
     void setJobId(KapuaId jobId);
 
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(example = "JMQdKuPgUjE")
     KapuaId getJobTargetId();
 
     void setJobTargetId(KapuaId jobTargetId);

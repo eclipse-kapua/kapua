@@ -12,19 +12,19 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.core.model.message;
 
-import org.eclipse.kapua.message.KapuaPayload;
-import org.eclipse.kapua.message.xml.XmlAdaptedMetric;
-import org.eclipse.kapua.model.type.ObjectValueConverter;
-import org.eclipse.kapua.model.xml.BinaryXmlAdapter;
-
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.eclipse.kapua.message.KapuaPayload;
+import org.eclipse.kapua.message.xml.XmlAdaptedMetric;
+import org.eclipse.kapua.model.type.ObjectValueConverter;
+import org.eclipse.kapua.model.xml.BinaryXmlAdapter;
 
 @XmlRootElement(name = "payload")
 @XmlAccessorType(XmlAccessType.PROPERTY)

@@ -1,0 +1,63 @@
+prettyPrint: true
+cacheTTL: 0
+sortOutput: true
+defaultResponseCode: 200
+modelConverterClasses:
+  - org.eclipse.kapua.app.api.resources.v1.resources.config.CustomConverter
+openAPI:
+  info:
+    version: '2.1.0-SNAPSHOT'
+    title: Eclipse Kapua REST API
+    termsOfService: http://swagger.io/terms/
+    contact:
+      name: Eclipse Kapua Dev Team
+      url: https://eclipse.org/kapua
+      email: kapua-dev@eclipse.org
+    license:
+      name: Eclipse Public License 2.0
+      url: https://www.eclipse.org/legal/epl-2.0
+    description: |
+      # Introduction
+      Eclipse Kapua exposes a comprehensive set of Web Service APIs for application integration purposes. The Eclipse Kapua REST API allows you to build applications that use Representational State Transfer HTTP calls to retrieve, modify, or publish platform data. For example through the APIs, you are able to access all the functionality of the Console or to control a device from your application built on top of Eclipse Kapua.
+
+      The Eclipse Kapua platform conforms to standard REpresentational State Transfer (REST) protocol to expose its Application Programming Interfaces (API). REST has emerged over the past few years as a predominant Web service design model. REST-style architectures consist of clients and servers. Clients initiate requests to servers, while servers process requests and return appropriate responses. Requests and responses are built around the transfer of representations of resources. A resource can be essentially any coherent and meaningful concept that may be addressed. A representation of a resource is typically a document that captures the current or intended state of a resource.
+
+      Eclipse Kapua RESTful APIs expose the standard action types (create, read, update, delete) over the platform objects. They are capable of retrieving a resource representation in XML or JSON format. You can use the REST HTTP Accept Header to specify the representation requested using the "application/xml" and "application/json" Media Types. As an alternative to the Accept header, you can specify the requested data representation by appending an ".xml" or ".json" suffix to the path part of your request URLs.
+
+      For more details on the Eclipse Kapua REST APIs, please refer to:
+      - [The Eclipse Kapua Documentation](https://www.eclipse.org/kapua/documentation.php)
+      - [The Eclipse Kapua Code on github](https://github.com/eclipse/kapua)
+
+      # Authentication
+      All Eclipse Kapua REST API, except the Authentication endpoints that performs an Authentication, need an Authentication Token to be executed. You will retrieve such token as a response of one of the Authentication calls, in the form of a [JWT](https://jwt.io) as the value of the property `tokenId`. For every subsequent call, you need to pass such token in the `Authorization` HTTP Header, with the `Bearer` type.
+  servers:
+    - description: Kapua REST API Endpoint hosted where this definition file is hosted
+      url: /v1
+    - description: Kapua REST API Endpoint custom
+      url: "{scheme}://{host}:{port}/{basePath}"
+      variables:
+        scheme:
+          default: https
+          enum:
+            - http
+            - https
+        host:
+          description: Host name of the Kapua REST API Endpoint
+          default: api.your-kapua-instance.com
+        port:
+          description: Port number of the Kapua REST API Endpoint
+          default: '8080'
+        basePath:
+          description: The Base path of the Kapua REST API Endpoint
+          default: v1
+    - description: Localhost Docker Compose
+      url: http://localhost:8081/v1
+  components:
+    securitySchemes:
+      kapuaToken:
+        type: http
+        description: The default AccessToken Security Scheme. A [JWT](https://jwt.io) is used to represent the claims of a user
+        scheme: bearer
+        bearerFormat: JWT
+  security:
+    - kapuaToken: [ ]

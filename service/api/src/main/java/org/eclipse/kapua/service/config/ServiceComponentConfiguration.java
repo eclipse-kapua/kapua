@@ -13,7 +13,6 @@
 package org.eclipse.kapua.service.config;
 
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -23,6 +22,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Service component configuration entity definition.
@@ -65,6 +65,7 @@ public class ServiceComponentConfiguration {
      * @return
      */
     @XmlElement(name = "id")
+    @Schema(example = "org.eclipse.kapua.service.account.AccountService")
     public String getId() {
         return id;
     }
@@ -84,6 +85,7 @@ public class ServiceComponentConfiguration {
      * @return
      */
     @XmlAttribute(name = "name")
+    @Schema(example = "AccountService")
     public String getName() {
         return name;
     }

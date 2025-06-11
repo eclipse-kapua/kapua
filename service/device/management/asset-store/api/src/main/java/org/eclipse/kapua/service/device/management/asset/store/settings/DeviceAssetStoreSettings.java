@@ -12,16 +12,17 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.asset.store.settings;
 
-import org.eclipse.kapua.service.device.management.app.settings.ByDeviceAppManagementSettings;
-import org.eclipse.kapua.service.device.management.asset.store.DeviceAssetStoreService;
-import org.eclipse.kapua.service.device.management.asset.store.DeviceAssetStoreXmlFactory;
-import org.eclipse.kapua.service.device.registry.Device;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.eclipse.kapua.service.device.management.app.settings.ByDeviceAppManagementSettings;
+import org.eclipse.kapua.service.device.management.asset.store.DeviceAssetStoreService;
+import org.eclipse.kapua.service.device.management.asset.store.DeviceAssetStoreXmlFactory;
+import org.eclipse.kapua.service.device.registry.Device;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link DeviceAssetStoreSettings} definition.
@@ -33,6 +34,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "deviceAssetStoreSettings")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(factoryClass = DeviceAssetStoreXmlFactory.class, factoryMethod = "newDeviceAssetStoreSettings")
+@Schema(description = "Base class for Device Management Applications that have per-device settings")
 public interface DeviceAssetStoreSettings extends ByDeviceAppManagementSettings {
 
     /**

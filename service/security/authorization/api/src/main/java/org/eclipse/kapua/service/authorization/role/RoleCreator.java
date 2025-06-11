@@ -12,17 +12,18 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.role;
 
-import org.eclipse.kapua.model.KapuaNamedEntityCreator;
-import org.eclipse.kapua.service.authorization.permission.Permission;
-
+import java.security.Permissions;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import java.security.Permissions;
-import java.util.Set;
+
+import org.eclipse.kapua.model.KapuaNamedEntityCreator;
+import org.eclipse.kapua.service.authorization.permission.Permission;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link RoleCreator} definition.
@@ -34,6 +35,7 @@ import java.util.Set;
 @XmlRootElement(name = "roleCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(factoryClass = RoleXmlRegistry.class, factoryMethod = "newRoleCreator")
+@Schema(description = "An object containing the properties for the new Role to be created")
 public interface RoleCreator extends KapuaNamedEntityCreator<Role> {
 
     /**

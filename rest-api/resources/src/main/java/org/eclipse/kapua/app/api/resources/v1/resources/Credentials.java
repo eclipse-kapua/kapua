@@ -26,7 +26,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.google.common.base.Strings;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.app.api.core.model.CountResult;
 import org.eclipse.kapua.app.api.core.model.EntityId;
@@ -43,10 +42,13 @@ import org.eclipse.kapua.service.authentication.credential.CredentialFactory;
 import org.eclipse.kapua.service.authentication.credential.CredentialListResult;
 import org.eclipse.kapua.service.authentication.credential.CredentialQuery;
 import org.eclipse.kapua.service.authentication.credential.CredentialService;
+import com.google.common.base.Strings;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Path("{scopeId}/credentials")
+@Tag(name = "Credentials")
 public class Credentials extends AbstractKapuaResource {
-
     @Inject
     public
     CredentialService credentialService;
@@ -67,13 +69,29 @@ public class Credentials extends AbstractKapuaResource {
     @GET
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public CredentialListResult simpleQuery(
-            @PathParam("scopeId") ScopeId scopeId,
-            @QueryParam("userId") EntityId userId,
-            @QueryParam("sortParam") String sortParam,
-            @QueryParam("askTotalCount") boolean askTotalCount,
-            @QueryParam("sortDir") @DefaultValue("ASCENDING") SortOrder sortDir,
-            @QueryParam("offset") @DefaultValue("0") int offset,
-            @QueryParam("limit") @DefaultValue("50") int limit) throws KapuaException {
+            @PathParam("scopeId")
+            @Parameter(description = "The scope ID to filter credentials.")
+            ScopeId scopeId,
+            @QueryParam("userId")
+            @Parameter(description = "The user ID to filter credentials.")
+            EntityId userId,
+            @QueryParam("sortParam")
+            @Parameter(description = "The name of the parameter that will be used as a sorting key")
+            String sortParam,
+            @QueryParam("askTotalCount")
+            @Parameter(description = "If true, the total count of the entities matching the query will be included in the result set")
+            boolean askTotalCount,
+            @QueryParam("sortDir")
+            @DefaultValue("ASCENDING")
+            SortOrder sortDir,
+            @QueryParam("offset")
+            @DefaultValue("0")
+            @Parameter(description = "A Limit on the result size. The result set will not contain more items than this number")
+            int offset,
+            @QueryParam("limit")
+            @DefaultValue("50")
+            @Parameter(description = "An Offset on the result size. Used to skip the first `n` items of a result set, with `n` equal to the value of `offset`")
+            int limit) throws KapuaException {
         CredentialQuery query = credentialFactory.newQuery(scopeId);
 
         AndPredicate andPredicate = query.andPredicate();
@@ -106,6 +124,7 @@ public class Credentials extends AbstractKapuaResource {
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public CredentialListResult query(
+            @Parameter(description = "The scope ID to filter credentials.")
             @PathParam("scopeId") ScopeId scopeId,
             CredentialQuery query) throws KapuaException {
         query.setScopeId(scopeId);
@@ -127,6 +146,7 @@ public class Credentials extends AbstractKapuaResource {
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public CountResult count(
+            @Parameter(description = "The scope ID to filter credentials.")
             @PathParam("scopeId") ScopeId scopeId,
             CredentialQuery query) throws KapuaException {
         query.setScopeId(scopeId);
@@ -148,6 +168,7 @@ public class Credentials extends AbstractKapuaResource {
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Response create(
+            @Parameter(description = "The scope ID to filter credentials.")
             @PathParam("scopeId") ScopeId scopeId,
             CredentialCreator credentialCreator) throws KapuaException {
         credentialCreator.setScopeId(scopeId);
@@ -168,6 +189,7 @@ public class Credentials extends AbstractKapuaResource {
     @Path("{credentialId}")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Credential find(
+            @Parameter(description = "The scope ID to filter credentials.")
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("credentialId") EntityId credentialId) throws KapuaException {
         Credential credential = credentialService.find(scopeId, credentialId);
@@ -188,6 +210,7 @@ public class Credentials extends AbstractKapuaResource {
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Credential update(
+            @Parameter(description = "The scope ID to filter credentials.")
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("credentialId") EntityId credentialId,
             Credential credential) throws KapuaException {
@@ -208,6 +231,7 @@ public class Credentials extends AbstractKapuaResource {
     @DELETE
     @Path("{credentialId}")
     public Response deleteCredential(
+            @Parameter(description = "The scope ID to filter credentials.")
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("credentialId") EntityId credentialId) throws KapuaException {
         credentialService.delete(scopeId, credentialId);
@@ -230,6 +254,7 @@ public class Credentials extends AbstractKapuaResource {
     @Path("{credentialId}/unlock")
     @Deprecated
     public Response unlockCredential(
+            @Parameter(description = "The scope ID to filter credentials.")
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("credentialId") EntityId credentialId) throws KapuaException {
         credentialService.unlock(scopeId, credentialId);
@@ -250,6 +275,7 @@ public class Credentials extends AbstractKapuaResource {
     @POST
     @Path("{credentialId}/_unlock")
     public Response unlock(
+            @Parameter(description = "The scope ID to filter credentials.")
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("credentialId") EntityId credentialId) throws KapuaException {
         credentialService.unlock(scopeId, credentialId);

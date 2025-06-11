@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -33,6 +32,9 @@ import org.eclipse.kapua.app.api.core.model.CountResult;
 import org.eclipse.kapua.app.api.core.model.ScopeId;
 import org.eclipse.kapua.app.api.core.model.StorableEntityId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
+import org.eclipse.kapua.commons.rest.model.errors.ExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.IllegalArgumentExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.SubjectUnauthorizedExceptionInfo;
 import org.eclipse.kapua.service.datastore.MetricInfoFactory;
 import org.eclipse.kapua.service.datastore.MetricInfoRegistryService;
 import org.eclipse.kapua.service.datastore.internal.mediator.MetricInfoField;
@@ -46,10 +48,17 @@ import org.eclipse.kapua.service.storable.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.service.storable.model.query.predicate.OrPredicate;
 import org.eclipse.kapua.service.storable.model.query.predicate.StorablePredicate;
 import org.eclipse.kapua.service.storable.model.query.predicate.TermPredicate;
-
 import com.google.common.base.Strings;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Path("{scopeId}/data/metrics")
+@Tag(name = "Data Metric")
 public class DataMetrics extends AbstractKapuaResource {
 
     @Inject
@@ -79,11 +88,43 @@ public class DataMetrics extends AbstractKapuaResource {
      */
     @GET
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    @Operation(summary = "Query the Data Metrics")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The result of the query",
+            content = @Content(schema = @Schema(implementation = MetricInfoListResult.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public MetricInfoListResult simpleQuery(@PathParam("scopeId") ScopeId scopeId,
+            @Parameter(description = "The ClientID to filter results")
             @QueryParam("clientId") List<String> clientIds,
+            @Parameter(description = "The channel to filter results. It allows '#' wildcard in last channel level")
             @QueryParam("channel") String channel,
+            @Parameter(description = "The metric name to filter results")
             @QueryParam("name") String name,
+            @Parameter(description = "An Offset on the result size. Used to skip the first `n` items of a result set, with `n` equal to the value of `offset`")
             @QueryParam("offset") @DefaultValue("0") int offset,
+            @Parameter(description = "A Limit on the result size. The result set will not contain more items than this number")
             @QueryParam("limit") @DefaultValue("50") int limit)
             throws KapuaException {
         AndPredicate andPredicate = datastorePredicateFactory.newAndPredicate();
@@ -154,9 +195,37 @@ public class DataMetrics extends AbstractKapuaResource {
     @Path("_count")
     @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-    public CountResult count(@PathParam("scopeId") ScopeId scopeId,
-            MetricInfoQuery query)
-            throws KapuaException {
+    @Operation(summary = "Count the MetricInfos")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The count of the available Entities",
+            content = @Content(schema = @Schema(implementation = CountResult.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
+    public CountResult count(
+        @Parameter(description = "The ID of the Scope where to perform the operation.")
+        @PathParam("scopeId") ScopeId scopeId,
+        MetricInfoQuery query) throws KapuaException {
         query.setScopeId(scopeId);
 
         return new CountResult(metricInfoRegistryService.count(query));
@@ -172,9 +241,38 @@ public class DataMetrics extends AbstractKapuaResource {
     @GET
     @Path("{metricInfoId}")
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    public MetricInfo find(@PathParam("scopeId") ScopeId scopeId,
-            @PathParam("metricInfoId") StorableEntityId metricInfoId)
-            throws KapuaException {
+    @Operation(summary = "Get a single MetricInfo")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The details of the desired MetricInfo",
+            content = @Content(schema = @Schema(implementation = MetricInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
+    public MetricInfo find(
+        @Parameter(description = "The ID of the Scope where to perform the operation.")
+        @PathParam("scopeId") ScopeId scopeId,
+        @Parameter(description = "The ID of the MetricInfo on which to perform the operation", schema = @Schema(implementation = String.class))
+        @PathParam("metricInfoId") StorableEntityId metricInfoId) throws KapuaException {
         MetricInfo metricInfo = metricInfoRegistryService.find(scopeId, metricInfoId);
 
         return returnNotNullEntity(metricInfo);

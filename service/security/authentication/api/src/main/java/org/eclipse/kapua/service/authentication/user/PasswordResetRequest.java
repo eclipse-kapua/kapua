@@ -19,11 +19,15 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(factoryClass = UserCredentialsXmlRegistry.class, factoryMethod = "newPasswordResetRequest")
+@Schema(description = "Represent a request for resetting a user password")
 public interface PasswordResetRequest {
     @XmlElement(name = "newPassword")
+    @Schema(example = "newPassword42!")
     String getNewPassword();
 
 

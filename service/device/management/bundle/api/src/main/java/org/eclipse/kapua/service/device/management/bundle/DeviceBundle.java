@@ -18,6 +18,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * {@link DeviceBundle} definition.
  * <p>
@@ -54,6 +56,7 @@ public interface DeviceBundle {
      * @since 1.0.0
      */
     @XmlElement(name = "name")
+    @Schema(example = "org.eclipse.osgi")
     String getName();
 
     /**
@@ -71,6 +74,7 @@ public interface DeviceBundle {
      * @since 1.0.0
      */
     @XmlElement(name = "state")
+    @Schema(example = "ACTIVE")
     String getState();
 
     /**
@@ -88,6 +92,7 @@ public interface DeviceBundle {
      * @since 1.0.0
      */
     @XmlElement(name = "version")
+    @Schema(example = "3.12.50.v20170928-1321")
     String getVersion();
 
     /**

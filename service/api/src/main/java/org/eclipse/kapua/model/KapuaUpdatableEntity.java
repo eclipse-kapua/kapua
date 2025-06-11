@@ -12,18 +12,20 @@
  *******************************************************************************/
 package org.eclipse.kapua.model;
 
+import java.util.Date;
+import java.util.Properties;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import org.eclipse.kapua.entity.EntityPropertiesReadException;
 import org.eclipse.kapua.entity.EntityPropertiesWriteException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdAdapter;
 import org.eclipse.kapua.model.xml.DateXmlAdapter;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
-import java.util.Properties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link KapuaUpdatableEntity} definition.
@@ -35,6 +37,10 @@ import java.util.Properties;
         "modifiedBy",
         "optlock"
 })
+@Schema(
+    name = "KapuaEntity",
+    description = "Represents an entity inside Kapua that can be updated"
+)
 public interface KapuaUpdatableEntity extends KapuaEntity {
 
     /**
@@ -45,6 +51,7 @@ public interface KapuaUpdatableEntity extends KapuaEntity {
      */
     @XmlElement(name = "modifiedOn")
     @XmlJavaTypeAdapter(DateXmlAdapter.class)
+    @Schema(description = "Modified on date", example = "2024-11-28T08:38:57.102Z")
     Date getModifiedOn();
 
     /**
@@ -55,6 +62,8 @@ public interface KapuaUpdatableEntity extends KapuaEntity {
      */
     @XmlElement(name = "modifiedBy")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(description = "Modified by", type = "string",
+        example = "REk=TcEOmceVaRDVW5GIEmEgJG8isd9IWOGECrhFXLZS_lO3Uli79L-BqVTfdK8Rsw457P4rN3QiZ=6=x6")
     KapuaId getModifiedBy();
 
     /**
@@ -64,6 +73,7 @@ public interface KapuaUpdatableEntity extends KapuaEntity {
      * @since 1.0.0
      */
     @XmlElement(name = "optlock")
+    @Schema(description = "Modified on date", example = "0")
     int getOptlock();
 
     /**
@@ -81,6 +91,8 @@ public interface KapuaUpdatableEntity extends KapuaEntity {
      * @throws EntityPropertiesReadException If there are error while reading {@link Properties}
      */
     @XmlTransient
+    //@Schema(hidden = true)
+    @JsonIgnore
     Properties getEntityAttributes() throws EntityPropertiesReadException;
 
     /**
@@ -100,6 +112,7 @@ public interface KapuaUpdatableEntity extends KapuaEntity {
      * @since 1.0.0
      */
     @XmlTransient
+    @Schema(hidden = true)
     Properties getEntityProperties() throws EntityPropertiesReadException;
 
     /**

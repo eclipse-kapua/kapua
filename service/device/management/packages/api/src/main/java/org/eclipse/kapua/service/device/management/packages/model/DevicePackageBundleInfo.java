@@ -18,6 +18,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * {@link DevicePackageBundleInfo} definition.
  *
@@ -35,6 +37,10 @@ public interface DevicePackageBundleInfo {
      * @since 1.0.0
      */
     @XmlElement(name = "name")
+    @Schema(
+        description = "The bundle name",
+        example = "org.eclipse.kura.demo.heater"
+    )
     String getName();
 
     /**
@@ -52,6 +58,10 @@ public interface DevicePackageBundleInfo {
      * @since 1.0.0
      */
     @XmlElement(name = "version")
+    @Schema(
+        description = "The bundle version",
+        example = "1.0.300"
+    )
     String getVersion();
 
     /**

@@ -12,16 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.resources.v1.resources;
 
-import org.eclipse.kapua.KapuaEntityNotFoundException;
-import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
-import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
-import org.eclipse.kapua.service.KapuaService;
-import org.eclipse.kapua.service.authentication.credential.mfa.MfaOption;
-import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionCreator;
-import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionService;
-import org.eclipse.kapua.service.authentication.credential.mfa.shiro.MfaOptionCreatorImpl;
-
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -32,7 +22,28 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.eclipse.kapua.KapuaEntityNotFoundException;
+import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
+import org.eclipse.kapua.commons.rest.model.errors.EntityNotFoundExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.ExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.IllegalArgumentExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.SubjectUnauthorizedExceptionInfo;
+import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
+import org.eclipse.kapua.service.KapuaService;
+import org.eclipse.kapua.service.authentication.credential.mfa.MfaOption;
+import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionCreator;
+import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionService;
+import org.eclipse.kapua.service.authentication.credential.mfa.shiro.MfaOptionCreatorImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @Path("user")
+@Tag(name = "User - Mfa")
 public class UserMfa extends AbstractKapuaResource {
 
     @Inject
@@ -49,6 +60,33 @@ public class UserMfa extends AbstractKapuaResource {
     @Path("mfa")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Operation(summary = "Activates MFA for the current user")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "201",
+            description = "The MfaOption that has just been created"//,
+//            content = @Content(schema = @Schema(implementation = MfaOptionCrea.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public Response activateMfa() throws KapuaException {
 
         MfaOptionCreator mfaOptionCreator = new MfaOptionCreatorImpl(KapuaSecurityUtils.getSession().getScopeId());
@@ -67,6 +105,38 @@ public class UserMfa extends AbstractKapuaResource {
     @GET
     @Path("mfa")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Operation(summary = "Get the MfaOption of this User")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "The details of the desired MfaOption",
+            content = @Content(schema = @Schema(implementation = MfaOption.class))
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "An illegal argument has been passed to the operation",
+            content = @Content(schema = @Schema(implementation = IllegalArgumentExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The desired entity could not be found",
+            content = @Content(schema = @Schema(implementation = EntityNotFoundExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public MfaOption findMfa() throws KapuaException {
         MfaOption mfaOption = KapuaSecurityUtils.doPrivileged(() -> mfaOptionService.findByUserId(KapuaSecurityUtils.getSession().getScopeId(), KapuaSecurityUtils.getSession().getUserId()));
         if (mfaOption == null) {
@@ -84,6 +154,32 @@ public class UserMfa extends AbstractKapuaResource {
      */
     @DELETE
     @Path("mfa")
+    @Operation(summary = "Get the MfaOption of this User")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "204",
+            description = "The MfaOption has been deleted"
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The desired entity could not be found",
+            content = @Content(schema = @Schema(implementation = EntityNotFoundExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public Response deleteMfa() throws KapuaException {
         KapuaSecurityUtils.doPrivileged(() -> mfaOptionService.deleteByUserId(KapuaSecurityUtils.getSession().getScopeId(), KapuaSecurityUtils.getSession().getUserId()));
 
@@ -101,6 +197,32 @@ public class UserMfa extends AbstractKapuaResource {
     @Path("mfa/disableTrust")
     @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Operation(summary = "Disable trusted machine for a MfaOption")
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "204",
+            description = "The trusted machine has been disabled for the User"
+        ),
+        @ApiResponse(
+            responseCode = "401",
+            description = "The authentication failed for some reason. If this was done via an Access Token, it could be expired or invalidated"
+        ),
+        @ApiResponse(
+            responseCode = "403",
+            description = "The desired entity could not be found",
+            content = @Content(schema = @Schema(implementation = EntityNotFoundExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "The user performing the operation does not have the required permissions",
+            content = @Content(schema = @Schema(implementation = SubjectUnauthorizedExceptionInfo.class))
+        ),
+        @ApiResponse(
+            responseCode = "500",
+            description = "An internal error occurred while performing the request",
+            content = @Content(schema = @Schema(implementation = ExceptionInfo.class))
+        )
+    })
     public Response disableTrust() throws KapuaException {
         KapuaSecurityUtils.doPrivileged(() -> mfaOptionService.disableTrustByUserId(KapuaSecurityUtils.getSession().getScopeId(), KapuaSecurityUtils.getSession().getUserId()));
         return returnNoContent();

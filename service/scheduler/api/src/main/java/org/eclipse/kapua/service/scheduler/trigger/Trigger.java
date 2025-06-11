@@ -12,18 +12,19 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.scheduler.trigger;
 
-import org.eclipse.kapua.model.KapuaNamedEntity;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerProperty;
-
+import java.util.Date;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
-import java.util.List;
+
+import org.eclipse.kapua.model.KapuaNamedEntity;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import org.eclipse.kapua.service.scheduler.trigger.definition.TriggerProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link Trigger} {@link KapuaNamedEntity} definition.
@@ -39,6 +40,7 @@ public interface Trigger extends KapuaNamedEntity {
     String TYPE = "trigger";
 
     @Override
+    @Schema(example = "trigger")
     default String getType() {
         return TYPE;
     }
@@ -134,6 +136,7 @@ public interface Trigger extends KapuaNamedEntity {
      * @since 1.1.0
      */
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(example = "Aw")
     KapuaId getTriggerDefinitionId();
 
     /**

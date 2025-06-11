@@ -104,5 +104,42 @@
             <groupId>org.eclipse.kapua</groupId>
             <artifactId>kapua-commons-rest-errors</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-jaxrs2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-jaxrs2-servlet-initializer-v2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+        </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-maven-plugin</artifactId>
+                <version>2.2.26</version>
+                <configuration>
+                    <outputFileName>openapi</outputFileName>
+                    <outputPath>${project.build.directory}/tmp/</outputPath>
+                    <configurationFilePath>${project.basedir}/src/main/resources/conf.yaml</configurationFilePath>
+                    <prettyPrint>true</prettyPrint>
+                    <outputFormat>YAML</outputFormat>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>resolve</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

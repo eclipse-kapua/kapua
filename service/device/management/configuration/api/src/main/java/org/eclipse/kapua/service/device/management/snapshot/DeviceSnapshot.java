@@ -18,6 +18,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * {@link DeviceSnapshot} definition.
  *
@@ -35,6 +37,7 @@ public interface DeviceSnapshot {
      * @since 1.0.0
      */
     @XmlElement(name = "id")
+    @Schema(example = "1568300687500")
     String getId();
 
     /**
@@ -52,6 +55,7 @@ public interface DeviceSnapshot {
      * @since 1.0.0
      */
     @XmlElement(name = "timestamp")
+    @Schema(example = "1568300687500")
     Long getTimestamp();
 
     /**

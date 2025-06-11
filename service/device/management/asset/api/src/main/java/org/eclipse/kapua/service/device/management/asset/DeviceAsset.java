@@ -12,8 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.asset;
 
-import org.eclipse.kapua.service.device.management.asset.xml.DeviceAssetChannelXmlAdapter;
-
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -21,7 +20,9 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.List;
+
+import org.eclipse.kapua.service.device.management.asset.xml.DeviceAssetChannelXmlAdapter;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link DeviceAsset} definition.
@@ -42,6 +43,7 @@ public interface DeviceAsset {
      * @since 1.0.0
      */
     @XmlElement(name = "name")
+    @Schema(description = "The name of the DeviceAsset")
     String getName();
 
     /**

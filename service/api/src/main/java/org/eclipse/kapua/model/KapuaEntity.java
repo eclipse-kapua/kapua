@@ -12,16 +12,18 @@
  *******************************************************************************/
 package org.eclipse.kapua.model;
 
-import org.eclipse.kapua.KapuaSerializable;
-import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.model.xml.DateXmlAdapter;
-
+import java.util.Date;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.util.Date;
+
+import org.eclipse.kapua.KapuaSerializable;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+import org.eclipse.kapua.model.xml.DateXmlAdapter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * {@link KapuaEntity} definition.
@@ -35,9 +37,14 @@ import java.util.Date;
         "scopeId",
         "createdOn",
         "createdBy"})
+@Schema(
+    name = "KapuaEntity",
+    description = "Represents an entity inside Kapua"
+)
 public interface KapuaEntity extends KapuaSerializable {
 
     @XmlTransient
+    @JsonIgnore
     String getType();
 
     /**
@@ -48,6 +55,7 @@ public interface KapuaEntity extends KapuaSerializable {
      */
     @XmlElement(name = "id")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(type = "string", example = "AJOgM70X35Sle3eZ1OVPMwLHEOk1A=jeQq7kVSfu5==apsDfLoRPC44hz8gBlN6YQVzox0w")
     KapuaId getId();
 
     /**
@@ -66,6 +74,7 @@ public interface KapuaEntity extends KapuaSerializable {
      */
     @XmlElement(name = "scopeId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(type = "string", example = "AS5sTGPCGQEKqgQMyyOOG3AIKep09=Lw6bN")
     KapuaId getScopeId();
 
     /**
@@ -94,5 +103,7 @@ public interface KapuaEntity extends KapuaSerializable {
      */
     @XmlElement(name = "createdBy")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    @Schema(type = "string",
+        example = "5_77YiomzLRvcZIhaCDWrOCjeOBJ2DD4-i6pm")
     KapuaId getCreatedBy();
 }
