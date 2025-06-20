@@ -18,6 +18,7 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.datastore.internal.mediator.ClientInfoField;
 import org.eclipse.kapua.service.datastore.internal.mediator.ConfigurationException;
 import org.eclipse.kapua.service.datastore.internal.model.ClientInfoListResultImpl;
+import org.eclipse.kapua.service.datastore.internal.model.query.ClientInfoQueryImpl;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettingsKey;
 import org.eclipse.kapua.service.datastore.model.ClientInfo;
@@ -110,7 +111,7 @@ public class ClientInfoRegistryFacadeImpl extends AbstractDatastoreFacade implem
                     doUpstore(storableId, clientInfoId, clientInfo);
                 }
             } else {
-                LOG.debug("Skip synch for client {}", clientInfo.getClientId()); 
+                LOG.debug("Skip synch for client {}", clientInfo.getClientId());
                 doUpstore(storableId, clientInfoId, clientInfo);
             }
         }
@@ -197,7 +198,11 @@ public class ClientInfoRegistryFacadeImpl extends AbstractDatastoreFacade implem
             return 0;
         }
 
-        return repository.count(query);
+        //Sanification of not compatible fields for the "count" ES endpoint
+        ClientInfoQueryImpl countCompatibleQuery = new ClientInfoQueryImpl(query);
+        countCompatibleQuery.sanificateQuery();
+
+        return repository.count(countCompatibleQuery);
     }
 
     /**
