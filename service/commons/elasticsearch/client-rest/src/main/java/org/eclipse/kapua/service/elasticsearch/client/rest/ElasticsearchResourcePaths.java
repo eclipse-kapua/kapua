@@ -93,6 +93,13 @@ public class ElasticsearchResourcePaths {
     }
 
     /**
+     * @since 2.1.0
+     */
+    public static String count(@NotNull String index) {
+        return String.format("/%s/_count", index);
+    }
+
+    /**
      * @since 1.0.0
      */
     public static String refreshAllIndexes() {

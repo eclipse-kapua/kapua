@@ -91,11 +91,4 @@ public enum ClientErrorCodes implements KapuaErrorCode {
      */
     ACTION_RESPONSE_ERROR,
 
-    /**
-     * see {@link ClientLimitsExceededException}
-     *
-     * @since 2.0.0
-     */
-    LIMITS_EXCEEDED
-
 }
