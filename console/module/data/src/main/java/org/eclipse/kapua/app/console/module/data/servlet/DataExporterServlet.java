@@ -134,7 +134,7 @@ public class DataExporterServlet extends HttpServlet {
             query.setPredicate(predicate);
             MessageListResult result;
             long totalCount = 0;
-            totalCount = KapuaGwtDataModelConverter.countEsDataCap10k(MESSAGE_STORE_SERVICE, query);
+            totalCount = KapuaGwtDataModelConverter.countEsDataCapped(MESSAGE_STORE_SERVICE, query);
 
             long totalOffset = 0;
             query.setLimit(250);
