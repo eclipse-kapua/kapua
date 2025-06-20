@@ -41,6 +41,10 @@ public class ChannelInfoQueryImpl extends AbstractStorableQuery implements Chann
         setSortFields(Collections.singletonList(SortField.ascending(ChannelInfoSchema.CHANNEL_NAME)));
     }
 
+    public ChannelInfoQueryImpl(ChannelInfoQuery other) {
+        super((AbstractStorableQuery) other);
+    }
+
     @Override
     public String[] getIncludes(StorableFetchStyle fetchStyle) {
         return new String[]{"*"};
