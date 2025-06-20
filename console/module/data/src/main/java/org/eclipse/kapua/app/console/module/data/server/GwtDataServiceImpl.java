@@ -270,7 +270,7 @@ public class GwtDataServiceImpl extends KapuaRemoteServiceServlet implements Gwt
                 channelInfoQuery.setLimit(-1);
                 channelInfoQuery.setOffset(0);
 
-                totalLength = (int) KapuaGwtDataModelConverter.countEsDataCap10k(channelInfoService, channelInfoQuery);
+                totalLength = (int) KapuaGwtDataModelConverter.countEsDataCapped(channelInfoService, channelInfoQuery);
             }
         } catch (Exception e) {
             KapuaExceptionHandler.handle(e);
@@ -493,7 +493,7 @@ public class GwtDataServiceImpl extends KapuaRemoteServiceServlet implements Gwt
         }
         messages = getMessagesList(query, headers);
         try {
-            totalLength = (int) KapuaGwtDataModelConverter.countEsDataCap10k(messageService, query);
+            totalLength = (int) KapuaGwtDataModelConverter.countEsDataCapped(messageService, query);
         } catch (KapuaException e) {
             KapuaExceptionHandler.handle(e);
         }

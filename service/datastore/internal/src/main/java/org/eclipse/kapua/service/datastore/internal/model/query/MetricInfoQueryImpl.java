@@ -41,6 +41,10 @@ public class MetricInfoQueryImpl extends AbstractStorableQuery implements Metric
         setSortFields(Collections.singletonList(SortField.ascending(MetricInfoSchema.METRIC_MTR_NAME_FULL)));
     }
 
+    public MetricInfoQueryImpl(MetricInfoQuery other) {
+        super((AbstractStorableQuery) other);
+    }
+
     @Override
     public String[] getIncludes(StorableFetchStyle fetchStyle) {
         return new String[]{"*"};
