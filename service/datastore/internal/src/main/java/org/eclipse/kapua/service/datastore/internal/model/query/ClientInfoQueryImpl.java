@@ -41,6 +41,10 @@ public class ClientInfoQueryImpl extends AbstractStorableQuery implements Client
         setSortFields(Collections.singletonList(SortField.ascending(ClientInfoSchema.CLIENT_ID)));
     }
 
+    public ClientInfoQueryImpl(ClientInfoQuery other) {
+        super((AbstractStorableQuery) other);
+    }
+
     @Override
     public String[] getIncludes(StorableFetchStyle fetchStyle) {
         return new String[]{"*"};

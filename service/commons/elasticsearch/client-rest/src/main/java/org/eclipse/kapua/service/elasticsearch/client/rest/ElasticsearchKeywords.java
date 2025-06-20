@@ -32,6 +32,7 @@ public class ElasticsearchKeywords {
     static final String KEY_DOC_TYPE = "_type";
 
     static final String KEY_ITEMS = "items";
+    static final String KEY_COUNT = "count";
     static final String KEY_RESULT = "result";
     static final String KEY_STATUS = "status";
     static final String KEY_UPDATE = "update";
