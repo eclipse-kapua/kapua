@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2017, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -21,6 +21,7 @@ import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.server.KapuaRemoteServiceServlet;
 import org.eclipse.kapua.app.console.module.api.server.util.KapuaExceptionHandler;
+import org.eclipse.kapua.app.console.module.api.server.util.UserCreatedByModifiedByUtils;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtGroupedNVPair;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtXSRFToken;
 import org.eclipse.kapua.app.console.module.api.shared.util.GwtKapuaCommonsModelConverter;
@@ -33,7 +34,6 @@ import org.eclipse.kapua.app.console.module.user.shared.util.GwtKapuaUserModelCo
 import org.eclipse.kapua.app.console.module.user.shared.util.KapuaGwtUserModelConverter;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.model.id.KapuaEid;
-import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
@@ -60,10 +60,8 @@ import org.eclipse.kapua.service.user.UserService;
 import org.eclipse.kapua.service.user.UserType;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 /**
  * The server side implementation of the RPC service.
@@ -225,85 +223,47 @@ public class GwtUserServiceImpl extends KapuaRemoteServiceServlet implements Gwt
 
     @Override
     public PagingLoadResult<GwtUser> query(PagingLoadConfig loadConfig, GwtUserQuery gwtUserQuery) throws GwtKapuaException {
-        // Do query
-        int totalLength = 0;
-        List<GwtUser> gwtUsers = new ArrayList<GwtUser>();
         try {
             // Convert from GWT entity
             UserQuery userQuery = GwtKapuaUserModelConverter.convertUserQuery(loadConfig, gwtUserQuery);
 
-            // query
+            // Query
             UserListResult users = USER_SERVICE.query(userQuery);
-            totalLength = users.getTotalCount().intValue();
 
             // If there are results
+            List<GwtUser> gwtUsers = new ArrayList<GwtUser>();
             if (!users.isEmpty()) {
-                //TODO: #LAYER_VIOLATION - missed opportunity to perform paging at the database layer
 
-                UserListResult allUsers = KapuaSecurityUtils.doPrivileged(new Callable<UserListResult>() {
-
-                    @Override
-                    public UserListResult call() throws Exception {
-                        return USER_SERVICE.query(USER_FACTORY.newQuery(null));
-                    }
-                });
-
-                HashMap<String, String> usernameMap = new HashMap<String, String>();
-                for (User user : allUsers.getItems()) {
-                    usernameMap.put(user.getId().toCompactId(), user.getName());
-                }
+                Map<KapuaId, String> idUsernameMap = UserCreatedByModifiedByUtils.resolveFromListResult(users);
 
                 // Convert to GWT entity
                 for (User u : users.getItems()) {
                     GwtUser gwtUser = KapuaGwtUserModelConverter.convertUser(u);
-                    gwtUser.setCreatedByName(usernameMap.get(u.getCreatedBy().toCompactId()));
-                    gwtUser.setModifiedByName(usernameMap.get(u.getModifiedBy().toCompactId()));
+
+                    gwtUser.setCreatedByName(idUsernameMap.get(u.getCreatedBy()));
+                    gwtUser.setModifiedByName(idUsernameMap.get(u.getModifiedBy()));
+
                     gwtUsers.add(gwtUser);
                 }
             }
 
+            return new BasePagingLoadResult<GwtUser>(gwtUsers, loadConfig.getOffset(), users.getTotalCount().intValue());
         } catch (Throwable t) {
-            KapuaExceptionHandler.handle(t);
+            throw KapuaExceptionHandler.buildExceptionFromError(t);
         }
-
-        return new BasePagingLoadResult<GwtUser>(gwtUsers, loadConfig.getOffset(), totalLength);
     }
 
     @Override
-    public ListLoadResult<GwtGroupedNVPair> getUserDescription(boolean isSsoEnabled, String shortScopeId,
-                                                               String shortUserId) throws GwtKapuaException {
-        List<GwtGroupedNVPair> gwtUserDescription = new ArrayList<GwtGroupedNVPair>();
+    public ListLoadResult<GwtGroupedNVPair> getUserDescription(boolean isSsoEnabled, String shortScopeId, String shortUserId) throws GwtKapuaException {
         try {
             final KapuaId scopeId = KapuaEid.parseCompactId(shortScopeId);
             final KapuaId userId = KapuaEid.parseCompactId(shortUserId);
 
             final User user = USER_SERVICE.find(scopeId, userId);
 
+            List<GwtGroupedNVPair> gwtUserDescription = new ArrayList<GwtGroupedNVPair>();
             if (user != null) {
-                //TODO: #LAYER_VIOLATION - user lookup should not be done here (horribly inefficient)
 
-                UserListResult userListResult = KapuaSecurityUtils.doPrivileged(new Callable<UserListResult>() {
-
-                    @Override
-                    public UserListResult call() throws Exception {
-                        return USER_SERVICE.query(USER_FACTORY.newQuery(null));
-                    }
-                });
-
-                Map<String, String> usernameMap = new HashMap<String, String>();
-                for (User userItem : userListResult.getItems()) {
-                    usernameMap.put(userItem.getId().toCompactId(), userItem.getName());
-                }
-
-                DeviceConnection deviceConnection = null;
-                if (deviceListQuery(scopeId) != null && AUTHORIZATION_SERVICE.isPermitted(PERMISSION_FACTORY.newPermission(Domains.DEVICE_CONNECTION, Actions.read, scopeId))) {
-                    for (Device device : deviceListQuery(scopeId).getItems()) {
-                        if (device.getConnectionId() != null) {
-                            deviceConnection = DEVICE_CONNECTION_SERVICE.find(scopeId, device.getConnectionId());
-                            break;
-                        }
-                    }
-                }
                 gwtUserDescription.add(new GwtGroupedNVPair(USER_INFO, "userStatus", user.getStatus().toString()));
                 gwtUserDescription.add(new GwtGroupedNVPair(USER_INFO, "userName", user.getName()));
                 gwtUserDescription.add(new GwtGroupedNVPair(USER_INFO, "userDisplayName", user.getDisplayName()));
@@ -320,19 +280,32 @@ public class GwtUserServiceImpl extends KapuaRemoteServiceServlet implements Gwt
                 }
 
                 gwtUserDescription.add(new GwtGroupedNVPair(ENTITY_INFO, "userCreatedOn", user.getCreatedOn()));
-                gwtUserDescription.add(new GwtGroupedNVPair(ENTITY_INFO, "userCreatedBy", user.getCreatedBy() != null ? usernameMap.get(user.getCreatedBy().toCompactId()) : null));
+                gwtUserDescription.add(new GwtGroupedNVPair(ENTITY_INFO, "userCreatedBy", UserCreatedByModifiedByUtils.resolveFromId(user.getCreatedBy())));
                 gwtUserDescription.add(new GwtGroupedNVPair(ENTITY_INFO, "userModifiedOn", user.getModifiedOn()));
-                gwtUserDescription.add(new GwtGroupedNVPair(ENTITY_INFO, "userModifiedBy", user.getModifiedBy() != null ? usernameMap.get(user.getModifiedBy().toCompactId()) : null));
+                gwtUserDescription.add(new GwtGroupedNVPair(ENTITY_INFO, "userModifiedBy", UserCreatedByModifiedByUtils.resolveFromId(user.getModifiedBy())));
 
-                if (deviceConnection != null && deviceConnection.getReservedUserId() != null && deviceConnection.getReservedUserId().equals(user.getId())) {
+                DeviceConnection deviceConnection = null;
+                if (deviceListQuery(scopeId) != null && AUTHORIZATION_SERVICE.isPermitted(PERMISSION_FACTORY.newPermission(Domains.DEVICE_CONNECTION, Actions.read, scopeId))) {
+                    for (Device device : deviceListQuery(scopeId).getItems()) {
+                        if (device.getConnectionId() != null) {
+                            deviceConnection = DEVICE_CONNECTION_SERVICE.find(scopeId, device.getConnectionId());
+                            break;
+                        }
+                    }
+                }
+
+                if (deviceConnection != null &&
+                        deviceConnection.getReservedUserId() != null &&
+                        deviceConnection.getReservedUserId().equals(user.getId())
+                ) {
                     gwtUserDescription.add(new GwtGroupedNVPair(USER_INFO, "userReservedConnection", "Yes"));
                 }
             }
-        } catch (Exception e) {
-            KapuaExceptionHandler.handle(e);
-        }
 
-        return new BaseListLoadResult<GwtGroupedNVPair>(gwtUserDescription);
+            return new BaseListLoadResult<GwtGroupedNVPair>(gwtUserDescription);
+        } catch (Exception e) {
+            throw KapuaExceptionHandler.buildExceptionFromError(e);
+        }
     }
 
     @Override
@@ -360,45 +333,31 @@ public class GwtUserServiceImpl extends KapuaRemoteServiceServlet implements Gwt
     }
 
     @Override
-    public PagingLoadResult<GwtUser> getUsersForAccount(PagingLoadConfig loadConfig, GwtUserQuery gwtUserQuery,
-                                                        String accountId) throws GwtKapuaException {
-
-        int totalLength = 0;
-        List<GwtUser> gwtUsers = new ArrayList<GwtUser>();
+    public PagingLoadResult<GwtUser> getUsersForAccount(PagingLoadConfig loadConfig, GwtUserQuery gwtUserQuery, String accountId)
+            throws GwtKapuaException {
         try {
             UserQuery userQuery = GwtKapuaUserModelConverter.convertUserQuery(loadConfig, gwtUserQuery);
             UserListResult users = USER_SERVICE.query(userQuery);
-            totalLength = users.getTotalCount().intValue();
 
+            List<GwtUser> gwtUsers = new ArrayList<GwtUser>();
             if (!users.isEmpty()) {
-                //TODO: #LAYER_VIOLATION - user lookup should not be done here (horribly inefficient)
 
-                final UserQuery allUsersQuery = USER_FACTORY.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(accountId));
-                UserListResult allUsers = KapuaSecurityUtils.doPrivileged(new Callable<UserListResult>() {
+                Map<KapuaId, String> idUsernameMap = UserCreatedByModifiedByUtils.resolveFromListResult(users);
 
-                    @Override
-                    public UserListResult call() throws Exception {
-                        return USER_SERVICE.query(allUsersQuery);
-                    }
-                });
-
-                HashMap<String, String> usernameMap = new HashMap<String, String>();
-                for (User user : allUsers.getItems()) {
-                    usernameMap.put(user.getId().toCompactId(), user.getName());
-                }
                 for (User u : users.getItems()) {
                     GwtUser gwtUser = KapuaGwtUserModelConverter.convertUser(u);
-                    gwtUser.setCreatedByName(usernameMap.get(u.getCreatedBy().toCompactId()));
-                    gwtUser.setModifiedByName(usernameMap.get(u.getModifiedBy().toCompactId()));
+
+                    gwtUser.setCreatedByName(idUsernameMap.get(u.getCreatedBy()));
+                    gwtUser.setModifiedByName(idUsernameMap.get(u.getModifiedBy()));
+
                     gwtUsers.add(gwtUser);
                 }
             }
 
+            return new BasePagingLoadResult<GwtUser>(gwtUsers, loadConfig.getOffset(), users.getTotalCount().intValue());
         } catch (Throwable t) {
-            KapuaExceptionHandler.handle(t);
+            throw KapuaExceptionHandler.buildExceptionFromError(t);
         }
-
-        return new BasePagingLoadResult<GwtUser>(gwtUsers, loadConfig.getOffset(), totalLength);
     }
 
     /**
