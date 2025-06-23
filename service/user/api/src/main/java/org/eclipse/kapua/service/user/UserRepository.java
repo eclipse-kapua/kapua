@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.user;
 
+import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.storage.KapuaNamedEntityRepository;
 import org.eclipse.kapua.storage.TxContext;
 
@@ -19,6 +20,8 @@ import java.util.Optional;
 
 public interface UserRepository extends
         KapuaNamedEntityRepository<User, UserListResult> {
+
+    Optional<User> find(TxContext txContext, KapuaId userId);
 
     Optional<User> findByExternalId(TxContext txContext, final String externalId);
 

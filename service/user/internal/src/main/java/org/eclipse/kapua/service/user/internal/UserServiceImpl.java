@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -278,6 +278,27 @@ public class UserServiceImpl extends KapuaConfigurableServiceBase implements Use
         // Do the find
         return txManager.execute(tx -> userRepository.find(tx, scopeId, userId))
                 .orElse(null);
+    }
+
+    @Override
+    public User find(KapuaId userId)
+            throws KapuaException {
+        //
+        // Validation of the fields
+        ArgumentValidator.notNull(userId, "userId");
+
+        //
+        // Do find
+        Optional<User> user = txManager.execute(tx -> userRepository.find(tx, userId));
+
+        // Check Access
+        if (user.isPresent()) {
+            authorizationService.checkPermission(permissionFactory.newPermission(Domains.USER, Actions.read, user.get().getScopeId()));
+        }
+
+        //
+        // Return result
+        return user.get();
     }
 
     @Override
