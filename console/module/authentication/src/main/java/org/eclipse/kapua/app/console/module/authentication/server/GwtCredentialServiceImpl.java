@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2017, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -21,6 +21,7 @@ import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.server.KapuaRemoteServiceServlet;
 import org.eclipse.kapua.app.console.module.api.server.util.KapuaExceptionHandler;
+import org.eclipse.kapua.app.console.module.api.server.util.UserCreatedByModifiedByUtils;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtXSRFToken;
 import org.eclipse.kapua.app.console.module.api.shared.util.GwtKapuaCommonsModelConverter;
 import org.eclipse.kapua.app.console.module.authentication.shared.model.GwtCredential;
@@ -41,20 +42,19 @@ import org.eclipse.kapua.service.authentication.credential.CredentialFactory;
 import org.eclipse.kapua.service.authentication.credential.CredentialListResult;
 import org.eclipse.kapua.service.authentication.credential.CredentialQuery;
 import org.eclipse.kapua.service.authentication.credential.CredentialService;
-import org.eclipse.kapua.service.authentication.shiro.utils.AuthenticationUtils;
 import org.eclipse.kapua.service.authentication.user.PasswordChangeRequest;
 import org.eclipse.kapua.service.authentication.user.PasswordResetRequest;
 import org.eclipse.kapua.service.authentication.user.UserCredentialsFactory;
 import org.eclipse.kapua.service.authentication.user.UserCredentialsService;
 import org.eclipse.kapua.service.user.User;
-import org.eclipse.kapua.service.user.UserFactory;
-import org.eclipse.kapua.service.user.UserListResult;
 import org.eclipse.kapua.service.user.UserService;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 public class GwtCredentialServiceImpl extends KapuaRemoteServiceServlet implements GwtCredentialService {
@@ -71,60 +71,55 @@ public class GwtCredentialServiceImpl extends KapuaRemoteServiceServlet implemen
     private static final CredentialsFactory CREDENTIALS_FACTORY = LOCATOR.getFactory(CredentialsFactory.class);
 
     private static final UserService USER_SERVICE = LOCATOR.getService(UserService.class);
-    private static final UserFactory USER_FACTORY = LOCATOR.getFactory(UserFactory.class);
 
     private static final UserCredentialsService USER_CREDENTIALS_SERVICE = LOCATOR.getService(UserCredentialsService.class);
     private static final UserCredentialsFactory USER_CREDENTIALS_FACTORY = LOCATOR.getFactory(UserCredentialsFactory.class);
-    private static final AuthenticationUtils AUTHENTICATION_UTILS = LOCATOR.getComponent(AuthenticationUtils.class);
-
-    // this should be removed due to the refactoring in fixPasswordValidationBypass method
-    private static final int SYSTEM_MAXIMUM_PASSWORD_LENGTH = 255;
 
     @Override
     public PagingLoadResult<GwtCredential> query(PagingLoadConfig loadConfig, final GwtCredentialQuery gwtCredentialQuery) throws GwtKapuaException {
-        int totalLength = 0;
-        List<GwtCredential> gwtCredentials = new ArrayList<GwtCredential>();
         try {
 
             // Convert from GWT entity
             CredentialQuery credentialQuery = GwtKapuaAuthenticationModelConverter.convertCredentialQuery(loadConfig, gwtCredentialQuery);
 
             // query
-            CredentialListResult credentials = CREDENTIAL_SERVICE.query(credentialQuery);
+            final CredentialListResult credentials = CREDENTIAL_SERVICE.query(credentialQuery);
             credentials.sort(credentialComparator);
-            totalLength = credentials.getTotalCount().intValue();
 
             // If there are results
+            List<GwtCredential> gwtCredentials = new ArrayList<GwtCredential>();
             if (!credentials.isEmpty()) {
-                //TODO: #LAYER_VIOLATION - user lookup should not be done here
-                UserListResult userListResult = KapuaSecurityUtils.doPrivileged(new Callable<UserListResult>() {
 
-                    @Override
-                    public UserListResult call() throws Exception {
-                        return USER_SERVICE.query(USER_FACTORY.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(gwtCredentialQuery.getScopeId())));
-                    }
+                Map<KapuaId, String> idUsernameMap = UserCreatedByModifiedByUtils.resolveFromListResultAndFields(
+                        credentials,
+                        new Callable<Set<KapuaId>>() {
+                            @Override
+                            public Set<KapuaId> call() {
+                                Set<KapuaId> additionalKapuaIds = new HashSet<KapuaId>();
+                                for (Credential credential : credentials.getItems()) {
+                                    additionalKapuaIds.add(credential.getUserId());
+                                }
+
+                                return additionalKapuaIds;
+                            }
                 });
-
-                HashMap<String, String> usernameMap = new HashMap<String, String>();
-                for (User user : userListResult.getItems()) {
-                    usernameMap.put(user.getId().toCompactId(), user.getName());
-                }
 
                 // Convert to GWT entity
                 for (Credential credential : credentials.getItems()) {
                     GwtCredential gwtCredential = KapuaGwtAuthenticationModelConverter.convertCredential(credential);
-                    gwtCredential.setUsername(usernameMap.get(credential.getUserId().toCompactId()));
-                    gwtCredential.setCreatedByName(usernameMap.get(credential.getCreatedBy().toCompactId()));
-                    gwtCredential.setModifiedByName(usernameMap.get(credential.getModifiedBy().toCompactId()));
+
+                    gwtCredential.setUsername(idUsernameMap.get(credential.getUserId()));
+                    gwtCredential.setCreatedByName(idUsernameMap.get(credential.getCreatedBy()));
+                    gwtCredential.setModifiedByName(idUsernameMap.get(credential.getModifiedBy()));
+
                     gwtCredentials.add(gwtCredential);
                 }
             }
 
+            return new BasePagingLoadResult<GwtCredential>(gwtCredentials, loadConfig.getOffset(), credentials.getTotalCount().intValue());
         } catch (Throwable t) {
             throw KapuaExceptionHandler.buildExceptionFromError(t);
         }
-
-        return new BasePagingLoadResult<GwtCredential>(gwtCredentials, loadConfig.getOffset(), totalLength);
     }
 
     @Override
