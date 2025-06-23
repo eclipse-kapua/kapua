@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -28,6 +28,11 @@ public class UserImplJpaRepository
         implements UserRepository {
     public UserImplJpaRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig) {
         super(UserImpl.class, User.TYPE, () -> new UserListResultImpl(), jpaRepoConfig);
+    }
+
+    @Override
+    public Optional<User> find(TxContext txContext, KapuaId userId) {
+        return find(txContext, KapuaId.ANY, userId);
     }
 
     @Override
