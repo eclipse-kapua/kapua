@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -77,6 +77,16 @@ public interface UserService extends KapuaEntityService<User, UserCreator>,
      */
     @Override
     User find(KapuaId accountId, KapuaId userId) throws KapuaException;
+
+    /**
+     * Finds a {@link User} by its {@link User#getId()}
+     *
+     * @param userId The {@link User#getId()} to look for
+     * @return The {@link User} found or {@code null}
+     * @throws KapuaException
+     * @since 2.1.0
+     */
+    User find(KapuaId userId) throws KapuaException;
 
     /**
      * Returns the User with the specified username; returns null if the user is not found.

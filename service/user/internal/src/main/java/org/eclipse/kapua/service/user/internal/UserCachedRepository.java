@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@ package org.eclipse.kapua.service.user.internal;
 
 import org.eclipse.kapua.commons.service.internal.cache.NamedEntityCache;
 import org.eclipse.kapua.commons.storage.KapuaNamedEntityRepositoryCachingWrapper;
+import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserListResult;
 import org.eclipse.kapua.service.user.UserRepository;
@@ -29,6 +30,13 @@ public class UserCachedRepository
     public UserCachedRepository(UserRepository wrapped, NamedEntityCache entityCache) {
         super(wrapped, entityCache);
         this.wrapped = wrapped;
+    }
+
+    @Override
+    public Optional<User> find(TxContext txContext, KapuaId userId) {
+        final Optional<User> found = wrapped.find(txContext, userId);
+        found.ifPresent(entityCache::put);
+        return found;
     }
 
     @Override

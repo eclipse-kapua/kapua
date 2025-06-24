@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2017, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -45,6 +45,7 @@ import org.eclipse.kapua.app.console.module.account.shared.util.KapuaGwtAccountM
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.server.KapuaRemoteServiceServlet;
 import org.eclipse.kapua.app.console.module.api.server.util.KapuaExceptionHandler;
+import org.eclipse.kapua.app.console.module.api.server.util.UserCreatedByModifiedByUtils;
 import org.eclipse.kapua.app.console.module.api.setting.ConsoleSetting;
 import org.eclipse.kapua.app.console.module.api.setting.ConsoleSettingKeys;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtConfigComponent;
@@ -84,10 +85,6 @@ import org.eclipse.kapua.service.endpoint.EndpointInfo;
 import org.eclipse.kapua.service.endpoint.EndpointInfoFactory;
 import org.eclipse.kapua.service.endpoint.EndpointInfoListResult;
 import org.eclipse.kapua.service.endpoint.EndpointInfoService;
-import org.eclipse.kapua.service.user.User;
-import org.eclipse.kapua.service.user.UserFactory;
-import org.eclipse.kapua.service.user.UserListResult;
-import org.eclipse.kapua.service.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,6 +102,10 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
 
     private static final long serialVersionUID = 3314502846487119577L;
 
+    private static final String ENTITY_INFO = "entityInfo";
+
+    private static final String ORGANIZATION_INFO = "organizationInfo";
+
     private static final Logger LOG = LoggerFactory.getLogger(GwtAccountServiceImpl.class);
 
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
@@ -121,8 +122,6 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
     private static final RoleService ROLE_SERVICE = LOCATOR.getService(RoleService.class);
     private static final RoleFactory ROLE_FACTORY = LOCATOR.getFactory(RoleFactory.class);
 
-    private static final UserService USER_SERVICE = LOCATOR.getService(UserService.class);
-    private static final UserFactory USER_FACTORY = LOCATOR.getFactory(UserFactory.class);
 
     @Override
     public GwtAccount create(GwtXSRFToken xsrfToken, GwtAccountCreator gwtAccountCreator)
@@ -202,35 +201,19 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
     @Override
     public ListLoadResult<GwtGroupedNVPair> getAccountInfo(String scopeIdString, String accountIdString)
             throws GwtKapuaException {
-        final KapuaId scopeId = KapuaEid.parseCompactId(scopeIdString);
-        KapuaId accountId = KapuaEid.parseCompactId(accountIdString);
 
-        List<GwtGroupedNVPair> accountPropertiesPairs = new ArrayList<GwtGroupedNVPair>();
         try {
+            final KapuaId scopeId = KapuaEid.parseCompactId(scopeIdString);
+            KapuaId accountId = KapuaEid.parseCompactId(accountIdString);
+
             final Account account = ACCOUNT_SERVICE.find(scopeId, accountId);
 
-            //TODO: #LAYER_VIOLATION - user lookup should not be done here
-            UserListResult userListResult = KapuaSecurityUtils.doPrivileged(new Callable<UserListResult>() {
-
-                @Override
-                public UserListResult call() throws Exception {
-                    return USER_SERVICE.query(USER_FACTORY.newQuery(null));
-                }
-            });
-
-            Map<String, String> usernameMap = new HashMap<String, String>();
-            for (User user : userListResult.getItems()) {
-                usernameMap.put(user.getId().toCompactId(), user.getName());
-            }
-
-            final String entityInfo = "entityInfo";
-            accountPropertiesPairs.add(new GwtGroupedNVPair(entityInfo, "expirationDate", account.getExpirationDate()));
-            accountPropertiesPairs.add(new GwtGroupedNVPair(entityInfo, "accountCreatedOn", account.getCreatedOn()));
-            accountPropertiesPairs.add(new GwtGroupedNVPair(entityInfo, "accountCreatedBy",
-                    account.getCreatedBy() != null ? usernameMap.get(account.getCreatedBy().toCompactId()) : null));
-            accountPropertiesPairs.add(new GwtGroupedNVPair(entityInfo, "accountModifiedOn", account.getModifiedOn()));
-            accountPropertiesPairs.add(new GwtGroupedNVPair(entityInfo, "accountModifiedBy",
-                    account.getModifiedBy() != null ? usernameMap.get(account.getModifiedBy().toCompactId()) : null));
+            List<GwtGroupedNVPair> accountPropertiesPairs = new ArrayList<GwtGroupedNVPair>();
+            accountPropertiesPairs.add(new GwtGroupedNVPair(ENTITY_INFO, "expirationDate", account.getExpirationDate()));
+            accountPropertiesPairs.add(new GwtGroupedNVPair(ENTITY_INFO, "accountCreatedOn", account.getCreatedOn()));
+            accountPropertiesPairs.add(new GwtGroupedNVPair(ENTITY_INFO, "accountCreatedBy", UserCreatedByModifiedByUtils.resolveFromId(account.getCreatedBy())));
+            accountPropertiesPairs.add(new GwtGroupedNVPair(ENTITY_INFO, "accountModifiedOn", account.getModifiedOn()));
+            accountPropertiesPairs.add(new GwtGroupedNVPair(ENTITY_INFO, "accountModifiedBy", UserCreatedByModifiedByUtils.resolveFromId(account.getModifiedBy())));
 
             if (account.getScopeId() != null) {
                 Account parentAccount = KapuaSecurityUtils.doPrivileged(new Callable<Account>() {
@@ -246,7 +229,6 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
 
             if (AUTHORIZATION_SERVICE.isPermitted(PERMISSION_FACTORY.newPermission(Domains.ENDPOINT_INFO, Actions.read, scopeId))) {
                 //TODO: #LAYER_VIOLATION - related entities lookup should not be done here
-
                 EndpointInfoListResult endpointInfos = KapuaSecurityUtils.doPrivileged(new Callable<EndpointInfoListResult>() {
 
                     @Override
@@ -259,23 +241,23 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
                     accountPropertiesPairs.add(new GwtGroupedNVPair("deploymentInfo", ei.getSecure() ? "deploymentNodeUriSecure" : "deploymentNodeUri", ei.toStringURI()));
                 }
             }
-            final String organizationInfo = "organizationInfo";
-            accountPropertiesPairs.add(new GwtGroupedNVPair(organizationInfo, "organizationName", account.getOrganization().getName()));
-            accountPropertiesPairs.add(new GwtGroupedNVPair(organizationInfo, "organizationContactName", account.getOrganization().getPersonName()));
-            accountPropertiesPairs.add(new GwtGroupedNVPair(organizationInfo, "organizationEmail", account.getOrganization().getEmail()));
-            accountPropertiesPairs.add(new GwtGroupedNVPair(organizationInfo, "organizationPhoneNumber", account.getOrganization().getPhoneNumber()));
-            accountPropertiesPairs.add(new GwtGroupedNVPair(organizationInfo, "organizationAddress1", account.getOrganization().getAddressLine1()));
-            accountPropertiesPairs.add(new GwtGroupedNVPair(organizationInfo, "organizationAddress2", account.getOrganization().getAddressLine2()));
-            accountPropertiesPairs.add(new GwtGroupedNVPair(organizationInfo, "organizationAddress3", account.getOrganization().getAddressLine3()));
-            accountPropertiesPairs.add(new GwtGroupedNVPair(organizationInfo, "organizationZip", account.getOrganization().getZipPostCode()));
-            accountPropertiesPairs.add(new GwtGroupedNVPair(organizationInfo, "organizationCity", account.getOrganization().getCity()));
-            accountPropertiesPairs.add(new GwtGroupedNVPair(organizationInfo, "organizationState", account.getOrganization().getStateProvinceCounty()));
-            accountPropertiesPairs.add(new GwtGroupedNVPair(organizationInfo, "organizationCountry", account.getOrganization().getCountry()));
-        } catch (Throwable t) {
-            KapuaExceptionHandler.handle(t);
-        }
 
-        return new BaseListLoadResult<GwtGroupedNVPair>(accountPropertiesPairs);
+            accountPropertiesPairs.add(new GwtGroupedNVPair(ORGANIZATION_INFO, "organizationName", account.getOrganization().getName()));
+            accountPropertiesPairs.add(new GwtGroupedNVPair(ORGANIZATION_INFO, "organizationContactName", account.getOrganization().getPersonName()));
+            accountPropertiesPairs.add(new GwtGroupedNVPair(ORGANIZATION_INFO, "organizationEmail", account.getOrganization().getEmail()));
+            accountPropertiesPairs.add(new GwtGroupedNVPair(ORGANIZATION_INFO, "organizationPhoneNumber", account.getOrganization().getPhoneNumber()));
+            accountPropertiesPairs.add(new GwtGroupedNVPair(ORGANIZATION_INFO, "organizationAddress1", account.getOrganization().getAddressLine1()));
+            accountPropertiesPairs.add(new GwtGroupedNVPair(ORGANIZATION_INFO, "organizationAddress2", account.getOrganization().getAddressLine2()));
+            accountPropertiesPairs.add(new GwtGroupedNVPair(ORGANIZATION_INFO, "organizationAddress3", account.getOrganization().getAddressLine3()));
+            accountPropertiesPairs.add(new GwtGroupedNVPair(ORGANIZATION_INFO, "organizationZip", account.getOrganization().getZipPostCode()));
+            accountPropertiesPairs.add(new GwtGroupedNVPair(ORGANIZATION_INFO, "organizationCity", account.getOrganization().getCity()));
+            accountPropertiesPairs.add(new GwtGroupedNVPair(ORGANIZATION_INFO, "organizationState", account.getOrganization().getStateProvinceCounty()));
+            accountPropertiesPairs.add(new GwtGroupedNVPair(ORGANIZATION_INFO, "organizationCountry", account.getOrganization().getCountry()));
+
+            return new BaseListLoadResult<GwtGroupedNVPair>(accountPropertiesPairs);
+        } catch (Throwable t) {
+            throw KapuaExceptionHandler.buildExceptionFromError(t);
+        }
     }
 
     @Override
@@ -665,40 +647,28 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
     @Override
     public PagingLoadResult<GwtAccount> query(PagingLoadConfig loadConfig, GwtAccountQuery gwtAccountQuery) throws GwtKapuaException {
 
-        int totalLength = 0;
-        List<GwtAccount> gwtAccounts = new ArrayList<GwtAccount>();
         try {
             AccountQuery query = GwtKapuaAccountModelConverter.convertAccountQuery(loadConfig, gwtAccountQuery);
-
             KapuaListResult<Account> accounts = ACCOUNT_SERVICE.query(query);
-            totalLength = accounts.getTotalCount().intValue();
 
+            List<GwtAccount> gwtAccounts = new ArrayList<GwtAccount>();
             if (!accounts.isEmpty()) {
-                UserListResult usernames = KapuaSecurityUtils.doPrivileged(new Callable<UserListResult>() {
 
-                    @Override
-                    public UserListResult call() throws Exception {
-                        return USER_SERVICE.query(USER_FACTORY.newQuery(null));
-                    }
-                });
+                Map<KapuaId, String> idUsernameMap = UserCreatedByModifiedByUtils.resolveFromListResult(accounts);
 
-                Map<String, String> usernameMap = new HashMap<String, String>();
-                for (User user : usernames.getItems()) {
-                    usernameMap.put(user.getId().toCompactId(), user.getName());
-                }
+                for (Account account : accounts.getItems()) {
+                    GwtAccount gwtAccount = KapuaGwtAccountModelConverter.convertAccount(account);
 
-                for (Account a : accounts.getItems()) {
-                    GwtAccount gwtAccount = KapuaGwtAccountModelConverter.convertAccount(a);
-                    gwtAccount.setCreatedByName(usernameMap.get(gwtAccount.getCreatedBy()));
-                    gwtAccount.setModifiedByName(usernameMap.get(gwtAccount.getModifiedBy()));
+                    gwtAccount.setCreatedByName(idUsernameMap.get(account.getCreatedBy()));
+                    gwtAccount.setModifiedByName(idUsernameMap.get(account.getModifiedBy()));
+
                     gwtAccounts.add(gwtAccount);
                 }
             }
+
+            return new BasePagingLoadResult<GwtAccount>(gwtAccounts, loadConfig.getOffset(), accounts.getTotalCount().intValue());
         } catch (Throwable t) {
-            KapuaExceptionHandler.handle(t);
+           throw KapuaExceptionHandler.buildExceptionFromError(t);
         }
-
-        return new BasePagingLoadResult<GwtAccount>(gwtAccounts, loadConfig.getOffset(), totalLength);
     }
-
 }
