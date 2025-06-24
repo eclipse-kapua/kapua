@@ -30,6 +30,11 @@ public class GwtDeviceConnectionOption extends GwtUpdatableEntityModel implement
     public GwtDeviceConnectionOption(GwtDeviceConnection gwtDeviceConnection) {
         setId(gwtDeviceConnection.getId());
         setScopeId(gwtDeviceConnection.getScopeId());
+        setConnectionUserCouplingMode(gwtDeviceConnection.getConnectionUserCouplingMode());
+        setUserId(gwtDeviceConnection.getUserId());
+        setReservedUserId(gwtDeviceConnection.getUserId());
+        setAllowUserChange(gwtDeviceConnection.getAllowUserChange());
+        setAuthenticationType(gwtDeviceConnection.getAuthenticationType());
     }
 
     @Override
