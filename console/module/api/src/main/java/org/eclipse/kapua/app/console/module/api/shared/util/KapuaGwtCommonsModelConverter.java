@@ -12,11 +12,16 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.api.shared.util;
 
+import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtEntityModel;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtUpdatableEntityModel;
 import org.eclipse.kapua.model.KapuaEntity;
 import org.eclipse.kapua.model.KapuaUpdatableEntity;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.service.storable.StorableService;
+import org.eclipse.kapua.service.storable.model.Storable;
+import org.eclipse.kapua.service.storable.model.StorableListResult;
+import org.eclipse.kapua.service.storable.model.query.StorableQuery;
 
 public class KapuaGwtCommonsModelConverter {
 
@@ -523,6 +528,19 @@ public class KapuaGwtCommonsModelConverter {
         gwtEntity.setId(convertKapuaId(kapuaEntity.getId()));
         gwtEntity.setCreatedOn(kapuaEntity.getCreatedOn());
         gwtEntity.setCreatedBy(convertKapuaId(kapuaEntity.getCreatedBy()));
+    }
+
+    /**
+     * This method counts the documents in ES (clients, channels, messages etc.) with the cap passed as input
+     * @param service the StorableService instance where you want to count documents
+     * @param query the count query that will be performed on the service
+     * @param capValue the maximum value allowed for counting
+     * @return the number of requested documents
+     */
+    public static <S extends Storable, L extends StorableListResult<S>, Q extends StorableQuery> long countEsDataCapped(StorableService<S,L,Q> service, Q query, long capValue) throws KapuaException {
+        long totalLength = 0;
+        totalLength = Math.min((int) service.count(query), capValue);
+        return totalLength;
     }
 
 //    /**
