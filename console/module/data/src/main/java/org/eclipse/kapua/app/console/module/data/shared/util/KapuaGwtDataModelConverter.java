@@ -12,30 +12,18 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.data.shared.util;
 
-import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.app.console.module.data.client.GwtTopic;
 import org.eclipse.kapua.app.console.module.data.client.util.GwtMessage;
 import org.eclipse.kapua.app.console.module.data.shared.model.GwtDatastoreAsset;
 import org.eclipse.kapua.app.console.module.data.shared.model.GwtDatastoreDevice;
 import org.eclipse.kapua.app.console.module.data.shared.model.GwtHeader;
-import org.eclipse.kapua.locator.KapuaLocator;
-import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
-import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettingsKey;
 import org.eclipse.kapua.service.datastore.model.ChannelInfo;
 import org.eclipse.kapua.service.datastore.model.ClientInfo;
 import org.eclipse.kapua.service.datastore.model.DatastoreMessage;
 import org.eclipse.kapua.service.datastore.model.MetricInfo;
-import org.eclipse.kapua.service.storable.StorableService;
-import org.eclipse.kapua.service.storable.model.Storable;
-import org.eclipse.kapua.service.storable.model.StorableListResult;
-import org.eclipse.kapua.service.storable.model.query.StorableQuery;
-
 import java.util.List;
 
 public class KapuaGwtDataModelConverter {
-
-    private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
-    private static final DatastoreSettings DATASTORE_SETTINGS = LOCATOR.getComponent(DatastoreSettings.class);
 
     private KapuaGwtDataModelConverter() { }
 
@@ -85,18 +73,6 @@ public class KapuaGwtDataModelConverter {
             gwtMessage.set(header.getName(), message.getPayload().getMetrics().get(header.getName()));
         }
         return gwtMessage;
-    }
-
-    /**
-     * This method counts the documents in ES (clients, channels, messages etc.) with a cap to the maximum number of searchable docs in the datastore
-     * @param service the StorableService instance where you want to count documents
-     * @param query the count query that will be performed on the service
-     * @return the number of requested documents
-     */
-    public static <S extends Storable, L extends StorableListResult<S>, Q extends StorableQuery> long countEsDataCapped(StorableService<S,L,Q> service, Q query) throws KapuaException {
-        long totalLength = 0;
-        totalLength = Math.min((int) service.count(query), DATASTORE_SETTINGS.getInt(DatastoreSettingsKey.MAX_RESULT_WINDOW_VALUE));
-        return totalLength;
     }
 
 }
