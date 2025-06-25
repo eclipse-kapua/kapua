@@ -12,10 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.device.client.connection;
 
-import com.extjs.gxt.ui.client.data.ListLoadResult;
-import com.extjs.gxt.ui.client.event.BaseEvent;
-import com.extjs.gxt.ui.client.event.Events;
-import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.data.BasePagingLoader;
+import com.extjs.gxt.ui.client.data.PagingLoadConfig;
+import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.CheckBox;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
@@ -40,6 +40,7 @@ import org.eclipse.kapua.app.console.module.device.shared.model.connection.GwtDe
 import org.eclipse.kapua.app.console.module.device.shared.service.GwtDeviceConnectionOptionService;
 import org.eclipse.kapua.app.console.module.device.shared.service.GwtDeviceConnectionOptionServiceAsync;
 import org.eclipse.kapua.app.console.module.user.shared.model.GwtUser;
+import org.eclipse.kapua.app.console.module.user.shared.model.GwtUserQuery;
 import org.eclipse.kapua.app.console.module.user.shared.model.permission.UserSessionPermission;
 import org.eclipse.kapua.app.console.module.user.shared.service.GwtUserService;
 import org.eclipse.kapua.app.console.module.user.shared.service.GwtUserServiceAsync;
@@ -84,14 +85,7 @@ public class ConnectionEditDialog extends EntityAddEditDialog {
         FormLayout layoutSecurityOptions = new FormLayout();
         layoutSecurityOptions.setLabelWidth(Constants.LABEL_WIDTH_DEVICE_FORM);
 
-        Listener<BaseEvent> comboBoxListener = new Listener<BaseEvent>() {
-
-            @Override
-            public void handleEvent(BaseEvent be) {
-                formPanel.fireEvent(Events.OnClick);
-            }
-        };
-
+        // Last User
         lastUserField = new LabelField();
         lastUserField.setName("connectionUserLastUserField");
         lastUserField.setLabelSeparator(":");
@@ -118,61 +112,55 @@ public class ConnectionEditDialog extends EntityAddEditDialog {
         couplingModeCombo.setSimpleValue(GwtConnectionUserCouplingMode.INHERITED.getLabel());
         groupFormPanel.add(couplingModeCombo);
 
-        reservedUserCombo = new ComboBox<GwtUser>();
-        reservedUserCombo.setName("connectionUserReservedUserCombo");
-        reservedUserCombo.setEditable(false);
-        reservedUserCombo.setTypeAhead(false);
-        reservedUserCombo.setAllowBlank(false);
-        reservedUserCombo.setFieldLabel(MSGS.connectionFormReservedUser());
-        reservedUserCombo.setToolTip(MSGS.connectionFormReservedUserTooltip());
-        reservedUserCombo.setTriggerAction(TriggerAction.ALL);
-        reservedUserCombo.setStore(new ListStore<GwtUser>());
-        reservedUserCombo.setDisplayField("username");
-        reservedUserCombo.setTemplate("<tpl for=\".\"><div role=\"listitem\" class=\"x-combo-list-item\" title={username}>{username}</div></tpl>");
-        reservedUserCombo.setValueField("id");
-        reservedUserCombo.addListener(Events.Select, comboBoxListener);
+        //
+        // Reserved User
+        if (currentSession.hasPermission(UserSessionPermission.read())) {
 
+            reservedUserCombo = new ComboBox<GwtUser>();
+            reservedUserCombo.setName("connectionUserReservedUserCombo");
+            reservedUserCombo.setEditable(true);
+            reservedUserCombo.setTypeAhead(false);
+            reservedUserCombo.setAllowBlank(true);
+            reservedUserCombo.setEmptyText("No user");
+            reservedUserCombo.setFieldLabel(MSGS.connectionFormReservedUser());
+            reservedUserCombo.setToolTip(MSGS.connectionFormReservedUserTooltip());
+            reservedUserCombo.setTriggerAction(TriggerAction.QUERY);
+            reservedUserCombo.setDisplayField("username");
+            reservedUserCombo.setTemplate("<tpl for=\".\"><div role=\"listitem\" class=\"x-combo-list-item\" title={username}>{username}</div></tpl>");
+            reservedUserCombo.setValueField("id");
+            groupFormPanel.add(reservedUserCombo);
+
+            reservedUserCombo.setPageSize(100);
+        }
+
+        RpcProxy<PagingLoadResult<GwtUser>> userDataProxy = new RpcProxy<PagingLoadResult<GwtUser>>() {
+
+            @Override
+            protected void load(Object loadConfig, AsyncCallback<PagingLoadResult<GwtUser>> callback) {
+
+                GwtUserQuery query = new GwtUserQuery();
+                query.setScopeId(selectedDeviceConnection.getScopeId());
+                query.setName(reservedUserCombo.getRawValue()); // This filters results with the user keyword used
+
+                GWT_USER_SERVICE.query((PagingLoadConfig) loadConfig,
+                        query,
+                        callback);
+            }
+        };
+
+        BasePagingLoader<PagingLoadResult<GwtUser>> userPagingLoader = new BasePagingLoader<PagingLoadResult<GwtUser>>(userDataProxy);
+        ListStore<GwtUser> userListStore = new ListStore<GwtUser>(userPagingLoader);
+
+        reservedUserCombo.setStore(userListStore);
+
+        //
         // Allow credential change
         allowUserChangeCheckbox = new CheckBox();
         allowUserChangeCheckbox.setName("connectionUserAllowUserChangeCheckbox");
         allowUserChangeCheckbox.setFieldLabel(MSGS.connectionFormAllowUserChange());
         allowUserChangeCheckbox.setToolTip(MSGS.connectionFormAllowUserChangeTooltip());
         allowUserChangeCheckbox.setBoxLabel("");
-
-        if (currentSession.hasPermission(UserSessionPermission.read())) {
-            // Device User
-            GWT_USER_SERVICE.findAll(currentSession.getSelectedAccountId(), new AsyncCallback<ListLoadResult<GwtUser>>() {
-
-                @Override
-                public void onFailure(Throwable caught) {
-                    exitStatus = false;
-                    if (!isPermissionErrorMessage(caught)) {
-                        FailureHandler.handle(caught);
-                        hide();
-                    }
-                }
-
-                @Override
-                public void onSuccess(ListLoadResult<GwtUser> result) {
-                    reservedUserCombo.getStore().removeAll();
-                    reservedUserCombo.getStore().add(NO_USER);
-                    for (GwtUser gwtUser : result.getData()) {
-                        reservedUserCombo.getStore().add(gwtUser);
-                    }
-                    setReservedUser();
-                }
-
-            });
-
-            groupFormPanel.add(reservedUserCombo);
-            groupFormPanel.add(allowUserChangeCheckbox);
-
-        } else {
-            GwtUser selectedUser = new GwtUser();
-            selectedUser.setId(selectedDeviceConnection.getReservedUserId());
-            reservedUserCombo.getStore().add(selectedUser);
-            reservedUserCombo.setValue(selectedUser);
-        }
+        groupFormPanel.add(allowUserChangeCheckbox);
 
         // Authentication type
         authenticationTypeCombo = new SimpleComboBox<String>();
@@ -226,8 +214,11 @@ public class ConnectionEditDialog extends EntityAddEditDialog {
         GwtDeviceConnectionOption selectedDeviceConnectionOption = new GwtDeviceConnectionOption(selectedDeviceConnection);
         selectedDeviceConnectionOption.setAllowUserChange(allowUserChangeCheckbox.getValue());
         selectedDeviceConnectionOption.setConnectionUserCouplingMode(couplingModeCombo.getValue() != null ? couplingModeCombo.getValue().getValue() : null);
-        selectedDeviceConnectionOption.setReservedUserId(reservedUserCombo.getValue() != null ? reservedUserCombo.getValue().getId() : null);
         selectedDeviceConnectionOption.setAuthenticationType(authenticationTypeCombo.getSimpleValue());
+
+        if (currentSession.hasPermission(UserSessionPermission.read())) {
+            selectedDeviceConnectionOption.setReservedUserId(reservedUserCombo.getValue() != null ? reservedUserCombo.getValue().getId() : null);
+        }
 
         GWT_CONNECTION_OPTION_SERVICE.update(xsrfToken, selectedDeviceConnectionOption, new AsyncCallback<GwtDeviceConnectionOption>() {
 
@@ -293,11 +284,13 @@ public class ConnectionEditDialog extends EntityAddEditDialog {
         } else {
             lastUserField.setValue("N/A");
         }
+
         GwtConnectionUserCouplingMode gwtConnectionUserCouplingMode = null;
         if (gwtDeviceConnection.getConnectionUserCouplingMode() != null) {
             gwtConnectionUserCouplingMode = GwtConnectionUserCouplingMode.getEnumFromLabel(gwtDeviceConnection.getConnectionUserCouplingMode());
         }
         couplingModeCombo.setSimpleValue(gwtConnectionUserCouplingMode != null ? gwtConnectionUserCouplingMode.getLabel() : "N/A");
+        setReservedUser();
         allowUserChangeCheckbox.setValue(gwtDeviceConnection.getAllowUserChange());
         authenticationTypeCombo.setSimpleValue(gwtDeviceConnection.getAuthenticationType());
         lastAuthenticationTypeLabel.setValue(gwtDeviceConnection.getLastAuthenticationType() != null ? gwtDeviceConnection.getLastAuthenticationType() : "N/A");
@@ -312,19 +305,39 @@ public class ConnectionEditDialog extends EntityAddEditDialog {
     }
 
     private void setReservedUser() {
-        for (GwtUser gwtUser : reservedUserCombo.getStore().getModels()) {
-            if (gwtUser.getId() == null) {
-                if (selectedDeviceConnection.getReservedUserId() == null) {
-                    reservedUserCombo.setValue(gwtUser);
+        String reservedUserId = selectedDeviceConnection.getReservedUserId();
+
+        if (reservedUserId != null) {
+            for (GwtUser listStoreUser : reservedUserCombo.getStore().getModels()) {
+                if (listStoreUser.getId().equals(reservedUserId)) {
+                    reservedUserCombo.setValue(listStoreUser);
+
+                    return;
                 }
-            } else if (gwtUser.getId().equals(selectedDeviceConnection.getReservedUserId())) {
-                reservedUserCombo.setValue(gwtUser);
-                break;
-            } else {
-                reservedUserCombo.setValue(NO_USER);
             }
+
+            // If not found in the current page of the list store...
+            GWT_USER_SERVICE.find(currentSession.getSelectedAccountId(), selectedDeviceConnection.getReservedUserId(), new AsyncCallback<GwtUser>() {
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    exitStatus = false;
+                    if (!isPermissionErrorMessage(caught)) {
+                        FailureHandler.handle(caught);
+                        hide();
+                    }
+                }
+
+                @Override
+                public void onSuccess(GwtUser reservedUser) {
+                    if (reservedUser != null) {
+                        reservedUserCombo.setValue(reservedUser);
+                    } else {
+                        // ??
+                    }
+                }
+            });
         }
-        formPanel.clearDirtyFields();
     }
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2017, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -20,6 +20,7 @@ import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.server.KapuaRemoteServiceServlet;
 import org.eclipse.kapua.app.console.module.api.server.util.KapuaExceptionHandler;
+import org.eclipse.kapua.app.console.module.api.server.util.UserCreatedByModifiedByUtils;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtGroupedNVPair;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtXSRFToken;
 import org.eclipse.kapua.app.console.module.api.shared.util.GwtKapuaCommonsModelConverter;
@@ -30,7 +31,6 @@ import org.eclipse.kapua.app.console.module.job.shared.service.GwtJobService;
 import org.eclipse.kapua.app.console.module.job.shared.util.GwtKapuaJobModelConverter;
 import org.eclipse.kapua.app.console.module.job.shared.util.KapuaGwtJobModelConverter;
 import org.eclipse.kapua.commons.model.id.KapuaEid;
-import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.job.Job;
@@ -39,16 +39,10 @@ import org.eclipse.kapua.service.job.JobFactory;
 import org.eclipse.kapua.service.job.JobListResult;
 import org.eclipse.kapua.service.job.JobQuery;
 import org.eclipse.kapua.service.job.JobService;
-import org.eclipse.kapua.service.user.User;
-import org.eclipse.kapua.service.user.UserFactory;
-import org.eclipse.kapua.service.user.UserListResult;
-import org.eclipse.kapua.service.user.UserService;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 
 public class GwtJobServiceImpl extends KapuaRemoteServiceServlet implements GwtJobService {
 
@@ -57,54 +51,38 @@ public class GwtJobServiceImpl extends KapuaRemoteServiceServlet implements GwtJ
     private static final JobService JOB_SERVICE = LOCATOR.getService(JobService.class);
     private static final JobFactory JOB_FACTORY = LOCATOR.getFactory(JobFactory.class);
 
-    private static final UserService USER_SERVICE = LOCATOR.getService(UserService.class);
-    private static final UserFactory USER_FACTORY = LOCATOR.getFactory(UserFactory.class);
-
     private static final String ENTITY_INFO = "entityInfo";
 
     @Override
     public PagingLoadResult<GwtJob> query(PagingLoadConfig loadConfig, GwtJobQuery gwtJobQuery) throws GwtKapuaException {
-        // Do query
-        int totalLength = 0;
-        List<GwtJob> gwtJobs = new ArrayList<GwtJob>();
         try {
-
             // Convert from GWT entity
             JobQuery jobQuery = GwtKapuaJobModelConverter.convertJobQuery(gwtJobQuery, loadConfig);
 
-            // query
+            // Query
             JobListResult jobs = JOB_SERVICE.query(jobQuery);
-            totalLength = jobs.getTotalCount().intValue();
 
             // If there are results
+            List<GwtJob> gwtJobs = new ArrayList<GwtJob>();
             if (!jobs.isEmpty()) {
-                //TODO: #LAYER_VIOLATION - user lookup should not be done here (horribly inefficient)
-                UserListResult usernames = KapuaSecurityUtils.doPrivileged(new Callable<UserListResult>() {
 
-                    @Override
-                    public UserListResult call() throws Exception {
-                        return USER_SERVICE.query(USER_FACTORY.newQuery(null));
-                    }
-                });
-
-                Map<String, String> usernameMap = new HashMap<String, String>();
-                for (User user : usernames.getItems()) {
-                    usernameMap.put(user.getId().toCompactId(), user.getName());
-                }
+                Map<KapuaId, String> idUsernameMap = UserCreatedByModifiedByUtils.resolveFromListResult(jobs);
 
                 // Converto to GWT entity
-                for (Job j : jobs.getItems()) {
-                    GwtJob gwtJob = KapuaGwtJobModelConverter.convertJob(j);
-                    gwtJob.setCreatedByName(usernameMap.get(j.getCreatedBy().toCompactId()));
+                for (Job job : jobs.getItems()) {
+                    GwtJob gwtJob = KapuaGwtJobModelConverter.convertJob(job);
+
+                    gwtJob.setCreatedByName(idUsernameMap.get(job.getCreatedBy()));
+                    gwtJob.setModifiedByName(idUsernameMap.get(job.getModifiedBy()));
+
                     gwtJobs.add(gwtJob);
                 }
             }
 
+            return new BasePagingLoadResult<GwtJob>(gwtJobs, loadConfig.getOffset(), jobs.getTotalCount().intValue());
         } catch (Throwable t) {
-            KapuaExceptionHandler.handle(t);
+            throw KapuaExceptionHandler.buildExceptionFromError(t);
         }
-
-        return new BasePagingLoadResult<GwtJob>(gwtJobs, loadConfig.getOffset(), totalLength);
     }
 
     @Override
@@ -206,40 +184,26 @@ public class GwtJobServiceImpl extends KapuaRemoteServiceServlet implements GwtJ
     }
 
     @Override
-    public ListLoadResult<GwtGroupedNVPair> findJobDescription(String gwtScopeId,
-                                                               String gwtJobId) throws GwtKapuaException {
-        List<GwtGroupedNVPair> gwtJobDescription = new ArrayList<GwtGroupedNVPair>();
+    public ListLoadResult<GwtGroupedNVPair> findJobDescription(String gwtScopeId, String gwtJobId) throws GwtKapuaException {
         try {
             KapuaId scopeId = KapuaEid.parseCompactId(gwtScopeId);
             KapuaId jobId = KapuaEid.parseCompactId(gwtJobId);
 
             Job job = JOB_SERVICE.find(scopeId, jobId);
 
-            UserListResult userListResult = KapuaSecurityUtils.doPrivileged(new Callable<UserListResult>() {
-
-                @Override
-                public UserListResult call() throws Exception {
-                    return USER_SERVICE.query(USER_FACTORY.newQuery(null));
-                }
-            });
-
-            Map<String, String> usernameMap = new HashMap<String, String>();
-            for (User user : userListResult.getItems()) {
-                usernameMap.put(user.getId().toCompactId(), user.getName());
-            }
-
+            List<GwtGroupedNVPair> gwtJobDescription = new ArrayList<GwtGroupedNVPair>();
             if (job != null) {
                 gwtJobDescription.add(new GwtGroupedNVPair("jobInfo", "jobName", job.getName()));
                 gwtJobDescription.add(new GwtGroupedNVPair("jobInfo", "jobDescription", job.getDescription()));
                 gwtJobDescription.add(new GwtGroupedNVPair(ENTITY_INFO, "jobCreatedOn", job.getCreatedOn()));
-                gwtJobDescription.add(new GwtGroupedNVPair(ENTITY_INFO, "jobCreatedBy", job.getCreatedBy() != null ? usernameMap.get(job.getCreatedBy().toCompactId()) : null));
+                gwtJobDescription.add(new GwtGroupedNVPair(ENTITY_INFO, "jobCreatedBy", UserCreatedByModifiedByUtils.resolveFromId(job.getCreatedBy())));
                 gwtJobDescription.add(new GwtGroupedNVPair(ENTITY_INFO, "jobModifiedOn", job.getModifiedOn()));
-                gwtJobDescription.add(new GwtGroupedNVPair(ENTITY_INFO, "jobModifiedBy", job.getModifiedBy() != null ? usernameMap.get(job.getModifiedBy().toCompactId()) : null));
+                gwtJobDescription.add(new GwtGroupedNVPair(ENTITY_INFO, "jobModifiedBy", UserCreatedByModifiedByUtils.resolveFromId(job.getModifiedBy())));
             }
-        } catch (Exception e) {
-            KapuaExceptionHandler.handle(e);
-        }
 
-        return new BaseListLoadResult<GwtGroupedNVPair>(gwtJobDescription);
+            return new BaseListLoadResult<GwtGroupedNVPair>(gwtJobDescription);
+        } catch (Exception e) {
+            throw KapuaExceptionHandler.buildExceptionFromError(e);
+        }
     }
 }

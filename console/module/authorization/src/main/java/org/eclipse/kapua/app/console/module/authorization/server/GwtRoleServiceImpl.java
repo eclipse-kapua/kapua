@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2017, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.server.KapuaRemoteServiceServlet;
 import org.eclipse.kapua.app.console.module.api.server.util.KapuaExceptionHandler;
+import org.eclipse.kapua.app.console.module.api.server.util.UserCreatedByModifiedByUtils;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtGroupedNVPair;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtXSRFToken;
 import org.eclipse.kapua.app.console.module.api.shared.util.GwtKapuaCommonsModelConverter;
@@ -58,13 +59,8 @@ import org.eclipse.kapua.service.authorization.role.RolePermissionQuery;
 import org.eclipse.kapua.service.authorization.role.RolePermissionService;
 import org.eclipse.kapua.service.authorization.role.RoleQuery;
 import org.eclipse.kapua.service.authorization.role.RoleService;
-import org.eclipse.kapua.service.user.User;
-import org.eclipse.kapua.service.user.UserFactory;
-import org.eclipse.kapua.service.user.UserListResult;
-import org.eclipse.kapua.service.user.UserService;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -82,9 +78,6 @@ public class GwtRoleServiceImpl extends KapuaRemoteServiceServlet implements Gwt
 
     private static final RolePermissionService ROLE_PERMISSION_SERVICE = LOCATOR.getService(RolePermissionService.class);
     private static final RolePermissionFactory ROLE_PERMISSION_FACTORY = LOCATOR.getFactory(RolePermissionFactory.class);
-
-    private static final UserService USER_SERVICE = LOCATOR.getService(UserService.class);
-    private static final UserFactory USER_FACTORY = LOCATOR.getFactory(UserFactory.class);
 
     private static final GroupService GROUP_SERVICE = LOCATOR.getService(GroupService.class);
 
@@ -157,53 +150,38 @@ public class GwtRoleServiceImpl extends KapuaRemoteServiceServlet implements Gwt
 
     @Override
     public PagingLoadResult<GwtRole> query(PagingLoadConfig loadConfig, final GwtRoleQuery gwtRoleQuery) throws GwtKapuaException {
-        // Do query
-        int totalLength = 0;
-        List<GwtRole> gwtRoles = new ArrayList<GwtRole>();
 
         try {
             // Convert from GWT entity
             RoleQuery roleQuery = GwtKapuaAuthorizationModelConverter.convertRoleQuery(loadConfig, gwtRoleQuery);
 
-            // query
+            // Query
             RoleListResult roles = ROLE_SERVICE.query(roleQuery);
-            totalLength = roles.getTotalCount().intValue();
 
+            // Convert results
+            List<GwtRole> gwtRoles = new ArrayList<GwtRole>();
             if (!roles.isEmpty()) {
-                //TODO: #LAYER_VIOLATION - user lookup should not be done here (horribly inefficient)
-                UserListResult usernames = KapuaSecurityUtils.doPrivileged(new Callable<UserListResult>() {
-
-                    @Override
-                    public UserListResult call() throws Exception {
-                        return USER_SERVICE.query(USER_FACTORY.newQuery(null));
-                    }
-                });
-
-                Map<String, String> usernameMap = new HashMap<String, String>();
-                for (User user : usernames.getItems()) {
-                    usernameMap.put(user.getId().toCompactId(), user.getName());
-                }
+                Map<KapuaId, String> idUsernameMap = UserCreatedByModifiedByUtils.resolveFromListResult(roles);
 
                 // Converto to GWT entity
-                for (Role r : roles.getItems()) {
-                    GwtRole gwtRole = KapuaGwtAuthorizationModelConverter.convertRole(r);
-                    gwtRole.setCreatedByName(usernameMap.get(r.getCreatedBy().toCompactId()));
-                    gwtRole.setModifiedByName(usernameMap.get(r.getModifiedBy().toCompactId()));
+                for (Role role : roles.getItems()) {
+                    GwtRole gwtRole = KapuaGwtAuthorizationModelConverter.convertRole(role);
+
+                    gwtRole.setCreatedByName(idUsernameMap.get(role.getCreatedBy()));
+                    gwtRole.setModifiedByName(idUsernameMap.get(role.getModifiedBy()));
+
                     gwtRoles.add(gwtRole);
                 }
             }
 
+            return new BasePagingLoadResult<GwtRole>(gwtRoles, loadConfig.getOffset(), roles.getTotalCount().intValue());
         } catch (Throwable t) {
-            KapuaExceptionHandler.handle(t);
+            throw KapuaExceptionHandler.buildExceptionFromError(t);
         }
-
-        return new BasePagingLoadResult<GwtRole>(gwtRoles, loadConfig.getOffset(), totalLength);
     }
 
     @Override
     public ListLoadResult<GwtGroupedNVPair> getRoleDescription(String scopeShortId, String roleShortId) throws GwtKapuaException {
-        // Do get
-        List<GwtGroupedNVPair> gwtRoleDescription = new ArrayList<GwtGroupedNVPair>();
         try {
             // Convert from GWT Entity
             final KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(scopeShortId);
@@ -211,41 +189,26 @@ public class GwtRoleServiceImpl extends KapuaRemoteServiceServlet implements Gwt
 
             // Find
             final Role role = ROLE_SERVICE.find(scopeId, roleId);
-            UserListResult userListResult = KapuaSecurityUtils.doPrivileged(new Callable<UserListResult>() {
-
-                @Override
-                public UserListResult call() throws Exception {
-                    return USER_SERVICE.query(USER_FACTORY.newQuery(null));
-                }
-            });
-
-            Map<String, String> usernameMap = new HashMap<String, String>();
-            for (User user : userListResult.getItems()) {
-                usernameMap.put(user.getId().toCompactId(), user.getName());
-            }
 
             // If there are results
+            List<GwtGroupedNVPair> gwtRoleDescription = new ArrayList<GwtGroupedNVPair>();
             if (role != null) {
                 gwtRoleDescription.add(new GwtGroupedNVPair("roleInfo", "roleName", role.getName()));
                 gwtRoleDescription.add(new GwtGroupedNVPair("roleInfo", "roleDescription", role.getDescription()));
-                gwtRoleDescription.add(new GwtGroupedNVPair(ENTITY_INFO, "roleModifiedOn", role.getModifiedOn()));
-                gwtRoleDescription.add(new GwtGroupedNVPair(ENTITY_INFO, "roleModifiedBy", role.getModifiedBy() != null ? usernameMap.get(role.getModifiedBy().toCompactId()) : null));
                 gwtRoleDescription.add(new GwtGroupedNVPair(ENTITY_INFO, "roleCreatedOn", role.getCreatedOn()));
-                gwtRoleDescription.add(new GwtGroupedNVPair(ENTITY_INFO, "roleCreatedBy", role.getCreatedBy() != null ? usernameMap.get(role.getCreatedBy().toCompactId()) : null));
+                gwtRoleDescription.add(new GwtGroupedNVPair(ENTITY_INFO, "roleCreatedBy", UserCreatedByModifiedByUtils.resolveFromId(role.getCreatedBy())));
+                gwtRoleDescription.add(new GwtGroupedNVPair(ENTITY_INFO, "roleModifiedOn", role.getModifiedOn()));
+                gwtRoleDescription.add(new GwtGroupedNVPair(ENTITY_INFO, "roleModifiedBy", UserCreatedByModifiedByUtils.resolveFromId(role.getModifiedBy())));
             }
 
+            return new BaseListLoadResult<GwtGroupedNVPair>(gwtRoleDescription);
         } catch (Throwable t) {
-            KapuaExceptionHandler.handle(t);
+            throw KapuaExceptionHandler.buildExceptionFromError(t);
         }
-
-        return new BaseListLoadResult<GwtGroupedNVPair>(gwtRoleDescription);
     }
 
     @Override
     public PagingLoadResult<GwtRolePermission> getRolePermissions(PagingLoadConfig loadConfig, String scopeShortId, String roleShortId) throws GwtKapuaException {
-        // Do get
-        int totalLength = 0;
-        List<GwtRolePermission> gwtRolePermissions = new ArrayList<GwtRolePermission>();
         try {
             // Convert from GWT Entity
             KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(scopeShortId);
@@ -267,51 +230,41 @@ public class GwtRoleServiceImpl extends KapuaRemoteServiceServlet implements Gwt
             query.setSortCriteria(sortCriteria);
             query.setAskTotalCount(true);
 
-            RolePermissionListResult list = ROLE_PERMISSION_SERVICE.query(query);
-            totalLength = list.getTotalCount().intValue();
+            RolePermissionListResult rolePermissions = ROLE_PERMISSION_SERVICE.query(query);
 
-            if (list != null) {
-                for (final RolePermission rolePermission : list.getItems()) {
-                    User createdByUser = KapuaSecurityUtils.doPrivileged(new Callable<User>() {
+            List<GwtRolePermission> gwtRolePermissions = new ArrayList<GwtRolePermission>();
+            for (final RolePermission rolePermission : rolePermissions.getItems()) {
+                Account targetScopeIdAccount = null;
+                if (rolePermission.getPermission().getTargetScopeId() != null) {
+                    targetScopeIdAccount = KapuaSecurityUtils.doPrivileged(new Callable<Account>() {
 
                         @Override
-                        public User call() throws Exception {
-                            return USER_SERVICE.find(rolePermission.getScopeId(), rolePermission.getCreatedBy());
+                        public Account call() throws Exception {
+                            return ACCOUNT_SERVICE.find(rolePermission.getScopeId(), rolePermission.getPermission().getTargetScopeId());
                         }
                     });
-
-                    Account targetScopeIdAccount = null;
-                    if (rolePermission.getPermission().getTargetScopeId() != null) {
-                        targetScopeIdAccount = KapuaSecurityUtils.doPrivileged(new Callable<Account>() {
-
-                            @Override
-                            public Account call() throws Exception {
-                                return ACCOUNT_SERVICE.find(rolePermission.getScopeId(), rolePermission.getPermission().getTargetScopeId());
-                            }
-                        });
-                    }
-
-                    GwtRolePermission gwtRolePermission = KapuaGwtAuthorizationModelConverter.convertRolePermission(rolePermission);
-                    if (rolePermission.getPermission().getGroupId() != null) {
-                        Group group = GROUP_SERVICE.find(rolePermission.getScopeId(), rolePermission.getPermission().getGroupId());
-                        if (group != null) {
-                            gwtRolePermission.setGroupName(group.getName());
-                        }
-                    } else {
-                        gwtRolePermission.setGroupName("ALL");
-                    }
-
-                    gwtRolePermission.setCreatedByName(createdByUser != null ? createdByUser.getName() : null);
-                    gwtRolePermission.setTargetScopeIdByName(targetScopeIdAccount != null ? targetScopeIdAccount.getName() : null);
-
-                    gwtRolePermissions.add(gwtRolePermission);
                 }
-            }
-        } catch (Throwable t) {
-            KapuaExceptionHandler.handle(t);
-        }
 
-        return new BasePagingLoadResult<GwtRolePermission>(gwtRolePermissions, loadConfig.getOffset(), totalLength);
+                GwtRolePermission gwtRolePermission = KapuaGwtAuthorizationModelConverter.convertRolePermission(rolePermission);
+                if (rolePermission.getPermission().getGroupId() != null) {
+                    Group group = GROUP_SERVICE.find(rolePermission.getScopeId(), rolePermission.getPermission().getGroupId());
+                    if (group != null) {
+                        gwtRolePermission.setGroupName(group.getName());
+                    }
+                } else {
+                    gwtRolePermission.setGroupName("ALL");
+                }
+
+                gwtRolePermission.setCreatedByName(UserCreatedByModifiedByUtils.resolveFromId(rolePermission.getCreatedBy()));
+                gwtRolePermission.setTargetScopeIdByName(targetScopeIdAccount != null ? targetScopeIdAccount.getName() : null);
+
+                gwtRolePermissions.add(gwtRolePermission);
+            }
+
+            return new BasePagingLoadResult<GwtRolePermission>(gwtRolePermissions, loadConfig.getOffset(), rolePermissions.getTotalCount().intValue());
+        } catch (Throwable t) {
+            throw KapuaExceptionHandler.buildExceptionFromError(t);
+        }
     }
 
     @Override
