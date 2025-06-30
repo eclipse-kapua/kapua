@@ -1440,16 +1440,15 @@ Feature: Datastore tests
     Then The message list "MessageInfo" have limitExceed value true
     And I delete all indices
 
-  Scenario: Create 10k messages and more, test if counting messages throws exception
+  Scenario: Create 10k messages and more, test if counting messages works despite internal limit on ES to search more than 10k docs
 
     Given I login as user with name "kapua-sys" and password "kapua-password"
     And I select account "kapua-sys"
-    When I store 10001 messages in bulk mode to the index "1-data-message-2023-1"
+    When I store 10005 messages in bulk mode to the index "1-data-message-2023-1"
     And I refresh all indices
-    Given I expect the exception "DatastoreException" with the text "An internal error occurred: Elasticsearch internal limits exceeded: MAX_RESULT_WINDOW overflow, unable to count precise number of documents stored in ES (more than 10k)"
     When I create message query for current account with limit 1
     And I count for data message
-    Then An exception was thrown
+    Then I get message count 10005
     And I delete all indices
 
   @teardown

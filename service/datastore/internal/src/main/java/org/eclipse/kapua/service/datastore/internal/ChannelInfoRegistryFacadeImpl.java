@@ -206,8 +206,11 @@ public class ChannelInfoRegistryFacadeImpl extends AbstractDatastoreFacade imple
             LOG.debug("Storage not enabled for account {}, returning empty result", query.getScopeId());
             return 0;
         }
+        //Sanification of not compatible fields for the "count" ES endpoint
+        ChannelInfoQueryImpl countCompatibleQuery = new ChannelInfoQueryImpl(query);
+        countCompatibleQuery.sanificateQuery();
 
-        return repository.count(query);
+        return repository.count(countCompatibleQuery);
     }
 
     /**
