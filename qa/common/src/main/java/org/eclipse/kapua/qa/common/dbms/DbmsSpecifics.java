@@ -16,18 +16,25 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
+//Abstraction that isolates details of specific DBMS
 public interface DbmsSpecifics {
 
+    //retrieve container image name
     public String getImageName();
 
+    //retrieve db container env. variables values
     public String[] getContainerEnvVars();
 
+    //retrieve container port
     public String getDbContainerPort();
 
+    //retrieve non-db container env. variables values (for container that depends on the db)
     public String[] getDbContainerEnvVars();
 
+    //retrieve settings for the jdbc connection
     public Map<String, String> getClientJdbcSettings();
 
+    //execute a drop of all tables inside the db
     public void dropAllTables(Connection connection) throws SQLException;
 
 }

@@ -13,6 +13,8 @@
 #        Eurotech
 ################################################################################
 
+# this is also entrypoint for mysql
+
 set -eo pipefail
 
 MY_CNF_FILE=/etc/mysql/conf.d/ec.cnf

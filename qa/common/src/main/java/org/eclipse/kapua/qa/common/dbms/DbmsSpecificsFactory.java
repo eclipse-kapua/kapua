@@ -30,6 +30,7 @@ public class DbmsSpecificsFactory {
         }
     }
 
+    //factory that receive context about current test scenario
     public static DbmsSpecifics createSpecifics(Scenario scenario) {
         Collection<String> sourceTagNames = scenario.getSourceTagNames();
         if (sourceTagNames.contains("@env_none")) {
