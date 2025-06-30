@@ -41,6 +41,10 @@ public class MessageQueryImpl extends AbstractStorableQuery implements MessageQu
         setSortFields(Collections.singletonList(SortField.descending(MessageSchema.MESSAGE_TIMESTAMP)));
     }
 
+    public MessageQueryImpl(MessageQuery other) {
+        super((AbstractStorableQuery) other);
+    }
+
     @Override
     public String[] getIncludes(StorableFetchStyle fetchStyle) {
         // Fetch mode

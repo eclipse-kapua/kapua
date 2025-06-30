@@ -10,7 +10,7 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.service.datastore.internal.converter;
+package org.eclipse.kapua.service.elasticsearch.client.rest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -40,13 +40,14 @@ public class QueryConverterImpl implements QueryConverter {
 
         try {
             StorableQuery storableQuery = (StorableQuery) query;
-
-            ObjectNode includesFields = MappingUtils.newObjectNode();
-            includesFields.set(SchemaKeys.KEY_INCLUDES, MappingUtils.newArrayNode(storableQuery.getIncludes(storableQuery.getFetchStyle())));
-            includesFields.set(SchemaKeys.KEY_EXCLUDES, MappingUtils.newArrayNode(storableQuery.getExcludes(storableQuery.getFetchStyle())));
-
             ObjectNode rootNode = MappingUtils.newObjectNode();
-            rootNode.set(SchemaKeys.KEY_SOURCE, includesFields);
+
+            if (storableQuery.getFetchStyle() != null) {
+                ObjectNode includesFields = MappingUtils.newObjectNode();
+                includesFields.set(SchemaKeys.KEY_INCLUDES, MappingUtils.newArrayNode(storableQuery.getIncludes(storableQuery.getFetchStyle())));
+                includesFields.set(SchemaKeys.KEY_EXCLUDES, MappingUtils.newArrayNode(storableQuery.getExcludes(storableQuery.getFetchStyle())));
+                rootNode.set(SchemaKeys.KEY_SOURCE, includesFields);
+            }
 
             // query
             if (storableQuery.getPredicate() != null) {
@@ -56,10 +57,11 @@ public class QueryConverterImpl implements QueryConverter {
             // sort
             ArrayNode sortNode = MappingUtils.newArrayNode();
             List<SortField> sortFields = storableQuery.getSortFields();
-            if (sortFields != null) {
+            if (sortFields != null && !sortFields.isEmpty()) {
                 for (SortField field : sortFields) {
                     sortNode.add(MappingUtils.newObjectNode(field.getField(), field.getSortDirection().name()));
                 }
+                rootNode.set(SchemaKeys.KEY_SORT, sortNode);
             }
 
             // offset and limit settings
@@ -71,7 +73,6 @@ public class QueryConverterImpl implements QueryConverter {
             if (limit != null) {
                 rootNode.set(SchemaKeys.KEY_SIZE, MappingUtils.newNumericNode(limit));
             }
-            rootNode.set(SchemaKeys.KEY_SORT, sortNode);
             return rootNode;
         } catch (MappingException me) {
             throw new QueryMappingException(me, "Cannot convert Storable Query");
