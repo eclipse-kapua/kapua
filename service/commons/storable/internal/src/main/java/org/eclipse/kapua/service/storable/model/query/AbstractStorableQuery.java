@@ -65,6 +65,40 @@ public abstract class AbstractStorableQuery implements StorableQuery {
     }
 
     /**
+     * Copy constructor.
+     * Be aware that for not primitive type fields there is a shallow copy, since they miss copy constructor/clone methods
+     * @param other The {@link AbstractStorableQuery} to copy.
+     * @since 2.1.0
+     */
+    public AbstractStorableQuery(AbstractStorableQuery other) {
+        if (other == null) {
+            throw new IllegalArgumentException("Cannot copy from null");
+        }
+        this.scopeId = KapuaEid.parseKapuaId(other.scopeId);
+        this.limit = other.limit;
+        this.indexOffset = other.indexOffset;
+        this.askTotalCount = other.askTotalCount;
+        this.fetchStyle = other.fetchStyle;
+        if (other.predicate != null) {
+            this.predicate = other.predicate; //shallow copy
+        }
+        if (other.sortFields != null) {
+            this.sortFields = new ArrayList<>(other.sortFields.size());
+            this.sortFields.addAll(other.sortFields); //shallow copy
+        }
+        if (other.fetchAttributes != null) {
+            this.fetchAttributes = new ArrayList<>(other.fetchAttributes); //shallow copy
+        }
+    }
+
+    public void sanificateQuery() {
+        this.setLimit(null);
+        this.setOffset(null);
+        this.setSortFields(null);
+        this.setFetchStyle(null);
+    }
+
+    /**
      * Gets the {@link StorableField}s.
      *
      * @return The {@link StorableField}s.
