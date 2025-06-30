@@ -36,7 +36,7 @@ import org.eclipse.kapua.service.datastore.MetricInfoFactory;
 import org.eclipse.kapua.service.datastore.MetricInfoRegistryService;
 import org.eclipse.kapua.service.datastore.internal.client.DatastoreElasticsearchClientConfiguration;
 import org.eclipse.kapua.service.datastore.internal.converter.ModelContextImpl;
-import org.eclipse.kapua.service.datastore.internal.converter.QueryConverterImpl;
+import org.eclipse.kapua.service.elasticsearch.client.rest.QueryConverterImpl;
 import org.eclipse.kapua.service.datastore.internal.mediator.DatastoreUtils;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
 import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientProvider;

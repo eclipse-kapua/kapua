@@ -41,6 +41,7 @@ import org.eclipse.kapua.service.datastore.internal.model.MessageUniquenessCheck
 import org.eclipse.kapua.service.datastore.internal.model.MetricInfoImpl;
 import org.eclipse.kapua.service.datastore.internal.model.query.ChannelInfoQueryImpl;
 import org.eclipse.kapua.service.datastore.internal.model.query.ClientInfoQueryImpl;
+import org.eclipse.kapua.service.datastore.internal.model.query.MessageQueryImpl;
 import org.eclipse.kapua.service.datastore.internal.model.query.MetricInfoQueryImpl;
 import org.eclipse.kapua.service.datastore.internal.model.query.predicate.ChannelMatchPredicateImpl;
 import org.eclipse.kapua.service.datastore.model.ChannelInfoListResult;
@@ -277,7 +278,12 @@ public final class MessageStoreFacadeImpl extends AbstractDatastoreFacade implem
             LOG.debug("Storage not enabled for account {}, returning empty result", query.getScopeId());
             return 0;
         }
-        return messageRepository.count(query);
+
+        //Sanification of not compatible fields for the "count" ES endpoint
+        MessageQueryImpl countCompatibleQuery = new MessageQueryImpl(query);
+        countCompatibleQuery.sanificateQuery();
+
+        return messageRepository.count(countCompatibleQuery);
     }
 
 
