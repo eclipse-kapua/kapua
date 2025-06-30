@@ -28,6 +28,7 @@ import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.server.KapuaRemoteServiceServlet;
 import org.eclipse.kapua.app.console.module.api.server.util.KapuaExceptionHandler;
 import org.eclipse.kapua.app.console.module.api.shared.util.GwtKapuaCommonsModelConverter;
+import org.eclipse.kapua.app.console.module.api.shared.util.KapuaGwtCommonsModelConverter;
 import org.eclipse.kapua.app.console.module.data.client.GwtTopic;
 import org.eclipse.kapua.app.console.module.data.client.util.GwtMessage;
 import org.eclipse.kapua.app.console.module.data.shared.model.GwtDataChannelInfoQuery;
@@ -55,6 +56,8 @@ import org.eclipse.kapua.service.datastore.internal.model.query.ClientInfoQueryI
 import org.eclipse.kapua.service.datastore.internal.model.query.MessageQueryImpl;
 import org.eclipse.kapua.service.datastore.internal.model.query.predicate.ChannelMatchPredicateImpl;
 import org.eclipse.kapua.service.datastore.internal.schema.MessageSchema;
+import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
+import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettingsKey;
 import org.eclipse.kapua.service.datastore.model.ChannelInfo;
 import org.eclipse.kapua.service.datastore.model.ChannelInfoListResult;
 import org.eclipse.kapua.service.datastore.model.ClientInfo;
@@ -96,6 +99,7 @@ public class GwtDataServiceImpl extends KapuaRemoteServiceServlet implements Gwt
     private static final long serialVersionUID = -5518740923786017558L;
 
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
+    private static final DatastoreSettings DATASTORE_SETTINGS = LOCATOR.getComponent(DatastoreSettings.class);
 
     private static final ChannelInfoFactory CHANNEL_INFO_FACTORY = LOCATOR.getFactory(ChannelInfoFactory.class);
     private static final ClientInfoFactory CLIENT_INFO_FACTORY = LOCATOR.getFactory(ClientInfoFactory.class);
@@ -270,7 +274,7 @@ public class GwtDataServiceImpl extends KapuaRemoteServiceServlet implements Gwt
                 channelInfoQuery.setLimit(-1);
                 channelInfoQuery.setOffset(0);
 
-                totalLength = (int) KapuaGwtDataModelConverter.countEsDataCap10k(channelInfoService, channelInfoQuery);
+                totalLength = (int) KapuaGwtCommonsModelConverter.countEsDataCapped(channelInfoService, channelInfoQuery, DATASTORE_SETTINGS.getInt((DatastoreSettingsKey.MAX_RESULT_WINDOW_VALUE)));
             }
         } catch (Exception e) {
             KapuaExceptionHandler.handle(e);
@@ -493,7 +497,7 @@ public class GwtDataServiceImpl extends KapuaRemoteServiceServlet implements Gwt
         }
         messages = getMessagesList(query, headers);
         try {
-            totalLength = (int) KapuaGwtDataModelConverter.countEsDataCap10k(messageService, query);
+            totalLength = (int) KapuaGwtCommonsModelConverter.countEsDataCapped(messageService, query, DATASTORE_SETTINGS.getInt((DatastoreSettingsKey.MAX_RESULT_WINDOW_VALUE)));
         } catch (KapuaException e) {
             KapuaExceptionHandler.handle(e);
         }
