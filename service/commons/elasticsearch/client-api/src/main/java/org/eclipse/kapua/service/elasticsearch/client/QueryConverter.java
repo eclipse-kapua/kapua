@@ -34,12 +34,21 @@ public interface QueryConverter {
     /**
      * Converts the Elasticsearch query to the client query
      *
-     * @param query The queyr to convert.
+     * @param query The query to convert.
      * @return The converted query.
      * @throws QueryMappingException if query mappings are not correst.
      * @since 1.0.0
      */
     JsonNode convertQuery(Object query) throws QueryMappingException;
+
+    /**
+     * Converts the Elasticsearch query to the client query, given the type of action you want to perform on Elasticsearch (query, count, etc...)
+     * The converter then adapts to the action
+     *
+     * @throws QueryMappingException if query mappings are not correst.
+     * @since 2.1.0
+     */
+    JsonNode convertQuery(String actionType, Object query) throws QueryMappingException;
 
     /**
      * Gets the query fetch style
