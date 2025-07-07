@@ -32,6 +32,12 @@ import java.util.List;
  */
 public class QueryConverterImpl implements QueryConverter {
 
+    private boolean sourceEnabled = true;
+    private boolean queryEnabled = true;
+    private boolean sortEnabled = true;
+    private boolean fromEnabled = true;
+    private boolean sizeEnabled = true;
+
     @Override
     public JsonNode convertQuery(Object query) throws QueryMappingException {
         if (!(query instanceof StorableQuery)) {
@@ -42,7 +48,7 @@ public class QueryConverterImpl implements QueryConverter {
             StorableQuery storableQuery = (StorableQuery) query;
             ObjectNode rootNode = MappingUtils.newObjectNode();
 
-            if (storableQuery.getFetchStyle() != null) {
+            if (sourceEnabled) {
                 ObjectNode includesFields = MappingUtils.newObjectNode();
                 includesFields.set(SchemaKeys.KEY_INCLUDES, MappingUtils.newArrayNode(storableQuery.getIncludes(storableQuery.getFetchStyle())));
                 includesFields.set(SchemaKeys.KEY_EXCLUDES, MappingUtils.newArrayNode(storableQuery.getExcludes(storableQuery.getFetchStyle())));
@@ -50,14 +56,14 @@ public class QueryConverterImpl implements QueryConverter {
             }
 
             // query
-            if (storableQuery.getPredicate() != null) {
+            if (queryEnabled && storableQuery.getPredicate() != null) {
                 rootNode.set(SchemaKeys.KEY_QUERY, storableQuery.getPredicate().toSerializedMap());
             }
 
             // sort
             ArrayNode sortNode = MappingUtils.newArrayNode();
             List<SortField> sortFields = storableQuery.getSortFields();
-            if (sortFields != null && !sortFields.isEmpty()) {
+            if (sortEnabled && sortFields != null && !sortFields.isEmpty()) {
                 for (SortField field : sortFields) {
                     sortNode.add(MappingUtils.newObjectNode(field.getField(), field.getSortDirection().name()));
                 }
@@ -66,11 +72,11 @@ public class QueryConverterImpl implements QueryConverter {
 
             // offset and limit settings
             Integer offset = storableQuery.getOffset();
-            if (offset != null) {
+            if (fromEnabled && offset != null) {
                 rootNode.set(SchemaKeys.KEY_FROM, MappingUtils.newNumericNode(offset));
             }
             Integer limit = storableQuery.getLimit();
-            if (limit != null) {
+            if (sizeEnabled && limit != null) {
                 rootNode.set(SchemaKeys.KEY_SIZE, MappingUtils.newNumericNode(limit));
             }
             return rootNode;
@@ -80,12 +86,35 @@ public class QueryConverterImpl implements QueryConverter {
     }
 
     @Override
+    public JsonNode convertQuery(String actionType, Object query) throws QueryMappingException {
+        if (actionType.equals("COUNT") || actionType.equals("DELETE")) {
+            queryEnabled = true;
+            sourceEnabled = false;
+            sortEnabled = false;
+            fromEnabled = false;
+            sizeEnabled = false;
+        }
+        if (actionType.equals("SEARCH")) {
+            resetEnablers();
+        }
+        return convertQuery(query);
+    }
+
+    @Override
     public Object getFetchStyle(Object query) throws QueryMappingException {
         if (!(query instanceof StorableQuery)) {
             throw new QueryMappingException("Given query is not a StorableQuery");
         }
 
         return ((StorableQuery) query).getFetchStyle();
+    }
+
+    private void resetEnablers() {
+        queryEnabled = true;
+        fromEnabled = true;
+        sourceEnabled = true;
+        sortEnabled = true;
+        sizeEnabled = true;
     }
 
 }
