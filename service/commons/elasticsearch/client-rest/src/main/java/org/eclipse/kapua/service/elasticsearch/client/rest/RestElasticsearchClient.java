@@ -271,8 +271,8 @@ public class RestElasticsearchClient extends AbstractElasticsearchClient<RestCli
                 throw new ClientException(ClientErrorCodes.ACTION_ERROR, CLIENT_HITS_MAX_VALUE_EXCEEDED);
             }
             resultsNode = ((ArrayNode) hitsNode.get(ElasticsearchKeywords.KEY_HITS));
-        } else if (!isRequestBadRequest(queryResponse) &&
-                !isRequestNotFound(queryResponse)) {
+        } else if ((!isRequestNotFound(queryResponse) && !isRequestBadRequest(queryResponse)) ||
+                isRequestNotParsed(queryResponse)) {
             throw buildExceptionFromUnsuccessfulResponse("Query", queryResponse);
         }
 
@@ -318,8 +318,8 @@ public class RestElasticsearchClient extends AbstractElasticsearchClient<RestCli
             if (totalCount > Integer.MAX_VALUE) {
                 throw new ClientException(ClientErrorCodes.ACTION_ERROR, CLIENT_HITS_MAX_VALUE_EXCEEDED);
             }
-        } else if (!isRequestBadRequest(queryResponse) &&
-                !isRequestNotFound(queryResponse)) {
+        } else if ((!isRequestNotFound(queryResponse) && !isRequestBadRequest(queryResponse)) || //for response with code different from 400 and 404...
+                    isRequestNotParsed(queryResponse)) {
             throw buildExceptionFromUnsuccessfulResponse("Count", queryResponse);
         }
 
@@ -350,8 +350,8 @@ public class RestElasticsearchClient extends AbstractElasticsearchClient<RestCli
         Response deleteResponse = restCallTimeoutHandler(() -> getClient().performRequest(request), typeDescriptor.getIndex(), "DELETE BY QUERY");
 
         if (!isRequestSuccessful(deleteResponse) &&
-                !isRequestNotFound(deleteResponse) &&
-                !isRequestBadRequest(deleteResponse)) {
+                ((!isRequestNotFound(deleteResponse) && !isRequestBadRequest(deleteResponse)) || //for response with code different from 400 and 404...
+                isRequestNotParsed(deleteResponse))) {
             throw buildExceptionFromUnsuccessfulResponse("Delete by query", deleteResponse);
         }
     }
@@ -589,6 +589,15 @@ public class RestElasticsearchClient extends AbstractElasticsearchClient<RestCli
      */
     private boolean isRequestNotFound(int responseCode) {
         return (404 == responseCode);
+    }
+
+    private boolean isRequestNotParsed(@NotNull Response response) throws ClientException {
+        if (isRequestBadRequest(response)) {
+            JsonNode responseNode = readResponseAsJsonNode(response);
+            return responseNode.path("error").path("type").asText().equals("parsing_exception");
+        } else {
+            return false;
+        }
     }
 
     /**
