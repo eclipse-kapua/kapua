@@ -91,13 +91,6 @@ public abstract class AbstractStorableQuery implements StorableQuery {
         }
     }
 
-    public void sanificateQuery() {
-        this.setLimit(null);
-        this.setOffset(null);
-        this.setSortFields(null);
-        this.setFetchStyle(null);
-    }
-
     /**
      * Gets the {@link StorableField}s.
      *
