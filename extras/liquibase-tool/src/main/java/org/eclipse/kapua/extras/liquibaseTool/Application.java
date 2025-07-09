@@ -10,7 +10,7 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.extras.liquibaseUnlocker;
+package org.eclipse.kapua.extras.liquibaseTool;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
@@ -32,7 +32,7 @@ public class Application {
     }
 
     public static void main(String[] args) {
-        LOG.info("Liquibase change log table unlocker tool... STARTING");
+        LOG.info("Liquibase tool... STARTING");
         try {
             {
                 printConfiguration();
@@ -43,15 +43,20 @@ public class Application {
                         SYSTEM_SETTING.getString(SystemSettingKey.DB_SCHEMA_ENV),
                         SYSTEM_SETTING.getString(SystemSettingKey.DB_SCHEMA)
                 );
+                KapuaLiquibaseClient client = new KapuaLiquibaseClient(JdbcConnectionUrlResolvers.resolveJdbcUrl(), dbUsername, dbPassword, schema);
 
-                new KapuaLiquibaseClient(JdbcConnectionUrlResolvers.resolveJdbcUrl(), dbUsername, dbPassword, schema).forceReleaseChangelogLock();
+                if (args[0].equals("locks")) {
+                    client.forceReleaseChangelogLock();
+                } else if (args[0].equals("checksums")) {
+                    client.clearChecksum();
+                }
             }
         } catch (Exception e) {
-            LOG.info("Liquibase change log table unlocker tool... ERROR!", e);
+            LOG.info("Liquibase tool... ERROR!", e);
             return;
         }
 
-        LOG.info("Liquibase change log table unlocker tool... DONE!");
+        LOG.info("Liquibase tool... DONE!");
     }
 
     /**
@@ -64,7 +69,7 @@ public class Application {
                 ConfigurationPrinter.create()
                         .withLogger(LOG)
                         .withLogLevel(ConfigurationPrinter.LogLevel.INFO)
-                        .withTitle("Entity Secret Attribute Migration Tool Configuration");
+                        .withTitle("Liquibase Tool Configuration");
 
         configurationPrinter
                 .openSection("JDBC Configuration")
