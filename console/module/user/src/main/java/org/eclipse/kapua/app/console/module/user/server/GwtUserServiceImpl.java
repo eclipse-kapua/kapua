@@ -44,12 +44,15 @@ import org.eclipse.kapua.service.authentication.credential.CredentialStatus;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.authorization.role.RoleService;
-import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceFactory;
 import org.eclipse.kapua.service.device.registry.DeviceListResult;
 import org.eclipse.kapua.service.device.registry.DeviceQuery;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnection;
+import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionAttributes;
+import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionFactory;
+import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionListResult;
+import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionQuery;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionService;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserCreator;
@@ -71,21 +74,22 @@ public class GwtUserServiceImpl extends KapuaRemoteServiceServlet implements Gwt
     private static final long serialVersionUID = 7430961652373364113L;
 
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
-    private static final RoleService ROLE_SERVICE = LOCATOR.getService(RoleService.class);
+
+    private static final AuthorizationService AUTHORIZATION_SERVICE = LOCATOR.getService(AuthorizationService.class);
+    private static final PermissionFactory PERMISSION_FACTORY = LOCATOR.getFactory(PermissionFactory.class);
 
     private static final CredentialService CREDENTIAL_SERVICE = LOCATOR.getService(CredentialService.class);
     private static final CredentialFactory CREDENTIAL_FACTORY = LOCATOR.getFactory(CredentialFactory.class);
 
-    private static final UserService USER_SERVICE = LOCATOR.getService(UserService.class);
-
-    private static final UserFactory USER_FACTORY = LOCATOR.getFactory(UserFactory.class);
-
     private static final DeviceConnectionService DEVICE_CONNECTION_SERVICE = LOCATOR.getService(DeviceConnectionService.class);
-    private static final AuthorizationService AUTHORIZATION_SERVICE = LOCATOR.getService(AuthorizationService.class);
+    private static final DeviceConnectionFactory DEVICE_CONNECTION_FACTORY = LOCATOR.getFactory(DeviceConnectionFactory.class);
 
-    private static final PermissionFactory PERMISSION_FACTORY = LOCATOR.getFactory(PermissionFactory.class);
     private static final DeviceRegistryService DEVICE_SERVICE = LOCATOR.getService(DeviceRegistryService.class);
     private static final DeviceFactory DEVICE_FACTORY = LOCATOR.getFactory(DeviceFactory.class);
+    private static final RoleService ROLE_SERVICE = LOCATOR.getService(RoleService.class);
+
+    private static final UserService USER_SERVICE = LOCATOR.getService(UserService.class);
+    private static final UserFactory USER_FACTORY = LOCATOR.getFactory(UserFactory.class);
 
     private static final String USER_INFO = "userInfo";
     private static final String ENTITY_INFO = "entityInfo";
@@ -284,21 +288,20 @@ public class GwtUserServiceImpl extends KapuaRemoteServiceServlet implements Gwt
                 gwtUserDescription.add(new GwtGroupedNVPair(ENTITY_INFO, "userModifiedOn", user.getModifiedOn()));
                 gwtUserDescription.add(new GwtGroupedNVPair(ENTITY_INFO, "userModifiedBy", UserCreatedByModifiedByUtils.resolveFromId(user.getModifiedBy())));
 
-                DeviceConnection deviceConnection = null;
-                if (deviceListQuery(scopeId) != null && AUTHORIZATION_SERVICE.isPermitted(PERMISSION_FACTORY.newPermission(Domains.DEVICE_CONNECTION, Actions.read, scopeId))) {
-                    for (Device device : deviceListQuery(scopeId).getItems()) {
-                        if (device.getConnectionId() != null) {
-                            deviceConnection = DEVICE_CONNECTION_SERVICE.find(scopeId, device.getConnectionId());
-                            break;
-                        }
-                    }
-                }
+                // Check if this user is assigned as DeviceConnection.reservedUserId to any DeviceConnection
+                if (AUTHORIZATION_SERVICE.isPermitted(PERMISSION_FACTORY.newPermission(Domains.DEVICE_CONNECTION, Actions.read, scopeId))) {
+                    DeviceConnectionQuery deviceConnectionQuery = DEVICE_CONNECTION_FACTORY.newQuery(scopeId);
 
-                if (deviceConnection != null &&
-                        deviceConnection.getReservedUserId() != null &&
-                        deviceConnection.getReservedUserId().equals(user.getId())
-                ) {
-                    gwtUserDescription.add(new GwtGroupedNVPair(USER_INFO, "userReservedConnection", "Yes"));
+                    deviceConnectionQuery.setPredicate(
+                            deviceConnectionQuery.attributePredicate(DeviceConnectionAttributes.RESERVED_USER_ID, userId)
+                    );
+
+                    DeviceConnectionListResult deviceConnectionListResult = DEVICE_CONNECTION_SERVICE.query(deviceConnectionQuery);
+
+                    DeviceConnection deviceConnection = deviceConnectionListResult.getFirstItem();
+                    if (deviceConnection != null) {
+                        gwtUserDescription.add(new GwtGroupedNVPair(USER_INFO, "userReservedConnection", deviceConnection.getClientId()));
+                    }
                 }
             }
 
