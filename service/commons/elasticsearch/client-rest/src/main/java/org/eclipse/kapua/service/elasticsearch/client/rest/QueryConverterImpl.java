@@ -26,9 +26,10 @@ import org.eclipse.kapua.service.storable.model.utils.MappingUtils;
 import java.util.List;
 
 /**
- * Query converter implementation
+ * Query converter implementation that converts only fields supported by the given ES endpoint/action (Query, Delete, Count etc.)
+ * In order to avoid bad requests
  *
- * @since 1.0
+ * @since 2.1.0
  */
 public class QueryConverterImpl implements QueryConverter {
 
@@ -94,8 +95,11 @@ public class QueryConverterImpl implements QueryConverter {
             fromEnabled = false;
             sizeEnabled = false;
         }
-        if (actionType.equals("SEARCH")) {
+        else if (actionType.equals("SEARCH")) {
             resetEnablers();
+        }
+        else {
+            throw new QueryMappingException("Unsupported actiontype");
         }
         return convertQuery(query);
     }
