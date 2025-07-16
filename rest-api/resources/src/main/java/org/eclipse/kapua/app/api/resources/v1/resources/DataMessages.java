@@ -97,23 +97,40 @@ public class DataMessages extends AbstractKapuaResource {
      */
     @GET
     @Produces({ MediaType.APPLICATION_XML })
-    public <V extends Comparable<V>> MessageListResult simpleQuery(@PathParam("scopeId") ScopeId scopeId,
+    public <V extends Comparable<V>> MessageListResult simpleQuery(
+            @PathParam("scopeId") ScopeId scopeId,
             @QueryParam("clientId") List<String> clientIds,
             @QueryParam("channel") String channel,
             @QueryParam("strictChannel") boolean strictChannel,
             @QueryParam("startDate") DateParam startDateParam,
             @QueryParam("endDate") DateParam endDateParam,
             @QueryParam("metricName") String metricName,
-            @QueryParam("metricType") String metricType,
+            @QueryParam("metricType") String stringMetricType,
             @QueryParam("metricMin") String metricMinValue,
             @QueryParam("metricMax") String metricMaxValue,
             @QueryParam("sortDir") @DefaultValue("DESC") SortDirection sortDir,
             @QueryParam("offset") @DefaultValue("0") int offset,
-            @QueryParam("limit") @DefaultValue("50") int limit)
-            throws KapuaException {
-        MetricType<V> internalMetricType = new MetricType<>(metricType);
-        MessageQuery query = parametersToQuery(datastorePredicateFactory, messageStoreFactory, scopeId, clientIds, channel, strictChannel, startDateParam, endDateParam, metricName, internalMetricType,
-                metricMinValue, metricMaxValue, sortDir, offset, limit);
+            @QueryParam("limit") @DefaultValue("50") int limit
+    ) throws KapuaException {
+
+        MetricType<V> metricType = new MetricType<>(stringMetricType);
+
+        MessageQuery query = parametersToQuery(
+                datastorePredicateFactory,
+                messageStoreFactory,
+                scopeId,
+                clientIds,
+                channel,
+                strictChannel,
+                startDateParam,
+                endDateParam,
+                metricName,
+                metricType,
+                metricMinValue,
+                metricMaxValue,
+                sortDir,
+                offset,
+                limit);
 
         return query(scopeId, query);
     }
@@ -207,6 +224,10 @@ public class DataMessages extends AbstractKapuaResource {
         return returnNotNullEntity(datastoreMessage);
     }
 
+    //
+    // Private methods
+    //
+
     //TODO: move this logic within the service, or at least in a collaborator shared with DataMessagesJson
     protected static <V extends Comparable<V>> MessageQuery parametersToQuery(
             DatastorePredicateFactory datastorePredicateFactory,
@@ -224,7 +245,10 @@ public class DataMessages extends AbstractKapuaResource {
             SortDirection sortDir,
             int offset,
             int limit) throws KapuaIllegalNullArgumentException {
+
         AndPredicate andPredicate = datastorePredicateFactory.newAndPredicate();
+
+        // Client ID predicates
         final List<StorablePredicate> clientPredicates = Optional.ofNullable(clientIds)
                 .orElse(new ArrayList<>())
                 .stream()
@@ -237,10 +261,13 @@ public class DataMessages extends AbstractKapuaResource {
             orPredicate.setPredicates(clientPredicates);
             andPredicate.addPredicate(orPredicate);
         }
+
+        // Channel predicate
         if (!Strings.isNullOrEmpty(channel)) {
             andPredicate.getPredicates().add(getChannelPredicate(datastorePredicateFactory, channel, strictChannel));
         }
 
+        // Start and End predicates
         Date startDate = startDateParam != null ? startDateParam.getDate() : null;
         Date endDate = endDateParam != null ? endDateParam.getDate() : null;
         if (startDate != null || endDate != null) {
@@ -248,10 +275,20 @@ public class DataMessages extends AbstractKapuaResource {
             andPredicate.getPredicates().add(timestampPredicate);
         }
 
+        // Metric predicate
         if (!Strings.isNullOrEmpty(metricName)) {
-            andPredicate.getPredicates().add(getMetricPredicate(datastorePredicateFactory, metricName, metricType, metricMinValue, metricMaxValue));
+            andPredicate.getPredicates().add(
+                    getMetricPredicate(
+                            datastorePredicateFactory,
+                            metricName,
+                            metricType,
+                            metricMinValue,
+                            metricMaxValue
+                    )
+            );
         }
 
+        // Prepare query
         MessageQuery query = messageStoreFactory.newQuery(scopeId);
         query.setPredicate(andPredicate);
         query.setOffset(offset);
@@ -273,8 +310,14 @@ public class DataMessages extends AbstractKapuaResource {
         return channelPredicate;
     }
 
-    private static <V extends Comparable<V>> StorablePredicate getMetricPredicate(DatastorePredicateFactory datastorePredicateFactory, String metricName, MetricType<V> metricType,
-            String metricMinValue, String metricMaxValue) throws KapuaIllegalNullArgumentException {
+    private static <V extends Comparable<V>> StorablePredicate getMetricPredicate(
+            DatastorePredicateFactory datastorePredicateFactory,
+            String metricName,
+            MetricType<V> metricType,
+            String metricMinValue,
+            String metricMaxValue)
+        throws KapuaIllegalNullArgumentException {
+
         if (metricMinValue == null && metricMaxValue == null) {
             Class<V> type = metricType != null ? metricType.getType() : null;
             return datastorePredicateFactory.newMetricExistsPredicate(metricName, type);
@@ -282,6 +325,7 @@ public class DataMessages extends AbstractKapuaResource {
             if (metricType == null) {
                 throw new KapuaIllegalNullArgumentException("metricType");
             }
+
             V minValue = (V) ObjectValueConverter.fromString(metricMinValue, metricType.getType());
             V maxValue = (V) ObjectValueConverter.fromString(metricMaxValue, metricType.getType());
 

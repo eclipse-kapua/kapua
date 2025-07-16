@@ -96,32 +96,50 @@ public class DataMessagesJson extends AbstractKapuaResource implements JsonSeria
 
     @GET
     @Produces({ MediaType.APPLICATION_JSON })
-    public <V extends Comparable<V>> JsonMessageListResult simpleQueryJson(@PathParam("scopeId") ScopeId scopeId,
+    public <V extends Comparable<V>> JsonMessageListResult simpleQueryJson(
+            @PathParam("scopeId") ScopeId scopeId,
             @QueryParam("clientId") List<String> clientIds,
             @QueryParam("channel") String channel,
             @QueryParam("strictChannel") boolean strictChannel,
             @QueryParam("startDate") DateParam startDateParam,
             @QueryParam("endDate") DateParam endDateParam,
             @QueryParam("metricName") String metricName,
-            @QueryParam("metricType") String metricType,
+            @QueryParam("metricType") String stringMetricType,
             @QueryParam("metricMin") String metricMinValue,
             @QueryParam("metricMax") String metricMaxValue,
             @QueryParam("sortDir") @DefaultValue("DESC") SortDirection sortDir,
             @QueryParam("offset") @DefaultValue("0") int offset,
-            @QueryParam("limit") @DefaultValue("50") int limit)
-            throws KapuaException {
-        MetricType<V> internalMetricType = new MetricType<>(metricType);
-        MessageQuery query = DataMessages.parametersToQuery(datastorePredicateFactory, messageStoreFactory, scopeId, clientIds, channel, strictChannel, startDateParam, endDateParam, metricName,
-                internalMetricType, metricMinValue, metricMaxValue, sortDir, offset, limit);
-        query.setScopeId(scopeId);
-        final MessageListResult result = messageStoreService.query(query);
+            @QueryParam("limit") @DefaultValue("50") int limit
+    ) throws KapuaException {
+        MetricType<V> metricType = new MetricType<>(stringMetricType);
+
+        MessageQuery query = DataMessages.parametersToQuery(
+                datastorePredicateFactory,
+                messageStoreFactory,
+                scopeId,
+                clientIds,
+                channel,
+                strictChannel,
+                startDateParam,
+                endDateParam,
+                metricName,
+                metricType,
+                metricMinValue,
+                metricMaxValue,
+                sortDir,
+                offset,
+                limit);
+
+        MessageListResult result = messageStoreService.query(query);
 
         List<JsonDatastoreMessage> jsonDatastoreMessages = new ArrayList<>();
         result.getItems().forEach(m -> jsonDatastoreMessages.add(new JsonDatastoreMessage(m)));
+
         JsonMessageListResult jsonResult = new JsonMessageListResult();
         jsonResult.addItems(jsonDatastoreMessages);
         jsonResult.setTotalCount(result.getTotalCount());
         jsonResult.setLimitExceeded(result.isLimitExceeded());
+
         return jsonResult;
     }
 
