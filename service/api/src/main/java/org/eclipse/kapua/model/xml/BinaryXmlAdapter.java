@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -16,15 +16,20 @@ import org.eclipse.kapua.model.type.ByteArrayConverter;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
+/**
+ * {@link Byte}[] {@link XmlAdapter}
+ *
+ * @since 1.0.0
+ */
 public class BinaryXmlAdapter extends XmlAdapter<String, byte[]> {
 
     @Override
     public String marshal(byte[] binary) {
-        return binary != null ? ByteArrayConverter.toString(binary) : null;
+        return ByteArrayConverter.toString(binary);
     }
 
     @Override
     public byte[] unmarshal(String binary) {
-        return binary != null ? ByteArrayConverter.fromString(binary) : null;
+        return ByteArrayConverter.fromString(binary);
     }
 }
