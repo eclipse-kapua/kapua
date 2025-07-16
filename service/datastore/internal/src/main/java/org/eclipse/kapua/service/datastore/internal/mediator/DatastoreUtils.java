@@ -657,6 +657,12 @@ public class DatastoreUtils {
             } else {
                 throw new IllegalArgumentException(String.format("Type [%s] cannot be converted to Date!", getValueClass(value)));
             }
+        } else if (CLIENT_METRIC_TYPE_BINARY_ACRONYM.equals(acronymType)) {
+            try {
+                convertedValue = Base64.getDecoder().decode((String) value);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException(String.format("Type [%s] cannot be converted to Byte[]. Value to convert [%s]", getValueClass(value), value));
+            }
         } else {
             // no need to translate for others field type
             convertedValue = value;
