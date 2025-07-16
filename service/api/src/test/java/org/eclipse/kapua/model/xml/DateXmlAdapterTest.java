@@ -26,6 +26,10 @@ import java.util.TimeZone;
 @Category(JUnitTests.class)
 public class DateXmlAdapterTest {
 
+    public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+
+    public static final String TIME_ZONE_UTC = "UTC";
+
     DateXmlAdapter dateXmlAdapter;
     Date date;
 
@@ -37,8 +41,8 @@ public class DateXmlAdapterTest {
 
     @Test
     public void marshalTest() throws Exception {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(DateXmlAdapter.DATE_FORMAT);
-        dateFormat.setTimeZone(TimeZone.getTimeZone(DateXmlAdapter.TIME_ZONE_UTC));
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+        dateFormat.setTimeZone(TimeZone.getTimeZone(TIME_ZONE_UTC));
         String expectedString = dateFormat.format(date);
         Assert.assertEquals("Expected and actual values should be the same.", expectedString, dateXmlAdapter.marshal(date));
     }
@@ -50,8 +54,8 @@ public class DateXmlAdapterTest {
 
     @Test
     public void unmarshalTest() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(DateXmlAdapter.DATE_FORMAT);
-        dateFormat.setTimeZone(TimeZone.getTimeZone(DateXmlAdapter.TIME_ZONE_UTC));
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+        dateFormat.setTimeZone(TimeZone.getTimeZone(TIME_ZONE_UTC));
         String dateStringValue = dateFormat.format(date);
 
         Assert.assertEquals("Expected and actual values should be the same.", date, dateXmlAdapter.unmarshal(dateStringValue));
