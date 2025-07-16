@@ -224,7 +224,13 @@ public class DataMessages extends AbstractKapuaResource {
         return channelPredicate;
     }
 
-    private <V extends Comparable<V>> StorablePredicate getMetricPredicate(String metricName, MetricType<V> metricType, String metricMinValue, String metricMaxValue) throws KapuaIllegalNullArgumentException {
+    private <V extends Comparable<V>> StorablePredicate getMetricPredicate(
+            String metricName,
+            MetricType<V> metricType,
+            String metricMinValue,
+            String metricMaxValue)
+        throws KapuaIllegalNullArgumentException {
+
         if (metricMinValue == null && metricMaxValue == null) {
             Class<V> type = metricType != null ? metricType.getType() : null;
             return DATASTORE_PREDICATE_FACTORY.newMetricExistsPredicate(metricName, type);
@@ -232,6 +238,7 @@ public class DataMessages extends AbstractKapuaResource {
             if (metricType == null) {
                 throw new KapuaIllegalNullArgumentException("metricType");
             }
+
             V minValue = (V) ObjectValueConverter.fromString(metricMinValue, metricType.getType());
             V maxValue = (V) ObjectValueConverter.fromString(metricMaxValue, metricType.getType());
 
