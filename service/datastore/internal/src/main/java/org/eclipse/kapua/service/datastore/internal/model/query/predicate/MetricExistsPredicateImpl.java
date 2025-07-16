@@ -65,13 +65,18 @@ public class MetricExistsPredicateImpl extends ExistsPredicateImpl implements Me
     public ObjectNode toSerializedMap() throws MappingException {
         StringBuilder fieldNameSb = new StringBuilder();
 
-        fieldNameSb.append(MessageField.METRICS.field())
-                .append(".")
-                .append(DatastoreUtils.normalizeMetricName(getName()));
+        fieldNameSb
+            .append(MessageField.METRICS.field())
+            .append(".")
+            .append(DatastoreUtils.normalizeMetricName(getName()));
 
         if (getType() != null) {
             fieldNameSb.append(".")
-                    .append(DatastoreUtils.getClientMetricFromAcronym(type.getSimpleName().toLowerCase()));
+                .append(
+                    DatastoreUtils.getClientMetricFromAcronym(
+                        DatastoreUtils.convertToClientMetricType(getType())
+                    )
+                );
         }
 
         ObjectNode termNode = MappingUtils.newObjectNode(new KeyValueEntry[]{new KeyValueEntry(PredicateConstants.FIELD_KEY, fieldNameSb.toString())});
