@@ -113,6 +113,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -136,6 +137,7 @@ public class DatastoreSteps extends TestBase {
     private static final String MESSAGE_COUNT_RESULT = "messageCountResult";
     private static final String DOUBLE = "double";
     private static final String LAST_ACCOUNT = "LastAccount";
+    private static final String LAST_ACCOUNT_ID = "LastAccountId";
     private static final String MESSAGE_QUERY = "messageQuery";
     private static final String DEVICE = "Device";
     private static final String DATE_FORMAT_HH_MM_SS = "HH:mm:ss dd/MM/yyyy";
@@ -317,7 +319,6 @@ public class DatastoreSteps extends TestBase {
     @Before
     public void beforeScenario(Scenario scenario) {
         updateScenario(scenario);
-
     }
 
     @After(value = "not (@setup or @teardown)", order = 10)
@@ -1597,6 +1598,109 @@ public class DatastoreSteps extends TestBase {
             elasticsearchClient.deleteIndexes(indexes);
         } catch (Exception ex) {
             verifyException(ex);
+        }
+    }
+
+    @Given("I store a message with clientId {string} on topic {string} with timestamp now and metrics")
+    public void storeMessageOnTopicTimestampMetric(String clientId, String topic, List<CucMetric> cucMetrics) throws ClassNotFoundException, ParseException, KapuaException {
+        storeMessageOnTopicTimestampMetric(clientId, topic, new Date(), cucMetrics);
+    }
+
+    @Given("I store a message with clientId {string} on topic {string} with timestamp {string} and metrics")
+    public void storeMessageOnTopicTimestampMetric(String clientId, String topic, String timestamp, List<CucMetric> cucMetrics) throws ClassNotFoundException, ParseException, KapuaException {
+
+       storeMessageOnTopicTimestampMetric(
+               clientId,
+               topic,
+               KapuaDateUtils.parseDate(timestamp),
+               cucMetrics
+       );
+    }
+
+    public void storeMessageOnTopicTimestampMetric(String clientId, String topic, Date timestamp, List<CucMetric> cucMetrics) throws ClassNotFoundException, ParseException, KapuaException {
+        KapuaId currentAccountId = (KapuaId) stepData.get(LAST_ACCOUNT_ID);
+
+        // Build channel
+        KapuaDataChannel kapuaDataChannel = dataMessageFactory.newKapuaDataChannel();
+        kapuaDataChannel.setSemanticParts(Arrays.asList(topic.split("/")));
+
+        // Build payload
+        KapuaDataPayload kapuaDataPayload = dataMessageFactory.newKapuaDataPayload();
+
+        for (CucMetric cucMetric : cucMetrics) {
+            kapuaDataPayload.getMetrics().put(cucMetric.getMetric(), cucMetric.getValueCasted());
+        }
+
+        // Build message
+        KapuaDataMessage datastoreMessageCreator = dataMessageFactory.newKapuaDataMessage();
+        datastoreMessageCreator.setScopeId(currentAccountId);
+        datastoreMessageCreator.setClientId(clientId);
+        datastoreMessageCreator.setCapturedOn(timestamp);
+        datastoreMessageCreator.setReceivedOn(timestamp);
+        datastoreMessageCreator.setSentOn(timestamp);
+        datastoreMessageCreator.setChannel(kapuaDataChannel);
+        datastoreMessageCreator.setPayload(kapuaDataPayload);
+
+        StorableId datastoreMessageId = messageStoreService.store(datastoreMessageCreator);
+
+        stepData.put("lastDatastoreMessageCreator", datastoreMessageCreator);
+        stepData.put("lastStoredMessageId", datastoreMessageId);
+    }
+
+    @When("searching for the last DatastoreMessage stored")
+    public void searchLastDatastoreMessageStored() throws KapuaException {
+        Account account = (Account) stepData.get(LAST_ACCOUNT);
+        StorableId msgId = (StorableId) stepData.get("lastStoredMessageId");
+
+        DatastoreMessage lastDatastoreMessateStored = messageStoreService.find(account.getId(), msgId, StorableFetchStyle.SOURCE_FULL);
+        stepData.put("lastDatastoreMessageStored", lastDatastoreMessateStored);
+    }
+
+    @Then("verify last DatastoreMessage stored exist")
+    public void verifyLastDatastoreMessageStoredExists() {
+        Assert.assertNotNull("lastStoredDatastoreMessage", stepData.get("lastDatastoreMessageStored"));
+    }
+
+    @Then("verify the last stored message matches the last DatastoreMessageCreator")
+    public void lastMessageStoredMatchedCreator() {
+        KapuaDataMessage datastoreMessageCreator = (KapuaDataMessage) stepData.get("lastDatastoreMessageCreator");
+        DatastoreMessage lastDatastoreMessageStored = (DatastoreMessage) stepData.get("lastDatastoreMessageStored");
+
+        // Verify Message
+        Assert.assertNotNull("datastoreMessageCreator", datastoreMessageCreator);
+        Assert.assertNotNull("lastDatastoreMessageStored", lastDatastoreMessageStored);
+        Assert.assertEquals(datastoreMessageCreator.getClientId(), lastDatastoreMessageStored.getClientId());
+        Assert.assertEquals(datastoreMessageCreator.getCapturedOn(), lastDatastoreMessageStored.getCapturedOn());
+
+        // Verify Channel
+        KapuaDataChannel datastoreChannelCreator = datastoreMessageCreator.getChannel();
+        KapuaDataChannel lastDatastoreChannelStored = lastDatastoreMessageStored.getChannel();
+        Assert.assertNotNull("datastoreChannelCreator", datastoreChannelCreator);
+        Assert.assertNotNull("lastDatastoreChannelStored", lastDatastoreChannelStored);
+        Assert.assertEquals(datastoreChannelCreator.toPathString(), lastDatastoreChannelStored.toPathString());
+
+        // Verify Payload
+        KapuaPayload datastorePayloadCreator = datastoreMessageCreator.getPayload();
+        KapuaPayload lastDatastorePayload = lastDatastoreMessageStored.getPayload();
+        Assert.assertNotNull("datastorePayloadCreator", datastorePayloadCreator);
+        Assert.assertNotNull("lastDatastorePayload", lastDatastorePayload);
+        Assert.assertEquals(datastorePayloadCreator.getBody(), lastDatastorePayload.getBody());
+
+        for (Map.Entry<String, Object> metricCreator : datastorePayloadCreator.getMetrics().entrySet()) {
+            Object lastMetricStored = lastDatastorePayload.getMetrics().get(metricCreator.getKey());
+
+            Assert.assertNotNull("lastMetricStored." + metricCreator.getKey(), lastMetricStored);
+            Assert.assertEquals(metricCreator.getValue().getClass(), lastMetricStored.getClass());
+
+            if (metricCreator.getValue().getClass().isArray() ) {
+                Assert.assertArrayEquals(
+                        new Object[]{metricCreator.getValue()},
+                        new Object[]{lastMetricStored}
+                );
+            }
+            else {
+                Assert.assertEquals(metricCreator.getValue(), lastMetricStored);
+            }
         }
     }
 

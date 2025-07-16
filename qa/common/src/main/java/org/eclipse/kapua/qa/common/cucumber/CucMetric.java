@@ -12,12 +12,19 @@
  *******************************************************************************/
 package org.eclipse.kapua.qa.common.cucumber;
 
+import org.eclipse.kapua.model.type.ObjectTypeConverter;
+import org.eclipse.kapua.model.type.ObjectValueConverter;
+
 public class CucMetric {
 
     private String metric;
     private String type;
     private String value;
     private int message;
+
+    private Class<?> typeCasted;
+
+    private Object valueCasted;
 
     public CucMetric(String metric, String type, String value, int message) {
         this.metric = metric;
@@ -56,5 +63,16 @@ public class CucMetric {
 
     public void setMessage(int message) {
         this.message = message;
+    }
+
+    public Class<?> getTypeCasted() throws ClassNotFoundException {
+        if (typeCasted == null) {
+            typeCasted = ObjectTypeConverter.fromString(type);
+        }
+        return typeCasted;
+    }
+
+    public Object getValueCasted() throws ClassNotFoundException {
+        return ObjectValueConverter.fromString(value, getTypeCasted());
     }
 }
