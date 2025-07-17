@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2021, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2021, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -33,14 +33,12 @@ public class Acl {
     private static final char ANY_WORDS = '#';
     private static final char SEPARATOR = '/';
 
-    private final LoginMetric loginMetric;
     private final WildcardConfiguration wildcardConfiguration;
     private final HierarchicalRepository<KapuaPrincipal> read;
     private final HierarchicalRepository<KapuaPrincipal> write;
     private final HierarchicalRepository<KapuaPrincipal> admin;
 
     public Acl(LoginMetric loginMetric, KapuaPrincipal principal, List<AuthAcl> authAcls) throws KapuaIllegalArgumentException {
-        this.loginMetric = loginMetric;
         wildcardConfiguration = new WildcardConfiguration();
         wildcardConfiguration.setSingleWord(SINGLE_WORD);
         wildcardConfiguration.setAnyWords(ANY_WORDS);
