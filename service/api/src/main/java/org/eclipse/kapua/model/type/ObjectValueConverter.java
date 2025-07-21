@@ -93,7 +93,7 @@ public class ObjectValueConverter {
                 value = ByteArrayConverter.fromString(stringValue);
             } else if (type == Date.class) {
                 value = DateConverter.fromString(stringValue);
-            } else if (type == KapuaId.class || KapuaId.class.isAssignableFrom(type)) {
+            } else if (KapuaId.class.isAssignableFrom(type)) {
                 value = new KapuaIdImpl(new BigInteger(stringValue));
             } else if (type.isEnum()) {
                 Class<? extends Enum> enumType = (Class<? extends Enum>) type;

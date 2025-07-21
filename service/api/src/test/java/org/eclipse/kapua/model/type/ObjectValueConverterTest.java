@@ -232,6 +232,15 @@ public class ObjectValueConverterTest {
     }
 
     @Test
+    public void fromStringKapuaId() {
+        Object convertedObject = ObjectValueConverter.fromString("1", KapuaId.class);
+
+        Assert.assertNotNull(convertedObject);
+        Assert.assertTrue(KapuaId.class.isAssignableFrom(convertedObject.getClass()));
+        Assert.assertEquals(KapuaId.ONE, convertedObject);
+    }
+
+    @Test
     public void fromStringEnum() {
         Object convertedObject = ObjectValueConverter.fromString("TEST", ObjectValueConverterTestEnum.class);
 
