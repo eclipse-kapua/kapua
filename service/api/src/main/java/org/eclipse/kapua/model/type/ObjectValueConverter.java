@@ -50,6 +50,7 @@ public class ObjectValueConverter {
             } else if (clazz == Date.class) {
                 stringValue = DateConverter.toString((Date) value);
             } else {
+                // FIXME: This should specifically check for listed classes and KapuaId and throw error if other class is given. This is because this class cannot convert back other classes!
                 // String
                 // Integer
                 // Long
@@ -99,6 +100,7 @@ public class ObjectValueConverter {
 
                 value = Enum.valueOf(enumType, stringValue);
             } else {
+                // FIXME: this should throw an exception since it cannot handle the given class and returning String value might lead to error!
                 value = stringValue;
             }
         }
