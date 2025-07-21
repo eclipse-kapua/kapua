@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.model.type;
 
-import com.google.common.base.Strings;
-
 import javax.xml.bind.DatatypeConverter;
 
 /**
@@ -70,8 +68,12 @@ public class ByteArrayConverter {
      * @since 1.0.0
      */
     public static byte[] fromString(String base64) {
-        if (Strings.isNullOrEmpty(base64)) {
+        if (base64 == null) {
             return null;
+        }
+
+        if (base64.isEmpty()) {
+            return new byte[0];
         }
 
         return DatatypeConverter.parseBase64Binary(base64);
