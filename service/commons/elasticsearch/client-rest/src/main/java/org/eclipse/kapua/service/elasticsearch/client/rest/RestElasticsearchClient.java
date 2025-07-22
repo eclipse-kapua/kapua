@@ -235,7 +235,7 @@ public class RestElasticsearchClient extends AbstractElasticsearchClient<RestCli
 
     @Override
     public <T> ResultList<T> query(String index, Object query, Class<T> clazz) throws ClientException {
-        JsonNode queryJsonNode = getModelConverter().convertQuery("SEARCH", query);
+        JsonNode queryJsonNode = getModelConverter().convertQuery(query);
         LOG.debug(QUERY_CONVERTED_QUERY, queryJsonNode);
 
         String json = writeRequestFromJsonNode(queryJsonNode);
@@ -286,7 +286,7 @@ public class RestElasticsearchClient extends AbstractElasticsearchClient<RestCli
 
     @Override
     public long count(String index, Object query) throws ClientException {
-        JsonNode queryJsonNode = getModelConverter().convertQuery("COUNT", query);
+        JsonNode queryJsonNode = getModelConverter().convertCountQuery(query);
 
         LOG.debug(COUNT_CONVERTED_QUERY, queryJsonNode);
 
@@ -324,7 +324,7 @@ public class RestElasticsearchClient extends AbstractElasticsearchClient<RestCli
 
     @Override
     public void deleteByQuery(String index, Object query) throws ClientException {
-        JsonNode queryJsonNode = getModelConverter().convertQuery("DELETE", query);
+        JsonNode queryJsonNode = getModelConverter().convertDeleteQuery(query);
 
         LOG.debug(QUERY_CONVERTED_QUERY, queryJsonNode);
 
