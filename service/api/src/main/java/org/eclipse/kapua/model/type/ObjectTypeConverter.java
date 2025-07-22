@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.model.type;
 
+import com.google.common.base.Strings;
+
 import java.util.Date;
 
 public class ObjectTypeConverter {
@@ -56,7 +58,7 @@ public class ObjectTypeConverter {
     }
 
     public static Class<?> fromString(String value) throws ClassNotFoundException {
-        if (value != null) {
+        if (!Strings.isNullOrEmpty(value)) {
             switch (value) {
                 case TYPE_STRING:
                     return String.class;

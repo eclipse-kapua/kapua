@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2020, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -13,67 +13,80 @@
 package org.eclipse.kapua.model.type;
 
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
-import org.hamcrest.core.IsInstanceOf;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
-
-
+/**
+ * Tests for {@link ByteArrayConverter}
+ *
+ * @since 1.3.0
+ */
 @Category(JUnitTests.class)
 public class ByteArrayConverterTest {
 
     Byte[] byteClassArray;
-    byte[] byteArray;
-    String expectedString;
+    byte[] bytePrimitiveArray;
+    String byteArrayString;
 
     @Before
     public void initialize() {
         byteClassArray = new Byte[]{-128, -10, 0, 1, 10, 127};
-        byteArray = new byte[]{-128, -10, 0, 1, 10, 127};
-        expectedString = "gPYAAQp/";
+        bytePrimitiveArray = new byte[]{-128, -10, 0, 1, 10, 127};
+        byteArrayString = "gPYAAQp/";
     }
 
     @Test
-    public void byteArrayConverterTest() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        Constructor<ByteArrayConverter> byteArrayConverter = ByteArrayConverter.class.getDeclaredConstructor();
-        Assert.assertTrue(Modifier.isPrivate(byteArrayConverter.getModifiers()));
-        byteArrayConverter.setAccessible(true);
-        byteArrayConverter.newInstance();
+    public void toStringConvertByteClassArray() {
+        String convertedByteArrayString = ByteArrayConverter.toString(byteClassArray);
+
+        Assert.assertEquals(byteArrayString, convertedByteArrayString);
     }
 
     @Test
-    public void toStringByteClassParameterTest() {
-        Assert.assertEquals("Expected and actual values should be the same.", expectedString, ByteArrayConverter.toString(byteClassArray));
-    }
+    public void toStringConvertByteClassNull() {
+        String convertedByteArrayString = ByteArrayConverter.toString((Byte[]) null);
 
-    @Test(expected = NullPointerException.class)
-    public void toStringNullByteClassParameterTest() {
-        ByteArrayConverter.toString((Byte[]) null);
+        Assert.assertNull(convertedByteArrayString);
     }
 
     @Test
-    public void toStringTest() {
-        Assert.assertEquals("Expected and actual values should be the same.", expectedString, ByteArrayConverter.toString(byteArray));
-    }
+    public void toStringConvertBytePrimitiveArray() {
+        String convertedByteArrayString = ByteArrayConverter.toString(bytePrimitiveArray);
 
-    @Test(expected = NullPointerException.class)
-    public void toStringNullParameterTest() {
-        ByteArrayConverter.toString((byte[]) null);
+        Assert.assertEquals(byteArrayString, convertedByteArrayString);
     }
 
     @Test
-    public void fromStringTest() {
-        String stringValue = "String Value";
-        Assert.assertThat("Instance of byte[] expected.", ByteArrayConverter.fromString(stringValue), IsInstanceOf.instanceOf(byte[].class));
+    public void toStringConvertBytePrimitiveNull() {
+        String convertedByteArrayString = ByteArrayConverter.toString((byte[]) null);
+
+        Assert.assertNull(convertedByteArrayString);
     }
 
-    @Test(expected = NullPointerException.class)
-    public void fromStringNullParameterTest() {
-        ByteArrayConverter.fromString(null);
+
+    @Test
+    public void fromStringConvertString() {
+        byte[] convertedByteArray = ByteArrayConverter.fromString(byteArrayString);
+
+        Assert.assertArrayEquals(convertedByteArray, bytePrimitiveArray);
     }
+
+    @Test
+    public void fromStringConvertStringNull() {
+        byte[] convertedByteArray = ByteArrayConverter.fromString(null);
+
+        Assert.assertNull(convertedByteArray);
+    }
+
+    @Test
+    public void fromStringConvertStringEmpty() {
+        byte[] convertedByteArray = ByteArrayConverter.fromString("");
+
+        Assert.assertNotNull(convertedByteArray);
+        Assert.assertArrayEquals(convertedByteArray, new byte[0]);
+    }
+
 }
