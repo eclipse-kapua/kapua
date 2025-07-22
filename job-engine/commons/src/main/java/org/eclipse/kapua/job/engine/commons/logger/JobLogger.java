@@ -15,20 +15,18 @@ package org.eclipse.kapua.job.engine.commons.logger;
 import com.google.common.base.Strings;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.type.DateConverter;
 import org.eclipse.kapua.service.job.execution.JobExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
-import java.text.DateFormat;
 import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 /**
  * Logger for {@link org.eclipse.kapua.service.job.Job} processing.
@@ -416,11 +414,7 @@ public class JobLogger {
         }
     }
 
-
     private String formatDate(Date date) {
-        TimeZone tz = TimeZone.getTimeZone("UTC");
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS'Z'");
-        df.setTimeZone(tz);
-        return df.format(date);
+        return DateConverter.toString(date);
     }
 }

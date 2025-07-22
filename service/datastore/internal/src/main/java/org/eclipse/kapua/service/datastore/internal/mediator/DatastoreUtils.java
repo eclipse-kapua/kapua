@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.kapua.KapuaErrorCodes;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.util.KapuaDateUtils;
+import org.eclipse.kapua.model.type.ByteArrayConverter;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettingsKey;
@@ -656,6 +657,12 @@ public class DatastoreUtils {
                 }
             } else {
                 throw new IllegalArgumentException(String.format("Type [%s] cannot be converted to Date!", getValueClass(value)));
+            }
+        } else if (CLIENT_METRIC_TYPE_BINARY_ACRONYM.equals(acronymType)) {
+            try {
+                convertedValue = ByteArrayConverter.fromString((String) value);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException(String.format("Type [%s] cannot be converted to Byte[]. Value to convert [%s]", getValueClass(value), value));
             }
         } else {
             // no need to translate for others field type
