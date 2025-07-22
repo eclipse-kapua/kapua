@@ -1,11 +1,15 @@
-Liquibase "changeLogLock" table unlocker tool
+Liquibase Tool
 ==========
+This module is meant to contain tools for liquibase. They can be called through the same application via different arguments
 
-## Introduction
+## Liquibase "changeLogLock" table unlocker tool
 
-This module contains a Java Application that unlocks a stucked deployment caused by a wrong execution of liquibase updates
 
-## Background
+### Introduction
+
+A tool that unlocks a stucked deployment caused by a wrong execution of liquibase updates
+
+### Background
 
 The liquibase updates, run on changelog files, are performed concurrently by some Kapua containers. To ensure that a single container is running an update on the DB, aka to ensure the right concurrent
 access to this shared resource, liquibase uses a table called DATABASECHANGELOGLOCK to track which entity is performing the update. A row in this table testifies the presence of an entity making an
@@ -23,7 +27,25 @@ on. The proposed script doesn't require this and get the job done with a single 
 #### Usage
 
 ```bash
-java -jar kapua-liquibase-unlocker-2.1.0-SNAPSHOT-app.jar
+java -jar kapua-liquibase-unlocker-2.1.0-SNAPSHOT-app.jar locks
 ```
 
 To be used when the deployment is stucked for the afore mentioned reasons, the lock will be released and the deployment will continue.
+
+
+## Liquibase "clear-checksums" tool
+
+
+### Introduction
+
+A tool that clear checksums (column MD5SUM) inside the DATABASECHANGELOG table. Useful for migration purposes.
+
+### Background
+
+In some cases it can be useful to clear the above checksums. For example, sometimes an upgrade to liquibase changes how they are computed, and they change even if the liquibase script remains the same. In such cases, this tool assists the migration process to re-compute the new checksums without complaints from liquibase.
+
+#### Usage
+
+```bash
+java -jar kapua-liquibase-unlocker-2.1.0-SNAPSHOT-app.jar checksums
+```
