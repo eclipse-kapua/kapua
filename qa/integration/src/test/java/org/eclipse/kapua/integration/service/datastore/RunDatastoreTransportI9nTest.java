@@ -19,7 +19,10 @@ import io.cucumber.junit.CucumberOptions;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-        features = "classpath:features/datastore/Datastore.feature",
+        features = {
+                "classpath:features/datastore/Datastore.feature",
+                "classpath:features/datastore/DatastoreMetricStore.feature",
+        },
         glue = {"org.eclipse.kapua.qa.common",
                "org.eclipse.kapua.qa.integration.steps",
                 "org.eclipse.kapua.service.account.steps",
