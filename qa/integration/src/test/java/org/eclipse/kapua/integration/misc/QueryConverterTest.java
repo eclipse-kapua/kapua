@@ -22,7 +22,6 @@ import org.eclipse.kapua.service.datastore.model.query.MessageQuery;
 import org.eclipse.kapua.service.datastore.model.query.predicate.DatastorePredicateFactory;
 import org.eclipse.kapua.service.elasticsearch.client.QueryConverter;
 import org.eclipse.kapua.service.elasticsearch.client.SchemaKeys;
-import org.eclipse.kapua.service.elasticsearch.client.exception.QueryMappingException;
 import org.eclipse.kapua.service.elasticsearch.client.rest.QueryConverterImpl;
 import org.eclipse.kapua.service.storable.model.query.SortField;
 import org.eclipse.kapua.service.storable.model.query.StorableFetchStyle;
@@ -51,14 +50,14 @@ public class QueryConverterTest {
 
     @Test
     public void queryConversionTest1() throws Exception {
-        JsonNode esQuery = qc.convertQuery("COUNT", mq);
+        JsonNode esQuery = qc.convertCountQuery(mq);
         Assert.assertEquals("Expected and actual values should be the same!", "{}", esQuery.toString());
     }
 
     @Test
     public void queryConversionTest2() throws Exception {
         mq.setPredicate(datastorePredicateFactory.newExistsPredicate(String.format(MessageSchema.MESSAGE_METRICS + ".%s", "thisMustBePresentInTheEsQuery")));
-        JsonNode esQuery = qc.convertQuery("COUNT", mq);
+        JsonNode esQuery = qc.convertCountQuery(mq);
         //Now I must check that only the "query" field is present in the json. Set with the given predicate
         Assert.assertTrue(esQuery.has("query"));
         Assert.assertEquals(1, esQuery.size());
@@ -68,7 +67,7 @@ public class QueryConverterTest {
     @Test
     public void queryConversionTest3() throws Exception {
         mq.setPredicate(datastorePredicateFactory.newExistsPredicate(String.format(MessageSchema.MESSAGE_METRICS + ".%s", "thisMustBePresentInTheEsQuery")));
-        JsonNode esQuery = qc.convertQuery("DELETE", mq);
+        JsonNode esQuery = qc.convertDeleteQuery(mq);
         //Now I must check that only the "query" field is present in the json. Set with the given predicate
         Assert.assertTrue(esQuery.has("query"));
         Assert.assertEquals(1, esQuery.size());
@@ -76,15 +75,8 @@ public class QueryConverterTest {
     }
 
     @Test
-    public void queryConversionTest4() throws Exception {
-        mq.setPredicate(datastorePredicateFactory.newExistsPredicate(String.format(MessageSchema.MESSAGE_METRICS + ".%s", "thisMustBePresentInTheEsQuery")));
-        Assert.assertThrows(QueryMappingException.class, () -> qc.convertQuery("DELET", mq)); //typo on action type, must return exception
-    }
-
-
-    @Test
     public void queryConversionTest5() throws Exception {
-        JsonNode esQuery = qc.convertQuery("SEARCH", mq);
+        JsonNode esQuery = qc.convertQuery(mq);
         //now I must check that the query converted all the parameters, given the "search" actiontype
         Assert.assertEquals(4, esQuery.size());
         Assert.assertTrue(esQuery.has("_source"));
