@@ -33,6 +33,7 @@ import org.eclipse.kapua.app.console.module.api.client.resources.icons.IconSet;
 import org.eclipse.kapua.app.console.module.api.client.resources.icons.KapuaIcon;
 import org.eclipse.kapua.app.console.module.api.client.ui.button.KapuaButton;
 import org.eclipse.kapua.app.console.module.api.client.ui.tab.TabItem;
+import org.eclipse.kapua.app.console.module.api.client.util.ConsoleInfo;
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
 import org.eclipse.kapua.app.console.module.data.client.messages.ConsoleDataMessages;
 import org.eclipse.kapua.app.console.module.data.shared.model.GwtHeader;
@@ -116,8 +117,25 @@ public class TopicsTabItem extends TabItem {
 
             @Override
             public void componentSelected(ButtonEvent ce) {
-                GwtTopic topic = topicTable.getSelectedTopic();
                 List<GwtHeader> metrics = metricsTable.getSelectedMetrics();
+
+                int binaryMetricsSelected = 0;
+                for (GwtHeader metric : metrics) {
+                    if ("binary".equals(metric.getType())) {
+                        binaryMetricsSelected++;
+                    }
+                }
+
+                if (binaryMetricsSelected == metrics.size()) {
+                    ConsoleInfo.display("Error!", "Only binary metrics selected. Binary metrics cannot be queried alone since they would not return any result");
+                    return;
+                }
+
+                if (binaryMetricsSelected > 0) {
+                    ConsoleInfo.display("Warning!", "Messages containing only binary metrics cannot be queried. The results set shown will show binary metric contained in messages that also contains selected non-binary metrics");
+                }
+
+                GwtTopic topic = topicTable.getSelectedTopic();
                 resultsTable.refresh(topic, metrics);
             }
         });

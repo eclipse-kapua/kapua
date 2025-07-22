@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2020, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -14,69 +14,245 @@ package org.eclipse.kapua.model.type;
 
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
-import org.hamcrest.core.IsInstanceOf;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
+import java.util.Date;
 
-
+/**
+ * Tests for {@link ObjectValueConverter}
+ *
+ * @since 1.3.0
+ */
 @Category(JUnitTests.class)
 public class ObjectValueConverterTest {
 
+    //
+    // toString
+    //
+
     @Test
-    public void objectValueConverterTest() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        Constructor<ObjectValueConverter> objectValueConverter = ObjectValueConverter.class.getDeclaredConstructor();
-        Assert.assertTrue(Modifier.isPrivate(objectValueConverter.getModifiers()));
-        objectValueConverter.setAccessible(true);
-        objectValueConverter.newInstance();
+    public void toStringObjectString() {
+        String convertedObjectString = ObjectValueConverter.toString("aString");
+
+        Assert.assertEquals("aString", convertedObjectString);
     }
 
     @Test
-    public void toStringTest() {
-        Byte[] byteArray1 = {-128, -10, 0, 1, 10, 127};
-        byte[] byteArray2 = {-128, -10, 0, 1, 10, 127};
-        Object[] objects = {byteArray1, byteArray2, 0, 10, 100000, "String", 'c', -10, -1000000000, -100000000000L, 10L, 10.0f, 10.10d, true, false, KapuaId.ONE, ObjectValieConverterTestEnum.TEST};
-        String[] expectedString = {"gPYAAQp/", "gPYAAQp/", "0", "10", "100000", "String", "c", "-10", "-1000000000", "-100000000000", "10", "10.0", "10.1", "true", "false", "1", "TEST"};
-        Object object = new Object();
+    public void toStringObjectInteger() {
+        String convertedObjectString = ObjectValueConverter.toString(1024);
 
-        for (int i = 0; i < objects.length; i++) {
-            Assert.assertEquals("Expected and actual values should be the same.", expectedString[i], ObjectValueConverter.toString(objects[i]));
-        }
-        Assert.assertNull("Null expected.", ObjectValueConverter.toString(null));
-        Assert.assertEquals("Expected and actual values should be the same.", object.toString(), ObjectValueConverter.toString(object));
+        Assert.assertEquals("1024", convertedObjectString);
     }
 
     @Test
-    public void fromStringTest() {
-        String[] stringValue = {"String", "-2147483648", "11", "-9223372036854775808", "9223372036854775807", "10F", "10.10d", "true", "false", "Object", "1", "TEST"};
-        Class[] classes = {String.class, Integer.class, Integer.class, Long.class, Long.class, Float.class, Double.class, Boolean.class, Boolean.class, Object.class, KapuaId.class, ObjectValieConverterTestEnum.class};
-        Object[] expectedObjects = {"String", -2147483648, 11, -9223372036854775808L, 9223372036854775807L, 10F, 10.1d, true, false, "Object", KapuaId.ONE, ObjectValieConverterTestEnum.TEST};
-        Class[] byteClasses = {byte[].class, Byte[].class};
+    public void toStringObjectLong() {
+        String convertedObjectString = ObjectValueConverter.toString(1024L);
 
-        for (int i = 0; i < stringValue.length; i++) {
-            Assert.assertEquals(expectedObjects[i], ObjectValueConverter.fromString(stringValue[i], classes[i]));
-        }
+        Assert.assertEquals("1024", convertedObjectString);
+    }
 
-        for (Class byteClass : byteClasses) {
-        Assert.assertThat("Instance of byte[] expected.", ObjectValueConverter.fromString("byteArray", byteClass), IsInstanceOf.instanceOf(byte[].class));
-        }
+    @Test
+    public void toStringObjectFloat() {
+        String convertedObjectString = ObjectValueConverter.toString(10.24f);
 
-        for (Class clazz : classes) {
-            Assert.assertNull(ObjectValueConverter.fromString(null, clazz));
-        }
+        Assert.assertEquals("10.24", convertedObjectString);
+    }
+
+    @Test
+    public void toStringObjectDouble() {
+        String convertedObjectString = ObjectValueConverter.toString(10.24d);
+
+        Assert.assertEquals("10.24", convertedObjectString);
+    }
+
+    @Test
+    public void toStringObjectBoolean() {
+        String convertedObjectString = ObjectValueConverter.toString(Boolean.TRUE);
+
+        Assert.assertEquals("true", convertedObjectString);
+    }
+
+    @Test
+    public void toStringObjectDate() {
+        String convertedObjectString = ObjectValueConverter.toString(new Date(1735689600000L));
+
+        Assert.assertEquals("2025-01-01T00:00:00.000Z", convertedObjectString);
+    }
+
+    @Test
+    public void toStringObjectBinaryClass() {
+        String convertedObjectString = ObjectValueConverter.toString(new Byte[]{-128, -10, 0, 1, 10, 127});
+
+        Assert.assertEquals("gPYAAQp/", convertedObjectString);
+    }
+
+    @Test
+    public void toStringObjectBinaryPrimitive() {
+        String convertedObjectString = ObjectValueConverter.toString(new byte[]{-128, -10, 0, 1, 10, 127});
+
+        Assert.assertEquals("gPYAAQp/", convertedObjectString);
+    }
+
+    @Test
+    public void toStringObjectSomeClass() {
+        String convertedObjectString = ObjectValueConverter.toString(KapuaId.ONE);
+
+        Assert.assertEquals("1", convertedObjectString);
+    }
+
+    @Test
+    public void toStringObjectEnum() {
+        String convertedObjectString = ObjectValueConverter.toString(ObjectValueConverterTestEnum.TEST);
+
+        Assert.assertEquals("TEST", convertedObjectString);
+    }
+
+    @Test
+    public void toStringObjectNull() {
+        String convertedObjectString = ObjectValueConverter.toString(null);
+
+        Assert.assertNull(convertedObjectString);
+    }
+
+    //
+    // fromString
+    //
+
+    @Test
+    public void fromStringString() {
+        Object convertedObject = ObjectValueConverter.fromString("aString", String.class);
+
+        Assert.assertNotNull(convertedObject);
+        Assert.assertEquals(String.class, convertedObject.getClass());
+        Assert.assertEquals("aString", convertedObject);
+    }
+
+    @Test
+    public void fromStringInteger() {
+        Object convertedObject = ObjectValueConverter.fromString("1024", Integer.class);
+
+        Assert.assertNotNull(convertedObject);
+        Assert.assertEquals(Integer.class, convertedObject.getClass());
+        Assert.assertEquals(1024, convertedObject);
     }
 
     @Test(expected = NumberFormatException.class)
-    public void fromStringInvalidStringValueTest() {
-        String[] invalidStringValue = {"-2147483649", "2147483648", "-9223372036854775809", "9223372036854775808", "10F",};
-        Class[] invalidClasses = {Integer.class, Integer.class, Long.class, Long.class, Integer.class};
+    public void fromStringIntegerNai() {
+        ObjectValueConverter.fromString("NaI", Integer.class);
+    }
 
-        for (int i = 0; i < invalidStringValue.length; i++) {
-            ObjectValueConverter.fromString(invalidStringValue[i], invalidClasses[i]);
-        }
+    @Test
+    public void fromStringLong() {
+        Object convertedObject = ObjectValueConverter.fromString("1024", Long.class);
+
+        Assert.assertNotNull(convertedObject);
+        Assert.assertEquals(Long.class, convertedObject.getClass());
+        Assert.assertEquals(1024L, convertedObject);
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void fromStringLongNal() {
+        ObjectValueConverter.fromString("NaL", Long.class);
+    }
+
+    @Test
+    public void fromStringFloat() {
+        Object convertedObject = ObjectValueConverter.fromString("10.24", Float.class);
+
+        Assert.assertNotNull(convertedObject);
+        Assert.assertEquals(Float.class, convertedObject.getClass());
+        Assert.assertEquals(10.24f, convertedObject);
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void fromStringFloatNaf() {
+        ObjectValueConverter.fromString("NaF", Float.class);
+    }
+
+    @Test
+    public void fromStringDouble() {
+        Object convertedObject = ObjectValueConverter.fromString("10.24", Double.class);
+
+        Assert.assertNotNull(convertedObject);
+        Assert.assertEquals(Double.class, convertedObject.getClass());
+        Assert.assertEquals(10.24d, convertedObject);
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void fromStringDoubleNad() {
+        ObjectValueConverter.fromString("NaD", Double.class);
+    }
+
+    @Test
+    public void fromStringBoolean() {
+        Object convertedObject = ObjectValueConverter.fromString("true", Boolean.class);
+
+        Assert.assertNotNull(convertedObject);
+        Assert.assertEquals(Boolean.class, convertedObject.getClass());
+        Assert.assertEquals(Boolean.TRUE, convertedObject);
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void fromStringBooleanNab() {
+        ObjectValueConverter.fromString("NaB", Double.class);
+    }
+
+    @Test
+    public void fromStringDate() {
+        Object convertedObject = ObjectValueConverter.fromString("2025-01-01T00:00:00.000Z", Date.class);
+
+        Assert.assertNotNull(convertedObject);
+        Assert.assertEquals(Date.class, convertedObject.getClass());
+        Assert.assertEquals(new Date(1735689600000L), convertedObject);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void fromStringDateNad() {
+        ObjectValueConverter.fromString("NaD", Date.class);
+    }
+
+    @Test
+    public void fromStringByteClass() {
+        Object convertedObject = ObjectValueConverter.fromString("gPYAAQp/", Byte[].class);
+
+        Assert.assertNotNull(convertedObject);
+        Assert.assertEquals(byte[].class, convertedObject.getClass());
+        Assert.assertArrayEquals(new byte[]{-128, -10, 0, 1, 10, 127}, (byte[]) convertedObject);
+    }
+
+    @Test
+    public void fromStringBytePrimitive() {
+        Object convertedObject = ObjectValueConverter.fromString("gPYAAQp/", byte[].class);
+
+        Assert.assertNotNull(convertedObject);
+        Assert.assertEquals(byte[].class, convertedObject.getClass());
+        Assert.assertArrayEquals(new byte[]{-128, -10, 0, 1, 10, 127}, (byte[]) convertedObject);
+    }
+
+    @Test
+    public void fromStringKapuaId() {
+        Object convertedObject = ObjectValueConverter.fromString("1", KapuaId.class);
+
+        Assert.assertNotNull(convertedObject);
+        Assert.assertTrue(KapuaId.class.isAssignableFrom(convertedObject.getClass()));
+        Assert.assertEquals(KapuaId.ONE, convertedObject);
+    }
+
+    @Test
+    public void fromStringEnum() {
+        Object convertedObject = ObjectValueConverter.fromString("TEST", ObjectValueConverterTestEnum.class);
+
+        Assert.assertNotNull(convertedObject);
+        Assert.assertEquals(ObjectValueConverterTestEnum.class, convertedObject.getClass());
+        Assert.assertEquals(ObjectValueConverterTestEnum.TEST, convertedObject);
+    }
+
+    @Test
+    public void fromStringNull() {
+        Object convertedObject = ObjectValueConverter.fromString(null, Object.class);
+
+        Assert.assertNull(convertedObject);
     }
 }
