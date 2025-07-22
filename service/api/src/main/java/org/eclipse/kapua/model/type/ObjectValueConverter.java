@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,7 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdImpl;
 
 import java.math.BigInteger;
+import java.util.Date;
 
 /**
  * Utilities to convert the value of objects to serialize them.
@@ -46,7 +47,10 @@ public class ObjectValueConverter {
                 stringValue = ByteArrayConverter.toString((byte[]) value);
             } else if (clazz == Byte[].class) {
                 stringValue = ByteArrayConverter.toString((Byte[]) value);
+            } else if (clazz == Date.class) {
+                stringValue = DateConverter.toString((Date) value);
             } else {
+                // FIXME: This should specifically check for listed classes and KapuaId and throw error if other class is given. This is because this class cannot convert back other classes!
                 // String
                 // Integer
                 // Long
@@ -87,13 +91,16 @@ public class ObjectValueConverter {
                 value = Boolean.parseBoolean(stringValue);
             } else if (type == byte[].class || type == Byte[].class) {
                 value = ByteArrayConverter.fromString(stringValue);
-            } else if (type == KapuaId.class || KapuaId.class.isAssignableFrom(type)) {
+            } else if (type == Date.class) {
+                value = DateConverter.fromString(stringValue);
+            } else if (KapuaId.class.isAssignableFrom(type)) {
                 value = new KapuaIdImpl(new BigInteger(stringValue));
             } else if (type.isEnum()) {
                 Class<? extends Enum> enumType = (Class<? extends Enum>) type;
 
                 value = Enum.valueOf(enumType, stringValue);
             } else {
+                // FIXME: this should throw an exception since it cannot handle the given class and returning String value might lead to error!
                 value = stringValue;
             }
         }

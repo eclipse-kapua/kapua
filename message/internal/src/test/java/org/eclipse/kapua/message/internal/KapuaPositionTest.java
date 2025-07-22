@@ -18,7 +18,6 @@ import java.time.ZonedDateTime;
 
 import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import org.eclipse.kapua.message.KapuaPosition;
-import org.eclipse.kapua.model.xml.DateXmlAdapter;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.junit.Assert;
 import org.junit.Before;
@@ -30,7 +29,7 @@ public class KapuaPositionTest {
 
     private static final String NEWLINE = System.lineSeparator();
 
-    private static ZonedDateTime referenceDate = ZonedDateTime.of(2017, 1, 18, 12, 10, 46, 238000000, ZoneId.of(DateXmlAdapter.TIME_ZONE_UTC));
+    private static ZonedDateTime referenceDate = ZonedDateTime.of(2017, 1, 18, 12, 10, 46, 238000000, ZoneId.of("UTC"));
 
     private static final String POSITION_DISPLAY_STR = "^altitude=.*" +
             "~~heading=.*" +
