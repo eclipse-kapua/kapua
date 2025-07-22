@@ -300,7 +300,7 @@ public class RestElasticsearchClient extends AbstractElasticsearchClient<RestCli
 
     @Override
     public long count(TypeDescriptor typeDescriptor, Object query) throws ClientException {
-        JsonNode queryJsonNode = getModelConverter().convertQuery(query);
+        JsonNode queryJsonNode = getModelConverter().convertCountQuery(query);
 
         LOG.debug(COUNT_CONVERTED_QUERY, queryJsonNode);
 
@@ -338,7 +338,7 @@ public class RestElasticsearchClient extends AbstractElasticsearchClient<RestCli
 
     @Override
     public void deleteByQuery(TypeDescriptor typeDescriptor, Object query) throws ClientException {
-        JsonNode queryJsonNode = getModelConverter().convertQuery(query);
+        JsonNode queryJsonNode = getModelConverter().convertDeleteQuery(query);
 
         LOG.debug(QUERY_CONVERTED_QUERY, queryJsonNode);
 
