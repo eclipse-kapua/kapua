@@ -180,6 +180,18 @@ public class KapuaLiquibaseClient {
         }
     }
 
+    public void clearChecksum() {
+        LOG.info("Trying to clear checksums...");
+        try (Connection connection = DriverManager.getConnection(jdbcUrl, username, password)) {
+            Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
+            Liquibase liquibase = new Liquibase((String) null, new FileSystemResourceAccessor(), database);
+            liquibase.clearCheckSums();
+        } catch (LiquibaseException | SQLException e) {
+            LOG.error("Running clear checksums util... ERROR! Error: {}", e.getMessage(), e);
+            throw new RuntimeException(e); // TODO: throw an appropriate exception!
+        }
+    }
+
     protected static synchronized File loadChangelogs() throws IOException {
         String tmpDirectory = SystemUtils.getJavaIoTmpDir().getAbsolutePath();
 
