@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -31,6 +31,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.KapuaIllegalNullArgumentException;
 import org.eclipse.kapua.app.api.core.model.CountResult;
 import org.eclipse.kapua.app.api.core.model.DateParam;
@@ -244,7 +245,7 @@ public class DataMessages extends AbstractKapuaResource {
             String metricMaxValue,
             SortDirection sortDir,
             int offset,
-            int limit) throws KapuaIllegalNullArgumentException {
+            int limit) throws KapuaIllegalArgumentException {
 
         AndPredicate andPredicate = datastorePredicateFactory.newAndPredicate();
 
@@ -316,7 +317,7 @@ public class DataMessages extends AbstractKapuaResource {
             MetricType<V> metricType,
             String metricMinValue,
             String metricMaxValue)
-        throws KapuaIllegalNullArgumentException {
+            throws KapuaIllegalArgumentException {
 
         if (metricMinValue == null && metricMaxValue == null) {
             Class<V> type = metricType != null ? metricType.getType() : null;
@@ -324,6 +325,10 @@ public class DataMessages extends AbstractKapuaResource {
         } else {
             if (metricType == null) {
                 throw new KapuaIllegalNullArgumentException("metricType");
+            }
+
+            if (new MetricType<>("binary").equals(metricType)) {
+                throw new KapuaIllegalArgumentException("metricType", "binary");
             }
 
             V minValue = (V) ObjectValueConverter.fromString(metricMinValue, metricType.getType());
