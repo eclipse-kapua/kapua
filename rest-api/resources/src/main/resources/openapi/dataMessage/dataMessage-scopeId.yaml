@@ -51,22 +51,22 @@ paths:
           schema:
             type: string
             format: 'date-time'
-        - description: The metric name to filter results. If filled, `metricType`, `metricMinValue` and `metricMaxValue` are also required
+        - description: The metric name to filter results.
           name: metricName
           in: query
           schema:
             type: string
-        - description: The metric type to filter results
+        - description: The metric type to filter results. If filled 'metricName' is required.
           name: metricType
           in: query
           schema:
             type: string
-        - description: The minimum metric value to filter results
+        - description: The minimum metric value to filter results. If filled 'metricName' and 'metricType' are required. If filled 'metricType' cannot be 'binary'.
           name: metricMin
           in: query
           schema:
             type: string
-        - description: The maximum metric value to filter results
+        - description: The maximum metric value to filter results. If filled 'metricName' and 'metricType' are required. If filled 'metricType' cannot be 'binary'.
           name: metricMax
           in: query
           schema:
