@@ -26,6 +26,7 @@ import javax.persistence.Persistence;
 import javax.persistence.PersistenceUnit;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Base {@code abstract} {@link EntityManager}.
@@ -111,7 +112,12 @@ public abstract class AbstractEntityManagerFactory implements org.eclipse.kapua.
             // Standalone JPA
             entityManagerFactory = Persistence.createEntityManagerFactory(persistenceUnitName, configOverrides);
 
-            printEntityManagerConfiguration(persistenceUnitName, datasourceName, configOverrides);
+            // Print configuration
+            Map<String, Object> configOverridesForPrint = new HashMap<>(configOverrides);
+            configOverridesForPrint.remove("eclipselink.connection-pool.default.user");
+            configOverridesForPrint.remove("eclipselink.connection-pool.default.password");
+
+            printEntityManagerConfiguration(persistenceUnitName, datasourceName, configOverridesForPrint);
         } catch (Throwable ex) {
             LOG.error("Error creating EntityManagerFactory", ex);
             throw new ExceptionInInitializerError(ex);
@@ -151,7 +157,7 @@ public abstract class AbstractEntityManagerFactory implements org.eclipse.kapua.
                         .addParameter("Datasource Name", datasourceName)
                         .openSection("Configuration Overrides");
 
-        for (Map.Entry<String, Object> config : configOverrides.entrySet()) {
+        for (Map.Entry<String, Object> config : configOverrides.entrySet().stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toList())) {
             configurationPrinter.addParameter(config.getKey(), config.getValue());
         }
 
