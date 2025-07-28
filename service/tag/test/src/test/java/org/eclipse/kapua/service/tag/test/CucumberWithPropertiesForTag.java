@@ -99,7 +99,7 @@ public class CucumberWithPropertiesForTag extends CucumberWithProperties {
                 bind(TagFactory.class).toInstance(new TagFactoryImpl());
 
                 //Inject actual Device service related services
-                DeviceEntityManagerFactory deviceEntityManagerFactory = DeviceEntityManagerFactory.instance();
+                DeviceEntityManagerFactory deviceEntityManagerFactory = DeviceEntityManagerFactory.getInstance();
                 bind(DeviceEntityManagerFactory.class).toInstance(deviceEntityManagerFactory);
 
                 bind(DeviceRegistryService.class).toInstance(new DeviceRegistryServiceImpl());

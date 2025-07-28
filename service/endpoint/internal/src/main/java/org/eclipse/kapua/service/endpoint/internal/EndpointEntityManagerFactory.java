@@ -17,49 +17,44 @@ import org.eclipse.kapua.commons.jpa.AbstractEntityManagerFactory;
 import org.eclipse.kapua.commons.jpa.EntityManager;
 import org.eclipse.kapua.commons.jpa.EntityManagerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
- * Entity manager factory for the endpointInfo module.
+ * {@link EndpointInfoServiceImpl} {@link EntityManagerFactory} implementation.
  *
  * @since 1.0.0
  */
 public class EndpointEntityManagerFactory extends AbstractEntityManagerFactory implements EntityManagerFactory {
 
     private static final String PERSISTENCE_UNIT_NAME = "kapua-endpoint";
-    private static final String DATASOURCE_NAME = "kapua-dbpool";
-    private static final Map<String, String> UNIQUE_CONSTRAINTS = new HashMap<>();
 
-    private static EndpointEntityManagerFactory instance = new EndpointEntityManagerFactory();
+    private static final EndpointEntityManagerFactory INSTANCE = new EndpointEntityManagerFactory();
 
     /**
-     * Constructs a new entity manager factory and configure it to use the endpointInfo persistence unit.
+     * Constructor.
+     *
+     * @since 1.0.0
      */
     private EndpointEntityManagerFactory() {
-        super(PERSISTENCE_UNIT_NAME,
-                DATASOURCE_NAME,
-                UNIQUE_CONSTRAINTS);
+        super(PERSISTENCE_UNIT_NAME);
     }
 
     /**
-     * Return the {@link EntityManager} singleton instance
+     * Returns a {@link EntityManager} instance
      *
-     * @return
-     * @throws KapuaException
+     * @return A {@link EntityManager} instance.
+     * @since 1.0.0
      */
-    public static EntityManager getEntityManager()
-            throws KapuaException {
-        return instance.createEntityManager();
+    public static EntityManager getEntityManager() throws KapuaException {
+        return INSTANCE.createEntityManager();
     }
 
     /**
-     * Return the {@link EntityManager} singleton instance
+     * Returns the {@link EntityManagerFactory} instance.
      *
-     * @return
+     * @return The {@link EntityManagerFactory} instance.
+     * @since 1.0.0
      */
     public static EndpointEntityManagerFactory getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
 }

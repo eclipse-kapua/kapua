@@ -13,40 +13,35 @@
 package org.eclipse.kapua.job.engine.jbatch;
 
 import org.eclipse.kapua.commons.jpa.AbstractEntityManagerFactory;
-import org.eclipse.kapua.commons.jpa.EntityManager;
 import org.eclipse.kapua.commons.jpa.EntityManagerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
- * {@link EntityManagerFactory} for the job-engine-jbatch module.
+ * {@link JobEngineServiceJbatch} {@link EntityManagerFactory} implementation.
  *
  * @since 1.1.0
  */
 public class JobEngineEntityManagerFactory extends AbstractEntityManagerFactory implements EntityManagerFactory {
 
     private static final String PERSISTENCE_UNIT_NAME = "kapua-job-engine";
-    private static final String DATASOURCE_NAME = "kapua-dbpool";
-    private static final Map<String, String> UNIQUE_CONTRAINTS = new HashMap<>();
 
-    private static JobEngineEntityManagerFactory instance = new JobEngineEntityManagerFactory();
+    private static final JobEngineEntityManagerFactory INSTANCE = new JobEngineEntityManagerFactory();
 
     /**
-     * Constructs a new entity manager factory and configure it to use the job persistence unit.
+     * Constructor.
+     *
+     * @since 1.0.0
      */
     private JobEngineEntityManagerFactory() {
-        super(PERSISTENCE_UNIT_NAME,
-                DATASOURCE_NAME,
-                UNIQUE_CONTRAINTS);
+        super(PERSISTENCE_UNIT_NAME);
     }
 
     /**
-     * Return the {@link EntityManager} singleton instance
+     * Returns the {@link EntityManagerFactory} instance.
      *
-     * @return
+     * @return The {@link EntityManagerFactory} instance.
+     * @since 1.0.0
      */
     public static JobEngineEntityManagerFactory getInstance() {
-        return instance;
+        return INSTANCE;
     }
 }

@@ -13,43 +13,35 @@
 package org.eclipse.kapua.service.device.management.job.internal;
 
 import org.eclipse.kapua.commons.jpa.AbstractEntityManagerFactory;
-import org.eclipse.kapua.commons.jpa.EntityManager;
 import org.eclipse.kapua.commons.jpa.EntityManagerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
- * {@link org.eclipse.kapua.service.device.management.job.JobDeviceManagementOperation} {@link EntityManagerFactory}
+ * {@link JobDeviceManagementOperationServiceImpl} {@link EntityManagerFactory} implementation.
  *
  * @since 1.1.0
  */
 public class JobDeviceManagementOperationEntityManagerFactory extends AbstractEntityManagerFactory implements EntityManagerFactory {
 
     private static final String PERSISTENCE_UNIT_NAME = "kapua-job-device-management-operation";
-    private static final String DATASOURCE_NAME = "kapua-dbpool";
-    private static final Map<String, String> UNIQUE_CONTRAINTS = new HashMap<>();
 
-    private static JobDeviceManagementOperationEntityManagerFactory instance = new JobDeviceManagementOperationEntityManagerFactory();
+    private static final JobDeviceManagementOperationEntityManagerFactory INSTANCE = new JobDeviceManagementOperationEntityManagerFactory();
 
     /**
-     * Constructs a new entity manager factory and configure it to use the job persistence unit.
+     * Constructor.
      *
      * @since 1.1.0
      */
     private JobDeviceManagementOperationEntityManagerFactory() {
-        super(PERSISTENCE_UNIT_NAME,
-                DATASOURCE_NAME,
-                UNIQUE_CONTRAINTS);
+        super(PERSISTENCE_UNIT_NAME);
     }
 
     /**
-     * Return the {@link EntityManager} singleton instance
+     * Returns the {@link EntityManagerFactory} instance
      *
-     * @return
+     * @return The {@link EntityManagerFactory} instance.
      * @since 1.1.0
      */
     public static JobDeviceManagementOperationEntityManagerFactory getInstance() {
-        return instance;
+        return INSTANCE;
     }
 }

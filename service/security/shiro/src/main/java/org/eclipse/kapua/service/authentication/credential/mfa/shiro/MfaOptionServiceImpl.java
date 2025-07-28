@@ -109,7 +109,7 @@ public class MfaOptionServiceImpl extends AbstractKapuaService implements MfaOpt
      * @since 1.3.0
      */
     public MfaOptionServiceImpl() {
-        super(MfaOptionEntityManagerFactory.getInstance());
+        super(AuthenticationEntityManagerFactory.getInstance());
     }
 
     @Override
@@ -383,9 +383,9 @@ public class MfaOptionServiceImpl extends AbstractKapuaService implements MfaOpt
      * This QR code generator follows the spec detailed here for the URI format: https://github.com/google/google-authenticator/wiki/Key-Uri-Format
      *
      * @param organizationName the organization name to be used as issuer in the QR code
-     * @param accountName the account name of the account to which the user belongs
-     * @param username    the username
-     * @param key         the Mfa secret key in plain text
+     * @param accountName      the account name of the account to which the user belongs
+     * @param username         the username
+     * @param key              the Mfa secret key in plain text
      * @return the QR code image in base64 format
      * @since 1.3.0
      */

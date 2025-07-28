@@ -61,7 +61,7 @@ public class DeviceEventServiceImpl extends AbstractKapuaService implements Devi
      * Constructor
      */
     public DeviceEventServiceImpl() {
-        super(DeviceEntityManagerFactory.instance());
+        super(DeviceEntityManagerFactory.getInstance());
 
         KapuaLocator locator = KapuaLocator.getInstance();
 

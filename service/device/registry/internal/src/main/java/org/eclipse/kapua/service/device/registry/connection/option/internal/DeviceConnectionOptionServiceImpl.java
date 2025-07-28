@@ -49,7 +49,7 @@ import org.eclipse.kapua.service.device.registry.internal.DeviceEntityManagerFac
 public class DeviceConnectionOptionServiceImpl extends AbstractKapuaService implements DeviceConnectionOptionService {
 
     public DeviceConnectionOptionServiceImpl() {
-        super(DeviceEntityManagerFactory.instance());
+        super(DeviceEntityManagerFactory.getInstance());
     }
 
     @Override

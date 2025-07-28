@@ -40,7 +40,7 @@ public class DeviceServiceModule extends ServiceEventModule {
 
         return new ServiceEventModuleConfiguration(
                 kapuaDeviceRegistrySettings.getString(KapuaDeviceRegistrySettingKeys.DEVICE_EVENT_ADDRESS),
-                DeviceEntityManagerFactory.instance(),
+                DeviceEntityManagerFactory.getInstance(),
                 serviceEventListenerConfigurations.toArray(new ServiceEventClientConfiguration[0])
         );
     }
