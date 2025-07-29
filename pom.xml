@@ -28,7 +28,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
 
         <!-- Dependencies versions -->
-        <activemq.version>5.16.7</activemq.version>
+        <activemq.version>5.16.8</activemq.version>
         <activemq-openwire-legacy.version>5.16.8</activemq-openwire-legacy.version> <!-- Bumped version to address CVE-2023-46604 and CVE-2025-27533-->
         <aopalliance.version>1.0</aopalliance.version>
         <artemis.version>2.19.0</artemis.version>
