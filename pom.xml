@@ -29,6 +29,7 @@
 
         <!-- Dependencies versions -->
         <activemq.version>5.16.7</activemq.version>
+        <activemq-openwire-legacy.version>5.16.8</activemq-openwire-legacy.version> <!-- Bumped version to address CVE-2023-46604 and CVE-2025-27533-->
         <aopalliance.version>1.0</aopalliance.version>
         <artemis.version>2.19.0</artemis.version>
         <assertj.version>3.2.0</assertj.version>
@@ -2091,6 +2092,11 @@
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>artemis-amqp-protocol</artifactId>
                 <version>${artemis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-openwire-legacy</artifactId>
+                <version>${activemq-openwire-legacy.version}</version>
             </dependency>
 
             <!-- Jetty-->
