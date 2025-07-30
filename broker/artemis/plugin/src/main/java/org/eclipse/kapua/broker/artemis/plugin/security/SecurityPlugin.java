@@ -182,18 +182,18 @@ public class SecurityPlugin implements ActiveMQSecurityManager5 {
 //            return authenticateExternalConnCallable(connectionInfo, connectionId, username, password, remotingConnection);
         }
         else {
-            return serverContext.getSecurityContext().callWithLock(LockType.CLIENT_ID, connectionInfo.getClientId(),
-                () -> authenticateExternalConnCallable(connectionInfo, connectionId, username, password, remotingConnection));
+            String fullClientId = Utils.getFullClientId(getScopeId(username), connectionInfo.getClientId());
+            return serverContext.getSecurityContext().callWithLock(LockType.CLIENT_ID, fullClientId,
+                () -> authenticateExternalConnCallable(connectionInfo, connectionId, fullClientId, username, password, remotingConnection));
         }
     }
 
-    private Subject authenticateExternalConnCallable(ConnectionInfo connectionInfo, String connectionId, String username, String password, RemotingConnection remotingConnection) {
+    private Subject authenticateExternalConnCallable(ConnectionInfo connectionInfo, String connectionId, String fullClientId, String username, String password, RemotingConnection remotingConnection) {
         loginMetric.getExternalConnector().getAttempt().inc();
         Context timeTotal = loginMetric.getExternalAddConnection().time();
         try {
             logger.info("Authenticate external: user: {} - clientId: {} - connectionIp: {} - connectionId: {} - isOpen: {}",
                     username, connectionInfo.getClientId(), connectionInfo.getClientIp(), remotingConnection.getID(), remotingConnection.getTransportConnection().isOpen());
-            String fullClientId = Utils.getFullClientId(getScopeId(username), connectionInfo.getClientId());
             AuthRequest authRequest = new AuthRequest(
                     serverContext.getClusterName(),
                     serverContext.getBrokerIdentity().getBrokerHost(), SecurityAction.brokerConnect.name(),
