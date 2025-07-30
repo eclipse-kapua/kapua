@@ -272,11 +272,7 @@ public class MetricInfoRegistryFacadeImpl extends AbstractDatastoreFacade implem
             return 0;
         }
 
-        //Sanification of not compatible fields for the "count" ES endpoint
-        MetricInfoQueryImpl countCompatibleQuery = new MetricInfoQueryImpl(query);
-        countCompatibleQuery.sanificateQuery();
-
-        return repository.count(countCompatibleQuery);
+        return repository.count(query);
     }
 
     /**

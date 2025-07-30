@@ -34,12 +34,33 @@ public interface QueryConverter {
     /**
      * Converts the Elasticsearch query to the client query
      *
-     * @param query The queyr to convert.
+     * @param query The query to convert.
      * @return The converted query.
      * @throws QueryMappingException if query mappings are not correst.
      * @since 1.0.0
      */
     JsonNode convertQuery(Object query) throws QueryMappingException;
+
+    /**
+     * Converts the Elasticsearch query to the client query for the count operation
+     *
+     * @param query The query to convert.
+     * @return The converted query.
+     * @throws QueryMappingException if query mappings are not correst.
+     * @since 2.1.0
+     */
+    JsonNode convertCountQuery(Object query) throws QueryMappingException;
+
+    /**
+     * Converts the Elasticsearch query to the client query for the delete operation
+     *
+     * @param query The query to convert.
+     * @return The converted query.
+     * @throws QueryMappingException if query mappings are not correst.
+     * @since 2.1.0
+     */
+    JsonNode convertDeleteQuery(Object query) throws QueryMappingException;
+
 
     /**
      * Gets the query fetch style
