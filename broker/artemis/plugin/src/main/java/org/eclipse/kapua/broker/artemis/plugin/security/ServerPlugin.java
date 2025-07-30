@@ -171,7 +171,6 @@ public class ServerPlugin implements ActiveMQServerPlugin {
     public void afterCreateConnection(RemotingConnection connection) throws ActiveMQException {
         connection.addCloseListener(() -> {
             try {
-                logger.info("$$$$$$$$$$ calling CLOSE for connection id: {}", connection.getID());
                 cleanUpConnectionData(connection, Failure.CLOSED);
             } catch (Exception e) {
                 //shouldn't happen so log it and throw runtime?
@@ -183,7 +182,6 @@ public class ServerPlugin implements ActiveMQServerPlugin {
 
             @Override
             public void connectionFailed(ActiveMQException exception, boolean failedOver, String scaleDownTargetNodeID) {
-                logger.info("$$$$$$$$$$ calling FAIL for connection id: {}", connection.getID());
                 serverContext.cleanUpConnectionData(
                         logger, loginMetric,
                         pluginUtility.getConnectionId(connection), pluginUtility.isInternal(connection),
@@ -192,7 +190,6 @@ public class ServerPlugin implements ActiveMQServerPlugin {
 
             @Override
             public void connectionFailed(ActiveMQException exception, boolean failedOver) {
-                logger.info("$$$$$$$$$$ calling FAIL for connection id: {}", connection.getID());
                 serverContext.cleanUpConnectionData(
                         logger, loginMetric,
                         pluginUtility.getConnectionId(connection), pluginUtility.isInternal(connection),
@@ -279,9 +276,6 @@ public class ServerPlugin implements ActiveMQServerPlugin {
                 logger.warn("### session context null for remoting connection {} and connection id {}", session.getRemotingConnection(), pluginUtility.getConnectionId(session.getRemotingConnection()));
                 throw new ActiveMQSecurityException("Operation not allowed");
             }
-            serverContext.getAddressAccessTracker().update(address);
-            logger.debug("Published message on address {} from clientId: {} - clientIp: {}", address, sessionContext.getClientId(), sessionContext.getClientIp());
-            ActiveMQServerPlugin.super.beforeSend(session, tx, message, direct, noAutoCreateQueue);
         } finally {
             sendContext.stop();
         }

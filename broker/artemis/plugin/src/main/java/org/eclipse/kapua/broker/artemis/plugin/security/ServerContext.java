@@ -90,7 +90,7 @@ public class ServerContext {
         return addressAccessTracker;
     }
 
-    public void closeConnection(Logger logger, LoginMetric loginMetric,RemotingConnection remotingConnection, String connectionId) {
+    public void closeConnection(Logger logger, LoginMetric loginMetric, RemotingConnection remotingConnection, String connectionId) {
         remotingConnection.disconnect(false);
         remotingConnection.destroy();
         cleanUpConnectionData(logger, loginMetric, connectionId, false, null, null);

@@ -198,8 +198,6 @@ public final class SecurityContext {
     public SessionContext cleanSessionContext(SessionContext sessionContext) throws Exception {
         String connectionId = sessionContext.getConnectionId();
         logger.debug("Updating session context for connection id: {}", connectionId);
-        logger.info("Before cleanSessionContext ({}) {}", connectionId, this);
-        logger.info("Cleaning session context for connection id: {}", connectionId);
         //cleaning context and filling cache
         SessionContext sessionContextOld = sessionContextMap.remove(connectionId);
         if (sessionContextOld != null) {
@@ -216,8 +214,8 @@ public final class SecurityContext {
         //if no stealing link remove the context by client id
         //on a stealing link currentSessionContext could be null if the disconnect of the latest connected client happens before the others
         if (currentSessionContext == null) {
-            logger.warn("Cannot find session context by full client id: {}", fullClientId);
-            loginMetric.getSessionContextByClientIdFailure().inc();
+            logger.debug("Cannot find session context by full client id: {}", fullClientId);
+            loginMetric.getSessionContextByClientIdNotFound().inc();
         } else {
             if (connectionId.equals(currentSessionContext.getConnectionId())) {
                 sessionContextMapByClient.remove(fullClientId);
@@ -228,7 +226,6 @@ public final class SecurityContext {
                     currentSessionContext.getClientId(), currentSessionContext.getConnectionId(), connectionId);
             }
         }
-        logger.info("After cleanSessionContext ({}) {}", connectionId, this);
         return currentSessionContext;
     }
 
