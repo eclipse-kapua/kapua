@@ -37,7 +37,7 @@ public class LoginMetric {
     private static final String CLOSED_CONNECTION = "closed_connection";
     private static final String DUPLICATE_SESSION_METADATA = "duplicate_session_metadata";
     private static final String DISCONNECT_CALLBACK_CALL = "disconnect_callback_call";
-    private static final String SESSION_CONTEXT_BY_CLIENT_ID = "session_context_by_client_id_not_found";
+    private static final String SESSION_CONTEXT_BY_CLIENT_ID_NOT_FOUND = "session_context_by_client_id_not_found";
     private static final String ACL_CACHE_HIT = "acl_cache_hit";
     private static final String ACL_CREATION = "acl_creation";
     private static final String DISCONNECT_BY_EVENT = DISCONNECT + "_by_event";
@@ -75,7 +75,7 @@ public class LoginMetric {
         loginClosedConnectionFailure = metricsService.getCounter(metricModuleName, COMPONENT_LOGIN, CLOSED_CONNECTION, MetricsLabel.FAILURE);
         duplicateSessionMetadataFailure = metricsService.getCounter(metricModuleName, COMPONENT_LOGIN, DUPLICATE_SESSION_METADATA, MetricsLabel.FAILURE);
         disconnectCallbackCallFailure = metricsService.getCounter(metricModuleName, COMPONENT_LOGIN, DISCONNECT_CALLBACK_CALL, MetricsLabel.FAILURE);
-        sessionContextByClientIdNotFound = metricsService.getCounter(metricModuleName, COMPONENT_LOGIN, SESSION_CONTEXT_BY_CLIENT_ID);
+        sessionContextByClientIdNotFound = metricsService.getCounter(metricModuleName, COMPONENT_LOGIN, SESSION_CONTEXT_BY_CLIENT_ID_NOT_FOUND);
         aclCacheHit = metricsService.getCounter(metricModuleName, COMPONENT_LOGIN, ACL_CACHE_HIT);
         aclCreationFailure = metricsService.getCounter(metricModuleName, COMPONENT_LOGIN, ACL_CREATION, MetricsLabel.FAILURE);
 

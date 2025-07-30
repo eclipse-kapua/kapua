@@ -165,7 +165,6 @@ public class ServerPlugin implements ActiveMQServerPlugin {
     public void afterCreateConnection(RemotingConnection connection) throws ActiveMQException {
         connection.addCloseListener(() -> {
             try {
-                logger.info("$$$$$$$$$$ calling CLOSE for connection id: {}", connection.getID());
                 cleanUpConnectionData(connection, Failure.CLOSED);
             } catch (Exception e) {
                 //shouldn't happen so log it and throw runtime?
