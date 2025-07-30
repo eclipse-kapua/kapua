@@ -192,7 +192,7 @@ Feature: Datastore tests
     When I delete the metric info data based on the last query
     And I refresh all indices
     When I query for the metrics in topic "delete/by/query/test/1" and store them as "TopicMetricList2x"
-#    Then There are exactly 0 metrics in the list "TopicMetricList2x"
+    Then There are exactly 0 metrics in the list "TopicMetricList2x"
     When I query for the current account clients and store them as "AccountClientlList"
     Then There are exactly 3 clients in the list "AccountClientlList"
     And I delete client number 1 from the list "AccountClientlList"
@@ -245,28 +245,24 @@ Feature: Datastore tests
     Then I get empty message list result
     When I count for data message
     Then I get message count 0
-    Then I delete the messages based on the last query
     And I delete the the message with the ID "fake-id" from the current account
     Given I create channel info query for current account with limit 10
     When I query for channel info
     Then I get empty channel info list result
     When I count for channel info
     Then I get channel info count 0
-    Then I delete the channel info data based on the last query
     Then I delete the the channel info data with the ID "fake-id" from the current account
     Given I create metric info query for current account with limit 10
     When I query for metric info
     Then I get empty metric info list result
     When I count for metric info
     Then I get metric info count 0
-    Then I delete the metric info data based on the last query
     Then I delete the the metric info data with the ID "fake-id" from the current account
     Given I create client info query for current account with limit 10
     When I query for client info
     Then I get empty client info list result
     When I count for client info
     Then I get client info count 0
-    Then I delete the client info data based on the last query
     Then I delete the the client info data with the ID "fake-id" from the current account
     Then I delete all indices
     And I logout

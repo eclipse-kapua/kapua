@@ -26,14 +26,33 @@ import org.eclipse.kapua.service.storable.model.utils.MappingUtils;
 import java.util.List;
 
 /**
- * Query converter implementation
+ * Query converter implementation that converts only fields supported by the given ES endpoint/action (Query, Delete, Count etc.)
+ * In order to avoid bad requests
  *
- * @since 1.0
+ * @since 2.1.0
  */
 public class QueryConverterImpl implements QueryConverter {
 
+    private static ConvertOptions convertOptionsCount = new ConvertOptions(false, true, false, false, false);
+    private static ConvertOptions convertOptionsDelete = convertOptionsCount;
+    private static ConvertOptions convertOptionsSearch = new ConvertOptions(true, true, true, true, true);
+
     @Override
     public JsonNode convertQuery(Object query) throws QueryMappingException {
+        return convertQuery(query, convertOptionsSearch);
+    }
+
+    @Override
+    public JsonNode convertCountQuery(Object query) throws QueryMappingException {
+        return convertQuery(query, convertOptionsCount);
+    }
+
+    @Override
+    public JsonNode convertDeleteQuery(Object query) throws QueryMappingException {
+        return convertQuery(query, convertOptionsDelete);
+    }
+
+    private JsonNode convertQuery(Object query, ConvertOptions convertOptions) throws QueryMappingException {
         if (!(query instanceof StorableQuery)) {
             throw new QueryMappingException("Given query is not a StorableQuery");
         }
@@ -42,7 +61,7 @@ public class QueryConverterImpl implements QueryConverter {
             StorableQuery storableQuery = (StorableQuery) query;
             ObjectNode rootNode = MappingUtils.newObjectNode();
 
-            if (storableQuery.getFetchStyle() != null) {
+            if (convertOptions.sourceEnabled) {
                 ObjectNode includesFields = MappingUtils.newObjectNode();
                 includesFields.set(SchemaKeys.KEY_INCLUDES, MappingUtils.newArrayNode(storableQuery.getIncludes(storableQuery.getFetchStyle())));
                 includesFields.set(SchemaKeys.KEY_EXCLUDES, MappingUtils.newArrayNode(storableQuery.getExcludes(storableQuery.getFetchStyle())));
@@ -50,14 +69,14 @@ public class QueryConverterImpl implements QueryConverter {
             }
 
             // query
-            if (storableQuery.getPredicate() != null) {
+            if (convertOptions.queryEnabled && storableQuery.getPredicate() != null) {
                 rootNode.set(SchemaKeys.KEY_QUERY, storableQuery.getPredicate().toSerializedMap());
             }
 
             // sort
             ArrayNode sortNode = MappingUtils.newArrayNode();
             List<SortField> sortFields = storableQuery.getSortFields();
-            if (sortFields != null && !sortFields.isEmpty()) {
+            if (convertOptions.sortEnabled && sortFields != null && !sortFields.isEmpty()) {
                 for (SortField field : sortFields) {
                     sortNode.add(MappingUtils.newObjectNode(field.getField(), field.getSortDirection().name()));
                 }
@@ -66,11 +85,11 @@ public class QueryConverterImpl implements QueryConverter {
 
             // offset and limit settings
             Integer offset = storableQuery.getOffset();
-            if (offset != null) {
+            if (convertOptions.fromEnabled && offset != null) {
                 rootNode.set(SchemaKeys.KEY_FROM, MappingUtils.newNumericNode(offset));
             }
             Integer limit = storableQuery.getLimit();
-            if (limit != null) {
+            if (convertOptions.sizeEnabled && limit != null) {
                 rootNode.set(SchemaKeys.KEY_SIZE, MappingUtils.newNumericNode(limit));
             }
             return rootNode;
@@ -86,6 +105,24 @@ public class QueryConverterImpl implements QueryConverter {
         }
 
         return ((StorableQuery) query).getFetchStyle();
+    }
+
+    private static class ConvertOptions {
+
+        protected boolean sourceEnabled;
+        protected boolean queryEnabled;
+        protected boolean sortEnabled;
+        protected boolean fromEnabled;
+        protected boolean sizeEnabled;
+
+        ConvertOptions(boolean source,boolean query,boolean sort, boolean from, boolean size) {
+            this.sourceEnabled = source;
+            this.queryEnabled = query;
+            this.sortEnabled = sort;
+            this.fromEnabled = from;
+            this.sizeEnabled = size;
+        }
+
     }
 
 }
