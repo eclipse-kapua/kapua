@@ -271,8 +271,7 @@ public class RestElasticsearchClient extends AbstractElasticsearchClient<RestCli
                 throw new ClientException(ClientErrorCodes.ACTION_ERROR, CLIENT_HITS_MAX_VALUE_EXCEEDED);
             }
             resultsNode = ((ArrayNode) hitsNode.get(ElasticsearchKeywords.KEY_HITS));
-        } else if (!isRequestBadRequest(queryResponse) &&
-                !isRequestNotFound(queryResponse)) {
+        } else if (isRequestCauseOfConcern(queryResponse)) {
             throw buildExceptionFromUnsuccessfulResponse("Query", queryResponse);
         }
 
@@ -301,7 +300,7 @@ public class RestElasticsearchClient extends AbstractElasticsearchClient<RestCli
 
     @Override
     public long count(TypeDescriptor typeDescriptor, Object query) throws ClientException {
-        JsonNode queryJsonNode = getModelConverter().convertQuery(query);
+        JsonNode queryJsonNode = getModelConverter().convertCountQuery(query);
 
         LOG.debug(COUNT_CONVERTED_QUERY, queryJsonNode);
 
@@ -318,8 +317,7 @@ public class RestElasticsearchClient extends AbstractElasticsearchClient<RestCli
             if (totalCount > Integer.MAX_VALUE) {
                 throw new ClientException(ClientErrorCodes.ACTION_ERROR, CLIENT_HITS_MAX_VALUE_EXCEEDED);
             }
-        } else if (!isRequestBadRequest(queryResponse) &&
-                !isRequestNotFound(queryResponse)) {
+        } else if (isRequestCauseOfConcern(queryResponse)) {
             throw buildExceptionFromUnsuccessfulResponse("Count", queryResponse);
         }
 
@@ -340,7 +338,7 @@ public class RestElasticsearchClient extends AbstractElasticsearchClient<RestCli
 
     @Override
     public void deleteByQuery(TypeDescriptor typeDescriptor, Object query) throws ClientException {
-        JsonNode queryJsonNode = getModelConverter().convertQuery(query);
+        JsonNode queryJsonNode = getModelConverter().convertDeleteQuery(query);
 
         LOG.debug(QUERY_CONVERTED_QUERY, queryJsonNode);
 
@@ -350,8 +348,7 @@ public class RestElasticsearchClient extends AbstractElasticsearchClient<RestCli
         Response deleteResponse = restCallTimeoutHandler(() -> getClient().performRequest(request), typeDescriptor.getIndex(), "DELETE BY QUERY");
 
         if (!isRequestSuccessful(deleteResponse) &&
-                !isRequestNotFound(deleteResponse) &&
-                !isRequestBadRequest(deleteResponse)) {
+                isRequestCauseOfConcern(deleteResponse)) {
             throw buildExceptionFromUnsuccessfulResponse("Delete by query", deleteResponse);
         }
     }
@@ -589,6 +586,26 @@ public class RestElasticsearchClient extends AbstractElasticsearchClient<RestCli
      */
     private boolean isRequestNotFound(int responseCode) {
         return (404 == responseCode);
+    }
+
+    private boolean isRequestNotParsed(@NotNull Response response) throws ClientException {
+        JsonNode responseNode = readResponseAsJsonNode(response);
+        return responseNode.path("error").path("type").asText().equals("parsing_exception");
+    }
+
+    /**
+     * In some cases, a query for a given index doesn't work properly because ES missed to refresh internal indexes, and does not yet "recognize" the requested index
+     * In such cases, it returns either a 404 or 400 error code BUT for the latter the exception type, in the response, is not a parsing_exception
+     * @param response The response code to check.
+     * @return {@code false} iff the above condition holds, case in which we don't want to propagate an exception
+     * @since 2.1.0
+     */
+    private boolean isRequestCauseOfConcern(@NotNull Response response) throws ClientException {
+        if (isRequestBadRequest(response)) {
+            return isRequestNotParsed(response);
+        } else {
+            return !isRequestNotFound(response);
+        }
     }
 
     /**
