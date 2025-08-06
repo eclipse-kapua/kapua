@@ -276,7 +276,7 @@ public class DockerSteps {
      * @param debugPort                debug port on docker
      * @param debugHostPort            debug port on docker host
      * @param brokerInternalDebugPort
-     * @param dockerImage              full name of image (e.g. "kapua/kapua-broker:1.6.13-SNAPSHOT")
+     * @param dockerImage              full name of image (e.g. "kapua/kapua-broker:1.6.13")
      * @return Container configuration for specific boroker instance
      */
     private ContainerConfig getBrokerContainerConfig(String brokerAddr, String brokerIp,
@@ -358,7 +358,7 @@ public class DockerSteps {
                         "DB_PASSWORD=kapua",
                         "DB_PORT_3306_TCP_PORT=3306"
                 )
-                .image("kapua/kapua-sql:1.6.13-SNAPSHOT")
+                .image("kapua/kapua-sql:1.6.13")
                 .build();
     }
 
@@ -403,7 +403,7 @@ public class DockerSteps {
         return ContainerConfig.builder()
                 .hostConfig(hostConfig)
                 .exposedPorts(String.valueOf(brokerPort))
-                .image("kapua/kapua-events-broker:1.6.13-SNAPSHOT")
+                .image("kapua/kapua-events-broker:1.6.13")
                 .build();
     }
 

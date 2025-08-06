@@ -16,7 +16,7 @@
     <parent>
         <artifactId>kapua-extras</artifactId>
         <groupId>org.eclipse.kapua</groupId>
-        <version>1.6.13-SNAPSHOT</version>
+        <version>1.6.13</version>
     </parent>
 
     <artifactId>kapua-encryption-migrator</artifactId>

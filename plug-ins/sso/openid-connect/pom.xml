@@ -20,7 +20,7 @@
     <parent>
         <groupId>org.eclipse.kapua</groupId>
         <artifactId>kapua-sso</artifactId>
-        <version>1.6.13-SNAPSHOT</version>
+        <version>1.6.13</version>
     </parent>
 
     <packaging>pom</packaging>

@@ -19,7 +19,7 @@
     <parent>
         <groupId>org.eclipse.kapua</groupId>
         <artifactId>kapua</artifactId>
-        <version>1.6.13-SNAPSHOT</version>
+        <version>1.6.13</version>
     </parent>
 
     <artifactId>kapua-console</artifactId>
