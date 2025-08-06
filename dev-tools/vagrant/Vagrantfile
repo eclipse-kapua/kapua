@@ -21,7 +21,7 @@ env_vars = {
   'ACTIVEMQ_VERSION'      => '5.14.5',
   'ARTEMIS_VERSION'       => '2.2.0',
   'JETTY_VERSION'         => '9.4.12.v20180830',
-  'KAPUA_VERSION'         => '1.6.13'
+  'KAPUA_VERSION'         => '1.6.14-SNAPSHOT'
 }
 
 # Vagrant 1.9.6 or major is required

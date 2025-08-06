@@ -18,7 +18,7 @@
     <parent>
         <groupId>org.eclipse.kapua</groupId>
         <artifactId>kapua-translator-kura</artifactId>
-        <version>1.6.13</version>
+        <version>1.6.14-SNAPSHOT</version>
     </parent>
 
     <artifactId>kapua-translator-kura-mqtt</artifactId>

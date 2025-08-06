@@ -17,8 +17,8 @@ Feature: Testing docker steps
   Scenario: Execute possible docker steps to show its usage
     For now it only lists docker images
 
-    Given List images by name "kapua/kapua-broker:1.6.13"
-    #And Pull image "kapua/kapua-sql:1.6.13"
+    Given List images by name "kapua/kapua-broker:1.6.14-SNAPSHOT"
+    #And Pull image "kapua/kapua-sql:1.6.14-SNAPSHOT"
     And Pull image "elasticsearch:5.4.0"
     Then Create network
     And Start DB container with name "db"
@@ -27,10 +27,10 @@ Feature: Testing docker steps
     Then I wait 15 seconds
     And Start Message Broker container
       | name     | brokerAddress  | brokerIp | clusterName  | mqttPort | mqttHostPort | mqttsPort | mqttsHostPort | webPort | webHostPort | debugPort | debugHostPort | brokerInternalDebugPort| dockerImage |
-      | broker-1 | broker1         | 0.0.0.0  | test-cluster | 1883     | 1883         | 8883      | 8883          | 8161    | 8161        | 9999      | 9999          | 9991                   | kapua/kapua-broker:1.6.13 |
+      | broker-1 | broker1         | 0.0.0.0  | test-cluster | 1883     | 1883         | 8883      | 8883          | 8161    | 8161        | 9999      | 9999          | 9991                   | kapua/kapua-broker:1.6.14-SNAPSHOT |
     And Start Message Broker container
       | name     | brokerAddress  | brokerIp | clusterName  | mqttPort | mqttHostPort | mqttsPort | mqttsHostPort | webPort | webHostPort | debugPort | debugHostPort | brokerInternalDebugPort| dockerImage |
-      | broker-2 | broker2        | 0.0.0.0  | test-cluster | 1883     | 1884         | 8883      | 8884          | 8161    | 8162        | 9999      | 9998          | 9991                   | kapua/kapua-broker:1.6.13 |
+      | broker-2 | broker2        | 0.0.0.0  | test-cluster | 1883     | 1884         | 8883      | 8884          | 8161    | 8162        | 9999      | 9998          | 9991                   | kapua/kapua-broker:1.6.14-SNAPSHOT |
     Then I wait 30 seconds
     And Create mqtt "client-1" client for broker "0.0.0.0" on port 1883 with user "kapua-sys" and pass "kapua-password"
     And Connect to mqtt client "client-1"

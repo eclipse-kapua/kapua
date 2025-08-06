@@ -19,7 +19,7 @@
     <parent>
         <artifactId>kapua-console-module</artifactId>
         <groupId>org.eclipse.kapua</groupId>
-        <version>1.6.13</version>
+        <version>1.6.14-SNAPSHOT</version>
     </parent>
 
     <artifactId>kapua-console-module-device</artifactId>
