@@ -18,7 +18,7 @@
     <parent>
         <artifactId>kapua-device-management-job</artifactId>
         <groupId>org.eclipse.kapua</groupId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>2.0.0-BETA-M15</version>
     </parent>
 
     <artifactId>kapua-device-management-job-api</artifactId>
