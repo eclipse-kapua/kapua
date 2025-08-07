@@ -172,7 +172,7 @@ default, Kapua comes with the NodePort service that routes all traffic from port
 connect your MQTT clients directly to this service. For the simulator example similar to the above, that would look
 something like
 
-    java -jar target/kapua-simulator-kura-2.0.0-BETA-M15-app.jar --broker tcp://kapua-broker:kapua-password@192.168.64.2:31883
+    java -jar target/kapua-simulator-kura-2.0.0-SNAPSHOT-app.jar --broker tcp://kapua-broker:kapua-password@192.168.64.2:31883
 
 This is suitable only for the local deployments. In the cloud or production environments, you should deploy a proper
 LoadBalancer Openshift service to enable external traffic flow to the broker.
