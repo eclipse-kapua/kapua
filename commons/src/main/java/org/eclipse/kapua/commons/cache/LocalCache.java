@@ -159,4 +159,8 @@ public class LocalCache<K, V> implements Cache<K, V> {
     public boolean containsKey(K k) {
         return cache.asMap().containsKey(k);
     }
+
+    public long getSize() {
+        return cache.size();
+    }
 }

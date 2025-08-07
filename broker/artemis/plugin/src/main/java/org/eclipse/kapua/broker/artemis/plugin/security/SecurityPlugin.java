@@ -23,6 +23,7 @@ import org.apache.activemq.artemis.core.security.CheckType;
 import org.apache.activemq.artemis.core.security.Role;
 import org.apache.activemq.artemis.spi.core.protocol.RemotingConnection;
 import org.apache.activemq.artemis.spi.core.security.ActiveMQSecurityManager5;
+import org.eclipse.kapua.broker.artemis.plugin.security.RunWithLock.LockType;
 import org.eclipse.kapua.broker.artemis.plugin.security.metric.LoginMetric;
 import org.eclipse.kapua.broker.artemis.plugin.security.metric.PublishMetric;
 import org.eclipse.kapua.broker.artemis.plugin.security.metric.SubscribeMetric;
@@ -53,7 +54,6 @@ import javax.jms.JMSException;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.security.auth.Subject;
 import javax.security.auth.login.CredentialException;
-import javax.security.cert.X509Certificate;
 import java.security.cert.Certificate;
 import java.util.Set;
 
@@ -130,23 +130,6 @@ public class SecurityPlugin implements ActiveMQSecurityManager5 {
         }
     }
 
-//    private String extractAndValidateClientId(RemotingConnection remotingConnection) {
-//        String clientId = remotingConnection.getClientID();
-//        //set a random client id value if not set by the client
-//        //from JMS 2 specs "Although setting client ID remains mandatory when creating an unshared durable subscription, it is optional when creating a shared durable subscription."
-//        if (Strings.isNullOrEmpty(clientId)) {
-//            clientId = clientIdPrefix + INDEX.getAndIncrement();
-//            logger.info("Updated empty client id to: {}", clientId);
-//        }
-//        //leave the clientId validation to the DeviceCreator. Here just check for / or ::
-//        //ArgumentValidator.match(clientId, DeviceValidationRegex.CLIENT_ID, "deviceCreator.clientId");
-//        if (clientId != null && (clientId.contains("/") || clientId.contains("::"))) {
-//            //TODO look for the right exception mapped to MQTT invalid client id error code
-//            throw new SecurityException("Invalid Client Id!");
-//        }
-//        return clientId;
-//    }
-
     private String extractAndValidateClientId(RemotingConnection remotingConnection) {
         String clientId = remotingConnection.getClientID();
         //leave the clientId validation to the DeviceCreator. Here just check for / or ::
@@ -158,6 +141,7 @@ public class SecurityPlugin implements ActiveMQSecurityManager5 {
         return clientId;
     }
 
+    //TODO SEE EXTERNAL FOR THE LOCK
     private Subject authenticateInternalConn(ConnectionInfo connectionInfo, String connectionId, String username, String password, RemotingConnection remotingConnection) {
         loginMetric.getInternalConnector().getAttempt().inc();
         String usernameToCompare = SystemSetting.getInstance().getString(SystemSettingKey.BROKER_INTERNAL_CONNECTOR_USERNAME);
@@ -192,21 +176,24 @@ public class SecurityPlugin implements ActiveMQSecurityManager5 {
 
     private Subject authenticateExternalConn(ConnectionInfo connectionInfo, String connectionId, String username, String password, RemotingConnection remotingConnection) throws Exception {
         if (connectionInfo.getClientId()==null) {
-            return authenticateExternalConnCallable(connectionInfo, connectionId, username, password, remotingConnection);
+            logger.warn("Client Id is null for connection id {} - login denied", connectionId);
+            return null;
+//            throw new SecurityException("Invalid Client Id!");
+//            return authenticateExternalConnCallable(connectionInfo, connectionId, username, password, remotingConnection);
         }
         else {
-            return serverContext.getSecurityContext().callWithLock(connectionInfo.getClientId(),
-                () -> authenticateExternalConnCallable(connectionInfo, connectionId, username, password, remotingConnection));
+            String fullClientId = Utils.getFullClientId(getScopeId(username), connectionInfo.getClientId());
+            return serverContext.getSecurityContext().callWithLock(LockType.CLIENT_ID, fullClientId,
+                () -> authenticateExternalConnCallable(connectionInfo, connectionId, fullClientId, username, password, remotingConnection));
         }
     }
 
-    private Subject authenticateExternalConnCallable(ConnectionInfo connectionInfo, String connectionId, String username, String password, RemotingConnection remotingConnection) {
+    private Subject authenticateExternalConnCallable(ConnectionInfo connectionInfo, String connectionId, String fullClientId, String username, String password, RemotingConnection remotingConnection) {
         loginMetric.getExternalConnector().getAttempt().inc();
         Context timeTotal = loginMetric.getExternalAddConnection().time();
         try {
             logger.info("Authenticate external: user: {} - clientId: {} - connectionIp: {} - connectionId: {} - isOpen: {}",
                     username, connectionInfo.getClientId(), connectionInfo.getClientIp(), remotingConnection.getID(), remotingConnection.getTransportConnection().isOpen());
-            String fullClientId = Utils.getFullClientId(getScopeId(username), connectionInfo.getClientId());
             AuthRequest authRequest = new AuthRequest(
                     serverContext.getClusterName(),
                     serverContext.getBrokerIdentity().getBrokerHost(), SecurityAction.brokerConnect.name(),
@@ -214,7 +201,8 @@ public class SecurityPlugin implements ActiveMQSecurityManager5 {
                     serverContext.getBrokerIdentity().getBrokerHost(), serverContext.getBrokerIdentity().getBrokerId());
             SessionContext currentSessionContext = serverContext.getSecurityContext().getSessionContextByClientId(fullClientId);
 
-            serverContext.getSecurityContext().updateStealingLinkAndIllegalState(authRequest, connectionId, currentSessionContext != null ? currentSessionContext.getConnectionId() : null);
+            boolean isStealingLink = serverContext.getSecurityContext().updateStealingLinkAndIllegalState(
+                    authRequest, connectionId, currentSessionContext != null ? currentSessionContext.getConnectionId() : null);
             AuthResponse authResponse = serverContext.getAuthServiceClient().brokerConnect(authRequest);
             validateAuthResponse(authResponse);
             KapuaPrincipal principal = new KapuaPrincipalImpl(authResponse);
@@ -226,11 +214,14 @@ public class SecurityPlugin implements ActiveMQSecurityManager5 {
             remotingConnection.setClientID(fullClientId);
             logger.info("Authenticate external: connectionId: {} - old: {}", sessionContext.getConnectionId(), currentSessionContext != null ? currentSessionContext.getConnectionId() : "N/A");
             Subject subject = null;
-            //this call is synchronized on sessionId value
+            //this call is synchronized on connectionId value
             if (serverContext.getSecurityContext().setSessionContext(sessionContext, authResponse.getAcls())) {
                 subject = serverContext.getSecurityContext().buildFromPrincipal(sessionContext.getPrincipal());
             }
             loginMetric.getExternalConnector().getSuccess().inc();
+            if (isStealingLink) {
+                serverContext.cleanUpConnectionData(logger, loginMetric, currentSessionContext.getConnectionId(), pluginUtility.isInternal(remotingConnection), null, null);
+            }
             return subject;
         } catch (Exception e) {
             loginMetric.getExternalConnector().getFailure().inc();
@@ -355,15 +346,13 @@ public class SecurityPlugin implements ActiveMQSecurityManager5 {
         try {
             SslHandler sslhandler = (SslHandler) nettyServerConnection.getChannel().pipeline().get("ssl");
             if (sslhandler != null) {
-                Certificate[] localCertificates = sslhandler.engine().getSession().getLocalCertificates();
-                Certificate[] clientCertificates = sslhandler.engine().getSession().getPeerCertificates();
-                X509Certificate[] x509ClientCertificates = sslhandler.engine().getSession().getPeerCertificateChain();//???
-                return clientCertificates;
+                return sslhandler.engine().getSession().getPeerCertificates();
             } else {
                 return null;
             }
         } catch (SSLPeerUnverifiedException e) {
-            logger.error("", e);
+            logger.warn("SSLPeerUnverifiedException: {}", e.getMessage());
+            logger.debug("", e);
             return null;
         }
     }

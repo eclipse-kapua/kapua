@@ -27,13 +27,13 @@ import java.util.stream.Stream;
 public class RunWithLock {
 
     public enum LockType {
-        EXTERNAL,
-        INTERNAL
+        CONNECTION_ID,
+        CLIENT_ID
     }
 
     //TODO make it configurable?
     //TODO how many threads are available?
-    private static final int LOCKS_SIZE = 128;
+    private static final int LOCKS_SIZE = 256;
     private final Map<LockType, Lock[]> locks;
 
     @Inject
