@@ -23,6 +23,10 @@ public class AddressAccessTracker {
         accessMap = new ConcurrentHashMap<String, Long>();
     }
 
+    public Map<String, Long> getAccessMap() {
+        return accessMap;
+    }
+
     public void update(String address) {
         accessMap.put(address, System.currentTimeMillis());
     }
