@@ -15,7 +15,7 @@ FROM @docker.account@/java-base
 
 COPY maven /
 
-ENV BROKER_HOST=message-broker
+ENV BROKER_HOST=${BROKER_HOST:-message-broker}
 ENV BROKER_ID=broker-id
 
 ENV DATASTORE_ADDR es:9200
@@ -41,13 +41,13 @@ RUN useradd -u 1002 -g 0 -d '/opt/artemis' -s '/sbin/nologin' artemis && \
 ENV JAVA_ARGS "-Dcommons.db.schema.update=true \
                    -Dcommons.db.connection.host=\${SQL_DB_ADDR} \
                    -Dcommons.db.connection.port=\${SQL_DB_PORT} \
+                   -Dbroker.host=\${BROKER_HOST} \
                    -Dcommons.eventbus.url="${EVENT_BROKER_URL}" \
                    -Dcommons.eventbus.username="${EVENT_BROKER_USERNAME}" \
                    -Dcommons.eventbus.password="${EVENT_BROKER_PASSWORD}" \
                    -Dcommons.servicebus.url="${SERVICE_BROKER_URL}" \
                    -Dcommons.servicebus.username="${SERVICE_BROKER_USERNAME}" \
                    -Dcommons.servicebus.password="${SERVICE_BROKER_PASSWORD}" \
-                   -Dbroker.ip=message-broker \
                    -Dlocator.class.impl=org.eclipse.kapua.locator.guice.GuiceLocatorImpl \
                    -Dlocator.guice.stage=PRODUCTION \
                    -Dcertificate.jwt.private.key=file:///etc/opt/kapua/key.pk8 \
