@@ -13,4 +13,17 @@
 
 JAVA_OPTS="${JAVA_OPTS} --add-opens java.base/java.lang=ALL-UNNAMED"
 
+#options for DB connection
+JAVA_OPTS="${JAVA_OPTS} -Dcommons.db.jdbc.database.target=${DB_TARGET:-}"
+JAVA_OPTS="${JAVA_OPTS} -Dcommons.db.connection.host=${DB_HOST:-db}"
+JAVA_OPTS="${JAVA_OPTS} -Dcommons.db.name=${DB_NAME:-kapuadb}"
+JAVA_OPTS="${JAVA_OPTS} -Dcommons.db.connection.port=${DB_PORT:-3306}"
+JAVA_OPTS="${JAVA_OPTS} -Dcommons.db.schema=${DB_SCHEMA_NAME:-kapuadb}"
+JAVA_OPTS="${JAVA_OPTS} -Dcommons.db.username=${DB_USERNAME:-kapua}"
+JAVA_OPTS="${JAVA_OPTS} -Dcommons.db.password=${DB_PASSWORD:-kapua}"
+JAVA_OPTS="${JAVA_OPTS} -Dcommons.db.connection.scheme=${DB_CONNECTION_SCHEME:-jdbc:h2:tcp}"
+JAVA_OPTS="${JAVA_OPTS} -Dcommons.db.jdbcConnectionUrlResolver=${DB_RESOLVER:-DEFAULT}"
+JAVA_OPTS="${JAVA_OPTS} -Dcommons.db.jdbc.driver=${DB_DRIVER:-org.h2.Driver}"
+JAVA_OPTS="${JAVA_OPTS} -Dcommons.db.connection.additionalOptions=${DB_CONNECTION_ADDITIONAL_OPTIONS}"
+
 java ${JAVA_OPTS} ${DEBUG_OPTS} ${JMX_OPTS} -jar kapua-consumer-telemetry-2.1.0-SNAPSHOT-app.jar
