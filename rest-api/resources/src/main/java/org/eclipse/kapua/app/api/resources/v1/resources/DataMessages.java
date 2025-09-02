@@ -232,16 +232,27 @@ public class DataMessages extends AbstractKapuaResource {
             String metricMaxValue)
         throws KapuaIllegalArgumentException {
 
+        // Cannot perform MetricExistPredicate MetricPredicate on `binary` metrics
+        if (new MetricType<>("binary").equals(metricType)) {
+            throw new KapuaIllegalArgumentException("metricType", "binary");
+        }
+
         if (metricMinValue == null && metricMaxValue == null) {
-            Class<V> type = metricType != null ? metricType.getType() : null;
-            return DATASTORE_PREDICATE_FACTORY.newMetricExistsPredicate(metricName, type);
+
+            StorablePredicate metricPredicate;
+
+            if (metricType != null) {
+                metricPredicate = DATASTORE_PREDICATE_FACTORY.newMetricExistsPredicate(metricName, metricType.getType());
+            }
+            else {
+                // If metric name matches a `binary` metric, no message will be matched since ES does not support binary indexing
+                metricPredicate = DATASTORE_PREDICATE_FACTORY.newMetricExistsPredicate(metricName, null);
+            }
+
+            return metricPredicate;
         } else {
             if (metricType == null) {
                 throw new KapuaIllegalNullArgumentException("metricType");
-            }
-
-            if (new MetricType<>("binary").equals(metricType)) {
-                throw new KapuaIllegalArgumentException("metricType", "binary");
             }
 
             V minValue = (V) ObjectValueConverter.fromString(metricMinValue, metricType.getType());
