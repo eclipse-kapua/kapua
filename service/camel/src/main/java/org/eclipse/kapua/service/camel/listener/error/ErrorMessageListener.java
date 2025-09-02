@@ -106,12 +106,4 @@ public class ErrorMessageListener {
         }
     }
 
-    protected int getDelivery(Exchange exchange) {
-        return exchange.getIn().getHeader(JMS_EXCHANGE_REDELIVERY_COUNTER, 0, Integer.class);
-    }
-
-    protected String getMessageId(Exchange exchange) {
-        return exchange.getIn().getMessageId();
-    }
-
 }
