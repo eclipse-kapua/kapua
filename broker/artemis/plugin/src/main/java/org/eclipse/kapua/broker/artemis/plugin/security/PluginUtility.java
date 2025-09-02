@@ -28,16 +28,12 @@ public class PluginUtility {
     protected static Logger logger = LoggerFactory.getLogger(SecurityPlugin.class);
 
     private final String amqpInternalConnectorPort;
-    private final String amqpInternalConnectorName;
     private final String mqttInternalConnectorPort;
-    private final String mqttInternalConnectorName;
 
     @Inject
     public PluginUtility(BrokerSetting brokerSetting) {
         amqpInternalConnectorPort = ":" + brokerSetting.getString(BrokerSettingKey.INTERNAL_AMQP_ACCEPTOR_PORT);
-        amqpInternalConnectorName = brokerSetting.getString(BrokerSettingKey.INTERNAL_AMQP_ACCEPTOR_NAME);
         mqttInternalConnectorPort = ":" + brokerSetting.getString(BrokerSettingKey.INTERNAL_MQTT_ACCEPTOR_PORT);
-        mqttInternalConnectorName = brokerSetting.getString(BrokerSettingKey.INTERNAL_MQTT_ACCEPTOR_NAME);
     }
 
     public String getConnectionId(RemotingConnection remotingConnection) {
@@ -45,9 +41,7 @@ public class PluginUtility {
     }
 
     public boolean isInternal(RemotingConnection remotingConnection) {
-        String protocolName = remotingConnection.getProtocolName();
         if (remotingConnection instanceof ActiveMQProtonRemotingConnection) {
-//            AMQPConnectionContext connectionContext = ((ActiveMQProtonRemotingConnection)remotingConnection).getAmqpConnection();
             Connection connection = ((ActiveMQProtonRemotingConnection) remotingConnection).getAmqpConnection().getConnectionCallback().getTransportConnection();
             if (logger.isDebugEnabled()) {
                 logger.debug("Connector: {} - Remote container: {} - connection id: {} - local address: {}",
@@ -68,15 +62,12 @@ public class PluginUtility {
     }
 
     //is internal if the inbound connection is coming from the amqp connector
-    public boolean isAmqpInternal(String localAddress) {
+    private boolean isAmqpInternal(String localAddress) {
         return localAddress.endsWith(amqpInternalConnectorPort);
     }
 
-    private boolean isMqttInternal(String localAddress, String protocolName) {
-        //is internal if the inbound connection is coming from the mqtt internal connector
-        //are the first check redundant? If the connector name is what is expected should be enough?
-        return
-                (localAddress.endsWith(mqttInternalConnectorPort) && //local port internal mqtt
-                        mqttInternalConnectorName.equalsIgnoreCase(protocolName));
+    //is internal if the inbound connection is coming from the mqtt internal connector
+    private boolean isMqttInternal(String localAddress) {
+        return localAddress.endsWith(mqttInternalConnectorPort);
     }
 }
