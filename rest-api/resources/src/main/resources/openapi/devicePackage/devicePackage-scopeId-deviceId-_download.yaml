@@ -55,7 +55,7 @@ paths:
                     blockDelay: 0
                     blockTimeout: 5000
                     notifyBlockSize: 256
-                    installVerifyURI: https://download.eclipse.org/kura/releases/4.1.0/org.eclipse.kura.demo.heater_1.0.500.verifier.sh
+                    installVerifierURI: https://download.eclipse.org/kura/releases/4.1.0/org.eclipse.kura.demo.heater_1.0.500.verifier.sh
         required: true
       responses:
         200:
