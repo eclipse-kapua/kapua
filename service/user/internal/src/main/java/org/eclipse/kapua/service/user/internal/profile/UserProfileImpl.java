@@ -15,9 +15,11 @@ package org.eclipse.kapua.service.user.internal.profile;
 import org.eclipse.kapua.service.user.profile.UserProfile;
 
 public class UserProfileImpl implements UserProfile {
+
     private String displayName;
     private String phoneNumber;
     private String email;
+    private int optlock;
 
 
     @Override
@@ -54,4 +56,13 @@ public class UserProfileImpl implements UserProfile {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public int getOptlock() {
+        return optlock;
+    }
+
+    public void setOptlock(int optlock) {
+        this.optlock = optlock;
+    }
+
 }
