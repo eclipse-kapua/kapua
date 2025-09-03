@@ -38,4 +38,11 @@ public interface UserProfile {
     String getEmail();
 
     void setEmail(String email);
+
+    @XmlElement(name = "optlock")
+    int getOptlock();
+
+    void setOptlock(int optlock);
+
 }
+
