@@ -125,7 +125,7 @@ components:
             notifyBlockSize:
               type: integer
               description: The amount of kBi to download before sending a new Operation Notification to the platform
-            installVerifyURI:
+            installVerifierURI:
               type: string
               description: The URI to download the script that can verify that the package installation has successfully completed.
       required:
@@ -149,7 +149,7 @@ components:
           blockDelay: 0
           blockTimeout: 5000
           notifyBlockSize: 256
-          installVerifyURI: https://download.eclipse.org/kura/releases/4.1.0/org.eclipse.kura.demo.heater_1.0.500.verifier.sh
+          installVerifierURI: https://download.eclipse.org/kura/releases/4.1.0/org.eclipse.kura.demo.heater_1.0.500.verifier.sh
     devicePackageUninstallRequest:
       type: object
       properties:
