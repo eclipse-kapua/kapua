@@ -85,6 +85,7 @@ components:
             status: CONNECTED
             clientId: Client-Id-1
             userId: Ag
+            reservedUserId: Gd1BfeWwh3r
             allowUserChange: false
             userCouplingMode: INHERITED
             authenticationType: USER_PASS
@@ -148,6 +149,7 @@ components:
             modifiedOn: '2019-09-13T08:04:49.927Z'
             modifiedBy: Ag
             optlock: 17
+            reservedUserId: Gd1BfeWwh3r
             allowUserChange: false
             userCouplingMode: INHERITED
             authenticationType: USER_PASS
