@@ -47,6 +47,7 @@ public class UserProfileServiceImpl implements UserProfileService {
             user.setEmail(userProfile.getEmail());
             user.setDisplayName(userProfile.getDisplayName());
             user.setPhoneNumber(userProfile.getPhoneNumber());
+            user.setOptlock(userProfile.getOptlock());
 
             userService.update(user);
         });
@@ -65,6 +66,8 @@ public class UserProfileServiceImpl implements UserProfileService {
             userProfile.setDisplayName(user.getDisplayName());
             userProfile.setEmail(user.getEmail());
             userProfile.setPhoneNumber(user.getPhoneNumber());
+            userProfile.setOptlock(user.getOptlock());
+
             return userProfile;
         });
     }
