@@ -158,6 +158,7 @@ components:
         modifiedBy: AQ
         optlock: 1
         clientId: testDevice
+        connectionId: Gd1BfeWwh3s
         status: ENABLED
         displayName: Test Device
         serialNumber: "1234567890"
@@ -191,6 +192,11 @@ components:
               type: string
               readOnly: true
               description: The Kura Client ID of this device
+            connectionId:
+              allOf:
+                - $ref: '../openapi.yaml#/components/schemas/kapuaId'
+                - description: The ID of the Connection of this Device
+                  readOnly: true
             status:
               $ref: '#/components/schemas/deviceStatus'
             lastEventId:
@@ -270,6 +276,7 @@ components:
             clientId: testDevice
             status: ENABLED
             displayName: Test Device
+            connectionId: Gd1BfeWwh3s
             serialNumber: "1234567890"
             modelId: Test Model
             biosVersion: N/A
