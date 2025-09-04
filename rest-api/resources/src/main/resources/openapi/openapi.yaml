@@ -488,6 +488,12 @@ components:
       type: string
       pattern: '[A-Za-z0-9-_=]+'
       description: The standard format for any ID in Kapua. It's encoded as a [base64url URL- and filename-safe (RFC 4648 §5)](https://tools.ietf.org/html/rfc4648#section-5)
+    ### Common Fields ###
+    optlock:
+      description: |
+        The optlock field is used to detect that this entity has not been modified by someone else. When updating an entity, first do a find to get the latest version of the entity and note the value of the optlock. Then in the update operation, set the optlock value to match the value that you found. If someone else has updated the entity between your find and update operations, the update will fail and the db/server will return an error.\
+        See this [StackOverflow question](http://stackoverflow.com/questions/129329/optimistic-vs-pessimistic-locking) for more information on optimistic locking
+      type: integer
     ### Entities ###
     kapuaEntity:
       description: A standard Entity, that doesn't support edits and versioning. All the objects (except for Datastore objects) in Kapua are Entities
@@ -530,10 +536,7 @@ components:
                 - description: The ID of the Entity who modified this Entity
                   readOnly: true
             optlock:
-              description: |
-                The optlock field is used to detect that this entity has not been modified by someone else. When updating an entity, first do a find to get the latest version of the entity and note the value of the optlock. Then in the update operation, set the optlock value to match the value that you found. If someone else has updated the entity between your find and update operations, the update will fail and the db/server will return an error.\
-                See this [StackOverflow question](http://stackoverflow.com/questions/129329/optimistic-vs-pessimistic-locking) for more information on optimistic locking
-              type: integer
+              $ref: '#/components/schemas/optlock'
     kapuaNamedEntity:
       allOf:
         - $ref: '#/components/schemas/kapuaUpdatableEntity'
