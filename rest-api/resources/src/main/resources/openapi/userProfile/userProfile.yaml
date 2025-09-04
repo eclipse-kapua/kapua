@@ -22,7 +22,10 @@ components:
               type: string
             email:
               type: string
+            optlock:
+              $ref: '../openapi.yaml#/components/schemas/optlock'
           example:
             displayName: "Foo42"
             phoneNumber: "424202424"
             email: "foo@bar.com"
+            optlock: 1
