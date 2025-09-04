@@ -16,11 +16,11 @@ import org.eclipse.kapua.service.user.profile.UserProfile;
 
 public class UserProfileImpl implements UserProfile {
 
+    private String name;
     private String displayName;
     private String phoneNumber;
     private String email;
     private int optlock;
-
 
     @Override
     public String getDisplayName() {
@@ -56,6 +56,18 @@ public class UserProfileImpl implements UserProfile {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    @Override
+    public String getName() {
+        return this.name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+
 
     public int getOptlock() {
         return optlock;

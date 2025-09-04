@@ -39,10 +39,14 @@ public interface UserProfile {
 
     void setEmail(String email);
 
+    @XmlElement(name = "name")
+    String getName();
+
+    void setName(String name);
+
     @XmlElement(name = "optlock")
     int getOptlock();
 
     void setOptlock(int optlock);
 
 }
-
