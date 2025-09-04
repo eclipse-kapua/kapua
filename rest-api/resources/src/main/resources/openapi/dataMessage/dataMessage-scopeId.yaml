@@ -23,7 +23,6 @@ paths:
         - name: clientId
           in: query
           required: false
-          collectionFormat: multi
           schema:
             type: array
             items:
