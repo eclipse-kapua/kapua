@@ -120,8 +120,8 @@ public class SecurityPlugin implements ActiveMQSecurityManager5 {
                         (String) remotingConnection.getTransportConnection().getConnectorConfig().getCombinedParams().get("sslEnabled"),//sslEnabled
                         getPeerCertificates(remotingConnection));//clientsCertificates
                 return pluginUtility.isInternal(remotingConnection) ?
-                        authenticateInternalConn(connectionInfo, connectionId, username, password, remotingConnection) :
-                        authenticateExternalConn(connectionInfo, connectionId, username, password, remotingConnection);
+                    authenticateInternalConn(connectionInfo, connectionId, username, password, remotingConnection) :
+                    authenticateExternalConn(connectionInfo, connectionId, username, password, remotingConnection);
             }
         } catch (Exception e) {
             //internal error. do not disclose any info about the reason. just deny the login
@@ -142,7 +142,8 @@ public class SecurityPlugin implements ActiveMQSecurityManager5 {
     }
 
     //TODO SEE EXTERNAL FOR THE LOCK
-    private Subject authenticateInternalConn(ConnectionInfo connectionInfo, String connectionId, String username, String password, RemotingConnection remotingConnection) {
+    private Subject authenticateInternalConn(ConnectionInfo connectionInfo, String connectionId, String username, String password,
+            RemotingConnection remotingConnection) {
         loginMetric.getInternalConnector().getAttempt().inc();
         String usernameToCompare = SystemSetting.getInstance().getString(SystemSettingKey.BROKER_INTERNAL_CONNECTOR_USERNAME);
         String passToCompare = SystemSetting.getInstance().getString(SystemSettingKey.BROKER_INTERNAL_CONNECTOR_PASSWORD);
@@ -151,15 +152,10 @@ public class SecurityPlugin implements ActiveMQSecurityManager5 {
                     passToCompare == null || !passToCompare.equals(password)) {
                 throw new ActiveMQException(ActiveMQExceptionType.SECURITY_EXCEPTION, "User not authorized! Internal connection credential did not match!");
             }
-            logger.info("Authenticate internal: user: {} - clientId: {} - connectionIp: {} - connectionId: {} - remoteIP: {} - isOpen: {}",
-                    username, connectionInfo.getClientId(), connectionInfo.getClientIp(), remotingConnection.getID(),
-                    remotingConnection.getTransportConnection().getRemoteAddress(), remotingConnection.getTransportConnection().isOpen());
+            logger.info("Authenticate internal: user: {} - clientId: {} - connectionIp: {} - connectionId: {} - isOpen: {}",
+                    username, connectionInfo.getClientId(), connectionInfo.getClientIp(), remotingConnection.getID(), remotingConnection.getTransportConnection().isOpen());
             KapuaPrincipal kapuaPrincipal = buildInternalKapuaPrincipal(getAdminAccountInfo().getId(), username, connectionInfo.getClientId());
-            //set a random client id value if not set by the client
             //from JMS 2 specs "Although setting client ID remains mandatory when creating an unshared durable subscription, it is optional when creating a shared durable subscription."
-            //update client id with account|clientId (see pattern)
-            String fullClientId = Utils.getFullClientId(getAdminAccountInfo().getId(), connectionInfo.getClientId());
-            remotingConnection.setClientID(fullClientId);
             Subject subject = buildInternalSubject(kapuaPrincipal);
             SessionContext sessionContext = new SessionContext(kapuaPrincipal, getAdminAccountInfo().getName(), connectionInfo,
                     serverContext.getBrokerIdentity().getBrokerId(), serverContext.getBrokerIdentity().getBrokerHost(),

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2022, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -118,7 +118,7 @@ public class ServerContext {
                         authServiceClient.brokerDisconnect(authRequest);
                     }
                     else {
-                        logger.info("Closing internal connection {} - nothing else to do", connectionId);
+                        logger.info("Closing internal connection {}", connectionId);
                     }
                 } else {
                     logger.debug("Cannot find any session context for connection id: {}", connectionId);

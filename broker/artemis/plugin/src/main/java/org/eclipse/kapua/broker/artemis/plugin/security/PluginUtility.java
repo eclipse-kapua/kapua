@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2022, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -45,23 +45,24 @@ public class PluginUtility {
             Connection connection = ((ActiveMQProtonRemotingConnection) remotingConnection).getAmqpConnection().getConnectionCallback().getTransportConnection();
             if (logger.isDebugEnabled()) {
                 logger.debug("Connector: {} - Remote container: {} - connection id: {} - local address: {}",
-                        remotingConnection.getProtocolName(), ((ActiveMQProtonRemotingConnection) remotingConnection).getAmqpConnection().getRemoteContainer(), connection.getID(), connection.getLocalAddress());
+                    remotingConnection.getProtocolName(), ((ActiveMQProtonRemotingConnection) remotingConnection).getAmqpConnection().getRemoteContainer(), connection.getID(), connection.getLocalAddress());
             }
-            return isAmqpInternal(connection.getLocalAddress());//and connector name as expected
+            return isAmqpInternal(connection.getLocalAddress());
         } else if (remotingConnection instanceof MQTTConnection) {
             Connection connection = ((MQTTConnection) remotingConnection).getTransportConnection();
             if (logger.isDebugEnabled()) {
                 logger.debug("Connector: {} - Remote address: {} - connection id: {} - local address: {}",
-                        remotingConnection.getProtocolName(), connection.getRemoteAddress(), connection.getID(), connection.getLocalAddress());
+                    remotingConnection.getProtocolName(), connection.getRemoteAddress(), connection.getID(), connection.getLocalAddress());
             }
-            return isMqttInternal(connection.getLocalAddress());//and connector name as expected
-        } else {
+            return isMqttInternal(connection.getLocalAddress());
+        }
+        else {
             return false;
         }
     }
 
     //is internal if the inbound connection is coming from the amqp connector
-    private boolean isAmqpInternal(String localAddress) {
+    public boolean isAmqpInternal(String localAddress) {
         return localAddress.endsWith(amqpInternalConnectorPort);
     }
 
