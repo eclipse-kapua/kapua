@@ -15,6 +15,7 @@ package org.eclipse.kapua.service.user.internal.profile;
 import com.google.common.base.Strings;
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.commons.util.CommonsValidationRegex;
@@ -26,6 +27,7 @@ import org.eclipse.kapua.service.user.profile.UserProfileService;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.Objects;
 
 @Singleton
 public class UserProfileServiceImpl implements UserProfileService {
@@ -49,6 +51,10 @@ public class UserProfileServiceImpl implements UserProfileService {
             if (user == null) {
                 throw new KapuaEntityNotFoundException(User.TYPE, KapuaSecurityUtils.getSession().getUserId());
             }
+            // name is read-only
+            if (userProfile.getName()!= null && !Objects.equals(user.getName(), userProfile.getName())) {
+                throw new KapuaIllegalArgumentException("userProfile.name", user.getName());
+            }
             user.setEmail(userProfile.getEmail());
             user.setDisplayName(userProfile.getDisplayName());
             user.setPhoneNumber(userProfile.getPhoneNumber());
@@ -68,6 +74,7 @@ public class UserProfileServiceImpl implements UserProfileService {
             }
 
             UserProfile userProfile = userProfileFactory.newUserProfile();
+            userProfile.setName(user.getName());
             userProfile.setDisplayName(user.getDisplayName());
             userProfile.setEmail(user.getEmail());
             userProfile.setPhoneNumber(user.getPhoneNumber());
