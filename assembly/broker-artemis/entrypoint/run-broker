@@ -44,5 +44,18 @@ echo 'copying libraries...'
 cp /opt/artemis/base-lib/* /opt/artemis/kapua/lib
 echo 'copying libraries... DONE'
 
+#options for DB connection
+JAVA_ARGS="${JAVA_ARGS} -Dcommons.db.jdbc.database.target=${DB_TARGET:-}"
+JAVA_ARGS="${JAVA_ARGS} -Dcommons.db.connection.host=${DB_HOST:-db}"
+JAVA_ARGS="${JAVA_ARGS} -Dcommons.db.name=${DB_NAME:-kapuadb}"
+JAVA_ARGS="${JAVA_ARGS} -Dcommons.db.connection.port=${DB_PORT:-3306}"
+JAVA_ARGS="${JAVA_ARGS} -Dcommons.db.schema=${DB_SCHEMA_NAME:-kapuadb}"
+JAVA_ARGS="${JAVA_ARGS} -Dcommons.db.username=${DB_USERNAME:-kapua}"
+JAVA_ARGS="${JAVA_ARGS} -Dcommons.db.password=${DB_PASSWORD:-kapua}"
+JAVA_ARGS="${JAVA_ARGS} -Dcommons.db.connection.scheme=${DB_CONNECTION_SCHEME:-jdbc:h2:tcp}"
+JAVA_ARGS="${JAVA_ARGS} -Dcommons.db.jdbcConnectionUrlResolver=${DB_RESOLVER:-DEFAULT}"
+JAVA_ARGS="${JAVA_ARGS} -Dcommons.db.jdbc.driver=${DB_DRIVER:-org.h2.Driver}"
+JAVA_ARGS="${JAVA_ARGS} -Dcommons.db.connection.additionalOptions=${DB_CONNECTION_ADDITIONAL_OPTIONS}"
+
 echo 'starting Artemis...'
 /opt/artemis/kapua/bin/artemis run xml:/opt/artemis/kapua/etc/bootstrap.xml
