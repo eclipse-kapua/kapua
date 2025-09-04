@@ -16,13 +16,7 @@ FROM @docker.account@/jetty-base
 
 COPY maven /
 
-ENV BROKER_ADDR broker
-ENV BROKER_PORT 1883
-
 ENV DATASTORE_ADDR es:9200
-
-ENV SQL_DB_ADDR db
-ENV SQL_DB_PORT 3306
 
 ENV EVENT_BROKER_URL=${EVENT_BROKER_URL:-amqp://events-broker:5672}
 ENV EVENT_BROKER_USERNAME=${EVENT_BROKER_USERNAME:-kapua-sys}
@@ -58,6 +52,17 @@ ENV JAVA_OPTS "-Dapi.cors.origins.allowed=\${API_CORS_ORIGINS_ALLOWED} \
                -Dauthentication.token.expire.after=\${AUTH_TOKEN_TTL} \
                -Dauthentication.refresh.token.expire.after=\${REFRESH_AUTH_TOKEN_TTL} \
                -Dapi.cors.refresh.interval=\${CORS_ENDPOINTS_REFRESH_INTERVAL} \
+               -Dcommons.db.jdbc.database.target=\${DB_TARGET:-} \
+               -Dcommons.db.connection.host=\${DB_HOST:-db} \
+               -Dcommons.db.name=\${DB_NAME:-kapuadb} \
+               -Dcommons.db.connection.port=\${DB_PORT:-3306} \
+               -Dcommons.db.schema=\${DB_SCHEMA_NAME:-kapuadb} \
+               -Dcommons.db.username=\${DB_USERNAME:-kapua} \
+               -Dcommons.db.password=\${DB_PASSWORD:-kapua} \
+               -Dcommons.db.connection.scheme=\${DB_CONNECTION_SCHEME:-jdbc:h2:tcp} \
+               -Dcommons.db.jdbcConnectionUrlResolver=\${DB_RESOLVER:-DEFAULT} \
+               -Dcommons.db.jdbc.driver=\${DB_DRIVER:-org.h2.Driver} \
+               -Dcommons.db.connection.additionalOptions=\${DB_CONNECTION_ADDITIONAL_OPTIONS} \
                \${JETTY_DEBUG_OPTS} \
                \${JETTY_JMX_OPTS}"
 
