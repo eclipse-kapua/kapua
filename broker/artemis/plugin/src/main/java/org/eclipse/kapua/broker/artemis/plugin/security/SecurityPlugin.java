@@ -162,7 +162,7 @@ public class SecurityPlugin implements ActiveMQSecurityManager5 {
             SessionContext sessionContext = new SessionContext(kapuaPrincipal, getAdminAccountInfo().getName(), connectionInfo,
                     serverContext.getBrokerIdentity().getBrokerId(), serverContext.getBrokerIdentity().getBrokerHost(),
                     true, false);
-            serverContext.getSecurityContext().setSessionContext(sessionContext, null);
+            serverContext.getSecurityContext().setSessionContext(sessionContext, null, true);
             loginMetric.getInternalConnector().getSuccess().inc();
             return subject;
         } catch (Exception e) {
@@ -213,7 +213,7 @@ public class SecurityPlugin implements ActiveMQSecurityManager5 {
             logger.info("Authenticate external: connectionId: {} - old: {}", sessionContext.getConnectionId(), currentSessionContext != null ? currentSessionContext.getConnectionId() : "N/A");
             Subject subject = null;
             //this call is synchronized on connectionId value
-            if (serverContext.getSecurityContext().setSessionContext(sessionContext, authResponse.getAcls())) {
+            if (serverContext.getSecurityContext().setSessionContext(sessionContext, authResponse.getAcls(), false)) {
                 subject = serverContext.getSecurityContext().buildFromPrincipal(sessionContext.getPrincipal());
             }
             loginMetric.getExternalConnector().getSuccess().inc();
