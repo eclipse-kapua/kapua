@@ -108,7 +108,7 @@ public class ServerContext {
                 if (sessionContext != null) {
                     securityContext.updateConnectionTokenOnDisconnection(connectionId);
                     logErrorMessage(logger, connectionId, exception, reason);
-                    SessionContext sessionContextByClient = securityContext.cleanSessionContext(sessionContext);
+                    SessionContext sessionContextByClient = securityContext.cleanSessionContext(sessionContext, isInternal);
                     if (!isInternal) {
                         AuthRequest authRequest = new AuthRequest(
                                 clusterName,
