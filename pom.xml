@@ -80,6 +80,7 @@
         <jaxb-core.version>2.3.0.1</jaxb-core.version>
         <jaxb-impl.version>2.3.6</jaxb-impl.version>
         <jbatch.version>1.0.2</jbatch.version>
+        <jettison.version>1.5.4</jettison.version>
         <jersey.version>2.38</jersey.version>
         <jetty.version>9.4.58.v20250814</jetty.version>
         <joda.version>2.9.4</joda.version>
@@ -1205,6 +1206,12 @@
                 <groupId>com.ibm.jbatch</groupId>
                 <artifactId>com.ibm.jbatch.container</artifactId>
                 <version>${jbatch.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.codehaus.jettison</groupId>
+                <artifactId>jettison</artifactId>
+                <version>${jettison.version}</version>
             </dependency>
 
             <!-- -->
