@@ -58,7 +58,7 @@
         <artemis.version>2.38.0</artemis.version>
         <assertj.version>3.2.0</assertj.version>
         <checker-framework.version>3.15.0</checker-framework.version>
-        <commons-beanutils.version>1.9.4</commons-beanutils.version>
+        <commons-beanutils.version>1.11.0</commons-beanutils.version>
         <commons-cli.version>1.4</commons-cli.version>
         <commons-codec.version>1.15</commons-codec.version>
         <commons-collections.version>3.2.2</commons-collections.version>
