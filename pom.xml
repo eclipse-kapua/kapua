@@ -2529,7 +2529,7 @@
                         <version>${nexus-staging-maven-plugin.version}</version>
                         <extensions>true</extensions>
                         <configuration>
-                            <serverId>ossrh</serverId>
+                            <serverId>central</serverId>
                             <nexusUrl>https://ossrh-staging-api.central.sonatype.com/</nexusUrl>
 
                             <autoReleaseAfterClose>false</autoReleaseAfterClose>
@@ -2659,11 +2659,11 @@
 
     <distributionManagement>
         <snapshotRepository>
-            <id>ossrh</id>
+            <id>central</id>
             <url>https://central.sonatype.com/repository/maven-snapshots/</url>
         </snapshotRepository>
         <repository>
-            <id>ossrh</id>
+            <id>central</id>
             <url>https://ossrh-staging-api.central.sonatype.com/service/local/</url>
         </repository>
     </distributionManagement>
