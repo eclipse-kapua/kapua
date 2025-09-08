@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2017, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -17,6 +17,8 @@ import org.eclipse.kapua.app.console.module.data.client.util.GwtMessage;
 import org.eclipse.kapua.app.console.module.data.shared.model.GwtDatastoreAsset;
 import org.eclipse.kapua.app.console.module.data.shared.model.GwtDatastoreDevice;
 import org.eclipse.kapua.app.console.module.data.shared.model.GwtHeader;
+import org.eclipse.kapua.model.type.ByteArrayConverter;
+import org.eclipse.kapua.model.type.ObjectTypeConverter;
 import org.eclipse.kapua.service.datastore.model.ChannelInfo;
 import org.eclipse.kapua.service.datastore.model.ClientInfo;
 import org.eclipse.kapua.service.datastore.model.DatastoreMessage;
@@ -39,7 +41,7 @@ public class KapuaGwtDataModelConverter {
     public static GwtHeader convertToHeader(MetricInfo metric) {
         GwtHeader header = new GwtHeader();
         header.setName(metric.getName());
-        header.setType(metric.getMetricType().getSimpleName());
+        header.setType(ObjectTypeConverter.toString(metric.getMetricType()));
         return header;
     }
 
@@ -71,7 +73,13 @@ public class KapuaGwtDataModelConverter {
         gwtMessage.setClientId(message.getClientId());
         gwtMessage.setTimestamp(message.getTimestamp());
         for (GwtHeader header : headers) {
-            gwtMessage.set(header.getName(), message.getPayload().getMetrics().get(header.getName()));
+            Object metricValue = message.getPayload().getMetrics().get(header.getName());
+
+            if (metricValue instanceof byte[]) {
+                metricValue = ByteArrayConverter.toString((byte[]) metricValue);
+            }
+
+            gwtMessage.set(header.getName(), metricValue);
         }
         return gwtMessage;
     }
