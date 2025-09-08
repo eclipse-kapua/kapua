@@ -71,6 +71,7 @@
         <commons-lang.version>3.4</commons-lang.version>
         <commons-logging.version>1.2</commons-logging.version>
         <commons-pool.version>2.3</commons-pool.version>
+        <commons-text.version>1.12.0</commons-text.version>
         <compress-lzf.version>1.0.3</compress-lzf.version>
         <cucumber.version>6.11.0</cucumber.version>
         <!-- Do NOT bump eclipselink further than this version. For details, see issue: https://github.com/eclipse/kapua/issues/3955 -->
@@ -1457,6 +1458,11 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-pool2</artifactId>
                 <version>${commons-pool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>${commons-text.version}</version>
             </dependency>
 
             <!-- Apache Httpcomponents -->
