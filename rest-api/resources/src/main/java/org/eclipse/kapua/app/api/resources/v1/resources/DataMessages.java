@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@ package org.eclipse.kapua.app.api.resources.v1.resources;
 
 import com.google.common.base.Strings;
 import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.KapuaIllegalNullArgumentException;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
 import org.eclipse.kapua.app.api.core.model.CountResult;
@@ -89,7 +90,7 @@ public class DataMessages extends AbstractKapuaResource {
                                                                    @QueryParam("startDate") DateParam startDateParam,
                                                                    @QueryParam("endDate") DateParam endDateParam,
                                                                    @QueryParam("metricName") String metricName,
-                                                                   @QueryParam("metricType") String metricType,
+                                                                   @QueryParam("metricType") String stringMetricType,
                                                                    @QueryParam("metricMin") String metricMinValue,
                                                                    @QueryParam("metricMax") String metricMaxValue,
                                                                    @QueryParam("sortDir") @DefaultValue("DESC") SortDirection sortDir,
@@ -115,9 +116,9 @@ public class DataMessages extends AbstractKapuaResource {
         }
 
         if (!Strings.isNullOrEmpty(metricName)) {
-            MetricType<V> internalMetricType = new MetricType<>(metricType);
+            MetricType<V> metricType = new MetricType<>(stringMetricType);
 
-            andPredicate.getPredicates().add(getMetricPredicate(metricName, internalMetricType, metricMinValue, metricMaxValue));
+            andPredicate.getPredicates().add(getMetricPredicate(metricName, metricType, metricMinValue, metricMaxValue));
         }
 
         MessageQuery query = MESSAGE_STORE_FACTORY.newQuery(scopeId);
@@ -224,14 +225,36 @@ public class DataMessages extends AbstractKapuaResource {
         return channelPredicate;
     }
 
-    private <V extends Comparable<V>> StorablePredicate getMetricPredicate(String metricName, MetricType<V> metricType, String metricMinValue, String metricMaxValue) throws KapuaIllegalNullArgumentException {
+    private <V extends Comparable<V>> StorablePredicate getMetricPredicate(
+            String metricName,
+            MetricType<V> metricType,
+            String metricMinValue,
+            String metricMaxValue)
+        throws KapuaIllegalArgumentException {
+
+        // Cannot perform MetricExistPredicate MetricPredicate on `binary` metrics
+        if (new MetricType<>("binary").equals(metricType)) {
+            throw new KapuaIllegalArgumentException("metricType", "binary");
+        }
+
         if (metricMinValue == null && metricMaxValue == null) {
-            Class<V> type = metricType != null ? metricType.getType() : null;
-            return DATASTORE_PREDICATE_FACTORY.newMetricExistsPredicate(metricName, type);
+
+            StorablePredicate metricPredicate;
+
+            if (metricType != null) {
+                metricPredicate = DATASTORE_PREDICATE_FACTORY.newMetricExistsPredicate(metricName, metricType.getType());
+            }
+            else {
+                // If metric name matches a `binary` metric, no message will be matched since ES does not support binary indexing
+                metricPredicate = DATASTORE_PREDICATE_FACTORY.newMetricExistsPredicate(metricName, null);
+            }
+
+            return metricPredicate;
         } else {
             if (metricType == null) {
                 throw new KapuaIllegalNullArgumentException("metricType");
             }
+
             V minValue = (V) ObjectValueConverter.fromString(metricMinValue, metricType.getType());
             V maxValue = (V) ObjectValueConverter.fromString(metricMaxValue, metricType.getType());
 

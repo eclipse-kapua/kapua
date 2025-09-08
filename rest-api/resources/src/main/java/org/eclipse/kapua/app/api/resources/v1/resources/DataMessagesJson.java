@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2018, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -113,10 +113,12 @@ public class DataMessagesJson extends AbstractKapuaResource implements JsonSeria
 
         List<JsonDatastoreMessage> jsonDatastoreMessages = new ArrayList<>();
         result.getItems().forEach(m -> jsonDatastoreMessages.add(new JsonDatastoreMessage(m)));
+
         JsonMessageListResult jsonResult = new JsonMessageListResult();
         jsonResult.addItems(jsonDatastoreMessages);
         jsonResult.setTotalCount(result.getTotalCount());
         jsonResult.setLimitExceeded(result.isLimitExceeded());
+
         return jsonResult;
     }
 
