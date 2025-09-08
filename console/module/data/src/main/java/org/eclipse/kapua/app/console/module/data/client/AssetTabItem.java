@@ -33,12 +33,14 @@ import org.eclipse.kapua.app.console.module.api.client.resources.icons.IconSet;
 import org.eclipse.kapua.app.console.module.api.client.resources.icons.KapuaIcon;
 import org.eclipse.kapua.app.console.module.api.client.ui.button.KapuaButton;
 import org.eclipse.kapua.app.console.module.api.client.ui.tab.TabItem;
+import org.eclipse.kapua.app.console.module.api.client.util.ConsoleInfo;
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
 import org.eclipse.kapua.app.console.module.data.client.messages.ConsoleDataMessages;
 import org.eclipse.kapua.app.console.module.data.shared.model.GwtDatastoreAsset;
 import org.eclipse.kapua.app.console.module.data.shared.model.GwtDatastoreDevice;
 import org.eclipse.kapua.app.console.module.data.shared.model.GwtHeader;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AssetTabItem extends TabItem {
@@ -138,10 +140,43 @@ public class AssetTabItem extends TabItem {
 
             @Override
             public void componentSelected(ButtonEvent ce) {
+
+                List<GwtHeader> metrics = metricsTable.getSelectedMetrics();
+
+                int binaryMetricsSelectedCount = 0;
+                List<String> binaryMetricsSelected = new ArrayList<String>();
+                for (GwtHeader metric : metrics) {
+                    if ("binary".equals(metric.getType())) {
+                        binaryMetricsSelectedCount++;
+                        binaryMetricsSelected.add(metric.getName());
+                    }
+                }
+
+                if (binaryMetricsSelectedCount > 0) {
+
+                    StringBuilder invalidMetricsMessage = new StringBuilder();
+
+                    for (int i = 0; i < binaryMetricsSelected.size() && i < 10; i ++) {
+                        invalidMetricsMessage
+                                .append(binaryMetricsSelected.get(i))
+                                .append(", ");
+                    }
+
+                    // Removing trailing comma
+                    invalidMetricsMessage.delete(invalidMetricsMessage.length() - 2, invalidMetricsMessage.length() - 1);
+
+                    // If more than 10 metrics are invalid add "and others
+                    if (binaryMetricsSelected.size() > 10) {
+                        invalidMetricsMessage.append(" and more");
+                    }
+
+                    ConsoleInfo.display("Warning!", "Metrics " + invalidMetricsMessage + " do not support the search criteria. Remove the metrics from the selection and repeat the query");
+                    return;
+                }
+
                 GwtDatastoreDevice gwtDevice = deviceTable.getSelectedDevice();
                 GwtDatastoreAsset gwtAsset = assetTable.getSelectedAsset();
-                List<GwtHeader> metricsInfo = metricsTable.getSelectedMetrics();
-                resultsTable.refresh(gwtDevice, gwtAsset, metricsInfo);
+                resultsTable.refresh(gwtDevice, gwtAsset, metrics);
             }
         });
         queryButton.disable();
