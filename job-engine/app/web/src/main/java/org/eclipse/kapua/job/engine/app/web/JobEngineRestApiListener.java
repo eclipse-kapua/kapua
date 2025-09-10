@@ -15,6 +15,7 @@ package org.eclipse.kapua.job.engine.app.web;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.core.ServiceModuleBundle;
 import org.eclipse.kapua.locator.KapuaLocator;
+import org.eclipse.kapua.service.scheduler.quartz.SchedulerServiceInit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +34,15 @@ public class JobEngineRestApiListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(final ServletContextEvent event) {
+        // Start Quartz scheduler
+        try {
+            LOG.info("Starting Quartz scheduler...");
+            SchedulerServiceInit.initialize();
+            LOG.info("Starting Quartz scheduler... DONE!");
+        } catch (Exception e) {
+            LOG.error("Starting Quartz scheduler... ERROR! Error: {}", e.getMessage(), e);
+            throw new ExceptionInInitializerError(e);
+        }
         // Start service modules
         try {
             LOG.info("Starting service modules...");
