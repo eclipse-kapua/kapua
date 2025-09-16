@@ -33,15 +33,6 @@ public class ConsoleListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(final ServletContextEvent event) {
-        // Start Quartz scheduler
-        try {
-            LOG.info("Starting Quartz scheduler...");
-            SchedulerServiceInit.initialize();
-            LOG.info("Starting Quartz scheduler... DONE!");
-        } catch (Exception e) {
-            LOG.error("Starting Quartz scheduler... ERROR! Error: {}", e.getMessage(), e);
-            throw new ExceptionInInitializerError(e);
-        }
 
         // Start service modules
         try {
