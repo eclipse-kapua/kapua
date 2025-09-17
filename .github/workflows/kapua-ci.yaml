@@ -11,6 +11,9 @@ env:
 jobs:
   build:
     name: Build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4 # Checks out a copy of the repository on the ubuntu-latest machine
@@ -31,6 +34,9 @@ jobs:
       - run: mvn -B ${BUILD_OPTS} -DskipTests clean install
   test-brokerAcl:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -57,6 +63,9 @@ jobs:
         uses: codecov/codecov-action@v4
   test-tag:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -83,6 +92,9 @@ jobs:
         uses: codecov/codecov-action@v4
   test-broker:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -109,6 +121,9 @@ jobs:
         uses: codecov/codecov-action@v4
   test-device:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -135,6 +150,9 @@ jobs:
         uses: codecov/codecov-action@v4
   test-device-management:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -161,6 +179,9 @@ jobs:
         uses: codecov/codecov-action@v4
   test-connection:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -187,6 +208,9 @@ jobs:
         uses: codecov/codecov-action@v4
   test-datastore:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -213,6 +237,9 @@ jobs:
         uses: codecov/codecov-action@v4
   test-user:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -239,6 +266,9 @@ jobs:
         uses: codecov/codecov-action@v4
   test-security:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -265,6 +295,9 @@ jobs:
         uses: codecov/codecov-action@v4
   test-jobs:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -291,6 +324,9 @@ jobs:
         uses: codecov/codecov-action@v4
   test-triggerService:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -317,6 +353,9 @@ jobs:
         uses: codecov/codecov-action@v4
   test-account:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -343,6 +382,9 @@ jobs:
         uses: codecov/codecov-action@v4
   test-jobEngineStepDefinitions:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -369,6 +411,9 @@ jobs:
         uses: codecov/codecov-action@v4
   test-jobEngineStartOfflineDevice:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -395,6 +440,9 @@ jobs:
         uses: codecov/codecov-action@v4
   test-jobEngineStartOnlineDevice:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -421,6 +469,9 @@ jobs:
         uses: codecov/codecov-action@v4
   test-jobEngineRestartOfflineDevice:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -447,6 +498,9 @@ jobs:
         uses: codecov/codecov-action@v4
   test-jobEngineRestartOnlineDevice:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -473,6 +527,9 @@ jobs:
         uses: codecov/codecov-action@v4
   test-jobEngineRestartOnlineDeviceSecondPart:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -499,6 +556,9 @@ jobs:
         uses: codecov/codecov-action@v4
   test-jobEngineServiceStop:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -525,6 +585,9 @@ jobs:
         uses: codecov/codecov-action@v4
   junit-tests:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -551,6 +614,9 @@ jobs:
         uses: codecov/codecov-action@v4
   build-javadoc:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
