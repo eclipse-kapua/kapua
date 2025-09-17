@@ -10,6 +10,9 @@ env: #these 2 env variables defines respectively the maven projects were cucumbe
 jobs:
   build:
     name: Build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -31,6 +34,9 @@ jobs:
   build-javadoc:
     needs: build
     name: Build Javadoc
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -48,6 +54,9 @@ jobs:
   junit-tests:
     needs: build
     name: Run jUnit Tests
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -62,6 +71,9 @@ jobs:
 
   test-brokerAcl:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -76,6 +88,9 @@ jobs:
 
   test-tag:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -90,6 +105,9 @@ jobs:
 
   test-broker:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -104,6 +122,9 @@ jobs:
 
   test-device:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -118,6 +139,9 @@ jobs:
 
   test-device-management:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -132,6 +156,9 @@ jobs:
 
   test-connection:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -146,6 +173,9 @@ jobs:
 
   test-datastore:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -160,6 +190,9 @@ jobs:
 
   test-user:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -174,6 +207,9 @@ jobs:
 
   test-userIntegrationBase:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -188,6 +224,9 @@ jobs:
 
   test-userIntegration:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -202,6 +241,9 @@ jobs:
 
   test-security:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -216,6 +258,9 @@ jobs:
 
   test-jobsAndScheduler:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -230,6 +275,9 @@ jobs:
 
   test-job-IT:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -244,6 +292,9 @@ jobs:
 
   test-jobEngine-IT:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -258,6 +309,9 @@ jobs:
 
   test-jobsIntegration:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -272,6 +326,9 @@ jobs:
 
   test-accountAndTranslator:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -286,6 +343,9 @@ jobs:
 
   test-RoleAndGroup:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -300,6 +360,9 @@ jobs:
 
   test-deviceRegistry:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -314,6 +377,9 @@ jobs:
 
   test-endpoint:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -328,6 +394,9 @@ jobs:
 
   test-api-auth:
     needs: build
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -343,6 +412,9 @@ jobs:
 
   test-api-corsfilter:
     needs: test-endpoint # test suite dependent on the endpoint service (if it has failings it's useless to perform these tests)
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -358,6 +430,9 @@ jobs:
 
   test-api-parsing:
     needs: test-api-auth
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
