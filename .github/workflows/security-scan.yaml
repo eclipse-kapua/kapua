@@ -12,6 +12,9 @@ jobs:
   # Documentation: https://jeremylong.github.io/DependencyCheck/dependency-check-maven/index.html
   owasp-dependency-check:
     name: Owasp Dependency Check
+    permissions:
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
