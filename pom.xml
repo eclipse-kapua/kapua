@@ -133,6 +133,7 @@
         <maven-war-plugin.version>3.0.0</maven-war-plugin.version>
 
         <buildnumber-maven-plugin.version>3.0.0</buildnumber-maven-plugin.version>
+        <central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
         <checkstyle.version>7.6.1</checkstyle.version>
         <dependency-check-maven.version>7.4.4</dependency-check-maven.version>
         <docker-maven-plugin.version>0.44.0</docker-maven-plugin.version>
@@ -186,6 +187,10 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>${maven-deploy-plugin.version}</version>
+                    <configuration>
+                        <!-- Disable 'deploy-default' plugin execution -->
+                        <skip>true</skip>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -244,6 +249,11 @@
                 </plugin>
 
                 <plugin>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>docker-maven-plugin</artifactId>
+                    <version>${docker-maven-plugin.version}</version>
+                </plugin>
+                <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
                     <version>${maven-bundle-plugin.version}</version>
@@ -261,15 +271,18 @@
                 </plugin>
 
                 <plugin>
-                    <groupId>org.sonatype.plugins</groupId>
-                    <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <version>${nexus-staging-maven-plugin.version}</version>
-                </plugin>
+                    <groupId>org.sonatype.central</groupId>
+                    <artifactId>central-publishing-maven-plugin</artifactId>
+                    <version>${central-publishing-maven-plugin.version}</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <publishingServerId>central</publishingServerId>
+                        <autoPublish>true</autoPublish>
+                        <waitUntil>published</waitUntil>
 
-                <plugin>
-                    <groupId>io.fabric8</groupId>
-                    <artifactId>docker-maven-plugin</artifactId>
-                    <version>${docker-maven-plugin.version}</version>
+                        <centralBaseUrl>https://central.sonatype.com</centralBaseUrl>
+                        <centralSnapshotsUrl>https://central.sonatype.com/repository/maven-snapshots/</centralSnapshotsUrl>
+                    </configuration>
                 </plugin>
 
 
@@ -291,6 +304,7 @@
                         <password>${db.password}</password>
                     </configuration>
                 </plugin>
+
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>license-maven-plugin</artifactId>
@@ -313,6 +327,7 @@
                         </execution>
                     </executions>
                 </plugin>
+
                 <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
@@ -459,6 +474,11 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>${central-publishing-maven-plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>de.dentrassi.maven</groupId>
@@ -2341,7 +2361,6 @@
                 <version>${spring-security.version}</version>
             </dependency>
 
-
             <dependency>
                 <groupId>org.webjars</groupId>
                 <artifactId>swagger-ui</artifactId>
@@ -2459,29 +2478,6 @@
                                 </goals>
                             </execution>
                         </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <!-- Profile used only during deploy. -->
-        <profile>
-            <id>deploy</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>${nexus-staging-maven-plugin.version}</version>
-                        <extensions>true</extensions>
-                        <configuration>
-                            <serverId>central</serverId>
-                            <nexusUrl>https://ossrh-staging-api.central.sonatype.com/</nexusUrl>
-
-                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
-                            <keepStagingRepositoryOnFailure>true</keepStagingRepositoryOnFailure>
-                            <keepStagingRepositoryOnCloseRuleFailure>true</keepStagingRepositoryOnCloseRuleFailure>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -2610,7 +2606,7 @@
         </snapshotRepository>
         <repository>
             <id>central</id>
-            <url>https://ossrh-staging-api.central.sonatype.com/service/local/</url>
+            <url>https://central.sonatype.com/</url>
         </repository>
     </distributionManagement>
 
