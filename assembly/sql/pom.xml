@@ -25,6 +25,18 @@
     <packaging>pom</packaging>
     <artifactId>kapua-assembly-sql</artifactId>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <configuration>
+                    <excludeArtifacts>${project.artifactId}</excludeArtifacts>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
     <profiles>
         <profile>
             <id>release</id>
