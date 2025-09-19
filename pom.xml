@@ -155,7 +155,6 @@
         <maven-install-plugin.version>2.5.2</maven-install-plugin.version>
         <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
         <maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
-        <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <maven-resources-plugin.version>3.3.0</maven-resources-plugin.version>
         <maven-shade-plugin.version>3.4.1</maven-shade-plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
@@ -252,18 +251,6 @@
                     <version>${maven-javadoc-plugin.version}</version>
                     <configuration>
                         <source>${javadoc-plugin.maven.compiler.source}</source>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>${maven-release-plugin.version}</version>
-                    <configuration>
-                        <autoVersionSubmodules>true</autoVersionSubmodules>
-                        <releaseProfiles>javadoc,deploy,release,!console</releaseProfiles>
-                        <goals>deploy</goals>
-                        <preparationGoals>clean install</preparationGoals>
-                        <tagNameFormat>@{project.version}</tagNameFormat>
                     </configuration>
                 </plugin>
                 <plugin>
