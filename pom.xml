@@ -2475,9 +2475,9 @@
             </modules>
         </profile>
 
-        <!-- Profile used only during release process. -->
+        <!-- Profile used only during release process to sign artifacts. -->
         <profile>
-            <id>release</id>
+            <id>sing</id>
             <build>
                 <plugins>
                     <plugin>
