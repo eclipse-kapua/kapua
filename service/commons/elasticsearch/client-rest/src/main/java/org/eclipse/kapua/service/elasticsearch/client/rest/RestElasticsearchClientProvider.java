@@ -106,6 +106,9 @@ public class RestElasticsearchClientProvider implements ElasticsearchClientProvi
             return this;
         }
         synchronized (RestElasticsearchClientProvider.class) {
+            if (initialized) { //this check is needed, in addition to the same above, to avoid multiple initializations with multi-threading
+                return this;
+            }
             if (elasticsearchClientConfiguration == null) {
                 throw new ClientProviderInitException("Client configuration not defined");
             }
