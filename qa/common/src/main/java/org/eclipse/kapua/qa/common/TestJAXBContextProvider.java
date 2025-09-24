@@ -29,7 +29,6 @@ import org.eclipse.kapua.job.engine.IsJobRunningMultipleResponse;
 import org.eclipse.kapua.job.engine.IsJobRunningResponse;
 import org.eclipse.kapua.job.engine.JobStartOptions;
 import org.eclipse.kapua.job.engine.MultipleJobIdRequest;
-import org.eclipse.kapua.job.engine.client.JobStartOptionsClient;
 import org.eclipse.kapua.job.engine.commons.model.JobStepPropertiesOverrides;
 import org.eclipse.kapua.job.engine.commons.model.JobTargetSublist;
 import org.eclipse.kapua.job.engine.exception.JobAlreadyRunningExceptionInfo;
@@ -149,7 +148,6 @@ public class TestJAXBContextProvider implements JAXBContextProvider {
                     JobXmlRegistry.class,
 
                     // Job Engine
-                    JobStartOptionsClient.class,
                     JobStartOptions.class,
                     JobStepPropertiesOverrides.class,
                     JobTargetSublist.class,
