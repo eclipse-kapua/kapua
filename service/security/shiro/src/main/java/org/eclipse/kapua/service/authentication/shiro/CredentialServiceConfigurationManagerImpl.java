@@ -55,6 +55,19 @@ public class CredentialServiceConfigurationManagerImpl extends ServiceConfigurat
     }
 
     @Override
+    protected Optional<KapuaTocd> doGetConfigMetadata(TxContext txContext, KapuaId scopeId, boolean excludeDisabled) throws KapuaException {
+        Optional<KapuaTocd> credentialServiceConfigDefinition = super.doGetConfigMetadata(txContext, scopeId, excludeDisabled);
+        credentialServiceConfigDefinition.ifPresent(kapuaTocd -> setCustomDefinition(
+                kapuaTocd,
+                AccountPasswordLengthProviderImpl.PASSWORD_MIN_LENGTH_ACCOUNT_CONFIG_KEY,
+                null,
+                String.valueOf(systemPasswordLengthProvider.getSystemMinimumPasswordLength()),
+                String.valueOf(systemPasswordLengthProvider.getSystemMaximumPasswordLength())
+        ));
+        return credentialServiceConfigDefinition;
+    }
+
+    @Override
     protected boolean validateNewConfigValuesCoherence(TxContext txContext, KapuaTocd ocd, Map<String, Object> updatedProps, KapuaId scopeId, Optional<KapuaId> parentId) throws KapuaException {
         if (updatedProps.get(AccountPasswordLengthProviderImpl.PASSWORD_MIN_LENGTH_ACCOUNT_CONFIG_KEY) != null) {
             // If we're going to set a new limit, check that it's not less than system limit
