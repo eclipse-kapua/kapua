@@ -73,17 +73,19 @@ public class UserModule extends AbstractKapuaModule {
             Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
+            UserServiceValidationUtils userServiceValidationUtils,
             UserRepository userRepository,
             UserFactory userFactory,
             EventStorer eventStorer,
             KapuaJpaTxManagerFactory jpaTxManagerFactory) {
         return new UserServiceImpl(
+                jpaTxManagerFactory.create("kapua-user"),
                 serviceConfigurationManagersByServiceClass.get(UserService.class),
                 authorizationService,
                 permissionFactory,
-                jpaTxManagerFactory.create("kapua-user"),
-                userRepository,
                 userFactory,
+                userServiceValidationUtils,
+                userRepository,
                 eventStorer);
     }
 
@@ -113,6 +115,20 @@ public class UserModule extends AbstractKapuaModule {
                         serviceEventBus
                 ), serviceEventBus,
                 subscriptionGroupId);
+    }
+
+    @Provides
+    @Singleton
+    public UserServiceValidationUtils userServiceValidationUtils(
+            AuthorizationService authorizationService,
+            PermissionFactory permissionFactory,
+            UserRepository userRepository
+    ) {
+        return new UserServiceValidationUtilsImpl(
+                authorizationService,
+                permissionFactory,
+                userRepository
+        );
     }
 
     @Provides
