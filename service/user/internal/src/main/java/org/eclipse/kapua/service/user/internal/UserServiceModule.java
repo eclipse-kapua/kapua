@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2017, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -23,12 +23,18 @@ import org.eclipse.kapua.service.user.internal.setting.KapuaUserSettingKeys;
 
 public class UserServiceModule extends ServiceEventTransactionalModule {
 
-    public UserServiceModule(UserService userService, KapuaUserSetting kapuaUserSetting, ServiceEventHouseKeeperFactory serviceEventTransactionalHousekeeperFactory,
+    public UserServiceModule(
+            UserService userService,
+            KapuaUserSetting kapuaUserSetting,
+            ServiceEventHouseKeeperFactory serviceEventTransactionalHousekeeperFactory,
             ServiceEventBus serviceEventBus,
-            String subscriptionGroupId) {
-        super(ServiceInspector.getEventBusClients(userService, UserService.class).toArray(new ServiceEventClientConfiguration[0]),
+            String subscriptionGroupId
+    ) {
+        super(
+                ServiceInspector.getEventBusClients(userService, UserService.class).toArray(new ServiceEventClientConfiguration[0]),
                 kapuaUserSetting.getString(KapuaUserSettingKeys.USER_EVENT_ADDRESS),
                 subscriptionGroupId,
-                serviceEventTransactionalHousekeeperFactory, serviceEventBus);
+                serviceEventTransactionalHousekeeperFactory,
+                serviceEventBus);
     }
 }

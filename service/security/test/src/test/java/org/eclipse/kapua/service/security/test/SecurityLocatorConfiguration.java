@@ -87,6 +87,7 @@ import org.eclipse.kapua.service.user.UserService;
 import org.eclipse.kapua.service.user.internal.UserFactoryImpl;
 import org.eclipse.kapua.service.user.internal.UserImplJpaRepository;
 import org.eclipse.kapua.service.user.internal.UserServiceImpl;
+import org.eclipse.kapua.service.user.internal.UserServiceValidationUtilsImpl;
 import org.eclipse.kapua.storage.TxManager;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
@@ -228,12 +229,17 @@ public class SecurityLocatorConfiguration {
                 final AccountRelativeFinder accountRelativeFinder = Mockito.mock(AccountRelativeFinder.class);
                 bind(AccountRelativeFinder.class).toInstance(accountRelativeFinder);
                 bind(UserService.class).toInstance(new UserServiceImpl(
+                        new KapuaJpaTxManagerFactory(maxInsertAttempts).create("kapua-user"),
                         Mockito.mock(ServiceConfigurationManager.class),
                         mockedAuthorization,
                         mockPermissionFactory,
-                        new KapuaJpaTxManagerFactory(maxInsertAttempts).create("kapua-user"),
-                        new UserImplJpaRepository(jpaRepoConfig),
                         userFactory,
+                        new UserServiceValidationUtilsImpl(
+                                mockedAuthorization,
+                                mockPermissionFactory,
+                                new UserImplJpaRepository(jpaRepoConfig)
+                        ),
+                        new UserImplJpaRepository(jpaRepoConfig),
                         new EventStorerImpl(new EventStoreRecordImplJpaRepository(jpaRepoConfig))));
             }
         };

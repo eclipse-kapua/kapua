@@ -50,6 +50,7 @@ import org.eclipse.kapua.service.user.UserService;
 import org.eclipse.kapua.service.user.internal.UserFactoryImpl;
 import org.eclipse.kapua.service.user.internal.UserImplJpaRepository;
 import org.eclipse.kapua.service.user.internal.UserServiceImpl;
+import org.eclipse.kapua.service.user.internal.UserServiceValidationUtilsImpl;
 import org.eclipse.kapua.storage.TxManager;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
@@ -93,9 +94,9 @@ public class UserLocatorConfiguration {
                 bind(MetricRegistry.class).toInstance(new MetricRegistry());
                 bind(MetricsService.class).to(MetricsServiceImpl.class).in(Singleton.class);
                 bind(KapuaJpaRepositoryConfiguration.class).toInstance(new KapuaJpaRepositoryConfiguration());
+
                 // Inject mocked Authorization Service method checkPermission
                 AuthorizationService mockedAuthorization = Mockito.mock(AuthorizationService.class);
-
                 try {
                     Mockito.doNothing().when(mockedAuthorization).checkPermission(Matchers.any(Permission.class));
                 } catch (KapuaException e) {
@@ -116,9 +117,11 @@ public class UserLocatorConfiguration {
                 // Inject actual User service related services
                 final UserFactoryImpl userFactory = new UserFactoryImpl();
                 bind(UserFactory.class).toInstance(userFactory);
+
                 final RootUserTester mockRootUserTester = Mockito.mock(RootUserTester.class);
                 bind(RootUserTester.class).toInstance(mockRootUserTester);
-                final UserRepository userRepository = Mockito.mock(UserRepository.class);
+
+                final UserRepository userRepository = new UserImplJpaRepository(new KapuaJpaRepositoryConfiguration());
                 final KapuaJpaRepositoryConfiguration jpaRepoConfig = new KapuaJpaRepositoryConfiguration();
                 final TxManager txManager = new KapuaJpaTxManagerFactory(maxInsertAttempts).create("kapua-user");
                 final ResourceLimitedServiceConfigurationManagerImpl userConfigurationManager = new ResourceLimitedServiceConfigurationManagerImpl(
@@ -135,12 +138,17 @@ public class UserLocatorConfiguration {
                 );
                 bind(UserService.class).toInstance(
                         new UserServiceImpl(
+                                txManager,
                                 userConfigurationManager,
                                 mockedAuthorization,
                                 mockPermissionFactory,
-                                txManager,
-                                new UserImplJpaRepository(jpaRepoConfig),
                                 userFactory,
+                                new UserServiceValidationUtilsImpl(
+                                    mockedAuthorization,
+                                    mockPermissionFactory,
+                                    userRepository
+                                ),
+                                new UserImplJpaRepository(jpaRepoConfig),
                                 new EventStorerImpl(new EventStoreRecordImplJpaRepository(jpaRepoConfig)))
                 );
             }

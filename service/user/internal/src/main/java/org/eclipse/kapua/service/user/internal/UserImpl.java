@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.user.internal;
 
-import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.AbstractKapuaNamedEntity;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.user.User;
@@ -110,11 +109,10 @@ public class UserImpl extends AbstractKapuaNamedEntity implements User {
     /**
      * Clone constructor.
      *
-     * @param user
-     * @throws KapuaException
+     * @param user The {@link User} to clone.
      * @since 1.1.0
      */
-    public UserImpl(User user) throws KapuaException {
+    public UserImpl(User user) {
         super(user);
 
         setStatus(user.getStatus());
