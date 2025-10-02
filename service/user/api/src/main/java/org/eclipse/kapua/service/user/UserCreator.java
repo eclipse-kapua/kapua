@@ -13,15 +13,19 @@
 package org.eclipse.kapua.service.user;
 
 import org.eclipse.kapua.model.KapuaNamedEntityCreator;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
 import org.eclipse.kapua.model.xml.DateXmlAdapter;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * {@link UserCreator} {@link org.eclipse.kapua.model.KapuaEntityCreator} definition
@@ -32,6 +36,25 @@ import java.util.Date;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(factoryClass = UserXmlRegistry.class, factoryMethod = "newUserCreator")
 public interface UserCreator extends KapuaNamedEntityCreator<User> {
+
+    /**
+     * Gets the set of Tag id assigned to this entity.
+     *
+     * @return The set Tag id assigned to this entity.
+     * @since 2.1.0
+     */
+    @XmlElementWrapper(name = "tagIds")
+    @XmlElement(name = "tagId")
+    @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    Set<KapuaId> getTagIds();
+
+    /**
+     * Sets the set of Tag id of this entity.
+     *
+     * @param tagIds The set Tag id to assign.
+     * @since 2.1.0
+     */
+    void setTagIds(Set<KapuaId> tagIds);
 
     /**
      * Return the display name (may be a friendly username to show in the UI)

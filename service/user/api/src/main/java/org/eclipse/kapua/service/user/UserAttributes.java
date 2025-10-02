@@ -22,6 +22,7 @@ import org.eclipse.kapua.model.KapuaNamedEntityAttributes;
  */
 public class UserAttributes extends KapuaNamedEntityAttributes {
 
+    public static final String TAG_IDS = "tagIds";
     public static final String STATUS = "status";
     public static final String EXPIRATION_DATE = "expirationDate";
     public static final String PHONE_NUMBER = "phoneNumber";
