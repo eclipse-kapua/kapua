@@ -17,6 +17,7 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import org.eclipse.kapua.KapuaDuplicateNameException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.server.KapuaRemoteServiceServlet;
@@ -54,6 +55,8 @@ import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionFact
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionListResult;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionQuery;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionService;
+import org.eclipse.kapua.service.tag.Tag;
+import org.eclipse.kapua.service.tag.TagService;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserCreator;
 import org.eclipse.kapua.service.user.UserFactory;
@@ -65,6 +68,7 @@ import org.eclipse.kapua.service.user.UserType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * The server side implementation of the RPC service.
@@ -362,6 +366,64 @@ public class GwtUserServiceImpl extends KapuaRemoteServiceServlet implements Gwt
             throw KapuaExceptionHandler.buildExceptionFromError(t);
         }
     }
+
+    @Override
+    public void addUserTag(GwtXSRFToken xsrfToken, String scopeIdString, String userIdString, String tagIdString) throws GwtKapuaException {
+        // Checking validity of the given XSRF Token
+        checkXSRFToken(xsrfToken);
+
+        try {
+            KapuaId scopeId = KapuaEid.parseCompactId(scopeIdString);
+            KapuaId userId = KapuaEid.parseCompactId(userIdString);
+            KapuaId tagId = KapuaEid.parseCompactId(tagIdString);
+
+            KapuaLocator locator = KapuaLocator.getInstance();
+            UserService userService = locator.getService(UserService.class);
+            TagService tagService = locator.getService(TagService.class);
+            User user = userService.find(scopeId, userId);
+
+            Set<KapuaId> tagIds = user.getTagIds();
+            if (tagIds.contains(tagId)) {
+                Tag tag = tagService.find(scopeId, tagId);
+                if (tag != null) {
+                    throw new KapuaDuplicateNameException(tag.getName());
+                }
+            }
+            tagIds.add(tagId);
+            user.setTagIds(tagIds);
+
+            userService.update(user);
+
+        } catch (Throwable t) {
+            throw KapuaExceptionHandler.buildExceptionFromError(t);
+        }
+    }
+
+    @Override
+    public void deleteUserTag(GwtXSRFToken xsrfToken, String scopeIdString, String userIdString, String tagIdString) throws GwtKapuaException {
+        // Checking validity of the given XSRF Token
+        checkXSRFToken(xsrfToken);
+
+        try {
+            KapuaId scopeId = KapuaEid.parseCompactId(scopeIdString);
+            KapuaId userId = KapuaEid.parseCompactId(userIdString);
+            KapuaId tagId = KapuaEid.parseCompactId(tagIdString);
+
+            KapuaLocator locator = KapuaLocator.getInstance();
+            UserService userService = locator.getService(UserService.class);
+
+            User user = userService.find(scopeId, userId);
+
+            Set<KapuaId> tagIds = user.getTagIds();
+            tagIds.remove(tagId);
+            user.setTagIds(tagIds);
+
+            userService.update(user);
+        } catch (Throwable t) {
+            throw KapuaExceptionHandler.buildExceptionFromError(t);
+        }
+    }
+
 
     /**
      * Method which returns list of all available devices in current scope(if User have Device:read permission), otherwise null is returned.
