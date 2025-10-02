@@ -32,6 +32,12 @@ import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.model.type.DateConverter;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.tag.Tag;
+import org.eclipse.kapua.service.tag.TagAttributes;
+import org.eclipse.kapua.service.tag.TagFactory;
+import org.eclipse.kapua.service.tag.TagListResult;
+import org.eclipse.kapua.service.tag.TagQuery;
+import org.eclipse.kapua.service.tag.TagService;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserCreator;
 import org.eclipse.kapua.service.user.UserRepository;
@@ -40,8 +46,11 @@ import org.eclipse.kapua.service.user.UserType;
 import org.eclipse.kapua.storage.TxContext;
 
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * {@link UserServiceValidationUtils} implementation.
@@ -52,15 +61,22 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
 
     private final AuthorizationService authorizationService;
     private final PermissionFactory permissionFactory;
+    private final TagService tagService;
+    private final TagFactory tagFactory;
+
     private final UserRepository userRepository;
 
     public UserServiceValidationUtilsImpl(
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
+            TagService tagService,
+            TagFactory tagFactory,
             UserRepository userRepository
     ) {
         this.authorizationService = authorizationService;
         this.permissionFactory = permissionFactory;
+        this.tagService = tagService;
+        this.tagFactory = tagFactory;
         this.userRepository = userRepository;
     }
 
@@ -74,6 +90,9 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
         ArgumentValidator.lengthRange(userCreator.getName(), 3, 255, "userCreator.name");
         ArgumentValidator.match(userCreator.getEmail(), CommonsValidationRegex.EMAIL_REGEXP, "userCreator.email");
         ArgumentValidator.notNull(userCreator.getStatus(), "userCreator.status");
+
+        // .tagIds
+        validateTagIds(userCreator.getScopeId(), userCreator.getTagIds());
 
         // .userType
         ArgumentValidator.notNull(userCreator.getUserType(), "userCreator.userType");
@@ -156,6 +175,9 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
             ArgumentValidator.isEmptyOrNull(user.getExternalId(), "user.externalId");
             ArgumentValidator.isEmptyOrNull(user.getExternalUsername(), "user.externalUsername");
         }
+
+        // .tagIds
+        validateTagIds(user.getScopeId(), user.getTagIds());
 
         //
         // Check Access
@@ -298,6 +320,7 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
         validateDeleteCurrentSubject(user);
     }
 
+
     //
     // Private methods
     //
@@ -344,6 +367,45 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
         // Current Subject cannot delete itself
         if (user.getId().equals(currentSubjectId)) {
             throw new KapuaIllegalArgumentException("userId", user.getId().toString());
+        }
+    }
+
+    /**
+     * Applies validation logics to {@link User#getTagIds()} attribute.
+     * <p>
+     * Requirements are:
+     * <ul>
+     *     <li>The Tags defined must exists</li>
+     * </ul>
+     *
+     * @param tagIds The {@link User} to check
+     * @throws KapuaException
+     * @since 2.1.0
+     */
+    private void validateTagIds(KapuaId scopeId, @NotNull Collection<KapuaId> tagIds) throws KapuaException {
+        if (tagIds.isEmpty()) {
+            return;
+        }
+
+        // Look for Tags
+        TagQuery tagQuery = tagFactory.newQuery(scopeId);
+        tagQuery.setPredicate(tagQuery.attributePredicate(TagAttributes.ENTITY_ID, tagIds));
+        TagListResult dbTags = KapuaSecurityUtils.doPrivileged(() -> tagService.query(tagQuery));
+
+        // Match Tags found with given Tag IDs
+        if (tagIds.size() != dbTags.getSize()) {
+            // Some tags have not been found
+            Set<KapuaId> dbTagsIds =
+                    dbTags.getItems()
+                            .stream()
+                            .map(Tag::getId)
+                            .collect(Collectors.toSet());
+
+            for (KapuaId tagId : tagIds) {
+                if (!dbTagsIds.contains(tagId)) {
+                    throw new KapuaEntityNotFoundException(Tag.TYPE, tagId);
+                }
+            }
         }
     }
 }

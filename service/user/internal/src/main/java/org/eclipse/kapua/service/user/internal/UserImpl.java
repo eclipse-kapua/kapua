@@ -13,20 +13,28 @@
 package org.eclipse.kapua.service.user.internal;
 
 import org.eclipse.kapua.commons.model.AbstractKapuaNamedEntity;
+import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserStatus;
 import org.eclipse.kapua.service.user.UserType;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.Basic;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * {@link User} implementation.
@@ -38,6 +46,13 @@ import java.util.Date;
 public class UserImpl extends AbstractKapuaNamedEntity implements User {
 
     private static final long serialVersionUID = 4029650117581681503L;
+
+    @ElementCollection
+    @CollectionTable(name = "usr_user_tag", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
+    @AttributeOverrides({
+            @AttributeOverride(name = "eid", column = @Column(name = "tag_id", nullable = false, updatable = false))
+    })
+    private Set<KapuaEid> tagIds;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -115,6 +130,7 @@ public class UserImpl extends AbstractKapuaNamedEntity implements User {
     public UserImpl(User user) {
         super(user);
 
+        setTagIds(user.getTagIds());
         setStatus(user.getStatus());
         setDisplayName(user.getDisplayName());
         setEmail(user.getEmail());
@@ -123,6 +139,28 @@ public class UserImpl extends AbstractKapuaNamedEntity implements User {
         setExternalId(user.getExternalId());
         setExternalUsername(user.getExternalUsername());
         setExpirationDate(user.getExpirationDate());
+    }
+
+    @Override
+    public void setTagIds(Set<KapuaId> tagIds) {
+        this.tagIds = new HashSet<>();
+
+        for (KapuaId id : tagIds) {
+            this.tagIds.add(KapuaEid.parseKapuaId(id));
+        }
+    }
+
+    @Override
+    public Set<KapuaId> getTagIds() {
+        Set<KapuaId> tagIds = new HashSet<>();
+
+        if (this.tagIds != null) {
+            for (KapuaId deviceTagId : this.tagIds) {
+                tagIds.add(new KapuaEid(deviceTagId));
+            }
+        }
+
+        return tagIds;
     }
 
     @Override
