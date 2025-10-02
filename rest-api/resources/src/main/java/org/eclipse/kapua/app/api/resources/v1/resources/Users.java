@@ -22,6 +22,8 @@ import org.eclipse.kapua.model.KapuaNamedEntityAttributes;
 import org.eclipse.kapua.model.query.SortOrder;
 import org.eclipse.kapua.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.service.KapuaService;
+import org.eclipse.kapua.service.device.registry.DeviceAttributes;
+import org.eclipse.kapua.service.tag.Tag;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserCreator;
 import org.eclipse.kapua.service.user.UserFactory;
@@ -55,6 +57,7 @@ public class Users extends AbstractKapuaResource {
      * Gets the {@link User} list in the scope.
      *
      * @param scopeId       The {@link ScopeId} in which to search results.
+     * @param tagId         The {@link Tag#getId()} to filter result
      * @param name          The {@link User} name in which to search results.
      * @param sortParam     The name of the parameter that will be used as a sorting key
      * @param sortDir       The sort direction. Can be ASCENDING (default), DESCENDING. Case-insensitive.
@@ -70,6 +73,7 @@ public class Users extends AbstractKapuaResource {
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public UserListResult simpleQuery(
             @PathParam("scopeId") ScopeId scopeId,
+            @QueryParam("tagId") EntityId tagId,
             @QueryParam("name") String name,
             @QueryParam("matchTerm") String matchTerm,
             @QueryParam("sortParam") String sortParam,
@@ -80,12 +84,19 @@ public class Users extends AbstractKapuaResource {
         UserQuery query = userFactory.newQuery(scopeId);
 
         AndPredicate andPredicate = query.andPredicate();
+
+        if (tagId != null) {
+            andPredicate.and(query.attributePredicate(DeviceAttributes.TAG_IDS, tagId));
+        }
+
         if (!Strings.isNullOrEmpty(name)) {
             andPredicate.and(query.attributePredicate(KapuaNamedEntityAttributes.NAME, name));
         }
+
         if (matchTerm != null && !matchTerm.isEmpty()) {
             andPredicate.and(query.matchPredicate(matchTerm));
         }
+
         if (!Strings.isNullOrEmpty(sortParam)) {
             query.setSortCriteria(query.fieldSortCriteria(sortParam, sortDir));
         }
