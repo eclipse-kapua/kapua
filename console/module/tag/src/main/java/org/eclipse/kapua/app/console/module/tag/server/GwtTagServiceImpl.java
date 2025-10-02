@@ -259,4 +259,30 @@ public class GwtTagServiceImpl extends KapuaRemoteServiceServlet implements GwtT
             return new BasePagingLoadResult<GwtTag>(new ArrayList<GwtTag>(), 0, 0);
         }
     }
+
+    @Override
+    public PagingLoadResult<GwtTag> findByUserId(PagingLoadConfig loadConfig, String gwtScopeId, String gwtUserId) throws GwtKapuaException {
+        KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(gwtScopeId);
+        KapuaId userId = GwtKapuaCommonsModelConverter.convertKapuaId(gwtUserId);
+
+        try {
+            User user = userService.find(scopeId, userId);
+            if (user.getTagIds().isEmpty()) {
+                return new BasePagingLoadResult<GwtTag>(new ArrayList<GwtTag>(), 0, 0);
+            }
+
+            GwtTagQuery gwtTagQuery = new GwtTagQuery();
+            gwtTagQuery.setScopeId(gwtScopeId);
+
+            List<String> gwtTagIds = new ArrayList<String>();
+            for (KapuaId tagId : user.getTagIds()) {
+                gwtTagIds.add(KapuaGwtCommonsModelConverter.convertKapuaId(tagId));
+            }
+            gwtTagQuery.setIds(gwtTagIds);
+
+            return query(loadConfig, gwtTagQuery);
+        } catch (KapuaException e) {
+            throw KapuaExceptionHandler.buildExceptionFromError(e);
+        }
+    }
 }
