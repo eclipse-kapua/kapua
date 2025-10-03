@@ -137,7 +137,6 @@ public class GroupQueryHelperImpl implements GroupQueryHelper {
 
             if (query.getPredicate() != null) {
                 andPredicate.and(query.getPredicate());
-                andPredicate.and(query.getPredicate());
             }
 
             query.setPredicate(andPredicate);
