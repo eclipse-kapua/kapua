@@ -62,7 +62,7 @@ public class PluginUtility {
     }
 
     //is internal if the inbound connection is coming from the amqp connector
-    public boolean isAmqpInternal(String localAddress) {
+    private boolean isAmqpInternal(String localAddress) {
         return localAddress.endsWith(amqpInternalConnectorPort);
     }
 
