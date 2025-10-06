@@ -146,7 +146,7 @@ public final class SecurityContext {
      * @return
      * @throws Exception
      */
-    public boolean setSessionContext(SessionContext sessionContext, List<AuthAcl> authAcls) throws Exception {
+    public boolean setSessionContext(SessionContext sessionContext, List<AuthAcl> authAcls, boolean isInternal) throws Exception {
         logger.debug("Updating session context for connection id: {}", sessionContext.getConnectionId());
         String connectionId = sessionContext.getConnectionId();
         return runWithLock.run(LockType.CONNECTION_ID, connectionId, () -> {
@@ -156,8 +156,10 @@ public final class SecurityContext {
                 //fill by connection id context
                 sessionContextMap.put(connectionId, sessionContext);
                 aclMap.put(connectionId, new Acl(loginMetric, sessionContext.getPrincipal(), authAcls));
-                //fill by full client id context
-                sessionContextMapByClient.put(Utils.getFullClientId(sessionContext), sessionContext);
+                if (!isInternal) {
+                    //fill by full client id context
+                    sessionContextMapByClient.put(Utils.getFullClientId(sessionContext), sessionContext);
+                }
                 return true;
             } else {
                 return false;
@@ -195,7 +197,7 @@ public final class SecurityContext {
         }
     }
 
-    public SessionContext cleanSessionContext(SessionContext sessionContext) throws Exception {
+    public SessionContext cleanSessionContext(SessionContext sessionContext, boolean isInternal) throws Exception {
         String connectionId = sessionContext.getConnectionId();
         logger.debug("Updating session context for connection id: {}", connectionId);
         //cleaning context and filling cache
@@ -209,24 +211,29 @@ public final class SecurityContext {
         }
         activeConnections.remove(connectionId);
 
-        String fullClientId = Utils.getFullClientId(sessionContext);
-        SessionContext currentSessionContext = sessionContextMapByClient.get(fullClientId);
-        //if no stealing link remove the context by client id
-        //on a stealing link currentSessionContext could be null if the disconnect of the latest connected client happens before the others
-        if (currentSessionContext == null) {
-            logger.debug("Cannot find session context by full client id: {}", fullClientId);
-            loginMetric.getSessionContextByClientIdNotFound().inc();
-        } else {
-            if (connectionId.equals(currentSessionContext.getConnectionId())) {
-                sessionContextMapByClient.remove(fullClientId);
-                logger.debug("Disconnect: NO stealing - remove session context by clientId: {} - connection id: {}",
-                    currentSessionContext.getClientId(), currentSessionContext.getConnectionId());
+        if (!isInternal) {
+            String fullClientId = Utils.getFullClientId(sessionContext);
+            SessionContext currentSessionContext = sessionContextMapByClient.get(fullClientId);
+            //if no stealing link remove the context by client id
+            //on a stealing link currentSessionContext could be null if the disconnect of the latest connected client happens before the others
+            if (currentSessionContext == null) {
+                logger.debug("Cannot find session context by full client id: {}", fullClientId);
+                loginMetric.getSessionContextByClientIdNotFound().inc();
             } else {
-                logger.info("Disconnect: stealing - leave session context by clientId: {} - connection id: {} (old connection id: {})",
-                    currentSessionContext.getClientId(), currentSessionContext.getConnectionId(), connectionId);
+                if (connectionId.equals(currentSessionContext.getConnectionId())) {
+                    sessionContextMapByClient.remove(fullClientId);
+                    logger.debug("Disconnect: NO stealing - remove session context by clientId: {} - connection id: {}",
+                            currentSessionContext.getClientId(), currentSessionContext.getConnectionId());
+                } else {
+                    logger.info("Disconnect: stealing - leave session context by clientId: {} - connection id: {} (old connection id: {})",
+                            currentSessionContext.getClientId(), currentSessionContext.getConnectionId(), connectionId);
+                }
             }
+            return currentSessionContext;
         }
-        return currentSessionContext;
+        else {
+            return null;
+        }
     }
 
     public SessionContext getSessionContextByClientId(String fullClientId) {
