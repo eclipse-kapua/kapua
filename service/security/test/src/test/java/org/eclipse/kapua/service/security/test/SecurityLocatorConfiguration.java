@@ -63,6 +63,7 @@ import org.eclipse.kapua.service.authentication.shiro.utils.AuthenticationUtils;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.access.AccessInfoService;
 import org.eclipse.kapua.service.authorization.access.AccessRoleService;
+import org.eclipse.kapua.service.authorization.access.GroupQueryHelper;
 import org.eclipse.kapua.service.authorization.access.shiro.AccessInfoFactoryImpl;
 import org.eclipse.kapua.service.authorization.access.shiro.AccessRoleFactoryImpl;
 import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
@@ -131,6 +132,10 @@ public class SecurityLocatorConfiguration {
                 AuthorizationService mockedAuthorization = Mockito.mock(AuthorizationService.class);
                 AccessInfoService mockedAccessInfo = Mockito.mock(AccessInfoService.class);
                 AccessRoleService mockedAccessRole = Mockito.mock(AccessRoleService.class);
+
+                GroupService mockGroupService = Mockito.mock(GroupService.class);
+                GroupFactory mockGroupFactory = Mockito.mock(GroupFactory.class);
+                GroupQueryHelper mockGroupQueryHelper = Mockito.mock(GroupQueryHelper.class);
 
                 try {
                     Mockito.doNothing().when(mockedAuthorization).checkPermission(Matchers.any(Permission.class));
@@ -238,16 +243,22 @@ public class SecurityLocatorConfiguration {
                         Mockito.mock(ServiceConfigurationManager.class),
                         mockedAuthorization,
                         mockPermissionFactory,
+                        mockGroupQueryHelper,
                         userFactory,
                         new UserServiceValidationUtilsImpl(
                                 mockedAuthorization,
                                 mockPermissionFactory,
+                                mockGroupService,
+                                mockGroupFactory,
+                                Mockito.mock(ServiceConfigurationManager.class),
                                 mockTagService,
                                 mockTagFactory,
                                 new UserImplJpaRepository(jpaRepoConfig)
                         ),
                         new UserImplJpaRepository(jpaRepoConfig),
-                        new EventStorerImpl(new EventStoreRecordImplJpaRepository(jpaRepoConfig))));
+                        new EventStorerImpl(new EventStoreRecordImplJpaRepository(jpaRepoConfig))
+                    )
+                );
             }
         };
 

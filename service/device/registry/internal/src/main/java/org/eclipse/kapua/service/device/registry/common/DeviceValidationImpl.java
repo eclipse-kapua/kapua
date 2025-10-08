@@ -476,6 +476,8 @@ public final class DeviceValidationImpl implements DeviceValidation {
 
     @Override
     public void validateUpdateInTransaction(TxContext txContext, Device device) throws KapuaException {
+        //
+        // Check access
 
         // .groupId
         // checkAccessDeviceGroupId(txContext, device);

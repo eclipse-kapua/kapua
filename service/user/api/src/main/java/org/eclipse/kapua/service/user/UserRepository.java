@@ -21,7 +21,7 @@ import java.util.Optional;
 public interface UserRepository extends
         KapuaNamedEntityRepository<User, UserListResult> {
 
-    Optional<User> find(TxContext txContext, KapuaId userId);
+    Optional<User> findById(TxContext txContext, KapuaId userId);
 
     Optional<User> findByExternalId(TxContext txContext, final String externalId);
 

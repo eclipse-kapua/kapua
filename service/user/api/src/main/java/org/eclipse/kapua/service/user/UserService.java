@@ -86,7 +86,7 @@ public interface UserService extends KapuaEntityService<User, UserCreator>,
      * @throws KapuaException
      * @since 2.1.0
      */
-    User find(KapuaId userId) throws KapuaException;
+    User findById(KapuaId userId) throws KapuaException;
 
     /**
      * Returns the User with the specified username; returns null if the user is not found.
