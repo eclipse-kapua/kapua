@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -28,7 +28,8 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
- * {@link Permission} definition.<br>
+ * {@link Permission} definition.
+ * <p>
  * A permission can be associated to a {@link Subject} (using {@link AccessInfo} entity) or a {@link Domain}.<br>
  * {@link Permission}s enable the assignee to do {@link Actions} under specified {@link Domain} and in specified scopes.
  *
@@ -36,14 +37,14 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  */
 @XmlRootElement(name = "permission")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(propOrder = { //
-        "domain", //
-        "action", //
-        "targetScopeId", //
-        "groupId", //
-        "forwardable" //
-}, //
-        factoryClass = PermissionXmlRegistry.class, //
+@XmlType(propOrder = {
+            "domain",
+            "action",
+            "targetScopeId",
+            "groupId",
+            "forwardable"
+        },
+        factoryClass = PermissionXmlRegistry.class,
         factoryMethod = "newPermission")
 public interface Permission {
 
@@ -121,7 +122,7 @@ public interface Permission {
     KapuaId getGroupId();
 
     /**
-     * Sets whether or not this {@link Permission} is valid also for children scopeId.
+     * Sets whether this {@link Permission} is valid also for children scopeId.
      *
      * @param forwardable {@code true} if this {@link Permission} is forward-able to children scopeIds.
      * @since 1.0.0
@@ -129,7 +130,7 @@ public interface Permission {
     void setForwardable(boolean forwardable);
 
     /**
-     * Gets whether or not this {@link Permission} is valid also for children scopeIds.
+     * Gets whether this {@link Permission} is valid also for children scopeIds.
      * If a {@link Permission} is forward-able to children, the {@link Permission} will be valid
      * for all scopeIds of the {@link #getTargetScopeId()} scopeId.
      *

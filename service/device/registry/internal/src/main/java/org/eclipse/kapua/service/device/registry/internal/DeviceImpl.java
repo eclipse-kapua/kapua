@@ -56,18 +56,25 @@ public class DeviceImpl extends AbstractKapuaUpdatableEntity implements Device, 
 
     private static final long serialVersionUID = 7688047426522474413L;
 
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "eid", column = @Column(name = "group_id", nullable = true, updatable = true))
+    })
+    private KapuaEid groupId;
+
+    @ElementCollection
+    @CollectionTable(name = "dvc_device_group", joinColumns = @JoinColumn(name = "device_id", referencedColumnName = "id"))
+    @AttributeOverrides({
+            @AttributeOverride(name = "eid", column = @Column(name = "group_id", nullable = false, updatable = false))
+    })
+    private Set<KapuaEid> groupIds;
+
     @ElementCollection
     @CollectionTable(name = "dvc_device_tag", joinColumns = @JoinColumn(name = "device_id", referencedColumnName = "id"))
     @AttributeOverrides({
             @AttributeOverride(name = "eid", column = @Column(name = "tag_id", nullable = false, updatable = false))
     })
     private Set<KapuaEid> tagIds;
-
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "eid", column = @Column(name = "group_id", nullable = true, updatable = true))
-    })
-    private KapuaEid groupId;
 
     @Basic
     @Column(name = "client_id", nullable = false, updatable = false)
@@ -230,8 +237,9 @@ public class DeviceImpl extends AbstractKapuaUpdatableEntity implements Device, 
     public DeviceImpl(Device device) throws KapuaException {
         super(device);
 
-        setTagIds(device.getTagIds());
         setGroupId(device.getGroupId());
+        setGroupIds(device.getGroupIds());
+        setTagIds(device.getTagIds());
         setClientId(device.getClientId());
         setConnectionId(device.getConnectionId());
         setConnection(device.getConnection());
@@ -264,6 +272,38 @@ public class DeviceImpl extends AbstractKapuaUpdatableEntity implements Device, 
     }
 
     @Override
+    public KapuaId getGroupId() {
+        return groupId;
+    }
+
+    @Override
+    public void setGroupId(KapuaId groupId) {
+        this.groupId = KapuaEid.parseKapuaId(groupId);
+    }
+
+    @Override
+    public void setGroupIds(Set<KapuaId> groupIds) {
+        this.groupIds = new HashSet<>();
+
+        for (KapuaId groupId : groupIds) {
+            this.groupIds.add(KapuaEid.parseKapuaId(groupId));
+        }
+    }
+
+    @Override
+    public Set<KapuaId> getGroupIds() {
+        Set<KapuaId> groupIds = new HashSet<>();
+
+        if (this.groupIds != null) {
+            for (KapuaId groupId : this.groupIds) {
+                groupIds.add(KapuaEid.parseKapuaId(groupId));
+            }
+        }
+
+        return groupIds;
+    }
+
+    @Override
     public void setTagIds(Set<KapuaId> tagIds) {
         this.tagIds = new HashSet<>();
 
@@ -283,16 +323,6 @@ public class DeviceImpl extends AbstractKapuaUpdatableEntity implements Device, 
         }
 
         return tagIds;
-    }
-
-    @Override
-    public KapuaId getGroupId() {
-        return groupId;
-    }
-
-    @Override
-    public void setGroupId(KapuaId groupId) {
-        this.groupId = KapuaEid.parseKapuaId(groupId);
     }
 
     @Override

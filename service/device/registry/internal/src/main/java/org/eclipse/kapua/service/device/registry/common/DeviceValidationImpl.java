@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -14,17 +14,24 @@
 package org.eclipse.kapua.service.device.registry.common;
 
 import com.google.common.base.Strings;
+import org.eclipse.kapua.KapuaDuplicateNameException;
+import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.model.KapuaEntityAttributes;
-import org.eclipse.kapua.model.KapuaUpdatableEntity;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
+import org.eclipse.kapua.service.authorization.CheckStrategy;
 import org.eclipse.kapua.service.authorization.group.Group;
+import org.eclipse.kapua.service.authorization.group.GroupAttributes;
+import org.eclipse.kapua.service.authorization.group.GroupFactory;
+import org.eclipse.kapua.service.authorization.group.GroupListResult;
+import org.eclipse.kapua.service.authorization.group.GroupQuery;
 import org.eclipse.kapua.service.authorization.group.GroupService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
@@ -32,18 +39,26 @@ import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceCreator;
 import org.eclipse.kapua.service.device.registry.DeviceExtendedProperty;
 import org.eclipse.kapua.service.device.registry.DeviceFactory;
-import org.eclipse.kapua.service.device.registry.DeviceListResult;
-import org.eclipse.kapua.service.device.registry.DeviceQuery;
-import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.device.registry.DeviceRepository;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionService;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventService;
 import org.eclipse.kapua.service.device.registry.internal.DeviceRegistryServiceImpl;
+import org.eclipse.kapua.service.tag.Tag;
+import org.eclipse.kapua.service.tag.TagAttributes;
+import org.eclipse.kapua.service.tag.TagFactory;
+import org.eclipse.kapua.service.tag.TagListResult;
+import org.eclipse.kapua.service.tag.TagQuery;
 import org.eclipse.kapua.service.tag.TagService;
-import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.storage.TxContext;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Logic used to validate preconditions required to execute the {@link DeviceRegistryServiceImpl} operations.
@@ -57,11 +72,14 @@ public final class DeviceValidationImpl implements DeviceValidation {
     private final AuthorizationService authorizationService;
     private final PermissionFactory permissionFactory;
     private final GroupService groupService;
+    private final GroupFactory groupFactory;
     private final DeviceConnectionService deviceConnectionService;
     private final DeviceEventService deviceEventService;
-    private final DeviceRepository deviceRepository;
     private final DeviceFactory deviceFactory;
+    private final DeviceRepository deviceRepository;
+    protected final ServiceConfigurationManager serviceConfigurationManager;
     private final TagService tagService;
+    private final TagFactory tagFactory;
 
     public DeviceValidationImpl(
             Integer birthFieldsClobMaxLength,
@@ -69,50 +87,50 @@ public final class DeviceValidationImpl implements DeviceValidation {
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
             GroupService groupService,
+            GroupFactory groupFactory,
             DeviceConnectionService deviceConnectionService,
             DeviceEventService deviceEventService,
-            DeviceRepository deviceRepository,
             DeviceFactory deviceFactory,
-            TagService tagService) {
+            DeviceRepository deviceRepository,
+            ServiceConfigurationManager serviceConfigurationManager,
+            TagService tagService,
+            TagFactory tagFactory
+    ) {
         this.birthFieldsClobMaxLength = birthFieldsClobMaxLength;
         this.birthFieldsExtendedPropertyValueMaxLength = birthFieldsExtendedPropertyValueMaxLength;
         this.authorizationService = authorizationService;
         this.permissionFactory = permissionFactory;
         this.groupService = groupService;
+        this.groupFactory = groupFactory;
         this.deviceConnectionService = deviceConnectionService;
         this.deviceEventService = deviceEventService;
         this.deviceRepository = deviceRepository;
         this.deviceFactory = deviceFactory;
+        this.serviceConfigurationManager = serviceConfigurationManager;
         this.tagService = tagService;
+        this.tagFactory = tagFactory;
     }
 
-    /**
-     * Validates the {@link DeviceCreator}.
-     *
-     * @param deviceCreator The {@link DeviceCreator} to validate.
-     * @throws org.eclipse.kapua.KapuaIllegalArgumentException                                if one of the {@link DeviceCreator} fields is invalid.
-     * @throws org.eclipse.kapua.service.authorization.exception.SubjectUnauthorizedException if current {@link User} does not have sufficient {@link Permission}s
-     * @throws KapuaException                                                                 if there are other errors.
-     * @since 1.0.0
-     */
     @Override
     public void validateCreatePreconditions(DeviceCreator deviceCreator) throws KapuaException {
+        //
         // Argument validation
         ArgumentValidator.notNull(deviceCreator, "deviceCreator");
         ArgumentValidator.notNull(deviceCreator.getScopeId(), "deviceCreator.scopeId");
+
+        // .tagIds
+        validateTagIds(deviceCreator.getScopeId(), deviceCreator.getTagIds());
+
+        // .groupId
+        validateDeviceCreatorGroupId(deviceCreator);
+
+        // .groupIds
+        validateDeviceCreatorGroupIds(deviceCreator);
 
         // .clientId
         ArgumentValidator.notEmptyOrNull(deviceCreator.getClientId(), "deviceCreator.clientId");
         ArgumentValidator.lengthRange(deviceCreator.getClientId(), 1, 255, "deviceCreator.clientId");
         ArgumentValidator.match(deviceCreator.getClientId(), DeviceValidationRegex.CLIENT_ID, "deviceCreator.clientId");
-
-        // .groupId
-        if (deviceCreator.getGroupId() != null) {
-            ArgumentValidator.notNull(
-                    KapuaSecurityUtils.doPrivileged(
-                            () -> groupService.find(deviceCreator.getScopeId(), deviceCreator.getGroupId())
-                    ), "deviceCreator.groupId");
-        }
 
         // .status
         ArgumentValidator.notNull(deviceCreator.getStatus(), "deviceCreator.status");
@@ -258,44 +276,53 @@ public final class DeviceValidationImpl implements DeviceValidation {
                 ArgumentValidator.lengthRange(deviceExtendedProperty.getValue(), 1, birthFieldsExtendedPropertyValueMaxLength, "deviceCreator.extendedProperties[].value");
             }
         }
+
+        //
         // Check access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE, Actions.write, deviceCreator.getScopeId(), deviceCreator.getGroupId()));
+
+        // Check that current Subject can manage the target Group of the Device
+        // authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE, Actions.write, deviceCreator.getScopeId(), deviceCreator.getGroupId()));
+
+        // Check that current Subject can manage all the target Groups
+        Set<Permission> groupPermissions = buildSetPermissionsFromGroupIds(Domains.DEVICE, Actions.write, deviceCreator.getScopeId(), deviceCreator.getGroupIds());
+        authorizationService.checkPermissions(groupPermissions);
     }
 
-    /**
-     * Validates the {@link Device} for {@link DeviceRegistryService#update(KapuaUpdatableEntity)} operation.
-     *
-     * @param device The {@link Device} to validate.
-     * @throws org.eclipse.kapua.KapuaIllegalArgumentException                                if one of the {@link Device} fields is invalid.
-     * @throws org.eclipse.kapua.service.authorization.exception.SubjectUnauthorizedException if current {@link User} does not have sufficient {@link Permission}s
-     * @throws KapuaException                                                                 if there are other errors.
-     * @since 1.0.0
-     */
     @Override
-    public void validateUpdatePreconditions(TxContext txContext, Device device) throws KapuaException {
+    public void validateCreateInTransaction(TxContext tx, DeviceCreator deviceCreator) throws KapuaException {
+
+        // Check entity limit
+        serviceConfigurationManager.checkAllowedEntities(tx, deviceCreator.getScopeId(), "Devices");
+
+        //
+        // Check duplicates
+        // .clientId
+        if (deviceRepository.findByClientId(tx, deviceCreator.getScopeId(), deviceCreator.getClientId()).isPresent()) {
+            throw new KapuaDuplicateNameException(deviceCreator.getClientId());
+        }
+    }
+
+    @Override
+    public void validateUpdatePreconditions(Device device) throws KapuaException {
+        //
         // Argument validation
         ArgumentValidator.notNull(device, "device");
         ArgumentValidator.notNull(device.getScopeId(), "device.scopeId");
         ArgumentValidator.notNull(device.getId(), "device.id");
 
+        // .groupId
+        validateDeviceGroupId(device);
+
+        // .groupIds
+        validateDeviceGroupIds(device);
+
+        // .tagIds
+        validateTagIds(device.getScopeId(), device.getTagIds());
+
         // .clientId
         ArgumentValidator.notEmptyOrNull(device.getClientId(), "device.clientId");
         ArgumentValidator.lengthRange(device.getClientId(), 1, 255, "device.clientId");
         ArgumentValidator.match(device.getClientId(), DeviceValidationRegex.CLIENT_ID, "device.clientId");
-
-        // .groupId
-        // Check that current User can manage the current Group of the Device
-        KapuaId currentGroupId = findCurrentGroupId(txContext, device.getScopeId(), device.getId());
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE, Actions.write, device.getScopeId(), currentGroupId));
-
-        // Check that current User can manage the target Group of the Device
-        if (device.getGroupId() != null) {
-            ArgumentValidator.notNull(
-                    KapuaSecurityUtils.doPrivileged(
-                            () -> groupService.find(device.getScopeId(), device.getGroupId())
-                    ), "device.groupId");
-        }
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE, Actions.write, device.getScopeId(), device.getGroupId()));
 
         // .status
         ArgumentValidator.notNull(device.getStatus(), "device.status");
@@ -442,50 +469,61 @@ public final class DeviceValidationImpl implements DeviceValidation {
             }
         }
 
-        // .tagsIds
-        for (KapuaId tagId : device.getTagIds()) {
-            ArgumentValidator.notNull(
-                    KapuaSecurityUtils.doPrivileged(
-                            () -> tagService.find(device.getScopeId(), tagId))
-                    , "device.tagsIds[].id"
-            );
-        }
+        //
+        // Check access
+        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE, Actions.write, device.getScopeId(), Group.ANY));
     }
 
-    /**
-     * Validates the parameters for {@link DeviceRegistryService#find(KapuaId, KapuaId)} operation.
-     *
-     * @param scopeId  The {@link Device#getScopeId()}
-     * @param deviceId The {@link Device#getId()}
-     * @throws org.eclipse.kapua.KapuaIllegalArgumentException                                if one of the parameters is invalid.
-     * @throws org.eclipse.kapua.service.authorization.exception.SubjectUnauthorizedException if current {@link User} does not have sufficient {@link Permission}s
-     * @throws KapuaException                                                                 if there are other errors.
-     * @since 1.0.0
-     */
     @Override
-    public void validateFindPreconditions(TxContext txContext, KapuaId scopeId, KapuaId deviceId) throws KapuaException {
+    public void validateUpdateInTransaction(TxContext txContext, Device device) throws KapuaException {
+
+        // .groupId
+        // checkAccessDeviceGroupId(txContext, device);
+
+        // .groupIds
+        checkAccessDeviceGroupIds(txContext, device);
+    }
+
+    @Override
+    public void validateFindPreconditions(KapuaId scopeId, KapuaId deviceId) throws KapuaException {
+        //
         // Argument validation
         ArgumentValidator.notNull(scopeId, KapuaEntityAttributes.SCOPE_ID);
         ArgumentValidator.notNull(deviceId, "deviceId");
+
+        //
         // Check access
-        KapuaId groupId = findCurrentGroupId(txContext, scopeId, deviceId);
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE, Actions.read, scopeId, groupId));
+        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE, Actions.read, scopeId, Group.ANY));
     }
 
-    /**
-     * Validates the {@link KapuaQuery} for {@link DeviceRegistryService#query(KapuaQuery)} operation.
-     *
-     * @param query The {@link KapuaQuery} to validate.
-     * @throws org.eclipse.kapua.KapuaIllegalArgumentException                                if one of the {@link KapuaQuery} fields is invalid.
-     * @throws org.eclipse.kapua.service.authorization.exception.SubjectUnauthorizedException if current {@link User} does not have sufficient {@link Permission}s
-     * @throws KapuaException                                                                 if there are other errors.
-     * @since 1.0.0
-     */
+    @Override
+    public void validateFindByClientIdPreconditions(KapuaId scopeId, String clientId) throws KapuaException {
+        //
+        // Argument validation
+        ArgumentValidator.notNull(scopeId, KapuaEntityAttributes.SCOPE_ID);
+        ArgumentValidator.notEmptyOrNull(clientId, "clientId");
+
+        //
+        // Check access
+        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE, Actions.read, scopeId, Group.ANY));
+    }
+
+    @Override
+    public void validateFindByFieldPostconditions(Device device) throws KapuaException {
+        // Check access
+        if (device != null) {
+            Set<Permission> groupPermissions = buildSetPermissionsFromGroupIds(Domains.DEVICE, Actions.read, device.getScopeId(), device.getGroupIds());
+            authorizationService.checkPermissions(groupPermissions, CheckStrategy.AT_LEAST_ONE_OF);
+        }
+    }
+
     @Override
     public void validateQueryPreconditions(KapuaQuery query) throws KapuaException {
+        //
         // Argument validation
         ArgumentValidator.notNull(query, "query");
 
+        //
         // .fetchAttributes
         List<String> fetchAttributes = query.getFetchAttributes();
         if (fetchAttributes != null) {
@@ -493,90 +531,325 @@ public final class DeviceValidationImpl implements DeviceValidation {
                 ArgumentValidator.match(fetchAttribute, DeviceValidationRegex.QUERY_FETCH_ATTRIBUTES, "fetchAttributes");
             }
         }
+
+        //
         // Check access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE, Actions.read, query.getScopeId(), Group.ANY));
     }
 
-    /**
-     * Validates the {@link KapuaQuery} for {@link DeviceRegistryService#count(KapuaQuery)} operation.
-     *
-     * @param query The {@link KapuaQuery} to validate.
-     * @throws org.eclipse.kapua.KapuaIllegalArgumentException                                if one of the {@link KapuaQuery} fields is invalid.
-     * @throws org.eclipse.kapua.service.authorization.exception.SubjectUnauthorizedException if current {@link User} does not have sufficient {@link Permission}s
-     * @throws KapuaException                                                                 if there are other errors.
-     * @since 1.0.0
-     */
     @Override
     public void validateCountPreconditions(KapuaQuery query) throws KapuaException {
+        //
         // Argument validation
         ArgumentValidator.notNull(query, "query");
+
+        //
         // Check access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE, Actions.read, query.getScopeId(), Group.ANY));
     }
 
-    /**
-     * Validates the parameters for {@link DeviceRegistryService#delete(KapuaId, KapuaId)} operation.
-     *
-     * @param scopeId  The {@link Device#getScopeId()}
-     * @param deviceId The {@link Device#getId()}
-     * @throws org.eclipse.kapua.KapuaIllegalArgumentException                                if one of the parameters is invalid.
-     * @throws org.eclipse.kapua.service.authorization.exception.SubjectUnauthorizedException if current {@link User} does not have sufficient {@link Permission}s
-     * @throws KapuaException                                                                 if there are other errors.
-     * @since 1.0.0
-     */
     @Override
-    public void validateDeletePreconditions(TxContext txContext, KapuaId scopeId, KapuaId deviceId) throws KapuaException {
+    public void validateDeletePreconditions(KapuaId scopeId, KapuaId deviceId) throws KapuaException {
+        //
         // Argument validation
         ArgumentValidator.notNull(scopeId, KapuaEntityAttributes.SCOPE_ID);
         ArgumentValidator.notNull(deviceId, "deviceId");
+
+        //
         // Check access
-        KapuaId groupId = findCurrentGroupId(txContext, scopeId, deviceId);
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE, Actions.delete, scopeId, groupId));
+        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE, Actions.delete, scopeId, Group.ANY));
     }
 
-    /**
-     * Validates the parameters for {@link DeviceRegistryService#findByClientId(KapuaId, String)} operation.
-     *
-     * @param scopeId  The {@link Device#getScopeId()}
-     * @param clientId The {@link Device#getClientId()}
-     * @throws org.eclipse.kapua.KapuaIllegalArgumentException                                if one of the parameters is invalid.
-     * @throws org.eclipse.kapua.service.authorization.exception.SubjectUnauthorizedException if current {@link User} does not have sufficient {@link Permission}s
-     * @throws KapuaException                                                                 if there are other errors.
-     * @since 1.0.0
-     */
     @Override
-    public void validateFindByClientIdPreconditions(KapuaId scopeId, String clientId) throws KapuaException {
-        // Argument validation
-        ArgumentValidator.notNull(scopeId, KapuaEntityAttributes.SCOPE_ID);
-        ArgumentValidator.notEmptyOrNull(clientId, "clientId");
-        // Check access is performed by the query method.
+    public void validateDeleteInTransaction(TxContext txContext, KapuaId scopeId, KapuaId deviceId) throws KapuaException {
+        //
+        // Check access
+        // Check current Subject can delete from all Group Ids
+        Set<KapuaId> groupIds = findCurrentGroupIds(txContext, scopeId, deviceId);
+        Set<Permission> groupPermissions = buildSetPermissionsFromGroupIds(Domains.DEVICE, Actions.delete, scopeId, groupIds);
+        authorizationService.checkPermissions(groupPermissions);
     }
 
+
+    //
+    // Private methods
+    //
+
+    // Groups validation
+
     /**
-     * Finds the current {@link Group} id assigned to the given {@link Device#getId()}.
+     * Finds the current {@link Group} id assigned to the given {@link Device}.
      *
      * @param scopeId  The {@link Device#getScopeId()}
-     * @param entityId The {@link Device#getId()}
+     * @param deviceId The {@link Device#getId()}
      * @return The {@link Group} id found.
      * @throws KapuaException if any error occurs while looking for the Group.
      * @since 1.0.0
      */
-    private KapuaId findCurrentGroupId(TxContext tx, KapuaId scopeId, KapuaId entityId) throws KapuaException {
-        DeviceQuery query = deviceFactory.newQuery(scopeId);
-        query.setPredicate(query.attributePredicate(KapuaEntityAttributes.ENTITY_ID, entityId));
-
-        DeviceListResult results;
+    private KapuaId findCurrentGroupId(TxContext tx, KapuaId scopeId, KapuaId deviceId) throws KapuaException {
         try {
-            results = deviceRepository.query(tx, query);
+            Optional<Device> optionalDevice = deviceRepository.find(tx, scopeId, deviceId);
+
+            return optionalDevice
+                    .map(Device::getGroupId)
+                    .orElse(null);
         } catch (Exception e) {
             throw KapuaException.internalError(e, "Error while searching groupId");
         }
+    }
 
-        KapuaId groupId = null;
-        if (results != null && !results.isEmpty()) {
-            groupId = results.getFirstItem().getGroupId();
+    /**
+     * Finds the current Set of {@link Group} ids assigned to the given {@link Device}.
+     *
+     * @param scopeId  The {@link Device#getScopeId()}
+     * @param deviceId The {@link Device#getId()}
+     * @return The Set of {@link Group} ids found.
+     * @throws KapuaException if any error occurs while looking for the Group.
+     * @since 2.1.0
+     */
+    private Set<KapuaId> findCurrentGroupIds(TxContext tx, KapuaId scopeId, KapuaId deviceId) throws KapuaException {
+        try {
+            Optional<Device> optionalDevice = deviceRepository.find(tx, scopeId, deviceId);
+
+            return optionalDevice
+                    .map(Device::getGroupIds)
+                    .orElse(Collections.emptySet());
+        } catch (Exception e) {
+            throw KapuaException.internalError(e, "Error while searching groupId");
         }
+    }
 
-        return groupId;
+    /**
+     * Applies validation logics to {@link DeviceCreator#getGroupId()} attribute.
+     * <p>
+     * Requirements are:
+     * <ul>
+     *     <li>The Group defined must exists</li>
+     * </ul>
+     *
+     * @param deviceCreator The {@link DeviceCreator} to check
+     * @throws KapuaException
+     * @since 2.1.0
+     */
+    private void validateDeviceCreatorGroupId(DeviceCreator deviceCreator) throws KapuaException {
+        //
+        // Check that target Group exist
+        checkGroupExistence(deviceCreator.getScopeId(), deviceCreator.getGroupId());
+    }
+
+    /**
+     * Applies validation logics to {@link DeviceCreator#getGroupIds()} attribute.
+     * <p>
+     * Requirements are:
+     * <ul>
+     *     <li>All Groups defined must exists</li>
+     * </ul>
+     *
+     * @param deviceCreator The {@link DeviceCreator} to validate
+     * @throws KapuaException
+     * @since 2.1.0
+     */
+    private void validateDeviceCreatorGroupIds(DeviceCreator deviceCreator) throws KapuaException {
+        if (!deviceCreator.getGroupIds().isEmpty()) {
+            Set<KapuaId> groupIds = deviceCreator.getGroupIds();
+
+            //
+            // Check existence of all Groups
+            GroupQuery groupQuery = groupFactory.newQuery(deviceCreator.getScopeId());
+            groupQuery.setPredicate(groupQuery.attributePredicate(GroupAttributes.ENTITY_ID, groupIds));
+
+            GroupListResult dbGroups = KapuaSecurityUtils.doPrivileged(() -> groupService.query(groupQuery));
+            if (groupIds.size() != dbGroups.getSize()) {
+                // Some groups have not been found
+                Set<KapuaId> dbGroupIds =
+                        dbGroups.getItems()
+                                .stream()
+                                .map(Group::getId)
+                                .collect(Collectors.toSet());
+
+                for (KapuaId groupId : groupIds) {
+                    if (!dbGroupIds.contains(groupId)) {
+                        throw new KapuaEntityNotFoundException(Group.TYPE, groupId);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Applies validation logics to {@link Device#getGroupId()} attribute.
+     * <p>
+     * Requirements are:
+     * <ul>
+     *     <li>device:write Permission on the current Group</li>
+     *     <li>If Group is updated, new Group defined must exists</li>
+     *     <li>If Group is updated, device:write Permission on new Group defined</li>
+     * </ul>
+     *
+     * @param device The {@link Device} to check
+     * @throws KapuaException
+     * @since 2.1.0
+     */
+    private void validateDeviceGroupId(Device device) throws KapuaException {
+        //
+        // Check that target Group exist
+        checkGroupExistence(device.getScopeId(), device.getGroupId());
+    }
+
+    private void checkAccessDeviceGroupId(TxContext txContext, Device device) throws KapuaException {
+        //
+        // Check that current Subject can manage the current Group of the Device
+        KapuaId currentGroupId = findCurrentGroupId(txContext, device.getScopeId(), device.getId());
+        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE, Actions.write, device.getScopeId(), currentGroupId));
+
+        // If Group has been updated
+        if (!Objects.equals(currentGroupId, device.getGroupId())) {
+            //
+            // Check that current Subject can manage the target Group of the Device
+            authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE, Actions.write, device.getScopeId(), device.getGroupId()));
+        }
+    }
+
+    private void validateDeviceGroupIds(Device device) throws KapuaException {
+        if (!device.getGroupIds().isEmpty()) {
+            Set<KapuaId> groupIds = device.getGroupIds();
+
+            GroupQuery groupQuery = groupFactory.newQuery(device.getScopeId());
+            groupQuery.setPredicate(groupQuery.attributePredicate(GroupAttributes.ENTITY_ID, groupIds));
+
+            GroupListResult dbGroups = KapuaSecurityUtils.doPrivileged(() -> groupService.query(groupQuery));
+            if (groupIds.size() != dbGroups.getSize()) {
+                // Some groups have not been found
+                Set<KapuaId> dbGroupIds =
+                        dbGroups.getItems()
+                                .stream()
+                                .map(Group::getId)
+                                .collect(Collectors.toSet());
+
+                for (KapuaId groupId : groupIds) {
+                    if (!dbGroupIds.contains(groupId)) {
+                        throw new KapuaEntityNotFoundException(Group.TYPE, groupId);
+                    }
+                }
+            }
+        }
+    }
+
+    private void checkAccessDeviceGroupIds(TxContext txContext, Device device) throws KapuaException {
+        //
+        // Check that current User can manage at least one of the current Groups of the Device
+        Set<KapuaId> currentGroupIds = findCurrentGroupIds(txContext, device.getScopeId(), device.getId());
+
+        Set<Permission> currentGroupPermissions =
+                currentGroupIds.stream()
+                        .map(groupId -> permissionFactory.newPermission(Domains.DEVICE, Actions.write, device.getScopeId(), groupId))
+                        .collect(Collectors.toSet());
+
+        authorizationService.checkPermissions(currentGroupPermissions, CheckStrategy.AT_LEAST_ONE_OF);
+
+        //
+        // Check access to Groups that have been changed
+        Set<KapuaId> updatedGroupIds = new HashSet<>();
+
+        // Added groups - all Groups present in the updated Device but not on DB
+        updatedGroupIds.addAll(
+                device.getGroupIds()
+                        .stream()
+                        .filter(groupId -> !currentGroupIds.contains(groupId))
+                        .collect(Collectors.toSet())
+        );
+
+        // Removed groups - all Groups not present in the updated Device but exists on DB
+        updatedGroupIds.addAll(
+                currentGroupIds
+                        .stream()
+                        .filter(currentGroupId1-> !device.getGroupIds().contains(currentGroupId1))
+                        .collect(Collectors.toSet())
+        );
+
+        // If any of the Group have been changed, check authorization for those Groups
+        if (!updatedGroupIds.isEmpty()) {
+            Set<Permission> groupPermissions =
+                    updatedGroupIds
+                            .stream()
+                            .map(groupId -> permissionFactory.newPermission(Domains.DEVICE, Actions.write, device.getScopeId(), groupId))
+                            .collect(Collectors.toSet());
+
+            authorizationService.checkPermissions(groupPermissions);
+        }
+    }
+
+
+    /**
+     * Checks that the given Group exists.
+     *
+     * @param scopeId The {@link Group#getScopeId()}
+     * @param groupId The {@link Group#getId()}
+     * @throws KapuaException
+     * @since 2.1.0
+     */
+    private void checkGroupExistence(KapuaId scopeId, KapuaId groupId) throws KapuaException {
+        if (groupId != null) {
+            Group group = KapuaSecurityUtils.doPrivileged(() -> groupService.find(scopeId, groupId));
+
+            if (group == null) {
+                throw new KapuaEntityNotFoundException(Group.TYPE, groupId);
+            }
+        }
+    }
+
+    /**
+     * Builds a set of {@link Permission} from a collection of Group Ids
+     *
+     * @param domain The {@link Permission#getDomain()}
+     * @param action The {@link Permission#getAction()}
+     * @param scopeId The {@link Permission#getTargetScopeId()}
+     * @param groupIds The collection of Group Ids
+     *
+     * @return The set of {@link Permission}
+     * @since 2.1.0
+     */
+    private Set<Permission> buildSetPermissionsFromGroupIds(String domain, Actions action, KapuaId scopeId, Collection<KapuaId> groupIds) {
+        return groupIds.stream()
+                .map(groupId -> permissionFactory.newPermission(domain, action, scopeId, groupId))
+                .collect(Collectors.toSet());
+
+    }
+
+    // Tags validation
+
+    /**
+     * Applies validation logics to {@link Device#getTagIds()} and {@link DeviceCreator#getTagIds()} attribute.
+     * <p>
+     * Requirements are:
+     * <ul>
+     *     <li>The Tags defined must exists</li>
+     * </ul>
+     *
+     * @param tagIds The {@link DeviceCreator} to check
+     * @throws KapuaException
+     * @since 2.1.0
+     */
+    private void validateTagIds(KapuaId scopeId, Collection<KapuaId> tagIds) throws KapuaException {
+        // Look for Tags
+        TagQuery tagQuery = tagFactory.newQuery(scopeId);
+        tagQuery.setPredicate(tagQuery.attributePredicate(TagAttributes.ENTITY_ID, tagIds));
+        TagListResult dbTags = KapuaSecurityUtils.doPrivileged(() -> tagService.query(tagQuery));
+
+        // Match Tags found with given Tag IDs
+        if (tagIds.size() != dbTags.getSize()) {
+            // Some tags have not been found
+            Set<KapuaId> dbTagsIds =
+                    dbTags.getItems()
+                            .stream()
+                            .map(Tag::getId)
+                            .collect(Collectors.toSet());
+
+            for (KapuaId tagId : tagIds) {
+                if (!dbTagsIds.contains(tagId)) {
+                    throw new KapuaEntityNotFoundException(Tag.TYPE, tagId);
+                }
+            }
+        }
     }
 }
