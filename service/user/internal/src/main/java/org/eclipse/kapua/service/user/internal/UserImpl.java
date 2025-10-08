@@ -48,6 +48,13 @@ public class UserImpl extends AbstractKapuaNamedEntity implements User {
     private static final long serialVersionUID = 4029650117581681503L;
 
     @ElementCollection
+    @CollectionTable(name = "usr_user_group", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
+    @AttributeOverrides({
+            @AttributeOverride(name = "eid", column = @Column(name = "group_id", nullable = false, updatable = false))
+    })
+    private Set<KapuaEid> groupIds;
+
+    @ElementCollection
     @CollectionTable(name = "usr_user_tag", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
     @AttributeOverrides({
             @AttributeOverride(name = "eid", column = @Column(name = "tag_id", nullable = false, updatable = false))
@@ -130,6 +137,7 @@ public class UserImpl extends AbstractKapuaNamedEntity implements User {
     public UserImpl(User user) {
         super(user);
 
+        setGroupIds(user.getGroupIds());
         setTagIds(user.getTagIds());
         setStatus(user.getStatus());
         setDisplayName(user.getDisplayName());
@@ -139,6 +147,28 @@ public class UserImpl extends AbstractKapuaNamedEntity implements User {
         setExternalId(user.getExternalId());
         setExternalUsername(user.getExternalUsername());
         setExpirationDate(user.getExpirationDate());
+    }
+
+    @Override
+    public void setGroupIds(Set<KapuaId> groupIds) {
+        this.groupIds = new HashSet<>();
+
+        for (KapuaId groupId : groupIds) {
+            this.groupIds.add(KapuaEid.parseKapuaId(groupId));
+        }
+    }
+
+    @Override
+    public Set<KapuaId> getGroupIds() {
+        Set<KapuaId> groupIds = new HashSet<>();
+
+        if (this.groupIds != null) {
+            for (KapuaId groupId : this.groupIds) {
+                groupIds.add(KapuaEid.parseKapuaId(groupId));
+            }
+        }
+
+        return groupIds;
     }
 
     @Override

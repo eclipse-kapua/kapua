@@ -33,8 +33,8 @@ public class UserCachedRepository
     }
 
     @Override
-    public Optional<User> find(TxContext txContext, KapuaId userId) {
-        final Optional<User> found = wrapped.find(txContext, userId);
+    public Optional<User> findById(TxContext txContext, KapuaId userId) {
+        final Optional<User> found = wrapped.findById(txContext, userId);
         found.ifPresent(entityCache::put);
         return found;
     }

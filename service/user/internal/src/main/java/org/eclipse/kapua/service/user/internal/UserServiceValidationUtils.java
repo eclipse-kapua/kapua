@@ -78,7 +78,7 @@ public interface UserServiceValidationUtils {
     void validateFindPreconditions(KapuaId scopeId, KapuaId userId) throws KapuaException;
 
     /**
-     * Validates inputs for {@link UserService#find(KapuaId)}
+     * Validates inputs for {@link UserService#findById(KapuaId)}
      *
      * @param userId The {@link User#getId()}
      * @throws KapuaException
@@ -116,7 +116,7 @@ public interface UserServiceValidationUtils {
     /**
      * Validates {@link User} found for:
      * <ul>
-     *     <li>{@link UserService#find(KapuaId)}</li>
+     *     <li>{@link UserService#findById(KapuaId)}</li>
      *     <li>{@link UserService#findByName(String)}</li>
      *     <li>{@link UserService#findByExternalId(String)}</li>
      *     <li>{@link UserService#findByExternalUsername(String)}</li>

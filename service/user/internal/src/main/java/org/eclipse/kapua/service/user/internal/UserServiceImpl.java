@@ -23,8 +23,10 @@ import org.eclipse.kapua.event.ServiceEvent;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
+import org.eclipse.kapua.service.authorization.access.GroupQueryHelper;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.user.User;
+import org.eclipse.kapua.service.user.UserAttributes;
 import org.eclipse.kapua.service.user.UserCreator;
 import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserListResult;
@@ -47,6 +49,8 @@ public class UserServiceImpl extends KapuaConfigurableServiceBase implements Use
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
+    private final GroupQueryHelper groupQueryHelper;
+
     private final UserServiceValidationUtils userServiceValidationUtils;
 
     private final UserRepository userRepository;
@@ -58,6 +62,7 @@ public class UserServiceImpl extends KapuaConfigurableServiceBase implements Use
             ServiceConfigurationManager serviceConfigurationManager,
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
+            GroupQueryHelper groupQueryHelper,
             UserFactory userFactory,
             UserServiceValidationUtils userServiceValidationUtils,
             UserRepository userRepository,
@@ -70,61 +75,64 @@ public class UserServiceImpl extends KapuaConfigurableServiceBase implements Use
             authorizationService,
             permissionFactory
         );
+
+        this.groupQueryHelper = groupQueryHelper;
+        this.userFactory = userFactory;
         this.userServiceValidationUtils = userServiceValidationUtils;
         this.userRepository = userRepository;
-        this.userFactory = userFactory;
         this.eventStorer = eventStorer;
     }
 
     @Override
     public User create(UserCreator userCreator) throws KapuaException {
 
-        // Validate UserCreator
+        // Validate preconditions
         userServiceValidationUtils.validateCreatePreconditions(userCreator);
 
         // Do create
-        return txManager.execute(tx -> {
-            // Check entity limit
-            serviceConfigurationManager.checkAllowedEntities(tx, userCreator.getScopeId(), "Users");
+        return txManager.execute(
+            tx -> {
+                // Validate in-transaction conditions
+                userServiceValidationUtils.validateCreateInTransaction(tx, userCreator);
 
-            // Validate in-transaction conditions
-            userServiceValidationUtils.validateCreateInTransaction(tx, userCreator);
+                // Create User
+                User user = userFactory.newEntity(userCreator.getScopeId());
+                user.setGroupIds(userCreator.getGroupIds());
+                user.setTagIds(userCreator.getTagIds());
+                user.setName(userCreator.getName());
+                user.setDisplayName(userCreator.getDisplayName());
+                user.setEmail(userCreator.getEmail());
+                user.setPhoneNumber(userCreator.getPhoneNumber());
+                user.setUserType(userCreator.getUserType());
+                user.setExternalId(userCreator.getExternalId());
+                user.setExternalUsername(userCreator.getExternalUsername());
+                user.setStatus(userCreator.getStatus());
+                user.setExpirationDate(userCreator.getExpirationDate());
 
-            // Create User
-            User user = userFactory.newEntity(userCreator.getScopeId());
-            user.setTagIds(userCreator.getTagIds());
-            user.setName(userCreator.getName());
-            user.setDisplayName(userCreator.getDisplayName());
-            user.setEmail(userCreator.getEmail());
-            user.setPhoneNumber(userCreator.getPhoneNumber());
-            user.setUserType(userCreator.getUserType());
-            user.setExternalId(userCreator.getExternalId());
-            user.setExternalUsername(userCreator.getExternalUsername());
-            user.setStatus(userCreator.getStatus());
-            user.setExpirationDate(userCreator.getExpirationDate());
-
-            return userRepository.create(tx, user);
-        });
+                // Persist
+                return userRepository.create(tx, user);
+            }
+        );
     }
 
     @Override
     //@RaiseServiceEvent
     public User update(User user) throws KapuaException {
-        //
-        // Validate User
+
+        // Validate preconditions
         userServiceValidationUtils.validateUpdatePreconditions(user);
 
-        //
         // Do update
         return txManager.execute(
-                tx -> {
-                    // Validate in-transaction conditions
-                    userServiceValidationUtils.validateUpdateInTransaction(tx, user);
+            tx -> {
+                // Validate in-transaction conditions
+                userServiceValidationUtils.validateUpdateInTransaction(tx, user);
 
-                    // Do update
-                    return userRepository.update(tx, user);
-                },
-                eventStorer::accept);
+                // Update
+                return userRepository.update(tx, user);
+            },
+            eventStorer::accept
+        );
     }
 
     @Override
@@ -134,20 +142,26 @@ public class UserServiceImpl extends KapuaConfigurableServiceBase implements Use
         userServiceValidationUtils.validateFindPreconditions(scopeId, userId);
 
         // Do find
-        return txManager
+        User user = txManager
                 .execute(tx -> userRepository.find(tx, scopeId, userId))
                 .orElse(null);
+
+        // Validate post conditions
+        userServiceValidationUtils.validateFindByFieldPostConditions(user);
+
+        // Return result
+        return user;
     }
 
     @Override
-    public User find(KapuaId userId)
+    public User findById(KapuaId userId)
             throws KapuaException {
         // Validate preconditions
         userServiceValidationUtils.validateFindByIdPreConditions(userId);
 
         // Do find
         User user = txManager
-                .execute(tx -> userRepository.find(tx, userId))
+                .execute(tx -> userRepository.findById(tx, userId))
                 .orElse(null);
 
         // Validate post conditions
@@ -214,7 +228,13 @@ public class UserServiceImpl extends KapuaConfigurableServiceBase implements Use
         userServiceValidationUtils.validateQueryPreconditions(query);
 
         // Do query
-        return txManager.execute(tx -> userRepository.query(tx, query));
+        return txManager.execute(tx -> {
+            // Handle group predicates
+            groupQueryHelper.handleKapuaQueryGroupPredicate(query, Domains.USER, UserAttributes.GROUP_IDS);
+
+            // Query
+            return userRepository.query(tx, query);
+        });
     }
 
     @Override
@@ -223,7 +243,13 @@ public class UserServiceImpl extends KapuaConfigurableServiceBase implements Use
         userServiceValidationUtils.validateCountPreconditions(query);
 
         // Do count
-        return txManager.execute(tx -> userRepository.count(tx, query));
+        return txManager.execute(tx -> {
+            // Handle group predicates
+            groupQueryHelper.handleKapuaQueryGroupPredicate(query, Domains.USER, UserAttributes.GROUP_IDS);
+
+            // Count
+            return userRepository.count(tx, query);
+        });
     }
 
     /**
@@ -247,14 +273,15 @@ public class UserServiceImpl extends KapuaConfigurableServiceBase implements Use
 
         // Do delete
         txManager.execute(
-                tx -> {
-                    // Validate in-transaction conditions
-                    userServiceValidationUtils.validateDeleteInTransaction(tx, scopeId, userId);
+            tx -> {
+                // Validate in-transaction conditions
+                userServiceValidationUtils.validateDeleteInTransaction(tx, scopeId, userId);
 
-                    // Do  delete
-                    return userRepository.delete(tx, scopeId, userId);
-                },
-                eventStorer::accept);
+                // Delete
+                return userRepository.delete(tx, scopeId, userId);
+            },
+            eventStorer::accept
+        );
     }
 
 

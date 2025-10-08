@@ -43,7 +43,10 @@ import org.eclipse.kapua.service.authentication.mfa.MfaAuthenticator;
 import org.eclipse.kapua.service.authentication.shiro.mfa.MfaAuthenticatorImpl;
 import org.eclipse.kapua.service.authentication.shiro.setting.KapuaAuthenticationSetting;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
+import org.eclipse.kapua.service.authorization.access.GroupQueryHelper;
 import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
+import org.eclipse.kapua.service.authorization.group.GroupFactory;
+import org.eclipse.kapua.service.authorization.group.GroupService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.tag.TagFactory;
@@ -104,14 +107,19 @@ public class UserLocatorConfiguration {
                 } catch (KapuaException e) {
                     // skip
                 }
-
-                bind(QueryFactory.class).toInstance(new QueryFactoryImpl());
-
                 bind(AuthorizationService.class).toInstance(mockedAuthorization);
                 // Inject mocked Permission Factory
                 PermissionFactory mockPermissionFactory = Mockito.mock(PermissionFactory.class);
+
+                // Inject mocked GroupServices
+                GroupService mockGroupService = Mockito.mock(GroupService.class);
+                GroupFactory mockGroupFactory = Mockito.mock(GroupFactory.class);
+
+                GroupQueryHelper mockGroupQueryHelper = Mockito.mock(GroupQueryHelper.class);
+
                 bind(PermissionFactory.class).toInstance(mockPermissionFactory);
 
+                bind(QueryFactory.class).toInstance(new QueryFactoryImpl());
                 // binding Account related services
                 final AccountRelativeFinder accountRelativeFinder = Mockito.mock(AccountRelativeFinder.class);
                 bind(AccountRelativeFinder.class).toInstance(accountRelativeFinder);
@@ -147,10 +155,14 @@ public class UserLocatorConfiguration {
                                 userConfigurationManager,
                                 mockedAuthorization,
                                 mockPermissionFactory,
+                                mockGroupQueryHelper,
                                 userFactory,
                                 new UserServiceValidationUtilsImpl(
                                     mockedAuthorization,
                                     mockPermissionFactory,
+                                    mockGroupService,
+                                    mockGroupFactory,
+                                    userConfigurationManager,
                                     mockTagService,
                                     mockTagFactory,
                                     userRepository
