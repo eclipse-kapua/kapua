@@ -18,13 +18,13 @@ import org.eclipse.kapua.app.api.core.model.CountResult;
 import org.eclipse.kapua.app.api.core.model.EntityId;
 import org.eclipse.kapua.app.api.core.model.ScopeId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
-import org.eclipse.kapua.model.KapuaNamedEntityAttributes;
 import org.eclipse.kapua.model.query.SortOrder;
 import org.eclipse.kapua.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.service.KapuaService;
-import org.eclipse.kapua.service.device.registry.DeviceAttributes;
+import org.eclipse.kapua.service.authorization.group.Group;
 import org.eclipse.kapua.service.tag.Tag;
 import org.eclipse.kapua.service.user.User;
+import org.eclipse.kapua.service.user.UserAttributes;
 import org.eclipse.kapua.service.user.UserCreator;
 import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserListResult;
@@ -57,6 +57,7 @@ public class Users extends AbstractKapuaResource {
      * Gets the {@link User} list in the scope.
      *
      * @param scopeId       The {@link ScopeId} in which to search results.
+     * @param groupId       The {@link Group#getId()} to filter results.
      * @param tagId         The {@link Tag#getId()} to filter result
      * @param name          The {@link User} name in which to search results.
      * @param sortParam     The name of the parameter that will be used as a sorting key
@@ -73,6 +74,7 @@ public class Users extends AbstractKapuaResource {
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public UserListResult simpleQuery(
             @PathParam("scopeId") ScopeId scopeId,
+            @QueryParam("groupId") EntityId groupId,
             @QueryParam("tagId") EntityId tagId,
             @QueryParam("name") String name,
             @QueryParam("matchTerm") String matchTerm,
@@ -85,12 +87,16 @@ public class Users extends AbstractKapuaResource {
 
         AndPredicate andPredicate = query.andPredicate();
 
+        if (groupId != null) {
+            andPredicate.and(query.attributePredicate(UserAttributes.GROUP_IDS, groupId));
+        }
+
         if (tagId != null) {
-            andPredicate.and(query.attributePredicate(DeviceAttributes.TAG_IDS, tagId));
+            andPredicate.and(query.attributePredicate(UserAttributes.TAG_IDS, tagId));
         }
 
         if (!Strings.isNullOrEmpty(name)) {
-            andPredicate.and(query.attributePredicate(KapuaNamedEntityAttributes.NAME, name));
+            andPredicate.and(query.attributePredicate(UserAttributes.NAME, name));
         }
 
         if (matchTerm != null && !matchTerm.isEmpty()) {
