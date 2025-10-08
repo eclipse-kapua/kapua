@@ -24,6 +24,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import java.util.Objects;
@@ -52,14 +53,14 @@ public class DomainImpl extends AbstractKapuaEntity implements Domain {
     @Column(name = "serviceName", nullable = false, updatable = false)
     private String serviceName;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "athz_domain_actions", joinColumns = @JoinColumn(name = "domain_id", referencedColumnName = "id"))
     @Column(name = "action", nullable = false)
     @Enumerated(EnumType.STRING)
     private Set<Actions> actions;
 
     @Basic
-    @Column(name = "groupable", nullable = false, updatable = false)
+    @Column(name = "groupable", nullable = false, updatable = true)
     private boolean groupable;
 
     /**
@@ -161,5 +162,19 @@ public class DomainImpl extends AbstractKapuaEntity implements Domain {
     @Override
     public int hashCode() {
         return Objects.hash(name, actions, groupable);
+    }
+
+    @Override
+    public String toString() {
+        return "DomainImpl{" +
+                "scopeId=" + scopeId +
+                ", id=" + id +
+                ", name='" + name + '\'' +
+                ", createdOn=" + createdOn +
+                ", createdBy=" + createdBy +
+                ", actions=" + actions +
+                ", groupable=" + groupable +
+                ", serviceName='" + serviceName + '\'' +
+                '}';
     }
 }
