@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -33,23 +33,9 @@ import java.io.Serializable;
  * @since 1.0.0
  */
 @Embeddable
-public class PermissionImpl
-//        extends
-//        WildcardPermission
-        implements
-        Permission
-//        , org.apache.shiro.authz.Permission
-        , Serializable {
-
+public class PermissionImpl implements Permission, Serializable {
 
     private static final long serialVersionUID = 1480557438886065675L;
-//
-//    //TODO: FIXME: REMOVE: A service in a jpa class? Behaviour should not be part of a data class!
-//    @Transient
-//    private final AccountService accountService = KapuaLocator.getInstance().getService(AccountService.class);
-//    //TODO: FIXME: REMOVE: A service in a jpa class? Behaviour should not be part of a data class!
-//    @Transient
-//    private final DomainRegistryService domainService = KapuaLocator.getInstance().getService(DomainRegistryService.class);
 
     @Basic
     @Column(name = "domain", nullable = true, updatable = false)

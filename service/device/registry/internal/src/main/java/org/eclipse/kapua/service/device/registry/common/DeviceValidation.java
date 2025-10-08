@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -23,15 +23,23 @@ import org.eclipse.kapua.storage.TxContext;
 public interface DeviceValidation {
     void validateCreatePreconditions(DeviceCreator deviceCreator) throws KapuaException;
 
-    void validateUpdatePreconditions(TxContext txContext, Device device) throws KapuaException;
+    void validateCreateInTransaction(TxContext tx, DeviceCreator deviceCreator) throws KapuaException;
 
-    void validateFindPreconditions(TxContext txContext, KapuaId scopeId, KapuaId deviceId) throws KapuaException;
+    void validateUpdatePreconditions(Device device) throws KapuaException;
+
+    void validateUpdateInTransaction(TxContext txContext, Device device) throws KapuaException;
+
+    void validateFindPreconditions(KapuaId scopeId, KapuaId deviceId) throws KapuaException;
+
+    void validateFindByClientIdPreconditions(KapuaId scopeId, String clientId) throws KapuaException;
+
+    void validateFindByFieldPostconditions(Device device) throws KapuaException;
 
     void validateQueryPreconditions(KapuaQuery query) throws KapuaException;
 
     void validateCountPreconditions(KapuaQuery query) throws KapuaException;
 
-    void validateDeletePreconditions(TxContext txContext, KapuaId scopeId, KapuaId deviceId) throws KapuaException;
+    void validateDeletePreconditions(KapuaId scopeId, KapuaId deviceId) throws KapuaException;
 
-    void validateFindByClientIdPreconditions(KapuaId scopeId, String clientId) throws KapuaException;
+    void validateDeleteInTransaction(TxContext txContext, KapuaId scopeId, KapuaId deviceId) throws KapuaException;
 }

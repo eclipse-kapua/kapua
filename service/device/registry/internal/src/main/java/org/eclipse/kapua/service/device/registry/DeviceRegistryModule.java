@@ -35,6 +35,7 @@ import org.eclipse.kapua.model.domain.Domain;
 import org.eclipse.kapua.model.domain.DomainEntry;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.access.GroupQueryHelper;
+import org.eclipse.kapua.service.authorization.group.GroupFactory;
 import org.eclipse.kapua.service.authorization.group.GroupService;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.device.authentication.api.DeviceConnectionCredentialAdapter;
@@ -67,6 +68,7 @@ import org.eclipse.kapua.service.device.registry.internal.DeviceRegistryCacheFac
 import org.eclipse.kapua.service.device.registry.internal.DeviceRegistryServiceImpl;
 import org.eclipse.kapua.service.device.registry.lifecycle.DeviceLifeCycleService;
 import org.eclipse.kapua.service.device.registry.lifecycle.internal.DeviceLifeCycleServiceImpl;
+import org.eclipse.kapua.service.tag.TagFactory;
 import org.eclipse.kapua.service.tag.TagService;
 import org.eclipse.kapua.storage.TxManager;
 import org.slf4j.Logger;
@@ -155,45 +157,54 @@ public class DeviceRegistryModule extends AbstractKapuaModule {
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
             GroupService groupService,
+            GroupFactory groupFactory,
             DeviceConnectionService deviceConnectionService,
             DeviceEventService deviceEventService,
             DeviceRepository deviceRepository,
             DeviceFactory deviceFactory,
-            TagService tagService) {
+            Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
+            TagService tagService,
+            TagFactory tagFactory
+    ) {
         return new DeviceValidationImpl(deviceRegistrySettings.getInt(KapuaDeviceRegistrySettingKeys.DEVICE_LIFECYCLE_BIRTH_VAR_FIELDS_LENGTH_MAX),
                 deviceRegistrySettings.getInt(KapuaDeviceRegistrySettingKeys.DEVICE_LIFECYCLE_BIRTH_EXTENDED_PROPERTIES_LENGTH_MAX),
                 authorizationService,
                 permissionFactory,
                 groupService,
+                groupFactory,
                 deviceConnectionService,
                 deviceEventService,
-                deviceRepository,
                 deviceFactory,
-                tagService);
+                deviceRepository,
+                serviceConfigurationManagersByServiceClass.get(DeviceRegistryService.class),
+                tagService,
+                tagFactory);
     }
 
     @Provides
     @Singleton
     DeviceRegistryService deviceRegistryService(
+            @Named("DeviceRegistryTransactionManager") TxManager deviceRegistryTxManager,
             Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
-            DeviceRepository deviceRepository,
             DeviceFactory deviceFactory,
+            DeviceValidation deviceValidation,
+            DeviceRepository deviceRepository,
             GroupQueryHelper groupQueryHelper,
-            EventStorer eventStorer,
-            @Named("DeviceRegistryTransactionManager") TxManager deviceRegistryTxManager,
-            DeviceValidation deviceValidation) {
+            EventStorer eventStorer
+    ) {
         return new DeviceRegistryServiceImpl(
+                deviceRegistryTxManager,
                 serviceConfigurationManagersByServiceClass.get(DeviceRegistryService.class),
                 authorizationService,
                 permissionFactory,
-                deviceRegistryTxManager,
-                deviceRepository,
                 deviceFactory,
+                deviceValidation,
+                deviceRepository,
                 groupQueryHelper,
-                eventStorer,
-                deviceValidation);
+                eventStorer
+        );
     }
 
     @Provides

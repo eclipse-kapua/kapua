@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -38,40 +38,7 @@ import org.eclipse.kapua.service.device.registry.event.DeviceEvent;
  */
 @XmlRootElement(name = "device")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(propOrder = {
-        "groupId",
-        "clientId",
-        "connectionId",
-        "connection",
-        "status",
-        "displayName",
-        "lastEventId",
-        "lastEvent",
-        "serialNumber",
-        "modelId",
-        "modelName",
-        "imei",
-        "imsi",
-        "iccid",
-        "biosVersion",
-        "firmwareVersion",
-        "osVersion",
-        "jvmVersion",
-        "osgiFrameworkVersion",
-        "applicationFrameworkVersion",
-        "connectionInterface",
-        "connectionIp",
-        "applicationIdentifiers",
-        "acceptEncoding",
-        "customAttribute1",
-        "customAttribute2",
-        "customAttribute3",
-        "customAttribute4",
-        "customAttribute5",
-        "extendedProperties",
-        "tamperStatus",
-        "tagIds"
-}, factoryClass = DeviceXmlRegistry.class, factoryMethod = "newDevice")
+@XmlType(factoryClass = DeviceXmlRegistry.class, factoryMethod = "newDevice")
 public interface Device extends KapuaUpdatableEntity {
 
     String TYPE = "device";
@@ -80,6 +47,47 @@ public interface Device extends KapuaUpdatableEntity {
     default String getType() {
         return TYPE;
     }
+
+    /**
+     * Gets the {@link Group#getId()}.
+     *
+     * @return The {@link Group#getId()}.
+     * @since 1.0.0
+     * @deprecated Since 2.1.0. Please use {@link #getGroupIds()}
+     */
+    @Deprecated
+    @XmlElement(name = "groupId")
+    @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    KapuaId getGroupId();
+
+    /**
+     * Sets the {@link Group#getId()}.
+     *
+     * @param groupId The {@link Group#getId()}.
+     * @since 1.0.0
+     * @deprecated Since 2.1.0. Please use {@link #setGroupIds(Set)}
+     */
+    @Deprecated
+    void setGroupId(KapuaId groupId);
+
+    /**
+     * Gets the set of Group id assigned to this entity.
+     *
+     * @return The set Group id assigned to this entity.
+     * @since 2.1.0
+     */
+    @XmlElementWrapper(name = "groupIds")
+    @XmlElement(name = "groupId")
+    @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    Set<KapuaId> getGroupIds();
+
+    /**
+     * Sets the set of Group id of this entity.
+     *
+     * @param groupIds The set Group id to assign.
+     * @since 2.1.0
+     */
+    void setGroupIds(Set<KapuaId> groupIds);
 
     /**
      * Gets the set of Tag id assigned to this entity.
@@ -99,24 +107,6 @@ public interface Device extends KapuaUpdatableEntity {
      * @since 1.0.0
      */
     void setTagIds(Set<KapuaId> tagIds);
-
-    /**
-     * Gets the {@link Group#getId()}.
-     *
-     * @return The {@link Group#getId()}.
-     * @since 1.0.0
-     */
-    @XmlElement(name = "groupId")
-    @XmlJavaTypeAdapter(KapuaIdAdapter.class)
-    KapuaId getGroupId();
-
-    /**
-     * Sets the {@link Group#getId()}.
-     *
-     * @param groupId The {@link Group#getId()}.
-     * @since 1.0.0
-     */
-    void setGroupId(KapuaId groupId);
 
     /**
      * Gets the client identifier.

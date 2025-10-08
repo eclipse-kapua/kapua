@@ -93,38 +93,42 @@ public class GroupQueryHelperImpl implements GroupQueryHelper {
 
     private void handleKapuaQueryGroupPredicate(TxContext txContext, KapuaSession kapuaSession, KapuaQuery query, String domain, String groupPredicateName) throws KapuaException {
         try {
+            // Gather all groups that the user has access to
             KapuaId userId = kapuaSession.getUserId();
 
-            final Optional<AccessInfo> maybeAccessInfo = accessInfoRepository.findByUserId(txContext, kapuaSession.getScopeId(), userId);
+            Optional<AccessInfo> optionalAccessInfo = accessInfoRepository.findByUserId(txContext, kapuaSession.getScopeId(), userId);
 
-            final List<Permission> groupPermissions = new ArrayList<>();
-            if (maybeAccessInfo.isPresent()) {
-                final AccessInfo accessInfo = maybeAccessInfo.get();
+            List<Permission> groupPermissions = new ArrayList<>();
+            if (optionalAccessInfo.isPresent()) {
+                AccessInfo accessInfo = optionalAccessInfo.get();
+
+                // Read from Permission granted to the User
                 AccessPermissionListResult accessPermissions = accessPermissionRepository.findByAccessInfoId(txContext, accessInfo.getScopeId(), accessInfo.getId());
-                for (AccessPermission ap : accessPermissions.getItems()) {
-                    if (checkGroupPermission(domain, groupPermissions, ap.getPermission())) {
+                for (AccessPermission accessPermission : accessPermissions.getItems()) {
+                    if (checkGroupPermission(domain, groupPermissions, accessPermission.getPermission())) {
                         break;
                     }
                 }
 
+                // Read from Roles granted to the User
                 AccessRoleListResult accessRoles = accessRoleRepository.findByAccessInfoId(txContext, accessInfo.getScopeId(), accessInfo.getId());
-
                 for (AccessRole ar : accessRoles.getItems()) {
                     KapuaId roleId = ar.getRoleId();
 
-                    Role role = roleRepository.find(txContext, ar.getScopeId(), roleId)
+                    Role role = roleRepository
+                            .find(txContext, ar.getScopeId(), roleId)
                             .orElseThrow(() -> new KapuaEntityNotFoundException(Role.TYPE, roleId));
 
                     RolePermissionListResult rolePermissions = rolePermissionRepository.findByRoleId(txContext, role.getScopeId(), roleId);
-
-                    for (RolePermission rp : rolePermissions.getItems()) {
-                        if (checkGroupPermission(domain, groupPermissions, rp.getPermission())) {
+                    for (RolePermission rolePermission : rolePermissions.getItems()) {
+                        if (checkGroupPermission(domain, groupPermissions, rolePermission.getPermission())) {
                             break;
                         }
                     }
                 }
             }
 
+            // Create AttributePredicate on Groups if Permission with Groups are granted to User
             AndPredicate andPredicate = query.andPredicate();
             if (!groupPermissions.isEmpty()) {
                 int i = 0;
@@ -135,6 +139,7 @@ public class GroupQueryHelperImpl implements GroupQueryHelper {
                 andPredicate.and(query.attributePredicate(groupPredicateName, groupsIds));
             }
 
+            // Merge User-defined query predicates with the AttributePredicate on Groups
             if (query.getPredicate() != null) {
                 andPredicate.and(query.getPredicate());
             }
