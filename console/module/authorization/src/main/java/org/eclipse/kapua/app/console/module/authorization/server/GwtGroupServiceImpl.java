@@ -42,6 +42,8 @@ import org.eclipse.kapua.service.authorization.group.GroupQuery;
 import org.eclipse.kapua.service.authorization.group.GroupService;
 import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
+import org.eclipse.kapua.service.user.User;
+import org.eclipse.kapua.service.user.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -217,6 +219,33 @@ public class GwtGroupServiceImpl extends KapuaRemoteServiceServlet implements Gw
 
             List<String> gwtGroupIds = new ArrayList<String>();
             for (KapuaId groupId : device.getGroupIds()) {
+                gwtGroupIds.add(KapuaGwtCommonsModelConverter.convertKapuaId(groupId));
+            }
+            gwtGroupQuery.setIds(gwtGroupIds);
+
+            return query(loadConfig, gwtGroupQuery);
+        } catch (KapuaException e) {
+            throw KapuaExceptionHandler.buildExceptionFromError(e);
+        }
+    }
+
+    @Override
+    public PagingLoadResult<GwtGroup> findByUserId(PagingLoadConfig loadConfig, String scopeIdString, String userIdString) throws GwtKapuaException {
+        try {
+            KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(scopeIdString);
+            KapuaId userId = GwtKapuaCommonsModelConverter.convertKapuaId(userIdString);
+
+            UserService userRegistryService = LOCATOR.getService(UserService.class);
+            User user = userRegistryService.find(scopeId, userId);
+            if (user.getGroupIds().isEmpty()) {
+                return new BasePagingLoadResult<GwtGroup>(new ArrayList<GwtGroup>(), 0, 0);
+            }
+
+            GwtGroupQuery gwtGroupQuery = new GwtGroupQuery();
+            gwtGroupQuery.setScopeId(scopeIdString);
+
+            List<String> gwtGroupIds = new ArrayList<String>();
+            for (KapuaId groupId : user.getGroupIds()) {
                 gwtGroupIds.add(KapuaGwtCommonsModelConverter.convertKapuaId(groupId));
             }
             gwtGroupQuery.setIds(gwtGroupIds);

@@ -23,6 +23,7 @@ public class GwtUserCreator implements Serializable {
     private static final long serialVersionUID = -7786687388389046845L;
 
     private String scopeId;
+    private String groupId;
     private String username;
     private String password;
     private String displayName;
@@ -46,6 +47,14 @@ public class GwtUserCreator implements Serializable {
 
     public void setScopeId(String accountId) {
         this.scopeId = accountId;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 
     public String getUsername() {

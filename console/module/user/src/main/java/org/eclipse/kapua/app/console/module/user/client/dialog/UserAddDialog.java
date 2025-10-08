@@ -16,6 +16,8 @@ import com.extjs.gxt.ui.client.Style;
 import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.extjs.gxt.ui.client.widget.form.ComboBox.TriggerAction;
 import com.extjs.gxt.ui.client.widget.form.FieldSet;
 import com.extjs.gxt.ui.client.widget.form.LabelField;
@@ -29,7 +31,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
-import org.eclipse.kapua.app.console.module.api.client.messages.ConsoleMessages;
 import org.eclipse.kapua.app.console.module.api.client.ui.dialog.entity.EntityAddEditDialog;
 import org.eclipse.kapua.app.console.module.api.client.ui.panel.FormPanel;
 import org.eclipse.kapua.app.console.module.api.client.ui.widget.KapuaDateField;
@@ -45,12 +46,20 @@ import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
 import org.eclipse.kapua.app.console.module.authentication.shared.model.permission.CredentialSessionPermission;
 import org.eclipse.kapua.app.console.module.authentication.shared.service.GwtCredentialService;
 import org.eclipse.kapua.app.console.module.authentication.shared.service.GwtCredentialServiceAsync;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.permission.GroupSessionPermission;
+import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtGroupService;
+import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtGroupServiceAsync;
 import org.eclipse.kapua.app.console.module.user.client.messages.ConsoleUserMessages;
 import org.eclipse.kapua.app.console.module.user.shared.model.GwtUser;
 import org.eclipse.kapua.app.console.module.user.shared.model.GwtUser.GwtUserStatus;
 import org.eclipse.kapua.app.console.module.user.shared.model.GwtUserCreator;
 import org.eclipse.kapua.app.console.module.user.shared.service.GwtUserService;
 import org.eclipse.kapua.app.console.module.user.shared.service.GwtUserServiceAsync;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class UserAddDialog extends EntityAddEditDialog {
 
@@ -59,15 +68,16 @@ public class UserAddDialog extends EntityAddEditDialog {
     }
 
     protected static final ConsoleUserMessages USER_MSGS = GWT.create(ConsoleUserMessages.class);
-    protected static final ConsoleMessages CMSGS = GWT.create(ConsoleMessages.class);
-
-    private static final GwtUserServiceAsync GWT_USER_SERVICE = GWT.create(GwtUserService.class);
     private static final GwtCredentialServiceAsync GWT_CREDENTIAL_SERVICE = GWT.create(GwtCredentialService.class);
+    private static final GwtGroupServiceAsync GWT_GROUP_SERVICE = GWT.create(GwtGroupService.class);
+    private static final GwtUserServiceAsync GWT_USER_SERVICE = GWT.create(GwtUserService.class);
 
     protected FieldSet infoFieldSet;
 
     protected KapuaTextField<String> username;
     protected LabelField usernameLabel;
+
+    protected ComboBox<GwtGroup> groupCombo;
 
     protected KapuaTextField<String> externalId;
     protected LabelField externalIdLabel;
@@ -93,6 +103,14 @@ public class UserAddDialog extends EntityAddEditDialog {
     protected RadioGroup userTypeRadioGroup = new RadioGroup();
 
     private String scopeId;
+
+    protected static final GwtGroup NO_GROUP;
+
+    static {
+        NO_GROUP = new GwtGroup();
+        NO_GROUP.setGroupName("No Group");
+        NO_GROUP.setId(null);
+    }
 
     public UserAddDialog(GwtSession currentSession) {
         super(currentSession);
@@ -150,6 +168,67 @@ public class UserAddDialog extends EntityAddEditDialog {
         username.setValidator(new TextFieldValidator(username, FieldType.NAME));
         username.setToolTip(USER_MSGS.dialogAddFieldNameTooltip());
         infoFieldSet.add(username, userFieldsetFormData);
+
+        // groupIds
+        groupCombo = new ComboBox<GwtGroup>();
+        groupCombo.setStore(new ListStore<GwtGroup>());
+        groupCombo.setFieldLabel("* Access Group");
+        groupCombo.setToolTip("Select an access group in which you want the device to be part of.");
+        groupCombo.setForceSelection(true);
+        groupCombo.setTypeAhead(false);
+        groupCombo.setTriggerAction(TriggerAction.ALL);
+        groupCombo.setAllowBlank(false);
+        groupCombo.setEditable(false);
+        groupCombo.setDisplayField("groupName");
+        groupCombo.setTemplate("<tpl for=\".\"><div role=\"listitem\" class=\"x-combo-list-item\" title={groupName}>{groupName}</div></tpl>");
+        groupCombo.setValueField("id");
+        groupCombo.setEmptyText("Select An Access Group");
+
+        if (currentSession.hasPermission(GroupSessionPermission.read())) {
+            Listener<BaseEvent> comboBoxListener = new Listener<BaseEvent>() {
+
+                @Override
+                public void handleEvent(BaseEvent be) {
+                    UserAddDialog.this.formPanel.fireEvent(Events.OnClick);
+                }
+            };
+
+            groupCombo.addListener(Events.Select, comboBoxListener);
+
+            GWT_GROUP_SERVICE.findAll(currentSession.getSelectedAccountId(), new AsyncCallback<List<GwtGroup>>() {
+
+                @Override
+                public void onFailure(Throwable caught) {
+                    exitStatus = false;
+                    if (!isPermissionErrorMessage(caught)) {
+                        FailureHandler.handle(caught);
+                        hide();
+                    }
+                }
+
+                @Override
+                public void onSuccess(List<GwtGroup> result) {
+                    groupCombo.getStore().removeAll();
+                    groupCombo.getStore().add(NO_GROUP);
+
+                    Collections.sort(result, new Comparator<GwtGroup>() {
+
+                        @Override
+                        public int compare(GwtGroup group1, GwtGroup group2) {
+                            return group1.getGroupName().compareTo(group2.getGroupName());
+                        }
+                    });
+
+                    groupCombo.getStore().add(result);
+                    groupCombo.setValue(NO_GROUP);
+                }
+            });
+            infoFieldSet.add(groupCombo, userFieldsetFormData);
+        } else {
+            groupCombo.getStore().removeAll();
+            groupCombo.getStore().add(NO_GROUP);
+            groupCombo.setValue(NO_GROUP);
+        }
 
         // User type
         userTypeRadioGroup.setFieldLabel(USER_MSGS.dialogAddFieldUserTypeRadioButton());
@@ -389,6 +468,7 @@ public class UserAddDialog extends EntityAddEditDialog {
 
         gwtUserCreator.setScopeId(scopeId != null ? scopeId : currentSession.getSelectedAccountId());
         gwtUserCreator.setUsername(username.getValue());
+        gwtUserCreator.setGroupId(groupCombo.getValue().getId());
 
         if (userTypeRadioGroup.getValue().getValueAttribute().equals(RadioGroupStatus.INTERNAL.name())) {
             gwtUserCreator.setGwtUserType(GwtUser.GwtUserType.INTERNAL);
