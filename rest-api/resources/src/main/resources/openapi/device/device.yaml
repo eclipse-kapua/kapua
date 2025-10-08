@@ -48,7 +48,18 @@ components:
         - $ref: '../openapi.yaml#/components/schemas/kapuaUpdatableEntity'
         - type: object
           properties:
+            tagIds:
+              type: array
+              items:
+                allOf:
+                  - $ref: '../openapi.yaml#/components/schemas/kapuaId'
+            groupIds:
+              type: array
+              items:
+                allOf:
+                  - $ref: '../openapi.yaml#/components/schemas/kapuaId'
             groupId:
+              deprecated: true
               allOf:
                 - $ref: '../openapi.yaml#/components/schemas/kapuaId'
                 - description: The ID of the Access Group to which this Device is assigned to
@@ -146,11 +157,6 @@ components:
               items:
                 allOf:
                   - $ref: '#/components/schemas/deviceExtendedProperty'
-            tagIds:
-              type: array
-              items:
-                allOf:
-                  - $ref: '../openapi.yaml#/components/schemas/kapuaId'
       example:
         type: device
         id: dIVxI5QpFUI

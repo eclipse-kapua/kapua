@@ -76,6 +76,7 @@ public class Devices extends AbstractKapuaResource {
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public DeviceListResult simpleQuery(
             @PathParam("scopeId") ScopeId scopeId,
+            @QueryParam("groupId") EntityId groupId,
             @QueryParam("tagId") EntityId tagId,
             @QueryParam("clientId") String clientId,
             @QueryParam("status") DeviceConnectionStatus connectionStatus,
@@ -89,6 +90,9 @@ public class Devices extends AbstractKapuaResource {
         DeviceQuery query = deviceFactory.newQuery(scopeId);
 
         AndPredicate andPredicate = query.andPredicate();
+        if (groupId != null) {
+            andPredicate.and(query.attributePredicate(DeviceAttributes.GROUP_IDS, groupId));
+        }
         if (tagId != null) {
             andPredicate.and(query.attributePredicate(DeviceAttributes.TAG_IDS, tagId));
         }
