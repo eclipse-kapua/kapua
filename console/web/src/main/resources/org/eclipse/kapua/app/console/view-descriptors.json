@@ -48,6 +48,10 @@
     "descriptor": "org.eclipse.kapua.app.console.module.device.client.device.DeviceViewDescriptor",
     "view": "org.eclipse.kapua.app.console.module.device.client.device.DeviceView",
     "tabs": [
+      "org.eclipse.kapua.app.console.module.device.client.device.group.DeviceTabGroupsDescriptor",
+      "org.eclipse.kapua.app.console.module.device.client.device.tag.DeviceTabTagsDescriptor",
+      "org.eclipse.kapua.app.console.module.device.client.device.profile.DeviceTabProfileDescriptor",
+
       "org.eclipse.kapua.app.console.module.device.client.device.assets.DeviceTabAssetsDescriptor",
       "org.eclipse.kapua.app.console.module.device.client.device.bundles.DeviceTabBundlesDescriptor",
       "org.eclipse.kapua.app.console.module.device.client.device.command.DeviceTabCommandDescriptor",
@@ -55,9 +59,7 @@
       "org.eclipse.kapua.app.console.module.device.client.device.events.DeviceTabEventsDescriptor",
       "org.eclipse.kapua.app.console.module.device.client.device.inventory.DeviceTabInventoryDescriptor",
       "org.eclipse.kapua.app.console.module.device.client.device.keystore.DeviceTabKeystoreDescriptor",
-      "org.eclipse.kapua.app.console.module.device.client.device.packages.DeviceTabPackagesDescriptor",
-      "org.eclipse.kapua.app.console.module.device.client.device.profile.DeviceTabProfileDescriptor",
-      "org.eclipse.kapua.app.console.module.device.client.device.tag.DeviceTabTagsDescriptor"
+      "org.eclipse.kapua.app.console.module.device.client.device.packages.DeviceTabPackagesDescriptor"
     ]
   },
   {
@@ -65,7 +67,7 @@
     "view": "org.eclipse.kapua.app.console.module.authorization.client.group.GroupView",
     "tabs": [
       "org.eclipse.kapua.app.console.module.authorization.client.group.GroupTabDescriptionDescriptor",
-      "org.eclipse.kapua.app.console.module.device.client.device.group.DevicesGroupTabItemDescriptor"
+      "org.eclipse.kapua.app.console.module.device.client.group.device.DevicesGroupTabItemDescriptor"
     ]
   },
   {

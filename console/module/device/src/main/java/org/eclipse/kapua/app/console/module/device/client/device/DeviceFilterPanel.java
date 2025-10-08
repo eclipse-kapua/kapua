@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2017, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -49,13 +49,13 @@ public class DeviceFilterPanel extends EntityFilterPanel<GwtDevice> {
 
     private static final ConsoleMessages MSGS = GWT.create(ConsoleMessages.class);
     private static final ConsoleDeviceMessages DEVICE_MSGS = GWT.create(ConsoleDeviceMessages.class);
+    private static final GwtGroupServiceAsync GROUP_SERVICE = GWT.create(GwtGroupService.class);
+    private static final GwtTagServiceAsync TAG_SERVICE = GWT.create(GwtTagService.class);
     private static final int WIDTH = 193;
     private static final int MAX_LEN = 255;
 
-    private EntityGrid<GwtDevice> entityGrid;
+    private final EntityGrid<GwtDevice> entityGrid;
 
-    private final GwtGroupServiceAsync groupService = GWT.create(GwtGroupService.class);
-    private final GwtTagServiceAsync tagService = GWT.create(GwtTagService.class);
     private final GwtSession currentSession;
 
     private final KapuaTextField<String> clientIdField;
@@ -272,7 +272,7 @@ public class DeviceFilterPanel extends EntityFilterPanel<GwtDevice> {
             groupsCombo.setStyleAttribute(CssLiterals.MARGIN_BOTTOM, "10px");
             groupsCombo.setTriggerAction(TriggerAction.ALL);
             groupsCombo.setValue(allGroup);
-            groupService.findAll(currentSession.getSelectedAccountId(), new AsyncCallback<List<GwtGroup>>() {
+            GROUP_SERVICE.findAll(currentSession.getSelectedAccountId(), new AsyncCallback<List<GwtGroup>>() {
 
                 @Override
                 public void onFailure(Throwable caught) {
@@ -321,7 +321,7 @@ public class DeviceFilterPanel extends EntityFilterPanel<GwtDevice> {
             tagsCombo.setStyleAttribute(CssLiterals.MARGIN_BOTTOM, "10px");
             tagsCombo.setTriggerAction(TriggerAction.ALL);
             tagsCombo.setValue(allTag);
-            tagService.findAll(currentSession.getSelectedAccountId(), new AsyncCallback<List<GwtTag>>() {
+            TAG_SERVICE.findAll(currentSession.getSelectedAccountId(), new AsyncCallback<List<GwtTag>>() {
 
                 @Override
                 public void onFailure(Throwable caught) {
@@ -405,7 +405,11 @@ public class DeviceFilterPanel extends EntityFilterPanel<GwtDevice> {
             predicates.setCustomAttribute2(unescapeValue(customAttribute2Field.getValue()));
         }
         if (groupsCombo != null && !groupsCombo.getValue().equals(allGroup) && !groupsCombo.getValue().equals(noGroup)) {
-            predicates.setGroupId(groupsCombo.getValue().getId());
+            // FIXME: handle multiple selection
+            List<String> groupIdsString = new ArrayList<String>(1);
+            groupIdsString.add(groupsCombo.getValue().getId());
+
+            predicates.setGroupIds(groupIdsString);
             predicates.setGroupDevice("ANY");
         }
         if (groupsCombo != null && groupsCombo.getValue().equals(noGroup)) {
