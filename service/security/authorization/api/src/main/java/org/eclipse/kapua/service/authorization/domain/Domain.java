@@ -154,7 +154,6 @@ public interface Domain extends KapuaEntity {//, org.eclipse.kapua.model.domain.
             public String getServiceName() {
                 return Domain.this.getServiceName();
             }
-
         };
     }
 }

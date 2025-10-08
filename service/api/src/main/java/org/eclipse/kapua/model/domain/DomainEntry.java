@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2024, 2022 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,11 @@ package org.eclipse.kapua.model.domain;
 
 import java.util.EnumSet;
 
+/**
+ * {@link Domain} implementation.
+ *
+ * @since 2.0.0
+ */
 public class DomainEntry extends AbstractDomain implements Domain {
     private final String name;
     private final boolean groupable;
@@ -47,4 +52,13 @@ public class DomainEntry extends AbstractDomain implements Domain {
         return actions;
     }
 
+    @Override
+    public String toString() {
+        return "DomainEntry{" +
+                "name='" + name + '\'' +
+                ", actions=" + actions +
+                ", groupable=" + groupable +
+                ", serviceName='" + serviceName + '\'' +
+                '}';
+    }
 }
