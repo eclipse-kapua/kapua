@@ -20,9 +20,14 @@ paths:
       operationId: deviceList
       parameters:
         - $ref: '../openapi.yaml#/components/parameters/scopeId'
+        - name: groupId
+          in: query
+          description: The Group id to filter results
+          schema:
+            $ref: '../openapi.yaml#/components/schemas/kapuaId'
         - name: tagId
           in: query
-          description: The tag id to filter results
+          description: The Tag id to filter results
           schema:
             $ref: '../openapi.yaml#/components/schemas/kapuaId'
         - $ref: './device.yaml#/components/parameters/clientId'
