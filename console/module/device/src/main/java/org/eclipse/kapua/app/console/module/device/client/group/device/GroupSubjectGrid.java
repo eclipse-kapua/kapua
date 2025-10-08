@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2018, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -10,7 +10,7 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.app.console.module.device.client.device.group;
+package org.eclipse.kapua.app.console.module.device.client.group.device;
 
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
@@ -139,8 +139,12 @@ public class GroupSubjectGrid extends EntityGrid<GwtDevice> {
     public void setEntity(GwtGroup gwtGroup) {
         if (gwtGroup != null) {
             selectedGroup = gwtGroup;
+
+            List<String> groupIdsString = new ArrayList<String>(1);
+            groupIdsString.add(selectedGroup.getId());
+
             GwtDeviceQueryPredicates predicates = new GwtDeviceQueryPredicates();
-            predicates.setGroupId(selectedGroup.getId());
+            predicates.setGroupIds(groupIdsString);
             predicates.setGroupDevice("ANY");
             query.setPredicates(predicates);
         }

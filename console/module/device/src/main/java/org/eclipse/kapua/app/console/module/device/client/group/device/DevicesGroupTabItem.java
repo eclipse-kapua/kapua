@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2018, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -10,7 +10,7 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.app.console.module.device.client.device.group;
+package org.eclipse.kapua.app.console.module.device.client.group.device;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Element;
@@ -41,14 +41,12 @@ public class DevicesGroupTabItem extends KapuaTabItem<GwtGroup> {
     }
 
     @Override
-    public void setEntity(GwtGroup t) {
-        super.setEntity(t);
-        if (t != null) {
-            setEnabled(true);
-        } else {
-            setEnabled(false);
-        }
-        groupDeviceGrid.setEntity(t);
+    public void setEntity(GwtGroup gwtGroup) {
+        super.setEntity(gwtGroup);
+
+        setEnabled(gwtGroup != null);
+
+        groupDeviceGrid.setEntity(gwtGroup);
 
     }
 

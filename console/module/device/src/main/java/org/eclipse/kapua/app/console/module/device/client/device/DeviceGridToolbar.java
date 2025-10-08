@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2017, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -163,17 +163,17 @@ public class DeviceGridToolbar extends EntityCRUDToolbar<GwtDevice> {
                     .append(query.getPredicates().getCustomAttribute2());
         }
 
-        if (query.getPredicates().getGroupId() != null) {
-            sbUrl.append("&accessGroup=")
-                    .append(URL.encodeQueryString(query.getPredicates().getGroupId()));
+        if (query.getPredicates().getGroupIds() != null) {
+            for (String groupIdString : query.getPredicates().getGroupIds()) {
+                sbUrl.append("&accessGroup=")
+                    .append(URL.encodeQueryString(groupIdString));
+            }
         }
 
-        if (query.getPredicates().getTagIds() != null && !query.getPredicates().getTagIds().isEmpty()) {
+        if (query.getPredicates().getTagIds() != null) {
             for (String tagId : query.getPredicates().getTagIds()) {
-                if (tagId != null && !tagId.isEmpty()) {
-                    sbUrl.append("&tag=")
-                            .append(URL.encodeQueryString(tagId));
-                }
+                sbUrl.append("&tag=")
+                   .append(URL.encodeQueryString(tagId));
             }
         }
 

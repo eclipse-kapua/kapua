@@ -209,11 +209,13 @@ public class GwtKapuaDeviceModelConverter {
         if (predicates.getGroupDevice() != null) {
             switch (predicates.getGroupDeviceEnum()) {
                 case NO_GROUP:
-                    andPred = andPred.and(query.attributePredicate(DeviceAttributes.GROUP_ID, null, Operator.IS_NULL));
+                    // FIXME: Add support for criteriaBuilder.isEmpty on ElementCollections. Not sure that works but seems promising
+                    andPred = andPred.and(query.attributePredicate(DeviceAttributes.GROUP_IDS, null, Operator.IS_NULL));
                     break;
                 default:
-                    if (predicates.getGroupId() != null) {
-                        andPred = andPred.and(query.attributePredicate(DeviceAttributes.GROUP_ID, KapuaEid.parseCompactId(predicates.getGroupId())));
+                    if (predicates.getGroupIds() != null && !predicates.getGroupIds().isEmpty()) {
+                        // FIXME: handle multiple groups search
+                        andPred = andPred.and(query.attributePredicate(DeviceAttributes.GROUP_IDS, KapuaEid.parseCompactId(predicates.getGroupIds().get(0))));
                     }
             }
         }
