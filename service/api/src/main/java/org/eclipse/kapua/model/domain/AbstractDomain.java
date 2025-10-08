@@ -49,8 +49,8 @@ public abstract class AbstractDomain implements Domain {
     public String toString() {
         return "DomainEntry{" +
                 "name='" + getName() + '\'' +
-                ", groupable=" + getGroupable() +
                 ", actions=" + getActions() +
+                ", groupable=" + getGroupable() +
                 ", serviceName='" + getServiceName() + '\'' +
                 '}';
     }

@@ -56,6 +56,4 @@ public interface Domain {
      */
     @Deprecated
     String getServiceName();
-
-
 }
