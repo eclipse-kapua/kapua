@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -47,30 +47,34 @@ import javax.inject.Singleton;
 public class GroupServiceImpl extends KapuaConfigurableServiceBase implements GroupService {
 
     private static final Logger LOG = LoggerFactory.getLogger(GroupServiceImpl.class);
-    private final PermissionFactory permissionFactory;
-    private final AuthorizationService authorizationService;
-    private final TxManager txManager;
     private final GroupRepository groupRepository;
 
     /**
      * Injectable constructor
      *
-     * @param permissionFactory           The {@link PermissionFactory} instance.
-     * @param authorizationService        The {@link AuthorizationService} instance.
-     * @param serviceConfigurationManager The {@link ServiceConfigurationManager} instance.
      * @param txManager
-     * @param groupRepository
+     * @param serviceConfigurationManager The {@link ServiceConfigurationManager} instance.
+     * @param authorizationService The {@link AuthorizationService} instance.
+     * @param permissionFactory The {@link PermissionFactory} instance.
+     * @param groupRepository The {@link GroupRepository} instance.
      * @since 2.0.0
      */
     @Inject
-    public GroupServiceImpl(PermissionFactory permissionFactory,
-                            AuthorizationService authorizationService,
-                            ServiceConfigurationManager serviceConfigurationManager,
-                            TxManager txManager, GroupRepository groupRepository) {
-        super(txManager, serviceConfigurationManager, Domains.GROUP, authorizationService, permissionFactory);
-        this.permissionFactory = permissionFactory;
-        this.authorizationService = authorizationService;
-        this.txManager = txManager;
+    public GroupServiceImpl(
+            TxManager txManager,
+            ServiceConfigurationManager serviceConfigurationManager,
+            AuthorizationService authorizationService,
+            PermissionFactory permissionFactory,
+            GroupRepository groupRepository
+    ) {
+        super(
+            txManager,
+            serviceConfigurationManager,
+            Domains.GROUP,
+            authorizationService,
+            permissionFactory
+        );
+
         this.groupRepository = groupRepository;
     }
 
@@ -80,15 +84,19 @@ public class GroupServiceImpl extends KapuaConfigurableServiceBase implements Gr
         ArgumentValidator.notNull(groupCreator, "groupCreator");
         ArgumentValidator.notNull(groupCreator.getScopeId(), "roleCreator.scopeId");
         ArgumentValidator.validateEntityName(groupCreator.getName(), "groupCreator.name");
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.GROUP, Actions.write, groupCreator.getScopeId()));
+
         return txManager.execute(tx -> {
             // Check entity limit
             serviceConfigurationManager.checkAllowedEntities(tx, groupCreator.getScopeId(), "Groups");
+
             // Do create
             Group group = new GroupImpl(groupCreator.getScopeId());
             group.setName(groupCreator.getName());
             group.setDescription(groupCreator.getDescription());
+
             // Check duplicate name
             if (groupRepository.countEntitiesWithNameInScope(tx, group.getScopeId(), group.getName()) > 0) {
                 throw new KapuaDuplicateNameException(group.getName());
@@ -104,13 +112,16 @@ public class GroupServiceImpl extends KapuaConfigurableServiceBase implements Gr
         ArgumentValidator.notNull(group.getId(), "group.id");
         ArgumentValidator.notNull(group.getScopeId(), "group.scopeId");
         ArgumentValidator.validateEntityName(group.getName(), "group.name");
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.GROUP, Actions.write, group.getScopeId()));
+
         return txManager.execute(tx -> {
             // Check existence
             if (!groupRepository.find(tx, group.getScopeId(), group.getId()).isPresent()) {
                 throw new KapuaEntityNotFoundException(Group.TYPE, group.getId());
             }
+
             // Do update
             // Check duplicate name
             if (groupRepository.countOtherEntitiesWithNameInScope(tx, group.getScopeId(), group.getId(), group.getName()) > 0) {
@@ -125,6 +136,7 @@ public class GroupServiceImpl extends KapuaConfigurableServiceBase implements Gr
         // Argument validation
         ArgumentValidator.notNull(scopeId, "scopeId");
         ArgumentValidator.notNull(groupId, "groupId");
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.GROUP, Actions.delete, scopeId));
 
@@ -136,8 +148,10 @@ public class GroupServiceImpl extends KapuaConfigurableServiceBase implements Gr
         // Argument validation
         ArgumentValidator.notNull(scopeId, "scopeId");
         ArgumentValidator.notNull(groupId, "groupId");
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.GROUP, Actions.read, scopeId));
+
         // Do find
         return txManager.execute(tx -> groupRepository.find(tx, scopeId, groupId))
                 .orElse(null);
@@ -147,8 +161,10 @@ public class GroupServiceImpl extends KapuaConfigurableServiceBase implements Gr
     public GroupListResult query(KapuaQuery query) throws KapuaException {
         // Argument validation
         ArgumentValidator.notNull(query, "query");
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.GROUP, Actions.read, query.getScopeId()));
+
         // Do query
         return txManager.execute(tx -> groupRepository.query(tx, query));
     }
@@ -157,8 +173,10 @@ public class GroupServiceImpl extends KapuaConfigurableServiceBase implements Gr
     public long count(KapuaQuery query) throws KapuaException {
         // Argument validation
         ArgumentValidator.notNull(query, "query");
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.GROUP, Actions.read, query.getScopeId()));
+
         // Do count
         return txManager.execute(tx -> groupRepository.count(tx, query));
     }

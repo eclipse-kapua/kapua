@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (c) 2025, 2025 Eurotech and/or its affiliates and others
+
+    This program and the accompanying materials are made
+    available under the terms of the Eclipse Public License 2.0
+    which is available at https://www.eclipse.org/legal/epl-2.0/
+
+    SPDX-License-Identifier: EPL-2.0
+
+    Contributors:
+        Eurotech - initial API and implementation
+-->
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd"
+  logicalFilePath="KapuaDB/changelog-group-2.1.0.xml">
+
+    <changeSet id="group_tag-2.1.0-create_table" author="eurotech">
+
+        <createTable tableName="athz_group_tag">
+            <column name="group_id" type="bigint(21) unsigned">
+                <constraints nullable="false" primaryKey="true" checkConstraint=">= 0"/>
+            </column>
+            <column name="tag_id" type="bigint(21) unsigned">
+                <constraints nullable="false" primaryKey="true" checkConstraint=">= 0"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+            constraintName="fk-group_tag-group_id"
+            baseTableName="athz_group_tag"
+            baseColumnNames="group_id"
+            referencedTableName="athz_group"
+            referencedColumnNames="id"
+            onDelete="CASCADE"/>
+
+        <rollback>
+            <dropTable tableName="athz_group_tag"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
