@@ -20,6 +20,11 @@ paths:
       operationId: groupList
       parameters:
         - $ref: '../openapi.yaml#/components/parameters/scopeId'
+        - name: tagId
+          in: query
+          description: The Tag id to filter results
+          schema:
+            $ref: '../openapi.yaml#/components/schemas/kapuaId'
         - name: name
           in: query
           description: The group name to filter results
