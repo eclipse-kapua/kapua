@@ -78,6 +78,14 @@ public interface GroupServiceValidationUtils {
     void validateFindPreconditions(KapuaId scopeId, KapuaId groupId) throws KapuaException;
 
     /**
+     * Validates output for {@link GroupService#find(KapuaId, KapuaId)}
+
+     * @param group The {@link Group} to check
+     * @since 2.1.0
+     */
+    void validateFindPostconditions(Group group);
+
+    /**
      * Validates {@link KapuaQuery} for {@link GroupService#query(KapuaQuery)}
      *
      * @param query The {@link KapuaQuery} to validate
@@ -115,5 +123,6 @@ public interface GroupServiceValidationUtils {
      * @since 2.1.0
      */
     void validateDeleteInTransaction(TxContext txContext, KapuaId scopeId, KapuaId groupId) throws KapuaException;
+
 
 }
