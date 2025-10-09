@@ -18,4 +18,6 @@ import org.eclipse.kapua.model.query.KapuaQuery;
 public interface GroupQueryHelper {
 
     void handleKapuaQueryGroupPredicate(KapuaQuery query, String domain, String groupPredicateName) throws KapuaException;
+
+    void handleGroupVisibility(KapuaQuery query) throws KapuaException;
 }

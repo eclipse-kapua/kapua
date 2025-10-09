@@ -322,6 +322,7 @@ public class AuthorizationModule extends AbstractKapuaModule {
             Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
             GroupServiceValidationUtils groupServiceValidationUtils,
             GroupRepository groupRepository,
+            GroupQueryHelper groupQueryHelper,
             KapuaJpaTxManagerFactory jpaTxManagerFactory
     ) {
         return new GroupServiceImpl(
@@ -330,6 +331,7 @@ public class AuthorizationModule extends AbstractKapuaModule {
             authorizationService,
             permissionFactory,
             groupServiceValidationUtils,
+            groupQueryHelper,
             groupRepository);
     }
 
@@ -461,6 +463,7 @@ public class AuthorizationModule extends AbstractKapuaModule {
             AccessInfoRepository accessInfoRepository,
             AccessPermissionRepository accessPermissionRepository,
             AccessRoleRepository accessRoleRepository,
+            DomainRepository domainRepository,
             RoleRepository roleRepository,
             RolePermissionRepository rolePermissionRepository) {
         return new GroupQueryHelperImpl(
@@ -469,6 +472,7 @@ public class AuthorizationModule extends AbstractKapuaModule {
                 accessInfoRepository,
                 accessPermissionRepository,
                 accessRoleRepository,
+                domainRepository,
                 roleRepository,
                 rolePermissionRepository);
     }

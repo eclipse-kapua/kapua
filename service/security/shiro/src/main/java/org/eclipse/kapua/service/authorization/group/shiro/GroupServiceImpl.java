@@ -20,7 +20,9 @@ import org.eclipse.kapua.event.ServiceEvent;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
+import org.eclipse.kapua.service.authorization.access.GroupQueryHelper;
 import org.eclipse.kapua.service.authorization.group.Group;
+import org.eclipse.kapua.service.authorization.group.GroupAttributes;
 import org.eclipse.kapua.service.authorization.group.GroupCreator;
 import org.eclipse.kapua.service.authorization.group.GroupListResult;
 import org.eclipse.kapua.service.authorization.group.GroupQuery;
@@ -46,6 +48,8 @@ public class GroupServiceImpl extends KapuaConfigurableServiceBase implements Gr
 
     private final GroupServiceValidationUtils groupServiceValidationUtils;
 
+    private final GroupQueryHelper groupQueryHelper;
+
     private final GroupRepository groupRepository;
 
     /**
@@ -65,6 +69,7 @@ public class GroupServiceImpl extends KapuaConfigurableServiceBase implements Gr
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
             GroupServiceValidationUtils groupServiceValidationUtils,
+            GroupQueryHelper groupQueryHelper,
             GroupRepository groupRepository
     ) {
         super(
@@ -76,6 +81,7 @@ public class GroupServiceImpl extends KapuaConfigurableServiceBase implements Gr
         );
 
         this.groupServiceValidationUtils = groupServiceValidationUtils;
+        this.groupQueryHelper = groupQueryHelper;
         this.groupRepository = groupRepository;
     }
 
@@ -121,10 +127,32 @@ public class GroupServiceImpl extends KapuaConfigurableServiceBase implements Gr
         groupServiceValidationUtils.validateFindPreconditions(scopeId, groupId);
 
         // Do find
-        return txManager.execute(
-            tx -> groupRepository
-                .find(tx, scopeId, groupId))
-                .orElse(null);
+        // FIXME: make this use GroupRepository.find and then check on validateFindPostconditions access to the Group fpunt
+        // Group group = txManager.execute(
+        //     tx -> groupRepository
+        //         .find(tx, scopeId, groupId))
+        //         .orElse(null);
+
+        // FIXME: remove this once the GroupRepository.find is restored.
+        // Using GroupRepository.query because it supports the Group visibility filtering via GroupQueryHelper.handleGroupVisibility
+        GroupQuery groupQuery = new GroupQueryImpl(scopeId);
+        groupQuery.setPredicate(
+            groupQuery.attributePredicate(GroupAttributes.ENTITY_ID, groupId)
+        );
+
+        Group group = txManager.execute(
+            tx -> {
+                groupQueryHelper.handleGroupVisibility(groupQuery);
+
+                return groupRepository.query(tx, groupQuery);
+            }
+        ).getFirstItem();
+
+        // Validate postconditions
+        groupServiceValidationUtils.validateFindPostconditions(group);
+
+        // Return result
+        return group;
     }
 
     @Override
@@ -133,7 +161,13 @@ public class GroupServiceImpl extends KapuaConfigurableServiceBase implements Gr
         groupServiceValidationUtils.validateQueryPreconditions(query);
 
         // Do query
-        return txManager.execute(tx -> groupRepository.query(tx, query));
+        return txManager.execute(
+            tx -> {
+                groupQueryHelper.handleGroupVisibility(query);
+
+                return groupRepository.query(tx, query);
+            }
+        );
     }
 
     @Override
@@ -142,7 +176,13 @@ public class GroupServiceImpl extends KapuaConfigurableServiceBase implements Gr
         groupServiceValidationUtils.validateCountPreconditions(query);
 
         // Do count
-        return txManager.execute(tx -> groupRepository.count(tx, query));
+        return txManager.execute(
+            tx -> {
+                groupQueryHelper.handleGroupVisibility(query);
+
+                return groupRepository.count(tx, query);
+            }
+        );
     }
 
     @Override
