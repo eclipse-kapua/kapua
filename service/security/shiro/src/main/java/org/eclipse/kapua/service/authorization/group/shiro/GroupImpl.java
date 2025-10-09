@@ -12,13 +12,21 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.group.shiro;
 
-import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.AbstractKapuaNamedEntity;
+import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.group.Group;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.Table;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * {@link Group} implementation.
@@ -30,6 +38,14 @@ import javax.persistence.Table;
 public class GroupImpl extends AbstractKapuaNamedEntity implements Group {
 
     private static final long serialVersionUID = -3760818776351242930L;
+
+    @ElementCollection
+    @CollectionTable(name = "athz_group_tag", joinColumns = @JoinColumn(name = "group_id", referencedColumnName = "id"))
+    @AttributeOverrides({
+            @AttributeOverride(name = "eid", column = @Column(name = "tag_id", nullable = false, updatable = false))
+    })
+    private Set<KapuaEid> tagIds;
+
 
     /**
      * Constructor.
@@ -56,10 +72,33 @@ public class GroupImpl extends AbstractKapuaNamedEntity implements Group {
      * Clone constructor.
      *
      * @param group the {@link Group} to clone.
-     * @throws KapuaException
      * @since 1.0.0
      */
-    public GroupImpl(Group group) throws KapuaException {
+    public GroupImpl(Group group) {
         super(group);
+
+        setTagIds(group.getTagIds());
+    }
+
+    @Override
+    public void setTagIds(Set<KapuaId> tagIds) {
+        this.tagIds = new HashSet<>();
+
+        for (KapuaId id : tagIds) {
+            this.tagIds.add(KapuaEid.parseKapuaId(id));
+        }
+    }
+
+    @Override
+    public Set<KapuaId> getTagIds() {
+        Set<KapuaId> tagIds = new HashSet<>();
+
+        if (this.tagIds != null) {
+            for (KapuaId deviceTagId : this.tagIds) {
+                tagIds.add(new KapuaEid(deviceTagId));
+            }
+        }
+
+        return tagIds;
     }
 }

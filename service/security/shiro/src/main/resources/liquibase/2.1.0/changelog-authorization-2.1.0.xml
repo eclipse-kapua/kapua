@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright (c) 2024, 2025 Eurotech and/or its affiliates and others
+    Copyright (c) 2025, 2025 Eurotech and/or its affiliates and others
 
     This program and the accompanying materials are made
     available under the terms of the Eclipse Public License 2.0
@@ -16,8 +16,8 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd"
-        logicalFilePath="KapuaDB/changelog-authentication-2.1.0.xml">
+        logicalFilePath="KapuaDB/changelog-authorization-2.1.0.xml">
 
-    <include relativeToChangelogFile="true" file="./atht-mfa_option-has_trust_me.xml"/>
+    <include relativeToChangelogFile="true" file="./athz-group-tag.xml"/>
 
 </databaseChangeLog>
