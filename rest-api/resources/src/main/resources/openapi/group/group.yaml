@@ -27,6 +27,12 @@ components:
       allOf:
         - $ref: '../openapi.yaml#/components/schemas/kapuaNamedEntity'
         - type: object
+          properties:
+            tagIds:
+              type: array
+              items:
+                allOf:
+                  - $ref: '../openapi.yaml#/components/schemas/kapuaId'
           example:
             type: group
             id: Skm7PvmgOh0
