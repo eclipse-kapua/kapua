@@ -34,6 +34,8 @@ import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.service.authorization.group.Group;
+import org.eclipse.kapua.service.authorization.group.GroupService;
 import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.tag.Tag;
@@ -60,6 +62,7 @@ public class GwtTagServiceImpl extends KapuaRemoteServiceServlet implements GwtT
     KapuaLocator locator = KapuaLocator.getInstance();
 
     DeviceRegistryService deviceRegistryService = locator.getService(DeviceRegistryService.class);
+    GroupService groupService = locator.getService(GroupService.class);
 
     TagService tagService = locator.getService(TagService.class);
     TagFactory tagFactory = locator.getFactory(TagFactory.class);
@@ -234,9 +237,9 @@ public class GwtTagServiceImpl extends KapuaRemoteServiceServlet implements GwtT
     }
 
     @Override
-    public PagingLoadResult<GwtTag> findByDeviceId(PagingLoadConfig loadConfig, String gwtScopeId, String gwtDeviceId) throws GwtKapuaException {
+    public PagingLoadResult<GwtTag> findByDeviceId(PagingLoadConfig loadConfig, String gwtScopeId, String deviceIdString) throws GwtKapuaException {
         KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(gwtScopeId);
-        KapuaId deviceId = GwtKapuaCommonsModelConverter.convertKapuaId(gwtDeviceId);
+        KapuaId deviceId = GwtKapuaCommonsModelConverter.convertKapuaId(deviceIdString);
 
         try {
             Device device = deviceRegistryService.find(scopeId, deviceId);
@@ -255,15 +258,40 @@ public class GwtTagServiceImpl extends KapuaRemoteServiceServlet implements GwtT
 
             return query(loadConfig, gwtTagQuery);
         } catch (KapuaException e) {
-            KapuaExceptionHandler.handle(e);
-            return new BasePagingLoadResult<GwtTag>(new ArrayList<GwtTag>(), 0, 0);
+            throw KapuaExceptionHandler.buildExceptionFromError(e);
         }
     }
 
     @Override
-    public PagingLoadResult<GwtTag> findByUserId(PagingLoadConfig loadConfig, String gwtScopeId, String gwtUserId) throws GwtKapuaException {
+    public PagingLoadResult<GwtTag> findByGroupId(PagingLoadConfig loadConfig, String gwtScopeId, String groupIdString) throws GwtKapuaException {
         KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(gwtScopeId);
-        KapuaId userId = GwtKapuaCommonsModelConverter.convertKapuaId(gwtUserId);
+        KapuaId groupId = GwtKapuaCommonsModelConverter.convertKapuaId(groupIdString);
+
+        try {
+            Group group = groupService.find(scopeId, groupId);
+            if (group.getTagIds().isEmpty()) {
+                return new BasePagingLoadResult<GwtTag>(new ArrayList<GwtTag>(), 0, 0);
+            }
+
+            GwtTagQuery gwtTagQuery = new GwtTagQuery();
+            gwtTagQuery.setScopeId(gwtScopeId);
+
+            List<String> gwtTagIds = new ArrayList<String>();
+            for (KapuaId tagId : group.getTagIds()) {
+                gwtTagIds.add(KapuaGwtCommonsModelConverter.convertKapuaId(tagId));
+            }
+            gwtTagQuery.setIds(gwtTagIds);
+
+            return query(loadConfig, gwtTagQuery);
+        } catch (KapuaException e) {
+            throw KapuaExceptionHandler.buildExceptionFromError(e);
+        }
+    }
+
+    @Override
+    public PagingLoadResult<GwtTag> findByUserId(PagingLoadConfig loadConfig, String gwtScopeId, String userIdString) throws GwtKapuaException {
+        KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(gwtScopeId);
+        KapuaId userId = GwtKapuaCommonsModelConverter.convertKapuaId(userIdString);
 
         try {
             User user = userService.find(scopeId, userId);
