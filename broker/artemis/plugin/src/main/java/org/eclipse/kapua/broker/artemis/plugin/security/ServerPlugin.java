@@ -25,6 +25,7 @@ import org.apache.activemq.artemis.core.transaction.Transaction;
 import org.apache.activemq.artemis.spi.core.protocol.RemotingConnection;
 import org.apache.activemq.artemis.utils.critical.CriticalComponent;
 import org.apache.commons.lang3.SerializationUtils;
+import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaRuntimeException;
 import org.eclipse.kapua.broker.artemis.plugin.security.RunWithLock.LockType;
 import org.eclipse.kapua.broker.artemis.plugin.security.connector.AcceptorHandler;
@@ -66,7 +67,7 @@ public class ServerPlugin implements ActiveMQServerPlugin {
     protected static Logger logger = LoggerFactory.getLogger(ServerPlugin.class);
 
     private static final int DEFAULT_PUBLISHED_MESSAGE_SIZE_LOG_THRESHOLD = 100000;
-    private static final String MISSING_TOPIC_SUFFIX = "MQTT.LWT";
+    private static final String MISSING_TOPIC_SUFFIX_MQTT = "MQTT/LWT";
     private static final String DISCONNECT_EVENT_OPERATION = "disconnect";
 
     enum Failure {
@@ -96,6 +97,8 @@ public class ServerPlugin implements ActiveMQServerPlugin {
     protected String version;
     protected ServerContext serverContext;
 
+    protected DeviceConnectionService deviceConnectionService;
+
     protected DeviceConnectionEventListenerService deviceConnectionEventListenerService;
 
     public ServerPlugin() {
@@ -108,6 +111,7 @@ public class ServerPlugin implements ActiveMQServerPlugin {
         this.publishInfoMessageSizeLimit = brokerSetting.getInt(BrokerSettingKey.PUBLISHED_MESSAGE_SIZE_LOG_THRESHOLD, DEFAULT_PUBLISHED_MESSAGE_SIZE_LOG_THRESHOLD);
         serverContext = kapuaLocator.getComponent(ServerContext.class);
         deviceConnectionEventListenerService = kapuaLocator.getComponent(DeviceConnectionEventListenerService.class);
+        deviceConnectionService = KapuaLocator.getInstance().getService(DeviceConnectionService.class);
         brokerEventHandler = new BrokerEventHandler(kapuaLocator.getComponent(CommonsMetric.class));
         brokerEventHandler.registerConsumer((brokerEvent) -> disconnectClient(brokerEvent));
         brokerEventHandler.start();
@@ -248,6 +252,14 @@ public class ServerPlugin implements ActiveMQServerPlugin {
                         //handle the missing message case
                         logger.info("Detected missing message for client {}... Flag session to tell disconnector to avoid disconnect event sending", sessionContext.getClientId());
                         sessionContext.setMissing(true);
+                        try {
+                            DeviceConnection deviceConnection = deviceConnectionService.findByClientId(sessionContext.getScopeId(), sessionContext.getClientId());
+                            if (deviceConnection == null || !sessionContext.getBrokerHost().equals(deviceConnection.getServerIp())) {
+                                throw new ActiveMQSecurityException("Device connected to another node. Abort LWT sending.");
+                            }
+                        } catch (KapuaException e) {
+                            throw new ActiveMQSecurityException("Cannot get device connection info. Abort LWT sending.");
+                        }
                     }
                     if (publishInfoMessageSizeLimit < messageSize) {
                         logger.info("Published message size over threshold. size: {} - destination: {} - account id: {} - username: {} - clientId: {}",
@@ -278,7 +290,7 @@ public class ServerPlugin implements ActiveMQServerPlugin {
     }
 
     private boolean isLwt(String originalTopic) {
-        return originalTopic != null && originalTopic.endsWith(MISSING_TOPIC_SUFFIX);
+    return originalTopic != null && originalTopic.endsWith(MISSING_TOPIC_SUFFIX_MQTT);
     }
 
     protected void fillAdditionalMessagePropertiesInternal(Message message, SessionContext sessionContext, String address) {
@@ -378,7 +390,7 @@ public class ServerPlugin implements ActiveMQServerPlugin {
         }
 
         try {
-            DeviceConnection deviceConnection = KapuaLocator.getInstance().getService(DeviceConnectionService.class).find(event.getEntityScopeId(), event.getEntityId());
+            DeviceConnection deviceConnection = deviceConnectionService.find(event.getEntityScopeId(), event.getEntityId());
             if (deviceConnection == null) {
                 logger.warn("DeviceConnection not found - scopeId: {}, id: {} - ", event.getEntityScopeId(), event.getEntityId());
                 return;
