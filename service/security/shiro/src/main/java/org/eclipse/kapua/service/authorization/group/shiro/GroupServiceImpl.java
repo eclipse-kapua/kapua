@@ -12,15 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.group.shiro;
 
-import org.eclipse.kapua.KapuaDuplicateNameException;
-import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.configuration.KapuaConfigurableServiceBase;
 import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
 import org.eclipse.kapua.commons.model.domains.Domains;
-import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.event.ServiceEvent;
-import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
@@ -47,6 +43,9 @@ import javax.inject.Singleton;
 public class GroupServiceImpl extends KapuaConfigurableServiceBase implements GroupService {
 
     private static final Logger LOG = LoggerFactory.getLogger(GroupServiceImpl.class);
+
+    private final GroupServiceValidationUtils groupServiceValidationUtils;
+
     private final GroupRepository groupRepository;
 
     /**
@@ -65,6 +64,7 @@ public class GroupServiceImpl extends KapuaConfigurableServiceBase implements Gr
             ServiceConfigurationManager serviceConfigurationManager,
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
+            GroupServiceValidationUtils groupServiceValidationUtils,
             GroupRepository groupRepository
     ) {
         super(
@@ -75,95 +75,62 @@ public class GroupServiceImpl extends KapuaConfigurableServiceBase implements Gr
             permissionFactory
         );
 
+        this.groupServiceValidationUtils = groupServiceValidationUtils;
         this.groupRepository = groupRepository;
     }
 
     @Override
     public Group create(GroupCreator groupCreator) throws KapuaException {
-        // Argument validation
-        ArgumentValidator.notNull(groupCreator, "groupCreator");
-        ArgumentValidator.notNull(groupCreator.getScopeId(), "roleCreator.scopeId");
-        ArgumentValidator.validateEntityName(groupCreator.getName(), "groupCreator.name");
+        // Validate preconditions
+        groupServiceValidationUtils.validateCreatePreconditions(groupCreator);
 
-        // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.GROUP, Actions.write, groupCreator.getScopeId()));
-
+        // Do create
         return txManager.execute(tx -> {
-            // Check entity limit
-            serviceConfigurationManager.checkAllowedEntities(tx, groupCreator.getScopeId(), "Groups");
+            // Validate in-transaction conditions
+            groupServiceValidationUtils.validateCreateInTransaction(tx, groupCreator);
 
             // Do create
             Group group = new GroupImpl(groupCreator.getScopeId());
             group.setName(groupCreator.getName());
             group.setDescription(groupCreator.getDescription());
 
-            // Check duplicate name
-            if (groupRepository.countEntitiesWithNameInScope(tx, group.getScopeId(), group.getName()) > 0) {
-                throw new KapuaDuplicateNameException(group.getName());
-            }
             return groupRepository.create(tx, group);
         });
     }
 
     @Override
     public Group update(Group group) throws KapuaException {
-        // Argument validator
-        ArgumentValidator.notNull(group, "group");
-        ArgumentValidator.notNull(group.getId(), "group.id");
-        ArgumentValidator.notNull(group.getScopeId(), "group.scopeId");
-        ArgumentValidator.validateEntityName(group.getName(), "group.name");
+        // Validate preconditions
+        groupServiceValidationUtils.validateUpdatePreconditions(group);
 
-        // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.GROUP, Actions.write, group.getScopeId()));
-
+        // Do update
         return txManager.execute(tx -> {
-            // Check existence
-            if (!groupRepository.find(tx, group.getScopeId(), group.getId()).isPresent()) {
-                throw new KapuaEntityNotFoundException(Group.TYPE, group.getId());
-            }
+            // Validate in-transaction conditions
+            groupServiceValidationUtils.validateUpdateInTransaction(tx, group);
 
-            // Do update
-            // Check duplicate name
-            if (groupRepository.countOtherEntitiesWithNameInScope(tx, group.getScopeId(), group.getId(), group.getName()) > 0) {
-                throw new KapuaDuplicateNameException(group.getName());
-            }
+            // Update
             return groupRepository.update(tx, group);
         });
     }
 
-    @Override
-    public void delete(KapuaId scopeId, KapuaId groupId) throws KapuaException {
-        // Argument validation
-        ArgumentValidator.notNull(scopeId, "scopeId");
-        ArgumentValidator.notNull(groupId, "groupId");
 
-        // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.GROUP, Actions.delete, scopeId));
-
-        txManager.execute(tx -> groupRepository.delete(tx, scopeId, groupId));
-    }
 
     @Override
     public Group find(KapuaId scopeId, KapuaId groupId) throws KapuaException {
-        // Argument validation
-        ArgumentValidator.notNull(scopeId, "scopeId");
-        ArgumentValidator.notNull(groupId, "groupId");
-
-        // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.GROUP, Actions.read, scopeId));
+        // Validate preconditions
+        groupServiceValidationUtils.validateFindPreconditions(scopeId, groupId);
 
         // Do find
-        return txManager.execute(tx -> groupRepository.find(tx, scopeId, groupId))
+        return txManager.execute(
+            tx -> groupRepository
+                .find(tx, scopeId, groupId))
                 .orElse(null);
     }
 
     @Override
     public GroupListResult query(KapuaQuery query) throws KapuaException {
-        // Argument validation
-        ArgumentValidator.notNull(query, "query");
-
-        // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.GROUP, Actions.read, query.getScopeId()));
+        // Validate preconditions
+        groupServiceValidationUtils.validateQueryPreconditions(query);
 
         // Do query
         return txManager.execute(tx -> groupRepository.query(tx, query));
@@ -171,14 +138,29 @@ public class GroupServiceImpl extends KapuaConfigurableServiceBase implements Gr
 
     @Override
     public long count(KapuaQuery query) throws KapuaException {
-        // Argument validation
-        ArgumentValidator.notNull(query, "query");
-
-        // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.GROUP, Actions.read, query.getScopeId()));
+        // Validate preconditions
+        groupServiceValidationUtils.validateCountPreconditions(query);
 
         // Do count
         return txManager.execute(tx -> groupRepository.count(tx, query));
+    }
+
+    @Override
+    public void delete(KapuaId scopeId, KapuaId groupId) throws KapuaException {
+        // Validate preconditions
+        groupServiceValidationUtils.validateDeletePreconditions(scopeId, groupId);
+
+        // Do delete
+        txManager.execute(
+            tx -> {
+                // Validate in-transaction conditions
+                groupServiceValidationUtils.validateDeleteInTransaction(tx, scopeId, groupId);
+
+                // Delete
+                groupRepository.delete(tx, scopeId, groupId);
+                return null;
+            }
+        );
     }
 
     //@ListenServiceEvent(fromAddress="account")
