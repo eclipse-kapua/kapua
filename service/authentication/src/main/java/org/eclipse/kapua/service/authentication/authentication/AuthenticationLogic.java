@@ -330,7 +330,8 @@ public abstract class AuthenticationLogic {
             logger.warn("Cannot find device connection for device: {}/{}", authContext.getScopeId(), authContext.getClientId());
             authenticationMetric.getFailure().getFindDeviceConnectionFailure().inc();
         } else {
-            ownedByTheCurrentNode = authContext.getBrokerHost().equals(deviceConnection.getServerIp());
+            ownedByTheCurrentNode = authContext.getBrokerHost().equals(deviceConnection.getServerIp()) &&
+                    authContext.getClientIp().equals(deviceConnection.getClientIp());
         }
         return ownedByTheCurrentNode;
     }
