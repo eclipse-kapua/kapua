@@ -30,6 +30,11 @@ paths:
           description: The group name to filter results
           schema:
             type: string
+        - name: domain
+          in: query
+          description: The group target domain to filter results
+          schema:
+            type: string
         - $ref: '../openapi.yaml#/components/parameters/askTotalCount'
         - $ref: '../openapi.yaml#/components/parameters/sortParam'
         - name: sortDir
