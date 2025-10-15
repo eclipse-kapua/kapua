@@ -1,7 +1,7 @@
 services:
   db:
     container_name: db
-    image: kapua/kapua-sql:${IMAGE_VERSION}
+    image: kapua/kapua-sql-h2:${IMAGE_VERSION}
     ports:
       - "3306:3306"
   es:

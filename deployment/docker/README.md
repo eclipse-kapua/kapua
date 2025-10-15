@@ -198,6 +198,25 @@ Following ports will be opened
 
 ---
 
+### Enabling MariaDB/MySQL mode
+
+It is possible to deploy Kapua with a mariaDB/MySQL instance instead of H2. to do so, provide the `--mariadb`/`--mysql` option.
+
+Example:
+
+```bash
+./docker-deploy.sh --mariadb
+```
+
+Before doing so, the docker image for the dbms needs to be built. To do so, provide the profile `--mariadb`/`--mysql` in the next commands used to build containers from scratch.
+
+Example:
+
+```bash
+mvn clean install -Pconsole,docker,mysql
+```
+---
+
 ### Building containers from scratch
 
 If you want to build containers from the code, you'll need to build the whole Kapua Project.

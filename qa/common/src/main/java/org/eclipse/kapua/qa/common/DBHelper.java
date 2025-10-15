@@ -22,13 +22,12 @@ import org.eclipse.kapua.commons.service.internal.cache.KapuaCacheManager;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.commons.setting.system.SystemSettingKey;
 import org.eclipse.kapua.locator.KapuaLocator;
+import org.eclipse.kapua.qa.common.dbms.DbmsSpecifics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 
@@ -52,6 +51,8 @@ public class DBHelper {
 
     private Connection connection;
 
+    private DbmsSpecifics dbmsSpecifics;
+
     public void init() {
         logger.warn("########################### Called DBHelper ###########################");
         cacheManager = KapuaLocator.getInstance().getComponent(KapuaCacheManager.class);
@@ -73,6 +74,10 @@ public class DBHelper {
         }
 
         new KapuaLiquibaseClient(jdbcUrl, dbUsername, dbPassword, schema).update();
+    }
+
+    public void setDbmsSpecifics(DbmsSpecifics toSet) {
+        this.dbmsSpecifics = toSet;
     }
 
     public void close() {
@@ -105,19 +110,14 @@ public class DBHelper {
 
     public void dropAll() throws SQLException {
         if (connection != null && !connection.isClosed()) {
-            String[] types = {"TABLE"};
-            ResultSet sqlResults = connection.getMetaData().getTables(null, null, "%", types);
 
-            while (sqlResults.next()) {
-                String sqlStatement = String.format("DROP TABLE %s CASCADE", sqlResults.getString("TABLE_NAME").toUpperCase());
-                try (PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
-                    preparedStatement.execute();
-                }
-            }
+            dbmsSpecifics.dropAllTables(connection);
+
             close();
         } else {
             logger.warn("================================> invoked drop all on closed connection!");
         }
+
         Optional.ofNullable(cacheManager).ifPresent(KapuaCacheManager::invalidateAll);
     }
 

@@ -30,8 +30,6 @@ ENV JOB_ENGINE_BASE_ADDR http://job-engine:8080/v1
 ENV JAVA_OPTS "-Dapi.cors.origins.allowed=\${API_CORS_ORIGINS_ALLOWED} \
                -Dcommons.db.schema.update=true \
                -Dlocator.guice.stage=PRODUCTION \
-               -Dcommons.db.connection.host=\${SQL_DB_ADDR} \
-               -Dcommons.db.connection.port=\${SQL_DB_PORT} \
                -Dbroker.host=\${BROKER_ADDR} \
                -Ddatastore.elasticsearch.nodes=\${DATASTORE_ADDR} \
                -Dcommons.eventbus.url="${EVENT_BROKER_URL}" \

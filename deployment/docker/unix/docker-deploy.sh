@@ -81,11 +81,38 @@ docker_compose() {
     fi
     export KAPUA_SWAGGER_ENABLE=$6
 
+    # Check for mutually exclusive MariaDB and MySQL deployment
+    if [[ "$7" == true && "$8" == true ]]; then
+        echo "Error: Both MariaDB and MySQL deployment options cannot be enabled simultaneously." >&2
+        exit 1
+    fi
+
+    # MariaDB deployment
+    if [[ "$7" == true ]]; then
+      echo "MariaDB deployment enabled!"
+      COMPOSE_FILES+=(-f "${SCRIPT_DIR}/../compose/extras/docker-compose.db-mariadb.yml")
+      export DB_TARGET="${DB_TARGET:-MySQL}"
+      export DB_CONNECTION_SCHEME="${DB_CONNECTION_SCHEME:-jdbc:mariadb}"
+      export DB_RESOLVER="${DB_RESOLVER:-MariaDB}"
+      export DB_DRIVER="${DB_DRIVER:-org.mariadb.jdbc.Driver}"
+    fi
+
+    # MySQL deployment
+    if [[ "$8" == true ]]; then
+      echo "MySQL deployment enabled!"
+      COMPOSE_FILES+=(-f "${SCRIPT_DIR}/../compose/extras/docker-compose.db-mysql.yml")
+      export DB_TARGET="${DB_TARGET:-MySQL}"
+      export DB_CONNECTION_SCHEME="${DB_CONNECTION_SCHEME:-jdbc:mysql}"
+      export DB_RESOLVER="${DB_RESOLVER:-MariaDB}"
+      export DB_DRIVER="${DB_DRIVER:-org.mariadb.jdbc.Driver}" #re-use mariadb driver
+      export DB_CONNECTION_ADDITIONAL_OPTIONS="${DB_CONNECTION_ADDITIONAL_OPTIONS:-allowPublicKeyRetrieval=True}"
+    fi
+
     docker compose -f "${SCRIPT_DIR}/../compose/docker-compose.yml" "${COMPOSE_FILES[@]}" up -d
 }
 
 print_usage_deploy() {
-    echo "Usage: $(basename "$0") [-h|--help] [--dev] [--debug] [--jmx] [--logs] [--ssl] [--sso] [--no-swagger]" >&2
+    echo "Usage: $(basename "$0") [-h|--help] [--dev] [--debug] [--jmx] [--logs] [--ssl] [--sso] [--no-swagger] [--mariadb|--mysql]" >&2
 }
 
 DEBUG_MODE=false
@@ -95,6 +122,8 @@ JMX_MODE=false
 SSL_MODE=false
 SSO_MODE=false
 SWAGGER=true
+MARIADB_MODE=false
+MYSQL_MODE=false
 for option in "$@"; do
   case $option in
     -h|--help)
@@ -119,6 +148,12 @@ for option in "$@"; do
     --sso)
       SSO_MODE=true
       ;;
+    --mariadb)
+      MARIADB_MODE=true
+      ;;
+    --mysql)
+      MYSQL_MODE=true
+      ;;
     --no-swagger)
       SWAGGER=false
       ;;
@@ -140,7 +175,7 @@ if [[ ${SSL_MODE} == true ]]; then
 fi
 
 echo "Deploying Eclipse Kapua version $IMAGE_VERSION..."
-docker_compose ${DEBUG_MODE} ${JMX_MODE} ${DEV_MODE} ${SSL_MODE} ${SSO_MODE} ${SWAGGER} || {
+docker_compose ${DEBUG_MODE} ${JMX_MODE} ${DEV_MODE} ${SSL_MODE} ${SSO_MODE} ${SWAGGER} ${MARIADB_MODE} ${MYSQL_MODE} || {
     echo "Deploying Eclipse Kapua... ERROR!"
     exit 1
 }

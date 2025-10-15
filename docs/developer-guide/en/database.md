@@ -33,3 +33,26 @@ Also, after you create the XML, be sure to add a reference to it in the main cha
 If such file doesn't exist yet, because it's releated to a new version of the service, create it and add a reference to it in an appropriate master XML file.
 
 More details regarding Liquibase XML file syntax, can be found on [Liquibase web page](http://www.liquibase.org/documentation/xml_format.html).
+
+## Adding support for different DBMS inside the code-base
+
+Currently, using Docker, Kapua supports H2 by default but also MariaDB and MySQL, providing the correct deployment options (see readme file under the deployment section).
+These are the steps you need to follow to be able to assembly your db image and deploy it with Kapua:
+
+1) Under the "kapua-assembly-sql" module, provide a new descriptor, dockerfile and entrypoint script for the DMBS and configure a maven profile to build the corresponding docker image
+2) Provide the dependency for the correct JDBC class, both in root pom file and the module of containers that connect to the db (let the position of the dependency of mariadb-java-client guide you)
+3) Some liquibase scripts could be not fully compatible with the new DBMS, or could be the case that new scripts have to be inserted to adapt to nuances of this new DBMS. See for example the liquibase changeSet with id="device_alter-value-clob-to-longtext" placed under _service/device/registry/internal/src/main/resources/liquibase/2.1.0/device-extended-properties-lob.xml_
+4) Under the "kapua-docker" deployment module, modify the "docker-deploy.sh" script to insert a new deployment option for the new dbms, along with the compose file for it (that sets env variables needed for the dbms docker container). See how this has been done for mariadb/mysql to guide you in this operation.
+
+### Running QA with the new DBMS
+
+The QA code-base adapts to different types of DBMS and this is accomplished separating the details of it under the abstraction _org.eclipse.kapua.qa.common.dbms.DbmsSpecifics_.
+There is one implementation of this interface for each supported DBMS, that specifies the details of it. The needed implementation is then properly "injected" in the qa code with the _DbmsSpecificsFactory_
+Having supported a new DBMS, running QA with it gives more assurance about correct operations in a production context. These are the steps to take:
+
+1) Create a new implementation of _DbmsSpecifics_
+2) Modify _DbmsSpecificsFactory_ to provide it
+3) Set the property _org.eclipse.kapua.qa.dbms_ accordingly and run the test or set of tests you need, they will automatically switch from H2 to the needed DBMS
+
+
+

@@ -39,6 +39,8 @@ import org.eclipse.kapua.commons.core.ServiceModuleBundle;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.qa.common.BasicSteps;
 import org.eclipse.kapua.qa.common.DBHelper;
+import org.eclipse.kapua.qa.common.dbms.DbmsSpecifics;
+import org.eclipse.kapua.qa.common.dbms.DbmsSpecificsFactory;
 import org.eclipse.kapua.qa.common.StepData;
 import org.eclipse.kapua.qa.integration.steps.utils.TestReadinessHttpConnection;
 import org.eclipse.kapua.qa.integration.steps.utils.TestReadinessMqttBrokerConnection;
@@ -61,6 +63,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 @Singleton
 public class DockerSteps {
@@ -147,7 +150,7 @@ public class DockerSteps {
     private StepData stepData;
 
     private static final String ALL_IP = "0.0.0.0";
-
+    private final DbmsSpecifics dbmsSpecifics = DbmsSpecificsFactory.createSpecifics();
 
     @Inject
     public DockerSteps(StepData stepData, DBHelper database) {
@@ -1040,15 +1043,13 @@ public class DockerSteps {
 
         final HostConfig hostConfig = HostConfig.builder().portBindings(portBindings).build();
 
-        List<String> envVars = Lists.newArrayList("commons.db.schema.update=true",
-                "commons.db.connection.host=db",
-                "commons.db.connection.port=3306",
+        List<String> envVars = Lists.newArrayList(addDbEnvVars("commons.db.schema.update=true",
                 "datastore.elasticsearch.nodes=es:9200",
                 "commons.eventbus.url=amqp://events-broker:5672?jms.sendTimeout=1000",
                 "certificate.jwt.private.key=file:///var/opt/activemq/key.pk8",
                 "certificate.jwt.certificate=file:///var/opt/activemq/cert.pem",
                 "CRYPTO_SECRET_KEY=kapuaTestsKey!!!",
-                String.format("broker.host=%s", brokerIp));
+                String.format("broker.host=%s", brokerIp)));
         if (envVar != null) {
             envVars.addAll(envVar);
         }
@@ -1080,7 +1081,7 @@ public class DockerSteps {
      * @return Container configuration for database instance.
      */
     private ContainerConfig getDbContainerConfig() {
-        final int dbPort = 3306;
+        final int dbPort = Integer.parseInt(dbmsSpecifics.getDbContainerPort());
         final int dbPortConsole = 8181;
         final Map<String, List<PortBinding>> portBindings = new HashMap<>();
         addHostPort(ALL_IP, portBindings, dbPort, dbPort);
@@ -1096,14 +1097,9 @@ public class DockerSteps {
                 .hostConfig(hostConfig)
                 .exposedPorts(ports)
                 .env(
-                        "DATABASE=kapuadb",
-                        "DB_USER=kapua",
-                        "DB_PASSWORD=kapua",
-                        //uncomment this line to enable the H@ web console (WARNING enable it only for test and then disable it again!)
-//                        "H2_WEB_OPTS=-web -webAllowOthers -webPort 8181",
-                        "DB_PORT_3306_TCP_PORT=3306"
+                        dbmsSpecifics.getDbContainerEnvVars()
                 )
-                .image("kapua/kapua-sql:" + KAPUA_VERSION)
+                .image(dbmsSpecifics.getImageName() + ":" + KAPUA_VERSION)
                 .build();
     }
 
@@ -1121,14 +1117,14 @@ public class DockerSteps {
         return ContainerConfig.builder()
                 .hostConfig(hostConfig)
                 .exposedPorts(ports)
-                .env(
+                .env(addDbEnvVars(
                         "CRYPTO_SECRET_KEY=kapuaTestsKey!!!",
                         "KAPUA_DISABLE_DATASTORE=false",
                         //now I set very little TTL access token to help me in the test scenarios
                         "AUTH_TOKEN_TTL=" + tokenTTL,
                         "REFRESH_AUTH_TOKEN_TTL=" + refreshTokenTTL,
                         "CORS_ENDPOINTS_REFRESH_INTERVAL=" + corsEndpointRefreshInterval,
-                        "SWAGGER=true"
+                        "SWAGGER=true")
                 )
                 .image("kapua/" + API_IMAGE + ":" + KAPUA_VERSION)
                 .build();
@@ -1188,7 +1184,7 @@ public class DockerSteps {
         return ContainerConfig.builder()
                 .hostConfig(hostConfig)
                 .exposedPorts(ports)
-                .env(envVars)
+                .env(addDbEnvVars(envVars.toArray(new String[0])))
                 .image("kapua/" + imageName + ":" + KAPUA_VERSION)
                 .build();
     }
@@ -1252,8 +1248,8 @@ public class DockerSteps {
                 .hostConfig(hostConfig)
                 .exposedPorts(String.valueOf(JOB_ENGINE_PORT_CONTAINER))
                 .env(
-                        "CRYPTO_SECRET_KEY=kapuaTestsKey!!!"
-                )
+                        addDbEnvVars( "CRYPTO_SECRET_KEY=kapuaTestsKey!!!")
+                        )
                 .image("kapua/kapua-job-engine:" + KAPUA_VERSION)
                 .build();
     }
@@ -1275,6 +1271,19 @@ public class DockerSteps {
         List<PortBinding> hostPorts = new ArrayList<>();
         hostPorts.add(PortBinding.of(host, hostPort));
         portBindings.put(String.valueOf(port), hostPorts);
+    }
+
+    //add Env vars related to db connection to the containerEnvVars, returning the merge
+    private String[] addDbEnvVars(String ... containerEnvVars) {
+        String[] dbContainerEnvVars = dbmsSpecifics.getContainerEnvVars();
+        if (dbContainerEnvVars[0].isEmpty()) { //no env. vars needed for this dbms
+            return containerEnvVars;
+        } else {
+            return Stream.concat(
+                    Arrays.stream(containerEnvVars),
+                    Arrays.stream(dbmsSpecifics.getContainerEnvVars())
+            ).toArray(String[]::new);
+        }
     }
 
 }
