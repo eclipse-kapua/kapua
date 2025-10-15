@@ -32,7 +32,6 @@ import org.eclipse.kapua.app.api.core.model.CountResult;
 import org.eclipse.kapua.app.api.core.model.EntityId;
 import org.eclipse.kapua.app.api.core.model.ScopeId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
-import org.eclipse.kapua.model.KapuaNamedEntityAttributes;
 import org.eclipse.kapua.model.query.SortOrder;
 import org.eclipse.kapua.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.service.KapuaService;
@@ -69,6 +68,7 @@ public class Groups extends AbstractKapuaResource {
             @PathParam("scopeId") ScopeId scopeId,
             @QueryParam("tagId") EntityId tagId,
             @QueryParam("name") String name,
+            @QueryParam("domain") String domain,
             @QueryParam("askTotalCount") boolean askTotalCount,
             @QueryParam("matchTerm") String matchTerm,
             @QueryParam("sortParam") String sortParam,
@@ -81,9 +81,11 @@ public class Groups extends AbstractKapuaResource {
         if (tagId != null) {
             andPredicate.and(query.attributePredicate(GroupAttributes.TAG_IDS, tagId));
         }
-
         if (!Strings.isNullOrEmpty(name)) {
-            andPredicate.and(query.attributePredicate(KapuaNamedEntityAttributes.NAME, name));
+            andPredicate.and(query.attributePredicate(GroupAttributes.NAME, name));
+        }
+        if(!Strings.isNullOrEmpty(domain)) {
+            andPredicate.and(query.attributePredicate(GroupAttributes.DOMAIN, domain));
         }
         if (matchTerm != null && !matchTerm.isEmpty()) {
             andPredicate.and(query.matchPredicate(matchTerm));
