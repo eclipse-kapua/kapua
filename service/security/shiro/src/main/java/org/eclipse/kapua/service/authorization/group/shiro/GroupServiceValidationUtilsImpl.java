@@ -23,6 +23,8 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
+import org.eclipse.kapua.service.authorization.domain.Domain;
+import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
 import org.eclipse.kapua.service.authorization.group.Group;
 import org.eclipse.kapua.service.authorization.group.GroupCreator;
 import org.eclipse.kapua.service.authorization.group.GroupRepository;
@@ -51,6 +53,8 @@ public final class GroupServiceValidationUtilsImpl implements GroupServiceValida
     private final PermissionFactory permissionFactory;
 
     protected final ServiceConfigurationManager serviceConfigurationManager;
+
+    private final DomainRegistryService domainRegistryService;
     private final TagService tagService;
     private final TagFactory tagFactory;
 
@@ -60,6 +64,7 @@ public final class GroupServiceValidationUtilsImpl implements GroupServiceValida
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
             ServiceConfigurationManager serviceConfigurationManager,
+            DomainRegistryService domainRegistryService,
             TagService tagService,
             TagFactory tagFactory,
             GroupRepository groupRepository
@@ -67,6 +72,7 @@ public final class GroupServiceValidationUtilsImpl implements GroupServiceValida
         this.authorizationService = authorizationService;
         this.permissionFactory = permissionFactory;
         this.serviceConfigurationManager = serviceConfigurationManager;
+        this.domainRegistryService = domainRegistryService;
         this.tagService = tagService;
         this.tagFactory = tagFactory;
         this.groupRepository = groupRepository;
@@ -79,6 +85,13 @@ public final class GroupServiceValidationUtilsImpl implements GroupServiceValida
         ArgumentValidator.notNull(groupCreator.getScopeId().getId(), "groupCreator.scopeId");
         ArgumentValidator.notEmptyOrNull(groupCreator.getName(), "groupCreator.name");
         ArgumentValidator.validateEntityName(groupCreator.getName(), "groupCreator.name");
+
+        // .domain
+        ArgumentValidator.validateEntityName(groupCreator.getDomain(), "groupCreator.domain");
+
+        if (domainRegistryService.findByName(groupCreator.getDomain()) == null) {
+            throw new KapuaEntityNotFoundException(Domain.TYPE, groupCreator.getDomain());
+        }
 
         //
         // Check Access

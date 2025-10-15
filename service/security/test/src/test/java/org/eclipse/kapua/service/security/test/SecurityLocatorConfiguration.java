@@ -187,6 +187,7 @@ public class SecurityLocatorConfiguration {
                             mockedAuthorization,
                             mockPermissionFactory,
                             Mockito.mock(ServiceConfigurationManager.class),
+                            Mockito.mock(DomainRegistryService.class),
                             Mockito.mock(TagService.class),
                             Mockito.mock(TagFactory.class),
                             groupRepository
