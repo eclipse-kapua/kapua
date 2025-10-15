@@ -42,6 +42,14 @@ public class GwtGroup extends GwtUpdatableEntityModel {
         set("value", description);
     }
 
+    public String getDomain() {
+        return get("domain");
+    }
+
+    public void setDomain(String domain) {
+        set("domain", domain);
+    }
+
     @Override
     public String toString() {
         return getGroupName();

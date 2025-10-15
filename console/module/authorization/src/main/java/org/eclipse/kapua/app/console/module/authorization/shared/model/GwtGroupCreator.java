@@ -24,6 +24,8 @@ public class GwtGroupCreator extends GwtEntityCreator {
     private String name;
     private String description;
 
+    private String domain;
+
     public GwtGroupCreator() {
         super();
     }
@@ -42,5 +44,13 @@ public class GwtGroupCreator extends GwtEntityCreator {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
 }
