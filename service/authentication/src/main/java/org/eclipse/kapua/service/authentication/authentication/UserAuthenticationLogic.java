@@ -90,7 +90,7 @@ public class UserAuthenticationLogic extends AuthenticationLogic {
     public boolean disconnect(AuthContext authContext) {
         Context timeTotal = authenticationMetric.getExtConnectorTime().getUserRemoveConnection().time();
         boolean deviceOwnedByTheCurrentNode = true;
-        if (!authContext.isStealingLink() && !authContext.isIllegalState()) {
+        if (!authContext.isIllegalState()) {
             // update device connection (if the disconnection wasn't caused by a stealing link)
             DeviceConnection deviceConnection = getDeviceConnection(authContext);
             deviceOwnedByTheCurrentNode = isDeviceOwnedByTheCurrentNode(authContext, deviceConnection);
@@ -109,7 +109,7 @@ public class UserAuthenticationLogic extends AuthenticationLogic {
             }
         }
         timeTotal.stop();
-        return !authContext.isStealingLink() && deviceOwnedByTheCurrentNode && !authContext.isMissing();
+        return !authContext.isStealingLink() && deviceOwnedByTheCurrentNode;
     }
 
     @Override
