@@ -19,6 +19,7 @@ import org.eclipse.kapua.service.authorization.group.Group;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.Basic;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -46,6 +47,9 @@ public class GroupImpl extends AbstractKapuaNamedEntity implements Group {
     })
     private Set<KapuaEid> tagIds;
 
+    @Basic
+    @Column(name = "domain", nullable = false, updatable = true)
+    private String domain;
 
     /**
      * Constructor.
@@ -78,6 +82,7 @@ public class GroupImpl extends AbstractKapuaNamedEntity implements Group {
         super(group);
 
         setTagIds(group.getTagIds());
+        setDomain(group.getDomain());
     }
 
     @Override
@@ -100,5 +105,15 @@ public class GroupImpl extends AbstractKapuaNamedEntity implements Group {
         }
 
         return tagIds;
+    }
+
+    @Override
+    public String getDomain() {
+        return domain;
+    }
+
+    @Override
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
 }

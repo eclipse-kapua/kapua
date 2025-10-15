@@ -23,4 +23,6 @@ import org.eclipse.kapua.model.KapuaNamedEntityAttributes;
 public class GroupAttributes extends KapuaNamedEntityAttributes {
 
     public static final String TAG_IDS = "tagIds";
+
+    public static final String DOMAIN = "domain";
 }

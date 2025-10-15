@@ -19,5 +19,6 @@
         logicalFilePath="KapuaDB/changelog-authorization-2.1.0.xml">
 
     <include relativeToChangelogFile="true" file="./athz-group-tag.xml"/>
+    <include relativeToChangelogFile="true" file="./athz-group-domain.xml"/>
 
 </databaseChangeLog>
