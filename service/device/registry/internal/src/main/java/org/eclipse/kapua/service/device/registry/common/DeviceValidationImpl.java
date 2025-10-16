@@ -18,6 +18,7 @@ import com.google.common.collect.Sets;
 import org.eclipse.kapua.KapuaDuplicateNameException;
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
@@ -126,7 +127,7 @@ public final class DeviceValidationImpl implements DeviceValidation {
         validateDeviceCreatorGroupId(deviceCreator);
 
         // .groupIds
-        validateDeviceCreatorGroupIds(deviceCreator);
+        validateGroupIds(deviceCreator.getScopeId(), deviceCreator.getGroupIds());
 
         // .clientId
         ArgumentValidator.notEmptyOrNull(deviceCreator.getClientId(), "deviceCreator.clientId");
@@ -315,7 +316,7 @@ public final class DeviceValidationImpl implements DeviceValidation {
         validateDeviceGroupId(device);
 
         // .groupIds
-        validateDeviceGroupIds(device);
+        validateGroupIds(device.getScopeId(), device.getGroupIds());
 
         // .tagIds
         validateTagIds(device.getScopeId(), device.getTagIds());
@@ -639,45 +640,6 @@ public final class DeviceValidationImpl implements DeviceValidation {
     }
 
     /**
-     * Applies validation logics to {@link DeviceCreator#getGroupIds()} attribute.
-     * <p>
-     * Requirements are:
-     * <ul>
-     *     <li>All Groups defined must exists</li>
-     * </ul>
-     *
-     * @param deviceCreator The {@link DeviceCreator} to validate
-     * @throws KapuaException
-     * @since 2.1.0
-     */
-    private void validateDeviceCreatorGroupIds(DeviceCreator deviceCreator) throws KapuaException {
-        if (!deviceCreator.getGroupIds().isEmpty()) {
-            Set<KapuaId> groupIds = deviceCreator.getGroupIds();
-
-            //
-            // Check existence of all Groups
-            GroupQuery groupQuery = groupFactory.newQuery(deviceCreator.getScopeId());
-            groupQuery.setPredicate(groupQuery.attributePredicate(GroupAttributes.ENTITY_ID, groupIds));
-
-            GroupListResult dbGroups = KapuaSecurityUtils.doPrivileged(() -> groupService.query(groupQuery));
-            if (groupIds.size() != dbGroups.getSize()) {
-                // Some groups have not been found
-                Set<KapuaId> dbGroupIds =
-                        dbGroups.getItems()
-                                .stream()
-                                .map(Group::getId)
-                                .collect(Collectors.toSet());
-
-                for (KapuaId groupId : groupIds) {
-                    if (!dbGroupIds.contains(groupId)) {
-                        throw new KapuaEntityNotFoundException(Group.TYPE, groupId);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * Applies validation logics to {@link Device#getGroupId()} attribute.
      * <p>
      * Requirements are:
@@ -711,14 +673,14 @@ public final class DeviceValidationImpl implements DeviceValidation {
         }
     }
 
-    private void validateDeviceGroupIds(Device device) throws KapuaException {
-        if (!device.getGroupIds().isEmpty()) {
-            Set<KapuaId> groupIds = device.getGroupIds();
+    private void validateGroupIds(KapuaId scopeId, Set<KapuaId> groupIds) throws KapuaException {
+        if (!groupIds.isEmpty()) {
 
-            GroupQuery groupQuery = groupFactory.newQuery(device.getScopeId());
+            GroupQuery groupQuery = groupFactory.newQuery(scopeId);
             groupQuery.setPredicate(groupQuery.attributePredicate(GroupAttributes.ENTITY_ID, groupIds));
-
             GroupListResult dbGroups = KapuaSecurityUtils.doPrivileged(() -> groupService.query(groupQuery));
+
+            // Check existence
             if (groupIds.size() != dbGroups.getSize()) {
                 // Some groups have not been found
                 Set<KapuaId> dbGroupIds =
@@ -731,6 +693,13 @@ public final class DeviceValidationImpl implements DeviceValidation {
                     if (!dbGroupIds.contains(groupId)) {
                         throw new KapuaEntityNotFoundException(Group.TYPE, groupId);
                     }
+                }
+            }
+
+            // Check matching domain
+            for (Group group : dbGroups.getItems()) {
+                if (!group.getDomain().equals(Domains.DEVICE)) {
+                    throw new KapuaIllegalArgumentException(Group.TYPE, group.getId().toString());
                 }
             }
         }
