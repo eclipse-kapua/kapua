@@ -38,6 +38,7 @@ import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.group.Group;
+import org.eclipse.kapua.service.authorization.group.GroupAttributes;
 import org.eclipse.kapua.service.authorization.group.GroupCreator;
 import org.eclipse.kapua.service.authorization.group.GroupFactory;
 import org.eclipse.kapua.service.authorization.group.GroupListResult;
@@ -198,19 +199,34 @@ public class GwtGroupServiceImpl extends KapuaRemoteServiceServlet implements Gw
 
     @Override
     public List<GwtGroup> findAll(String scopeId) throws GwtKapuaException {
+        return findAll(scopeId, null);
+    }
+
+    @Override
+    public List<GwtGroup> findAll(String scopeId, String domain) throws GwtKapuaException {
         try {
             GroupQuery query = GROUP_FACTORY.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(scopeId));
+
+            if (domain != null) {
+                query.setPredicate(
+                        query.attributePredicate(GroupAttributes.DOMAIN, domain)
+                );
+            }
+
             GroupListResult result = GROUP_SERVICE.query(query);
 
             List<GwtGroup> groupList = new ArrayList<GwtGroup>();
             for (Group group : result.getItems()) {
                 groupList.add(KapuaGwtAuthorizationModelConverter.convertGroup(group));
             }
+
             return groupList;
         } catch (KapuaException e) {
             throw KapuaExceptionHandler.buildExceptionFromError(e);
         }
     }
+
+
 
     @Override
     public PagingLoadResult<GwtGroup> findByDeviceId(PagingLoadConfig loadConfig, String gwtScopeId, String gwtDeviceId) throws GwtKapuaException {
