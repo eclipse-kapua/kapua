@@ -129,7 +129,7 @@ public class UserGroupAddDialog extends EntityAddEditDialog {
         groupsCombo.setTemplate("<tpl for=\".\"><div role=\"listitem\" class=\"x-combo-list-item\" title={groupName}>{groupName}</div></tpl>");
         groupsCombo.addListener(Events.Select, comboBoxListener);
 
-        GWT_GROUP_SERVICE.findAll(selectedUser.getScopeId(), new AsyncCallback<List<GwtGroup>>() {
+        GWT_GROUP_SERVICE.findAll(selectedUser.getScopeId(), "user", new AsyncCallback<List<GwtGroup>>() {
 
             @Override
             public void onFailure(Throwable caught) {
