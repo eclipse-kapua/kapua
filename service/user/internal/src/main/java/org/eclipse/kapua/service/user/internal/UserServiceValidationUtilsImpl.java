@@ -448,6 +448,8 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
             groupQuery.setPredicate(groupQuery.attributePredicate(GroupAttributes.ENTITY_ID, groupIds));
 
             GroupListResult dbGroups = KapuaSecurityUtils.doPrivileged(() -> groupService.query(groupQuery));
+
+            // Check existence
             if (groupIds.size() != dbGroups.getSize()) {
                 // Some groups have not been found
                 Set<KapuaId> dbGroupIds =
@@ -460,6 +462,13 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
                     if (!dbGroupIds.contains(groupId)) {
                         throw new KapuaEntityNotFoundException(Group.TYPE, groupId);
                     }
+                }
+            }
+
+            // Check matching domain
+            for (Group group : dbGroups.getItems()) {
+                if (!group.getDomain().equals(Domains.USER)) {
+                    throw new KapuaIllegalArgumentException(Group.TYPE, group.getId().toString());
                 }
             }
         }
