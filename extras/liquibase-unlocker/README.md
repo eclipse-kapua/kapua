@@ -23,7 +23,7 @@ on. The proposed script doesn't require this and get the job done with a single 
 #### Usage
 
 ```bash
-java -jar kapua-liquibase-unlocker-2.0.0-BETA-M17-app.jar
+java -jar kapua-liquibase-unlocker-2.0.0-SNAPSHOT-app.jar
 ```
 
 To be used when the deployment is stucked for the afore mentioned reasons, the lock will be released and the deployment will continue.
