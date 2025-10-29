@@ -53,6 +53,7 @@ import org.eclipse.kapua.service.device.management.keystore.model.DeviceKeystore
 import org.eclipse.kapua.service.device.management.keystore.model.internal.DeviceKeystoreCertificateImpl;
 import org.eclipse.kapua.service.device.management.keystore.model.internal.DeviceKeystoreItemQueryImpl;
 import org.eclipse.kapua.service.device.management.message.KapuaMethod;
+import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventFactory;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventService;
@@ -88,7 +89,9 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
             DeviceEventFactory deviceEventFactory,
             DeviceRegistryService deviceRegistryService,
             CertificateInfoService certificateInfoService,
-            CertificateInfoFactory certificateInfoFactory, DeviceKeystoreManagementFactory deviceKeystoreManagementFactory) {
+            CertificateInfoFactory certificateInfoFactory,
+            DeviceKeystoreManagementFactory deviceKeystoreManagementFactory
+    ) {
         super(txManager,
                 authorizationService,
                 permissionFactory,
@@ -106,8 +109,15 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         // Argument Validation
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         KeystoreRequestChannel keystoreRequestChannel = new KeystoreRequestChannel();
         keystoreRequestChannel.setAppName(DeviceKeystoreAppProperties.APP_NAME);
@@ -146,6 +156,7 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
 
         // Create event
         createDeviceEvent(scopeId, deviceId, keystoreRequestMessage, responseMessage);
+
         // Check response
         return checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getKeystores().orElse(deviceKeystoreManagementFactory.newDeviceKeystores()));
     }
@@ -169,8 +180,15 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         ) {
             throw new KapuaIllegalArgumentException("itemQuery.alias", itemQuery.getAlias());
         }
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         KeystoreRequestChannel keystoreRequestChannel = new KeystoreRequestChannel();
         keystoreRequestChannel.setAppName(DeviceKeystoreAppProperties.APP_NAME);
@@ -226,8 +244,15 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         ArgumentValidator.notEmptyOrNull(keystoreId, "keystoreId");
         ArgumentValidator.notEmptyOrNull(alias, "alias");
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         KeystoreRequestChannel keystoreRequestChannel = new KeystoreRequestChannel();
         keystoreRequestChannel.setAppName(DeviceKeystoreAppProperties.APP_NAME);
@@ -283,11 +308,13 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
 
     @Override
     public void createKeystoreCertificate(KapuaId scopeId, KapuaId deviceId, String keystoreId, String alias, KapuaId certificateId, Long timeout) throws KapuaException {
+        // Argument validation
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         ArgumentValidator.notEmptyOrNull(keystoreId, "keystoreId");
         ArgumentValidator.notEmptyOrNull(alias, "alias");
         ArgumentValidator.notNull(certificateId, "certificateId");
+
         // Check Certificate Info existence
         CertificateInfo certificateInfo;
         try {
@@ -300,6 +327,7 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         if (certificateInfo == null) {
             throw new KapuaEntityNotFoundException(CertificateInfo.TYPE, certificateId);
         }
+
         // Build DeviceKeystoreCertificate create
         DeviceKeystoreCertificate deviceKeystoreCertificate = new DeviceKeystoreCertificateImpl();
         deviceKeystoreCertificate.setKeystoreId(keystoreId);
@@ -315,8 +343,15 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         ArgumentValidator.notNull(keystoreCertificate, "keystoreCertificate");
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         KeystoreRequestChannel keystoreRequestChannel = new KeystoreRequestChannel();
         keystoreRequestChannel.setAppName(DeviceKeystoreAppProperties.APP_NAME);
@@ -372,8 +407,15 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         ArgumentValidator.notNull(keystoreKeypair, "keystoreKeypair");
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         KeystoreRequestChannel keystoreRequestChannel = new KeystoreRequestChannel();
         keystoreRequestChannel.setAppName(DeviceKeystoreAppProperties.APP_NAME);
@@ -429,8 +471,15 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         ArgumentValidator.notNull(keystoreCSRInfo, "keystoreCSRInfo");
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         KeystoreRequestChannel keystoreRequestChannel = new KeystoreRequestChannel();
         keystoreRequestChannel.setAppName(DeviceKeystoreAppProperties.APP_NAME);
@@ -487,8 +536,15 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         ArgumentValidator.notEmptyOrNull(keystoreId, "keystoreId");
         ArgumentValidator.notEmptyOrNull(alias, "alias");
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.delete, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         KeystoreRequestChannel keystoreRequestChannel = new KeystoreRequestChannel();
         keystoreRequestChannel.setAppName(DeviceKeystoreAppProperties.APP_NAME);

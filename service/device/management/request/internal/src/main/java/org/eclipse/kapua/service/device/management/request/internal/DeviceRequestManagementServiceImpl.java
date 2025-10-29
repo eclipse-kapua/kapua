@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.request.internal;
 
+import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
@@ -29,6 +30,7 @@ import org.eclipse.kapua.service.device.management.request.message.request.Gener
 import org.eclipse.kapua.service.device.management.request.message.request.GenericRequestMessage;
 import org.eclipse.kapua.service.device.management.request.message.request.GenericRequestPayload;
 import org.eclipse.kapua.service.device.management.request.message.response.GenericResponseMessage;
+import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventFactory;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventService;
@@ -58,7 +60,8 @@ public class DeviceRequestManagementServiceImpl extends AbstractDeviceManagement
             DeviceEventService deviceEventService,
             DeviceEventFactory deviceEventFactory,
             DeviceRegistryService deviceRegistryService,
-            GenericRequestFactory genericRequestFactory) {
+            GenericRequestFactory genericRequestFactory
+    ) {
         super(txManager,
                 authorizationService,
                 permissionFactory,
@@ -77,6 +80,7 @@ public class DeviceRequestManagementServiceImpl extends AbstractDeviceManagement
     public GenericResponseMessage exec(KapuaId scopeId, KapuaId deviceId, GenericRequestMessage requestInput, Long timeout) throws KapuaException {
         // Argument Validation
         ArgumentValidator.notNull(requestInput, "requestInput");
+
         // Check Access
         Actions action;
         switch (requestInput.getChannel().getMethod()) {
@@ -98,6 +102,12 @@ public class DeviceRequestManagementServiceImpl extends AbstractDeviceManagement
                 throw new DeviceManagementRequestBadMethodException(requestInput.getChannel().getMethod());
         }
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, action, requestInput.getScopeId()));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         GenericRequestChannel genericRequestChannel = genericRequestFactory.newRequestChannel();
         genericRequestChannel.setAppName(requestInput.getChannel().getAppName());

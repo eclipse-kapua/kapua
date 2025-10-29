@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.inventory.internal;
 
+import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.commons.model.domains.Domains;
@@ -46,6 +47,7 @@ import org.eclipse.kapua.service.device.management.inventory.model.inventory.Dev
 import org.eclipse.kapua.service.device.management.inventory.model.packages.DeviceInventoryPackages;
 import org.eclipse.kapua.service.device.management.inventory.model.system.DeviceInventorySystemPackages;
 import org.eclipse.kapua.service.device.management.message.KapuaMethod;
+import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventFactory;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventService;
@@ -77,7 +79,9 @@ public class DeviceInventoryManagementServiceImpl extends AbstractDeviceManageme
             PermissionFactory permissionFactory,
             DeviceEventService deviceEventService,
             DeviceEventFactory deviceEventFactory,
-            DeviceRegistryService deviceRegistryService, DeviceInventoryManagementFactory deviceInventoryManagementFactory) {
+            DeviceRegistryService deviceRegistryService,
+            DeviceInventoryManagementFactory deviceInventoryManagementFactory
+    ) {
         super(txManager,
                 authorizationService,
                 permissionFactory,
@@ -93,8 +97,15 @@ public class DeviceInventoryManagementServiceImpl extends AbstractDeviceManageme
         // Argument Validation
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         InventoryRequestChannel inventoryRequestChannel = new InventoryRequestChannel();
         inventoryRequestChannel.setAppName(DeviceInventoryAppProperties.APP_NAME);
@@ -145,8 +156,15 @@ public class DeviceInventoryManagementServiceImpl extends AbstractDeviceManageme
         // Argument Validation
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         InventoryRequestChannel inventoryRequestChannel = new InventoryRequestChannel();
         inventoryRequestChannel.setAppName(DeviceInventoryAppProperties.APP_NAME);
@@ -205,6 +223,12 @@ public class DeviceInventoryManagementServiceImpl extends AbstractDeviceManageme
 
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         InventoryRequestChannel inventoryRequestChannel = new InventoryRequestChannel();
         inventoryRequestChannel.setAppName(DeviceInventoryAppProperties.APP_NAME);
@@ -261,8 +285,15 @@ public class DeviceInventoryManagementServiceImpl extends AbstractDeviceManageme
         // Argument Validation
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         InventoryRequestChannel inventoryRequestChannel = new InventoryRequestChannel();
         inventoryRequestChannel.setAppName(DeviceInventoryAppProperties.APP_NAME);
@@ -316,8 +347,15 @@ public class DeviceInventoryManagementServiceImpl extends AbstractDeviceManageme
         ArgumentValidator.notNull(deviceInventoryContainer.getName(), "deviceInventoryContainer.name");
         ArgumentValidator.notNull(deviceInventoryContainer.getVersion(), "deviceInventoryContainer.version");
         ArgumentValidator.notNull(deviceInventoryContainerAction, "deviceInventoryContainerAction");
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         InventoryRequestChannel inventoryRequestChannel = new InventoryRequestChannel();
         inventoryRequestChannel.setAppName(DeviceInventoryAppProperties.APP_NAME);
@@ -374,8 +412,15 @@ public class DeviceInventoryManagementServiceImpl extends AbstractDeviceManageme
         // Argument Validation
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         InventoryRequestChannel inventoryRequestChannel = new InventoryRequestChannel();
         inventoryRequestChannel.setAppName(DeviceInventoryAppProperties.APP_NAME);
@@ -426,8 +471,15 @@ public class DeviceInventoryManagementServiceImpl extends AbstractDeviceManageme
         // Argument Validation
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         InventoryRequestChannel inventoryRequestChannel = new InventoryRequestChannel();
         inventoryRequestChannel.setAppName(DeviceInventoryAppProperties.APP_NAME);

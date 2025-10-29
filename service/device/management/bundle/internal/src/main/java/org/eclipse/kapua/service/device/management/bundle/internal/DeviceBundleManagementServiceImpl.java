@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.bundle.internal;
 
+import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
@@ -30,6 +31,7 @@ import org.eclipse.kapua.service.device.management.bundle.message.internal.Bundl
 import org.eclipse.kapua.service.device.management.commons.AbstractDeviceManagementTransactionalServiceImpl;
 import org.eclipse.kapua.service.device.management.commons.call.DeviceCallBuilder;
 import org.eclipse.kapua.service.device.management.message.KapuaMethod;
+import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventFactory;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventService;
@@ -60,7 +62,9 @@ public class DeviceBundleManagementServiceImpl extends AbstractDeviceManagementT
                                              PermissionFactory permissionFactory,
                                              DeviceEventService deviceEventService,
                                              DeviceEventFactory deviceEventFactory,
-                                             DeviceRegistryService deviceRegistryService, DeviceBundleFactory deviceBundleFactory) {
+                                             DeviceRegistryService deviceRegistryService,
+                                             DeviceBundleFactory deviceBundleFactory
+    ) {
         super(txManager,
                 authorizationService,
                 permissionFactory,
@@ -76,8 +80,15 @@ public class DeviceBundleManagementServiceImpl extends AbstractDeviceManagementT
         // Argument Validation
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         BundleRequestChannel bundleRequestChannel = new BundleRequestChannel();
         bundleRequestChannel.setAppName(DeviceBundleAppProperties.APP_NAME);
@@ -123,8 +134,15 @@ public class DeviceBundleManagementServiceImpl extends AbstractDeviceManagementT
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         ArgumentValidator.notEmptyOrNull(bundleId, "bundleId");
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.execute, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         BundleRequestChannel bundleRequestChannel = new BundleRequestChannel();
         bundleRequestChannel.setAppName(DeviceBundleAppProperties.APP_NAME);
@@ -171,8 +189,15 @@ public class DeviceBundleManagementServiceImpl extends AbstractDeviceManagementT
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         ArgumentValidator.notEmptyOrNull(bundleId, "bundleId");
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.execute, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         BundleRequestChannel bundleRequestChannel = new BundleRequestChannel();
         bundleRequestChannel.setAppName(DeviceBundleAppProperties.APP_NAME);

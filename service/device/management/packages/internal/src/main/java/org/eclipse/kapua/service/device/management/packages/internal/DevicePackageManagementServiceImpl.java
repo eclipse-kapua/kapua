@@ -13,6 +13,7 @@
 package org.eclipse.kapua.service.device.management.packages.internal;
 
 import com.google.common.base.MoreObjects;
+import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.commons.model.domains.Domains;
@@ -60,6 +61,7 @@ import org.eclipse.kapua.service.device.management.registry.operation.DeviceMana
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationFactory;
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationProperty;
 import org.eclipse.kapua.service.device.management.registry.operation.DeviceManagementOperationRegistryService;
+import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventFactory;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventService;
@@ -105,7 +107,8 @@ public class DevicePackageManagementServiceImpl extends AbstractDeviceManagement
             DeviceManagementOperationRegistryService deviceManagementOperationRegistryService,
             DeviceManagementOperationFactory deviceManagementOperationFactory,
             DevicePackageFactory devicePackageFactory,
-            PackageManagementServiceSetting packageManagementServiceSetting) {
+            PackageManagementServiceSetting packageManagementServiceSetting
+    ) {
         super(txManager,
                 authorizationService,
                 permissionFactory,
@@ -124,8 +127,15 @@ public class DevicePackageManagementServiceImpl extends AbstractDeviceManagement
         // Argument Validation
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         PackageRequestChannel packageRequestChannel = new PackageRequestChannel();
         packageRequestChannel.setAppName(PackageAppProperties.APP_NAME);
@@ -192,6 +202,12 @@ public class DevicePackageManagementServiceImpl extends AbstractDeviceManagement
 
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Generate requestId
         KapuaId operationId = new KapuaEid(IdGenerator.generate());
         // Prepare the request
@@ -270,8 +286,15 @@ public class DevicePackageManagementServiceImpl extends AbstractDeviceManagement
         // Argument Validation
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         PackageRequestChannel packageRequestChannel = new PackageRequestChannel();
         packageRequestChannel.setAppName(PackageAppProperties.APP_NAME);
@@ -325,8 +348,15 @@ public class DevicePackageManagementServiceImpl extends AbstractDeviceManagement
         // Argument Validation
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         PackageRequestChannel packageRequestChannel = new PackageRequestChannel();
         packageRequestChannel.setAppName(PackageAppProperties.APP_NAME);
@@ -381,8 +411,15 @@ public class DevicePackageManagementServiceImpl extends AbstractDeviceManagement
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         ArgumentValidator.notNull(deployInstallRequest, "deployInstallRequest");
         ArgumentValidator.notNull(packageInstallOptions, "packageInstallOptions");
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Generate requestId
         KapuaId operationId = new KapuaEid(IdGenerator.generate());
         // Prepare the request
@@ -442,8 +479,15 @@ public class DevicePackageManagementServiceImpl extends AbstractDeviceManagement
         // Argument Validation
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         PackageRequestChannel packageRequestChannel = new PackageRequestChannel();
         packageRequestChannel.setAppName(PackageAppProperties.APP_NAME);
@@ -498,8 +542,15 @@ public class DevicePackageManagementServiceImpl extends AbstractDeviceManagement
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         ArgumentValidator.notNull(packageUninstallRequest, "packageUninstallRequest");
         ArgumentValidator.notNull(packageUninstallOptions, "packageUninstallOptions");
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Generate requestId
         KapuaId operationId = new KapuaEid(IdGenerator.generate());
         // Prepare the request
@@ -559,8 +610,15 @@ public class DevicePackageManagementServiceImpl extends AbstractDeviceManagement
         // Argument Validation
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         PackageRequestChannel packageRequestChannel = new PackageRequestChannel();
         packageRequestChannel.setAppName(PackageAppProperties.APP_NAME);
@@ -605,7 +663,9 @@ public class DevicePackageManagementServiceImpl extends AbstractDeviceManagement
         ArgumentValidator.lengthRange(packageDownloadRequest.getVersion(), null, 256, "packageDownloadRequest.version");
     }
 
+    //
     // Private methods
+    //
 
     private List<DeviceManagementOperationProperty> extractInputProperties(KapuaRequestMessage<?, ?> requestMessage) {
 

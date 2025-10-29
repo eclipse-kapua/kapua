@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.asset.internal;
 
+import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
@@ -32,6 +33,7 @@ import org.eclipse.kapua.service.device.management.commons.call.DeviceCallBuilde
 import org.eclipse.kapua.service.device.management.exception.DeviceManagementRequestContentException;
 import org.eclipse.kapua.service.device.management.exception.DeviceNeverConnectedException;
 import org.eclipse.kapua.service.device.management.message.KapuaMethod;
+import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventFactory;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventService;
@@ -66,13 +68,16 @@ public class DeviceAssetManagementServiceImpl extends AbstractDeviceManagementTr
             DeviceEventService deviceEventService,
             DeviceEventFactory deviceEventFactory,
             DeviceRegistryService deviceRegistryService,
-            DeviceAssetStoreService deviceAssetStoreService, DeviceAssetFactory deviceAssetFactory) {
+            DeviceAssetStoreService deviceAssetStoreService,
+            DeviceAssetFactory deviceAssetFactory
+    ) {
         super(txManager,
                 authorizationService,
                 permissionFactory,
                 deviceEventService,
                 deviceEventFactory,
                 deviceRegistryService);
+
         this.deviceAssetStoreService = deviceAssetStoreService;
         this.deviceAssetFactory = deviceAssetFactory;
     }
@@ -84,8 +89,15 @@ public class DeviceAssetManagementServiceImpl extends AbstractDeviceManagementTr
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         ArgumentValidator.notNull(deviceAssets, DEVICE_ASSETS);
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         AssetRequestChannel assetRequestChannel = new AssetRequestChannel();
         assetRequestChannel.setAppName(DeviceAssetAppProperties.APP_NAME);
@@ -149,8 +161,15 @@ public class DeviceAssetManagementServiceImpl extends AbstractDeviceManagementTr
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         ArgumentValidator.notNull(deviceAssets, DEVICE_ASSETS);
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         AssetRequestChannel assetRequestChannel = new AssetRequestChannel();
         assetRequestChannel.setAppName(DeviceAssetAppProperties.APP_NAME);
@@ -216,8 +235,15 @@ public class DeviceAssetManagementServiceImpl extends AbstractDeviceManagementTr
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         ArgumentValidator.notNull(deviceAssets, DEVICE_ASSETS);
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         AssetRequestChannel assetRequestChannel = new AssetRequestChannel();
         assetRequestChannel.setAppName(DeviceAssetAppProperties.APP_NAME);

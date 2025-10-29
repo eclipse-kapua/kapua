@@ -15,6 +15,7 @@ package org.eclipse.kapua.service.device.management.command.internal;
 import java.util.Date;
 import javax.inject.Singleton;
 
+import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
@@ -33,6 +34,7 @@ import org.eclipse.kapua.service.device.management.command.message.internal.Comm
 import org.eclipse.kapua.service.device.management.commons.AbstractDeviceManagementTransactionalServiceImpl;
 import org.eclipse.kapua.service.device.management.commons.call.DeviceCallBuilder;
 import org.eclipse.kapua.service.device.management.message.KapuaMethod;
+import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventFactory;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventService;
@@ -53,7 +55,8 @@ public class DeviceCommandManagementServiceImpl extends AbstractDeviceManagement
             PermissionFactory permissionFactory,
             DeviceEventService deviceEventService,
             DeviceEventFactory deviceEventFactory,
-            DeviceRegistryService deviceRegistryService) {
+            DeviceRegistryService deviceRegistryService
+    ) {
         super(txManager,
                 authorizationService,
                 permissionFactory,
@@ -73,8 +76,15 @@ public class DeviceCommandManagementServiceImpl extends AbstractDeviceManagement
         ArgumentValidator.notNull(commandInput, "commandInput");
         ArgumentValidator.notNull(commandInput.getTimeout(), "commandInput.timeout");
         ArgumentValidator.notEmptyOrNull(commandInput.getCommand(), "commandInput.command");
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.execute, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         CommandRequestChannel commandRequestChannel = new CommandRequestChannel();
         commandRequestChannel.setAppName(CommandAppProperties.APP_NAME);

@@ -17,6 +17,7 @@ import java.util.Date;
 import javax.inject.Singleton;
 import javax.xml.bind.JAXBException;
 
+import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.commons.model.domains.Domains;
@@ -40,6 +41,7 @@ import org.eclipse.kapua.service.device.management.configuration.store.DeviceCon
 import org.eclipse.kapua.service.device.management.exception.DeviceManagementRequestContentException;
 import org.eclipse.kapua.service.device.management.exception.DeviceNeverConnectedException;
 import org.eclipse.kapua.service.device.management.message.KapuaMethod;
+import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventFactory;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventService;
@@ -75,7 +77,8 @@ public class DeviceConfigurationManagementServiceImpl extends AbstractDeviceMana
             DeviceRegistryService deviceRegistryService,
             DeviceConfigurationFactory deviceConfigurationFactory,
             DeviceConfigurationStoreService deviceConfigurationStoreService,
-            XmlUtil xmlUtil) {
+            XmlUtil xmlUtil
+    ) {
         super(txManager,
                 authorizationService,
                 permissionFactory,
@@ -94,8 +97,15 @@ public class DeviceConfigurationManagementServiceImpl extends AbstractDeviceMana
         // Argument Validation
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         ConfigurationRequestChannel configurationRequestChannel = new ConfigurationRequestChannel();
         configurationRequestChannel.setAppName(DeviceConfigurationAppProperties.APP_NAME);

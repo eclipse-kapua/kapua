@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.snapshot.internal;
 
+import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
@@ -31,6 +32,7 @@ import org.eclipse.kapua.service.device.management.snapshot.message.internal.Sna
 import org.eclipse.kapua.service.device.management.snapshot.message.internal.SnapshotRequestMessage;
 import org.eclipse.kapua.service.device.management.snapshot.message.internal.SnapshotRequestPayload;
 import org.eclipse.kapua.service.device.management.snapshot.message.internal.SnapshotResponseMessage;
+import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventFactory;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventService;
@@ -50,6 +52,7 @@ import java.util.Date;
 @Singleton
 public class DeviceSnapshotManagementServiceImpl extends AbstractDeviceManagementTransactionalServiceImpl implements DeviceSnapshotManagementService {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DeviceConfigurationManagementServiceImpl.class);
     private final DeviceSnapshotFactory deviceSnapshotFactory;
 
     @Inject
@@ -59,17 +62,18 @@ public class DeviceSnapshotManagementServiceImpl extends AbstractDeviceManagemen
             PermissionFactory permissionFactory,
             DeviceEventService deviceEventService,
             DeviceEventFactory deviceEventFactory,
-            DeviceRegistryService deviceRegistryService, DeviceSnapshotFactory deviceSnapshotFactory) {
+            DeviceRegistryService deviceRegistryService,
+            DeviceSnapshotFactory deviceSnapshotFactory
+    ) {
         super(txManager,
                 authorizationService,
                 permissionFactory,
                 deviceEventService,
                 deviceEventFactory,
                 deviceRegistryService);
+
         this.deviceSnapshotFactory = deviceSnapshotFactory;
     }
-
-    private static final Logger LOG = LoggerFactory.getLogger(DeviceConfigurationManagementServiceImpl.class);
 
     @Override
     public DeviceSnapshots get(KapuaId scopeId, KapuaId deviceId, Long timeout)
@@ -77,8 +81,15 @@ public class DeviceSnapshotManagementServiceImpl extends AbstractDeviceManagemen
         // Argument Validation
         ArgumentValidator.notNull(scopeId, "scopeId");
         ArgumentValidator.notNull(deviceId, "deviceId");
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         SnapshotRequestChannel snapshotRequestChannel = new SnapshotRequestChannel();
         snapshotRequestChannel.setAppName(DeviceConfigurationAppProperties.APP_NAME);
@@ -123,8 +134,15 @@ public class DeviceSnapshotManagementServiceImpl extends AbstractDeviceManagemen
         ArgumentValidator.notNull(scopeId, "scopeId");
         ArgumentValidator.notNull(deviceId, "deviceId");
         ArgumentValidator.notEmptyOrNull(snapshotId, "snapshotId");
+
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.execute, scopeId));
+
+        // Check Device existence
+        if (deviceRegistryService.find(scopeId, deviceId) == null) {
+            throw new KapuaEntityNotFoundException(Device.TYPE, deviceId);
+        }
+
         // Prepare the request
         SnapshotRequestChannel snapshotRequestChannel = new SnapshotRequestChannel();
         snapshotRequestChannel.setAppName(DeviceConfigurationAppProperties.APP_NAME);
