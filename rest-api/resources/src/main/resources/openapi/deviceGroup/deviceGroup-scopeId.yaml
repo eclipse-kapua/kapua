@@ -1,0 +1,91 @@
+openapi: 3.0.3
+
+info:
+  title: Eclipse Kapua REST API - Device Groups
+  version: '1.0'
+  contact:
+    name: Eclipse Kapua Dev Team
+    url: https://eclipse.org/kapua
+    email: kapua-dev@eclipse.org
+  license:
+    name: Eclipse Public License 2.0
+    url: https://www.eclipse.org/legal/epl-2.0
+
+paths:
+  /{scopeId}/deviceGroups:
+    get:
+      tags:
+        - Device Group
+      summary: Get all the Device Groups
+      operationId: deviceGroupList
+      parameters:
+        - $ref: '../openapi.yaml#/components/parameters/scopeId'
+        - name: tagId
+          in: query
+          description: The Tag id to filter results
+          schema:
+            $ref: '../openapi.yaml#/components/schemas/kapuaId'
+        - name: name
+          in: query
+          description: The Device Group name to filter results
+          schema:
+            type: string
+        - $ref: '../openapi.yaml#/components/parameters/askTotalCount'
+        - $ref: '../openapi.yaml#/components/parameters/sortParam'
+        - name: sortDir
+          in: query
+          description: The sort direction. Can be ASCENDING (default), DESCENDING. Case-insensitive (except for "clientId" parameter).
+          schema:
+            type: string
+            enum:
+              - ASCENDING
+              - DESCENDING
+            default: ASCENDING
+        - $ref: '../openapi.yaml#/components/parameters/limit'
+        - $ref: '../openapi.yaml#/components/parameters/offset'
+      responses:
+        200:
+          description: The list of the Device Groups available in the Scope
+          content:
+            application/json:
+              schema:
+                $ref: './deviceGroup.yaml#/components/schemas/deviceGroupListResult'
+        400:
+          $ref: '../openapi.yaml#/components/responses/illegalArgument'
+        401:
+          $ref: '../openapi.yaml#/components/responses/unauthenticated'
+        403:
+          $ref: '../openapi.yaml#/components/responses/subjectUnauthorized'
+        500:
+          $ref: '../openapi.yaml#/components/responses/kapuaError'
+    post:
+      tags:
+        - Device Group
+      summary: Create a new DeviceGroup
+      operationId: deviceGroupCreate
+      parameters:
+        - $ref: '../openapi.yaml#/components/parameters/scopeId'
+      requestBody:
+        description: An object containing the properties for the new Device Group to be created
+        content:
+          application/json:
+            schema:
+              $ref: './deviceGroup.yaml#/components/schemas/deviceGroupCreator'
+        required: true
+      responses:
+        201:
+          description: The Device Group that has just been created
+          content:
+            application/json:
+              schema:
+                $ref: './deviceGroup.yaml#/components/schemas/deviceGroup'
+        400:
+          $ref: '../openapi.yaml#/components/responses/illegalArgument'
+        401:
+          $ref: '../openapi.yaml#/components/responses/unauthenticated'
+        403:
+          $ref: '../openapi.yaml#/components/responses/subjectUnauthorized'
+        404:
+          $ref: '../openapi.yaml#/components/responses/entityNotFound'
+        500:
+          $ref: '../openapi.yaml#/components/responses/kapuaError'

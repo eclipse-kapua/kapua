@@ -281,6 +281,15 @@ paths:
     $ref: './deviceEvent/deviceEvent-scopeId-deviceId-_count.yaml#/paths/~1{scopeId}~1devices~1{deviceId}~1events~1_count'
   /{scopeId}/devices/{deviceId}/events/_query:
     $ref: './deviceEvent/deviceEvent-scopeId-deviceId-_query.yaml#/paths/~1{scopeId}~1devices~1{deviceId}~1events~1_query'
+  ### Device Group ###
+  /{scopeId}/deviceGroups:
+    $ref: './deviceGroup/deviceGroup-scopeId.yaml#/paths/~1{scopeId}~1deviceGroups'
+  /{scopeId}/deviceGroups/_count:
+    $ref: './deviceGroup/deviceGroup-scopeId-_count.yaml#/paths/~1{scopeId}~1deviceGroups~1_count'
+  /{scopeId}/deviceGroups/_query:
+    $ref: './deviceGroup/deviceGroup-scopeId-_query.yaml#/paths/~1{scopeId}~1deviceGroups~1_query'
+  /{scopeId}/deviceGroups/{deviceGroupId}:
+    $ref: './deviceGroup/deviceGroup-scopeId-deviceGroupId.yaml#/paths/~1{scopeId}~1deviceGroups~1{deviceGroupId}'
   ### Domain ###
   /{scopeId}/domains:
     $ref: './domain/domain-scopeId.yaml#/paths/~1{scopeId}~1domains'
@@ -443,6 +452,15 @@ paths:
     $ref: './user/user-scopeId-_count.yaml#/paths/~1{scopeId}~1users~1_count'
   /{scopeId}/users/_query:
     $ref: './user/user-scopeId-_query.yaml#/paths/~1{scopeId}~1users~1_query'
+  ### User Group ###
+  /{scopeId}/userGroups:
+    $ref: './userGroup/userGroup-scopeId.yaml#/paths/~1{scopeId}~1userGroups'
+  /{scopeId}/userGroups/_count:
+    $ref: './userGroup/userGroup-scopeId-_count.yaml#/paths/~1{scopeId}~1userGroups~1_count'
+  /{scopeId}/userGroups/_query:
+    $ref: './userGroup/userGroup-scopeId-_query.yaml#/paths/~1{scopeId}~1userGroups~1_query'
+  /{scopeId}/userGroups/{userGroupId}:
+    $ref: './userGroup/userGroup-scopeId-userGroupId.yaml#/paths/~1{scopeId}~1userGroups~1{userGroupId}'
   ### Users Mfa ###
   /{scopeId}/users/{userId}/mfa:
     $ref: './usersMfa/users-scopeId-userId-mfa.yaml#/paths/~1{scopeId}~1users~1{userId}~1mfa'
@@ -920,6 +938,13 @@ components:
       $ref: './device/device.yaml#/components/schemas/deviceCreator'
     deviceListResult:
       $ref: './device/device.yaml#/components/schemas/deviceListResult'
+    ### Device Group Entities ###
+    deviceGroup:
+      $ref: './deviceGroup/deviceGroup.yaml#/components/schemas/deviceGroup'
+    deviceGroupCreator:
+      $ref: './deviceGroup/deviceGroup.yaml#/components/schemas/deviceGroupCreator'
+    deviceGroupListResult:
+      $ref: './deviceGroup/deviceGroup.yaml#/components/schemas/deviceGroupListResult'
     ### Device Asset Entities ###
     assetDescription:
       $ref: './deviceAsset/deviceAsset.yaml#/components/schemas/assetDescription'
@@ -1203,6 +1228,13 @@ components:
       $ref: './user/user.yaml#/components/schemas/userCreator'
     userListResult:
       $ref: './user/user.yaml#/components/schemas/userListResult'
+    ### User Group Entities ###
+    userGroup:
+      $ref: './userGroup/userGroup.yaml#/components/schemas/userGroup'
+    userGroupCreator:
+      $ref: './userGroup/userGroup.yaml#/components/schemas/userGroupCreator'
+    userGroupListResult:
+      $ref: './userGroup/userGroup.yaml#/components/schemas/userGroupListResult'
     ### User MFA Entities ###
     mfaOption:
       $ref: './userMfa/userMfa.yaml#/components/schemas/mfaOption'

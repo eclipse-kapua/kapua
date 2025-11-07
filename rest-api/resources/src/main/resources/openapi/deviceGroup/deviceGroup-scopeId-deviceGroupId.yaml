@@ -1,0 +1,98 @@
+openapi: 3.0.3
+
+info:
+  title: Eclipse Kapua REST API - Device Groups
+  version: '1.0'
+  contact:
+    name: Eclipse Kapua Dev Team
+    url: https://eclipse.org/kapua
+    email: kapua-dev@eclipse.org
+  license:
+    name: Eclipse Public License 2.0
+    url: https://www.eclipse.org/legal/epl-2.0
+
+paths:
+  /{scopeId}/deviceGroups/{deviceGroupId}:
+    get:
+      tags:
+        - Device Group
+      summary: Get a single Device Group
+      operationId: deviceGroupGet
+      parameters:
+        - $ref: '../openapi.yaml#/components/parameters/scopeId'
+        - $ref: './deviceGroup.yaml#/components/parameters/deviceGroupId'
+      responses:
+        200:
+          description: The details of the desired Device Group
+          content:
+            application/json:
+              schema:
+                $ref: './deviceGroup.yaml#/components/schemas/deviceGroup'
+        400:
+          $ref: '../openapi.yaml#/components/responses/illegalArgument'
+        401:
+          $ref: '../openapi.yaml#/components/responses/unauthenticated'
+        403:
+          $ref: '../openapi.yaml#/components/responses/subjectUnauthorized'
+        404:
+          $ref: '../openapi.yaml#/components/responses/entityNotFound'
+        500:
+          $ref: '../openapi.yaml#/components/responses/kapuaError'
+    put:
+      tags:
+        - Device Group
+      summary: Update a single Device Group
+      operationId: deviceGroupUpdate
+      parameters:
+        - $ref: '../openapi.yaml#/components/parameters/scopeId'
+        - $ref: './deviceGroup.yaml#/components/parameters/deviceGroupId'
+      requestBody:
+        description: An object containing the new properties for the Device Group to update
+        content:
+          application/json:
+            schema:
+              $ref: './deviceGroup.yaml#/components/schemas/deviceGroup'
+            example:
+              type: deviceGroup
+              optlock: 1
+              name: Device Group 1
+              description: A Device Group
+        required: true
+      responses:
+        200:
+          description: The details of the updated Device Group
+          content:
+            application/json:
+              schema:
+                $ref: './deviceGroup.yaml#/components/schemas/deviceGroup'
+        400:
+          $ref: '../openapi.yaml#/components/responses/illegalArgument'
+        401:
+          $ref: '../openapi.yaml#/components/responses/unauthenticated'
+        403:
+          $ref: '../openapi.yaml#/components/responses/subjectUnauthorized'
+        404:
+          $ref: '../openapi.yaml#/components/responses/entityNotFound'
+        500:
+          $ref: '../openapi.yaml#/components/responses/kapuaError'
+    delete:
+      tags:
+        - Device Group
+      summary: Delete a single Device Group
+      operationId: deviceGroupDelete
+      parameters:
+        - $ref: '../openapi.yaml#/components/parameters/scopeId'
+        - $ref: './deviceGroup.yaml#/components/parameters/deviceGroupId'
+      responses:
+        204:
+          description: The Device Group has been deleted
+        400:
+          $ref: '../openapi.yaml#/components/responses/illegalArgument'
+        401:
+          $ref: '../openapi.yaml#/components/responses/unauthenticated'
+        403:
+          $ref: '../openapi.yaml#/components/responses/subjectUnauthorized'
+        404:
+          $ref: '../openapi.yaml#/components/responses/entityNotFound'
+        500:
+          $ref: '../openapi.yaml#/components/responses/kapuaError'
