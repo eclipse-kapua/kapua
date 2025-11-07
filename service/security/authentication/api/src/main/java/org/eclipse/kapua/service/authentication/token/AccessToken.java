@@ -16,7 +16,6 @@ import org.eclipse.kapua.model.KapuaUpdatableEntity;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdAdapter;
 import org.eclipse.kapua.model.xml.DateXmlAdapter;
-import org.eclipse.kapua.service.user.User;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -84,9 +83,9 @@ public interface AccessToken extends KapuaUpdatableEntity, Serializable {
     KapuaId getUserId();
 
     /**
-     * Sets the {@link User} id of this {@link AccessToken}
+     * Sets the User id of this {@link AccessToken}
      *
-     * @param userId The {@link User} id to set.
+     * @param userId The User id to set.
      * @since 1.0.0
      */
     void setUserId(KapuaId userId);

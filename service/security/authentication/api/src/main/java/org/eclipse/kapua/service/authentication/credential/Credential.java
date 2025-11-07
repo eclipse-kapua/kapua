@@ -16,7 +16,6 @@ import org.eclipse.kapua.model.KapuaUpdatableEntity;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdAdapter;
 import org.eclipse.kapua.model.xml.DateXmlAdapter;
-import org.eclipse.kapua.service.user.User;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -44,9 +43,9 @@ public interface Credential extends KapuaUpdatableEntity {
     }
 
     /**
-     * Gets the {@link User#getId()} owner of the {@link Credential}
+     * Gets the User#getId owner of the {@link Credential}
      *
-     * @return The {@link User#getId()}
+     * @return The User#getId
      * @since 1.0.0
      */
     @XmlElement(name = "userId")
@@ -54,9 +53,9 @@ public interface Credential extends KapuaUpdatableEntity {
     KapuaId getUserId();
 
     /**
-     * Sets the {@link User#getId()} owner of the {@link Credential}
+     * Sets the User#getId owner of the {@link Credential}
      *
-     * @param userId The {@link User#getId()}
+     * @param userId The User#getId
      * @since 1.0.0
      */
     void setUserId(KapuaId userId);

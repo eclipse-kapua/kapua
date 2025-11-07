@@ -16,7 +16,6 @@ import org.eclipse.kapua.model.KapuaUpdatableEntity;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdAdapter;
 import org.eclipse.kapua.model.xml.DateXmlAdapter;
-import org.eclipse.kapua.service.user.User;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -47,9 +46,9 @@ public interface MfaOption extends KapuaUpdatableEntity {
     }
 
     /**
-     * Gets the {@link User#getId()}.
+     * Gets the User#getId.
      *
-     * @return The {@link User#getId()}.
+     * @return The User#getId.
      * @since 1.3.0
      */
     @XmlElement(name = "userId")
@@ -57,9 +56,9 @@ public interface MfaOption extends KapuaUpdatableEntity {
     KapuaId getUserId();
 
     /**
-     * Sets the {@link User#getId()}.
+     * Sets the User#getId.
      *
-     * @param userId The {@link User#getId()}.
+     * @param userId The User#getId.
      * @since 1.3.0
      */
     void setUserId(KapuaId userId);

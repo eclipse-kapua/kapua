@@ -16,7 +16,6 @@ import org.eclipse.kapua.model.KapuaEntityCreator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdAdapter;
 import org.eclipse.kapua.model.xml.DateXmlAdapter;
-import org.eclipse.kapua.service.user.User;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -37,9 +36,9 @@ import java.util.Date;
 public interface CredentialCreator extends KapuaEntityCreator<Credential> {
 
     /**
-     * Gets the {@link User#getId()} owner of the {@link Credential}
+     * Gets the User#getId owner of the {@link Credential}
      *
-     * @return The {@link User#getId()}
+     * @return The User#getId
      * @since 1.0.0
      */
     @XmlElement(name = "userId")
@@ -47,9 +46,9 @@ public interface CredentialCreator extends KapuaEntityCreator<Credential> {
     KapuaId getUserId();
 
     /**
-     * Sets the {@link User#getId()} owner of the {@link Credential}
+     * Sets the User#getId owner of the {@link Credential}
      *
-     * @param userId The {@link User#getId()}
+     * @param userId The User#getId
      * @since 1.0.0
      */
     void setUserId(KapuaId userId);
