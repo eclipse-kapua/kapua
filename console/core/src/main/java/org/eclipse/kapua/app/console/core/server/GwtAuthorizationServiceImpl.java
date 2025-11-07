@@ -40,6 +40,7 @@ import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.commons.util.ThrowingRunnable;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.domain.Actions;
+import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authentication.AuthenticationService;
@@ -57,6 +58,12 @@ import org.eclipse.kapua.service.authorization.access.AccessPermissionService;
 import org.eclipse.kapua.service.authorization.access.AccessRole;
 import org.eclipse.kapua.service.authorization.access.AccessRoleListResult;
 import org.eclipse.kapua.service.authorization.access.AccessRoleService;
+import org.eclipse.kapua.service.authorization.group.GroupPermission;
+import org.eclipse.kapua.service.authorization.group.GroupPermissionListResult;
+import org.eclipse.kapua.service.authorization.group.GroupPermissionService;
+import org.eclipse.kapua.service.authorization.group.GroupRole;
+import org.eclipse.kapua.service.authorization.group.GroupRoleListResult;
+import org.eclipse.kapua.service.authorization.group.GroupRoleService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.role.Role;
 import org.eclipse.kapua.service.authorization.role.RolePermission;
@@ -95,6 +102,9 @@ public class GwtAuthorizationServiceImpl extends KapuaRemoteServiceServlet imple
     private static final AccessRoleService ACCESS_ROLE_SERVICE = LOCATOR.getService(AccessRoleService.class);
     private static final RoleService ROLE_SERVICE = LOCATOR.getService(RoleService.class);
     private static final RolePermissionService ROLE_PERMISSION_SERVICE = LOCATOR.getService(RolePermissionService.class);
+
+    private static final GroupPermissionService GROUP_PERMISSION_SERVICE = LOCATOR.getService(GroupPermissionService.class);
+    private static final GroupRoleService GROUP_ROLE_SERVICE = LOCATOR.getService(GroupRoleService.class);
 
     private static final RegistrationService REGISTRATION_SERVICE = LOCATOR.getService(RegistrationService.class);
 
@@ -323,19 +333,41 @@ public class GwtAuthorizationServiceImpl extends KapuaRemoteServiceServlet imple
 
                     // Permission info
                     AccessPermissionListResult accessPermissions = ACCESS_PERMISSION_SERVICE.findByAccessInfoId(userAccessInfo.getScopeId(), userAccessInfo.getId());
-                    for (AccessPermission ap : accessPermissions.getItems()) {
-                        gwtSession.addSessionPermission(convert(ap.getPermission()));
+                    for (AccessPermission accessPermission : accessPermissions.getItems()) {
+                        gwtSession.addSessionPermission(convert(accessPermission.getPermission()));
                     }
 
                     // Role info
                     AccessRoleListResult accessRoles = ACCESS_ROLE_SERVICE.findByAccessInfoId(userAccessInfo.getScopeId(), userAccessInfo.getId());
 
-                    for (AccessRole ar : accessRoles.getItems()) {
-                        Role role = ROLE_SERVICE.find(ar.getScopeId(), ar.getRoleId());
+                    for (AccessRole accessRole : accessRoles.getItems()) {
+                        Role role = ROLE_SERVICE.find(accessRole.getScopeId(), accessRole.getRoleId());
 
                         RolePermissionListResult rolePermissions = ROLE_PERMISSION_SERVICE.findByRoleId(role.getScopeId(), role.getId());
                         for (RolePermission rp : rolePermissions.getItems()) {
                             gwtSession.addSessionPermission(convert(rp.getPermission()));
+                        }
+                    }
+
+                    // Group Access
+                    for (KapuaId userGroupId : user.getGroupIds()) {
+                        // Group Permission
+                        GroupPermissionListResult userGroupPermissions = GROUP_PERMISSION_SERVICE.findByGroupId(user.getScopeId(), userGroupId);
+
+                        for (GroupPermission userGroupPermission : userGroupPermissions.getItems()) {
+                            gwtSession.addSessionPermission(convert(userGroupPermission.getPermission()));
+                        }
+
+                        // Group Roles
+                        GroupRoleListResult userGroupRoles = GROUP_ROLE_SERVICE.findByGroupId(user.getScopeId(), userGroupId);
+
+                        for (GroupRole userGroupRole : userGroupRoles.getItems()) {
+                            Role role = ROLE_SERVICE.find(userGroupRole.getScopeId(), userGroupRole.getRoleId());
+
+                            RolePermissionListResult rolePermissions = ROLE_PERMISSION_SERVICE.findByRoleId(role.getScopeId(), role.getId());
+                            for (RolePermission rp : rolePermissions.getItems()) {
+                                gwtSession.addSessionPermission(convert(rp.getPermission()));
+                            }
                         }
                     }
                 }

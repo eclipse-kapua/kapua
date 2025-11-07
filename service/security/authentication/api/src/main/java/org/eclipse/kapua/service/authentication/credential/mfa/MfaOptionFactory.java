@@ -28,7 +28,7 @@ public interface MfaOptionFactory extends KapuaEntityFactory<MfaOption, MfaOptio
      * Instantiates a new {@link MfaOptionCreator}.
      *
      * @param scopeId The scope {@link KapuaId} to set into the {@link MfaOptionCreator}.
-     * @param userId  The {@link org.eclipse.kapua.service.user.User} {@link KapuaId} to set into the{@link AccessToken}.
+     * @param userId  The User {@link KapuaId} to set into the{@link AccessToken}.
      * @return The newly instantiated {@link MfaOptionCreator}
      * @since 1.3.0
      */
