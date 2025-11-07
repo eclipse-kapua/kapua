@@ -22,6 +22,20 @@ components:
       schema:
         $ref: '../openapi.yaml#/components/schemas/kapuaId'
       required: true
+    groupPermissionId:
+      name: groupPermissionId
+      in: path
+      description: The ID of the Group Permission on which to perform the operation
+      schema:
+        $ref: '../openapi.yaml#/components/schemas/kapuaId'
+      required: true
+    groupRoleId:
+      name: groupRoleId
+      in: path
+      description: The ID of the Group Role on which to perform the operation
+      schema:
+        $ref: '../openapi.yaml#/components/schemas/kapuaId'
+      required: true
   schemas:
     group:
       allOf:
@@ -85,3 +99,109 @@ components:
                 name: group-1
                 description: An Access Group
                 domain: device
+
+    groupPermission:
+      allOf:
+        - $ref: '../openapi.yaml#/components/schemas/kapuaEntity'
+        - description: An object that represents the link between an Group and a Permission
+          type: object
+          properties:
+            groupId:
+              allOf:
+                - $ref: '../openapi.yaml#/components/schemas/kapuaId'
+                - description: The ID of the Group
+            permission:
+              $ref: '../accessInfo/accessInfo.yaml#/components/schemas/permission'
+          example:
+            type: groupPermission
+            id: AQ
+            scopeId: AQ
+            createdOn: '2019-11-12T14:15:47.000Z'
+            createdBy: AQ
+            groupId: Ag
+            permission:
+              domain: broker
+              action: connect
+              targetScopeId: AQ
+              forwardable: false
+    groupPermissionCreator:
+      allOf:
+        - $ref: '../openapi.yaml#/components/schemas/kapuaEntityCreator'
+        - description: An object that contains the informations needed to create an GroupPermission
+          type: object
+          properties:
+            groupId:
+              allOf:
+                - $ref: '../openapi.yaml#/components/schemas/kapuaId'
+                - description: The ID of the Group to which attach the Permission
+            permission:
+              $ref: '../accessInfo/accessInfo.yaml#/components/schemas/permission'
+          required:
+            - groupId
+            - permission
+    groupPermissionListResult:
+      allOf:
+        - $ref: '../openapi.yaml#/components/schemas/kapuaListResult'
+        - description: A container for a list of GroupPermission objects
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/groupPermission'
+          example:
+            type: groupPermissionListResult
+            limitExceeded: false
+            size: 1
+            items:
+              - type: groupPermission
+                id: Io4dVUnrBtE
+                scopeId: AQ
+                createdOn: 2019-09-11T14:14:15.786Z
+                createdBy: AQ
+                groupId: FPRcCYjzgqs
+                permission:
+                  domain: broker
+                  action: connect
+                  forwardable: false
+    groupRole:
+      allOf:
+        - $ref: '../openapi.yaml#/components/schemas/kapuaEntity'
+        - description: An object that represents the link between an Group and a Role
+          type: object
+          properties:
+            groupId:
+              allOf:
+                - $ref: '../openapi.yaml#/components/schemas/kapuaId'
+                - description: The ID of the Group
+            roleId:
+              allOf:
+                - $ref: '../openapi.yaml#/components/schemas/kapuaId'
+                - description: The ID of the Role attached to the Group
+    groupRoleCreator:
+      allOf:
+        - $ref: '../openapi.yaml#/components/schemas/kapuaEntityCreator'
+        - description: An object that contains the informations needed to create an GroupRole
+          type: object
+          properties:
+            groupId:
+              allOf:
+                - $ref: '../openapi.yaml#/components/schemas/kapuaId'
+                - description: The ID of the Group to which attach the Permission
+            roleId:
+              allOf:
+                - $ref: '../openapi.yaml#/components/schemas/kapuaId'
+                - description: The ID of the Group
+          required:
+            - groupId
+            - roleId
+    groupRoleListResult:
+      allOf:
+        - $ref: '../openapi.yaml#/components/schemas/kapuaListResult'
+        - description: A container for a list of GroupRole objects
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/groupRole'

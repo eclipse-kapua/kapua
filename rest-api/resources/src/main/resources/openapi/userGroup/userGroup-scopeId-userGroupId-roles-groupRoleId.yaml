@@ -1,0 +1,63 @@
+openapi: 3.0.3
+
+info:
+  title: Eclipse Kapua REST API - User Group
+  version: '1.0'
+  contact:
+    name: Eclipse Kapua Dev Team
+    url: https://eclipse.org/kapua
+    email: kapua-dev@eclipse.org
+  license:
+    name: Eclipse Public License 2.0
+    url: https://www.eclipse.org/legal/epl-2.0
+
+paths:
+  /{scopeId}/userGroups/{userGroupId}/roles/{groupRoleId}:
+    get:
+      tags:
+        - User Group Role
+      summary: Get a single User Group Role
+      operationId: userGroupRoleGet
+      parameters:
+        - $ref: '../openapi.yaml#/components/parameters/scopeId'
+        - $ref: './userGroup.yaml#/components/parameters/userGroupId'
+        - $ref: '../group/group.yaml#/components/parameters/groupRoleId'
+      responses:
+        200:
+          description: The details of the desired User Group Role
+          content:
+            application/json:
+              schema:
+                $ref: '../group/group.yaml#/components/schemas/groupRole'
+        400:
+          $ref: '../openapi.yaml#/components/responses/illegalArgument'
+        401:
+          $ref: '../openapi.yaml#/components/responses/unauthenticated'
+        403:
+          $ref: '../openapi.yaml#/components/responses/subjectUnauthorized'
+        404:
+          $ref: '../openapi.yaml#/components/responses/entityNotFound'
+        500:
+          $ref: '../openapi.yaml#/components/responses/kapuaError'
+    delete:
+      tags:
+        - User Group Role
+      summary: Delete a single User Group Role
+      operationId: userGroupRoleDelete
+      parameters:
+        - $ref: '../openapi.yaml#/components/parameters/scopeId'
+        - $ref: './userGroup.yaml#/components/parameters/userGroupId'
+        - $ref: '../group/group.yaml#/components/parameters/groupRoleId'
+      responses:
+        204:
+          description: The UserGroupRole has been deleted
+        400:
+          $ref: '../openapi.yaml#/components/responses/illegalArgument'
+        401:
+          $ref: '../openapi.yaml#/components/responses/unauthenticated'
+        403:
+          $ref: '../openapi.yaml#/components/responses/subjectUnauthorized'
+        404:
+          $ref: '../openapi.yaml#/components/responses/entityNotFound'
+        500:
+          $ref: '../openapi.yaml#/components/responses/kapuaError'

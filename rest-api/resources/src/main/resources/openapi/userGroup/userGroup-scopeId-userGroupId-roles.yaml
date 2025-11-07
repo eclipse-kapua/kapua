@@ -1,0 +1,69 @@
+openapi: 3.0.3
+
+info:
+  title: Eclipse Kapua REST API - User Group
+  version: '1.0'
+  contact:
+    name: Eclipse Kapua Dev Team
+    url: https://eclipse.org/kapua
+    email: kapua-dev@eclipse.org
+  license:
+    name: Eclipse Public License 2.0
+    url: https://www.eclipse.org/legal/epl-2.0
+
+paths:
+  /{scopeId}/userGroups/{userGroupId}/roles:
+    get:
+      tags:
+        - User Group Role
+      summary: Get all the User Group Roles
+      operationId: userGroupRolesList
+      parameters:
+        - $ref: '../openapi.yaml#/components/parameters/scopeId'
+        - $ref: './userGroup.yaml#/components/parameters/userGroupId'
+        - $ref: '../openapi.yaml#/components/parameters/askTotalCount'
+        - $ref: '../openapi.yaml#/components/parameters/limit'
+        - $ref: '../openapi.yaml#/components/parameters/offset'
+      responses:
+        200:
+          description: The list of the User Group Role objects available in the Scope
+          content:
+            application/json:
+              schema:
+                $ref: '../group/group.yaml#/components/schemas/groupRoleListResult'
+        400:
+          $ref: '../openapi.yaml#/components/responses/illegalArgument'
+        401:
+          $ref: '../openapi.yaml#/components/responses/unauthenticated'
+        403:
+          $ref: '../openapi.yaml#/components/responses/subjectUnauthorized'
+        500:
+          $ref: '../openapi.yaml#/components/responses/kapuaError'
+    post:
+      tags:
+        - User Group Role
+      summary: Create an User Group Role
+      operationId: userGroupRoleCreate
+      parameters:
+        - $ref: '../openapi.yaml#/components/parameters/scopeId'
+        - $ref: './userGroup.yaml#/components/parameters/userGroupId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '../group/group.yaml#/components/schemas/groupRoleCreator'
+      responses:
+        201:
+          description: The User Group Role that has just been created
+          content:
+            application/json:
+              schema:
+                $ref: '../group/group.yaml#/components/schemas/groupRoleListResult'
+        400:
+          $ref: '../openapi.yaml#/components/responses/illegalArgument'
+        401:
+          $ref: '../openapi.yaml#/components/responses/unauthenticated'
+        403:
+          $ref: '../openapi.yaml#/components/responses/subjectUnauthorized'
+        500:
+          $ref: '../openapi.yaml#/components/responses/kapuaError'
