@@ -1,0 +1,73 @@
+openapi: 3.0.3
+
+info:
+  title: Eclipse Kapua REST API - User Group
+  version: '1.0'
+  contact:
+    name: Eclipse Kapua Dev Team
+    url: https://eclipse.org/kapua
+    email: kapua-dev@eclipse.org
+  license:
+    name: Eclipse Public License 2.0
+    url: https://www.eclipse.org/legal/epl-2.0
+
+paths:
+  /{scopeId}/userGroups/{userGroupId}/permissions:
+    get:
+      tags:
+        - User Group Permission
+      summary: Get all the User Group Permissions
+      operationId: userGroupPermissionList
+      parameters:
+        - $ref: '../openapi.yaml#/components/parameters/scopeId'
+        - $ref: './userGroup.yaml#/components/parameters/userGroupId'
+        - $ref: '../openapi.yaml#/components/parameters/askTotalCount'
+        - $ref: '../openapi.yaml#/components/parameters/sortParam'
+        - $ref: '../openapi.yaml#/components/parameters/sortDir'
+        - $ref: '../openapi.yaml#/components/parameters/limit'
+        - $ref: '../openapi.yaml#/components/parameters/offset'
+      responses:
+        200:
+          description: The list of the User Group Permission objects available in the Scope
+          content:
+            application/json:
+              schema:
+                $ref: '../group/group.yaml#/components/schemas/groupPermissionListResult'
+        400:
+          $ref: '../openapi.yaml#/components/responses/illegalArgument'
+        401:
+          $ref: '../openapi.yaml#/components/responses/unauthenticated'
+        403:
+          $ref: '../openapi.yaml#/components/responses/subjectUnauthorized'
+        500:
+          $ref: '../openapi.yaml#/components/responses/kapuaError'
+    post:
+      tags:
+        - User Group Permission
+      summary: Create an User Group Permission
+      operationId: userGroupPermissionCreate
+      parameters:
+        - $ref: '../openapi.yaml#/components/parameters/scopeId'
+        - $ref: './userGroup.yaml#/components/parameters/userGroupId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '../group/group.yaml#/components/schemas/groupPermissionCreator'
+      responses:
+        201:
+          description: The User Group Permission that has just been created
+          content:
+            application/json:
+              schema:
+                $ref: '../group/group.yaml#/components/schemas/groupPermissionListResult'
+        400:
+          $ref: '../openapi.yaml#/components/responses/illegalArgument'
+        401:
+          $ref: '../openapi.yaml#/components/responses/unauthenticated'
+        403:
+          $ref: '../openapi.yaml#/components/responses/subjectUnauthorized'
+        409:
+          $ref: '../openapi.yaml#/components/responses/entityUniqueness'
+        500:
+          $ref: '../openapi.yaml#/components/responses/kapuaError'

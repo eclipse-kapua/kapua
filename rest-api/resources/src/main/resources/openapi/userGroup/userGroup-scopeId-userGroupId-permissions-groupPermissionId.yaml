@@ -1,0 +1,63 @@
+openapi: 3.0.3
+
+info:
+  title: Eclipse Kapua REST API - User Group
+  version: '1.0'
+  contact:
+    name: Eclipse Kapua Dev Team
+    url: https://eclipse.org/kapua
+    email: kapua-dev@eclipse.org
+  license:
+    name: Eclipse Public License 2.0
+    url: https://www.eclipse.org/legal/epl-2.0
+
+paths:
+  /{scopeId}/userGroups/{userGroupId}/permissions/{groupPermissionId}:
+    get:
+      tags:
+        - User Group Permission
+      summary: Get a single User Group Permission
+      operationId: userGroupPermissionGet
+      parameters:
+        - $ref: '../openapi.yaml#/components/parameters/scopeId'
+        - $ref: './userGroup.yaml#/components/parameters/userGroupId'
+        - $ref: '../group/group.yaml#/components/parameters/groupPermissionId'
+      responses:
+        200:
+          description: The details of the desired User GroupPermission
+          content:
+            application/json:
+              schema:
+                $ref: '../group/group.yaml#/components/schemas/groupPermission'
+        400:
+          $ref: '../openapi.yaml#/components/responses/illegalArgument'
+        401:
+          $ref: '../openapi.yaml#/components/responses/unauthenticated'
+        403:
+          $ref: '../openapi.yaml#/components/responses/subjectUnauthorized'
+        404:
+          $ref: '../openapi.yaml#/components/responses/entityNotFound'
+        500:
+          $ref: '../openapi.yaml#/components/responses/kapuaError'
+    delete:
+      tags:
+        - User Group Permission
+      summary: Delete a single User Group Permission
+      operationId: userGroupPermissionDelete
+      parameters:
+        - $ref: '../openapi.yaml#/components/parameters/scopeId'
+        - $ref: './userGroup.yaml#/components/parameters/userGroupId'
+        - $ref: '../group/group.yaml#/components/parameters/groupPermissionId'
+      responses:
+        204:
+          description: The Group Permission has been deleted
+        400:
+          $ref: '../openapi.yaml#/components/responses/illegalArgument'
+        401:
+          $ref: '../openapi.yaml#/components/responses/unauthenticated'
+        403:
+          $ref: '../openapi.yaml#/components/responses/subjectUnauthorized'
+        404:
+          $ref: '../openapi.yaml#/components/responses/entityNotFound'
+        500:
+          $ref: '../openapi.yaml#/components/responses/kapuaError'
