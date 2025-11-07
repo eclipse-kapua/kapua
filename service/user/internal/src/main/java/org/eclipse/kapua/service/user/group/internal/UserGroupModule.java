@@ -21,10 +21,14 @@ import org.eclipse.kapua.model.domain.Domain;
 import org.eclipse.kapua.model.domain.DomainEntry;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.group.GroupFactory;
+import org.eclipse.kapua.service.authorization.group.GroupPermissionService;
+import org.eclipse.kapua.service.authorization.group.GroupRoleService;
 import org.eclipse.kapua.service.authorization.group.GroupService;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.user.group.UserGroup;
 import org.eclipse.kapua.service.user.group.UserGroupFactory;
+import org.eclipse.kapua.service.user.group.UserGroupPermissionService;
+import org.eclipse.kapua.service.user.group.UserGroupRoleService;
 import org.eclipse.kapua.service.user.group.UserGroupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +77,41 @@ public class UserGroupModule extends AbstractKapuaModule {
         return new UserGroupServiceImpl(
             groupService,
             groupFactory,
-                userGroupServiceValidationUtils
+            userGroupServiceValidationUtils
         );
     }
+
+
+    @Provides
+    @Singleton
+    UserGroupPermissionService userGroupPermissionService(
+            AuthorizationService authorizationService,
+            PermissionFactory permissionFactory,
+            UserGroupService userGroupService,
+            GroupPermissionService groupPermissionService
+    ) {
+        return new UserGroupPermissionServiceImpl(
+                authorizationService,
+                permissionFactory,
+                userGroupService,
+                groupPermissionService
+        );
+    }
+
+    @Provides
+    @Singleton
+    public UserGroupRoleService userGroupRoleService(
+            AuthorizationService authorizationService,
+            PermissionFactory permissionFactory,
+            GroupRoleService userGroupRoleService,
+            UserGroupService userGroupService
+    ) {
+        return new UserGroupRoleServiceImpl(
+            authorizationService,
+            permissionFactory,
+            userGroupRoleService,
+            userGroupService
+        );
+    }
+
 }

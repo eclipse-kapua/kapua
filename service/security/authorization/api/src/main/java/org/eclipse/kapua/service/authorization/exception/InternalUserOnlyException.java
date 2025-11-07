@@ -12,11 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.exception;
 
-import org.eclipse.kapua.service.user.User;
-import org.eclipse.kapua.service.user.UserType;
-
 /**
- * {@link KapuaAuthorizationException} to {@code throw} when an operation is reserved only to {@link User}s with {@link User#getUserType()} is {@link UserType#INTERNAL}.
+ * {@link KapuaAuthorizationException} to {@code throw} when an operation is reserved only to User with User type is UserType INTERNAL.
  *
  * @since 1.4.0
  */
