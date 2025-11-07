@@ -1,0 +1,77 @@
+openapi: 3.0.3
+
+info:
+  title: Eclipse Kapua REST API - Device Groups
+  version: '1.0'
+  contact:
+    name: Eclipse Kapua Dev Team
+    url: https://eclipse.org/kapua
+    email: kapua-dev@eclipse.org
+  license:
+    name: Eclipse Public License 2.0
+    url: https://www.eclipse.org/legal/epl-2.0
+
+paths: {}
+
+components:
+  parameters:
+    deviceGroupId:
+      name: deviceGroupId
+      in: path
+      description: The ID of the Device Group on which to perform the operation
+      schema:
+        $ref: '../openapi.yaml#/components/schemas/kapuaId'
+      required: true
+  schemas:
+    deviceGroup:
+      allOf:
+        - $ref: '../openapi.yaml#/components/schemas/kapuaNamedEntity'
+        - type: object
+          properties:
+            tagIds:
+              type: array
+              items:
+                allOf:
+                  - $ref: '../openapi.yaml#/components/schemas/kapuaId'
+          example:
+            type: deviceGroup
+            id: Skm7PvmgOh0
+            scopeId: AQ
+            createdOn: '2019-09-13T15:16:09.174Z'
+            createdBy: AQ
+            modifiedOn: '2019-09-13T15:16:09.174Z'
+            modifiedBy: AQ
+            optlock: 1
+            name: Device Group 1
+            description: A Device Group
+    deviceGroupCreator:
+      allOf:
+        - $ref: '../openapi.yaml#/components/schemas/kapuaNamedEntityCreator'
+        - type: object
+          example:
+            name: Device Group 1
+            description: A Device Group
+    deviceGroupListResult:
+      allOf:
+        - $ref: '../openapi.yaml#/components/schemas/kapuaListResult'
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/deviceGroup'
+          example:
+            type: deviceGroupListResult
+            limitExceeded: false
+            size: 1
+            items:
+              - type: deviceGroup
+                id: Skm7PvmgOh0
+                scopeId: AQ
+                createdOn: '2019-09-13T15:16:09.174Z'
+                createdBy: AQ
+                modifiedOn: '2019-09-13T15:16:09.174Z'
+                modifiedBy: AQ
+                optlock: 1
+                name: group-1
+                description: A Device Group
