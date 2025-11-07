@@ -71,10 +71,22 @@ import org.eclipse.kapua.service.authorization.domain.shiro.DomainImplJpaReposit
 import org.eclipse.kapua.service.authorization.domain.shiro.DomainRegistryServiceImpl;
 import org.eclipse.kapua.service.authorization.domain.shiro.DomainsAligner;
 import org.eclipse.kapua.service.authorization.group.GroupFactory;
+import org.eclipse.kapua.service.authorization.group.GroupPermissionFactory;
+import org.eclipse.kapua.service.authorization.group.GroupPermissionService;
 import org.eclipse.kapua.service.authorization.group.GroupRepository;
+import org.eclipse.kapua.service.authorization.group.GroupRoleFactory;
+import org.eclipse.kapua.service.authorization.group.GroupRoleService;
 import org.eclipse.kapua.service.authorization.group.GroupService;
 import org.eclipse.kapua.service.authorization.group.shiro.GroupFactoryImpl;
 import org.eclipse.kapua.service.authorization.group.shiro.GroupImplJpaRepository;
+import org.eclipse.kapua.service.authorization.group.shiro.GroupPermissionFactoryImpl;
+import org.eclipse.kapua.service.authorization.group.shiro.GroupPermissionRepository;
+import org.eclipse.kapua.service.authorization.group.shiro.GroupPermissionRepositoryJpa;
+import org.eclipse.kapua.service.authorization.group.shiro.GroupPermissionServiceImpl;
+import org.eclipse.kapua.service.authorization.group.shiro.GroupRoleFactoryImpl;
+import org.eclipse.kapua.service.authorization.group.shiro.GroupRoleRepository;
+import org.eclipse.kapua.service.authorization.group.shiro.GroupRoleRepositoryJpa;
+import org.eclipse.kapua.service.authorization.group.shiro.GroupRoleServiceImpl;
 import org.eclipse.kapua.service.authorization.group.shiro.GroupServiceImpl;
 import org.eclipse.kapua.service.authorization.group.shiro.GroupServiceValidationUtils;
 import org.eclipse.kapua.service.authorization.group.shiro.GroupServiceValidationUtilsImpl;
@@ -100,6 +112,7 @@ import org.eclipse.kapua.service.authorization.shiro.claims.ClaimsFetcherImpl;
 import org.eclipse.kapua.service.authorization.shiro.setting.KapuaAuthorizationSetting;
 import org.eclipse.kapua.service.tag.TagFactory;
 import org.eclipse.kapua.service.tag.TagService;
+import org.eclipse.kapua.service.user.UserService;
 import org.eclipse.kapua.storage.TxManager;
 
 import com.google.inject.Provides;
@@ -122,6 +135,9 @@ public class AuthorizationModule extends AbstractKapuaModule {
         bind(RolePermissionFactory.class).to(RolePermissionFactoryImpl.class).in(Singleton.class);
 
         bind(GroupFactory.class).to(GroupFactoryImpl.class).in(Singleton.class);
+        bind(GroupPermissionFactory.class).to(GroupPermissionFactoryImpl.class).in(Singleton.class);
+        bind(GroupRoleFactory.class).to(GroupRoleFactoryImpl.class).in(Singleton.class);
+
         bind(KapuaAuthorizationSetting.class).in(Singleton.class);
         bind(PermissionValidator.class).in(Singleton.class);
         bind(PermissionMapper.class).to(PermissionMapperImpl.class).in(Singleton.class);
@@ -363,6 +379,58 @@ public class AuthorizationModule extends AbstractKapuaModule {
         return new GroupImplJpaRepository(jpaRepoConfig);
     }
 
+
+    @Provides
+    @Singleton
+    GroupPermissionService groupPermissionService(
+            AuthorizationService authorizationService,
+            PermissionFactory permissionFactory,
+            GroupPermissionRepository groupPermissionRepository,
+            GroupRepository groupRepository,
+            KapuaJpaTxManagerFactory jpaTxManagerFactory,
+            PermissionValidator permissionValidator
+    ) {
+        return new GroupPermissionServiceImpl(
+                authorizationService,
+                permissionFactory,
+                jpaTxManagerFactory.create("kapua-authorization"),
+                groupPermissionRepository,
+                groupRepository,
+                permissionValidator);
+    }
+
+    @Provides
+    @Singleton
+    GroupPermissionRepository groupPermissionRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig) {
+        return new GroupPermissionRepositoryJpa(jpaRepoConfig);
+    }
+
+    @Provides
+    @Singleton
+    GroupRoleService groupRoleService(
+            KapuaJpaTxManagerFactory jpaTxManagerFactory,
+            AuthorizationService authorizationService,
+            PermissionFactory permissionFactory,
+            GroupRepository groupRepository,
+            RoleRepository roleRepository,
+            GroupRoleRepository groupRoleRepository
+    ) {
+        return new GroupRoleServiceImpl(
+            jpaTxManagerFactory.create("kapua-authorization"),
+            authorizationService,
+            permissionFactory,
+            groupRepository,
+            roleRepository,
+            groupRoleRepository
+        );
+    }
+
+    @Provides
+    @Singleton
+    GroupRoleRepository groupRoleRepository(KapuaJpaRepositoryConfiguration jpaRepoConfig) {
+        return new GroupRoleRepositoryJpa(jpaRepoConfig);
+    }
+
     @Provides
     @Singleton
     AccessInfoService accessInfoService(
@@ -465,17 +533,25 @@ public class AuthorizationModule extends AbstractKapuaModule {
             AccessInfoRepository accessInfoRepository,
             AccessPermissionRepository accessPermissionRepository,
             AccessRoleRepository accessRoleRepository,
+            GroupPermissionRepository groupPermissionRepository,
+            GroupRoleRepository groupRoleRepository,
             DomainRepository domainRepository,
             RoleRepository roleRepository,
-            RolePermissionRepository rolePermissionRepository) {
+            RolePermissionRepository rolePermissionRepository,
+            UserService userService
+    ) {
         return new GroupQueryHelperImpl(
-                jpaTxManagerFactory.create("kapua-authorization"),
-                accessInfoFactory,
-                accessInfoRepository,
-                accessPermissionRepository,
-                accessRoleRepository,
-                domainRepository,
-                roleRepository,
-                rolePermissionRepository);
+            jpaTxManagerFactory.create("kapua-authorization"),
+            accessInfoFactory,
+            accessInfoRepository,
+            accessPermissionRepository,
+            accessRoleRepository,
+            groupPermissionRepository,
+            groupRoleRepository,
+            domainRepository,
+            roleRepository,
+            rolePermissionRepository,
+            userService
+        );
     }
 }

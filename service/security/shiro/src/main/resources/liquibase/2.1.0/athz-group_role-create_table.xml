@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (c) 2025, 2025 Eurotech and/or its affiliates and others
+
+    This program and the accompanying materials are made
+    available under the terms of the Eclipse Public License 2.0
+    which is available at https://www.eclipse.org/legal/epl-2.0/
+
+    SPDX-License-Identifier: EPL-2.0
+
+    Contributors:
+        Eurotech - initial API and implementation
+ -->
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd"
+  logicalFilePath="KapuaDB/changelog-authorization-2.1.0.xml">
+
+    <include relativeToChangelogFile="true" file="../common-properties.xml" />
+
+    <changeSet id="changelog-authorization-group_role-0.2.0-create_table" author="eurotech">
+
+        <createTable tableName="athz_group_role">
+            <column name="scope_id" type="bigint(21) unsigned">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id" type="bigint(21) unsigned">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="created_on" type="timestamp(3)" defaultValueComputed="${now}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="bigint(21) unsigned">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="group_id" type="bigint(21) unsigned">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role_id" type="bigint(21) unsigned">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk-group_role-groupId"
+                baseTableName="athz_group_role"
+                baseColumnNames="group_id"
+                referencedTableName="athz_group"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint
+                constraintName="fk-group_role-roleId"
+                baseTableName="athz_group_role"
+                baseColumnNames="role_id"
+                referencedTableName="athz_role"
+                referencedColumnNames="id"
+                onDelete="CASCADE"/>
+
+        <createIndex
+            tableName="athz_group_role"
+            indexName="idx-group_role-scopeId_groupId_roleId"
+            unique="true">
+
+            <column name="scope_id"/>
+            <column name="group_id"/>
+            <column name="role_id"/>
+        </createIndex>
+
+        <rollback>
+            <dropTable tableName="athz_group_role"/>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
