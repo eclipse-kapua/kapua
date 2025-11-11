@@ -38,6 +38,8 @@ public interface GroupRole extends KapuaEntity {
         return TYPE;
     }
 
+    @XmlElement(name = "groupId")
+    @XmlJavaTypeAdapter(KapuaIdAdapter.class)
     KapuaId getGroupId();
 
     void setGroupId(KapuaId groupId);
