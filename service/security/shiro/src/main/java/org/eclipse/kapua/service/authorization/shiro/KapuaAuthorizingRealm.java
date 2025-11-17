@@ -89,6 +89,8 @@ public class KapuaAuthorizingRealm extends AuthorizingRealm {
         AccessInfoFactory accessInfoFactory = locator.getFactory(AccessInfoFactory.class);
         AccessRoleService accessRoleService = locator.getService(AccessRoleService.class);
         AccessPermissionService accessPermissionService = locator.getService(AccessPermissionService.class);
+        RoleService roleService = locator.getService(RoleService.class);
+        RolePermissionService rolePermissionService = locator.getService(RolePermissionService.class);
         GroupPermissionService groupPermissionService = locator.getService(GroupPermissionService.class);
         GroupRoleService groupRoleService = locator.getService(GroupRoleService.class);
 
@@ -157,8 +159,6 @@ public class KapuaAuthorizingRealm extends AuthorizingRealm {
                 throw new ShiroException("Error while find access role ids!", e);
             }
 
-            RoleService roleService = locator.getService(RoleService.class);
-            RolePermissionService rolePermissionService = locator.getService(RolePermissionService.class);
             for (AccessRole accessRole : accessRoles.getItems()) {
 
                 KapuaId roleId = accessRole.getRoleId();
@@ -188,61 +188,62 @@ public class KapuaAuthorizingRealm extends AuthorizingRealm {
                     info.addObjectPermission(permissionMapper.mapPermission(p));
                 }
             }
+        }
 
-            // Group Permissions and Roles
-            // For each User Group
-            for (KapuaId groupId : user.getGroupIds()) {
+        // Group Permissions and Roles
+        // For each User Group
+        for (KapuaId groupId : user.getGroupIds()) {
 
-                // Read from Permission granted to the User Group
-                GroupPermissionListResult userGroupPermissions = null;
+            // Read from Permission granted to the User Group
+            GroupPermissionListResult userGroupPermissions = null;
+            try {
+                userGroupPermissions = KapuaSecurityUtils.doPrivileged(() -> groupPermissionService.findByGroupId(user.getScopeId(), groupId));
+            } catch (KapuaException e) {
+                throw new ShiroException("Error while find Group Permissions!", e);
+            }
+
+            for (GroupPermission userGroupPermission : userGroupPermissions.getItems()) {
+                info.addObjectPermission(permissionMapper.mapPermission(userGroupPermission.getPermission()));
+            }
+
+            // Read from Roles granted to the User Group
+            GroupRoleListResult userGroupRoles = null;
+            try {
+                userGroupRoles = KapuaSecurityUtils.doPrivileged(() -> groupRoleService.findByGroupId(user.getScopeId(), groupId));
+            } catch (KapuaException e) {
+                throw new ShiroException("Error while find Group Roles!", e);
+            }
+
+            for (GroupRole userGroupRole : userGroupRoles.getItems()) {
+                KapuaId userGroupRoleId = userGroupRole.getRoleId();
+
+                Role role;
                 try {
-                    userGroupPermissions = KapuaSecurityUtils.doPrivileged(() -> groupPermissionService.findByGroupId(user.getScopeId(), groupId));
-                } catch (KapuaException e) {
-                    throw new ShiroException("Error while find Group Permissions!", e);
+                    role = KapuaSecurityUtils.doPrivileged(() -> roleService.find(userGroupRole.getScopeId(), userGroupRoleId));
+                } catch (AuthenticationException e) {
+                    throw e;
+                } catch (Exception e) {
+                    throw new ShiroException("Error while find role!", e);
                 }
 
-                for (GroupPermission userGroupPermission : userGroupPermissions.getItems()) {
-                    info.addObjectPermission(permissionMapper.mapPermission(userGroupPermission.getPermission()));
-                }
+                info.addRole(role.getName());
 
-                // Read from Roles granted to the User Group
-                GroupRoleListResult userGroupRoles = null;
+                RolePermissionListResult rolePermissions = null;
                 try {
-                    userGroupRoles = KapuaSecurityUtils.doPrivileged(() -> groupRoleService.findByGroupId(user.getScopeId(), groupId));
+                    rolePermissions = KapuaSecurityUtils.doPrivileged(() -> rolePermissionService.findByRoleId(role.getScopeId(), userGroupRoleId));
                 } catch (KapuaException e) {
-                    throw new ShiroException("Error while find Group Roles!", e);
+                    throw new ShiroException("Error while find role ids!", e);
                 }
 
-                for (GroupRole userGroupRole : userGroupRoles.getItems()) {
-                    KapuaId userGroupRoleId = userGroupRole.getRoleId();
+                for (RolePermission rolePermission : rolePermissions.getItems()) {
 
-                    Role role;
-                    try {
-                        role = KapuaSecurityUtils.doPrivileged(() -> roleService.find(userGroupRole.getScopeId(), userGroupRoleId));
-                    } catch (AuthenticationException e) {
-                        throw e;
-                    } catch (Exception e) {
-                        throw new ShiroException("Error while find role!", e);
-                    }
-
-                    info.addRole(role.getName());
-
-                    RolePermissionListResult rolePermissions = null;
-                    try {
-                        rolePermissions = KapuaSecurityUtils.doPrivileged(() -> rolePermissionService.findByRoleId(role.getScopeId(), userGroupRoleId));
-                    } catch (KapuaException e) {
-                        throw new ShiroException("Error while find role ids!", e);
-                    }
-
-                    for (RolePermission rolePermission : rolePermissions.getItems()) {
-
-                        PermissionImpl p = rolePermission.getPermission();
-                        logger.trace("Role: {} has permission: {}", role, p);
-                        info.addObjectPermission(permissionMapper.mapPermission(p));
-                    }
+                    PermissionImpl p = rolePermission.getPermission();
+                    logger.trace("Role: {} has permission: {}", role, p);
+                    info.addObjectPermission(permissionMapper.mapPermission(p));
                 }
             }
         }
+
         // Return authorization info
         return info;
     }
