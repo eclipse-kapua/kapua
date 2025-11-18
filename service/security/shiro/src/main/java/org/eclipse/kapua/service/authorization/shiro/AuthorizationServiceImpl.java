@@ -109,7 +109,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
                             claims.add(String.format("%s:%s", d, a));
                         }
                     } catch (KapuaException e) {
-                        // Ignore
+                        // Ignore (don't add claim)
                     }
                 }
                 actions.clear();
