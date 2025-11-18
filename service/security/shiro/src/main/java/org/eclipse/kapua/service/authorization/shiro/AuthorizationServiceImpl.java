@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.google.inject.Provider;
 import org.apache.shiro.SecurityUtils;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaUnauthenticatedException;
@@ -49,14 +50,15 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     private final PermissionFactory permissionFactory;
     private final Set<Domain> knownDomains;
     private final PermissionMapper permissionMapper;
-    private final AuthenticationService authenticationService;
+    //Provider added to break circular dependency between AuthZServiceImpl -> AuthNServiceImpl -> CertificateServiceImpl -> AuthZServiceImpl
+    private final Provider<AuthenticationService> authenticationService; //Read https://github.com/google/guice/wiki/CyclicDependencies
 
     @Inject
     public AuthorizationServiceImpl(
             PermissionFactory permissionFactory,
             Set<Domain> knownDomains,
             PermissionMapper permissionMapper,
-            AuthenticationService authenticationService) {
+            Provider<AuthenticationService> authenticationService) {
         this.permissionFactory = permissionFactory;
         this.knownDomains = knownDomains;
         this.permissionMapper = permissionMapper;
@@ -84,7 +86,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
     @Override
     public Set<String> fetchUserClaims(KapuaId inScope) throws KapuaException {
-        LoginInfo loginInfo = authenticationService.getLoginInfo();
+        LoginInfo loginInfo = authenticationService.get().getLoginInfo();
         //Retrieve all permissions from both AccessPermissions and RolePermissions
         Set<AccessPermission> accessPermissions = loginInfo.getAccessPermission();
         Set<RolePermission> accessRolePermissions = loginInfo.getRolePermission();
