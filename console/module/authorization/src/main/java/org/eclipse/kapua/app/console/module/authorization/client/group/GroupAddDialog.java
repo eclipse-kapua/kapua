@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.authorization.client.group;
 
+import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
+import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.google.gwt.core.client.GWT;
@@ -95,6 +97,13 @@ public class GroupAddDialog extends EntityAddEditDialog {
         domainsCombo.setEmptyText("Loading Domains...");
         domainsCombo.setToolTip("Select a target domain for the Group");
         domainsCombo.setDisplayField("domainName");
+        domainsCombo.addSelectionChangedListener(new SelectionChangedListener<GwtDomain>() {
+
+            @Override
+            public void selectionChanged(SelectionChangedEvent<GwtDomain> selectionChangedEvent) {
+                setSubmitButtonState();
+            }
+        });
         groupFormPanel.add(domainsCombo);
 
         // Load domains
@@ -135,6 +144,7 @@ public class GroupAddDialog extends EntityAddEditDialog {
     @Override
     protected void preSubmit() {
         validateGroups();
+
         super.preSubmit();
     }
 
