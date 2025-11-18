@@ -13,6 +13,7 @@
 package org.eclipse.kapua.service.user.internal;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
 import org.eclipse.kapua.KapuaDuplicateExternalIdException;
 import org.eclipse.kapua.KapuaDuplicateExternalUsernameException;
 import org.eclipse.kapua.KapuaDuplicateNameException;
@@ -581,10 +582,14 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
      * @since 2.1.0
      */
     private Set<Permission> buildSetPermissionsFromGroupIds(String domain, Actions action, KapuaId scopeId, Collection<KapuaId> groupIds) {
-        return groupIds.stream()
-                .map(groupId -> permissionFactory.newPermission(domain, action, scopeId, groupId))
-                .collect(Collectors.toSet());
-
+        if (groupIds.isEmpty()) {
+            return Sets.newHashSet(permissionFactory.newPermission(domain, action, scopeId));
+        }
+        else {
+            return groupIds.stream()
+                    .map(groupId -> permissionFactory.newPermission(domain, action, scopeId, groupId))
+                    .collect(Collectors.toSet());
+        }
     }
 
 }
