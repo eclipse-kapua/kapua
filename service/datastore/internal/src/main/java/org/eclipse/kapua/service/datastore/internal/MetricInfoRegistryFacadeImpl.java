@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -55,7 +55,7 @@ public class MetricInfoRegistryFacadeImpl extends AbstractDatastoreFacade implem
 
     private final DatastoreSettings datastoreSettings;
 
-    private final Boolean metricCacheFetchFromSourceBeforeUpsertSetting;
+    private final Boolean shouldFetchBeforeUpsertInCacheMiss;
 
     private static final String QUERY = "query";
     private static final String QUERY_SCOPE_ID = "query.scopeId";
@@ -83,7 +83,7 @@ public class MetricInfoRegistryFacadeImpl extends AbstractDatastoreFacade implem
         this.datastoreCacheManager = datastoreCacheManager;
 
         this.datastoreSettings = datastoreSettings;
-        this.metricCacheFetchFromSourceBeforeUpsertSetting = datastoreSettings.getBoolean(DatastoreSettingsKey.CONFIG_CACHE_METRICS_FETCH_FROM_SOURCE_BEFORE_UPSERT, true);
+        this.shouldFetchBeforeUpsertInCacheMiss = datastoreSettings.getBoolean(DatastoreSettingsKey.CONFIG_CACHE_METRICS_FETCH_FROM_SOURCE_BEFORE_UPSERT, true);
     }
 
     /**
@@ -108,7 +108,12 @@ public class MetricInfoRegistryFacadeImpl extends AbstractDatastoreFacade implem
         // Store channel. Look up channel in the cache, and cache it if it doesn't exist
         if (!datastoreCacheManager.getMetricsCache().get(metricInfoId)) {
             // fix #REPLACE_ISSUE_NUMBER
-            MetricInfo storedField = doFind(metricInfo.getScopeId(), storableId);
+            MetricInfo storedField = null;
+            if (shouldFetchBeforeUpsertInCacheMiss) {
+                storedField = doFind(metricInfo.getScopeId(), storableId);
+            } else {
+                LOG.info("Skip find of metric {} in channel {}", metricInfo.getName(), metricInfo.getChannel());
+            }
             if (storedField == null) {
                 repository.upsert(metricInfoId, metricInfo);
             }
@@ -140,13 +145,16 @@ public class MetricInfoRegistryFacadeImpl extends AbstractDatastoreFacade implem
             String metricInfoId = MetricInfoField.getOrDeriveId(metricInfo.getId(), metricInfo);
             // fix #REPLACE_ISSUE_NUMBER
             if (!datastoreCacheManager.getMetricsCache().get(metricInfoId)) {
-                if (metricCacheFetchFromSourceBeforeUpsertSetting) {
+                MetricInfo storedField = null;
+                if (shouldFetchBeforeUpsertInCacheMiss) {
                     StorableId storableId = storableIdFactory.newStorableId(metricInfoId);
-                    MetricInfo storedField = find(metricInfo.getScopeId(), storableId);
-                    if (storedField != null) {
-                        datastoreCacheManager.getMetricsCache().put(metricInfoId, true);
-                        continue;
-                    }
+                    storedField = doFind(metricInfo.getScopeId(), storableId);
+                } else {
+                    LOG.info("Skip find of metric {} in channel {}", metricInfo.getName(), metricInfo.getChannel());
+                }
+                if (storedField != null) {
+                    datastoreCacheManager.getMetricsCache().put(metricInfoId, true);
+                    continue;
                 }
 
                 toUpsert.add(metricInfo);
