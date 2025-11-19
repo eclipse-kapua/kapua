@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -18,6 +18,8 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.datastore.internal.mediator.ClientInfoField;
 import org.eclipse.kapua.service.datastore.internal.mediator.ConfigurationException;
 import org.eclipse.kapua.service.datastore.internal.model.ClientInfoListResultImpl;
+import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
+import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettingsKey;
 import org.eclipse.kapua.service.datastore.model.ClientInfo;
 import org.eclipse.kapua.service.datastore.model.ClientInfoListResult;
 import org.eclipse.kapua.service.datastore.model.query.ClientInfoQuery;
@@ -45,6 +47,7 @@ public class ClientInfoRegistryFacadeImpl extends AbstractDatastoreFacade implem
     private final ClientInfoRepository repository;
     private final DatastoreCacheManager datastoreCacheManager;
     private final Object metadataUpdateSync = new Object();
+    private final DatastoreSettings datastoreSettings;
 
     private static final String QUERY = "query";
     private static final String QUERY_SCOPE_ID = "query.scopeId";
@@ -61,12 +64,14 @@ public class ClientInfoRegistryFacadeImpl extends AbstractDatastoreFacade implem
             StorableIdFactory storableIdFactory,
             StorablePredicateFactory storablePredicateFactory,
             ClientInfoRepository clientInfoRepository,
-            DatastoreCacheManager datastoreCacheManager) {
+            DatastoreCacheManager datastoreCacheManager,
+            DatastoreSettings datastoreSettings) {
         super(configProvider);
         this.storableIdFactory = storableIdFactory;
         this.storablePredicateFactory = storablePredicateFactory;
         this.repository = clientInfoRepository;
         this.datastoreCacheManager = datastoreCacheManager;
+        this.datastoreSettings = datastoreSettings;
     }
 
     /**
@@ -88,23 +93,21 @@ public class ClientInfoRegistryFacadeImpl extends AbstractDatastoreFacade implem
 
         String clientInfoId = ClientInfoField.getOrDeriveId(clientInfo.getId(), clientInfo);
         StorableId storableId = storableIdFactory.newStorableId(clientInfoId);
+        final boolean shouldSynchBeforeUpsertInCacheMiss = datastoreSettings.getBoolean(DatastoreSettingsKey.CONFIG_CLIENTS_CACHE_LOCAL_SYNCH_BEFORE_UPSERT, true);
 
         // Store channel. Look up channel in the cache, and cache it if it doesn't exist
         if (!datastoreCacheManager.getClientsCache().get(clientInfo.getClientId())) {
-            // The code is safe even without the synchronized block
-            // Synchronize in order to let the first thread complete its update
-            // then the others of the same type will find the cache updated and
-            // skip the update.
-            synchronized (metadataUpdateSync) {
-                if (!datastoreCacheManager.getClientsCache().get(clientInfo.getClientId())) {
-                    // fix #REPLACE_ISSUE_NUMBER
-                    ClientInfo storedField = repository.find(clientInfo.getScopeId(), storableId);
-                    if (storedField == null) {
-                        repository.upsert(clientInfoId, clientInfo);
-                    }
-                    // Update cache if client update is completed successfully
-                    datastoreCacheManager.getClientsCache().put(clientInfo.getClientId(), true);
+            if (shouldSynchBeforeUpsertInCacheMiss) {
+                // The code is safe even without the synchronized block
+                // Synchronize in order to let the first thread complete its update
+                // then the others of the same type will find the cache updated and
+                // skip the update.
+                synchronized (metadataUpdateSync) {
+                    doUpstore(storableId, clientInfoId, clientInfo);
                 }
+            } else {
+                LOG.debug("Skip synch for client {}", clientInfo.getClientId()); 
+                doUpstore(storableId, clientInfoId, clientInfo);
             }
         }
         return storableId;
@@ -214,5 +217,23 @@ public class ClientInfoRegistryFacadeImpl extends AbstractDatastoreFacade implem
         }
 
         repository.delete(query);
+    }
+
+    private void doUpstore(StorableId storableId, String clientInfoId, ClientInfo clientInfo) {
+        final boolean shouldFetchBeforeUpsertInCacheMiss = datastoreSettings.getBoolean(DatastoreSettingsKey.CONFIG_CLIENTS_CACHE_LOCAL_FETCH_FROM_SOURCE_BEFORE_UPSERT, true);
+        if (!datastoreCacheManager.getClientsCache().get(clientInfo.getClientId())) {
+            ClientInfo storedField = null;
+            if (shouldFetchBeforeUpsertInCacheMiss) {
+                // fix #REPLACE_ISSUE_NUMBER
+                storedField = repository.find(clientInfo.getScopeId(), storableId);
+            } else {
+                LOG.info("Skip find of client {}", clientInfo.getClientId());
+            }
+            if (storedField == null) {
+                repository.upsert(clientInfoId, clientInfo);
+            }
+            // Update cache if client update is completed successfully
+            datastoreCacheManager.getClientsCache().put(clientInfo.getClientId(), true);
+        }
     }
 }
