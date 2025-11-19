@@ -51,6 +51,9 @@ public class ChannelInfoRegistryFacadeImpl extends AbstractDatastoreFacade imple
     private final Object metadataUpdateSync = new Object();
     private final DatastoreSettings datastoreSettings;
 
+    private final Boolean shouldSynchBeforeUpsertInCacheMiss;
+    private final Boolean shouldFetchBeforeUpsertInCacheMiss;
+
     private static final String QUERY = "query";
     private static final String QUERY_SCOPE_ID = "query.scopeId";
 
@@ -74,6 +77,9 @@ public class ChannelInfoRegistryFacadeImpl extends AbstractDatastoreFacade imple
         this.repository = channelInfoRepository;
         this.datastoreCacheManager = datastoreCacheManager;
         this.datastoreSettings = datastoreSettings;
+
+        this.shouldSynchBeforeUpsertInCacheMiss = datastoreSettings.getBoolean(DatastoreSettingsKey.CONFIG_CHANNELS_CACHE_LOCAL_SYNCH_BEFORE_UPSERT, true);
+        this.shouldFetchBeforeUpsertInCacheMiss = datastoreSettings.getBoolean(DatastoreSettingsKey.CONFIG_CHANNELS_CACHE_LOCAL_FETCH_FROM_SOURCE_BEFORE_UPSERT, true);
     }
 
     /**
@@ -95,7 +101,6 @@ public class ChannelInfoRegistryFacadeImpl extends AbstractDatastoreFacade imple
 
         String channelInfoId = ChannelInfoField.getOrDeriveId(channelInfo.getId(), channelInfo);
         StorableId storableId = storableIdFactory.newStorableId(channelInfoId);
-        final boolean shouldSynchBeforeUpsertInCacheMiss = datastoreSettings.getBoolean(DatastoreSettingsKey.CONFIG_CHANNELS_CACHE_LOCAL_SYNCH_BEFORE_UPSERT, true);
 
         // Store channel. Look up channel in the cache, and cache it if it doesn't exist
         if (!datastoreCacheManager.getChannelsCache().get(channelInfoId)) {
@@ -238,7 +243,6 @@ public class ChannelInfoRegistryFacadeImpl extends AbstractDatastoreFacade imple
     }
 
     private void doUpstore(StorableId storableId, String channelInfoId, ChannelInfo channelInfo) throws KapuaIllegalArgumentException, ConfigurationException, ClientException {
-        final boolean shouldFetchBeforeUpsertInCacheMiss = datastoreSettings.getBoolean(DatastoreSettingsKey.CONFIG_CHANNELS_CACHE_LOCAL_FETCH_FROM_SOURCE_BEFORE_UPSERT, true);
         if (!datastoreCacheManager.getChannelsCache().get(channelInfoId)) {
             ChannelInfo storedField = null;
             if (shouldFetchBeforeUpsertInCacheMiss) {

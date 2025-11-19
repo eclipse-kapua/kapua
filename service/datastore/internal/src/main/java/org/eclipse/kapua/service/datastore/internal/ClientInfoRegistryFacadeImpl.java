@@ -49,6 +49,8 @@ public class ClientInfoRegistryFacadeImpl extends AbstractDatastoreFacade implem
     private final Object metadataUpdateSync = new Object();
     private final DatastoreSettings datastoreSettings;
 
+    private final Boolean shouldSynchBeforeUpsertInCacheMiss;
+    private final Boolean shouldFetchBeforeUpsertInCacheMiss;
     private static final String QUERY = "query";
     private static final String QUERY_SCOPE_ID = "query.scopeId";
 
@@ -71,7 +73,10 @@ public class ClientInfoRegistryFacadeImpl extends AbstractDatastoreFacade implem
         this.storablePredicateFactory = storablePredicateFactory;
         this.repository = clientInfoRepository;
         this.datastoreCacheManager = datastoreCacheManager;
+
         this.datastoreSettings = datastoreSettings;
+        this.shouldSynchBeforeUpsertInCacheMiss = datastoreSettings.getBoolean(DatastoreSettingsKey.CONFIG_CLIENTS_CACHE_LOCAL_SYNCH_BEFORE_UPSERT, true);
+        this.shouldFetchBeforeUpsertInCacheMiss = datastoreSettings.getBoolean(DatastoreSettingsKey.CONFIG_CLIENTS_CACHE_LOCAL_FETCH_FROM_SOURCE_BEFORE_UPSERT, true);
     }
 
     /**
@@ -93,7 +98,6 @@ public class ClientInfoRegistryFacadeImpl extends AbstractDatastoreFacade implem
 
         String clientInfoId = ClientInfoField.getOrDeriveId(clientInfo.getId(), clientInfo);
         StorableId storableId = storableIdFactory.newStorableId(clientInfoId);
-        final boolean shouldSynchBeforeUpsertInCacheMiss = datastoreSettings.getBoolean(DatastoreSettingsKey.CONFIG_CLIENTS_CACHE_LOCAL_SYNCH_BEFORE_UPSERT, true);
 
         // Store channel. Look up channel in the cache, and cache it if it doesn't exist
         if (!datastoreCacheManager.getClientsCache().get(clientInfo.getClientId())) {
@@ -220,7 +224,6 @@ public class ClientInfoRegistryFacadeImpl extends AbstractDatastoreFacade implem
     }
 
     private void doUpstore(StorableId storableId, String clientInfoId, ClientInfo clientInfo) {
-        final boolean shouldFetchBeforeUpsertInCacheMiss = datastoreSettings.getBoolean(DatastoreSettingsKey.CONFIG_CLIENTS_CACHE_LOCAL_FETCH_FROM_SOURCE_BEFORE_UPSERT, true);
         if (!datastoreCacheManager.getClientsCache().get(clientInfo.getClientId())) {
             ClientInfo storedField = null;
             if (shouldFetchBeforeUpsertInCacheMiss) {
