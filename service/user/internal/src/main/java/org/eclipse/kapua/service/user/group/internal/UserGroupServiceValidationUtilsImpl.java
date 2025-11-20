@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.user.group.internal;
 
+import com.google.common.collect.Sets;
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.domains.Domains;
@@ -21,11 +22,15 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
+import org.eclipse.kapua.service.authorization.CheckStrategy;
 import org.eclipse.kapua.service.authorization.group.Group;
 import org.eclipse.kapua.service.authorization.group.GroupService;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.user.group.UserGroup;
 import org.eclipse.kapua.service.user.group.UserGroupCreator;
+
+import java.util.Set;
 
 /**
  * {@link UserGroupServiceValidationUtils} implementation.
@@ -58,7 +63,11 @@ public final class UserGroupServiceValidationUtilsImpl implements UserGroupServi
 
         //
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.USER_GROUP, Actions.write, userGroupCreator.getScopeId()));
+        Set<Permission> permissions = Sets.newHashSet(
+                permissionFactory.newPermission(Domains.GROUP, Actions.write, userGroupCreator.getScopeId()),
+                permissionFactory.newPermission(Domains.USER_GROUP, Actions.write, userGroupCreator.getScopeId())
+        );
+        authorizationService.checkPermissions(permissions, CheckStrategy.AT_LEAST_ONE_OF);
     }
 
     @Override
@@ -72,7 +81,11 @@ public final class UserGroupServiceValidationUtilsImpl implements UserGroupServi
 
         //
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.USER_GROUP, Actions.write, userGroup.getScopeId()));
+        Set<Permission> permissions = Sets.newHashSet(
+                permissionFactory.newPermission(Domains.GROUP, Actions.write, userGroup.getScopeId()),
+                permissionFactory.newPermission(Domains.USER_GROUP, Actions.write, userGroup.getScopeId())
+        );
+        authorizationService.checkPermissions(permissions, CheckStrategy.AT_LEAST_ONE_OF);
 
         // Check correct domain
         checkGroupDomainIsUser(userGroup.getScopeId(), userGroup.getId());
@@ -85,7 +98,11 @@ public final class UserGroupServiceValidationUtilsImpl implements UserGroupServi
         ArgumentValidator.notNull(userGroupId, "userGroupId");
 
         // Check access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.USER_GROUP, Actions.read, scopeId));
+        Set<Permission> permissions = Sets.newHashSet(
+                permissionFactory.newPermission(Domains.GROUP, Actions.read, scopeId),
+                permissionFactory.newPermission(Domains.USER_GROUP, Actions.read, scopeId)
+        );
+        authorizationService.checkPermissions(permissions, CheckStrategy.AT_LEAST_ONE_OF);
     }
 
     @Override
@@ -101,7 +118,11 @@ public final class UserGroupServiceValidationUtilsImpl implements UserGroupServi
         ArgumentValidator.notNull(query, "query");
 
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.USER_GROUP, Actions.read, query.getScopeId()));
+        Set<Permission> permissions = Sets.newHashSet(
+                permissionFactory.newPermission(Domains.GROUP, Actions.read, query.getScopeId()),
+                permissionFactory.newPermission(Domains.USER_GROUP, Actions.read, query.getScopeId())
+        );
+        authorizationService.checkPermissions(permissions, CheckStrategy.AT_LEAST_ONE_OF);
     }
 
     @Override
@@ -110,7 +131,11 @@ public final class UserGroupServiceValidationUtilsImpl implements UserGroupServi
         ArgumentValidator.notNull(query, "query");
 
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.USER_GROUP, Actions.read, query.getScopeId()));
+        Set<Permission> permissions = Sets.newHashSet(
+                permissionFactory.newPermission(Domains.GROUP, Actions.read, query.getScopeId()),
+                permissionFactory.newPermission(Domains.USER_GROUP, Actions.read, query.getScopeId())
+        );
+        authorizationService.checkPermissions(permissions, CheckStrategy.AT_LEAST_ONE_OF);
     }
 
     @Override
@@ -120,7 +145,11 @@ public final class UserGroupServiceValidationUtilsImpl implements UserGroupServi
         ArgumentValidator.notNull(userGroupId, "userGroupId");
 
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.USER_GROUP, Actions.delete, scopeId));
+        Set<Permission> permissions = Sets.newHashSet(
+                permissionFactory.newPermission(Domains.GROUP, Actions.delete, scopeId),
+                permissionFactory.newPermission(Domains.USER_GROUP, Actions.delete, scopeId)
+        );
+        authorizationService.checkPermissions(permissions, CheckStrategy.AT_LEAST_ONE_OF);
 
         // Check correct domain
         checkGroupDomainIsUser(scopeId, userGroupId);
