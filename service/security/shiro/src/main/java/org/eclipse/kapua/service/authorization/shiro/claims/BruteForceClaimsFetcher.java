@@ -25,6 +25,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+//A ClaimsFetcher that enumerates all possible domain&actions
+//BE AWARE THAT PERFORMS WRONG IN PRESENCE OF PERMISSIONS RESTRICTED TO GROUPS
+
 public class BruteForceClaimsFetcher implements ClaimsFetcher {
 
     private final Provider<AuthorizationService> authorizationServiceProvider;
