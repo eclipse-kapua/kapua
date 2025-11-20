@@ -555,10 +555,9 @@ Feature: User role service integration tests
       | name  | password      | enabled |
       | user1 | User@10031995 | true    |
     And I create the access info entity
-    Given I select the domain "device"
-    And The permission "read"
     And I create a group with name "group1"
-    When I restrict permission to last created group
+    Given I select the domain "device"
+    And The permission "read", restricted to the last created group
     When I create the permissions
     Given I select the domain "stream"
     And The permissions "write"
@@ -570,6 +569,41 @@ Feature: User role service integration tests
     Then The user claims contains exactly
       | device:read        |
       | stream:write       |
+    And I logout
+
+  Scenario: Test fetching claims - simple permissions with all possible actions for it
+  Test fetching claims with simple permissions restricted to a group
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I select account "kapua-sys"
+    And Scope with ID 1
+    And User A
+      | name  | displayName  | email             | phoneNumber     | status  | userType |
+      | user1 | Kapua User B | kapua_b@kapua.com | +386 31 323 555 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password      | enabled |
+      | user1 | User@10031995 | true    |
+    And I create the access info entity
+    Given I select the domain "device"
+    And The permission "all"
+    And I create a group with name "group1"
+    When I restrict permission to last created group
+    When I create the permissions
+    Given I select the domain "job"
+    And The permissions "all"
+    When I create the permissions
+    Then exception is not thrown
+    And I logout
+    Then I login as user with name "user1" and password "User@10031995"
+    When I fetch user claims for the last account
+    Then The user claims contains exactly
+      | device:read        |
+      | device:write       |
+      | device:delete      |
+      | job:execute        |
+      | job:write          |
+      | job:delete         |
+      | job:read           |
     And I logout
 
   Scenario: Add datastore permissions to the role
