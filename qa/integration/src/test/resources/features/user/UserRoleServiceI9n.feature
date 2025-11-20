@@ -522,7 +522,7 @@ Feature: User role service integration tests
       | user:read          |
       | user:write         |
     Given I select the domain "stream"
-    And The permission "read"
+    And The permission "write"
     When I create the permission
     Given I select the domain "job"
     And The permissions "write, delete"
@@ -537,7 +537,7 @@ Feature: User role service integration tests
       | access_info:delete |
       | user:read          |
       | user:write         |
-      | stream:read        |
+      | stream:write       |
       | job:write          |
       | job:delete         |
     And I logout
@@ -561,7 +561,7 @@ Feature: User role service integration tests
     When I restrict permission to last created group
     When I create the permissions
     Given I select the domain "stream"
-    And The permissions "read, write"
+    And The permissions "write"
     When I create the permissions
     Then exception is not thrown
     And I logout
@@ -569,7 +569,6 @@ Feature: User role service integration tests
     When I fetch user claims for the last account
     Then The user claims contains exactly
       | device:read        |
-      | stream:read        |
       | stream:write       |
     And I logout
 
