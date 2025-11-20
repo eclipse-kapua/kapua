@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.registry.group.internal;
 
+import com.google.common.collect.Sets;
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.domains.Domains;
@@ -21,11 +22,15 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
+import org.eclipse.kapua.service.authorization.CheckStrategy;
 import org.eclipse.kapua.service.authorization.group.Group;
 import org.eclipse.kapua.service.authorization.group.GroupService;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.device.registry.group.DeviceGroup;
 import org.eclipse.kapua.service.device.registry.group.DeviceGroupCreator;
+
+import java.util.Set;
 
 /**
  * {@link DeviceGroupServiceValidationUtils} implementation.
@@ -58,7 +63,11 @@ public final class DeviceGroupServiceValidationUtilsImpl implements DeviceGroupS
 
         //
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_GROUP, Actions.write, deviceGroupCreator.getScopeId()));
+        Set<Permission> permissions = Sets.newHashSet(
+                permissionFactory.newPermission(Domains.GROUP, Actions.write, deviceGroupCreator.getScopeId()),
+                permissionFactory.newPermission(Domains.DEVICE_GROUP, Actions.write, deviceGroupCreator.getScopeId())
+        );
+        authorizationService.checkPermissions(permissions, CheckStrategy.AT_LEAST_ONE_OF);
     }
 
     @Override
@@ -72,7 +81,11 @@ public final class DeviceGroupServiceValidationUtilsImpl implements DeviceGroupS
 
         //
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_GROUP, Actions.write, deviceGroup.getScopeId()));
+        Set<Permission> permissions = Sets.newHashSet(
+                permissionFactory.newPermission(Domains.GROUP, Actions.write, deviceGroup.getScopeId()),
+                permissionFactory.newPermission(Domains.DEVICE_GROUP, Actions.write, deviceGroup.getScopeId())
+        );
+        authorizationService.checkPermissions(permissions, CheckStrategy.AT_LEAST_ONE_OF);
 
         // Check correct domain
         checkGroupDomainIsDevice(deviceGroup.getScopeId(), deviceGroup.getId());
@@ -85,7 +98,11 @@ public final class DeviceGroupServiceValidationUtilsImpl implements DeviceGroupS
         ArgumentValidator.notNull(deviceGroupId, "deviceGroupId");
 
         // Check access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_GROUP, Actions.read, scopeId));
+        Set<Permission> permissions = Sets.newHashSet(
+                permissionFactory.newPermission(Domains.GROUP, Actions.read, scopeId),
+                permissionFactory.newPermission(Domains.DEVICE_GROUP, Actions.read, scopeId)
+        );
+        authorizationService.checkPermissions(permissions, CheckStrategy.AT_LEAST_ONE_OF);
     }
 
     @Override
@@ -101,7 +118,11 @@ public final class DeviceGroupServiceValidationUtilsImpl implements DeviceGroupS
         ArgumentValidator.notNull(query, "query");
 
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_GROUP, Actions.read, query.getScopeId()));
+        Set<Permission> permissions = Sets.newHashSet(
+                permissionFactory.newPermission(Domains.GROUP, Actions.read, query.getScopeId()),
+                permissionFactory.newPermission(Domains.DEVICE_GROUP, Actions.read, query.getScopeId())
+        );
+        authorizationService.checkPermissions(permissions, CheckStrategy.AT_LEAST_ONE_OF);
     }
 
     @Override
@@ -110,7 +131,11 @@ public final class DeviceGroupServiceValidationUtilsImpl implements DeviceGroupS
         ArgumentValidator.notNull(query, "query");
 
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_GROUP, Actions.read, query.getScopeId()));
+        Set<Permission> permissions = Sets.newHashSet(
+                permissionFactory.newPermission(Domains.GROUP, Actions.read, query.getScopeId()),
+                permissionFactory.newPermission(Domains.DEVICE_GROUP, Actions.read, query.getScopeId())
+        );
+        authorizationService.checkPermissions(permissions, CheckStrategy.AT_LEAST_ONE_OF);
     }
 
     @Override
@@ -120,7 +145,11 @@ public final class DeviceGroupServiceValidationUtilsImpl implements DeviceGroupS
         ArgumentValidator.notNull(deviceGroupId, "id");
 
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_GROUP, Actions.delete, scopeId));
+        Set<Permission> permissions = Sets.newHashSet(
+                permissionFactory.newPermission(Domains.GROUP, Actions.delete, scopeId),
+                permissionFactory.newPermission(Domains.DEVICE_GROUP, Actions.delete, scopeId)
+        );
+        authorizationService.checkPermissions(permissions, CheckStrategy.AT_LEAST_ONE_OF);
 
         // Check correct domain
         checkGroupDomainIsDevice(scopeId, deviceGroupId);
