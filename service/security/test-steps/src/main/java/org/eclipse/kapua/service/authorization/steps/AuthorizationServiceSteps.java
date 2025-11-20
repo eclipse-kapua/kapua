@@ -37,6 +37,7 @@ import org.eclipse.kapua.qa.common.cucumber.CucRole;
 import org.eclipse.kapua.qa.common.cucumber.CucRolePermission;
 import org.eclipse.kapua.qa.common.cucumber.CucUser;
 import org.eclipse.kapua.service.account.Account;
+import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.access.AccessInfo;
 import org.eclipse.kapua.service.authorization.access.AccessInfoAttributes;
 import org.eclipse.kapua.service.authorization.access.AccessInfoCreator;
@@ -153,6 +154,7 @@ public class AuthorizationServiceSteps extends TestBase {
     private RolePermissionService rolePermissionService;
     private RolePermissionFactory rolePermissionFactory;
     private UserService userService;
+    private AuthorizationService authorizationService;
 
     @Inject
     public AuthorizationServiceSteps(StepData stepData) {
@@ -178,6 +180,7 @@ public class AuthorizationServiceSteps extends TestBase {
         rolePermissionFactory = locator.getFactory(RolePermissionFactory.class);
         permissionFactory = locator.getFactory(PermissionFactory.class);
         userService = locator.getService(UserService.class);
+        authorizationService = locator.getService(AuthorizationService.class);
     }
 
     @Before
@@ -1262,6 +1265,15 @@ public class AuthorizationServiceSteps extends TestBase {
         }
     }
 
+    @When("I restrict permission(s) to last created group")
+    public void restrictPermissionsToSpecificGroup() throws Exception {
+        Set<Permission> permissions = (Set<Permission>) stepData.get(PERMISSIONS);
+        Group group = (Group) stepData.get(GROUP);
+        for (Permission perm : permissions) {
+            perm.setGroupId(group.getId());
+        }
+    }
+
     @When("I create the permission(s)")
     public void createPermissionEntries() throws Exception {
         KapuaId currScope = (KapuaId) stepData.get(LAST_ACCOUNT_ID);
@@ -1287,6 +1299,28 @@ public class AuthorizationServiceSteps extends TestBase {
         } catch (KapuaException ex) {
             verifyException(ex);
         }
+    }
+
+    @When("I fetch user claims for the last account")
+    public void fetchUserClaimsForLastAccount() throws Exception {
+        KapuaId currScope = (KapuaId) stepData.get(LAST_ACCOUNT_ID);
+        try {
+            primeException();
+            Set<String> userClaims = authorizationService.fetchUserClaims(currScope);
+            stepData.put("UserClaims", userClaims);
+        } catch (KapuaException ex) {
+            verifyException(ex);
+        }
+    }
+
+    @Then("The user claims contains exactly")
+    public void checkThatUserClaimsContain(List<String> claims) {
+        Set<String> userClaims = (Set<String>) stepData.get("UserClaims");
+        for (String claim : claims) {
+            Assert.assertTrue(userClaims.contains(claim));
+            userClaims.remove(claim);
+        }
+        Assert.assertTrue(userClaims.isEmpty());
     }
 
     @When("I search for the last created permission")
