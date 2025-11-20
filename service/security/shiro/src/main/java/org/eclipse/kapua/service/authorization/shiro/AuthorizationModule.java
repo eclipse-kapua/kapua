@@ -13,10 +13,12 @@
 package org.eclipse.kapua.service.authorization.shiro;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import com.google.inject.Provider;
 import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.core.ServiceModule;
@@ -36,6 +38,7 @@ import org.eclipse.kapua.event.ServiceEventBusException;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.domain.Domain;
 import org.eclipse.kapua.model.domain.DomainEntry;
+import org.eclipse.kapua.service.authentication.AuthenticationService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.access.AccessInfoFactory;
 import org.eclipse.kapua.service.authorization.access.AccessInfoRepository;
@@ -91,6 +94,9 @@ import org.eclipse.kapua.service.authorization.role.shiro.RolePermissionFactoryI
 import org.eclipse.kapua.service.authorization.role.shiro.RolePermissionImplJpaRepository;
 import org.eclipse.kapua.service.authorization.role.shiro.RolePermissionServiceImpl;
 import org.eclipse.kapua.service.authorization.role.shiro.RoleServiceImpl;
+import org.eclipse.kapua.service.authorization.shiro.claims.BruteForceClaimsFetcher;
+import org.eclipse.kapua.service.authorization.shiro.claims.ClaimsFetcher;
+import org.eclipse.kapua.service.authorization.shiro.claims.SimpleClaimsFetcher;
 import org.eclipse.kapua.service.authorization.shiro.setting.KapuaAuthorizationSetting;
 import org.eclipse.kapua.storage.TxManager;
 
@@ -101,7 +107,6 @@ public class AuthorizationModule extends AbstractKapuaModule {
 
     @Override
     protected void configureModule() {
-        bind(AuthorizationService.class).to(AuthorizationServiceImpl.class).in(Singleton.class);
         bind(RoleFactory.class).to(RoleFactoryImpl.class).in(Singleton.class);
 
         bind(DomainFactory.class).to(DomainFactoryImpl.class).in(Singleton.class);
@@ -177,11 +182,50 @@ public class AuthorizationModule extends AbstractKapuaModule {
 
     @Provides
     @Singleton
+    AuthorizationService authorizationService(
+            PermissionMapper permissionMapper,
+            @Named("defaultClaimsFetcher") ClaimsFetcher claimsFetcher) {
+        return new AuthorizationServiceImpl(
+                permissionMapper,
+                claimsFetcher);
+    }
+
+
+    @Provides
+    @Singleton
     @Named("authorizationTxManager")
     TxManager authorizationTxManager(
             KapuaJpaTxManagerFactory jpaTxManagerFactory
     ) {
         return jpaTxManagerFactory.create("kapua-authorization");
+    }
+
+    @Provides
+    @Singleton
+    @Named("bruteForceClaimsFetcher")
+    ClaimsFetcher bruteForceClaimsFetcher(
+            Provider<AuthorizationService> authorizationService,
+            PermissionFactory permissionFactory,
+            Set<Domain> knownDomains) {
+        return new BruteForceClaimsFetcher(
+                authorizationService,
+                permissionFactory,
+                knownDomains);
+    }
+
+    @Provides
+    @Singleton
+    @Named("defaultClaimsFetcher")
+    ClaimsFetcher defaultClaimsFetcher(
+            Provider<AuthorizationService> authorizationService,
+            Provider<AuthenticationService> authenticationService, //Provider added to break circular dependency between AuthZServiceImpl -> AuthNServiceImpl -> CertificateServiceImpl -> AuthZServiceImpl
+            PermissionFactory permissionFactory,
+            Set<Domain> knownDomains) {
+        return new SimpleClaimsFetcher(
+                authorizationService,
+                authenticationService,
+                permissionFactory,
+                knownDomains);
     }
 
     @Provides
