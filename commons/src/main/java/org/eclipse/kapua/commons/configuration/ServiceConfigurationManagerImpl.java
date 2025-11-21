@@ -486,4 +486,36 @@ public class ServiceConfigurationManagerImpl implements ServiceConfigurationMana
             return Optional.empty();
         });
     }
+
+    /**
+     * Sets custom values (default, min, max) for the given KapuaTad object
+     * Defined for convenience to be used by subclasses
+     * @since 2.0.0
+     */
+    protected void setCustomKapuaTad(KapuaTad tad, String defaultValue, String minValue, String maxValue) {
+        if (defaultValue != null) {
+            tad.setDefault(defaultValue);
+        }
+        if (minValue != null) {
+            tad.setMin(minValue);
+        }
+        if (maxValue != null) {
+            tad.setMax(maxValue);
+        }
+    }
+
+    /**
+     * Extracts from the given KapuaTocd object the KapuaTad with the given 'defaultValue' name, and sets the custom values (default, min, max)
+     * Defined for convenience to be used by subclasses
+     * @since 2.0.0
+     */
+    protected void setCustomDefinition(KapuaTocd definition, String kapuaTadName, String defaultValue, String minValue, String maxValue) {
+        Optional<KapuaTad> definitioToChange =
+                definition.getAD()
+                        .stream()
+                        .filter(a -> a.getName().equals(kapuaTadName))
+                        .findAny();
+        definitioToChange.ifPresent(kapuaTad -> setCustomKapuaTad(kapuaTad, defaultValue, minValue, maxValue));
+    }
+
 }
