@@ -184,7 +184,7 @@ public class AuthorizationModule extends AbstractKapuaModule {
     @Singleton
     AuthorizationService authorizationService(
             PermissionMapper permissionMapper,
-            @Named("defaultClaimsFetcher") ClaimsFetcher claimsFetcher) {
+            @Named("defaultClaimsFetcher") Provider<ClaimsFetcher> claimsFetcher) {
         return new AuthorizationServiceImpl(
                 permissionMapper,
                 claimsFetcher);
@@ -204,7 +204,7 @@ public class AuthorizationModule extends AbstractKapuaModule {
     @Singleton
     @Named("bruteForceClaimsFetcher")
     ClaimsFetcher bruteForceClaimsFetcher(
-            Provider<AuthorizationService> authorizationService,
+            AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
             Set<Domain> knownDomains) {
         return new BruteForceClaimsFetcher(
@@ -217,8 +217,8 @@ public class AuthorizationModule extends AbstractKapuaModule {
     @Singleton
     @Named("defaultClaimsFetcher")
     ClaimsFetcher defaultClaimsFetcher(
-            Provider<AuthorizationService> authorizationService,
-            Provider<AuthenticationService> authenticationService, //Provider added to break circular dependency between AuthZServiceImpl -> AuthNServiceImpl -> CertificateServiceImpl -> AuthZServiceImpl
+            AuthorizationService authorizationService,
+            AuthenticationService authenticationService,
             PermissionFactory permissionFactory,
             Set<Domain> knownDomains) {
         return new SimpleClaimsFetcher(
