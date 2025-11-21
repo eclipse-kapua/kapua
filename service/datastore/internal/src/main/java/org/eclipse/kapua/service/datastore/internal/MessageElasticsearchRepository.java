@@ -118,7 +118,7 @@ public class MessageElasticsearchRepository extends DatastoreElasticSearchReposi
             }
         } else {
             final Map<String, Metric> newMetrics = getMessageMappingDiffs(metricsByIndex.get(indexName), metrics);
-            if(!newMetrics.isEmpty()) {
+            if(newMetrics != null && newMetrics.size() > 0) {
                 synchronized (metadataUpdateSync) {
                     doUpsertMappings(indexName, metrics);
                     metricsByIndex.get(indexName).putAll(newMetrics);
