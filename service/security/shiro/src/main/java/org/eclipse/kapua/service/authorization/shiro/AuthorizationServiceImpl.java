@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.google.inject.Provider;
 import org.apache.shiro.SecurityUtils;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaUnauthenticatedException;
@@ -40,14 +41,14 @@ import org.eclipse.kapua.service.authorization.shiro.claims.ClaimsFetcher;
 public class AuthorizationServiceImpl implements AuthorizationService {
 
     private final PermissionMapper permissionMapper;
-    private final ClaimsFetcher claimsFetcher;
+    private final Provider<ClaimsFetcher> claimsFetcherProvider; //I want a lazy injection here, to avoid a potential circular dependency and because ClaimsFetcher may not be needed
 
     @Inject
     public AuthorizationServiceImpl(
             PermissionMapper permissionMapper,
-            ClaimsFetcher claimsFetcher) {
+            Provider<ClaimsFetcher> claimsFetcherProvider) {
         this.permissionMapper = permissionMapper;
-        this.claimsFetcher = claimsFetcher;
+        this.claimsFetcherProvider = claimsFetcherProvider;
     }
 
     @Override
@@ -71,7 +72,7 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 
     @Override
     public Set<String> fetchUserClaims(KapuaId inScope) throws KapuaException {
-        return claimsFetcher.fetchUserClaims(inScope);
+        return claimsFetcherProvider.get().fetchUserClaims(inScope);
     }
 
     @Override

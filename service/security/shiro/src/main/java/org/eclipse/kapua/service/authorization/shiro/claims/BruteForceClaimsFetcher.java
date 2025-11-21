@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.shiro.claims;
 
-import com.google.inject.Provider;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.model.domain.Domain;
 import org.eclipse.kapua.model.id.KapuaId;
@@ -30,15 +29,15 @@ import java.util.stream.Stream;
 
 public class BruteForceClaimsFetcher implements ClaimsFetcher {
 
-    private final Provider<AuthorizationService> authorizationServiceProvider;
+    private final AuthorizationService authorizationServiceProvider;
     private final Set<Domain> knownDomains;
     private final PermissionFactory permissionFactory;
 
     @Inject
-    public BruteForceClaimsFetcher(Provider<AuthorizationService> authorizationServiceProvider,
+    public BruteForceClaimsFetcher(AuthorizationService authorizationService,
                                    PermissionFactory permissionFactory,
                                    Set<Domain> knownDomains) {
-        this.authorizationServiceProvider = authorizationServiceProvider;
+        this.authorizationServiceProvider = authorizationService;
         this.permissionFactory = permissionFactory;
         this.knownDomains = knownDomains;
     }
@@ -52,7 +51,7 @@ public class BruteForceClaimsFetcher implements ClaimsFetcher {
                             .filter(action -> {
                                 try {
                                     final Permission permission = permissionFactory.newPermission(domain.getName(), action, inScope);
-                                    return authorizationServiceProvider.get().isPermitted(permission);
+                                    return authorizationServiceProvider.isPermitted(permission);
                                 } catch (KapuaException e) {
                                     return false;
                                 }

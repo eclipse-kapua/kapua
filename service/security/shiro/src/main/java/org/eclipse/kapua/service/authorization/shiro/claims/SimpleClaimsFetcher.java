@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.shiro.claims;
 
-import com.google.inject.Provider;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.domain.Domain;
@@ -33,26 +32,25 @@ import java.util.stream.Collectors;
 
 public class SimpleClaimsFetcher implements ClaimsFetcher {
 
-    //Provider added to break circular dependency between AuthZServiceImpl -> AuthNServiceImpl -> CertificateServiceImpl -> AuthZServiceImpl
-    private final Provider<AuthenticationService> authenticationServiceProvider;
-    private final Provider<AuthorizationService> authorizationServiceProvider;
+    private final AuthenticationService authenticationService;
+    private final AuthorizationService authorizationService;
     private final Set<Domain> knownDomains;
     private final PermissionFactory permissionFactory;
 
     @Inject
-    public SimpleClaimsFetcher(Provider<AuthorizationService> authorizationServiceProvider,
-                               Provider<AuthenticationService> authenticationServiceProvider,
+    public SimpleClaimsFetcher(AuthorizationService authorizationService,
+                               AuthenticationService authenticationService,
                                PermissionFactory permissionFactory,
                                Set<Domain> knownDomains) {
-        this.authorizationServiceProvider = authorizationServiceProvider;
-        this.authenticationServiceProvider = authenticationServiceProvider;
+        this.authorizationService = authorizationService;
+        this.authenticationService = authenticationService;
         this.permissionFactory = permissionFactory;
         this.knownDomains = knownDomains;
     }
 
     @Override
     public Set<String> fetchUserClaims(KapuaId inScope) throws KapuaException {
-        LoginInfo loginInfo = authenticationServiceProvider.get().getLoginInfo();
+        LoginInfo loginInfo = authenticationService.getLoginInfo();
         //Retrieve all permissions from both AccessPermissions and RolePermissions
         Set<AccessPermission> accessPermissions = loginInfo.getAccessPermission();
         Set<RolePermission> accessRolePermissions = loginInfo.getRolePermission();
@@ -71,7 +69,7 @@ public class SimpleClaimsFetcher implements ClaimsFetcher {
                 for (Actions a : actions) {
                     try {
                         final Permission permission = permissionFactory.newPermission(d, a, inScope, p.getGroupId()); //GroupId could be null (no group) or a specific group
-                        if (this.authorizationServiceProvider.get().isPermitted(permission)) {
+                        if (authorizationService.isPermitted(permission)) {
                             claims.add(String.format("%s:%s", d, a));
                         }
                     } catch (KapuaException e) {
