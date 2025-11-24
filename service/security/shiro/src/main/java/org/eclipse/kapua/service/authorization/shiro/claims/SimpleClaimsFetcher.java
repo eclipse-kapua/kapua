@@ -29,6 +29,9 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+
+//A ClaimsFetcher that enumerates only the domain&action assigned to the user in session
+
 public class SimpleClaimsFetcher implements ClaimsFetcher {
 
     private final AuthenticationService authenticationService;
