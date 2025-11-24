@@ -25,8 +25,7 @@ import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.authorization.role.RolePermission;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -59,14 +58,16 @@ public class SimpleClaimsFetcher implements ClaimsFetcher {
         permissions.addAll(permissionsRole);
 
         Set<String> claims = new java.util.HashSet<>();
-        List<String> domains = new ArrayList<>();
-        List<Actions> actions = new ArrayList<>();
+        Queue<String> domains = new java.util.LinkedList<>();
+        Queue<Actions> actions = new java.util.LinkedList<>();
 
         for (Permission p : permissions) {
             resolveDomain(p, domains); //Resolve domains considering the "*" a possibility
-            for (String d : domains) {
+            while (!domains.isEmpty()) {
+                String d = domains.poll();
                 resolveAction(p, d, actions); //Resolve actions considering the "*" a possibility
-                for (Actions a : actions) {
+                while (!actions.isEmpty()) {
+                    Actions a = actions.poll();
                     try {
                         final Permission permission = permissionFactory.newPermission(d, a, inScope, p.getGroupId()); //GroupId could be null (no group) or a specific group
                         if (authorizationService.isPermitted(permission)) {
@@ -76,14 +77,12 @@ public class SimpleClaimsFetcher implements ClaimsFetcher {
                         // Ignore (don't add claim)
                     }
                 }
-                actions.clear();
             }
-            domains.clear();
         }
         return claims;
     }
 
-    private void resolveDomain(Permission p, List<String> domains) {
+    private void resolveDomain(Permission p, Queue<String> domains) {
         if (p.getDomain() != null) { //Specific domain
             domains.add(p.getDomain());
         } else { //All domains
@@ -93,7 +92,7 @@ public class SimpleClaimsFetcher implements ClaimsFetcher {
         }
     }
 
-    private void resolveAction(Permission p, String d, List<Actions> actions) {
+    private void resolveAction(Permission p, String d, Queue<Actions> actions) {
         if (p.getAction() != null) { //Specific Action
             actions.add(p.getAction());
         } else { //All Actions
