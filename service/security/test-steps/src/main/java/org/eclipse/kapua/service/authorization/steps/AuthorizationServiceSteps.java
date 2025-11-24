@@ -138,6 +138,8 @@ public class AuthorizationServiceSteps extends TestBase {
 
     private static final TestDomain TEST_DOMAIN = new TestDomain();
 
+    KapuaLocator locator = KapuaLocator.getInstance();
+
     // Various Authorization service references
     private PermissionFactory permissionFactory;
     private AccessInfoService accessInfoService;
@@ -156,7 +158,6 @@ public class AuthorizationServiceSteps extends TestBase {
     private RolePermissionFactory rolePermissionFactory;
     private UserService userService;
     private AuthorizationService authorizationService;
-    private ClaimsFetcher bruteForceClaimsFetcher;
 
     @Inject
     public AuthorizationServiceSteps(StepData stepData) {
@@ -165,7 +166,6 @@ public class AuthorizationServiceSteps extends TestBase {
 
     @After(value = "@setup")
     public void setServices() {
-        KapuaLocator locator = KapuaLocator.getInstance();
         accessInfoService = locator.getService(AccessInfoService.class);
         accessInfoFactory = locator.getFactory(AccessInfoFactory.class);
         accessPermissionService = locator.getService(AccessPermissionService.class);
@@ -183,7 +183,6 @@ public class AuthorizationServiceSteps extends TestBase {
         permissionFactory = locator.getFactory(PermissionFactory.class);
         userService = locator.getService(UserService.class);
         authorizationService = locator.getService(AuthorizationService.class);
-        bruteForceClaimsFetcher = locator.getComponent(ClaimsFetcher.class, "bruteForceClaimsFetcher");
     }
 
     @Before
@@ -1345,7 +1344,7 @@ public class AuthorizationServiceSteps extends TestBase {
     public void compareUserClaimsWithBruteForce() throws Exception {
         KapuaId currScope = (KapuaId) stepData.get(LAST_ACCOUNT_ID);
         Set<String> userClaims = (Set<String>) stepData.get("UserClaims");
-        Assert.assertEquals(bruteForceClaimsFetcher.fetchUserClaims(currScope), userClaims);
+        Assert.assertEquals(locator.getComponent(ClaimsFetcher.class, "bruteForceClaimsFetcher").fetchUserClaims(currScope), userClaims);
     }
 
     @When("I search for the last created permission")
