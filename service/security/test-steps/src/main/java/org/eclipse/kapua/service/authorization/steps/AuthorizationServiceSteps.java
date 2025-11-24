@@ -84,6 +84,7 @@ import org.eclipse.kapua.service.authorization.role.RolePermissionQuery;
 import org.eclipse.kapua.service.authorization.role.RolePermissionService;
 import org.eclipse.kapua.service.authorization.role.RoleQuery;
 import org.eclipse.kapua.service.authorization.role.RoleService;
+import org.eclipse.kapua.service.authorization.shiro.claims.ClaimsFetcher;
 import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserService;
@@ -155,6 +156,7 @@ public class AuthorizationServiceSteps extends TestBase {
     private RolePermissionFactory rolePermissionFactory;
     private UserService userService;
     private AuthorizationService authorizationService;
+    private ClaimsFetcher bruteForceClaimsFetcher;
 
     @Inject
     public AuthorizationServiceSteps(StepData stepData) {
@@ -181,6 +183,7 @@ public class AuthorizationServiceSteps extends TestBase {
         permissionFactory = locator.getFactory(PermissionFactory.class);
         userService = locator.getService(UserService.class);
         authorizationService = locator.getService(AuthorizationService.class);
+        bruteForceClaimsFetcher = locator.getComponent(ClaimsFetcher.class, "bruteForceClaimsFetcher");
     }
 
     @Before
@@ -1336,6 +1339,13 @@ public class AuthorizationServiceSteps extends TestBase {
             userClaims.remove(claim);
         }
         Assert.assertTrue(userClaims.isEmpty());
+    }
+
+    @Then("The computed user claims are the same of using the brute force approach")
+    public void compareUserClaimsWithBruteForce() throws Exception {
+        KapuaId currScope = (KapuaId) stepData.get(LAST_ACCOUNT_ID);
+        Set<String> userClaims = (Set<String>) stepData.get("UserClaims");
+        Assert.assertEquals(bruteForceClaimsFetcher.fetchUserClaims(currScope), userClaims);
     }
 
     @When("I search for the last created permission")
