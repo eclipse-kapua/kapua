@@ -23,11 +23,10 @@ import org.eclipse.kapua.service.authentication.KapuaPrincipal;
  *
  * @since 1.0
  */
-public class KapuaPrincipalImpl implements KapuaPrincipal {
+public class KapuaPrincipalImpl extends org.apache.activemq.artemis.spi.core.security.jaas.UserPrincipal implements KapuaPrincipal {
 
     private static final long serialVersionUID = -2120917772921438176L;
 
-    private String name;
     private String clientId;
     private boolean internal;
     /**
@@ -45,7 +44,7 @@ public class KapuaPrincipalImpl implements KapuaPrincipal {
      * @param authResponse
      */
     public KapuaPrincipalImpl(AuthResponse authResponse) {
-        name = authResponse.getUsername() + "@" + authResponse.getClientId();
+        super(authResponse.getUsername() + "@" + authResponse.getClientId());
         clientId = authResponse.getClientId();
         accessTokenId = authResponse.getAccessTokenId();
         userId = KapuaEid.parseCompactId(authResponse.getUserId());
@@ -61,15 +60,10 @@ public class KapuaPrincipalImpl implements KapuaPrincipal {
      * @param clientId
      */
     public KapuaPrincipalImpl(KapuaId accountId, String username, String clientId) {
+        super(username + "@" + clientId);
         internal = true;
         this.accountId = accountId;
-        name = username + "@" + clientId;
         this.clientId = clientId;
-    }
-
-    @Override
-    public String getName() {
-        return name;
     }
 
     @Override
@@ -110,7 +104,7 @@ public class KapuaPrincipalImpl implements KapuaPrincipal {
     @Override
     public int hashCode() {
         //name is unique so let's use it for hashing
-        return (name == null ? 0 : name.hashCode());
+        return (getName() == null ? 0 : getName().hashCode());
     }
 
     @Override
@@ -125,11 +119,11 @@ public class KapuaPrincipalImpl implements KapuaPrincipal {
             return false;
         }
         KapuaPrincipalImpl other = (KapuaPrincipalImpl) obj;
-        if (name == null) {
-            if (other.name != null) {
+        if (getName() == null) {
+            if (other.getName() != null) {
                 return false;
             }
-        } else if (!name.equals(other.name)) {
+        } else if (!getName().equals(other.getName())) {
             return false;
         }
         return true;
