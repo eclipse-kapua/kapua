@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -32,6 +32,7 @@ public class DatastoreCacheManager {
     private final LocalCache<String, Boolean> channelsCache;
     private final LocalCache<String, Boolean> metricsCache;
     private final LocalCache<String, Boolean> clientsCache;
+    private final LocalCache<String, Boolean> indexCache;
 
     @Inject
     public DatastoreCacheManager(DatastoreSettings datastoreSettings) {
@@ -42,6 +43,7 @@ public class DatastoreCacheManager {
         metricsCache = new LocalCache<>(datastoreSettings.getMetricsCacheConfig(), false);
 
         schemaCache = new LocalCache<>(sizeMaxMetadata, null);
+        indexCache = new LocalCache<>(sizeMaxMetadata, null);
     }
 
     /**
@@ -72,6 +74,16 @@ public class DatastoreCacheManager {
      */
     public LocalCache<String, Boolean> getClientsCache() {
         return clientsCache;
+    }
+
+    /**
+     * Get the index informations cache
+     *
+     * @return
+     * @since 2.0.0
+     */
+    public LocalCache<String, Boolean> getIndexCache() {
+        return indexCache;
     }
 
     /**
