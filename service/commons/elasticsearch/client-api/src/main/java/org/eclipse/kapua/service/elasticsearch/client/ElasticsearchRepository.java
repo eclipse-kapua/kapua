@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2020, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -45,12 +45,14 @@ public abstract class ElasticsearchRepository<
         T extends Storable,
         L extends StorableListResult<T>,
         Q extends StorableQuery> implements StorableRepository<T, L, Q> {
+
     protected final ElasticsearchClientProvider elasticsearchClientProviderInstance;
     private final Class<T> clazz;
     private final StorableFactory<T, L, Q> storableFactory;
     protected final StorablePredicateFactory storablePredicateFactory;
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     protected final LocalCache<String, Boolean> indexUpserted;
+    private final Object updateSync = new Object();
 
     protected abstract String indexResolver(KapuaId scopeId);
 
@@ -110,7 +112,7 @@ public abstract class ElasticsearchRepository<
 
     private void synchIndex(String indexName) {
         if (!indexUpserted.containsKey(indexName)) {
-            synchronized (clazz) {
+            synchronized (updateSync) {
                 doUpsertIndex(indexName);
                 indexUpserted.put(indexName, true);
             }
@@ -196,6 +198,7 @@ public abstract class ElasticsearchRepository<
             throw new RuntimeException(e);
         }
     }
+
 
     @Override
     public Set<String> upsert(List<T> items) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -63,6 +63,7 @@ public class MessageElasticsearchRepository extends DatastoreElasticSearchReposi
                 DatastoreMessage.class,
                 messageStoreFactory,
                 storablePredicateFactory,
+                datastoreCacheManager.getIndexCache(),
                 datastoreSettings);
         this.datastoreUtils = datastoreUtils;
         metricsByIndex = datastoreCacheManager.getMetadataCache();
