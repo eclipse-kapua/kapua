@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -36,6 +36,8 @@ import org.eclipse.kapua.service.storable.model.id.StorableId;
 import org.eclipse.kapua.service.storable.model.query.predicate.StorablePredicateFactory;
 import org.eclipse.kapua.service.storable.model.utils.KeyValueEntry;
 import org.eclipse.kapua.service.storable.model.utils.MappingUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.Map;
@@ -43,8 +45,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class MessageElasticsearchRepository extends DatastoreElasticSearchRepositoryBase<DatastoreMessage, MessageListResult, MessageQuery> implements MessageRepository {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ClientInfoRegistryFacadeImpl.class);
     private final DatastoreUtils datastoreUtils;
     private final LocalCache<String, Map<String, Metric>> metricsByIndex;
+    private final Object metadataUpdateSync = new Object();
 
     @Inject
     public MessageElasticsearchRepository(
@@ -58,6 +63,7 @@ public class MessageElasticsearchRepository extends DatastoreElasticSearchReposi
                 DatastoreMessage.class,
                 messageStoreFactory,
                 storablePredicateFactory,
+                datastoreCacheManager.getIndexCache(),
                 datastoreSettings);
         this.datastoreUtils = datastoreUtils;
         metricsByIndex = datastoreCacheManager.getMetadataCache();
@@ -106,16 +112,20 @@ public class MessageElasticsearchRepository extends DatastoreElasticSearchReposi
         final String indexName = indexResolver(messageToStore.getScopeId(), messageTime);
 
         if (!metricsByIndex.containsKey(indexName)) {
-            synchronized (DatastoreMessage.class) {
+            synchronized (metadataUpdateSync) {
                 doUpsertIndex(indexName);
                 doUpsertMappings(indexName, metrics);
                 metricsByIndex.put(indexName, metrics);
             }
         } else {
             final Map<String, Metric> newMetrics = getMessageMappingDiffs(metricsByIndex.get(indexName), metrics);
-            synchronized (DatastoreMessage.class) {
-                doUpsertMappings(indexName, metrics);
-                metricsByIndex.get(indexName).putAll(newMetrics);
+            if(newMetrics != null && newMetrics.size() > 0) {
+                synchronized (metadataUpdateSync) {
+                    doUpsertMappings(indexName, metrics);
+                    metricsByIndex.get(indexName).putAll(newMetrics);
+                }
+            } else {
+                LOG.debug("No mapping updates for index {}", indexName);
             }
         }
         final InsertRequest insertRequest = new InsertRequest(idExtractor(messageToStore).toString(), indexName, messageToStore);

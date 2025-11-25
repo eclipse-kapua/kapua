@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -19,6 +19,8 @@ import org.eclipse.kapua.service.datastore.internal.mediator.ChannelInfoField;
 import org.eclipse.kapua.service.datastore.internal.mediator.ConfigurationException;
 import org.eclipse.kapua.service.datastore.internal.model.ChannelInfoListResultImpl;
 import org.eclipse.kapua.service.datastore.internal.model.query.ChannelInfoQueryImpl;
+import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
+import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettingsKey;
 import org.eclipse.kapua.service.datastore.model.ChannelInfo;
 import org.eclipse.kapua.service.datastore.model.ChannelInfoListResult;
 import org.eclipse.kapua.service.datastore.model.query.ChannelInfoQuery;
@@ -47,6 +49,10 @@ public class ChannelInfoRegistryFacadeImpl extends AbstractDatastoreFacade imple
     private final ChannelInfoRepository repository;
     private final DatastoreCacheManager datastoreCacheManager;
     private final Object metadataUpdateSync = new Object();
+    private final DatastoreSettings datastoreSettings;
+
+    private final Boolean shouldSynchBeforeUpsertInCacheMiss;
+    private final Boolean shouldFetchBeforeUpsertInCacheMiss;
 
     private static final String QUERY = "query";
     private static final String QUERY_SCOPE_ID = "query.scopeId";
@@ -63,12 +69,17 @@ public class ChannelInfoRegistryFacadeImpl extends AbstractDatastoreFacade imple
             StorableIdFactory storableIdFactory,
             StorablePredicateFactory storablePredicateFactory,
             ChannelInfoRepository channelInfoRepository,
-            DatastoreCacheManager datastoreCacheManager) {
+            DatastoreCacheManager datastoreCacheManager,
+            DatastoreSettings datastoreSettings) {
         super(configProvider);
         this.storableIdFactory = storableIdFactory;
         this.storablePredicateFactory = storablePredicateFactory;
         this.repository = channelInfoRepository;
         this.datastoreCacheManager = datastoreCacheManager;
+        this.datastoreSettings = datastoreSettings;
+
+        this.shouldSynchBeforeUpsertInCacheMiss = datastoreSettings.getBoolean(DatastoreSettingsKey.CONFIG_CHANNELS_CACHE_LOCAL_SYNCH_BEFORE_UPSERT, true);
+        this.shouldFetchBeforeUpsertInCacheMiss = datastoreSettings.getBoolean(DatastoreSettingsKey.CONFIG_CHANNELS_CACHE_LOCAL_FETCH_FROM_SOURCE_BEFORE_UPSERT, true);
     }
 
     /**
@@ -93,19 +104,17 @@ public class ChannelInfoRegistryFacadeImpl extends AbstractDatastoreFacade imple
 
         // Store channel. Look up channel in the cache, and cache it if it doesn't exist
         if (!datastoreCacheManager.getChannelsCache().get(channelInfoId)) {
-            // The code is safe even without the synchronized block
-            // Synchronize in order to let the first thread complete its
-            // update then the others of the same type will find the cache
-            // updated and skip the update.
-            synchronized (metadataUpdateSync) {
-                if (!datastoreCacheManager.getChannelsCache().get(channelInfoId)) {
-                    ChannelInfo storedField = doFind(channelInfo.getScopeId(), storableId);
-                    if (storedField == null) {
-                        repository.upsert(channelInfoId, channelInfo);
-                    }
-                    // Update cache if channel update is completed successfully
-                    datastoreCacheManager.getChannelsCache().put(channelInfoId, true);
+            if (shouldSynchBeforeUpsertInCacheMiss) {
+                // The code is safe even without the synchronized block
+                // Synchronize in order to let the first thread complete its
+                // update then the others of the same type will find the cache
+                // updated and skip the update.
+                synchronized (metadataUpdateSync) {
+                    doUpstore(storableId, channelInfoId, channelInfo);
                 }
+            } else {
+                LOG.debug("Skip synch for channnel {} of client {}", channelInfo.getName(), channelInfo.getClientId());
+                doUpstore(storableId, channelInfoId, channelInfo);
             }
         }
         return storableId;
@@ -231,5 +240,21 @@ public class ChannelInfoRegistryFacadeImpl extends AbstractDatastoreFacade imple
             return;
         }
         repository.delete(query);
+    }
+
+    private void doUpstore(StorableId storableId, String channelInfoId, ChannelInfo channelInfo) throws KapuaIllegalArgumentException, ConfigurationException, ClientException {
+        if (!datastoreCacheManager.getChannelsCache().get(channelInfoId)) {
+            ChannelInfo storedField = null;
+            if (shouldFetchBeforeUpsertInCacheMiss) {
+                storedField = doFind(channelInfo.getScopeId(), storableId);
+            } else {
+                LOG.info("Skip find for channnel {} of client {}", channelInfo.getName(), channelInfo.getClientId());
+            }
+            if (storedField == null) {
+                repository.upsert(channelInfoId, channelInfo);
+            }
+            // Update cache if channel update is completed successfully
+            datastoreCacheManager.getChannelsCache().put(channelInfoId, true);
+        }
     }
 }
