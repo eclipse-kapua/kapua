@@ -137,7 +137,6 @@
 
         <!-- Log Dependencies Versions-->
         <log4j-api.version>2.25.2</log4j-api.version>
-        <log4j2-mock.version>0.0.2</log4j2-mock.version>
         <logback.version>1.5.21</logback.version>
         <slf4j.version>2.0.17</slf4j.version>
 
@@ -2212,11 +2211,6 @@
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
                 <version>${logback.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>de.dentrassi.elasticsearch</groupId>
-                <artifactId>log4j2-mock</artifactId>
-                <version>${log4j2-mock.version}</version>
             </dependency>
             <!-- Logging - Bridge implementations -->
             <dependency>
