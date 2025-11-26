@@ -10,7 +10,7 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.service.authorization.shiro.claims;
+package org.eclipse.kapua.service.authorization.steps;
 
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.model.domain.Domain;
@@ -18,25 +18,32 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.shiro.claims.ClaimsFetcher;
 
 import javax.inject.Inject;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-//A ClaimsFetcher that enumerates all possible domain&actions
-//BE AWARE THAT PERFORMS WRONG IN PRESENCE OF PERMISSIONS RESTRICTED TO GROUPS
 
-public class BruteForceClaimsFetcher implements ClaimsFetcher {
+/**
+ * {@link ClaimsFetcher} implementation.
+ * A ClaimsFetcher that enumerates all possible domains and actions without taking into account groups (i.e. if a permission is assigned to a group it is not included in the claims).
+ * Used for test purposes only
+ *
+ * @since 2.0.0
+ */
+
+public class NoGroupsClaimsFetcher implements ClaimsFetcher {
 
     private final AuthorizationService authorizationServiceProvider;
     private final Set<Domain> knownDomains;
     private final PermissionFactory permissionFactory;
 
     @Inject
-    public BruteForceClaimsFetcher(AuthorizationService authorizationService,
-                                   PermissionFactory permissionFactory,
-                                   Set<Domain> knownDomains) {
+    public NoGroupsClaimsFetcher(AuthorizationService authorizationService,
+                                 PermissionFactory permissionFactory,
+                                 Set<Domain> knownDomains) {
         this.authorizationServiceProvider = authorizationService;
         this.permissionFactory = permissionFactory;
         this.knownDomains = knownDomains;

@@ -30,9 +30,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 
-//A ClaimsFetcher that enumerates only the domain&action assigned to the user in session
+/**
+ * {@link ClaimsFetcher} implementation.
+ * A ClaimsFetcher that enumerates only the domains and actions assigned to the user in session
+ *
+ * @since 2.0.0
+ */
 
-public class SimpleClaimsFetcher implements ClaimsFetcher {
+public class ClaimsFetcherImpl implements ClaimsFetcher {
 
     private final AuthenticationService authenticationService;
     private final AuthorizationService authorizationService;
@@ -40,10 +45,10 @@ public class SimpleClaimsFetcher implements ClaimsFetcher {
     private final PermissionFactory permissionFactory;
 
     @Inject
-    public SimpleClaimsFetcher(AuthorizationService authorizationService,
-                               AuthenticationService authenticationService,
-                               PermissionFactory permissionFactory,
-                               Set<Domain> knownDomains) {
+    public ClaimsFetcherImpl(AuthorizationService authorizationService,
+                             AuthenticationService authenticationService,
+                             PermissionFactory permissionFactory,
+                             Set<Domain> knownDomains) {
         this.authorizationService = authorizationService;
         this.authenticationService = authenticationService;
         this.permissionFactory = permissionFactory;
