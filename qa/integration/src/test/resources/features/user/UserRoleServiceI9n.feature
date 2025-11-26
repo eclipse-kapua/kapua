@@ -620,7 +620,7 @@ Feature: User role service integration tests
       | user1 | User@10031995 | true    |
     And Full permissions
     When I fetch user claims for the last account
-    Then The computed user claims are the same of using the brute force approach
+    Then The computed user claims are the same of using another approach
     And I logout
 
 
