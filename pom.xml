@@ -116,9 +116,6 @@
         <junit.version>4.13.2</junit.version>
         <jupiter.version>5.9.2</jupiter.version>
         <liquibase.version>3.6.3</liquibase.version>
-        <log4j-api.version>2.25.2</log4j-api.version>
-        <log4j2-mock.version>0.0.2</log4j2-mock.version>
-        <logback.version>1.5.21</logback.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <mockito.version>1.10.19</mockito.version>
         <netty.version>4.1.124.Final</netty.version>
@@ -133,11 +130,16 @@
         <reflections.version>0.10.2</reflections.version>
         <scada-utils.version>0.4.0</scada-utils.version>
         <shiro.version>1.13.0</shiro.version>
-        <slf4j.version>2.0.17</slf4j.version>
         <snakeyaml.version>2.2</snakeyaml.version>
         <spotify.version>8.15.1</spotify.version>
         <swagger-ui.version>5.3.1</swagger-ui.version>
         <zxing.version>3.4.1</zxing.version>
+
+        <!-- Log Dependencies Versions-->
+        <log4j-api.version>2.25.2</log4j-api.version>
+        <log4j2-mock.version>0.0.2</log4j2-mock.version>
+        <logback.version>1.5.21</logback.version>
+        <slf4j.version>2.0.17</slf4j.version>
 
         <!-- Plugins versions -->
         <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
