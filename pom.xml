@@ -118,7 +118,7 @@
         <liquibase.version>3.6.3</liquibase.version>
         <log4j-api.version>2.17.1</log4j-api.version>
         <log4j2-mock.version>0.0.2</log4j2-mock.version>
-        <logback.version>1.5.18</logback.version>
+        <logback.version>1.5.21</logback.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <mockito.version>1.10.19</mockito.version>
         <netty.version>4.1.124.Final</netty.version>
