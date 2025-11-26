@@ -12,70 +12,72 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication;
 
-import com.google.inject.Provides;
-import org.eclipse.kapua.commons.core.AbstractKapuaModule;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.apache.activemq.artemis.spi.core.security.jaas.UserPrincipal;
+import org.eclipse.kapua.commons.core.AbstractKapuaModule;
+import com.google.inject.Provides;
+
 public class TestModule extends AbstractKapuaModule {
+
     @Override
     protected void configureModule() {
-
+        bind(UserPrincipal.class).toInstance(new UserPrincipal(""));
     }
 
     @Provides
     @Named(value = "metricModuleName")
     String metricModuleName() {
-        return "test";
+        return "shiro-unit-test";
     }
 
     @Provides
     @Named(value = "eventsModuleName")
     String eventsModuleName() {
-        return "test";
+        return "shiro-unit-test";
     }
 
     @Provides
     @Singleton
     @Named("accountEvtSubscriptionGroupId")
     String accountEvtSubscriptionGroupId() {
-        return "shiro-test";
+        return "shiro-unit-test";
     }
 
     @Provides
     @Singleton
     @Named("authenticationEvtSubscriptionGroupId")
     String authenticationEvtSubscriptionGroupId() {
-        return "shiro-test";
+        return "shiro-unit-test";
     }
 
     @Provides
     @Singleton
     @Named("authorizationEvtSubscriptionGroupId")
     String authorizationEvtSubscriptionGroupId() {
-        return "shiro-test";
+        return "shiro-unit-test";
     }
 
     @Provides
     @Singleton
     @Named("deviceConnectionEvtSubscriptionGroupId")
     String deviceConnectionEvtSubscriptionGroupId() {
-        return "shiro-test";
+        return "shiro-unit-test";
     }
 
     @Provides
     @Singleton
     @Named("deviceRegistryEvtSubscriptionGroupId")
     String deviceRegistryEvtSubscriptionGroupId() {
-        return "shiro-test";
+        return "shiro-unit-test";
     }
 
     @Provides
     @Singleton
     @Named("userEvtSubscriptionGroupId")
     String userEvtSubscriptionGroupId() {
-        return "shiro-test";
+        return "shiro-unit-test";
     }
 
 }
