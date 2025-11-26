@@ -1340,11 +1340,11 @@ public class AuthorizationServiceSteps extends TestBase {
         Assert.assertTrue(userClaims.isEmpty());
     }
 
-    @Then("The computed user claims are the same of using the brute force approach")
-    public void compareUserClaimsWithBruteForce() throws Exception {
+    @Then("The computed user claims are the same of using another approach")
+    public void compareUserClaimsWithOldApproach() throws Exception {
         KapuaId currScope = (KapuaId) stepData.get(LAST_ACCOUNT_ID);
         Set<String> userClaims = (Set<String>) stepData.get("UserClaims");
-        Assert.assertEquals(locator.getComponent(ClaimsFetcher.class, "bruteForceClaimsFetcher").fetchUserClaims(currScope), userClaims);
+        Assert.assertEquals(locator.getComponent(ClaimsFetcher.class, "NoGroupsClaimsFetcher").fetchUserClaims(currScope), userClaims);
     }
 
     @When("I search for the last created permission")
