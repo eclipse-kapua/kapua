@@ -56,4 +56,4 @@ if [ "${KAPUA_DISABLE_DATASTORE:-false}" == "true" ]; then
 fi
 
 # Run broker
-/opt/activemq/bin/activemq console
+exec /opt/activemq/bin/activemq console
