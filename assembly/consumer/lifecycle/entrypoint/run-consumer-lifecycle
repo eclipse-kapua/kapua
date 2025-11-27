@@ -26,4 +26,4 @@ JAVA_OPTS="${JAVA_OPTS} -Dcommons.db.jdbcConnectionUrlResolver=${DB_RESOLVER:-DE
 JAVA_OPTS="${JAVA_OPTS} -Dcommons.db.jdbc.driver=${DB_DRIVER:-org.h2.Driver}"
 JAVA_OPTS="${JAVA_OPTS} -Dcommons.db.connection.additionalOptions=${DB_CONNECTION_ADDITIONAL_OPTIONS}"
 
-java ${JAVA_OPTS} ${DEBUG_OPTS} ${JMX_OPTS} -jar kapua-consumer-lifecycle-2.1.0-SNAPSHOT-app.jar
+exec java ${JAVA_OPTS} ${DEBUG_OPTS} ${JMX_OPTS} -jar kapua-consumer-lifecycle-2.1.0-SNAPSHOT-app.jar
