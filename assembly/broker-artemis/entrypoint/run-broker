@@ -58,4 +58,4 @@ JAVA_ARGS="${JAVA_ARGS} -Dcommons.db.jdbc.driver=${DB_DRIVER:-org.h2.Driver}"
 JAVA_ARGS="${JAVA_ARGS} -Dcommons.db.connection.additionalOptions=${DB_CONNECTION_ADDITIONAL_OPTIONS}"
 
 echo 'starting Artemis...'
-/opt/artemis/kapua/bin/artemis run xml:/opt/artemis/kapua/etc/bootstrap.xml
+exec /opt/artemis/kapua/bin/artemis run xml:/opt/artemis/kapua/etc/bootstrap.xml
