@@ -43,4 +43,4 @@ echo -e -n "\r\n${ARTEMIS_USER:-kapua-sys} = ENC("$(/opt/artemis/kapua/bin/artem
 echo -e "\r\namq = ${ARTEMIS_USER:-kapua-sys}" >> /opt/artemis/kapua/etc/artemis-roles.properties
 
 echo 'starting Artemis...'
-/opt/artemis/kapua/bin/artemis run xml:/opt/artemis/kapua/etc/bootstrap.xml
+exec /opt/artemis/kapua/bin/artemis run xml:/opt/artemis/kapua/etc/bootstrap.xml
