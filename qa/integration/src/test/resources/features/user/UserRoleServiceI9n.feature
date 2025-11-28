@@ -440,6 +440,241 @@ Feature: User role service integration tests
     Then No exception was thrown
     And I logout
 
+  Scenario: Test fetching claims - simple permissions
+  Test fetching claims with simple permissions
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I select account "kapua-sys"
+    And Scope with ID 1
+    And User A
+      | name  | displayName  | email             | phoneNumber     | status  | userType |
+      | user1 | Kapua User B | kapua_b@kapua.com | +386 31 323 555 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password      | enabled |
+      | user1 | User@10031995 | true    |
+    And I create the access info entity
+    Given I select the domain "endpoint_info"
+    And The permission "read"
+    When I create the permission
+    Given I select the domain "device_event"
+    And The permissions "read, write"
+    When I create the permissions
+    Given I select the domain "device_management"
+    And The permissions "execute, write"
+    When I create the permissions
+    Then exception is not thrown
+    And I logout
+    Then I login as user with name "user1" and password "User@10031995"
+    When I fetch user claims for the last account
+    Then The user claims contains exactly
+      | endpoint_info:read        |
+      | device_event:read         |
+      | device_event:write        |
+      | device_management:execute |
+      | device_management:write   |
+    And I logout
+
+  Scenario: Test fetching claims - roles and permissions
+  Test fetching claims with roles and permissions
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I select account "kapua-sys"
+    And Scope with ID 1
+    And User A
+      | name  | displayName  | email             | phoneNumber     | status  | userType |
+      | user1 | Kapua User B | kapua_b@kapua.com | +386 31 323 555 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password      | enabled |
+      | user1 | User@10031995 | true    |
+    And I create the access info entity
+    And I create the following role
+      | scopeId | name      |
+      | 1       | test_role |
+    And I select the domain "domain"
+    And I create the following role permissions
+      | scopeId | actionName |
+      | 1       | read       |
+      | 1       | write      |
+      | 1       | delete     |
+    And I select the domain "access_info"
+    And I create the following role permissions
+      | scopeId | actionName |
+      | 1       | read       |
+      | 1       | write      |
+      | 1       | delete     |
+    And I select the domain "user"
+    And I create the following role permissions
+      | scopeId | actionName |
+      | 1       | read       |
+      | 1       | write      |
+    And I add access role "test_role" to user "user1"
+    And I logout
+    Then I login as user with name "user1" and password "User@10031995"
+    When I fetch user claims for the last account
+    Then The user claims contains exactly
+      | domain:read        |
+      | domain:write       |
+      | domain:delete      |
+      | access_info:read   |
+      | access_info:write  |
+      | access_info:delete |
+      | user:read          |
+      | user:write         |
+    Given I select the domain "stream"
+    And The permission "write"
+    When I create the permission
+    Given I select the domain "job"
+    And The permissions "write, delete"
+    When I create the permissions
+    When I fetch user claims for the last account
+    Then The user claims contains exactly
+      | domain:read        |
+      | domain:write       |
+      | domain:delete      |
+      | access_info:read   |
+      | access_info:write  |
+      | access_info:delete |
+      | user:read          |
+      | user:write         |
+      | stream:write       |
+      | job:write          |
+      | job:delete         |
+    And I logout
+
+  Scenario: Test fetching claims - simple permissions with groups
+  Test fetching claims with simple permissions restricted to a group
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I select account "kapua-sys"
+    And Scope with ID 1
+    And User A
+      | name  | displayName  | email             | phoneNumber     | status  | userType |
+      | user1 | Kapua User B | kapua_b@kapua.com | +386 31 323 555 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password      | enabled |
+      | user1 | User@10031995 | true    |
+    And I create the access info entity
+    And I create a group with name "group1"
+    Given I select the domain "device"
+    And The permission "read", restricted to the last created group
+    When I create the permissions
+    Given I select the domain "stream"
+    And The permissions "write"
+    When I create the permissions
+    Then exception is not thrown
+    And I logout
+    Then I login as user with name "user1" and password "User@10031995"
+    When I fetch user claims for the last account
+    Then The user claims contains exactly
+      | device:read        |
+      | stream:write       |
+    And I logout
+
+  Scenario: Test fetching claims - simple permissions with all possible actions for it
+  Test fetching claims with simple permissions restricted to a group
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I select account "kapua-sys"
+    And Scope with ID 1
+    And User A
+      | name  | displayName  | email             | phoneNumber     | status  | userType |
+      | user1 | Kapua User B | kapua_b@kapua.com | +386 31 323 555 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password      | enabled |
+      | user1 | User@10031995 | true    |
+    And I create the access info entity
+    Given I select the domain "device"
+    And The permission "all"
+    And I create a group with name "group1"
+    When I restrict permission to last created group
+    When I create the permissions
+    Given I select the domain "job"
+    And The permission "all"
+    When I create the permission
+    Then exception is not thrown
+    And I logout
+    Then I login as user with name "user1" and password "User@10031995"
+    When I fetch user claims for the last account
+    Then The user claims contains exactly
+      | device:read        |
+      | device:write       |
+      | device:delete      |
+      | job:execute        |
+      | job:write          |
+      | job:delete         |
+      | job:read           |
+    And I logout
+
+  Scenario: Test fetching claims - user with admin privileges
+  user with admin privileges
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I select account "kapua-sys"
+    And Scope with ID 1
+    And User A
+      | name  | displayName  | email             | phoneNumber     | status  | userType |
+      | user1 | Kapua User B | kapua_b@kapua.com | +386 31 323 555 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password      | enabled |
+      | user1 | User@10031995 | true    |
+    And Full permissions
+    When I fetch user claims for the last account
+    Then The computed user claims are the same of using another approach
+    And I logout
+
+
+  Scenario: Test fetching claims - mix of roles/permissions/groups
+    Mix test
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I select account "kapua-sys"
+    And Scope with ID 1
+    And User A
+      | name  | displayName  | email             | phoneNumber     | status  | userType |
+      | user1 | Kapua User B | kapua_b@kapua.com | +386 31 323 555 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password      | enabled |
+      | user1 | User@10031995 | true    |
+    And I create the access info entity
+    And I create the following role
+      | scopeId | name      |
+      | 1       | test_role |
+    And I select the domain "job"
+    And I create the following role permissions
+      | scopeId | actionName |
+      | 1       | read       |
+      | 1       | write      |
+      | 1       | delete     |
+    And I select the domain "access_info"
+    And I create the following role permissions
+      | scopeId | actionName |
+      | 1       | read       |
+      | 1       | write      |
+      | 1       | delete     |
+    And I add access role "test_role" to user "user1"
+    And I create a group with name "group1"
+    Given I select the domain "device"
+    And The permission "read", restricted to the last created group
+    When I create the permissions
+    Given I select the domain "credential"
+    And The permission "all"
+    When I create the permission
+    And I logout
+    Then I login as user with name "user1" and password "User@10031995"
+    When I fetch user claims for the last account
+    Then The user claims contains exactly
+      | job:read        |
+      | job:write       |
+      | job:delete      |
+      | access_info:read   |
+      | access_info:write  |
+      | access_info:delete |
+      | device:read        |
+      | credential:read    |
+      | credential:write   |
+      | credential:delete  |
+    And I logout
+
   Scenario: Add datastore permissions to the role
   Creating user "user1" and role "test_role", adding permissions with tag datastore and read, write and delete actions to the "test_role",
   adding "test_role" to "user1" and after that trying to work with data as "user1"
