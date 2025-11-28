@@ -16,22 +16,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.google.inject.Provider;
 import org.apache.shiro.SecurityUtils;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaUnauthenticatedException;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.security.KapuaSession;
-import org.eclipse.kapua.model.domain.Domain;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.exception.SubjectUnauthorizedException;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.shiro.claims.ClaimsFetcher;
 
 /**
  * {@link AuthorizationService} implementation.
@@ -41,18 +40,15 @@ import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 @Singleton
 public class AuthorizationServiceImpl implements AuthorizationService {
 
-    private final PermissionFactory permissionFactory;
-    private final Set<Domain> knownDomains;
     private final PermissionMapper permissionMapper;
+    private final Provider<ClaimsFetcher> claimsFetcherProvider; //I want a lazy injection here, to avoid a potential circular dependency and because ClaimsFetcher may not be needed
 
     @Inject
     public AuthorizationServiceImpl(
-            PermissionFactory permissionFactory,
-            Set<Domain> knownDomains,
-            PermissionMapper permissionMapper) {
-        this.permissionFactory = permissionFactory;
-        this.knownDomains = knownDomains;
+            PermissionMapper permissionMapper,
+            Provider<ClaimsFetcher> claimsFetcherProvider) {
         this.permissionMapper = permissionMapper;
+        this.claimsFetcherProvider = claimsFetcherProvider;
     }
 
     @Override
@@ -75,24 +71,8 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     }
 
     @Override
-    public Set<String> fetchUserClaims(KapuaId inScope) {
-        final Set<String> claims = knownDomains.stream()
-                .flatMap(domain -> {
-                    final Stream<String> domainClaims = domain.getActions()
-                            .stream()
-                            .filter(action -> {
-                                try {
-                                    final Permission permission = permissionFactory.newPermission(domain.getName(), action, inScope);
-                                    return this.isPermitted(permission);
-                                } catch (KapuaException e) {
-                                    return false;
-                                }
-                            })
-                            .map(action -> String.format("%s:%s", domain.getName(), action));
-                    return domainClaims;
-                })
-                .collect(Collectors.toSet());
-        return claims;
+    public Set<String> fetchUserClaims(KapuaId inScope) throws KapuaException {
+        return claimsFetcherProvider.get().fetchUserClaims(inScope);
     }
 
     @Override
