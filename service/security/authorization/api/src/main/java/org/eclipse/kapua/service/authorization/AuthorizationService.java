@@ -28,7 +28,7 @@ import org.eclipse.kapua.service.authorization.permission.Permission;
  */
 public interface AuthorizationService extends KapuaService {
 
-    Set<String> fetchUserClaims(KapuaId inScope);
+    Set<String> fetchUserClaims(KapuaId inScope) throws KapuaException ;
 
     /**
      * Returns if the user (the current logged user retrieved by thread context) is allowed to perform the operation identified by provided the permission.

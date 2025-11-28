@@ -37,6 +37,7 @@ import org.eclipse.kapua.qa.common.cucumber.CucRole;
 import org.eclipse.kapua.qa.common.cucumber.CucRolePermission;
 import org.eclipse.kapua.qa.common.cucumber.CucUser;
 import org.eclipse.kapua.service.account.Account;
+import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.access.AccessInfo;
 import org.eclipse.kapua.service.authorization.access.AccessInfoAttributes;
 import org.eclipse.kapua.service.authorization.access.AccessInfoCreator;
@@ -83,6 +84,7 @@ import org.eclipse.kapua.service.authorization.role.RolePermissionQuery;
 import org.eclipse.kapua.service.authorization.role.RolePermissionService;
 import org.eclipse.kapua.service.authorization.role.RoleQuery;
 import org.eclipse.kapua.service.authorization.role.RoleService;
+import org.eclipse.kapua.service.authorization.shiro.claims.ClaimsFetcher;
 import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserService;
@@ -136,6 +138,8 @@ public class AuthorizationServiceSteps extends TestBase {
 
     private static final TestDomain TEST_DOMAIN = new TestDomain();
 
+    KapuaLocator locator = KapuaLocator.getInstance();
+
     // Various Authorization service references
     private PermissionFactory permissionFactory;
     private AccessInfoService accessInfoService;
@@ -153,6 +157,7 @@ public class AuthorizationServiceSteps extends TestBase {
     private RolePermissionService rolePermissionService;
     private RolePermissionFactory rolePermissionFactory;
     private UserService userService;
+    private AuthorizationService authorizationService;
 
     @Inject
     public AuthorizationServiceSteps(StepData stepData) {
@@ -161,7 +166,6 @@ public class AuthorizationServiceSteps extends TestBase {
 
     @After(value = "@setup")
     public void setServices() {
-        KapuaLocator locator = KapuaLocator.getInstance();
         accessInfoService = locator.getService(AccessInfoService.class);
         accessInfoFactory = locator.getFactory(AccessInfoFactory.class);
         accessPermissionService = locator.getService(AccessPermissionService.class);
@@ -178,6 +182,7 @@ public class AuthorizationServiceSteps extends TestBase {
         rolePermissionFactory = locator.getFactory(RolePermissionFactory.class);
         permissionFactory = locator.getFactory(PermissionFactory.class);
         userService = locator.getService(UserService.class);
+        authorizationService = locator.getService(AuthorizationService.class);
     }
 
     @Before
@@ -1015,6 +1020,15 @@ public class AuthorizationServiceSteps extends TestBase {
 
     @Given("The permission(s) {string}")
     public void createPermissionsForDomain(String permList) {
+        createPermissionsForDomain(permList, false);
+    }
+
+    @Given("The permission(s) {string}, restricted to the last created group")
+    public void createPermissionsForDomainInGroup(String permList) {
+        createPermissionsForDomain(permList, true);
+    }
+
+    private void createPermissionsForDomain(String permList, boolean restrictToLastCreatedGroup) {
         // Split the parameter string and make sure there is at least one item
         String[] tmpList = permList.toLowerCase().split(",");
         Assert.assertNotNull(tmpList);
@@ -1041,11 +1055,17 @@ public class AuthorizationServiceSteps extends TestBase {
                 case "execute":
                     permissions.add(permissionFactory.newPermission(curDomain.getDomain().getName(), Actions.execute, currId));
                     break;
+                case "all":
+                    permissions.add(permissionFactory.newPermission(curDomain.getDomain().getName(), null, currId));
+                    break;
             }
         }
         // Make sure that there is at least one valid item
         Assert.assertFalse(permissions.isEmpty());
         stepData.put(PERMISSIONS, permissions);
+        if (restrictToLastCreatedGroup) {
+            restrictPermissionsToSpecificGroup();
+        }
     }
 
     @Given("The role {string}")
@@ -1262,6 +1282,15 @@ public class AuthorizationServiceSteps extends TestBase {
         }
     }
 
+    @When("I restrict permission(s) to last created group")
+    public void restrictPermissionsToSpecificGroup() {
+        Set<Permission> permissions = (Set<Permission>) stepData.get(PERMISSIONS);
+        Group group = (Group) stepData.get(GROUP);
+        for (Permission perm : permissions) {
+            perm.setGroupId(group.getId());
+        }
+    }
+
     @When("I create the permission(s)")
     public void createPermissionEntries() throws Exception {
         KapuaId currScope = (KapuaId) stepData.get(LAST_ACCOUNT_ID);
@@ -1287,6 +1316,35 @@ public class AuthorizationServiceSteps extends TestBase {
         } catch (KapuaException ex) {
             verifyException(ex);
         }
+    }
+
+    @When("I fetch user claims for the last account")
+    public void fetchUserClaimsForLastAccount() throws Exception {
+        KapuaId currScope = (KapuaId) stepData.get(LAST_ACCOUNT_ID);
+        try {
+            primeException();
+            Set<String> userClaims = authorizationService.fetchUserClaims(currScope);
+            stepData.put("UserClaims", userClaims);
+        } catch (KapuaException ex) {
+            verifyException(ex);
+        }
+    }
+
+    @Then("The user claims contains exactly")
+    public void checkThatUserClaimsContain(List<String> claims) {
+        Set<String> userClaims = (Set<String>) stepData.get("UserClaims");
+        for (String claim : claims) {
+            Assert.assertTrue(userClaims.contains(claim));
+            userClaims.remove(claim);
+        }
+        Assert.assertTrue(userClaims.isEmpty());
+    }
+
+    @Then("The computed user claims are the same of using another approach")
+    public void compareUserClaimsWithOldApproach() throws Exception {
+        KapuaId currScope = (KapuaId) stepData.get(LAST_ACCOUNT_ID);
+        Set<String> userClaims = (Set<String>) stepData.get("UserClaims");
+        Assert.assertEquals(locator.getComponent(ClaimsFetcher.class, "NoGroupsClaimsFetcher").fetchUserClaims(currScope), userClaims);
     }
 
     @When("I search for the last created permission")
