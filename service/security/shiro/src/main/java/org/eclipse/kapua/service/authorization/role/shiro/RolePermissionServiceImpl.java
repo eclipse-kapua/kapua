@@ -131,7 +131,7 @@ public class RolePermissionServiceImpl implements RolePermissionService {
         ArgumentValidator.notNull(rolePermissionId, KapuaEntityAttributes.ENTITY_ID);
 
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.ROLE, Actions.delete, scopeId));
+        authorizationService.checkPermission(permissionFactory.newPermission(Domains.ROLE, Actions.write, scopeId));
 
         if (KapuaId.ONE.equals(rolePermissionId)) {
             throw new KapuaException(KapuaErrorCodes.PERMISSION_DELETE_NOT_ALLOWED);
