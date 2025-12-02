@@ -13,13 +13,11 @@
 package org.eclipse.kapua.service.authorization.shiro;
 
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import com.google.inject.Provider;
-import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.core.ServiceModule;
@@ -95,9 +93,8 @@ import org.eclipse.kapua.service.authorization.role.shiro.RolePermissionFactoryI
 import org.eclipse.kapua.service.authorization.role.shiro.RolePermissionImplJpaRepository;
 import org.eclipse.kapua.service.authorization.role.shiro.RolePermissionServiceImpl;
 import org.eclipse.kapua.service.authorization.role.shiro.RoleServiceImpl;
-import org.eclipse.kapua.service.authorization.shiro.claims.BruteForceClaimsFetcher;
 import org.eclipse.kapua.service.authorization.shiro.claims.ClaimsFetcher;
-import org.eclipse.kapua.service.authorization.shiro.claims.SimpleClaimsFetcher;
+import org.eclipse.kapua.service.authorization.shiro.claims.ClaimsFetcherImpl;
 import org.eclipse.kapua.service.authorization.shiro.setting.KapuaAuthorizationSetting;
 import org.eclipse.kapua.storage.TxManager;
 
@@ -203,29 +200,14 @@ public class AuthorizationModule extends AbstractKapuaModule {
 
     @Provides
     @Singleton
-    @Named("bruteForceClaimsFetcher")
-    ClaimsFetcher bruteForceClaimsFetcher(
-            AuthorizationService authorizationService,
-            PermissionFactory permissionFactory,
-            DomainRegistryService domainService,
-            DomainFactory domainFactory) {
-        return new BruteForceClaimsFetcher(
-                authorizationService,
-                permissionFactory,
-                domainService,
-                domainFactory);
-    }
-
-    @Provides
-    @Singleton
     @Named("defaultClaimsFetcher")
     ClaimsFetcher defaultClaimsFetcher(
             AuthorizationService authorizationService,
             AuthenticationService authenticationService,
             PermissionFactory permissionFactory,
             DomainRegistryService domainService,
-            DomainFactory domainFactory) throws KapuaException {
-        return new SimpleClaimsFetcher(
+            DomainFactory domainFactory) {
+        return new ClaimsFetcherImpl(
                 authorizationService,
                 authenticationService,
                 permissionFactory,

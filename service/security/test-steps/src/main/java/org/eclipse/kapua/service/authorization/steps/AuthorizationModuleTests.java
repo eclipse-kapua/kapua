@@ -14,14 +14,14 @@ package org.eclipse.kapua.service.authorization.steps;
 
 import com.google.inject.Provides;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
-import org.eclipse.kapua.model.domain.Domain;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
+import org.eclipse.kapua.service.authorization.domain.DomainFactory;
+import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.authorization.shiro.claims.ClaimsFetcher;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
-import java.util.Set;
 
 public class AuthorizationModuleTests extends AbstractKapuaModule {
 
@@ -31,11 +31,13 @@ public class AuthorizationModuleTests extends AbstractKapuaModule {
     ClaimsFetcher noGroupsClaimsFetcher(
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
-            Set<Domain> knownDomains) {
+            DomainRegistryService domainService,
+            DomainFactory domainFactory) {
         return new NoGroupsClaimsFetcher(
                 authorizationService,
                 permissionFactory,
-                knownDomains);
+                domainService,
+                domainFactory);
     }
 
     @Override
