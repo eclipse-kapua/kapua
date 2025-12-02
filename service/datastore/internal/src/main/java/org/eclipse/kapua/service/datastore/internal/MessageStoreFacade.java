@@ -26,7 +26,7 @@ import org.eclipse.kapua.service.storable.exception.MappingException;
 import org.eclipse.kapua.service.storable.model.id.StorableId;
 
 public interface MessageStoreFacade {
-    StorableId store(KapuaMessage<?, ?> message, String messageId, boolean newInsert)
+    StorableId store(KapuaMessage<?, ?> message, String messageId)
             throws KapuaIllegalArgumentException,
             DatastoreDisabledException,
             ConfigurationException,

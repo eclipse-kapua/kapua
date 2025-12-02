@@ -88,28 +88,7 @@ public class MessageStoreServiceImpl extends KapuaConfigurableServiceBase implem
     @Override
     public StorableId store(KapuaMessage<?, ?> message)
             throws KapuaException {
-        String datastoreId = UUID.randomUUID().toString();
-        Context metricDataSaveTimeContext = metrics.getDataSaveTime().time();
-        try {
-            checkDataAccess(message.getScopeId(), Actions.write);
-            metrics.getMessage().inc();
-            return messageStoreFacade.store(message, datastoreId, true);
-        } catch (ConfigurationException e) {
-            metrics.getConfigurationError().inc();
-            throw e;
-        } catch (KapuaIllegalArgumentException e) {
-            metrics.getValidationError().inc();
-            throw e;
-        } catch (ClientCommunicationException e) {
-            metrics.getCommunicationError().inc();
-            throw new DatastoreCommunicationException(datastoreId, e);
-        } catch (Exception e) {
-            metrics.getGenericError().inc();
-            logException(e);
-            throw new DatastoreException(KapuaErrorCodes.INTERNAL_ERROR, e, e.getMessage());
-        } finally {
-            metricDataSaveTimeContext.stop();
-        }
+        return store(message, UUID.randomUUID().toString());
     }
 
     @Override
@@ -120,7 +99,7 @@ public class MessageStoreServiceImpl extends KapuaConfigurableServiceBase implem
         try {
             checkDataAccess(message.getScopeId(), Actions.write);
             metrics.getMessage().inc();
-            return messageStoreFacade.store(message, datastoreId, false);
+            return messageStoreFacade.store(message, datastoreId);
         } catch (ConfigurationException e) {
             metrics.getConfigurationError().inc();
             throw e;

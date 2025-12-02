@@ -26,9 +26,6 @@ public class MetricsDatastore {
     private static final String CONSUMER_TELEMETRY = "consumer_telemetry";
     private static final String STORE = "store";
     private static final String PROCESSED = "processed";
-    private static final String DUPLICATED_STORE = "duplicated_store";
-
-    private Counter alreadyInTheDatastore;
 
     private final Counter message;
     private final Counter communicationError;
@@ -44,8 +41,6 @@ public class MetricsDatastore {
 
     @Inject
     public MetricsDatastore(MetricsService metricsService) {
-        alreadyInTheDatastore = metricsService.getCounter(CONSUMER_TELEMETRY, STORE, DUPLICATED_STORE);
-
         // data message
         message = metricsService.getCounter(CONSUMER_TELEMETRY, STORE, MetricsLabel.ATTEMPT);
         communicationError = metricsService.getCounter(CONSUMER_TELEMETRY, STORE, MetricsLabel.COMMUNICATION, MetricsLabel.ERROR);
@@ -60,10 +55,6 @@ public class MetricsDatastore {
 
         // store timers
         dataSaveTime = metricsService.getTimer(CONSUMER_TELEMETRY, STORE, MetricsLabel.TIME, MetricsLabel.SECONDS);
-    }
-
-    public Counter getAlreadyInTheDatastore() {
-        return alreadyInTheDatastore;
     }
 
     public Counter getMessage() {

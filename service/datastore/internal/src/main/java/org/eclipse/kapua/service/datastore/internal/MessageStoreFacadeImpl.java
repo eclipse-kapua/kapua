@@ -13,7 +13,6 @@
 package org.eclipse.kapua.service.datastore.internal;
 
 import org.eclipse.kapua.KapuaIllegalArgumentException;
-import org.eclipse.kapua.commons.cache.LocalCache;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.commons.util.KapuaDateUtils;
 import org.eclipse.kapua.message.KapuaMessage;
@@ -25,9 +24,7 @@ import org.eclipse.kapua.service.datastore.exception.DatastoreDisabledException;
 import org.eclipse.kapua.service.datastore.internal.mediator.ChannelInfoField;
 import org.eclipse.kapua.service.datastore.internal.mediator.ClientInfoField;
 import org.eclipse.kapua.service.datastore.internal.mediator.ConfigurationException;
-import org.eclipse.kapua.service.datastore.internal.mediator.DatastoreChannel;
 import org.eclipse.kapua.service.datastore.internal.mediator.DatastoreUtils;
-import org.eclipse.kapua.service.datastore.internal.mediator.MessageField;
 import org.eclipse.kapua.service.datastore.internal.mediator.MessageInfo;
 import org.eclipse.kapua.service.datastore.internal.mediator.MessageStoreConfiguration;
 import org.eclipse.kapua.service.datastore.internal.mediator.Metric;
@@ -37,17 +34,9 @@ import org.eclipse.kapua.service.datastore.internal.model.ClientInfoImpl;
 import org.eclipse.kapua.service.datastore.internal.model.DataIndexBy;
 import org.eclipse.kapua.service.datastore.internal.model.DatastoreMessageImpl;
 import org.eclipse.kapua.service.datastore.internal.model.MessageListResultImpl;
-import org.eclipse.kapua.service.datastore.internal.model.MessageUniquenessCheck;
 import org.eclipse.kapua.service.datastore.internal.model.MetricInfoImpl;
-import org.eclipse.kapua.service.datastore.internal.model.query.ChannelInfoQueryImpl;
-import org.eclipse.kapua.service.datastore.internal.model.query.ClientInfoQueryImpl;
-import org.eclipse.kapua.service.datastore.internal.model.query.MetricInfoQueryImpl;
-import org.eclipse.kapua.service.datastore.internal.model.query.predicate.ChannelMatchPredicateImpl;
-import org.eclipse.kapua.service.datastore.model.ChannelInfoListResult;
-import org.eclipse.kapua.service.datastore.model.ClientInfoListResult;
 import org.eclipse.kapua.service.datastore.model.DatastoreMessage;
 import org.eclipse.kapua.service.datastore.model.MessageListResult;
-import org.eclipse.kapua.service.datastore.model.MetricInfoListResult;
 import org.eclipse.kapua.service.datastore.model.query.MessageQuery;
 import org.eclipse.kapua.service.elasticsearch.client.exception.ClientException;
 import org.eclipse.kapua.service.elasticsearch.client.exception.QueryMappingException;
@@ -80,9 +69,7 @@ public final class MessageStoreFacadeImpl extends AbstractDatastoreFacade implem
     private final MetricInfoRepository metricInfoRepository;
     private final ChannelInfoRepository channelInfoRepository;
     private final ClientInfoRepository clientInfoRepository;
-    private final MetricsDatastore metrics;
     private final DatastoreUtils datastoreUtils;
-    private final DatastoreCacheManager datastoreCacheManager;
 
     private static final String QUERY = "query";
     private static final String QUERY_SCOPE_ID = "query.scopeId";
@@ -99,9 +86,7 @@ public final class MessageStoreFacadeImpl extends AbstractDatastoreFacade implem
             MetricInfoRepository metricInfoRepository,
             ChannelInfoRepository channelInfoRepository,
             ClientInfoRepository clientInfoRepository,
-            MetricsDatastore metricsDatastore,
-            DatastoreUtils datastoreUtils,
-            DatastoreCacheManager datastoreCacheManager) {
+            DatastoreUtils datastoreUtils) {
         super(configProvider);
         this.storableIdFactory = storableIdFactory;
         this.clientInfoRegistryFacade = clientInfoRegistryFacade;
@@ -111,9 +96,7 @@ public final class MessageStoreFacadeImpl extends AbstractDatastoreFacade implem
         this.metricInfoRepository = metricInfoRepository;
         this.channelInfoRepository = channelInfoRepository;
         this.clientInfoRepository = clientInfoRepository;
-        this.metrics = metricsDatastore;
         this.datastoreUtils = datastoreUtils;
-        this.datastoreCacheManager = datastoreCacheManager;
     }
 
     /**
@@ -126,7 +109,7 @@ public final class MessageStoreFacadeImpl extends AbstractDatastoreFacade implem
      * @throws ClientException
      */
     @Override
-    public StorableId store(KapuaMessage<?, ?> message, String messageId, boolean newInsert) throws KapuaIllegalArgumentException, DatastoreDisabledException, ConfigurationException, ClientException, MappingException {
+    public StorableId store(KapuaMessage<?, ?> message, String messageId) throws KapuaIllegalArgumentException, DatastoreDisabledException, ConfigurationException, ClientException, MappingException {
         ArgumentValidator.notNull(message, "message");
         ArgumentValidator.notNull(message.getScopeId(), SCOPE_ID);
         ArgumentValidator.notNull(message.getReceivedOn(), "receivedOn");
@@ -152,17 +135,6 @@ public final class MessageStoreFacadeImpl extends AbstractDatastoreFacade implem
         }
         // Extract schema metadata
         Date indexedOnDate = new Date(indexedOn);
-
-        if (!newInsert && !MessageUniquenessCheck.NONE.equals(accountServicePlan.getMessageUniquenessCheck())) {
-            DatastoreMessage datastoreMessage = MessageUniquenessCheck.FULL.equals(accountServicePlan.getMessageUniquenessCheck()) ?
-                    messageRepository.find(message.getScopeId(), storableIdFactory.newStorableId(messageId)) :
-                    messageRepository.find(message.getScopeId(), storableIdFactory.newStorableId(messageId), indexedOnDate.getTime());
-            if (datastoreMessage != null) {
-                LOG.debug("Message with datastore id '{}' already found", messageId);
-                metrics.getAlreadyInTheDatastore().inc();
-                return storableIdFactory.newStorableId(messageId);
-            }
-        }
 
         // Save message (the big one)
         final DatastoreMessage messageToStore = convertTo(message, messageId);
@@ -359,143 +331,7 @@ public final class MessageStoreFacadeImpl extends AbstractDatastoreFacade implem
         return messageRepository.query(query);
     }
 
-
-    // TODO cache will not be reset from the client code it should be automatically reset
-    // after some time.
-    private void resetCache(KapuaId scopeId, KapuaId deviceId, String channel, String clientId) throws Exception {
-
-        boolean isAnyClientId;
-        boolean isClientToDelete = false;
-        String semTopic;
-
-        if (channel != null) {
-
-            // determine if we should delete an client if topic = account/clientId/#
-            isAnyClientId = isAnyClientId(channel);
-            semTopic = channel;
-
-            if (semTopic.isEmpty() && !isAnyClientId) {
-                isClientToDelete = true;
-            }
-        } else {
-            isClientToDelete = true;
-        }
-
-        // Find all topics
-        int pageSize = 1000;
-        int offset = 0;
-        long totalHits = 1;
-
-        MetricInfoQueryImpl metricQuery = new MetricInfoQueryImpl(scopeId);
-        metricQuery.setLimit(pageSize + 1);
-        metricQuery.setOffset(offset);
-
-        ChannelMatchPredicateImpl channelPredicate = new ChannelMatchPredicateImpl(MessageField.CHANNEL, channel);
-        metricQuery.setPredicate(channelPredicate);
-
-        // Remove metrics
-        while (totalHits > 0) {
-            MetricInfoListResult metrics = metricInfoRepository.query(metricQuery);
-
-            totalHits = metrics.getTotalCount();
-            LocalCache<String, Boolean> metricsCache = datastoreCacheManager.getMetricsCache();
-            long toBeProcessed = totalHits > pageSize ? pageSize : totalHits;
-
-            for (int i = 0; i < toBeProcessed; i++) {
-                String id = metrics.getItem(i).getId().toString();
-                if (metricsCache.get(id)) {
-                    metricsCache.remove(id);
-                }
-            }
-
-            if (totalHits > pageSize) {
-                offset += pageSize + 1;
-            }
-        }
-        LOG.debug("Removed cached channel metrics for: {}", channel);
-        metricInfoRepository.delete(metricQuery);
-        LOG.debug("Removed channel metrics for: {}", channel);
-        ChannelInfoQueryImpl channelQuery = new ChannelInfoQueryImpl(scopeId);
-        channelQuery.setLimit(pageSize + 1);
-        channelQuery.setOffset(offset);
-
-        channelPredicate = new ChannelMatchPredicateImpl(MessageField.CHANNEL, channel);
-        channelQuery.setPredicate(channelPredicate);
-
-        // Remove channel
-        offset = 0;
-        totalHits = 1;
-        while (totalHits > 0) {
-            final ChannelInfoListResult channels = channelInfoRepository.query(channelQuery);
-
-            totalHits = channels.getTotalCount();
-            LocalCache<String, Boolean> channelsCache = datastoreCacheManager.getChannelsCache();
-            long toBeProcessed = totalHits > pageSize ? pageSize : totalHits;
-
-            for (int i = 0; i < toBeProcessed; i++) {
-                String id = channels.getFirstItem().getId().toString();
-                if (channelsCache.get(id)) {
-                    channelsCache.remove(id);
-                }
-            }
-            if (totalHits > pageSize) {
-                offset += pageSize + 1;
-            }
-        }
-
-        LOG.debug("Removed cached channels for: {}", channel);
-        channelInfoRepository.delete(channelQuery);
-
-        LOG.debug("Removed channels for: {}", channel);
-        // Remove client
-        if (isClientToDelete) {
-            ClientInfoQueryImpl clientInfoQuery = new ClientInfoQueryImpl(scopeId);
-            clientInfoQuery.setLimit(pageSize + 1);
-            clientInfoQuery.setOffset(offset);
-
-            channelPredicate = new ChannelMatchPredicateImpl(MessageField.CHANNEL, channel);
-            clientInfoQuery.setPredicate(channelPredicate);
-            offset = 0;
-            totalHits = 1;
-            while (totalHits > 0) {
-                ClientInfoListResult clients = clientInfoRepository.query(clientInfoQuery);
-                totalHits = clients.getTotalCount();
-                LocalCache<String, Boolean> clientsCache = datastoreCacheManager.getClientsCache();
-                long toBeProcessed = totalHits > pageSize ? pageSize : totalHits;
-
-                for (int i = 0; i < toBeProcessed; i++) {
-                    String id = clients.getItem(i).getId().toString();
-                    if (clientsCache.get(id)) {
-                        clientsCache.remove(id);
-                    }
-                }
-                if (totalHits > pageSize) {
-                    offset += pageSize + 1;
-                }
-            }
-
-            LOG.debug("Removed cached clients for: {}", channel);
-            clientInfoRepository.delete(clientInfoQuery);
-
-            LOG.debug("Removed clients for: {}", channel);
-        }
-    }
-
     // Utility methods
-
-    /**
-     * Check if the channel admit any client identifier (so if the channel has a specific wildcard in the second topic level).<br>
-     * In the MQTT word this method return true if the topic starts with 'account/+/'.
-     *
-     * @param clientId
-     * @return
-     * @since 1.0.0
-     */
-    private boolean isAnyClientId(String clientId) {
-        return DatastoreChannel.SINGLE_LEVEL_WCARD.equals(clientId);
-    }
-
-
     @Override
     public void refreshAllIndexes() throws ClientException {
         messageRepository.refreshAllIndexes();
