@@ -13,18 +13,22 @@
 package org.eclipse.kapua.service.authorization.shiro.claims;
 
 import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.model.domain.Actions;
-import org.eclipse.kapua.model.domain.Domain;
+import org.eclipse.kapua.service.authorization.domain.Domain;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authentication.AuthenticationService;
 import org.eclipse.kapua.service.authentication.token.LoginInfo;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.access.AccessPermission;
+import org.eclipse.kapua.service.authorization.domain.DomainFactory;
+import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.authorization.role.RolePermission;
 
 import javax.inject.Inject;
+import java.util.HashSet;
 import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -41,22 +45,30 @@ public class ClaimsFetcherImpl implements ClaimsFetcher {
 
     private final AuthenticationService authenticationService;
     private final AuthorizationService authorizationService;
-    private final Set<Domain> knownDomains;
     private final PermissionFactory permissionFactory;
+    private final DomainRegistryService domainService;
+    private final DomainFactory domainFactory;
+    private Set<Domain> knownDomains;
 
     @Inject
     public ClaimsFetcherImpl(AuthorizationService authorizationService,
-                             AuthenticationService authenticationService,
-                             PermissionFactory permissionFactory,
-                             Set<Domain> knownDomains) {
+                               AuthenticationService authenticationService,
+                               PermissionFactory permissionFactory,
+                               DomainRegistryService domainService,
+                               DomainFactory domainFactory) {
         this.authorizationService = authorizationService;
         this.authenticationService = authenticationService;
         this.permissionFactory = permissionFactory;
-        this.knownDomains = knownDomains;
+        this.domainService = domainService;
+        this.domainFactory = domainFactory;
     }
 
     @Override
     public Set<String> fetchUserClaims(KapuaId inScope) throws KapuaException {
+        if (this.knownDomains == null ) {
+            this.knownDomains = KapuaSecurityUtils.doPrivileged(() -> new HashSet<>(domainService.query(domainFactory.newQuery(null)).getItems()));
+        }
+
         LoginInfo loginInfo = authenticationService.getLoginInfo();
         //Retrieve all permissions from both AccessPermissions and RolePermissions
         Set<AccessPermission> accessPermissions = loginInfo.getAccessPermission();
