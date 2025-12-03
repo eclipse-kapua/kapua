@@ -50,7 +50,18 @@ public class DeviceManagementResponseCodeExceptionInfo extends ExceptionInfo {
      * @since 1.0.0
      */
     public DeviceManagementResponseCodeExceptionInfo(DeviceManagementResponseCodeException deviceManagementResponseCodeException, boolean showStackTrace) {
-        super(500/*Status.INTERNAL_SERVER_ERROR*/, deviceManagementResponseCodeException, showStackTrace);
+        this(500, deviceManagementResponseCodeException, showStackTrace);
+    }
+
+    /**
+     * Constructor with a custom http status code
+     *
+     * @param httpStatusCode the http status code we want to set in the response
+     * @param deviceManagementResponseCodeException The root exception.
+     * @since 2.0.0
+     */
+    public DeviceManagementResponseCodeExceptionInfo(int httpStatusCode, DeviceManagementResponseCodeException deviceManagementResponseCodeException, boolean showStackTrace) {
+        super(httpStatusCode, deviceManagementResponseCodeException, showStackTrace);
 
         this.responseCode = deviceManagementResponseCodeException.getResponseCode();
         this.errorMessage = deviceManagementResponseCodeException.getErrorMessage();
