@@ -13,14 +13,18 @@
 package org.eclipse.kapua.service.authorization.steps;
 
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.model.domain.Domain;
+import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
+import org.eclipse.kapua.service.authorization.domain.Domain;
+import org.eclipse.kapua.service.authorization.domain.DomainFactory;
+import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.authorization.shiro.claims.ClaimsFetcher;
 
 import javax.inject.Inject;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -37,20 +41,28 @@ import java.util.stream.Stream;
 public class NoGroupsClaimsFetcher implements ClaimsFetcher {
 
     private final AuthorizationService authorizationServiceProvider;
-    private final Set<Domain> knownDomains;
     private final PermissionFactory permissionFactory;
+    private final DomainRegistryService domainService;
+    private final DomainFactory domainFactory;
+    private Set<Domain> knownDomains;
 
     @Inject
     public NoGroupsClaimsFetcher(AuthorizationService authorizationService,
                                  PermissionFactory permissionFactory,
-                                 Set<Domain> knownDomains) {
+                                 DomainRegistryService domainService,
+                                 DomainFactory domainFactory) {
         this.authorizationServiceProvider = authorizationService;
         this.permissionFactory = permissionFactory;
-        this.knownDomains = knownDomains;
+        this.domainService = domainService;
+        this.domainFactory = domainFactory;
     }
 
     @Override
-    public Set<String> fetchUserClaims(KapuaId inScope) {
+    public Set<String> fetchUserClaims(KapuaId inScope) throws KapuaException {
+        if (this.knownDomains == null ) {
+            this.knownDomains = KapuaSecurityUtils.doPrivileged(() -> new HashSet<>(domainService.query(domainFactory.newQuery(null)).getItems()));
+        }
+
         final Set<String> claims = knownDomains.stream()
                 .flatMap(domain -> {
                     final Stream<String> domainClaims = domain.getActions()

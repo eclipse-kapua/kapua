@@ -13,7 +13,6 @@
 package org.eclipse.kapua.service.authorization.shiro;
 
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -206,12 +205,14 @@ public class AuthorizationModule extends AbstractKapuaModule {
             AuthorizationService authorizationService,
             AuthenticationService authenticationService,
             PermissionFactory permissionFactory,
-            Set<Domain> knownDomains) {
+            DomainRegistryService domainService,
+            DomainFactory domainFactory) {
         return new ClaimsFetcherImpl(
                 authorizationService,
                 authenticationService,
                 permissionFactory,
-                knownDomains);
+                domainService,
+                domainFactory);
     }
 
     @Provides
