@@ -36,6 +36,8 @@ public class QueryConverterImpl implements QueryConverter {
     private static ConvertOptions convertOptionsCount = new ConvertOptions(false, true, false, false, false);
     private static ConvertOptions convertOptionsDelete = convertOptionsCount;
     private static ConvertOptions convertOptionsSearch = new ConvertOptions(true, true, true, true, true);
+    private static ConvertOptions convertOptionsScrolling = new ConvertOptions(true, true, true, false, true);
+    private static ConvertOptions getConvertOptionsAggregateChannels = new ConvertOptions(false, false, false, false, false);
 
     @Override
     public JsonNode convertQuery(Object query) throws QueryMappingException {
@@ -52,6 +54,11 @@ public class QueryConverterImpl implements QueryConverter {
         return convertQuery(query, convertOptionsDelete);
     }
 
+    @Override
+    public JsonNode convertQueryScrolling(Object query) throws QueryMappingException {
+        return convertQuery(query, getConvertOptionsAggregateChannels);
+    }
+
     private JsonNode convertQuery(Object query, ConvertOptions convertOptions) throws QueryMappingException {
         if (!(query instanceof StorableQuery)) {
             throw new QueryMappingException("Given query is not a StorableQuery");
@@ -60,6 +67,26 @@ public class QueryConverterImpl implements QueryConverter {
         try {
             StorableQuery storableQuery = (StorableQuery) query;
             ObjectNode rootNode = MappingUtils.newObjectNode();
+
+            if (convertOptions.equals(getConvertOptionsAggregateChannels)) {
+                // Set size to 0 since we only want aggregation results
+                rootNode.set(SchemaKeys.KEY_SIZE, MappingUtils.newNumericNode(0));
+
+                // Create the aggregations structure
+                ObjectNode aggsNode = MappingUtils.newObjectNode();
+                ObjectNode distinctChannelsNode = MappingUtils.newObjectNode();
+                ObjectNode termsNode = MappingUtils.newObjectNode();
+
+                // Configure the terms aggregation
+                termsNode.put("field", "channel");
+                termsNode.put("size", 1000);
+
+                distinctChannelsNode.set("terms", termsNode);
+                aggsNode.set("distinct_channels", distinctChannelsNode);
+                rootNode.set("aggs", aggsNode);
+
+                return rootNode;
+            }
 
             if (convertOptions.sourceEnabled) {
                 ObjectNode includesFields = MappingUtils.newObjectNode();

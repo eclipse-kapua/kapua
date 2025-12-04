@@ -33,6 +33,8 @@ public interface StorableRepository<
 
     L query(Q query);
 
+    L queryAllResults(Q query);
+
     long count(Q query);
 
     void delete(KapuaId scopeId, StorableId id);

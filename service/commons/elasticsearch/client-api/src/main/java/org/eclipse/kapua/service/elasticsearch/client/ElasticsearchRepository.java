@@ -133,6 +133,22 @@ public abstract class ElasticsearchRepository<
         }
     }
 
+    @Override
+    public L queryAllResults(Q query) {
+        try {
+            final String indexName = indexResolver(query.getScopeId());
+            synchIndex(indexName);
+            final ResultList<T> partialResult = elasticsearchClientProviderInstance.getElasticsearchClient().queryAllResults(indexName, query, clazz);
+            final L res = storableFactory.newListResult();
+            res.addItems(partialResult.getResult());
+            res.setTotalCount(partialResult.getTotalCount());
+            setLimitExceed(query, partialResult.getTotalHitsExceedsCount(), res);
+            return res;
+        } catch (ClientException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static <T extends Storable> void setLimitExceed(StorableQuery query, boolean hitsExceedsTotalCount, StorableListResult<T> list) {
         int offset = query.getOffset() != null ? query.getOffset() : 0;
         if (query.getLimit() != null) {

@@ -114,19 +114,11 @@ public class GwtDataServiceImpl extends KapuaRemoteServiceServlet implements Gwt
         HashMap<String, GwtTopic> topicMap = new HashMap<String, GwtTopic>();
         ChannelInfoRegistryService channelInfoService = LOCATOR.getService(ChannelInfoRegistryService.class);
         ChannelInfoQuery query = CHANNEL_INFO_FACTORY.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(scopeId));
-        int offset = 0;
-        int limit = 250;
         try {
-            query.setOffset(offset);
-            query.setLimit(limit);
-            ChannelInfoListResult result = channelInfoService.query(query);
-            while (result != null && !result.isEmpty()) {
-                for (ChannelInfo channel : result.getItems()) {
+            query.setLimit(250); //scroll 250 results at a time (it will be converted to 'size")
+            ChannelInfoListResult result = channelInfoService.queryAllResults(query);
+            for (ChannelInfo channel : result.getItems()) {
                     addToMap(topicMap, channel);
-                }
-                offset += limit;
-                query.setOffset(offset);
-                result = channelInfoService.query(query);
             }
 
             for (Map.Entry<String, GwtTopic> entry : topicMap.entrySet()) {

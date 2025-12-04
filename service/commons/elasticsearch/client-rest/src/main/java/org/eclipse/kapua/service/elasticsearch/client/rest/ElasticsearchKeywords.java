@@ -40,4 +40,5 @@ public class ElasticsearchKeywords {
     static final String KEY_TOTAL = "total";
     static final String KEY_VALUE = "value";
     static final String KEY_RELATION = "relation";
+    static final String KEY_SCROLL_ID = "_scroll_id";
 }

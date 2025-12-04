@@ -179,6 +179,8 @@ public interface ElasticsearchClient<C extends Closeable> {
      */
     <T> ResultList<T> query(String index, Object query, Class<T> clazz) throws ClientException;
 
+    <T> ResultList<T> queryAllResults(String index, Object query, Class<T> clazz) throws ClientException;
+
     /**
      * Counts by query.
      *
