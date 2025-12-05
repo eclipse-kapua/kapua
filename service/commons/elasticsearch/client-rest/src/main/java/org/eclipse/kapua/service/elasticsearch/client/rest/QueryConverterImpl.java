@@ -19,6 +19,7 @@ import org.eclipse.kapua.service.elasticsearch.client.QueryConverter;
 import org.eclipse.kapua.service.elasticsearch.client.SchemaKeys;
 import org.eclipse.kapua.service.elasticsearch.client.exception.QueryMappingException;
 import org.eclipse.kapua.service.storable.exception.MappingException;
+import org.eclipse.kapua.service.storable.model.query.AggregationField;
 import org.eclipse.kapua.service.storable.model.query.SortField;
 import org.eclipse.kapua.service.storable.model.query.StorableQuery;
 import org.eclipse.kapua.service.storable.model.utils.MappingUtils;
@@ -33,11 +34,10 @@ import java.util.List;
  */
 public class QueryConverterImpl implements QueryConverter {
 
-    private static ConvertOptions convertOptionsCount = new ConvertOptions(false, true, false, false, false);
+    private static ConvertOptions convertOptionsCount = new ConvertOptions(false, true, false, false, false, false);
     private static ConvertOptions convertOptionsDelete = convertOptionsCount;
-    private static ConvertOptions convertOptionsSearch = new ConvertOptions(true, true, true, true, true);
-    private static ConvertOptions convertOptionsScrolling = new ConvertOptions(true, true, true, false, true);
-    private static ConvertOptions getConvertOptionsAggregateChannels = new ConvertOptions(false, false, false, false, false);
+    private static ConvertOptions convertOptionsSearch = new ConvertOptions(true, true, true, true, true, false);
+    private static ConvertOptions getConvertOptionsAggregation = new ConvertOptions(true, true, true, true, true, true);
 
     @Override
     public JsonNode convertQuery(Object query) throws QueryMappingException {
@@ -55,8 +55,8 @@ public class QueryConverterImpl implements QueryConverter {
     }
 
     @Override
-    public JsonNode convertQueryScrolling(Object query) throws QueryMappingException {
-        return convertQuery(query, getConvertOptionsAggregateChannels);
+    public JsonNode convertAggregationQuery(Object query) throws QueryMappingException {
+        return convertQuery(query, getConvertOptionsAggregation);
     }
 
     private JsonNode convertQuery(Object query, ConvertOptions convertOptions) throws QueryMappingException {
@@ -68,9 +68,11 @@ public class QueryConverterImpl implements QueryConverter {
             StorableQuery storableQuery = (StorableQuery) query;
             ObjectNode rootNode = MappingUtils.newObjectNode();
 
-            if (convertOptions.equals(getConvertOptionsAggregateChannels)) {
-                // Set size to 0 since we only want aggregation results
-                rootNode.set(SchemaKeys.KEY_SIZE, MappingUtils.newNumericNode(0));
+            if (convertOptions.aggregationEnabled) {
+                AggregationField aggregationField = storableQuery.getAggregationField();
+
+//                // Set size to 0 since we only want aggregation results
+//                rootNode.set(SchemaKeys.KEY_SIZE, MappingUtils.newNumericNode(0));
 
                 // Create the aggregations structure
                 ObjectNode aggsNode = MappingUtils.newObjectNode();
@@ -78,14 +80,12 @@ public class QueryConverterImpl implements QueryConverter {
                 ObjectNode termsNode = MappingUtils.newObjectNode();
 
                 // Configure the terms aggregation
-                termsNode.put("field", "channel");
-                termsNode.put("size", 1000);
+                termsNode.put("field", aggregationField.getFieldName());
+                termsNode.put("size", aggregationField.getSize());
 
                 distinctChannelsNode.set("terms", termsNode);
-                aggsNode.set("distinct_channels", distinctChannelsNode);
+                aggsNode.set(aggregationField.getAggregationName(), distinctChannelsNode);
                 rootNode.set("aggs", aggsNode);
-
-                return rootNode;
             }
 
             if (convertOptions.sourceEnabled) {
@@ -141,13 +141,15 @@ public class QueryConverterImpl implements QueryConverter {
         protected boolean sortEnabled;
         protected boolean fromEnabled;
         protected boolean sizeEnabled;
+        protected boolean aggregationEnabled;
 
-        ConvertOptions(boolean source,boolean query,boolean sort, boolean from, boolean size) {
+        ConvertOptions(boolean source, boolean query, boolean sort, boolean from, boolean size, boolean aggregationEnabled) {
             this.sourceEnabled = source;
             this.queryEnabled = query;
             this.sortEnabled = sort;
             this.fromEnabled = from;
             this.sizeEnabled = size;
+            this.aggregationEnabled = aggregationEnabled;
         }
 
     }

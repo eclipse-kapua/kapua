@@ -138,7 +138,7 @@ public abstract class ElasticsearchRepository<
         try {
             final String indexName = indexResolver(query.getScopeId());
             synchIndex(indexName);
-            final ResultList<T> partialResult = elasticsearchClientProviderInstance.getElasticsearchClient().queryAllResults(indexName, query, clazz);
+            final ResultList<T> partialResult = elasticsearchClientProviderInstance.getElasticsearchClient().queryAggregatingResults(indexName, query, clazz);
             final L res = storableFactory.newListResult();
             res.addItems(partialResult.getResult());
             res.setTotalCount(partialResult.getTotalCount());

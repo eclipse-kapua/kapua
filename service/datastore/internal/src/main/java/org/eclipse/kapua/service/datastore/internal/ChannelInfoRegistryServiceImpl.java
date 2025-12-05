@@ -172,7 +172,7 @@ public class ChannelInfoRegistryServiceImpl implements ChannelInfoRegistryServic
 
         try {
             ChannelInfoListResult result = channelInfoRegistryFacade.queryAllResults(query);
-            if (result != null && query.getFetchAttributes().contains(ChannelInfoField.TIMESTAMP.field())) {
+            if (result != null && query.getFetchAttributes().contains(ChannelInfoField.TIMESTAMP.field())) { //TODO: review this thing, does it need to work??
                 // populate the lastMessageTimestamp
                 for (ChannelInfo channelInfo : result.getItems()) {
                     updateLastPublishedFields(channelInfo);

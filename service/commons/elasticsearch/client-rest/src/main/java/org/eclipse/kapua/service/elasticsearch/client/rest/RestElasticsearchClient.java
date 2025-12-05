@@ -43,6 +43,8 @@ import org.eclipse.kapua.service.elasticsearch.client.model.UpdateRequest;
 import org.eclipse.kapua.service.elasticsearch.client.model.UpdateResponse;
 import org.eclipse.kapua.service.elasticsearch.client.rest.exception.RequestEntityWriteError;
 import org.eclipse.kapua.service.elasticsearch.client.rest.exception.ResponseEntityReadError;
+import org.eclipse.kapua.service.storable.model.query.AggregationField;
+import org.eclipse.kapua.service.storable.model.query.StorableQuery;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.ResponseException;
@@ -285,8 +287,11 @@ public class RestElasticsearchClient extends AbstractElasticsearchClient<RestCli
     }
 
     @Override
-    public <T> ResultList<T> queryAllResults(String index, Object query, Class<T> clazz) throws ClientException {
-        JsonNode queryJsonNode = getModelConverter().convertQueryScrolling(query);
+    public <T> ResultList<T> queryAggregatingResults(String index, Object query, Class<T> clazz) throws ClientException {
+        JsonNode queryJsonNode = getModelConverter().convertAggregationQuery(query);
+        StorableQuery storableQuery = (StorableQuery) query;
+
+        AggregationField aggregationField = storableQuery.getAggregationField();
         LOG.debug("Query With Aggregation - converted query: '{}'", queryJsonNode);
         String json = writeRequestFromJsonNode(queryJsonNode);
 
@@ -299,14 +304,14 @@ public class RestElasticsearchClient extends AbstractElasticsearchClient<RestCli
 
         if (isRequestSuccessful(queryResponse)) {
             JsonNode responseNode = readResponseAsJsonNode(queryResponse);
-            ArrayNode aggregationBuckets = (ArrayNode) responseNode.path("aggregations").path("distinct_channels").path("buckets");
+            ArrayNode aggregationBuckets = (ArrayNode) responseNode.path("aggregations").path(aggregationField.getAggregationName()).path("buckets");
             resultList = new ResultList<>(aggregationBuckets.size());
 
             for (JsonNode result : aggregationBuckets) {
                 Map<String, Object> object = new HashMap<>();
-                object.put("scope_id", "1");
-                object.put("channel", result.get("key").asText());
-                object.put("clientId", "foo");
+                object.put("scope_id", storableQuery.getScopeId().toStringId());
+                object.put(aggregationField.getFieldName(), result.get("key").asText());
+//                object.put("clientId", "foo");
                 object.put(QueryConverter.QUERY_FETCH_STYLE_KEY, queryFetchStyle);
                 resultList.add(getModelContext().unmarshal(clazz, object));
             }

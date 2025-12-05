@@ -55,6 +55,7 @@ import org.eclipse.kapua.service.datastore.internal.mediator.MetricInfoField;
 import org.eclipse.kapua.service.datastore.internal.model.query.ClientInfoQueryImpl;
 import org.eclipse.kapua.service.datastore.internal.model.query.MessageQueryImpl;
 import org.eclipse.kapua.service.datastore.internal.model.query.predicate.ChannelMatchPredicateImpl;
+import org.eclipse.kapua.service.datastore.internal.schema.ChannelInfoSchema;
 import org.eclipse.kapua.service.datastore.internal.schema.MessageSchema;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettingsKey;
@@ -77,6 +78,7 @@ import org.eclipse.kapua.service.device.registry.DeviceFactory;
 import org.eclipse.kapua.service.device.registry.DeviceListResult;
 import org.eclipse.kapua.service.device.registry.DeviceQuery;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
+import org.eclipse.kapua.service.storable.model.query.AggregationField;
 import org.eclipse.kapua.service.storable.model.query.SortDirection;
 import org.eclipse.kapua.service.storable.model.query.SortField;
 import org.eclipse.kapua.service.storable.model.query.StorableFetchStyle;
@@ -114,8 +116,9 @@ public class GwtDataServiceImpl extends KapuaRemoteServiceServlet implements Gwt
         HashMap<String, GwtTopic> topicMap = new HashMap<String, GwtTopic>();
         ChannelInfoRegistryService channelInfoService = LOCATOR.getService(ChannelInfoRegistryService.class);
         ChannelInfoQuery query = CHANNEL_INFO_FACTORY.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(scopeId));
+        query.setLimit(0); //Only return aggregation results and not documents
+        query.setAggregationField(new AggregationField("distinct_channels", ChannelInfoSchema.CHANNEL_NAME, 10000));
         try {
-            query.setLimit(250); //scroll 250 results at a time (it will be converted to 'size")
             ChannelInfoListResult result = channelInfoService.queryAllResults(query);
             for (ChannelInfo channel : result.getItems()) {
                     addToMap(topicMap, channel);

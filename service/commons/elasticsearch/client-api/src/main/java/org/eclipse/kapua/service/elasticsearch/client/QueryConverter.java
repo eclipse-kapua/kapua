@@ -62,7 +62,7 @@ public interface QueryConverter {
     JsonNode convertDeleteQuery(Object query) throws QueryMappingException;
 
 
-    JsonNode convertQueryScrolling(Object query) throws QueryMappingException;
+    JsonNode convertAggregationQuery(Object query) throws QueryMappingException;
 
     /**
      * Gets the query fetch style
