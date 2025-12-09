@@ -55,6 +55,8 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.security.auth.Subject;
 import javax.security.auth.login.CredentialException;
 import java.security.cert.Certificate;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -157,9 +159,11 @@ public class SecurityPlugin implements ActiveMQSecurityManager5 {
             KapuaPrincipal kapuaPrincipal = buildInternalKapuaPrincipal(getAdminAccountInfo().getId(), username, connectionInfo.getClientId());
             //from JMS 2 specs "Although setting client ID remains mandatory when creating an unshared durable subscription, it is optional when creating a shared durable subscription."
             Subject subject = buildInternalSubject(kapuaPrincipal);
+            Map<String, Object> properties = new HashMap<>();
+            properties.put(SessionContext.PARAM_KEY_PROFILE_ADMIN, true);
+            properties.put(SessionContext.PARAM_KEY_STATUS_MISSING, false);
             SessionContext sessionContext = new SessionContext(kapuaPrincipal, getAdminAccountInfo().getName(), connectionInfo,
-                    serverContext.getBrokerIdentity().getBrokerId(), serverContext.getBrokerIdentity().getBrokerHost(),
-                    true, false);
+                    serverContext.getBrokerIdentity().getBrokerId(), serverContext.getBrokerIdentity().getBrokerHost(), properties);
             serverContext.getSecurityContext().setSessionContext(sessionContext, null, true);
             loginMetric.getInternalConnector().getSuccess().inc();
             return subject;
@@ -203,8 +207,7 @@ public class SecurityPlugin implements ActiveMQSecurityManager5 {
             validateAuthResponse(authResponse);
             KapuaPrincipal principal = new KapuaPrincipalImpl(authResponse);
             SessionContext sessionContext = new SessionContext(principal, authResponse.getAccountName(), connectionInfo, authResponse.getKapuaConnectionId(),
-                    serverContext.getBrokerIdentity().getBrokerId(), serverContext.getBrokerIdentity().getBrokerHost(),
-                    authResponse.isAdmin(), authResponse.isMissing());
+                    serverContext.getBrokerIdentity().getBrokerId(), serverContext.getBrokerIdentity().getBrokerHost(), authResponse.getProperties());
 
             //update client id with account|clientId (see pattern)
             remotingConnection.setClientID(fullClientId);
