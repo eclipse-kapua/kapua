@@ -55,7 +55,6 @@ import org.eclipse.kapua.service.datastore.internal.mediator.MetricInfoField;
 import org.eclipse.kapua.service.datastore.internal.model.query.ClientInfoQueryImpl;
 import org.eclipse.kapua.service.datastore.internal.model.query.MessageQueryImpl;
 import org.eclipse.kapua.service.datastore.internal.model.query.predicate.ChannelMatchPredicateImpl;
-import org.eclipse.kapua.service.datastore.internal.schema.ChannelInfoSchema;
 import org.eclipse.kapua.service.datastore.internal.schema.MessageSchema;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettingsKey;
@@ -78,7 +77,6 @@ import org.eclipse.kapua.service.device.registry.DeviceFactory;
 import org.eclipse.kapua.service.device.registry.DeviceListResult;
 import org.eclipse.kapua.service.device.registry.DeviceQuery;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
-import org.eclipse.kapua.service.storable.model.query.AggregationField;
 import org.eclipse.kapua.service.storable.model.query.SortDirection;
 import org.eclipse.kapua.service.storable.model.query.SortField;
 import org.eclipse.kapua.service.storable.model.query.StorableFetchStyle;
@@ -115,13 +113,10 @@ public class GwtDataServiceImpl extends KapuaRemoteServiceServlet implements Gwt
         List<GwtTopic> channelInfoList = new ArrayList<GwtTopic>();
         HashMap<String, GwtTopic> topicMap = new HashMap<String, GwtTopic>();
         ChannelInfoRegistryService channelInfoService = LOCATOR.getService(ChannelInfoRegistryService.class);
-        ChannelInfoQuery query = CHANNEL_INFO_FACTORY.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(scopeId));
-        query.setLimit(0); //Only return aggregation results and not documents
-        query.setAggregationField(new AggregationField("distinct_channels", ChannelInfoSchema.CHANNEL_NAME, 10000));
         try {
-            ChannelInfoListResult result = channelInfoService.query(query);
-            for (ChannelInfo channel : result.getItems()) {
-                    addToMap(topicMap, channel);
+            List<String> result = channelInfoService.fetchAllChannelNames(GwtKapuaCommonsModelConverter.convertKapuaId(scopeId));
+            for (String channelName : result) {
+                    addToMap(topicMap, channelName);
             }
 
             for (Map.Entry<String, GwtTopic> entry : topicMap.entrySet()) {
@@ -215,8 +210,8 @@ public class GwtDataServiceImpl extends KapuaRemoteServiceServlet implements Gwt
         return updatedDevices;
     }
 
-    private void addToMap(HashMap<String, GwtTopic> topicMap, ChannelInfo channel) {
-        String[] topicParts = channel.getName().split("/");
+    private void addToMap(HashMap<String, GwtTopic> topicMap, String channelName) {
+        String[] topicParts = channelName.split("/");
         GwtTopic parent = null;
         String topicName = topicParts[0];
         String baseTopic = topicParts[0];

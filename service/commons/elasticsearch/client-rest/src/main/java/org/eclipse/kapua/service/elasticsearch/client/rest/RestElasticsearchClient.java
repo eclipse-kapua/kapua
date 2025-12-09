@@ -239,14 +239,8 @@ public class RestElasticsearchClient extends AbstractElasticsearchClient<RestCli
     public <T> ResultList<T> query(String index, Object query, Class<T> clazz) throws ClientException {
         StorableQuery storableQuery = (StorableQuery) query;
         JsonNode queryJsonNode = null;
-        AggregationField aggregationField = null;
-        if (storableQuery.getAggregationField() != null) {
-            aggregationField = storableQuery.getAggregationField();
-            queryJsonNode = getModelConverter().convertAggregationQuery(query);
-        } else {
-            queryJsonNode = getModelConverter().convertQuery(query);
-        }
-
+        AggregationField aggregationField = storableQuery.getAggregationField();
+        queryJsonNode = getModelConverter().convertQuery(query);
         LOG.debug(QUERY_CONVERTED_QUERY, queryJsonNode);
 
         String json = writeRequestFromJsonNode(queryJsonNode);
@@ -259,10 +253,10 @@ public class RestElasticsearchClient extends AbstractElasticsearchClient<RestCli
         if (isRequestSuccessful(queryResponse)) {
             Object queryFetchStyle = getModelConverter().getFetchStyle(query);
             JsonNode responseNode = readResponseAsJsonNode(queryResponse);
-            if (aggregationField != null) {
-                resultList = handleQueryAggregation(responseNode, storableQuery, queryFetchStyle, clazz);
+            if (aggregationField == null) {
+                resultList = fillResultListQuery(responseNode, queryFetchStyle, clazz);
             } else {
-                resultList = handleQueryNoAggregation(responseNode, queryFetchStyle, clazz);
+                resultList = fillResultListAggregationQuery(responseNode, storableQuery, queryFetchStyle, clazz);
             }
         } else if (isRequestCauseOfConcern(queryResponse)) {
             throw buildExceptionFromUnsuccessfulResponse("Query", queryResponse);
@@ -270,7 +264,7 @@ public class RestElasticsearchClient extends AbstractElasticsearchClient<RestCli
         return resultList;
     }
 
-    private <T> ResultList<T> handleQueryAggregation(JsonNode responseNode, StorableQuery storableQuery, Object queryFetchStyle, Class<T> clazz) throws ClientException {
+    private <T> ResultList<T> fillResultListAggregationQuery(JsonNode responseNode, StorableQuery storableQuery, Object queryFetchStyle, Class<T> clazz) throws ClientException {
         //TODO: set if possible setTotalHitsExceedsCount
         ArrayNode aggregationBuckets = (ArrayNode) responseNode.path("aggregations").path(storableQuery.getAggregationField().getAggregationName()).path("buckets");
         ResultList<T> resultList = new ResultList<>(aggregationBuckets.size());
@@ -285,9 +279,9 @@ public class RestElasticsearchClient extends AbstractElasticsearchClient<RestCli
         return resultList;
     }
 
-    private <T> ResultList<T> handleQueryNoAggregation(JsonNode responseNode, Object queryFetchStyle, Class<T> clazz) throws ClientException {
+    private <T> ResultList<T> fillResultListQuery(JsonNode responseNode, Object queryFetchStyle, Class<T> clazz) throws ClientException {
         JsonNode hitsNode = responseNode.path(ElasticsearchKeywords.KEY_HITS);
-        //First, understand if ES contains more than
+        //First, understand if ES contains more than 'max-result-window' hits
         long totalCount = hitsNode.path(ElasticsearchKeywords.KEY_TOTAL).path(ElasticsearchKeywords.KEY_VALUE).asLong();
         String totalRelation = hitsNode.path(ElasticsearchKeywords.KEY_TOTAL).path(ElasticsearchKeywords.KEY_RELATION).asText();
         if (totalCount > Integer.MAX_VALUE) {

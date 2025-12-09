@@ -36,8 +36,7 @@ public class QueryConverterImpl implements QueryConverter {
 
     private static ConvertOptions convertOptionsCount = new ConvertOptions(false, true, false, false, false, false);
     private static ConvertOptions convertOptionsDelete = convertOptionsCount;
-    private static ConvertOptions convertOptionsSearch = new ConvertOptions(true, true, true, true, true, false);
-    private static ConvertOptions getConvertOptionsAggregation = new ConvertOptions(true, true, true, true, true, true);
+    private static ConvertOptions convertOptionsSearch = new ConvertOptions(true, true, true, true, true, true);
 
     @Override
     public JsonNode convertQuery(Object query) throws QueryMappingException {
@@ -54,11 +53,6 @@ public class QueryConverterImpl implements QueryConverter {
         return convertQuery(query, convertOptionsDelete);
     }
 
-    @Override
-    public JsonNode convertAggregationQuery(Object query) throws QueryMappingException {
-        return convertQuery(query, getConvertOptionsAggregation);
-    }
-
     private JsonNode convertQuery(Object query, ConvertOptions convertOptions) throws QueryMappingException {
         if (!(query instanceof StorableQuery)) {
             throw new QueryMappingException("Given query is not a StorableQuery");
@@ -68,12 +62,8 @@ public class QueryConverterImpl implements QueryConverter {
             StorableQuery storableQuery = (StorableQuery) query;
             ObjectNode rootNode = MappingUtils.newObjectNode();
 
-            if (convertOptions.aggregationEnabled) {
+            if (convertOptions.aggregationEnabled && storableQuery.getAggregationField() != null) {
                 AggregationField aggregationField = storableQuery.getAggregationField();
-
-//                // Set size to 0 since we only want aggregation results
-//                rootNode.set(SchemaKeys.KEY_SIZE, MappingUtils.newNumericNode(0));
-
                 // Create the aggregations structure
                 ObjectNode aggsNode = MappingUtils.newObjectNode();
                 ObjectNode distinctChannelsNode = MappingUtils.newObjectNode();

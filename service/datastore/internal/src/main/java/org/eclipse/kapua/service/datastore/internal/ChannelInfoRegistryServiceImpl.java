@@ -23,10 +23,12 @@ import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.datastore.ChannelInfoFactory;
 import org.eclipse.kapua.service.datastore.ChannelInfoRegistryService;
 import org.eclipse.kapua.service.datastore.internal.mediator.ChannelInfoField;
 import org.eclipse.kapua.service.datastore.internal.mediator.MessageField;
 import org.eclipse.kapua.service.datastore.internal.model.query.MessageQueryImpl;
+import org.eclipse.kapua.service.datastore.internal.schema.ChannelInfoSchema;
 import org.eclipse.kapua.service.datastore.internal.schema.MessageSchema;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettingsKey;
@@ -38,6 +40,7 @@ import org.eclipse.kapua.service.datastore.model.query.ChannelInfoQuery;
 import org.eclipse.kapua.service.datastore.model.query.MessageQuery;
 import org.eclipse.kapua.service.datastore.model.query.predicate.DatastorePredicateFactory;
 import org.eclipse.kapua.service.storable.model.id.StorableId;
+import org.eclipse.kapua.service.storable.model.query.AggregationField;
 import org.eclipse.kapua.service.storable.model.query.SortField;
 import org.eclipse.kapua.service.storable.model.query.StorableFetchStyle;
 import org.eclipse.kapua.service.storable.model.query.predicate.AndPredicate;
@@ -52,6 +55,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Channel info registry implementation
@@ -70,6 +74,7 @@ public class ChannelInfoRegistryServiceImpl implements ChannelInfoRegistryServic
     private final ChannelInfoRegistryFacade channelInfoRegistryFacade;
     private final MessageRepository messageRepository;
     private final DatastoreSettings datastoreSettings;
+    private final ChannelInfoFactory channelInfoFactory;
     private static final String QUERY = "query";
     private static final String QUERY_SCOPE_ID = "query.scopeId";
 
@@ -86,7 +91,8 @@ public class ChannelInfoRegistryServiceImpl implements ChannelInfoRegistryServic
             PermissionFactory permissionFactory,
             MessageRepository messageStoreService,
             ChannelInfoRegistryFacade channelInfoRegistryFacade,
-            DatastoreSettings datastoreSettings) {
+            DatastoreSettings datastoreSettings,
+            ChannelInfoFactory channelInfoFactory) {
         this.datastorePredicateFactory = datastorePredicateFactory;
         this.authorizationService = authorizationService;
         this.permissionFactory = permissionFactory;
@@ -95,6 +101,7 @@ public class ChannelInfoRegistryServiceImpl implements ChannelInfoRegistryServic
         this.datastoreSettings = datastoreSettings;
         this.accountService = accountService;
         this.maxResultWindowValue = datastoreSettings.getInt(DatastoreSettingsKey.MAX_RESULT_WINDOW_VALUE);
+        this.channelInfoFactory = channelInfoFactory;
     }
 
     @Override
@@ -207,6 +214,15 @@ public class ChannelInfoRegistryServiceImpl implements ChannelInfoRegistryServic
         } catch (Exception e) {
             throw KapuaException.internalError(e);
         }
+    }
+
+    @Override
+    public List<String> fetchAllChannelNames(KapuaId scopeId) throws KapuaException {
+        ChannelInfoQuery aggregationQuery = channelInfoFactory.newQuery(scopeId);
+        aggregationQuery.setLimit(0); //setting size to 0 to retrieve only aggregation results and no documents
+        aggregationQuery.setAggregationField(new AggregationField("distinct_channels", ChannelInfoSchema.CHANNEL_NAME, 10000));
+        ChannelInfoListResult result = this.query(aggregationQuery);
+        return result.getItems().stream().map(ChannelInfo::getName).collect(Collectors.toList());
     }
 
     private void checkDataAccess(KapuaId scopeId, Actions action)

@@ -21,6 +21,8 @@ import org.eclipse.kapua.service.datastore.model.query.ChannelInfoQuery;
 import org.eclipse.kapua.service.storable.StorableService;
 import org.eclipse.kapua.service.storable.model.id.StorableId;
 
+import java.util.List;
+
 /**
  * {@link ChannelInfoRegistryService} definition.
  * <p>
@@ -33,6 +35,9 @@ public interface ChannelInfoRegistryService extends KapuaService, StorableServic
             throws KapuaException;
 
     void delete(ChannelInfoQuery query)
+            throws KapuaException;
+
+    List<String> fetchAllChannelNames(KapuaId scopeId)
             throws KapuaException;
 
 }
