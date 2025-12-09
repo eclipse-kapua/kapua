@@ -13,7 +13,9 @@
 package org.eclipse.kapua.client.security.bean;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,12 +62,6 @@ public class AuthResponse implements Response {
     @JsonProperty("kapuaConnectionId")
     private String kapuaConnectionId;
 
-    @JsonProperty("admin")
-    private boolean admin;
-
-    @JsonProperty("missing")
-    private boolean missing;
-
     @JsonProperty("stealingLink")
     private boolean stealingLink;
 
@@ -84,16 +80,20 @@ public class AuthResponse implements Response {
     @JsonProperty("errorCode")
     private String errorCode;
 
+    @JsonProperty("properties")
+    private Map<String, Object> properties;
 
     public AuthResponse() {
         acls = new ArrayList<>();
     }
 
     public void update(AuthContext authContext) {
-        admin = authContext.isAdmin();
-        missing = authContext.isMissing();
         stealingLink = authContext.isStealingLink();
         kapuaConnectionId = authContext.getKapuaConnectionId();
+        properties = new HashMap<>();
+        if (authContext.getProperties() != null) {
+            properties.putAll(authContext.getProperties());
+        }
     }
 
     public String getRequester() {
@@ -200,22 +200,6 @@ public class AuthResponse implements Response {
         this.kapuaConnectionId = kapuaConnectionId;
     }
 
-    public boolean isAdmin() {
-        return admin;
-    }
-
-    public void setAdmin(boolean admin) {
-        this.admin = admin;
-    }
-
-    public boolean isMissing() {
-        return missing;
-    }
-
-    public void setMissing(boolean missing) {
-        this.missing = missing;
-    }
-
     public boolean isStealingLink() {
         return stealingLink;
     }
@@ -256,4 +240,7 @@ public class AuthResponse implements Response {
         this.exceptionClass = exceptionClass;
     }
 
+    public Map<String, Object> getProperties() {
+        return properties;
+    }
 }

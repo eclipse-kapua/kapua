@@ -18,6 +18,7 @@ import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaIllegalAccessException;
 import org.eclipse.kapua.client.security.bean.AuthAcl;
 import org.eclipse.kapua.client.security.bean.AuthContext;
+import org.eclipse.kapua.client.security.context.SessionContext;
 import org.eclipse.kapua.client.security.metric.AuthMetric;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.model.id.KapuaEid;
@@ -90,7 +91,7 @@ public class UserAuthenticationLogic extends AuthenticationLogic {
     public boolean disconnect(AuthContext authContext) {
         Context timeTotal = authenticationMetric.getExtConnectorTime().getUserRemoveConnection().time();
         boolean deviceOwnedByTheCurrentNode = true;
-        if (!authContext.isIllegalState()) {
+        if (!authContext.isStealingLink() && !authContext.isIllegalState()) {
             // update device connection (if the disconnection wasn't caused by a stealing link)
             DeviceConnection deviceConnection = getDeviceConnection(authContext);
             deviceOwnedByTheCurrentNode = isDeviceOwnedByTheCurrentNode(authContext, deviceConnection);
@@ -99,7 +100,7 @@ public class UserAuthenticationLogic extends AuthenticationLogic {
                 if (DeviceConnectionStatus.MISSING.equals(deviceConnection.getStatus())) {
                     logger.warn("Skipping device status update for device {} since last status was MISSING!", deviceConnection.getClientId());
                 } else {
-                    deviceConnection.setStatus(!authContext.isMissing() ? DeviceConnectionStatus.DISCONNECTED : DeviceConnectionStatus.MISSING);
+                    deviceConnection.setStatus(!authContext.getProperty(SessionContext.PARAM_KEY_STATUS_MISSING, false) ? DeviceConnectionStatus.DISCONNECTED : DeviceConnectionStatus.MISSING);
                     try {
                         KapuaSecurityUtils.doPrivileged(() -> deviceConnectionService.update(deviceConnection));
                     } catch (Exception e) {
@@ -109,7 +110,7 @@ public class UserAuthenticationLogic extends AuthenticationLogic {
             }
         }
         timeTotal.stop();
-        return !authContext.isStealingLink() && deviceOwnedByTheCurrentNode;
+        return !authContext.isStealingLink() && deviceOwnedByTheCurrentNode && !authContext.getProperty(SessionContext.PARAM_KEY_STATUS_MISSING, false);
     }
 
     @Override
