@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.client.security.bean;
 
+import org.eclipse.kapua.client.security.context.SessionContext;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnection;
 
@@ -39,15 +40,13 @@ public class AuthContext {
     private String exceptionClass;
     private String errorCode;
 
-    private boolean admin;
-    private boolean missing;
     //stealing link flag
     private boolean stealingLink;
     //device connection illegal state flag
     private boolean illegalState;
     private String kapuaConnectionId;
 
-    private Map<String, Object> property;
+    private Map<String, Object> properties;
 
     public AuthContext(AuthRequest authRequest) {
         initCommonFields(authRequest);
@@ -61,10 +60,13 @@ public class AuthContext {
         accountName = authResponse.getAccountName();
         scopeId = authResponse.getScopeId();
         userId = authResponse.getUserId();
+        if (authResponse.getProperties() != null) {
+            properties.putAll(authResponse.getProperties());
+        }
     }
 
     private void initCommonFields(AuthRequest authRequest) {
-        property = new HashMap<>();
+        properties = new HashMap<>();
         clusterName = authRequest.getClusterName();
         requester = authRequest.getRequester();
         username = authRequest.getUsername();
@@ -80,7 +82,7 @@ public class AuthContext {
         errorCode = authRequest.getErrorCode();
         stealingLink = authRequest.isStealingLink();
         illegalState = authRequest.isIllegalState();
-        missing = authRequest.isMissing();
+        setProperty(SessionContext.PARAM_KEY_STATUS_MISSING, authRequest.isMissing());
     }
 
     public String getClusterName() {
@@ -183,22 +185,6 @@ public class AuthContext {
         this.kapuaConnectionId = kapuaConnectionId.toCompactId();
     }
 
-    public boolean isMissing() {
-        return missing;
-    }
-
-    public void setMissing(boolean missing) {
-        this.missing = missing;
-    }
-
-    public boolean isAdmin() {
-        return admin;
-    }
-
-    public void setAdmin(boolean admin) {
-        this.admin = admin;
-    }
-
     public boolean isStealingLink() {
         return stealingLink;
     }
@@ -216,12 +202,12 @@ public class AuthContext {
     }
 
     public <T> void setProperty(String key, T value) {
-        property.put(key, value);
+        properties.put(key, value);
     }
 
     public <T> T getProperty(String key, T defaultValue) {
         try {
-            T value = (T) property.get(key);
+            T value = (T) properties.get(key);
             if (value == null) {
                 return defaultValue;
             } else {
@@ -230,5 +216,9 @@ public class AuthContext {
         } catch (ClassCastException e) {
             return defaultValue;
         }
+    }
+
+    public Map<String, Object> getProperties() {
+        return properties;
     }
 }

@@ -50,12 +50,12 @@ public class SessionContext {
 
     private Map<String, Object> properties = new HashMap<>();
 
-    public SessionContext(KapuaPrincipal principal, String accountName, ConnectionInfo connectionInfo, String kapuaConnectionId, String brokerId, String brokerHost, boolean admin, boolean missing) {
-        this(principal, accountName, connectionInfo, brokerId, brokerHost, admin, missing);
+    public SessionContext(KapuaPrincipal principal, String accountName, ConnectionInfo connectionInfo, String kapuaConnectionId, String brokerId, String brokerHost, Map<String, Object> properties) {
+        this(principal, accountName, connectionInfo, brokerId, brokerHost, properties);
         this.kapuaConnectionId = KapuaEid.parseCompactId(kapuaConnectionId);
     }
 
-    public SessionContext(KapuaPrincipal principal, String accountName, ConnectionInfo connectionInfo, String brokerId, String brokerHost, boolean admin, boolean missing) {
+    public SessionContext(KapuaPrincipal principal, String accountName, ConnectionInfo connectionInfo, String brokerId, String brokerHost, Map<String, Object> properties) {
         this.principal = principal;
         //after the fix from this commit 824cccbb1e5b4347c0b0a583b4050a630dceb4c7
         //fix(authentication): fix KapuaPrincipal name
@@ -73,8 +73,10 @@ public class SessionContext {
         connectorName = connectionInfo.getConnectorName();
         transportProtocol = connectionInfo.getTransportProtocol();
         certificates = connectionInfo.getCertificates();
-        setAdmin(admin);
-        setMissing(missing);
+        this.properties = new HashMap<>();
+        if (properties != null) {
+            this.properties.putAll(properties);
+        }
     }
 
     public boolean isInternal() {
