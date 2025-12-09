@@ -33,7 +33,5 @@ public interface ChannelInfoRegistryFacade {
 
     ChannelInfoListResult query(ChannelInfoQuery query) throws KapuaIllegalArgumentException, ConfigurationException, ClientException;
 
-    ChannelInfoListResult queryAllResults(ChannelInfoQuery query) throws KapuaIllegalArgumentException, ConfigurationException, ClientException;
-
     long count(ChannelInfoQuery query) throws KapuaIllegalArgumentException, ConfigurationException, ClientException;
 }

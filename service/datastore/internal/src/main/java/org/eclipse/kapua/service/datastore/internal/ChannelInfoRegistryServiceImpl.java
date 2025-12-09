@@ -156,35 +156,6 @@ public class ChannelInfoRegistryServiceImpl implements ChannelInfoRegistryServic
     }
 
     @Override
-    public ChannelInfoListResult queryAllResults(ChannelInfoQuery query) throws KapuaException {
-        if (!isServiceEnabled(query.getScopeId())) {
-            throw new KapuaServiceDisabledException(this.getClass().getName());
-        }
-
-        ArgumentValidator.notNull(query, QUERY);
-        ArgumentValidator.notNull(query.getScopeId(), QUERY_SCOPE_ID);
-        checkDataAccess(query.getScopeId(), Actions.read);
-        if (query.getLimit() != null && query.getOffset() != null) {
-            ArgumentValidator.notNegative(query.getLimit(), "limit");
-            ArgumentValidator.notNegative(query.getOffset(), "offset");
-            ArgumentValidator.numLessThenOrEqual(query.getLimit() + query.getOffset(), maxResultWindowValue, "limit + offset");
-        }
-
-        try {
-            ChannelInfoListResult result = channelInfoRegistryFacade.queryAllResults(query);
-            if (result != null && query.getFetchAttributes().contains(ChannelInfoField.TIMESTAMP.field())) { //TODO: review this thing, does it need to work??
-                // populate the lastMessageTimestamp
-                for (ChannelInfo channelInfo : result.getItems()) {
-                    updateLastPublishedFields(channelInfo);
-                }
-            }
-            return result;
-        } catch (Exception e) {
-            throw KapuaException.internalError(e);
-        }
-    }
-
-    @Override
     public long count(ChannelInfoQuery query)
             throws KapuaException {
         if (!isServiceEnabled(query.getScopeId())) {

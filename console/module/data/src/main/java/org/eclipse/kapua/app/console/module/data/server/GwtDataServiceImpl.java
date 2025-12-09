@@ -119,7 +119,7 @@ public class GwtDataServiceImpl extends KapuaRemoteServiceServlet implements Gwt
         query.setLimit(0); //Only return aggregation results and not documents
         query.setAggregationField(new AggregationField("distinct_channels", ChannelInfoSchema.CHANNEL_NAME, 10000));
         try {
-            ChannelInfoListResult result = channelInfoService.queryAllResults(query);
+            ChannelInfoListResult result = channelInfoService.query(query);
             for (ChannelInfo channel : result.getItems()) {
                     addToMap(topicMap, channel);
             }

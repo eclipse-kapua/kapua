@@ -23,10 +23,19 @@ package org.eclipse.kapua.service.storable.model.query;
 
 public class AggregationField {
 
-    private final String aggregationName;
-    private final String fieldName;
-    private final int size;
+    private String aggregationName;
+    private String fieldName;
+    private int size;
 
+    /**
+     * Constructor.
+     * <p>
+     * Required by JAXB.
+     *
+     * @since 2.0.0
+     */
+    public AggregationField() {
+    }
 
     public AggregationField(String aggregationName, String fieldName, int size) {
         this.aggregationName = aggregationName;

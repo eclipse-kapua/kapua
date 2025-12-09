@@ -188,19 +188,6 @@ public class ChannelInfoRegistryFacadeImpl extends AbstractDatastoreFacade imple
         return repository.query(query);
     }
 
-    @Override
-    public ChannelInfoListResult queryAllResults(ChannelInfoQuery query) throws KapuaIllegalArgumentException, ConfigurationException, ClientException {
-        ArgumentValidator.notNull(query, QUERY);
-        ArgumentValidator.notNull(query.getScopeId(), QUERY_SCOPE_ID);
-
-        if (!isDatastoreServiceEnabled(query.getScopeId())) {
-            LOG.debug("Storage not enabled for account {}, returning empty result", query.getScopeId());
-            return new ChannelInfoListResultImpl();
-        }
-
-        return repository.queryAllResults(query);
-    }
-
     /**
      * Get channels informations count matching the given query
      *
