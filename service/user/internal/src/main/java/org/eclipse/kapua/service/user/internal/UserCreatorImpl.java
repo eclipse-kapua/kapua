@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -21,6 +21,7 @@ import org.eclipse.kapua.service.user.UserType;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -60,7 +61,7 @@ public class UserCreatorImpl extends AbstractKapuaNamedEntityCreator<User> imple
     @Override
     public Set<KapuaId> getGroupIds() {
         if (groupIds == null) {
-            groupIds = Collections.emptySet();
+            groupIds = new HashSet<>();
         }
 
         return groupIds;
