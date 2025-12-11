@@ -70,12 +70,12 @@ public class QueryConverterImpl implements QueryConverter {
                 ObjectNode termsNode = MappingUtils.newObjectNode();
 
                 // Configure the terms aggregation
-                termsNode.put("field", aggregationField.getFieldName());
-                termsNode.put("size", aggregationField.getSize());
+                termsNode.put(SchemaKeys.KEY_AGGREGATION_FIELD, aggregationField.getFieldName());
+                termsNode.put(SchemaKeys.KEY_AGGREGATION_SIZE, aggregationField.getSize());
 
-                distinctChannelsNode.set("terms", termsNode);
+                distinctChannelsNode.set(SchemaKeys.KEY_AGGREGATION_TERMS, termsNode);
                 aggsNode.set(aggregationField.getAggregationName(), distinctChannelsNode);
-                rootNode.set("aggs", aggsNode);
+                rootNode.set(SchemaKeys.KEY_AGGREGATION_NODE, aggsNode);
             }
 
             if (convertOptions.sourceEnabled) {

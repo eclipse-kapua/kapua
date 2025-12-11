@@ -217,7 +217,7 @@ public class ChannelInfoRegistryServiceImpl implements ChannelInfoRegistryServic
     }
 
     @Override
-    public List<String> fetchAllChannelNames(KapuaId scopeId) throws KapuaException {
+    public List<String> fetchDistinctChannelNames(KapuaId scopeId) throws KapuaException {
         ChannelInfoQuery aggregationQuery = channelInfoFactory.newQuery(scopeId);
         aggregationQuery.setLimit(0); //setting size to 0 to retrieve only aggregation results and no documents
         aggregationQuery.setAggregationField(new AggregationField("distinct_channels", ChannelInfoSchema.CHANNEL_NAME, 10000));

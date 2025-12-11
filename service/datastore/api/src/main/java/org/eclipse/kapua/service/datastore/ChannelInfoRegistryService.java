@@ -37,7 +37,7 @@ public interface ChannelInfoRegistryService extends KapuaService, StorableServic
     void delete(ChannelInfoQuery query)
             throws KapuaException;
 
-    List<String> fetchAllChannelNames(KapuaId scopeId)
+    List<String> fetchDistinctChannelNames(KapuaId scopeId)
             throws KapuaException;
 
 }

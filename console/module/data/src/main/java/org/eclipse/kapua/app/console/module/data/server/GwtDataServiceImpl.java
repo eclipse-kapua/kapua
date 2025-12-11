@@ -114,8 +114,8 @@ public class GwtDataServiceImpl extends KapuaRemoteServiceServlet implements Gwt
         HashMap<String, GwtTopic> topicMap = new HashMap<String, GwtTopic>();
         ChannelInfoRegistryService channelInfoService = LOCATOR.getService(ChannelInfoRegistryService.class);
         try {
-            List<String> result = channelInfoService.fetchAllChannelNames(GwtKapuaCommonsModelConverter.convertKapuaId(scopeId));
-            for (String channelName : result) {
+            List<String> channelNames = channelInfoService.fetchDistinctChannelNames(GwtKapuaCommonsModelConverter.convertKapuaId(scopeId));
+            for (String channelName : channelNames) {
                     addToMap(topicMap, channelName);
             }
 

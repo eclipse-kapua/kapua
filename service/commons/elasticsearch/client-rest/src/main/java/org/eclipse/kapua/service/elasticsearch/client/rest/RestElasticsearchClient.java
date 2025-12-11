@@ -235,6 +235,10 @@ public class RestElasticsearchClient extends AbstractElasticsearchClient<RestCli
         return result.getResult().isEmpty() ? null : result.getResult().get(0);
     }
 
+    /**
+     * In case of aggregation query (aka the aggregation field has been set) the returned ResultList will contain one entry for each aggregation bucket ('hits' are not processed/considered in this case)
+     * each entry is of type T and has just 2 fields set: the aggregation field name (with its value) and the scope_id
+     */
     @Override
     public <T> ResultList<T> query(String index, Object query, Class<T> clazz) throws ClientException {
         StorableQuery storableQuery = (StorableQuery) query;
@@ -265,14 +269,13 @@ public class RestElasticsearchClient extends AbstractElasticsearchClient<RestCli
     }
 
     private <T> ResultList<T> fillResultListAggregationQuery(JsonNode responseNode, StorableQuery storableQuery, Object queryFetchStyle, Class<T> clazz) throws ClientException {
-        //TODO: set if possible setTotalHitsExceedsCount
-        ArrayNode aggregationBuckets = (ArrayNode) responseNode.path("aggregations").path(storableQuery.getAggregationField().getAggregationName()).path("buckets");
+        ArrayNode aggregationBuckets = (ArrayNode) responseNode.path(ElasticsearchKeywords.KEY_AGGREGATIONS).path(storableQuery.getAggregationField().getAggregationName()).path(ElasticsearchKeywords.KEY_BUCKETS);
         ResultList<T> resultList = new ResultList<>(aggregationBuckets.size());
 
         for (JsonNode result : aggregationBuckets) {
             Map<String, Object> object = new HashMap<>();
             object.put("scope_id", storableQuery.getScopeId().toStringId());
-            object.put(storableQuery.getAggregationField().getFieldName(), result.get("key").asText());
+            object.put(storableQuery.getAggregationField().getFieldName(), result.get(ElasticsearchKeywords.KEY_BUCKETS_KEY).asText()); //set the value for the aggregation field
             object.put(QueryConverter.QUERY_FETCH_STYLE_KEY, queryFetchStyle);
             resultList.add(getModelContext().unmarshal(clazz, object));
         }
