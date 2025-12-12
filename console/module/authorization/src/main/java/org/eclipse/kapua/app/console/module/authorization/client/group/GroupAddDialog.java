@@ -16,6 +16,7 @@ import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
 import com.extjs.gxt.ui.client.event.SelectionChangedListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.form.ComboBox;
+import com.extjs.gxt.ui.client.widget.form.LabelField;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaErrorCode;
@@ -54,6 +55,8 @@ public class GroupAddDialog extends EntityAddEditDialog {
     protected KapuaTextField<String> groupDescriptionField;
 
     protected ComboBox<GwtDomain> domainsCombo;
+
+    protected LabelField domainsLabel;
 
     public GroupAddDialog(GwtSession currentSession) {
         super(currentSession);
@@ -124,16 +127,18 @@ public class GroupAddDialog extends EntityAddEditDialog {
 
                 domainsCombo.getStore().add(result);
                 domainsCombo.enable();
-
-                selectGroupForEdit();
             }
         });
+
+        domainsLabel = new LabelField();
+        domainsLabel.setFieldLabel("Domain");
+        domainsLabel.setLabelSeparator(":");
+        domainsLabel.hide();
+        groupFormPanel.add(domainsLabel);
 
         // Add form panel to main body
         bodyPanel.add(groupFormPanel);
     }
-
-
 
     public void validateGroups() {
         if (groupNameField.getValue() == null) {
@@ -147,7 +152,6 @@ public class GroupAddDialog extends EntityAddEditDialog {
 
         super.preSubmit();
     }
-
 
     @Override
     public void submit() {
@@ -196,12 +200,5 @@ public class GroupAddDialog extends EntityAddEditDialog {
     @Override
     public String getInfoMessage() {
         return MSGS.dialogAddInfo();
-    }
-
-    /**
-     * Overridden in {@link GroupEditDialog} to select Domain when loaded
-     */
-    protected void selectGroupForEdit() {
-        // Nothing to do
     }
 }
