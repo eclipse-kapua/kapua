@@ -48,7 +48,7 @@ public class GroupImpl extends AbstractKapuaNamedEntity implements Group {
     private Set<KapuaEid> tagIds;
 
     @Basic
-    @Column(name = "domain", nullable = false, updatable = true)
+    @Column(name = "domain", nullable = false, updatable = false)
     private String domain;
 
     /**
