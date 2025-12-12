@@ -15,6 +15,7 @@ package org.eclipse.kapua.service.authorization.group.shiro;
 import org.eclipse.kapua.KapuaDuplicateNameException;
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
@@ -133,16 +134,22 @@ public final class GroupServiceValidationUtilsImpl implements GroupServiceValida
     public void validateUpdateInTransaction(TxContext txContext, Group group) throws KapuaException {
         //
         // Check existence
-        groupRepository
+        Group originalGroup = groupRepository
                 .find(txContext, group.getScopeId(), group.getId())
                 .orElseThrow(() -> new KapuaEntityNotFoundException(Group.TYPE, group.getId()));
 
         //
         // Check duplicates
-
         // .name
         if (groupRepository.countOtherEntitiesWithNameInScope(txContext, group.getScopeId(), group.getId(), group.getName()) > 0) {
             throw new KapuaDuplicateNameException(group.getName());
+        }
+
+        //
+        // Check not updatable fields
+        // .domain
+        if(!originalGroup.getDomain().equals(group.getDomain())) {
+            throw new KapuaIllegalArgumentException("domain", group.getDomain());
         }
     }
 
