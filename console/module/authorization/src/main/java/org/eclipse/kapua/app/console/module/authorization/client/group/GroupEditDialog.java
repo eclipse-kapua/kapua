@@ -20,7 +20,6 @@ import org.eclipse.kapua.app.console.module.api.client.util.FailureHandler;
 import org.eclipse.kapua.app.console.module.api.client.util.KapuaSafeHtmlUtils;
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
 import org.eclipse.kapua.app.console.module.authorization.client.messages.ConsoleGroupMessages;
-import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtDomain;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
 import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtGroupService;
 import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtGroupServiceAsync;
@@ -40,8 +39,11 @@ public class GroupEditDialog extends GroupAddDialog {
 
     @Override
     public void createBody() {
-
         super.createBody();
+
+        domainsCombo.removeFromParent();
+        domainsLabel.show();
+
         populateEditDialog(selectedGroup);
     }
 
@@ -49,7 +51,6 @@ public class GroupEditDialog extends GroupAddDialog {
     public void submit() {
         selectedGroup.setGroupName(groupNameField.getValue());
         selectedGroup.setGroupDescription(KapuaSafeHtmlUtils.htmlUnescape(groupDescriptionField.getValue()));
-        selectedGroup.setDomain(domainsCombo.getValue().getDomainName());
 
         GWT_GROUP_SERVICE.update(selectedGroup, new AsyncCallback<GwtGroup>() {
 
@@ -94,17 +95,8 @@ public class GroupEditDialog extends GroupAddDialog {
     private void populateEditDialog(GwtGroup gwtGroup) {
         groupNameField.setValue(gwtGroup.getGroupName());
         groupDescriptionField.setValue(gwtGroup.getUnescapedDescription());
-        domainsCombo.setRawValue(gwtGroup.getDomain());
+        domainsLabel.setText(gwtGroup.getDomain());
 
         formPanel.clearDirtyFields();
-    }
-
-    @Override
-    protected void selectGroupForEdit() {
-        for (GwtDomain domain : domainsCombo.getStore().getModels()) {
-            if (domain.getDomainName().equals(selectedGroup.getDomain())) {
-                domainsCombo.setValue(domain);
-            }
-        }
     }
 }
