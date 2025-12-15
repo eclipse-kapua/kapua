@@ -14,8 +14,10 @@ package org.eclipse.kapua.app.console.module.user.shared.util;
 
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.app.console.module.api.shared.util.KapuaGwtCommonsModelConverter;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
 import org.eclipse.kapua.app.console.module.user.shared.model.GwtUser;
 import org.eclipse.kapua.service.user.User;
+import org.eclipse.kapua.service.user.group.UserGroup;
 
 public class KapuaGwtUserModelConverter {
 
@@ -46,5 +48,18 @@ public class KapuaGwtUserModelConverter {
         gwtUser.setExternalUsername(user.getExternalUsername());
         // Return converted entity
         return gwtUser;
+    }
+
+    public static GwtGroup convertUserGroup(UserGroup group) {
+
+        GwtGroup gwtGroup = new GwtGroup();
+        // Covert commons attributes
+        KapuaGwtCommonsModelConverter.convertUpdatableEntity(group, gwtGroup);
+        // Convert other attributes
+        gwtGroup.setGroupName(group.getName());
+        gwtGroup.setGroupDescription(group.getDescription());
+        gwtGroup.setDomain("user");
+
+        return gwtGroup;
     }
 }
