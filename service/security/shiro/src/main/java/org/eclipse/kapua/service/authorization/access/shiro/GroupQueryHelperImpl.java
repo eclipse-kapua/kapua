@@ -122,11 +122,16 @@ public class GroupQueryHelperImpl implements GroupQueryHelper {
 
     @Override
     public void handleGroupVisibility(KapuaQuery query) throws KapuaException {
+        handleGroupVisibility(null, query);
+    }
+
+    @Override
+    public void handleGroupVisibility(String domainFilter, KapuaQuery query) throws KapuaException {
         final KapuaSession kapuaSession = KapuaSecurityUtils.getSession();
         if (accessInfoFactory != null) {
             if (kapuaSession != null && !kapuaSession.isTrustedMode()) {
                 txManager.execute(tx -> {
-                    handleGroupVisibility(tx, kapuaSession, query);
+                    handleGroupVisibility(tx, kapuaSession, domainFilter, query);
                     return null;
                 });
             }
@@ -225,7 +230,7 @@ public class GroupQueryHelperImpl implements GroupQueryHelper {
         }
     }
 
-    private void handleGroupVisibility(TxContext txContext, KapuaSession kapuaSession, KapuaQuery query) throws KapuaException{
+    private void handleGroupVisibility(TxContext txContext, KapuaSession kapuaSession, String domainFilter, KapuaQuery query) throws KapuaException{
         try {
             //
             // Gather all groups that the user has access to
@@ -300,6 +305,10 @@ public class GroupQueryHelperImpl implements GroupQueryHelper {
 
             Set<KapuaId> groupIds = new HashSet<>();
             for (Permission permission : allPermissions) {
+                if (domainFilter != null && !domainFilter.equals(permission.getDomain())) {
+                    continue;
+                }
+
                 Domain permissionDomain = allDomains.get(permission.getDomain());
 
                 if (permissionDomain == null || permissionDomain.getGroupable()) {

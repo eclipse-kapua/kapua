@@ -15,11 +15,13 @@ package org.eclipse.kapua.service.user.group.internal;
 import com.google.inject.Provides;
 import com.google.inject.multibindings.ProvidesIntoSet;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
+import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.domain.Domain;
 import org.eclipse.kapua.model.domain.DomainEntry;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
+import org.eclipse.kapua.service.authorization.access.GroupQueryHelper;
 import org.eclipse.kapua.service.authorization.group.GroupFactory;
 import org.eclipse.kapua.service.authorization.group.GroupPermissionService;
 import org.eclipse.kapua.service.authorization.group.GroupRoleService;
@@ -70,13 +72,17 @@ public class UserGroupModule extends AbstractKapuaModule {
     @Provides
     @Singleton
     UserGroupService userGroupService(
+            KapuaJpaTxManagerFactory jpaTxManagerFactory,
             GroupService groupService,
             GroupFactory groupFactory,
+            GroupQueryHelper groupQueryHelper,
             UserGroupServiceValidationUtils userGroupServiceValidationUtils
     ) {
         return new UserGroupServiceImpl(
+            jpaTxManagerFactory.create("kapua-user"),
             groupService,
             groupFactory,
+            groupQueryHelper,
             userGroupServiceValidationUtils
         );
     }

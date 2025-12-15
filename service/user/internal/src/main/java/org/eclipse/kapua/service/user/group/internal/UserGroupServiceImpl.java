@@ -14,10 +14,12 @@ package org.eclipse.kapua.service.user.group.internal;
 
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.model.query.predicate.QueryPredicate;
+import org.eclipse.kapua.service.authorization.access.GroupQueryHelper;
 import org.eclipse.kapua.service.authorization.group.Group;
 import org.eclipse.kapua.service.authorization.group.GroupAttributes;
 import org.eclipse.kapua.service.authorization.group.GroupCreator;
@@ -30,6 +32,7 @@ import org.eclipse.kapua.service.user.group.UserGroup;
 import org.eclipse.kapua.service.user.group.UserGroupCreator;
 import org.eclipse.kapua.service.user.group.UserGroupListResult;
 import org.eclipse.kapua.service.user.group.UserGroupService;
+import org.eclipse.kapua.storage.TxManager;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -43,8 +46,10 @@ import java.util.stream.Collectors;
 @Singleton
 public class UserGroupServiceImpl implements UserGroupService {
 
+    private final TxManager txManager;
     private final GroupService groupService;
     private final GroupFactory groupFactory;
+    private final GroupQueryHelper groupQueryHelper;
     private final UserGroupServiceValidationUtils userGroupServiceValidationUtils;
 
     /**
@@ -55,12 +60,16 @@ public class UserGroupServiceImpl implements UserGroupService {
      */
     @Inject
     public UserGroupServiceImpl(
+            TxManager txManager,
             GroupService groupService,
             GroupFactory groupFactory,
+            GroupQueryHelper groupQueryHelper,
             UserGroupServiceValidationUtils userGroupServiceValidationUtils
     ) {
+        this.txManager = txManager;
         this.groupService = groupService;
         this.groupFactory = groupFactory;
+        this.groupQueryHelper = groupQueryHelper;
         this.userGroupServiceValidationUtils = userGroupServiceValidationUtils;
     }
 
@@ -73,7 +82,7 @@ public class UserGroupServiceImpl implements UserGroupService {
         GroupCreator groupCreator = groupFactory.newCreator(userGroupCreator.getScopeId());
         groupCreator.setName(userGroupCreator.getName());
         groupCreator.setDescription(userGroupCreator.getDescription());
-        groupCreator.setDomain("user");
+        groupCreator.setDomain(Domains.USER);
 
         // Do create
         Group group = KapuaSecurityUtils.doPrivileged(() -> groupService.create(groupCreator));
@@ -102,7 +111,7 @@ public class UserGroupServiceImpl implements UserGroupService {
         group.setId(userGroup.getId());
         group.setTagIds(userGroup.getTagIds());
         group.setName(userGroup.getName());
-        group.setDomain("user");
+        group.setDomain(Domains.USER);
         group.setDescription(userGroup.getDescription());
         group.setEntityAttributes(userGroup.getEntityAttributes());
         group.setEntityProperties(userGroup.getEntityProperties());
@@ -133,7 +142,7 @@ public class UserGroupServiceImpl implements UserGroupService {
         // Do find
         Group group = KapuaSecurityUtils.doPrivileged(() -> groupService.find(scopeId, userGroupId));
 
-        if (!group.getDomain().equals("user")) {
+        if (!group.getDomain().equals(Domains.USER)) {
             throw new KapuaEntityNotFoundException(UserGroup.TYPE, userGroupId);
         }
 
@@ -170,17 +179,23 @@ public class UserGroupServiceImpl implements UserGroupService {
         QueryPredicate queryPredicate;
         if (query.getPredicate() != null) {
             queryPredicate = groupQuery.andPredicate(
-                groupQuery.attributePredicate(GroupAttributes.DOMAIN, "user"),
+                groupQuery.attributePredicate(GroupAttributes.DOMAIN, Domains.USER),
                 query.getPredicate()
             );
         }
         else {
-            queryPredicate = groupQuery.attributePredicate(GroupAttributes.DOMAIN, "user");
+            queryPredicate = groupQuery.attributePredicate(GroupAttributes.DOMAIN, Domains.USER);
         }
 
         groupQuery.setPredicate(queryPredicate);
 
         // Do query
+        txManager.execute(tx -> {
+            groupQueryHelper.handleGroupVisibility(Domains.USER, groupQuery);
+
+            return null;
+        });
+
         GroupListResult groups = KapuaSecurityUtils.doPrivileged(() -> groupService.query(groupQuery));
 
         // Convert

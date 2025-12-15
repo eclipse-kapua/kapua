@@ -20,4 +20,6 @@ public interface GroupQueryHelper {
     void handleKapuaQueryGroupPredicate(KapuaQuery query, String domain, String groupPredicateName) throws KapuaException;
 
     void handleGroupVisibility(KapuaQuery query) throws KapuaException;
+
+    void handleGroupVisibility(String domainFilter, KapuaQuery query) throws KapuaException;
 }
