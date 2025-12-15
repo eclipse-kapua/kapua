@@ -14,10 +14,12 @@ package org.eclipse.kapua.service.device.registry.group.internal;
 
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.model.query.predicate.QueryPredicate;
+import org.eclipse.kapua.service.authorization.access.GroupQueryHelper;
 import org.eclipse.kapua.service.authorization.group.Group;
 import org.eclipse.kapua.service.authorization.group.GroupAttributes;
 import org.eclipse.kapua.service.authorization.group.GroupCreator;
@@ -30,6 +32,7 @@ import org.eclipse.kapua.service.device.registry.group.DeviceGroup;
 import org.eclipse.kapua.service.device.registry.group.DeviceGroupCreator;
 import org.eclipse.kapua.service.device.registry.group.DeviceGroupListResult;
 import org.eclipse.kapua.service.device.registry.group.DeviceGroupService;
+import org.eclipse.kapua.storage.TxManager;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -43,8 +46,10 @@ import java.util.stream.Collectors;
 @Singleton
 public class DeviceGroupServiceImpl implements DeviceGroupService {
 
+    private final TxManager txManager;
     private final GroupService groupService;
     private final GroupFactory groupFactory;
+    private final GroupQueryHelper groupQueryHelper;
     private final DeviceGroupServiceValidationUtils deviceGroupServiceValidationUtils;
 
     /**
@@ -55,12 +60,16 @@ public class DeviceGroupServiceImpl implements DeviceGroupService {
      */
     @Inject
     public DeviceGroupServiceImpl(
+            TxManager txManager,
             GroupService groupService,
             GroupFactory groupFactory,
+            GroupQueryHelper groupQueryHelper,
             DeviceGroupServiceValidationUtils deviceGroupServiceValidationUtils
     ) {
+        this.txManager = txManager;
         this.groupService = groupService;
         this.groupFactory = groupFactory;
+        this.groupQueryHelper = groupQueryHelper;
         this.deviceGroupServiceValidationUtils = deviceGroupServiceValidationUtils;
     }
 
@@ -73,7 +82,7 @@ public class DeviceGroupServiceImpl implements DeviceGroupService {
         GroupCreator groupCreator = groupFactory.newCreator(deviceGroupCreator.getScopeId());
         groupCreator.setName(deviceGroupCreator.getName());
         groupCreator.setDescription(deviceGroupCreator.getDescription());
-        groupCreator.setDomain("device");
+        groupCreator.setDomain(Domains.DEVICE);
 
         // Do create
         Group group = KapuaSecurityUtils.doPrivileged(() -> groupService.create(groupCreator));
@@ -102,7 +111,7 @@ public class DeviceGroupServiceImpl implements DeviceGroupService {
         group.setId(deviceGroup.getId());
         group.setTagIds(deviceGroup.getTagIds());
         group.setName(deviceGroup.getName());
-        group.setDomain("device");
+        group.setDomain(Domains.DEVICE);
         group.setDescription(deviceGroup.getDescription());
         group.setEntityAttributes(deviceGroup.getEntityAttributes());
         group.setEntityProperties(deviceGroup.getEntityProperties());
@@ -133,7 +142,7 @@ public class DeviceGroupServiceImpl implements DeviceGroupService {
         // Do find
         Group group = KapuaSecurityUtils.doPrivileged(() -> groupService.find(scopeId, deviceGroupId));
 
-        if (!group.getDomain().equals("device")) {
+        if (!group.getDomain().equals(Domains.DEVICE)) {
             throw new KapuaEntityNotFoundException(DeviceGroup.TYPE, deviceGroupId);
         }
 
@@ -170,17 +179,22 @@ public class DeviceGroupServiceImpl implements DeviceGroupService {
         QueryPredicate queryPredicate;
         if (query.getPredicate() != null) {
             queryPredicate = groupQuery.andPredicate(
-                groupQuery.attributePredicate(GroupAttributes.DOMAIN, "device"),
+                groupQuery.attributePredicate(GroupAttributes.DOMAIN, Domains.DEVICE),
                 query.getPredicate()
             );
         }
         else {
-            queryPredicate = groupQuery.attributePredicate(GroupAttributes.DOMAIN, "device");
+            queryPredicate = groupQuery.attributePredicate(GroupAttributes.DOMAIN, Domains.DEVICE);
         }
 
         groupQuery.setPredicate(queryPredicate);
 
         // Do query
+        txManager.execute(tx -> {
+            groupQueryHelper.handleGroupVisibility(Domains.DEVICE, groupQuery);
+            return null;
+        });
+
         GroupListResult groups = KapuaSecurityUtils.doPrivileged(() -> groupService.query(groupQuery));
 
         // Convert
@@ -225,17 +239,22 @@ public class DeviceGroupServiceImpl implements DeviceGroupService {
         QueryPredicate queryPredicate;
         if (query.getPredicate() != null) {
             queryPredicate = groupQuery.andPredicate(
-                    groupQuery.attributePredicate(GroupAttributes.DOMAIN, "device"),
+                    groupQuery.attributePredicate(GroupAttributes.DOMAIN, Domains.DEVICE),
                     query.getPredicate()
             );
         }
         else {
-            queryPredicate = groupQuery.attributePredicate(GroupAttributes.DOMAIN, "device");
+            queryPredicate = groupQuery.attributePredicate(GroupAttributes.DOMAIN, Domains.DEVICE);
         }
 
         groupQuery.setPredicate(queryPredicate);
 
         // Do count
+        txManager.execute(tx -> {
+            groupQueryHelper.handleGroupVisibility(Domains.DEVICE, groupQuery);
+            return null;
+        });
+
         return KapuaSecurityUtils.doPrivileged(() -> groupService.count(query));
     }
 

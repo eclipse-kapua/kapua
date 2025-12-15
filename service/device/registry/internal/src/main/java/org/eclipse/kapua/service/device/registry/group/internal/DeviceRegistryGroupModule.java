@@ -15,11 +15,13 @@ package org.eclipse.kapua.service.device.registry.group.internal;
 import com.google.inject.Provides;
 import com.google.inject.multibindings.ProvidesIntoSet;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
+import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.domain.Domain;
 import org.eclipse.kapua.model.domain.DomainEntry;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
+import org.eclipse.kapua.service.authorization.access.GroupQueryHelper;
 import org.eclipse.kapua.service.authorization.group.GroupFactory;
 import org.eclipse.kapua.service.authorization.group.GroupService;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
@@ -66,13 +68,17 @@ public class DeviceRegistryGroupModule extends AbstractKapuaModule {
     @Provides
     @Singleton
     DeviceGroupService deviceGroupService(
+            KapuaJpaTxManagerFactory jpaTxManagerFactory,
             GroupService groupService,
             GroupFactory groupFactory,
+            GroupQueryHelper groupQueryHelper,
             DeviceGroupServiceValidationUtils deviceGroupServiceValidationUtils
     ) {
         return new DeviceGroupServiceImpl(
+            jpaTxManagerFactory.create("kapua-device"),
             groupService,
             groupFactory,
+            groupQueryHelper,
             deviceGroupServiceValidationUtils
         );
     }
