@@ -192,7 +192,6 @@ public class UserGroupServiceImpl implements UserGroupService {
         // Do query
         txManager.execute(tx -> {
             groupQueryHelper.handleGroupVisibility(Domains.USER, groupQuery);
-
             return null;
         });
 
@@ -251,6 +250,11 @@ public class UserGroupServiceImpl implements UserGroupService {
         groupQuery.setPredicate(queryPredicate);
 
         // Do count
+        txManager.execute(tx -> {
+            groupQueryHelper.handleGroupVisibility(Domains.USER, groupQuery);
+            return null;
+        });
+
         return KapuaSecurityUtils.doPrivileged(() -> groupService.count(query));
     }
 
