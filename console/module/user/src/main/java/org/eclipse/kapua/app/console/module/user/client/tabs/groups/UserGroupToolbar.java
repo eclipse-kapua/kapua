@@ -63,7 +63,7 @@ public class UserGroupToolbar extends GroupToolbarGrid {
             deleteEntityButton.setEnabled(selectedUser != null && selectedEntity != null
                     && currentSession.hasPermission(UserSessionPermission.write()));
         }
-        if (addEntityButton != null) {
+        if (refreshEntityButton != null) {
             refreshEntityButton.setEnabled(selectedUser != null);
         }
     }

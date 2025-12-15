@@ -17,6 +17,7 @@ import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtGroupedNVPair;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtXSRFToken;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtAccessRoleQuery;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
 import org.eclipse.kapua.app.console.module.user.shared.model.GwtUser;
 import org.eclipse.kapua.app.console.module.user.shared.model.GwtUserCreator;
 import org.eclipse.kapua.app.console.module.user.shared.model.GwtUserQuery;
@@ -25,6 +26,8 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+
+import java.util.List;
 
 /**
  * The client side stub for the RPC service.
@@ -102,6 +105,10 @@ public interface GwtUserService extends RemoteService {
     public PagingLoadResult<GwtUser> getUsersForAccount(PagingLoadConfig loadConfig, GwtUserQuery gwtUserQuery, String accountId) throws GwtKapuaException;
 
     // Groups
+
+    List<GwtGroup> findAllGroups(String scopeId) throws GwtKapuaException;
+
+    PagingLoadResult<GwtGroup> findGroupsByUserId(PagingLoadConfig loadConfig, String scopeIdString, String userIdString) throws GwtKapuaException;
 
     void addUserGroup(GwtXSRFToken xsrfToken, String scopeIdString, String userIdString, String groupIdString) throws GwtKapuaException;
 
