@@ -29,8 +29,6 @@ import org.eclipse.kapua.app.console.module.api.client.util.DialogUtils;
 import org.eclipse.kapua.app.console.module.api.client.util.FailureHandler;
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
-import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtGroupService;
-import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtGroupServiceAsync;
 import org.eclipse.kapua.app.console.module.device.shared.model.GwtDevice;
 import org.eclipse.kapua.app.console.module.device.shared.service.GwtDeviceService;
 import org.eclipse.kapua.app.console.module.device.shared.service.GwtDeviceServiceAsync;
@@ -41,7 +39,6 @@ import java.util.List;
 
 public class DeviceGroupAddDialog extends EntityAddEditDialog {
 
-    private static final GwtGroupServiceAsync GWT_GROUP_SERVICE = GWT.create(GwtGroupService.class);
     private static final GwtDeviceServiceAsync GWT_DEVICE_SERVICE = GWT.create(GwtDeviceService.class);
 
     private final GwtDevice selectedDevice;
@@ -129,7 +126,7 @@ public class DeviceGroupAddDialog extends EntityAddEditDialog {
         groupsCombo.setTemplate("<tpl for=\".\"><div role=\"listitem\" class=\"x-combo-list-item\" title={groupName}>{groupName}</div></tpl>");
         groupsCombo.addListener(Events.Select, comboBoxListener);
 
-        GWT_GROUP_SERVICE.findAll(selectedDevice.getScopeId(), "device", new AsyncCallback<List<GwtGroup>>() {
+        GWT_DEVICE_SERVICE.findAllGroups(selectedDevice.getScopeId(), new AsyncCallback<List<GwtGroup>>() {
 
             @Override
             public void onFailure(Throwable caught) {

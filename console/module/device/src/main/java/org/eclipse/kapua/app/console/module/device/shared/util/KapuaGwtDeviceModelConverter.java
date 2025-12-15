@@ -15,6 +15,7 @@ package org.eclipse.kapua.app.console.module.device.shared.util;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.app.console.module.api.client.util.KapuaSafeHtmlUtils;
 import org.eclipse.kapua.app.console.module.api.shared.util.KapuaGwtCommonsModelConverter;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
 import org.eclipse.kapua.app.console.module.device.shared.model.GwtDevice;
 import org.eclipse.kapua.app.console.module.device.shared.model.GwtDeviceQueryPredicates.GwtGroupDevice;
 import org.eclipse.kapua.app.console.module.device.shared.model.connection.GwtDeviceConnection;
@@ -39,6 +40,7 @@ import org.eclipse.kapua.service.device.registry.connection.DeviceConnection;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionStatus;
 import org.eclipse.kapua.service.device.registry.connection.option.DeviceConnectionOption;
 import org.eclipse.kapua.service.device.registry.event.DeviceEvent;
+import org.eclipse.kapua.service.device.registry.group.DeviceGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -233,4 +235,16 @@ public class KapuaGwtDeviceModelConverter {
         return gwtDeviceConnectionOption;
     }
 
+    public static GwtGroup convertDeviceGroup(DeviceGroup group) {
+
+        GwtGroup gwtGroup = new GwtGroup();
+        // Covert commons attributes
+        KapuaGwtCommonsModelConverter.convertUpdatableEntity(group, gwtGroup);
+        // Convert other attributes
+        gwtGroup.setGroupName(group.getName());
+        gwtGroup.setGroupDescription(group.getDescription());
+        gwtGroup.setDomain("device");
+
+        return gwtGroup;
+    }
 }
