@@ -43,13 +43,12 @@ import org.eclipse.kapua.app.console.module.api.client.util.validator.TextFieldV
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.permission.GroupSessionPermission;
-import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtGroupService;
-import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtGroupServiceAsync;
 import org.eclipse.kapua.app.console.module.device.client.messages.ConsoleDeviceMessages;
 import org.eclipse.kapua.app.console.module.device.shared.model.GwtDevice;
 import org.eclipse.kapua.app.console.module.device.shared.model.GwtDeviceCreator;
 import org.eclipse.kapua.app.console.module.device.shared.model.GwtDeviceQueryPredicates;
 import org.eclipse.kapua.app.console.module.device.shared.model.GwtDeviceQueryPredicates.GwtDeviceStatus;
+import org.eclipse.kapua.app.console.module.device.shared.model.permission.DeviceGroupSessionPermission;
 import org.eclipse.kapua.app.console.module.device.shared.service.GwtDeviceService;
 import org.eclipse.kapua.app.console.module.device.shared.service.GwtDeviceServiceAsync;
 
@@ -64,7 +63,7 @@ public class DeviceAddDialog extends EntityAddEditDialog {
 
     protected final GwtDeviceServiceAsync gwtDeviceService = GWT.create(GwtDeviceService.class);
     // protected final GwtUserServiceAsync gwtUserService = GWT.create(GwtUserService.class);
-    protected final GwtGroupServiceAsync gwtGroupService = GWT.create(GwtGroupService.class);
+//    protected final GwtGroupServiceAsync gwtGroupService = GWT.create(GwtGroupService.class);
 
     // General info fields
     protected LabelField clientIdLabel;
@@ -193,10 +192,11 @@ public class DeviceAddDialog extends EntityAddEditDialog {
         groupCombo.setValueField("id");
         groupCombo.setEmptyText(DEVICE_MSGS.deviceFilteringPanelGroupEmptyText());
 
-        if (currentSession.hasPermission(GroupSessionPermission.read())) {
+        if (currentSession.hasPermission(GroupSessionPermission.read()) ||
+                currentSession.hasPermission(DeviceGroupSessionPermission.read())) {
             groupCombo.addListener(Events.Select, comboBoxListener);
 
-            gwtGroupService.findAll(currentSession.getSelectedAccountId(), "device", new AsyncCallback<List<GwtGroup>>() {
+            gwtDeviceService.findAllGroups(currentSession.getSelectedAccountId(), new AsyncCallback<List<GwtGroup>>() {
 
                 @Override
                 public void onFailure(Throwable caught) {

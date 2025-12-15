@@ -23,15 +23,15 @@ import org.eclipse.kapua.app.console.module.api.client.ui.view.AbstractEntityVie
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
 import org.eclipse.kapua.app.console.module.authorization.client.group.GroupGrid;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
-import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtGroupService;
-import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtGroupServiceAsync;
 import org.eclipse.kapua.app.console.module.device.shared.model.GwtDevice;
+import org.eclipse.kapua.app.console.module.device.shared.service.GwtDeviceService;
+import org.eclipse.kapua.app.console.module.device.shared.service.GwtDeviceServiceAsync;
 
 import java.util.ArrayList;
 
 public class DeviceGroupGrid extends GroupGrid {
 
-    private static final GwtGroupServiceAsync GWT_GROUP_SERVICE = GWT.create(GwtGroupService.class);
+    private static final GwtDeviceServiceAsync GWT_DEVICE_SERVICE = GWT.create(GwtDeviceService.class);
 
     private DeviceGroupToolbar deviceGroupToolbar;
     private GwtDevice selectedDevice;
@@ -64,7 +64,7 @@ public class DeviceGroupGrid extends GroupGrid {
             @Override
             protected void load(Object loadConfig, AsyncCallback<PagingLoadResult<GwtGroup>> callback) {
                 if (selectedDevice != null) {
-                    GWT_GROUP_SERVICE.findByDeviceId((PagingLoadConfig) loadConfig, currentSession.getSelectedAccountId(), selectedDevice.getId(), callback);
+                    GWT_DEVICE_SERVICE.findGroupsByDeviceId((PagingLoadConfig) loadConfig, currentSession.getSelectedAccountId(), selectedDevice.getId(), callback);
                 } else {
                     callback.onSuccess(new BasePagingLoadResult<GwtGroup>(new ArrayList<GwtGroup>()));
                 }

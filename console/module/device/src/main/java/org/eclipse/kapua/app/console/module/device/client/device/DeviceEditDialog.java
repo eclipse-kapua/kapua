@@ -14,11 +14,9 @@ package org.eclipse.kapua.app.console.module.device.client.device;
 
 import com.extjs.gxt.ui.client.widget.tips.ToolTipConfig;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.eclipse.kapua.app.console.module.api.client.util.FailureHandler;
 import org.eclipse.kapua.app.console.module.api.client.util.KapuaSafeHtmlUtils;
 import org.eclipse.kapua.app.console.module.api.client.util.SplitTooltipStringUtil;
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
-import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.permission.GroupSessionPermission;
 import org.eclipse.kapua.app.console.module.device.shared.model.GwtDevice;
 import org.eclipse.kapua.app.console.module.device.shared.model.GwtDeviceQueryPredicates;
@@ -134,25 +132,6 @@ public class DeviceEditDialog extends DeviceAddDialog {
             displayNameField.setValue(device.getUnescapedDisplayName());
             statusCombo.setSimpleValue(GwtDeviceQueryPredicates.GwtDeviceStatus.valueOf(device.getGwtDeviceStatus()));
 
-            if (currentSession.hasPermission(GroupSessionPermission.read())) {
-                if (device.getGroupId() != null) {
-                    gwtGroupService.find(currentSession.getSelectedAccountId(), device.getGroupId(), new AsyncCallback<GwtGroup>() {
-
-                        @Override
-                        public void onFailure(Throwable caught) {
-                            FailureHandler.handle(caught);
-                        }
-
-                        @Override
-                        public void onSuccess(GwtGroup result) {
-                            setAccessGroup();
-                        }
-                    });
-                } else {
-                    groupCombo.setValue(NO_GROUP);
-                }
-            }
-
             // // Custom attributes data
             customAttribute1Field.setValue(device.getUnescapedCustomAttribute1());
             customAttribute2Field.setValue(device.getUnescapedCustomAttribute2());
@@ -166,17 +145,4 @@ public class DeviceEditDialog extends DeviceAddDialog {
         formPanel.clearDirtyFields();
     }
 
-    private void setAccessGroup() {
-        for (GwtGroup gwtGroup : groupCombo.getStore().getModels()) {
-            if (gwtGroup.getId() == null) {
-                if (selectedDevice.getGroupId() == null) {
-                    groupCombo.setValue(gwtGroup);
-                }
-            } else if (gwtGroup.getId().equals(selectedDevice.getGroupId())) {
-                groupCombo.setValue(gwtGroup);
-                break;
-            }
-        }
-        formPanel.clearDirtyFields();
-    }
 }

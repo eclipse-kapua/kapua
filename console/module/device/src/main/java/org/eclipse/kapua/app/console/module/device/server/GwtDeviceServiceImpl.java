@@ -26,6 +26,7 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import org.eclipse.kapua.KapuaDuplicateNameException;
+import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.server.KapuaRemoteServiceServlet;
 import org.eclipse.kapua.app.console.module.api.server.util.KapuaExceptionHandler;
@@ -34,6 +35,7 @@ import org.eclipse.kapua.app.console.module.api.setting.ConsoleSettingKeys;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtGroupedNVPair;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtXSRFToken;
 import org.eclipse.kapua.app.console.module.api.shared.util.GwtKapuaCommonsModelConverter;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
 import org.eclipse.kapua.app.console.module.device.shared.model.GwtDevice;
 import org.eclipse.kapua.app.console.module.device.shared.model.GwtDeviceCreator;
 import org.eclipse.kapua.app.console.module.device.shared.model.GwtDeviceQuery;
@@ -74,6 +76,12 @@ import org.eclipse.kapua.service.device.registry.event.DeviceEventAttributes;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventFactory;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventQuery;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventService;
+import org.eclipse.kapua.service.device.registry.group.DeviceGroup;
+import org.eclipse.kapua.service.device.registry.group.DeviceGroupAttributes;
+import org.eclipse.kapua.service.device.registry.group.DeviceGroupFactory;
+import org.eclipse.kapua.service.device.registry.group.DeviceGroupListResult;
+import org.eclipse.kapua.service.device.registry.group.DeviceGroupQuery;
+import org.eclipse.kapua.service.device.registry.group.DeviceGroupService;
 import org.eclipse.kapua.service.tag.Tag;
 import org.eclipse.kapua.service.tag.TagService;
 import org.eclipse.kapua.service.user.User;
@@ -89,6 +97,9 @@ public class GwtDeviceServiceImpl extends KapuaRemoteServiceServlet implements G
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
     private static final AuthorizationService AUTHORIZATION_SERVICE = LOCATOR.getService(AuthorizationService.class);
     private static final PermissionFactory PERMISSION_FACTORY = LOCATOR.getFactory(PermissionFactory.class);
+
+    private static final DeviceGroupService DEVICE_GROUP_SERVICE = LOCATOR.getService(DeviceGroupService.class);
+    private static final DeviceGroupFactory DEVICE_GROUP_FACTORY = LOCATOR.getFactory(DeviceGroupFactory.class);
 
     private static final String DEV_INFO = "devInfo";
     private static final String CONN_INFO = "connInfo";
@@ -486,6 +497,53 @@ public class GwtDeviceServiceImpl extends KapuaRemoteServiceServlet implements G
 
     //
     // Groups
+
+    @Override
+    public List<GwtGroup> findAllGroups(String scopeId) throws GwtKapuaException {
+        try {
+            DeviceGroupQuery query = DEVICE_GROUP_FACTORY.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(scopeId));
+
+            DeviceGroupListResult result = DEVICE_GROUP_SERVICE.query(query);
+
+            List<GwtGroup> deviceGroupList = new ArrayList<GwtGroup>();
+            for (DeviceGroup deviceGroup : result.getItems()) {
+                deviceGroupList.add(KapuaGwtDeviceModelConverter.convertDeviceGroup(deviceGroup));
+            }
+
+            return deviceGroupList;
+        } catch (KapuaException e) {
+            throw KapuaExceptionHandler.buildExceptionFromError(e);
+        }
+    }
+
+    @Override
+    public PagingLoadResult<GwtGroup> findGroupsByDeviceId(PagingLoadConfig loadConfig, String scopeIdString, String deviceIdString) throws GwtKapuaException {
+        try {
+            KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(scopeIdString);
+            KapuaId deviceId = GwtKapuaCommonsModelConverter.convertKapuaId(deviceIdString);
+
+            DeviceRegistryService deviceRegistryService = LOCATOR.getService(DeviceRegistryService.class);
+            Device device = deviceRegistryService.find(scopeId, deviceId);
+            if (device.getGroupIds().isEmpty()) {
+                return new BasePagingLoadResult<GwtGroup>(new ArrayList<GwtGroup>(), 0, 0);
+            }
+
+            DeviceGroupQuery deviceGroupQuery = DEVICE_GROUP_FACTORY.newQuery(scopeId);
+            deviceGroupQuery.setPredicate(deviceGroupQuery.attributePredicate(DeviceGroupAttributes.ENTITY_ID, device.getGroupIds()));
+            deviceGroupQuery.setAskTotalCount(true);
+
+            DeviceGroupListResult deviceGroups = DEVICE_GROUP_SERVICE.query(deviceGroupQuery);
+
+            List<GwtGroup> gwtGroups = new ArrayList<GwtGroup>();
+            for (DeviceGroup deviceGroup : deviceGroups.getItems()) {
+                gwtGroups.add(KapuaGwtDeviceModelConverter.convertDeviceGroup(deviceGroup));
+            }
+
+            return new BasePagingLoadResult<GwtGroup>(gwtGroups, loadConfig.getOffset(), deviceGroups.getTotalCount().intValue());
+        } catch (KapuaException e) {
+            throw KapuaExceptionHandler.buildExceptionFromError(e);
+        }
+    }
 
     @Override
     public void addDeviceGroup(GwtXSRFToken xsrfToken, String scopeIdString, String deviceIdString, String groupIdString) throws GwtKapuaException {
