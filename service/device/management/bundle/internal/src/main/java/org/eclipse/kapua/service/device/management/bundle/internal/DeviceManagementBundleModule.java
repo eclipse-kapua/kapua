@@ -39,7 +39,7 @@ public class DeviceManagementBundleModule extends AbstractKapuaModule {
 
     @ProvidesIntoSet
     public Domain deviceManagementModule() {
-        return new DomainEntry(Domains.DEVICE_MANAGEMENT, DeviceManagementService.class.getName(), false, Actions.execute, Actions.read, Actions.write);
+        return new DomainEntry(Domains.DEVICE_MANAGEMENT, DeviceManagementService.class.getName(), false, Actions.execute, Actions.read, Actions.write, Actions.delete);
     }
 
     @Provides
