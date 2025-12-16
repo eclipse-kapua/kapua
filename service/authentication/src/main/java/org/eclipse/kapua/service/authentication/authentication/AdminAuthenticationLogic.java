@@ -16,6 +16,7 @@ import com.codahale.metrics.Timer.Context;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.client.security.bean.AuthAcl;
 import org.eclipse.kapua.client.security.bean.AuthContext;
+import org.eclipse.kapua.client.security.context.SessionContext;
 import org.eclipse.kapua.client.security.metric.AuthMetric;
 import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
@@ -51,7 +52,7 @@ public class AdminAuthenticationLogic extends AuthenticationLogic {
     @Override
     public List<AuthAcl> connect(AuthContext authContext) throws KapuaException {
         Context timeAdminTotal = authenticationMetric.getExtConnectorTime().getAdminAddConnection().time();
-        authContext.setAdmin(true);
+        authContext.setProperty(SessionContext.PARAM_KEY_PROFILE_ADMIN, true);
         DeviceConnection deviceConnection = KapuaSecurityUtils.doPrivileged(() -> deviceConnectionService.findByClientId(
                 KapuaEid.parseCompactId(authContext.getScopeId()), authContext.getClientId()));
         deviceConnection = deviceConnection != null ? updateDeviceConnection(authContext, deviceConnection) : createDeviceConnection(authContext);
@@ -67,7 +68,7 @@ public class AdminAuthenticationLogic extends AuthenticationLogic {
 
     @Override
     public boolean disconnect(AuthContext authContext) {
-        return !authContext.isIllegalState() && !authContext.isMissing();
+        return !authContext.isIllegalState() && !authContext.getProperty(SessionContext.PARAM_KEY_STATUS_MISSING, false);
     }
 
     protected List<AuthAcl> buildAuthorizationMap(UserPermissions userPermissions, AuthContext authContext) {
