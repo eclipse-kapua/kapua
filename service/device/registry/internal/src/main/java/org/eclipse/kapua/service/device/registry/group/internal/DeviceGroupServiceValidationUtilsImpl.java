@@ -203,7 +203,7 @@ public final class DeviceGroupServiceValidationUtilsImpl implements DeviceGroupS
         checkGroupDomainIsDevice(scopeId, deviceGroupId);
 
         // Check no-attached Devices
-        DeviceListResult deviceListResult = txManager.execute((txContext) -> {
+        DeviceListResult devices = txManager.execute((txContext) -> {
             DeviceQuery deviceQuery = new DeviceQueryImpl(scopeId);
             deviceQuery.setPredicate(
                     deviceQuery.attributePredicate(DeviceAttributes.GROUP_IDS, deviceGroupId)
@@ -212,7 +212,7 @@ public final class DeviceGroupServiceValidationUtilsImpl implements DeviceGroupS
             return KapuaSecurityUtils.doPrivileged(() -> deviceRepository.query(txContext, deviceQuery));
         });
 
-        if (!deviceListResult.isEmpty()) {
+        if (!devices.isEmpty()) {
             // FIXME: Throw proper exception
             throw new KapuaIllegalArgumentException("deviceGroupId", deviceGroupId.toString());
         }
