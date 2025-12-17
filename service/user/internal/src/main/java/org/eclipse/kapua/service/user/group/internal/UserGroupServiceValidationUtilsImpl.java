@@ -203,7 +203,7 @@ public final class UserGroupServiceValidationUtilsImpl implements UserGroupServi
         checkGroupDomainIsUser(scopeId, userGroupId);
 
         // Check no-attached Users
-        UserListResult userListResult = txManager.execute((txContext) -> {
+        UserListResult users = txManager.execute((txContext) -> {
             UserQuery userQuery = new UserQueryImpl(scopeId);
             userQuery.setPredicate(
                 userQuery.attributePredicate(UserAttributes.GROUP_IDS, userGroupId)
@@ -212,7 +212,7 @@ public final class UserGroupServiceValidationUtilsImpl implements UserGroupServi
             return KapuaSecurityUtils.doPrivileged(() -> userRepository.query(txContext, userQuery));
         });
 
-        if (!userListResult.isEmpty()) {
+        if (!users.isEmpty()) {
             // FIXME: Throw proper exception
             throw new KapuaIllegalArgumentException("userGroupId", userGroupId.toString());
         }
