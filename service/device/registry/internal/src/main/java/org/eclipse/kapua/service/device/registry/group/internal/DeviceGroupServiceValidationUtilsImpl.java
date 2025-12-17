@@ -227,7 +227,7 @@ public final class DeviceGroupServiceValidationUtilsImpl implements DeviceGroupS
 
         if (!accessPermissions.isEmpty()) {
             // FIXME: Throw proper exception
-            throw new KapuaIllegalArgumentException("userGroupId", deviceGroupId.toString());
+            throw new KapuaIllegalArgumentException("deviceGroupId", deviceGroupId.toString());
         }
 
         // Check no-attached RolePermissions
@@ -240,7 +240,7 @@ public final class DeviceGroupServiceValidationUtilsImpl implements DeviceGroupS
 
         if (!rolePermissions.isEmpty()) {
             // FIXME: Throw proper exception
-            throw new KapuaIllegalArgumentException("userGroupId", deviceGroupId.toString());
+            throw new KapuaIllegalArgumentException("deviceGroupId", deviceGroupId.toString());
         }
 
         // Check no-attached GroupPermissions
@@ -253,7 +253,7 @@ public final class DeviceGroupServiceValidationUtilsImpl implements DeviceGroupS
 
         if (!groupPermissions.isEmpty()) {
             // FIXME: Throw proper exception
-            throw new KapuaIllegalArgumentException("userGroupId", deviceGroupId.toString());
+            throw new KapuaIllegalArgumentException("deviceGroupId", deviceGroupId.toString());
         }
     }
 
