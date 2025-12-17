@@ -21,12 +21,18 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.domain.Domain;
 import org.eclipse.kapua.model.domain.DomainEntry;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
+import org.eclipse.kapua.service.authorization.access.AccessPermissionFactory;
+import org.eclipse.kapua.service.authorization.access.AccessPermissionService;
 import org.eclipse.kapua.service.authorization.access.GroupQueryHelper;
 import org.eclipse.kapua.service.authorization.group.GroupFactory;
+import org.eclipse.kapua.service.authorization.group.GroupPermissionFactory;
 import org.eclipse.kapua.service.authorization.group.GroupPermissionService;
 import org.eclipse.kapua.service.authorization.group.GroupRoleService;
 import org.eclipse.kapua.service.authorization.group.GroupService;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.role.RolePermissionFactory;
+import org.eclipse.kapua.service.authorization.role.RolePermissionService;
+import org.eclipse.kapua.service.user.UserRepository;
 import org.eclipse.kapua.service.user.group.UserGroup;
 import org.eclipse.kapua.service.user.group.UserGroupFactory;
 import org.eclipse.kapua.service.user.group.UserGroupPermissionService;
@@ -60,12 +66,28 @@ public class UserGroupModule extends AbstractKapuaModule {
     UserGroupServiceValidationUtils userGroupServiceValidationUtils(
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
-            GroupService groupService
+            GroupService groupService,
+            AccessPermissionService accessPermissionService,
+            AccessPermissionFactory accessPermissionFactory,
+            RolePermissionService rolePermissionService,
+            RolePermissionFactory rolePermissionFactory,
+            GroupPermissionService groupPermissionService,
+            GroupPermissionFactory groupPermissionFactory,
+            UserRepository userRepository,
+            KapuaJpaTxManagerFactory jpaTxManagerFactory
     ) {
         return new UserGroupServiceValidationUtilsImpl(
             authorizationService,
             permissionFactory,
-            groupService
+            groupService,
+            accessPermissionService,
+            accessPermissionFactory,
+            rolePermissionService,
+            rolePermissionFactory,
+            groupPermissionService,
+            groupPermissionFactory,
+            userRepository,
+            jpaTxManagerFactory.create("kapua-user")
         );
     }
 
