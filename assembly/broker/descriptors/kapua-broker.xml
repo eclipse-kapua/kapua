@@ -50,6 +50,9 @@
                 <exclude>lib/geronimo-jta_1.0.1B_spec*</exclude>
                 <exclude>lib/geronimo-jms*</exclude>
                 <exclude>lib/slf4j*</exclude> <!-- pull in version 1.7.24 -->
+                <exclude>lib/log4j-over-slf4j-*.jar</exclude>
+                <exclude>lib/log4j-core-*.jar</exclude>
+                <exclude>lib/log4j-slf4j2-impl-*.jar</exclude>
 
                 <exclude>lib/optional/activeio-core-*</exclude>
                 <exclude>lib/optional/activemq-amqp-*</exclude>
@@ -142,6 +145,7 @@
             <includes>
                 <include>ch.qos.logback:logback-core</include>
                 <include>ch.qos.logback:logback-classic</include>
+                <include>org.apache.logging.log4j:log4j-to-slf4j</include>
             </includes>
         </dependencySet>
 
@@ -154,6 +158,7 @@
             <fileMode>0644</fileMode>
             <includes>
                 <include>aopalliance:aopalliance</include>
+                <include>org.apache.logging.log4j:log4j-to-slf4j</include>
 
                 <include>com.carrotsearch:hppc</include>
                 <include>com.fasterxml.jackson.core:*</include>
@@ -205,8 +210,6 @@
                 <include>org.apache.httpcomponents:httpclient</include>
                 <include>org.apache.httpcomponents:httpcore-nio</include>
                 <include>org.apache.httpcomponents:httpcore</include>
-                <include>org.apache.logging.log4j:log4j-api</include>
-                <include>org.apache.logging.log4j:log4j-to-slf4j</include>
                 <include>org.apache.lucene:*</include>
                 <include>org.apache.qpid:proton-j</include>
                 <include>org.apache.qpid:qpid-jms-client</include>
@@ -241,8 +244,6 @@
                 <include>org.liquibase:liquibase-core</include>
                 <include>org.quartz-scheduler:quartz</include>
                 <include>org.reflections:reflections</include>
-                <include>org.slf4j:log4j-over-slf4j</include>
-                <include>org.slf4j:slf4j-api</include>
                 <include>org.springframework.security:spring-security-core</include>
                 <include>org.yaml:snakeyaml</include>
                 <include>javax.cache:cache-api</include>
