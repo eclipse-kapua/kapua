@@ -40,7 +40,7 @@
 
         <!-- feature packages -->
 
-        <module>features</module>
+<!--        <module>features</module>-->
 
     </modules>
 
