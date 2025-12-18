@@ -274,6 +274,9 @@ public class JobStepServiceImpl implements JobStepService {
         ArgumentValidator.notNull(scopeId, "scopeId");
         ArgumentValidator.notNull(jobStepId, "jobStepId");
         // Check Access
+        if (!authorizationService.isPermitted(permissionFactory.newPermission(Domains.JOB, Actions.read, scopeId))) {
+            authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.write, scopeId)); //backward compatibility check
+        }
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.write, scopeId));
         // Do find
         return txManager.execute(tx -> jobStepRepository.find(tx, scopeId, jobStepId))
