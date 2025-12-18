@@ -127,11 +127,14 @@ public class RolePermissionServiceImpl extends AbstractKapuaService implements R
         ArgumentValidator.notNull(scopeId, KapuaEntityAttributes.SCOPE_ID);
         ArgumentValidator.notNull(rolePermissionId, KapuaEntityAttributes.ENTITY_ID);
 
+        //
         // Check Access
         KapuaLocator locator = KapuaLocator.getInstance();
         AuthorizationService authorizationService = locator.getService(AuthorizationService.class);
         PermissionFactory permissionFactory = locator.getFactory(PermissionFactory.class);
-        authorizationService.checkPermission(permissionFactory.newPermission(AuthorizationDomains.ROLE_DOMAIN, Actions.delete, scopeId));
+        if (!authorizationService.isPermitted(permissionFactory.newPermission(AuthorizationDomains.ROLE_DOMAIN, Actions.write, scopeId))) {
+            authorizationService.checkPermission(permissionFactory.newPermission(AuthorizationDomains.ROLE_DOMAIN, Actions.delete, scopeId)); //backward compatibility check
+        }
 
         entityManagerSession.doTransactedAction(EntityManagerContainer.<RolePermission>create().onResultHandler(em -> {
             // TODO: check if it is correct to remove this statement (already thrown by the delete method, but
