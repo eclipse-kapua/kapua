@@ -430,7 +430,9 @@ public class DeviceKeystoreManagementServiceImpl extends AbstractDeviceManagemen
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
         ArgumentValidator.notNull(keystoreCSRInfo, "keystoreCSRInfo");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+        if (!authorizationService.isPermitted(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId))) {
+            authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId)); //backward compatibility check
+        }
         // Prepare the request
         KeystoreRequestChannel keystoreRequestChannel = new KeystoreRequestChannel();
         keystoreRequestChannel.setAppName(DeviceKeystoreAppProperties.APP_NAME);
