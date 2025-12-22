@@ -31,6 +31,7 @@
         <activemq.version>5.16.8</activemq.version>
         <activemq-openwire-legacy.version>5.16.8</activemq-openwire-legacy.version> <!-- Bumped version to address CVE-2023-46604 and CVE-2025-27533 coming from 'org.apache.activemq:apache-artemis:tar.gz:bin:2.19.0' in 'kapua-assembly-events-broker' module -->
         <aopalliance.version>1.0</aopalliance.version>
+        <apache-sshd-core.version>2.16.0</apache-sshd-core.version>
         <artemis.version>2.19.0</artemis.version>
         <assertj.version>3.2.0</assertj.version>
         <camel.version>2.16.3</camel.version>
@@ -1325,6 +1326,14 @@
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore-osgi</artifactId>
                 <version>${httpcomponents-core.version}</version>
+            </dependency>
+
+            <!-- -->
+            <!-- Apache Misc-->
+            <dependency>
+                <groupId>org.apache.sshd</groupId>
+                <artifactId>sshd-core</artifactId>
+                <version>${apache-sshd-core.version}</version>
             </dependency>
 
             <dependency>
