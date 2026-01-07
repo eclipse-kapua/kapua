@@ -162,7 +162,7 @@
         <maven-toolchains-plugin.version>3.1.0</maven-toolchains-plugin.version>
 
         <buildnumber-maven-plugin.version>3.0.0</buildnumber-maven-plugin.version>
-        <central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
+        <central-publishing-maven-plugin.version>0.10.0</central-publishing-maven-plugin.version>
         <checkstyle.version>7.6.1</checkstyle.version>
         <dependency-check-maven.version>7.4.4</dependency-check-maven.version>
         <docker-maven-plugin.version>0.44.0</docker-maven-plugin.version>
@@ -336,6 +336,7 @@
                     <version>${central-publishing-maven-plugin.version}</version>
                     <extensions>true</extensions>
                     <configuration>
+                        <deploymentName>Eclipse Kapua ${project.version}</deploymentName>
                         <publishingServerId>central</publishingServerId>
                         <autoPublish>true</autoPublish>
                         <waitUntil>published</waitUntil>
