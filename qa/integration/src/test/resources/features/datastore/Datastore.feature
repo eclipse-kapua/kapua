@@ -21,6 +21,42 @@ Feature: Datastore tests
     Given Init Security Context
     And Start full docker environment
 
+  Scenario: Test message store call with fixed document id
+  Do few inserts (even after waiting a index refresh time) with the same document id and verify that only one message is returned by the search.
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I select account "kapua-sys"
+    And The device "test-client"
+    And I set the database to device timestamp indexing
+
+    Given System property "datastore.index.prefix" with value ""
+    And I set the datastore indexing window to "week"
+
+    When I prepare a number of messages in the specified ranges and remember the list as "multipleStoreCall"
+      | clientId    | topic     | count | startDate                | endDate                  |
+      | test-client | messageId | 1     | 2025-12-01T12:00:00.000Z | 2025-12-02T12:00:00.000Z |
+    And Store messages "multipleStoreCall" for 8 times with message id "id-no-wait" and wait time 0
+    #wait to have message indexed
+    And I wait 5 seconds
+    And I query for messages and I found 1 message, 0 of them with UUID as id, and store the result as "multipleStoreCallFoundMessages"
+    Then I found a message with id "id-no-wait" and version 8 from stored search "multipleStoreCallFoundMessages"
+
+    When I prepare a number of messages in the specified ranges and remember the list as "multipleStoreCallWait"
+      | clientId         | topic         | count | startDate                | endDate                  |
+      | test-client-wait | messageIdWait | 1     | 2025-12-01T12:00:00.000Z | 2025-12-02T12:00:00.000Z |
+    And Store messages "multipleStoreCallWait" for 4 times with message id "id-wait" and wait time 5
+    And Store messages "multipleStoreCall" for 1 times with message id "other-id" and wait time 0
+    And Store messages "multipleStoreCall" for 6 times with message id "" and wait time 0
+    And I wait 5 seconds
+    And I query for messages and I found 9 messages, 6 of them with UUID as id, and store the result as "multipleStoreCallFoundMessages"
+    Then I found a message with id "id-no-wait" and version 8 from stored search "multipleStoreCallFoundMessages"
+    Then I found a message with id "id-wait" and version 4 from stored search "multipleStoreCallFoundMessages"
+    Then I found a message with id "other-id" and version 1 from stored search "multipleStoreCallFoundMessages"
+
+    Then I delete all indices
+
+    Then I logout
+
   Scenario: Delete items by date ranges
   Delete previously stored messages based on a time interval. The number of deleted items should
   depend on the index window. Only the items in whole hours/days/weeks of th einterval should be deleted.

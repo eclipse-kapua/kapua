@@ -56,18 +56,6 @@
             <Option label="SERVER_TIMESTAMP" value="SERVER_TIMESTAMP" />
         </AD>
 
-        <AD id="messageUniquenessCheck"
-            name="messageUniquenessCheck"
-            type="String"
-            cardinality="0"
-            required="true"
-            default="FULL"
-            description="Message uniqueness check type (on telemetry message datastore insert)">
-            <Option label="NONE" value="NONE" />
-            <Option label="BOUND" value="BOUND" />
-            <Option label="FULL" value="FULL" />
-        </AD>
-
     </OCD>
 
     <Designate pid="org.eclipse.kapua.service.datastore.MessageStoreService">

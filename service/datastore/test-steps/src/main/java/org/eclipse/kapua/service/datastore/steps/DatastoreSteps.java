@@ -22,6 +22,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.http.HttpHost;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.util.KapuaDateUtils;
 import org.eclipse.kapua.locator.KapuaLocator;
@@ -102,8 +103,15 @@ import org.eclipse.kapua.service.storable.model.query.StorableFetchStyle;
 import org.eclipse.kapua.service.storable.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.service.storable.model.query.predicate.RangePredicate;
 import org.eclipse.kapua.service.storable.model.query.predicate.TermPredicate;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Request;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -126,6 +134,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -495,7 +504,9 @@ public class DatastoreSteps extends TestBase {
         for (CucMessageRange tmpMessage : messages) {
             Date startDate = KapuaDateUtils.parseDate(tmpMessage.getStartDate());
             Date endDate = KapuaDateUtils.parseDate(tmpMessage.getEndDate());
-            long stepSeconds = (endDate.getTime() - startDate.getTime()) / (1000L * (tmpMessage.getCount().longValue() - 1));
+            long stepSeconds = tmpMessage.getCount() > 1 ?
+                    (endDate.getTime() - startDate.getTime()) / (1000L * (tmpMessage.getCount().longValue() - 1)) :
+                    0;
             tmpCal.setTime(startDate);
             for (int cnt = 0; cnt < tmpMessage.getCount(); cnt++) {
                 tmpMsg = createTestMessage(
@@ -510,6 +521,78 @@ public class DatastoreSteps extends TestBase {
         }
 
         stepData.put(listKey, tmpList);
+    }
+
+    @And("Store messages {string} for {int} time(s) with message id {string} and wait time {int}")
+    public void storeMessagesWithMessageId(String listKey, int insertCount, String msgId, int waitTime) throws Exception {
+        List<KapuaDataMessage> tmpList = (List<KapuaDataMessage>)stepData.get(listKey);
+        for (KapuaDataMessage msg : tmpList) {
+            for (int i=0; i<insertCount; i++) {
+                logger.info("Store attempt {} for message with id {}", i, msgId);
+                if ("".equals(msgId)) {
+                    messageStoreService.store(msg);
+                }
+                else {
+                    messageStoreService.store(msg, msgId);
+                }
+                if (waitTime>0) {
+                    synchronized (this) {
+                        this.wait(waitTime * 1000);
+                    }
+                }
+            }
+        }
+    }
+
+    @Then("I query for messages and I found {int} message(s), {int} of them with UUID as id, and store the result as {string}")
+    public void foundMessagesAndStoreAs(int messageCount, int messageUUIDCount, String messageListName) throws Exception {
+        Map<String, Integer> messages = new HashMap<>();
+        RestHighLevelClient client = null;
+        try {
+            client = new RestHighLevelClient(
+                    RestClient.builder(new HttpHost("localhost", 9200, "http")));
+            SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder().
+                    query(QueryBuilders.matchAllQuery()).
+                    size(100).
+                    version(true);
+            SearchRequest searchRequest = new SearchRequest("*-message-*").source(searchSourceBuilder);
+            SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+            int messageFound = 0;
+            int messageUUIDFound = 0;
+            for (SearchHit hit : searchResponse.getHits()) {
+                if (messages.put(hit.getId(), new Integer((int)hit.getVersion())) != null) {
+                    Assert.fail("More than one message found for message id " + hit.getId());
+                }
+                messageFound++;
+                try {
+                    UUID.fromString(hit.getId());
+                    messageUUIDFound++;
+                }
+                catch (IllegalArgumentException e) {
+                    //message with id set before store call, nothing to do
+                }
+            }
+            Assert.assertEquals("Wrong total message count", messageCount, messageFound);
+            Assert.assertEquals("Wrong total message count", messageUUIDCount, messageUUIDFound);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
+        finally {
+            if (client!=null) {
+                client.close();
+            }
+        }
+        stepData.put(messageListName, messages);
+    }
+
+    @Then("I found a message with id {string} and version {int} from stored search {string}")
+    public void foundMessagesWithMessageIdAndVersion(String messageId, int version, String messageListName) throws Exception {
+        Map<String, Integer> messages = (Map<String, Integer>)stepData.get(messageListName);
+        messages.forEach((key, value) -> {
+            if (key.equals(messageId)) {
+                Assert.assertEquals("Wrong message version for message id " + messageId, version, value.intValue());
+            }
+        });
     }
 
     @And("I set the following metrics to the message {int} from the list {string}")
