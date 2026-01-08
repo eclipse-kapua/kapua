@@ -118,7 +118,9 @@ public class JobTargetServiceImpl implements JobTargetService {
         ArgumentValidator.notNull(scopeId, "scopeId");
         ArgumentValidator.notNull(jobTargetId, "jobTargetId");
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.write, scopeId));
+        if (!authorizationService.isPermitted(permissionFactory.newPermission(Domains.JOB, Actions.read, scopeId))) {
+            authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.write, scopeId)); //backward compatibility check
+        }
         // Do find
         return txManager.execute(tx -> jobTargetRepository.find(tx, scopeId, jobTargetId))
                 .orElse(null);
