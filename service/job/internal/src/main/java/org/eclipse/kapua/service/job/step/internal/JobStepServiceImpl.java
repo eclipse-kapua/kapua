@@ -277,7 +277,6 @@ public class JobStepServiceImpl implements JobStepService {
         if (!authorizationService.isPermitted(permissionFactory.newPermission(Domains.JOB, Actions.read, scopeId))) {
             authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.write, scopeId)); //backward compatibility check
         }
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.JOB, Actions.write, scopeId));
         // Do find
         return txManager.execute(tx -> jobStepRepository.find(tx, scopeId, jobStepId))
                 .orElse(null);
