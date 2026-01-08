@@ -61,7 +61,7 @@
             type="String"
             cardinality="0"
             required="true"
-            default="FULL"
+            default="NONE"
             description="Message uniqueness check type (on telemetry message datastore insert)">
             <Option label="NONE" value="NONE" />
             <Option label="BOUND" value="BOUND" />
