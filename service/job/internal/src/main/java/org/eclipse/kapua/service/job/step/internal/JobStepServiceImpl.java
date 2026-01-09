@@ -254,8 +254,8 @@ public class JobStepServiceImpl extends AbstractKapuaService implements JobStepS
         if (!AUTHORIZATION_SERVICE.isPermitted(PERMISSION_FACTORY.newPermission(JobDomains.JOB_DOMAIN, Actions.read, scopeId))) {
             AUTHORIZATION_SERVICE.checkPermission(PERMISSION_FACTORY.newPermission(JobDomains.JOB_DOMAIN, Actions.write, scopeId)); //backward compatibility check
         }
-        AUTHORIZATION_SERVICE.checkPermission(PERMISSION_FACTORY.newPermission(JobDomains.JOB_DOMAIN, Actions.write, scopeId));
 
+        //
         // Do find
         return entityManagerSession.doAction(em -> JobStepDAO.find(em, scopeId, jobStepId));
     }
