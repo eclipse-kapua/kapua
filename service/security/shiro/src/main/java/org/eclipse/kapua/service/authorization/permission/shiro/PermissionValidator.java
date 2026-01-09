@@ -45,6 +45,9 @@ public class PermissionValidator {
             DomainListResult domains = DOMAIN_SERVICE.query(DOMAIN_FACTORY.newQuery(null));
 
             for (Permission p : permissions) {
+                if (p.getGroupId() != null && p.getForwardable()) {
+                    throw new KapuaIllegalArgumentException(PermissionAttributes.FORWARDABLE, "true");
+                }
                 if (p.getDomain() != null) {
                     boolean matched = false;
                     for (Domain domain : domains.getItems()) {
