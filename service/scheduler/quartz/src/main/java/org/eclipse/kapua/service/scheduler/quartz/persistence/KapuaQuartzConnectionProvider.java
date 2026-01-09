@@ -12,13 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.scheduler.quartz.persistence;
 
+import org.eclipse.kapua.commons.jpa.DataSource;
 import org.eclipse.kapua.commons.jpa.JdbcConnectionUrlResolvers;
-import org.eclipse.kapua.commons.setting.system.SystemSetting;
-import org.eclipse.kapua.commons.setting.system.SystemSettingKey;
 import org.quartz.utils.ConnectionProvider;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
@@ -30,15 +28,9 @@ import java.sql.SQLException;
  */
 public class KapuaQuartzConnectionProvider implements ConnectionProvider {
 
-    private static final String JDBC_CONNECTION_URL = JdbcConnectionUrlResolvers.resolveJdbcUrl();
-
-    private final SystemSetting systemSetting = SystemSetting.getInstance();
-    private final String username = systemSetting.getString(SystemSettingKey.DB_USERNAME);
-    private final String password = systemSetting.getString(SystemSettingKey.DB_PASSWORD);
-
     @Override
     public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(JDBC_CONNECTION_URL, username, password);
+        return DataSource.getDataSource().getConnection();
     }
 
     @Override
