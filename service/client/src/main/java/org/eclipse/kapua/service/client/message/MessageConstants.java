@@ -23,10 +23,6 @@ public class MessageConstants {
     }
 
     public static final String PROPERTY_ORIGINAL_TOPIC = "originalTopic";
-    public static final String PROPERTY_ENQUEUED_TIMESTAMP = "enqueuedTimestamp";
-    public static final String PROPERTY_BROKER_ID = "brokerId";
-    public static final String PROPERTY_CLIENT_ID = "clientId";
-    public static final String PROPERTY_SCOPE_ID = "scopeId";
 
     public static final String HEADER_KAPUA_CONNECTION_ID = "KAPUA_CONNECTION_ID";
     public static final String HEADER_KAPUA_RECEIVED_TIMESTAMP = "KAPUA_RECEIVED_TIMESTAMP";

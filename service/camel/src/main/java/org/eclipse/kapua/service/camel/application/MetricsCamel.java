@@ -34,9 +34,11 @@ public class MetricsCamel {
 
     //failure processor
     public static final String GENERIC = "generic";
+    public static final String RESTORE_CAMEL_SESSION = "restore_camel_session";
     public static final String UNAUTHENTICATED = "unauthenticated";
     private Counter unauthenticatedError;
     private Counter genericError;
+    private Counter restoreCamelSessionError;
 
     @Inject
     private MetricsCamel(MetricsService metricsService,
@@ -55,6 +57,7 @@ public class MetricsCamel {
 
         unauthenticatedError = metricsService.getCounter(metricModuleName, MetricsLabel.FAILURE, UNAUTHENTICATED);
         genericError = metricsService.getCounter(metricModuleName, MetricsLabel.FAILURE, GENERIC);
+        restoreCamelSessionError = metricsService.getCounter(metricModuleName, MetricsLabel.FAILURE, RESTORE_CAMEL_SESSION);
     }
 
     public Counter getErrorStoredToFileSuccess() {
@@ -79,5 +82,9 @@ public class MetricsCamel {
 
     public Counter getGenericError() {
         return genericError;
+    }
+
+    public Counter getRestoreCamelSessionError() {
+        return restoreCamelSessionError;
     }
 }
