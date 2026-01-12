@@ -258,14 +258,14 @@ public class ServerPlugin implements ActiveMQServerPlugin {
                         logger.info("Published message size over threshold. size: {} - destination: {} - account id: {} - username: {} - clientId: {}",
                                 messageSize, address, sessionContext.getAccountName(), sessionContext.getUsername(), sessionContext.getClientId());
                     }
-                    fillAdditionalMessagePropertiesExternal(message, sessionContext, address);
+                    fillAdditionalMessageProperties(message, sessionContext, address, false);
                     publishMetric.getMessageSizeAllowed().update(messageSize);
                 } else {
                     if (publishInfoMessageSizeLimit < messageSize) {
                         logger.info("Published message size over threshold. size: {} - destination: {}",
                                 messageSize, address);
                     }
-                    fillAdditionalMessagePropertiesInternal(message, sessionContext, address);
+                    fillAdditionalMessageProperties(message, sessionContext, address, true);
                     publishMetric.getMessageSizeAllowedInternal().update(messageSize);
                 }
                 serverContext.getAddressAccessTracker().update(address);
@@ -285,16 +285,6 @@ public class ServerPlugin implements ActiveMQServerPlugin {
         return originalTopic != null && originalTopic.endsWith(MISSING_TOPIC_SUFFIX);
     }
 
-    protected void fillAdditionalMessagePropertiesInternal(Message message, SessionContext sessionContext, String address) {
-        fillAdditionalMessageProperties(message, sessionContext, address, true);
-    }
-
-    protected void fillAdditionalMessagePropertiesExternal(Message message, SessionContext sessionContext, String address) {
-        fillAdditionalMessageProperties(message, sessionContext, address, false);
-        // FIX #164
-        message.putStringProperty(MessageConstants.HEADER_KAPUA_CONNECTION_ID, Base64.getEncoder().encodeToString(SerializationUtils.serialize(sessionContext.getKapuaConnectionId())));
-    }
-
     protected void fillAdditionalMessageProperties(Message message, SessionContext sessionContext, String address, boolean kapuaBrokerContext) {
         message.putStringProperty(MessageConstants.HEADER_KAPUA_CLIENT_ID, sessionContext.getClientId());
         message.putStringProperty(MessageConstants.HEADER_KAPUA_CONNECTOR_NAME, sessionContext.getConnectorName());
@@ -303,6 +293,13 @@ public class ServerPlugin implements ActiveMQServerPlugin {
         message.putStringProperty(MessageConstants.HEADER_KAPUA_MESSAGE_TYPE, getMessageType(address));
         message.putStringProperty(MessageConstants.PROPERTY_ORIGINAL_TOPIC, address);
         message.putBooleanProperty(MessageConstants.HEADER_KAPUA_BROKER_CONTEXT, kapuaBrokerContext);
+        // FIX #164
+        if (sessionContext.getKapuaConnectionId()==null) {
+            message.putStringProperty(MessageConstants.HEADER_KAPUA_CONNECTION_ID, Base64.getEncoder().encodeToString(SerializationUtils.serialize(KapuaId.ANY)));
+        }
+        else {
+            message.putStringProperty(MessageConstants.HEADER_KAPUA_CONNECTION_ID, Base64.getEncoder().encodeToString(SerializationUtils.serialize(sessionContext.getKapuaConnectionId())));
+        }
     }
 
     protected String getMessageType(String address) {
