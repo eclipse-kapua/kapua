@@ -90,8 +90,14 @@ public final class GroupServiceValidationUtilsImpl implements GroupServiceValida
         // .domain
         ArgumentValidator.validateEntityName(groupCreator.getDomain(), "groupCreator.domain");
 
-        if (KapuaSecurityUtils.doPrivileged(() -> domainRegistryService.findByName(groupCreator.getDomain())) == null) {
+        Domain groupDomain = KapuaSecurityUtils.doPrivileged(() -> domainRegistryService.findByName(groupCreator.getDomain()));
+
+        if (groupDomain == null) {
             throw new KapuaEntityNotFoundException(Domain.TYPE, groupCreator.getDomain());
+        }
+
+        if (!groupDomain.getGroupable()) {
+            throw new KapuaIllegalArgumentException("groupCreator.domain", groupCreator.getName());
         }
 
         //
