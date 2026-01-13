@@ -40,6 +40,7 @@ import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtDoma
 import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtGroupService;
 import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtGroupServiceAsync;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GroupAddDialog extends EntityAddEditDialog {
@@ -125,7 +126,15 @@ public class GroupAddDialog extends EntityAddEditDialog {
             public void onSuccess(List<GwtDomain> result) {
                 domainsCombo.setEmptyText("Select a Domain...");
 
-                domainsCombo.getStore().add(result);
+                List<GwtDomain> groupableDomains = new ArrayList<GwtDomain>();
+
+                for (GwtDomain gwtDomain : result) {
+                    if (gwtDomain.getGroupable()) {
+                        groupableDomains.add(gwtDomain);
+                    }
+                }
+
+                domainsCombo.getStore().add(groupableDomains);
                 domainsCombo.enable();
             }
         });
