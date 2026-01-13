@@ -13,12 +13,15 @@
 package org.eclipse.kapua.service.camel.converter;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.TypeConversionException;
 import org.apache.commons.lang.SerializationException;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.shiro.util.ThreadContext;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.security.KapuaSession;
+import org.eclipse.kapua.locator.KapuaLocator;
+import org.eclipse.kapua.service.camel.application.MetricsCamel;
 import org.eclipse.kapua.service.client.message.MessageConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +35,12 @@ public class KapuaCamelFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(KapuaCamelFilter.class);
 
+    private final MetricsCamel metricsCamel;
+
+    public KapuaCamelFilter() {
+        metricsCamel = KapuaLocator.getInstance().getComponent(MetricsCamel.class);
+    }
+
     /**
      * Bind the Kapua session retrieved from the message header (with key {@link MessageConstants#HEADER_KAPUA_SESSION}) to the current thread context.
      *
@@ -40,18 +49,23 @@ public class KapuaCamelFilter {
      * @throws KapuaException
      */
     public void bindSession(Exchange exchange, Object value) throws KapuaException {
-        logger.info("message from: {}", exchange.getIn().getHeader(MessageConstants.PROPERTY_ORIGINAL_TOPIC, String.class));
         ThreadContext.unbindSubject();
-        if (Boolean.FALSE.equals(exchange.getIn().getHeader(MessageConstants.HEADER_KAPUA_BROKER_CONTEXT, boolean.class))) {
-            try {
-                // FIX #164
-                String kapuaSession = exchange.getIn().getHeader(MessageConstants.HEADER_KAPUA_SESSION, String.class);
-                //no null check (see telemetry consumer camel.xml - bind/unbind of the kapua session)
-                KapuaSecurityUtils.setSession((KapuaSession) SerializationUtils.deserialize(Base64.getDecoder().decode(kapuaSession)));
-            } catch (IllegalArgumentException | SerializationException e) {
-                // continue without session
-                logger.debug("Cannot restore Kapua session: {}", e.getMessage(), e);
-            }
+        try {
+            // FIX #164
+            //no null check (see telemetry consumer camel.xml - bind/unbind of the kapua session)
+            KapuaSecurityUtils.setSession(
+                (KapuaSession) SerializationUtils.deserialize(
+                    Base64.getDecoder().decode(
+                        exchange.getIn().getHeader(MessageConstants.HEADER_KAPUA_SESSION, String.class))));
+        } catch (
+                TypeConversionException | IllegalArgumentException | NullPointerException | SerializationException e) {
+            metricsCamel.getRestoreCamelSessionError().inc();
+            // continue without session
+            logger.warn("Cannot restore Kapua session for message from: '{}' - client id: '{}'. Error: {}",
+                exchange.getIn().getHeader(MessageConstants.PROPERTY_ORIGINAL_TOPIC, String.class),
+                exchange.getIn().getHeader(MessageConstants.HEADER_KAPUA_CLIENT_ID, String.class),
+                e.getMessage());
+            logger.debug("", e);
         }
     }
 
