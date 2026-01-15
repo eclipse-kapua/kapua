@@ -120,4 +120,6 @@ public class GwtKapuaUserModelConverter {
         return UserType.valueOf(gwtUserType.toString());
     }
 
+
+
 }

@@ -60,6 +60,7 @@
         <url-pattern>/device_snapshots/*</url-pattern>
         <url-pattern>/endpoint/*</url-pattern>
         <url-pattern>/user/*</url-pattern>
+        <url-pattern>/userGroup/*</url-pattern>
         <url-pattern>/data/*</url-pattern>
         <url-pattern>/exporter_data/*</url-pattern>
         <url-pattern>/exporter/*</url-pattern>
@@ -364,6 +365,16 @@
         <servlet-name>userServlet</servlet-name>
         <url-pattern>/user</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>userGroupServlet</servlet-name>
+        <servlet-class>org.eclipse.kapua.app.console.module.user.server.GwtUserGroupServiceImpl</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>userGroupServlet</servlet-name>
+        <url-pattern>/userGroup</url-pattern>
+    </servlet-mapping>
+
 
     <servlet>
         <servlet-name>assetServlet</servlet-name>
