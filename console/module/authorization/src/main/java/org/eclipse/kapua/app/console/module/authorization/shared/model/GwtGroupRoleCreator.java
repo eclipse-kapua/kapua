@@ -10,7 +10,7 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.app.console.module.authorization.shared.model.as;
+package org.eclipse.kapua.app.console.module.authorization.shared.model;
 
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtEntityCreator;
 

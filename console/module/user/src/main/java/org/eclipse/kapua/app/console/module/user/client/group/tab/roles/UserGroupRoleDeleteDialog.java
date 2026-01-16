@@ -17,7 +17,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.eclipse.kapua.app.console.module.api.client.ui.dialog.entity.EntityDeleteDialog;
 import org.eclipse.kapua.app.console.module.api.client.util.DialogUtils;
 import org.eclipse.kapua.app.console.module.authorization.client.messages.ConsolePermissionMessages;
-import org.eclipse.kapua.app.console.module.authorization.shared.model.as.GwtGroupRole;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupRole;
 import org.eclipse.kapua.app.console.module.user.shared.service.GwtUserGroupService;
 import org.eclipse.kapua.app.console.module.user.shared.service.GwtUserGroupServiceAsync;
 

@@ -19,7 +19,7 @@ import org.eclipse.kapua.app.console.module.api.client.ui.widget.EntityCRUDToolb
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
 import org.eclipse.kapua.app.console.module.authorization.client.messages.ConsolePermissionMessages;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
-import org.eclipse.kapua.app.console.module.authorization.shared.model.as.GwtGroupRole;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupRole;
 
 public class UserGroupTabRoleToolbar extends EntityCRUDToolbar<GwtGroupRole> {
 

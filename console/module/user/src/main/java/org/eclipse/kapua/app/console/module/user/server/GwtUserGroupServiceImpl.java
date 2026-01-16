@@ -26,9 +26,9 @@ import org.eclipse.kapua.app.console.module.authorization.server.util.RoleNameFr
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupPermission;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupPermissionCreator;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupPermissionQuery;
-import org.eclipse.kapua.app.console.module.authorization.shared.model.as.GwtGroupRole;
-import org.eclipse.kapua.app.console.module.authorization.shared.model.as.GwtGroupRoleCreator;
-import org.eclipse.kapua.app.console.module.authorization.shared.model.as.GwtGroupRoleQuery;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupRole;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupRoleCreator;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupRoleQuery;
 import org.eclipse.kapua.app.console.module.authorization.shared.util.GwtKapuaAuthorizationModelConverter;
 import org.eclipse.kapua.app.console.module.authorization.shared.util.KapuaGwtAuthorizationModelConverter;
 import org.eclipse.kapua.app.console.module.user.server.user.AccountNameFromIdUtils;

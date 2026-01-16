@@ -21,9 +21,9 @@ import org.eclipse.kapua.app.console.module.api.shared.model.GwtXSRFToken;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupPermission;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupPermissionCreator;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupPermissionQuery;
-import org.eclipse.kapua.app.console.module.authorization.shared.model.as.GwtGroupRole;
-import org.eclipse.kapua.app.console.module.authorization.shared.model.as.GwtGroupRoleCreator;
-import org.eclipse.kapua.app.console.module.authorization.shared.model.as.GwtGroupRoleQuery;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupRole;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupRoleCreator;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupRoleQuery;
 
 /**
  * The client side stub for the RPC service.
