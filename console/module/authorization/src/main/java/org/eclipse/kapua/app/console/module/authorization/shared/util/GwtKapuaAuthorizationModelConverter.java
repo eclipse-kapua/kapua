@@ -32,7 +32,7 @@ import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtRole;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtRoleCreator;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtRolePermission;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtRoleQuery;
-import org.eclipse.kapua.app.console.module.authorization.shared.model.as.GwtGroupRoleQuery;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupRoleQuery;
 import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.KapuaEntity;
