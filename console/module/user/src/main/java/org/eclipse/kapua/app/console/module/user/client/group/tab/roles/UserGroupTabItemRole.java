@@ -51,7 +51,7 @@ public class UserGroupTabItemRole extends KapuaTabItem<GwtGroup> {
     public void setEntity(GwtGroup gwtGroup) {
         super.setEntity(gwtGroup);
 
-        setEnabled(gwtGroup != null);
+        setEnabled(gwtGroup != null && "user".equals(gwtGroup.getDomain()));
 
         groupRoleGrid.setUserGroup(gwtGroup);
     }
