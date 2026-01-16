@@ -21,6 +21,9 @@ import org.eclipse.kapua.app.console.module.api.shared.model.GwtXSRFToken;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupPermission;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupPermissionCreator;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupPermissionQuery;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.as.GwtGroupRole;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.as.GwtGroupRoleCreator;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.as.GwtGroupRoleQuery;
 
 /**
  * The client side stub for the RPC service.
@@ -28,12 +31,22 @@ import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupP
 @RemoteServiceRelativePath("userGroup")
 public interface GwtUserGroupService extends RemoteService {
 
+
+    //
+    // Group Permission
+
     GwtGroupPermission createPermission(GwtXSRFToken xsfrToken, GwtGroupPermissionCreator gwtGroupPermissionCreator) throws GwtKapuaException;
 
     void deletePermission(GwtXSRFToken xsfrToken, String accountId, String gwtGroupPermissionId) throws GwtKapuaException;
 
-    GwtGroupPermission findPermission(String accountId, String gwtGroupPermissionId) throws GwtKapuaException;
-
     PagingLoadResult<GwtGroupPermission> queryPermission(PagingLoadConfig loadConfig, GwtGroupPermissionQuery gwtUserGroupPermissionQuery) throws GwtKapuaException;
+
+    //
+    // Group Roles
+    GwtGroupRole createRole(GwtXSRFToken xsfrToken, GwtGroupRoleCreator gwtGroupRoleCreator) throws GwtKapuaException;
+
+    void deleteRole(GwtXSRFToken xsfrToken, String accountId, String gwtGroupRoleId) throws GwtKapuaException;
+
+    PagingLoadResult<GwtGroupRole> queryRole(PagingLoadConfig loadConfig, GwtGroupRoleQuery gwtGroupRoleQuery) throws GwtKapuaException;
 
 }
