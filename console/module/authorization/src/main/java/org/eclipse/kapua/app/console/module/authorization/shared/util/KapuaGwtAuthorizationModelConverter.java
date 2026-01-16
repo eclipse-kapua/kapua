@@ -23,6 +23,7 @@ import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtPermis
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtPermission.GwtAction;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtRole;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtRolePermission;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.as.GwtGroupRole;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.service.authorization.access.AccessInfo;
 import org.eclipse.kapua.service.authorization.access.AccessPermission;
@@ -30,6 +31,7 @@ import org.eclipse.kapua.service.authorization.access.AccessRole;
 import org.eclipse.kapua.service.authorization.domain.Domain;
 import org.eclipse.kapua.service.authorization.group.Group;
 import org.eclipse.kapua.service.authorization.group.GroupPermission;
+import org.eclipse.kapua.service.authorization.group.GroupRole;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.role.Role;
 import org.eclipse.kapua.service.authorization.role.RolePermission;
@@ -94,6 +96,19 @@ public class KapuaGwtAuthorizationModelConverter {
 
         // Return converted entity
         return gwtGroupPermission;
+    }
+
+    public static GwtGroupRole convertGroupRole(GroupRole groupRole) {
+        GwtGroupRole gwtGroupRole = new GwtGroupRole();
+
+        // Covert commons attributes
+        KapuaGwtCommonsModelConverter.convertEntity(groupRole, gwtGroupRole);
+
+        gwtGroupRole.setUserGroupId(groupRole.getGroupId().toCompactId());
+        gwtGroupRole.setRoleId(groupRole.getRoleId().toCompactId());
+
+        // Return converted entity
+        return gwtGroupRole;
     }
 
     /**

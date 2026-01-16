@@ -32,6 +32,7 @@ import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtRole;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtRoleCreator;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtRolePermission;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtRoleQuery;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.as.GwtGroupRoleQuery;
 import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.KapuaEntity;
@@ -60,6 +61,9 @@ import org.eclipse.kapua.service.authorization.group.GroupPermissionAttributes;
 import org.eclipse.kapua.service.authorization.group.GroupPermissionFactory;
 import org.eclipse.kapua.service.authorization.group.GroupPermissionQuery;
 import org.eclipse.kapua.service.authorization.group.GroupQuery;
+import org.eclipse.kapua.service.authorization.group.GroupRoleAttributes;
+import org.eclipse.kapua.service.authorization.group.GroupRoleFactory;
+import org.eclipse.kapua.service.authorization.group.GroupRoleQuery;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.authorization.role.Role;
@@ -85,6 +89,7 @@ public class GwtKapuaAuthorizationModelConverter {
 
     private static final GroupFactory GROUP_FACTORY = LOCATOR.getFactory(GroupFactory.class);
     private static final GroupPermissionFactory GROUP_PERMISSION_FACTORY = LOCATOR.getFactory(GroupPermissionFactory.class);
+    private static final GroupRoleFactory GROUP_ROLE_FACTORY = LOCATOR.getFactory(GroupRoleFactory.class);
     private GwtKapuaAuthorizationModelConverter() {
     }
 
@@ -157,6 +162,38 @@ public class GwtKapuaAuthorizationModelConverter {
         groupPermissionQuery.setAskTotalCount(true);
 
         return groupPermissionQuery;
+    }
+
+    public static GroupRoleQuery convertGroupRoleQuery(PagingLoadConfig loadConfig, GwtGroupRoleQuery gwtGroupRoleQuery) {
+        GroupRoleQuery groupRoleQuery = GROUP_ROLE_FACTORY.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(gwtGroupRoleQuery.getScopeId()));
+
+        AndPredicate andPredicate = groupRoleQuery.andPredicate();
+
+        if (gwtGroupRoleQuery.getUserGroupId() != null) {
+            andPredicate.and(groupRoleQuery.attributePredicate(GroupRoleAttributes.GROUP_ID, GwtKapuaCommonsModelConverter.convertKapuaId(gwtGroupRoleQuery.getUserGroupId())));
+        }
+
+        if (gwtGroupRoleQuery.getRoleId() != null) {
+            andPredicate.and(groupRoleQuery.attributePredicate(GroupRoleAttributes.ROLE_ID, GwtKapuaCommonsModelConverter.convertKapuaId(gwtGroupRoleQuery.getRoleId())));
+        }
+
+        String sortField = StringUtils.isEmpty(loadConfig.getSortField()) ? GroupRoleAttributes.CREATED_ON : loadConfig.getSortField();
+        if (sortField.equals("id")) {
+            sortField = GroupPermissionAttributes.ENTITY_ID;
+        } else if (sortField.equals("createdOnFormatted")) {
+            sortField = GroupPermissionAttributes.CREATED_ON;
+        }
+
+        SortOrder sortOrder = loadConfig.getSortDir().equals(SortDir.DESC) ? SortOrder.DESCENDING : SortOrder.ASCENDING;
+        FieldSortCriteria sortCriteria = groupRoleQuery.fieldSortCriteria(sortField, sortOrder);
+
+        groupRoleQuery.setSortCriteria(sortCriteria);
+        groupRoleQuery.setOffset(loadConfig.getOffset());
+        groupRoleQuery.setLimit(loadConfig.getLimit());
+        groupRoleQuery.setPredicate(andPredicate);
+        groupRoleQuery.setAskTotalCount(true);
+
+        return groupRoleQuery;
     }
 
 
