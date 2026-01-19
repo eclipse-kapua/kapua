@@ -123,6 +123,35 @@ components:
             version: haproxy:latest
             containerType: DOCKER
             state: INSTALLED
+    deviceInventoryImage:
+      type: object
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+        imageType:
+          type: string
+      example:
+        name: nginx
+        version: latest
+        imageType: CONTAINER_IMAGE
+    deviceInventoryImages:
+      type: object
+      properties:
+        inventoryImages:
+          type: array
+          items:
+            $ref: '#/components/schemas/deviceInventoryImage'
+      example:
+        type: deviceInventoryImages
+        inventoryImages:
+          - name: nginx
+            version: latest
+            imageType: CONTAINER_IMAGE
+          - name: alpine
+            version: latest
+            imageType: CONTAINER_IMAGE
     deviceInventorySystemPackage:
       type: object
       properties:

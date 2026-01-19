@@ -122,6 +122,33 @@ paths:
           $ref: '../openapi.yaml#/components/responses/entityNotFound'
         500:
           $ref: '../openapi.yaml#/components/responses/kapuaError'
+  /{scopeId}/devices/{deviceId}/inventory/images:
+    get:
+      tags:
+        - Device Management - Inventory
+      summary: Get the inventory images from a single Device
+      operationId: deviceInventoryImageGet
+      parameters:
+        - $ref: '../openapi.yaml#/components/parameters/scopeId'
+        - $ref: '../device/device.yaml#/components/parameters/deviceId'
+        - $ref: '../device/device.yaml#/components/parameters/timeout'
+      responses:
+        200:
+          description: The inventory image from the Device
+          content:
+            application/json:
+              schema:
+                $ref: './deviceInventory.yaml#/components/schemas/deviceInventoryImages'
+        400:
+          $ref: '../openapi.yaml#/components/responses/illegalArgument'
+        401:
+          $ref: '../openapi.yaml#/components/responses/unauthenticated'
+        403:
+          $ref: '../openapi.yaml#/components/responses/subjectUnauthorized'
+        404:
+          $ref: '../openapi.yaml#/components/responses/entityNotFound'
+        500:
+          $ref: '../openapi.yaml#/components/responses/kapuaError'
   /{scopeId}/devices/{deviceId}/inventory/containers:
     get:
       tags:

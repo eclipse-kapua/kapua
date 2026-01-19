@@ -195,6 +195,8 @@ paths:
     $ref: './deviceInventory/deviceInventory-scopeId-deviceId.yaml#/paths/~1{scopeId}~1devices~1{deviceId}~1inventory~1bundles~1_stop'
   /{scopeId}/devices/{deviceId}/inventory/containers:
     $ref: './deviceInventory/deviceInventory-scopeId-deviceId.yaml#/paths/~1{scopeId}~1devices~1{deviceId}~1inventory~1containers'
+  /{scopeId}/devices/{deviceId}/inventory/images:
+    $ref: './deviceInventory/deviceInventory-scopeId-deviceId.yaml#/paths/~1{scopeId}~1devices~1{deviceId}~1inventory~1images'
   /{scopeId}/devices/{deviceId}/inventory/containers/_start:
     $ref: './deviceInventory/deviceInventory-scopeId-deviceId.yaml#/paths/~1{scopeId}~1devices~1{deviceId}~1inventory~1containers~1_start'
   /{scopeId}/devices/{deviceId}/inventory/containers/_stop:
@@ -996,6 +998,10 @@ components:
       $ref: './deviceInventory/deviceInventory.yaml#/components/schemas/deviceInventoryContainer'
     deviceInventoryContainers:
       $ref: './deviceInventory/deviceInventory.yaml#/components/schemas/deviceInventoryContainers'
+    deviceInventoryImage:
+      $ref: './deviceInventory/deviceInventory.yaml#/components/schemas/deviceInventoryImage'
+    deviceInventoryImages:
+      $ref: './deviceInventory/deviceInventory.yaml#/components/schemas/deviceInventoryImages'
     deviceInventoryPackage:
       $ref: './deviceInventory/deviceInventory.yaml#/components/schemas/deviceInventorySystemPackage'
     deviceInventoryPackages:
