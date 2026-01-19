@@ -55,6 +55,7 @@ import org.eclipse.kapua.translator.kura.kapua.TranslatorLifeMissingKuraKapua;
 import org.eclipse.kapua.translator.kura.kapua.event.TranslatorEventConfigurationKuraKapua;
 import org.eclipse.kapua.translator.kura.kapua.inventory.TranslatorAppInventoryBundlesKuraKapua;
 import org.eclipse.kapua.translator.kura.kapua.inventory.TranslatorAppInventoryContainersKuraKapua;
+import org.eclipse.kapua.translator.kura.kapua.inventory.TranslatorAppInventoryImagesKuraKapua;
 import org.eclipse.kapua.translator.kura.kapua.inventory.TranslatorAppInventoryListKuraKapua;
 import org.eclipse.kapua.translator.kura.kapua.inventory.TranslatorAppInventoryNoContentKuraKapua;
 import org.eclipse.kapua.translator.kura.kapua.inventory.TranslatorAppInventoryPackagesKuraKapua;
@@ -111,6 +112,7 @@ public class KapuaKuraTranslatorsModule extends AbstractKapuaModule {
         translatorMultibinder.addBinding().to(TranslatorAppInventoryNoContentKuraKapua.class);
         translatorMultibinder.addBinding().to(TranslatorAppInventoryPackagesKuraKapua.class);
         translatorMultibinder.addBinding().to(TranslatorAppInventorySystemPackagesKuraKapua.class);
+        translatorMultibinder.addBinding().to(TranslatorAppInventoryImagesKuraKapua.class);
         //org.eclipse.kapua.translator.kura.kapua.keystore
         translatorMultibinder.addBinding().to(TranslatorAppKeystoreItemKuraKapua.class);
         translatorMultibinder.addBinding().to(TranslatorAppKeystoreItemsKuraKapua.class);
