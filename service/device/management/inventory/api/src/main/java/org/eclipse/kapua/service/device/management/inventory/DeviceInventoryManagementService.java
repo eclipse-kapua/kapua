@@ -22,6 +22,7 @@ import org.eclipse.kapua.service.device.management.inventory.model.bundle.Device
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainer;
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainerAction;
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainers;
+import org.eclipse.kapua.service.device.management.inventory.model.image.DeviceInventoryImage;
 import org.eclipse.kapua.service.device.management.inventory.model.image.DeviceInventoryImages;
 import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventory;
 import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventoryItem;
@@ -134,4 +135,16 @@ public interface DeviceInventoryManagementService extends DeviceManagementServic
      * @since 2.0.0
      */
     DeviceInventoryImages getImages(KapuaId scopeId, KapuaId deviceId, Long timeout) throws KapuaException;
+
+    /**
+     * Delete the {@link DeviceInventoryImage}
+     *
+     * @param scopeId  The scope {@link KapuaId} of the target {@link Device}
+     * @param deviceId The {@link Device#getId()}
+     * @param image    The {@link DeviceInventoryImage} to delete
+     * @param timeout  The timeout waiting for the device response
+     * @throws KapuaException
+     * @since 2.0.0
+     */
+    void deleteImage(KapuaId scopeId, KapuaId deviceId, DeviceInventoryImage image, Long timeout) throws KapuaException;
 }

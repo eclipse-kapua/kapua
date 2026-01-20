@@ -19,6 +19,7 @@ import org.eclipse.kapua.service.device.management.commons.setting.DeviceManagem
 import org.eclipse.kapua.service.device.management.commons.setting.DeviceManagementSettingKey;
 import org.eclipse.kapua.service.device.management.inventory.model.bundle.DeviceInventoryBundle;
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainer;
+import org.eclipse.kapua.service.device.management.inventory.model.image.DeviceInventoryImage;
 import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventory;
 import org.eclipse.kapua.service.device.management.message.request.KapuaRequestPayload;
 
@@ -90,5 +91,36 @@ public class InventoryRequestPayload extends KapuaPayloadImpl implements KapuaRe
     public void setDeviceInventoryContainer(@NotNull DeviceInventoryContainer deviceInventoryContainer) throws Exception {
         String bodyString = XmlUtil.marshal(deviceInventoryContainer);
         setBody(bodyString.getBytes(charEncoding));
+    }
+
+    /**
+     * Sets the {@link DeviceInventoryImage} in the {@link #getBody()}.
+     *
+     * @param deviceInventoryImage
+     *         The {@link DeviceInventoryImage} in the {@link #getBody()}.
+     * @throws Exception
+     *         if writing errors.
+     * @since 2.0.0
+     */
+    public void setDeviceInventoryImage(@NotNull DeviceInventoryImage deviceInventoryImage) throws Exception {
+        String bodyString = XmlUtil.marshal(deviceInventoryImage);
+        setBody(bodyString.getBytes(charEncoding));
+    }
+
+    /**
+     * Gets the {@link DeviceInventoryImage} from the {@link #getBody()}.
+     *
+     * @return The {@link DeviceInventoryImage} from the {@link #getBody()}.
+     * @throws Exception
+     *         if reading {@link #getBody()} errors.
+     * @since 2.0.0
+     */
+    public Optional<DeviceInventoryImage> getDeviceInventoryImage() throws Exception {
+        if (!hasBody()) {
+            return Optional.empty();
+        }
+
+        String bodyString = new String(getBody(), charEncoding);
+        return Optional.ofNullable(XmlUtil.unmarshal(bodyString, DeviceInventoryImage.class));
     }
 }
