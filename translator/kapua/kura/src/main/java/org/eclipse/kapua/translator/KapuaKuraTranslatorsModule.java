@@ -33,6 +33,7 @@ import org.eclipse.kapua.translator.kapua.kura.TranslatorDataKapuaKura;
 import org.eclipse.kapua.translator.kapua.kura.inventory.TranslatorAppInventoryBundleExecKapuaKura;
 import org.eclipse.kapua.translator.kapua.kura.inventory.TranslatorAppInventoryContainerExecKapuaKura;
 import org.eclipse.kapua.translator.kapua.kura.inventory.TranslatorAppInventoryEmptyKapuaKura;
+import org.eclipse.kapua.translator.kapua.kura.inventory.TranslatorAppInventoryImageDeleteKapuaKura;
 import org.eclipse.kapua.translator.kapua.kura.keystore.TranslatorAppKeystoreCertificateKapuaKura;
 import org.eclipse.kapua.translator.kapua.kura.keystore.TranslatorAppKeystoreCsrKapuaKura;
 import org.eclipse.kapua.translator.kapua.kura.keystore.TranslatorAppKeystoreKeypairKapuaKura;
@@ -84,6 +85,7 @@ public class KapuaKuraTranslatorsModule extends AbstractKapuaModule {
         translatorMultibinder.addBinding().to(TranslatorAppInventoryBundleExecKapuaKura.class);
         translatorMultibinder.addBinding().to(TranslatorAppInventoryContainerExecKapuaKura.class);
         translatorMultibinder.addBinding().to(TranslatorAppInventoryEmptyKapuaKura.class);
+        translatorMultibinder.addBinding().to(TranslatorAppInventoryImageDeleteKapuaKura.class);
         //org.eclipse.kapua.translator.kapua.kura.keystore
         translatorMultibinder.addBinding().to(TranslatorAppKeystoreCertificateKapuaKura.class);
         translatorMultibinder.addBinding().to(TranslatorAppKeystoreCsrKapuaKura.class);
