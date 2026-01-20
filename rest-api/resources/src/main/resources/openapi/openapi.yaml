@@ -197,6 +197,8 @@ paths:
     $ref: './deviceInventory/deviceInventory-scopeId-deviceId.yaml#/paths/~1{scopeId}~1devices~1{deviceId}~1inventory~1containers'
   /{scopeId}/devices/{deviceId}/inventory/images:
     $ref: './deviceInventory/deviceInventory-scopeId-deviceId.yaml#/paths/~1{scopeId}~1devices~1{deviceId}~1inventory~1images'
+  /{scopeId}/devices/{deviceId}/inventory/images/_delete:
+    $ref: './deviceInventory/deviceInventory-scopeId-deviceId.yaml#/paths/~1{scopeId}~1devices~1{deviceId}~1inventory~1images~1_delete'
   /{scopeId}/devices/{deviceId}/inventory/containers/_start:
     $ref: './deviceInventory/deviceInventory-scopeId-deviceId.yaml#/paths/~1{scopeId}~1devices~1{deviceId}~1inventory~1containers~1_start'
   /{scopeId}/devices/{deviceId}/inventory/containers/_stop:
