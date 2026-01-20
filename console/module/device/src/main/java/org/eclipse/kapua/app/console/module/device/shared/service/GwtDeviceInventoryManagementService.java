@@ -20,6 +20,7 @@ import org.eclipse.kapua.app.console.module.api.shared.model.GwtXSRFToken;
 import org.eclipse.kapua.app.console.module.device.shared.model.management.inventory.GwtInventoryBundle;
 import org.eclipse.kapua.app.console.module.device.shared.model.management.inventory.GwtInventoryContainer;
 import org.eclipse.kapua.app.console.module.device.shared.model.management.inventory.GwtInventoryDeploymentPackage;
+import org.eclipse.kapua.app.console.module.device.shared.model.management.inventory.GwtInventoryImage;
 import org.eclipse.kapua.app.console.module.device.shared.model.management.inventory.GwtInventoryItem;
 import org.eclipse.kapua.app.console.module.device.shared.model.management.inventory.GwtInventorySystemPackage;
 
@@ -41,6 +42,12 @@ public interface GwtDeviceInventoryManagementService extends RemoteService {
             throws GwtKapuaException;
 
     ListLoadResult<GwtInventoryContainer> findDeviceContainers(String scopeIdString, String deviceIdString)
+            throws GwtKapuaException;
+
+    ListLoadResult<GwtInventoryImage> findDeviceImages(String scopeIdString, String deviceIdString)
+            throws GwtKapuaException;
+
+    void deleteDeviceImage(GwtXSRFToken xsrfToken, String scopeIdString, String deviceIdString, GwtInventoryImage gwtInventoryImage)
             throws GwtKapuaException;
 
     void execDeviceContainer(GwtXSRFToken xsrfToken, String scopeIdString, String deviceIdString, GwtInventoryContainer gwtInventoryContainer, boolean startOrStop)
