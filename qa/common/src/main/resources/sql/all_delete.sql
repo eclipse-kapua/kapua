@@ -92,7 +92,7 @@ FROM job_job_step;
 
 DELETE
 FROM job_job_step_definition
-WHERE name NOT IN ('Asset Write','Bundle Start','Bundle Stop','Command Execution','Configuration Put','Keystore Certificate Create','Keystore Keypair Create','Keystore Item Delete','Package Download / Install','Package Uninstall','Container Start','Container Stop');
+WHERE name NOT IN ('Asset Write','Bundle Start','Bundle Stop','Command Execution','Configuration Put','Keystore Certificate Create','Keystore Keypair Create','Keystore Item Delete','Package Download / Install','Package Uninstall','Container Start','Container Stop','Image Delete');
 
 DELETE
 FROM job_job_step_properties;
