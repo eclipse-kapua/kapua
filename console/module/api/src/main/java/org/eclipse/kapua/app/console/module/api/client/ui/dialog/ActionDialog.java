@@ -51,14 +51,14 @@ public abstract class ActionDialog extends KapuaDialog {
     protected GwtXSRFToken xsrfToken;
 
     protected static final int FORM_LABEL_WIDTH = 120;
-    protected FormPanel formPanel;
+    public FormPanel formPanel;
 
-    protected Button submitButton;
-    protected Button cancelButton;
-    protected Status status;
+    public Button submitButton;
+    public Button cancelButton;
+    public Status status;
 
-    protected Boolean exitStatus;
-    protected String exitMessage;
+    public Boolean exitStatus;
+    public String exitMessage;
     private boolean dateValueNotNull;
     private boolean disabledFormPanelEvents;
 

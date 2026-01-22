@@ -10,35 +10,34 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.app.console.module.user.client.group.tab.roles;
+package org.eclipse.kapua.app.console.module.user.client.group.tab.tags;
 
 import org.eclipse.kapua.app.console.module.api.client.ui.view.descriptor.AbstractEntityTabDescriptor;
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
+import org.eclipse.kapua.app.console.module.authorization.client.tabs.groups.GroupTabTags;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
-import org.eclipse.kapua.app.console.module.authorization.shared.model.permission.RoleSessionPermission;
+import org.eclipse.kapua.app.console.module.tag.shared.model.permission.TagSessionPermission;
 import org.eclipse.kapua.app.console.module.user.client.group.UserGroupView;
-import org.eclipse.kapua.app.console.module.user.shared.model.permission.UserGroupSessionPermission;
 
-public class UserGroupTabItemRoleDescriptor extends AbstractEntityTabDescriptor<GwtGroup, UserGroupTabItemRole, UserGroupView> {
+public class UserGroupTabTagsDescriptor extends AbstractEntityTabDescriptor<GwtGroup, GroupTabTags, UserGroupView> {
 
     @Override
-    public UserGroupTabItemRole getTabViewInstance(UserGroupView view, GwtSession currentSession) {
-        return new UserGroupTabItemRole(currentSession);
+    public GroupTabTags getTabViewInstance(UserGroupView view, GwtSession currentSession) {
+        return new GroupTabTags(currentSession);
     }
 
     @Override
     public String getViewId() {
-        return "userGroup.role";
+        return "group.tags";
     }
 
     @Override
     public Integer getOrder() {
-        return 400;
+        return 200;
     }
 
     @Override
     public Boolean isEnabled(GwtSession currentSession) {
-        return currentSession.hasPermission(RoleSessionPermission.read()) &&
-                currentSession.hasPermission(UserGroupSessionPermission.read());
+        return currentSession.hasPermission(TagSessionPermission.read());
     }
 }

@@ -13,27 +13,23 @@
 package org.eclipse.kapua.app.console.module.authorization.client.group;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import org.eclipse.kapua.app.console.module.api.client.GwtKapuaErrorCode;
-import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
-import org.eclipse.kapua.app.console.module.api.client.util.FailureHandler;
 import org.eclipse.kapua.app.console.module.api.client.util.KapuaSafeHtmlUtils;
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
 import org.eclipse.kapua.app.console.module.authorization.client.messages.ConsoleGroupMessages;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
-import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtGroupService;
-import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtGroupServiceAsync;
 
 public class GroupEditDialog extends GroupAddDialog {
 
     private static final ConsoleGroupMessages MSGS = GWT.create(ConsoleGroupMessages.class);
 
-    private static final GwtGroupServiceAsync GWT_GROUP_SERVICE = GWT.create(GwtGroupService.class);
+    private EntityGroupDataProvider entityGroupDataProvider;
 
     private GwtGroup selectedGroup;
 
-    public GroupEditDialog(GwtSession currentSession, GwtGroup selectedGroup) {
-        super(currentSession);
+    public GroupEditDialog(GwtSession currentSession, EntityGroupDataProvider entityGroupDataProvider, GwtGroup selectedGroup) {
+        super(currentSession, entityGroupDataProvider);
+
+        this.entityGroupDataProvider = entityGroupDataProvider;
         this.selectedGroup = selectedGroup;
     }
 
@@ -41,7 +37,9 @@ public class GroupEditDialog extends GroupAddDialog {
     public void createBody() {
         super.createBody();
 
-        domainsCombo.removeFromParent();
+        if (domainsCombo != null) {
+            domainsCombo.removeFromParent();
+        }
         domainsLabel.show();
 
         populateEditDialog(selectedGroup);
@@ -52,34 +50,7 @@ public class GroupEditDialog extends GroupAddDialog {
         selectedGroup.setGroupName(groupNameField.getValue());
         selectedGroup.setGroupDescription(KapuaSafeHtmlUtils.htmlUnescape(groupDescriptionField.getValue()));
 
-        GWT_GROUP_SERVICE.update(selectedGroup, new AsyncCallback<GwtGroup>() {
-
-            @Override
-            public void onFailure(Throwable cause) {
-                exitStatus = false;
-                status.hide();
-                formPanel.getButtonBar().enable();
-                unmask();
-                submitButton.enable();
-                cancelButton.enable();
-                if (!isPermissionErrorMessage(cause)) {
-                    if (cause instanceof GwtKapuaException) {
-                        GwtKapuaException gwtCause = (GwtKapuaException) cause;
-                        if (gwtCause.getCode().equals(GwtKapuaErrorCode.DUPLICATE_NAME)) {
-                            groupNameField.markInvalid(gwtCause.getMessage());
-                        }
-                    }
-                    FailureHandler.handleFormException(formPanel, cause);
-                }
-            }
-
-            @Override
-            public void onSuccess(GwtGroup arg0) {
-                exitStatus = true;
-                exitMessage = MSGS.dialogEditConfirmation();
-                hide();
-            }
-        });
+        entityGroupDataProvider.handleUpdateEntityGroup(this, selectedGroup);
     }
 
     @Override

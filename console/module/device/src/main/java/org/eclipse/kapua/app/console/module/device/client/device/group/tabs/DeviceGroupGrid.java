@@ -10,7 +10,7 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.app.console.module.device.client.device.group;
+package org.eclipse.kapua.app.console.module.device.client.device.group.tabs;
 
 import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
@@ -21,6 +21,7 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.eclipse.kapua.app.console.module.api.client.ui.view.AbstractEntityView;
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
+import org.eclipse.kapua.app.console.module.authorization.client.group.AccessGroupDataProvider;
 import org.eclipse.kapua.app.console.module.authorization.client.group.GroupGrid;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
 import org.eclipse.kapua.app.console.module.device.shared.model.GwtDevice;
@@ -37,7 +38,7 @@ public class DeviceGroupGrid extends GroupGrid {
     private GwtDevice selectedDevice;
 
     protected DeviceGroupGrid(AbstractEntityView<GwtGroup> entityView, GwtSession currentSession, GwtDevice selectedDevice) {
-        super(entityView, currentSession);
+        super(entityView, new AccessGroupDataProvider(), currentSession);
 
         this.selectedDevice = selectedDevice;
 

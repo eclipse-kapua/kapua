@@ -16,6 +16,7 @@ import com.google.gwt.user.client.Element;
 import org.eclipse.kapua.app.console.module.api.client.ui.dialog.KapuaDialog;
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
 import org.eclipse.kapua.app.console.module.authorization.client.group.GroupToolbarGrid;
+import org.eclipse.kapua.app.console.module.user.client.group.UserGroupDataProvider;
 import org.eclipse.kapua.app.console.module.user.shared.model.GwtUser;
 import org.eclipse.kapua.app.console.module.user.shared.model.permission.UserSessionPermission;
 
@@ -24,7 +25,7 @@ public class UserGroupToolbar extends GroupToolbarGrid {
     private GwtUser selectedUser;
 
     public UserGroupToolbar(GwtSession currentSession) {
-        super(currentSession, true);
+        super(currentSession, new UserGroupDataProvider(), true);
 
         setEditButtonVisible(false);
     }
