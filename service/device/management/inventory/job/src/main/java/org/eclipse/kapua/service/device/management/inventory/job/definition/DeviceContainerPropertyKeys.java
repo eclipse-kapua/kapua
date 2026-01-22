@@ -18,6 +18,8 @@ public class DeviceContainerPropertyKeys implements JobPropertyKey {
 
     public static final String CONTAINER_NAME = "containerName";
     public static final String CONTAINER_VERSION = "containerVersion";
+    public static final String IMAGE_NAME = "imageName";
+    public static final String IMAGE_VERSION = "imageVersion";
     public static final String TIMEOUT = "timeout";
 
     private DeviceContainerPropertyKeys() {

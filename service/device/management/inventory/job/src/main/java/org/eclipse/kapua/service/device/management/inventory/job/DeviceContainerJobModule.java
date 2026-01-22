@@ -16,6 +16,7 @@ import com.google.inject.multibindings.ProvidesIntoSet;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.service.device.management.inventory.job.definition.DeviceContainerStartJobStepDefinition;
 import org.eclipse.kapua.service.device.management.inventory.job.definition.DeviceContainerStopJobStepDefinition;
+import org.eclipse.kapua.service.device.management.inventory.job.definition.DeviceImageDeleteJobStepDefinition;
 import org.eclipse.kapua.service.job.step.definition.JobStepDefinition;
 
 public class DeviceContainerJobModule extends AbstractKapuaModule {
@@ -32,6 +33,11 @@ public class DeviceContainerJobModule extends AbstractKapuaModule {
     @ProvidesIntoSet
     public JobStepDefinition deviceContainerStopJobStepDefinition() {
         return new DeviceContainerStopJobStepDefinition();
+    }
+
+    @ProvidesIntoSet
+    public JobStepDefinition deviceImageDeleteJobStepDefinition() {
+        return new DeviceImageDeleteJobStepDefinition();
     }
 
 }
