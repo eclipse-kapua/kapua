@@ -17,25 +17,34 @@ import com.extjs.gxt.ui.client.data.BaseModel;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.kapua.app.console.module.api.shared.util.GwtKapuaCommonsModelConverter;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupQuery;
 import org.eclipse.kapua.app.console.module.user.shared.model.GwtUser.GwtUserStatus;
 import org.eclipse.kapua.app.console.module.user.shared.model.GwtUser.GwtUserType;
 import org.eclipse.kapua.app.console.module.user.shared.model.GwtUserQuery;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.KapuaEntity;
+import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.FieldSortCriteria;
 import org.eclipse.kapua.model.query.SortOrder;
 import org.eclipse.kapua.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.model.query.predicate.AttributePredicate.Operator;
+import org.eclipse.kapua.service.authorization.group.GroupAttributes;
 import org.eclipse.kapua.service.user.UserAttributes;
 import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserQuery;
 import org.eclipse.kapua.service.user.UserStatus;
 import org.eclipse.kapua.service.user.UserType;
+import org.eclipse.kapua.service.user.group.UserGroupFactory;
+import org.eclipse.kapua.service.user.group.UserGroupQuery;
 
 /**
  * Utility class for convertKapuaId {@link BaseModel}s to {@link KapuaEntity}ies and other Kapua models
  */
 public class GwtKapuaUserModelConverter {
+
+    private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
+
+    private static final UserGroupFactory USER_GROUP_FACTORY = LOCATOR.getFactory(UserGroupFactory.class);
 
     private GwtKapuaUserModelConverter() {
     }
@@ -120,6 +129,49 @@ public class GwtKapuaUserModelConverter {
         return UserType.valueOf(gwtUserType.toString());
     }
 
+    public static UserGroupQuery convertUserGroupQuery(PagingLoadConfig loadConfig, GwtGroupQuery gwtGroupQuery) {
+
+        UserGroupQuery query = USER_GROUP_FACTORY.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(gwtGroupQuery.getScopeId()));
+
+        AndPredicate andPredicate = query.andPredicate();
+        // .id
+        if (!gwtGroupQuery.getIds().isEmpty()) {
+            int i = 0;
+            KapuaId[] tagIds = new KapuaId[gwtGroupQuery.getIds().size()];
+            for (String gwtTagId : gwtGroupQuery.getIds()) {
+                tagIds[i++] = GwtKapuaCommonsModelConverter.convertKapuaId(gwtTagId);
+            }
+
+            andPredicate.and(query.attributePredicate(GroupAttributes.ENTITY_ID, tagIds));
+        }
+
+        // .name
+        if (gwtGroupQuery.getName() != null && !gwtGroupQuery.getName().isEmpty()) {
+            andPredicate.and(query.attributePredicate(GroupAttributes.NAME, gwtGroupQuery.getName(), Operator.LIKE));
+        }
+
+        // .description
+        if (gwtGroupQuery.getDescription() != null && !gwtGroupQuery.getDescription().isEmpty()) {
+            andPredicate.and(query.attributePredicate(GroupAttributes.DESCRIPTION, gwtGroupQuery.getDescription(), Operator.LIKE));
+        }
+
+        String sortField = StringUtils.isEmpty(loadConfig.getSortField()) ? GroupAttributes.NAME : loadConfig.getSortField();
+        if (sortField.equals("groupName")) {
+            sortField = GroupAttributes.NAME;
+        } else if (sortField.equals("createdOnFormatted")) {
+            sortField = GroupAttributes.CREATED_ON;
+        }
+
+        SortOrder sortOrder = loadConfig.getSortDir().equals(SortDir.DESC) ? SortOrder.DESCENDING : SortOrder.ASCENDING;
+        FieldSortCriteria sortCriteria = query.fieldSortCriteria(sortField, sortOrder);
+        query.setSortCriteria(sortCriteria);
+        query.setOffset(loadConfig.getOffset());
+        query.setLimit(loadConfig.getLimit());
+        query.setPredicate(andPredicate);
+        query.setAskTotalCount(true);
+
+        return query;
+    }
 
 
 }

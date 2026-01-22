@@ -12,3 +12,4 @@
 #################################################################################
 org.eclipse.kapua.app.console.module.device.client.device.DeviceViewDescriptor
 org.eclipse.kapua.app.console.module.device.client.connection.ConnectionViewDescriptor
+org.eclipse.kapua.app.console.module.device.client.device.group.DeviceGroupViewDescriptor

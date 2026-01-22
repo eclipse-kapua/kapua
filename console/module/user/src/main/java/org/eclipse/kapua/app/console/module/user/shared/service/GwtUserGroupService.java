@@ -12,15 +12,20 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.user.shared.service;
 
+import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
+import org.eclipse.kapua.app.console.module.api.shared.model.GwtGroupedNVPair;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtXSRFToken;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupCreator;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupPermission;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupPermissionCreator;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupPermissionQuery;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupQuery;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupRole;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupRoleCreator;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupRoleQuery;
@@ -31,6 +36,15 @@ import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupR
 @RemoteServiceRelativePath("userGroup")
 public interface GwtUserGroupService extends RemoteService {
 
+    GwtGroup create(GwtGroupCreator gwtGroupCreator) throws GwtKapuaException;
+
+    GwtGroup update(GwtGroup gwtGroup) throws GwtKapuaException;
+
+    ListLoadResult<GwtGroupedNVPair> getUserGroupDescription(String scopeShortId, String groupShortId) throws GwtKapuaException;
+
+    PagingLoadResult<GwtGroup> query(PagingLoadConfig loadConfig, GwtGroupQuery gwtGroupQuery) throws GwtKapuaException;
+
+    void delete(String scopeId, String groupId) throws GwtKapuaException;
 
     //
     // Group Permission

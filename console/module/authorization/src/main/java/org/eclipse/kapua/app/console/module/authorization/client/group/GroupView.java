@@ -22,12 +22,15 @@ import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
 
 public class GroupView extends AbstractEntityView<GwtGroup> {
 
+    private EntityGroupDataProvider entityGroupDataProvider;
     private GroupGrid groupGrid;
 
     private static final ConsoleGroupMessages MSGS = GWT.create(ConsoleGroupMessages.class);
 
-    public GroupView(GwtSession gwtSession) {
+    public GroupView(GwtSession gwtSession, EntityGroupDataProvider entityGroupDataProvider) {
         super(gwtSession);
+
+        this.entityGroupDataProvider = entityGroupDataProvider;
     }
 
     public static String getName() {
@@ -35,18 +38,16 @@ public class GroupView extends AbstractEntityView<GwtGroup> {
     }
 
     @Override
-    public EntityGrid<GwtGroup> getEntityGrid(AbstractEntityView<GwtGroup> entityView,
-            GwtSession currentSession) {
+    public EntityGrid<GwtGroup> getEntityGrid(AbstractEntityView<GwtGroup> entityView, GwtSession currentSession) {
         if (groupGrid == null) {
-            groupGrid = new GroupGrid(entityView, currentSession);
+            groupGrid = new GroupGrid(entityView, entityGroupDataProvider, currentSession);
         }
+
         return groupGrid;
     }
 
     @Override
-    public EntityFilterPanel<GwtGroup> getEntityFilterPanel(AbstractEntityView<GwtGroup> entityView,
-            GwtSession currentSession2) {
-
-        return new GroupFilterPanel(this, currentSession2);
+    public EntityFilterPanel<GwtGroup> getEntityFilterPanel(AbstractEntityView<GwtGroup> entityView, GwtSession currentSession) {
+        return new GroupFilterPanel(this, currentSession);
     }
 }

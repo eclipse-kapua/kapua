@@ -12,12 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.authorization.client.group;
 
-import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.widget.grid.ColumnConfig;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import org.eclipse.kapua.app.console.module.api.client.messages.ConsoleMessages;
 import org.eclipse.kapua.app.console.module.api.client.ui.grid.CreatedByNameCellRenderer;
@@ -29,38 +27,32 @@ import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
 import org.eclipse.kapua.app.console.module.authorization.client.messages.ConsoleGroupMessages;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupQuery;
-import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtGroupService;
-import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtGroupServiceAsync;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class GroupGrid extends EntityGrid<GwtGroup> {
 
-    private static final GwtGroupServiceAsync GWT_GROUP_SERVICE = GWT.create(GwtGroupService.class);
-    private static final ConsoleGroupMessages MSGS = GWT.create(ConsoleGroupMessages.class);
-    private static final ConsoleMessages C_MSGS = GWT.create(ConsoleMessages.class);
-    private GwtGroupQuery query;
-    private GroupToolbarGrid toolbar;
     private static final String ACCESS_GROUP = "access group";
 
-    protected GroupGrid(AbstractEntityView<GwtGroup> entityView, GwtSession currentSession) {
+    private static final ConsoleGroupMessages MSGS = GWT.create(ConsoleGroupMessages.class);
+    private static final ConsoleMessages C_MSGS = GWT.create(ConsoleMessages.class);
+    private EntityGroupDataProvider entityGroupDataProvider;
+    private GwtGroupQuery query;
+    private GroupToolbarGrid toolbar;
+
+    public GroupGrid(AbstractEntityView<GwtGroup> entityView, EntityGroupDataProvider entityGroupDataProvider, GwtSession currentSession) {
         super(entityView, currentSession);
+
+        setEntityGroupDataProvider(entityGroupDataProvider);
+
         query = new GwtGroupQuery();
         query.setScopeId(currentSession.getSelectedAccountId());
     }
 
     @Override
     protected RpcProxy<PagingLoadResult<GwtGroup>> getDataProxy() {
-        return new RpcProxy<PagingLoadResult<GwtGroup>>() {
-
-            @Override
-            protected void load(Object loadConfig,
-                    AsyncCallback<PagingLoadResult<GwtGroup>> callback) {
-                GWT_GROUP_SERVICE.query((PagingLoadConfig) loadConfig, query, callback);
-
-            }
-        };
+        return entityGroupDataProvider.getEntityGridDataProxy(query);
     }
 
     @Override
@@ -100,14 +92,14 @@ public class GroupGrid extends EntityGrid<GwtGroup> {
     @Override
     public void setFilterQuery(GwtQuery filterQuery) {
         this.query = (GwtGroupQuery) filterQuery;
-
     }
 
     @Override
     protected GroupToolbarGrid getToolbar() {
         if (toolbar == null) {
-            toolbar = new GroupToolbarGrid(currentSession);
+            toolbar = new GroupToolbarGrid(currentSession, entityGroupDataProvider);
         }
+
         return toolbar;
     }
 
@@ -130,5 +122,11 @@ public class GroupGrid extends EntityGrid<GwtGroup> {
                 return C_MSGS.specificPagingToolbarNoResult(ACCESS_GROUP);
             }
         };
+    }
+
+    protected void setEntityGroupDataProvider(EntityGroupDataProvider entityGroupDataProvider) {
+        this.entityGroupDataProvider = entityGroupDataProvider;
+
+        getToolbar().setEntityGroupDataProvider(entityGroupDataProvider);
     }
 }

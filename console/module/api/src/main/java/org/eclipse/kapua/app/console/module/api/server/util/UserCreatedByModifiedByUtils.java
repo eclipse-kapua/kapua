@@ -125,6 +125,10 @@ public class UserCreatedByModifiedByUtils {
      * @since 2.1.0
      */
     public static String resolveFromId(final KapuaId userId) throws KapuaException {
+        if (userId == null) {
+            return null;
+        }
+
         User resolvedUser = KapuaSecurityUtils.doPrivileged(new Callable<User>() {
             @Override
             public User call() throws Exception {

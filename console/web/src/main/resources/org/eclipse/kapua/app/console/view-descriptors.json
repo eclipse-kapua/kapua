@@ -48,7 +48,7 @@
     "descriptor": "org.eclipse.kapua.app.console.module.device.client.device.DeviceViewDescriptor",
     "view": "org.eclipse.kapua.app.console.module.device.client.device.DeviceView",
     "tabs": [
-      "org.eclipse.kapua.app.console.module.device.client.device.group.DeviceTabGroupsDescriptor",
+      "org.eclipse.kapua.app.console.module.device.client.device.group.tabs.DeviceTabGroupsDescriptor",
       "org.eclipse.kapua.app.console.module.device.client.device.tag.DeviceTabTagsDescriptor",
       "org.eclipse.kapua.app.console.module.device.client.device.profile.DeviceTabProfileDescriptor",
 
@@ -63,14 +63,20 @@
     ]
   },
   {
+    "descriptor": "org.eclipse.kapua.app.console.module.device.client.device.group.DeviceGroupViewDescriptor",
+    "view": "org.eclipse.kapua.app.console.module.device.client.device.group.DeviceGroupView",
+    "tabs": [
+      "org.eclipse.kapua.app.console.module.device.client.device.group.DeviceGroupTabDescriptionDescriptor",
+      "org.eclipse.kapua.app.console.module.device.client.device.group.DeviceGroupTabTagsDescriptor",
+      "org.eclipse.kapua.app.console.module.device.client.device.group.DevicesGroupTabItemDescriptor"
+    ]
+  },
+  {
     "descriptor": "org.eclipse.kapua.app.console.module.authorization.client.group.GroupViewDescriptor",
     "view": "org.eclipse.kapua.app.console.module.authorization.client.group.GroupView",
     "tabs": [
       "org.eclipse.kapua.app.console.module.authorization.client.group.GroupTabDescriptionDescriptor",
-      "org.eclipse.kapua.app.console.module.authorization.client.tabs.groups.GroupTabTagsDescriptor",
-      "org.eclipse.kapua.app.console.module.device.client.group.device.DevicesGroupTabItemDescriptor",
-      "org.eclipse.kapua.app.console.module.user.client.group.tab.permission.UserGroupTabDescriptionDescriptor",
-      "org.eclipse.kapua.app.console.module.user.client.group.tab.roles.UserGroupTabItemRoleDescriptor"
+      "org.eclipse.kapua.app.console.module.authorization.client.tabs.groups.GroupTabTagsDescriptor"
     ]
   },
   {
@@ -112,6 +118,16 @@
       "org.eclipse.kapua.app.console.module.user.client.tabs.permission.UserTabItemPermissionDescriptor",
       "org.eclipse.kapua.app.console.module.user.client.tabs.roles.UserTabItemAccessRoleDescriptor",
       "org.eclipse.kapua.app.console.module.user.client.tabs.tags.UserTabTagsDescriptor"
+    ]
+  },
+  {
+    "descriptor": "org.eclipse.kapua.app.console.module.user.client.group.UserGroupViewDescriptor",
+    "view": "org.eclipse.kapua.app.console.module.user.client.group.UserGroupView",
+    "tabs": [
+      "org.eclipse.kapua.app.console.module.user.client.group.UserGroupTabDescriptionDescriptor",
+      "org.eclipse.kapua.app.console.module.user.client.group.tab.tags.UserGroupTabTagsDescriptor",
+      "org.eclipse.kapua.app.console.module.user.client.group.tab.permission.UserGroupTabDescriptionDescriptor",
+      "org.eclipse.kapua.app.console.module.user.client.group.tab.roles.UserGroupTabItemRoleDescriptor"
     ]
   }
 ]

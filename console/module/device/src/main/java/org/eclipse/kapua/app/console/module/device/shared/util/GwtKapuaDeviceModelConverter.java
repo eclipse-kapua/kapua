@@ -16,6 +16,7 @@ import com.extjs.gxt.ui.client.Style.SortDir;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.kapua.app.console.module.api.shared.util.GwtKapuaCommonsModelConverter;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupQuery;
 import org.eclipse.kapua.app.console.module.device.shared.model.GwtDeviceQuery;
 import org.eclipse.kapua.app.console.module.device.shared.model.GwtDeviceQueryPredicates;
 import org.eclipse.kapua.app.console.module.device.shared.model.connection.GwtDeviceConnectionQuery;
@@ -34,6 +35,7 @@ import org.eclipse.kapua.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.model.query.predicate.AttributePredicate.Operator;
 import org.eclipse.kapua.model.type.ObjectTypeConverter;
 import org.eclipse.kapua.model.type.ObjectValueConverter;
+import org.eclipse.kapua.service.authorization.group.GroupAttributes;
 import org.eclipse.kapua.service.device.management.asset.DeviceAsset;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssetChannel;
 import org.eclipse.kapua.service.device.management.asset.DeviceAssetChannelMode;
@@ -50,6 +52,8 @@ import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionAttr
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionFactory;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionQuery;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionStatus;
+import org.eclipse.kapua.service.device.registry.group.DeviceGroupFactory;
+import org.eclipse.kapua.service.device.registry.group.DeviceGroupQuery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,8 +64,8 @@ public class GwtKapuaDeviceModelConverter {
 
     private static final DeviceFactory DEVICE_FACTORY = LOCATOR.getFactory(DeviceFactory.class);
     private static final DeviceConnectionFactory DEVICE_CONNECTION_FACTORY = LOCATOR.getFactory(DeviceConnectionFactory.class);
+    private static final DeviceGroupFactory DEVICE_GROUP_FACTORY = LOCATOR.getFactory(DeviceGroupFactory.class);
     private static final DeviceManagementOperationFactory DEVICE_MANAGEMENT_OPERATION_FACTORY = LOCATOR.getFactory(DeviceManagementOperationFactory.class);
-
     private static final DeviceAssetFactory ASSET_FACTORY = LOCATOR.getFactory(DeviceAssetFactory.class);
 
 
@@ -281,6 +285,49 @@ public class GwtKapuaDeviceModelConverter {
             query.setOffset(loadConfig.getOffset());
         }
         query.setAskTotalCount(gwtQuery.getAskTotalCount());
+        return query;
+    }
+
+    public static DeviceGroupQuery convertDeviceGroupQuery(PagingLoadConfig loadConfig, GwtGroupQuery gwtGroupQuery) {
+        DeviceGroupQuery query = DEVICE_GROUP_FACTORY.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(gwtGroupQuery.getScopeId()));
+
+        AndPredicate andPredicate = query.andPredicate();
+        // .id
+        if (!gwtGroupQuery.getIds().isEmpty()) {
+            int i = 0;
+            KapuaId[] tagIds = new KapuaId[gwtGroupQuery.getIds().size()];
+            for (String gwtTagId : gwtGroupQuery.getIds()) {
+                tagIds[i++] = GwtKapuaCommonsModelConverter.convertKapuaId(gwtTagId);
+            }
+
+            andPredicate.and(query.attributePredicate(GroupAttributes.ENTITY_ID, tagIds));
+        }
+
+        // .name
+        if (gwtGroupQuery.getName() != null && !gwtGroupQuery.getName().isEmpty()) {
+            andPredicate.and(query.attributePredicate(GroupAttributes.NAME, gwtGroupQuery.getName(), Operator.LIKE));
+        }
+
+        // .description
+        if (gwtGroupQuery.getDescription() != null && !gwtGroupQuery.getDescription().isEmpty()) {
+            andPredicate.and(query.attributePredicate(GroupAttributes.DESCRIPTION, gwtGroupQuery.getDescription(), Operator.LIKE));
+        }
+
+        String sortField = StringUtils.isEmpty(loadConfig.getSortField()) ? GroupAttributes.NAME : loadConfig.getSortField();
+        if (sortField.equals("groupName")) {
+            sortField = GroupAttributes.NAME;
+        } else if (sortField.equals("createdOnFormatted")) {
+            sortField = GroupAttributes.CREATED_ON;
+        }
+
+        SortOrder sortOrder = loadConfig.getSortDir().equals(SortDir.DESC) ? SortOrder.DESCENDING : SortOrder.ASCENDING;
+        FieldSortCriteria sortCriteria = query.fieldSortCriteria(sortField, sortOrder);
+        query.setSortCriteria(sortCriteria);
+        query.setOffset(loadConfig.getOffset());
+        query.setLimit(loadConfig.getLimit());
+        query.setPredicate(andPredicate);
+        query.setAskTotalCount(true);
+
         return query;
     }
 }
