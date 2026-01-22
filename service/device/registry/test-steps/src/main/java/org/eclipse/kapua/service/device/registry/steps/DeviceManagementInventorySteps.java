@@ -30,6 +30,8 @@ import org.eclipse.kapua.service.device.management.inventory.model.bundle.Device
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainer;
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainerAction;
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainers;
+import org.eclipse.kapua.service.device.management.inventory.model.image.DeviceInventoryImage;
+import org.eclipse.kapua.service.device.management.inventory.model.image.DeviceInventoryImages;
 import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventory;
 import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventoryItem;
 import org.eclipse.kapua.service.device.management.inventory.model.packages.DeviceInventoryPackage;
@@ -49,6 +51,7 @@ public class DeviceManagementInventorySteps extends TestBase {
     private static final String INVENTORY_ITEMS = "inventory_inventory";
     private static final String INVENTORY_BUNDLES = "inventory_bundles";
     private static final String INVENTORY_CONTAINERS = "inventory_container";
+    private static final String INVENTORY_IMAGES = "inventory_images";
     private static final String INVENTORY_SYSTEM_PACKAGES = "inventory_system_packages";
     private static final String INVENTORY_DEPLOYMENT_PACKAGES = "inventory_deployment_packages";
 
@@ -295,6 +298,70 @@ public class DeviceManagementInventorySteps extends TestBase {
             Device device = deviceRegistryService.findByClientId(SYS_SCOPE_ID, kuraDevice.getClientId());
             if (device != null) {
                 deviceInventoryManagementService.execContainer(device.getScopeId(), device.getId(), inventoryContainer, DeviceInventoryContainerAction.STOP, null);
+            }
+        }
+    }
+
+    // /images
+    @When("Inventory Images are requested")
+    public void inventoryImagesRequested() throws Exception {
+        List<KuraDevice> kuraDevices = (List<KuraDevice>) stepData.get(KURA_DEVICES);
+        for (KuraDevice kuraDevice : kuraDevices) {
+            Device device = deviceRegistryService.findByClientId(SYS_SCOPE_ID, kuraDevice.getClientId());
+            if (device != null) {
+                DeviceInventoryImages deviceInventoryImages = deviceInventoryManagementService.getImages(device.getScopeId(), device.getId(), null);
+                List<DeviceInventoryImage> inventoryImages = deviceInventoryImages.getInventoryImages();
+                stepData.put(INVENTORY_IMAGES, inventoryImages);
+            }
+        }
+    }
+
+    @Then("Inventory Images are received")
+    public void inventoryImagesReceived() {
+        List<DeviceInventoryImage> inventoryImages = (List<DeviceInventoryImage>) stepData.get(INVENTORY_IMAGES);
+        Assert.assertNotNull(inventoryImages);
+    }
+
+    @Then("Inventory Images are {long}")
+    public void inventoryImagesAreSize(long size) {
+        List<DeviceInventoryImage> inventoryImages = (List<DeviceInventoryImage>) stepData.get(INVENTORY_IMAGES);
+        Assert.assertEquals(size, inventoryImages.size());
+    }
+
+    @Then("Inventory Images has Image named {string} is present")
+    public void inventoryImageNamedIsPresent(String inventoryImageName) {
+        List<DeviceInventoryImage> inventoryImages = (List<DeviceInventoryImage>) stepData.get(INVENTORY_IMAGES);
+        DeviceInventoryImage inventoryImage = inventoryImages.stream().filter(i -> i.getName().equals(inventoryImageName)).findAny().orElse(null);
+        Assert.assertNotNull(inventoryImage);
+    }
+
+    @Then("Inventory Images has Image named {string} has version {string}")
+    public void inventoryImageNamedHasVersion(String inventoryImageName, String inventoryImageVersion) {
+        List<DeviceInventoryImage> inventoryImages = (List<DeviceInventoryImage>) stepData.get(INVENTORY_IMAGES);
+        DeviceInventoryImage inventoryImage = inventoryImages.stream().filter(i -> i.getName().equals(inventoryImageName)).findAny().orElse(null);
+        Assert.assertNotNull(inventoryImage);
+        Assert.assertEquals(inventoryImageVersion, inventoryImage.getVersion());
+    }
+
+    @Then("Inventory Images has Image named {string} has type {string}")
+    public void inventoryImageNamedHasType(String inventoryImageName, String inventoryImageType) {
+        List<DeviceInventoryImage> inventoryImages = (List<DeviceInventoryImage>) stepData.get(INVENTORY_IMAGES);
+        DeviceInventoryImage inventoryImage = inventoryImages.stream().filter(i -> i.getName().equals(inventoryImageName)).findAny().orElse(null);
+        Assert.assertNotNull(inventoryImage);
+        Assert.assertEquals(inventoryImageType, inventoryImage.getImageType());
+    }
+
+    @Then("I delete Inventory Image named {string}")
+    public void inventoryImagedNamedDelete(String inventoryImageName) throws KapuaException {
+        List<DeviceInventoryImage> inventoryImages = (List<DeviceInventoryImage>) stepData.get(INVENTORY_IMAGES);
+        DeviceInventoryImage inventoryImage = inventoryImages.stream().filter(b -> b.getName().equals(inventoryImageName)).findAny().orElse(null);
+        Assert.assertNotNull(inventoryImage);
+
+        List<KuraDevice> kuraDevices = (List<KuraDevice>) stepData.get(KURA_DEVICES);
+        for (KuraDevice kuraDevice : kuraDevices) {
+            Device device = deviceRegistryService.findByClientId(SYS_SCOPE_ID, kuraDevice.getClientId());
+            if (device != null) {
+                deviceInventoryManagementService.deleteImage(device.getScopeId(), device.getId(), inventoryImage, null);
             }
         }
     }

@@ -197,6 +197,28 @@ Feature: Device Management Inventory Service Tests
     Then KuraMock is disconnected
     And I logout
 
+  Scenario: Request Inventory Images to a Device
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I start the Kura Mock
+    And Device is connected within 10 seconds
+    And Device status is "CONNECTED" within 10 seconds
+    And I select account "kapua-sys"
+    And I get the KuraMock device after 5 seconds
+    And Inventory Images are requested
+    And Inventory Images are received
+    And Inventory Images are 3
+    And Inventory Images has Image named "nginx" is present
+    And Inventory Images has Image named "nginx" has version "latest"
+    And Inventory Images has Image named "nginx" has type "CONTAINER_IMAGE"
+    And Inventory Images has Image named "alpine" is present
+    And Inventory Images has Image named "alpine" has version "latest"
+    And Inventory Images has Image named "alpine" has type "CONTAINER_IMAGE"
+    Then I delete Inventory Image named "nginx"
+    And No exception was thrown
+    Then KuraMock is disconnected
+    And I logout
+
   Scenario: Request Inventory System Packages to a Device
 
     Given I login as user with name "kapua-sys" and password "kapua-password"
