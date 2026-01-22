@@ -74,7 +74,9 @@ public class KuraDevice implements MqttCallback {
     private String inventoryExecInventoryBundleStop;
     private String inventoryGetInventoryContainerEntries;
     private String inventoryExecInventoryContainerStart;
+    private String inventoryGetInventoryImagesEntries;
     private String inventoryExecInventoryContainerStop;
+    private String inventoryDeleteInventoryImage;
     private String inventoryGetInventorySystemPackagesEntries;
     private String inventoryGetInventoryPackagesEntries;
 
@@ -209,8 +211,10 @@ public class KuraDevice implements MqttCallback {
         inventoryExecInventoryBundleStart = "$EDC/kapua-sys/rpione3/INVENTORY-V1/EXEC/bundles/_start";
         inventoryExecInventoryBundleStop = "$EDC/kapua-sys/rpione3/INVENTORY-V1/EXEC/bundles/_stop";
         inventoryGetInventoryContainerEntries = "$EDC/kapua-sys/rpione3/INVENTORY-V1/GET/containers";
+        inventoryGetInventoryImagesEntries = "$EDC/kapua-sys/rpione3/INVENTORY-V1/GET/images";
         inventoryExecInventoryContainerStart = "$EDC/kapua-sys/rpione3/INVENTORY-V1/EXEC/containers/_start";
         inventoryExecInventoryContainerStop = "$EDC/kapua-sys/rpione3/INVENTORY-V1/EXEC/containers/_stop";
+        inventoryDeleteInventoryImage = "$EDC/kapua-sys/rpione3/INVENTORY-V1/EXEC/images/_delete";
         inventoryGetInventorySystemPackagesEntries = "$EDC/kapua-sys/rpione3/INVENTORY-V1/GET/systemPackages";
         inventoryGetInventoryPackagesEntries = "$EDC/kapua-sys/rpione3/INVENTORY-V1/GET/deploymentPackages";
 
@@ -755,6 +759,39 @@ public class KuraDevice implements MqttCallback {
 
                         mqttClient.publish(responseTopic, responsePayload, 0, false);
                     }
+                } else if (topic.equals(inventoryDeleteInventoryImage)) {
+                    callbackParam = extractCallback(requestPayload);
+
+                    KuraPayload kuraRequestPayload = new KuraPayload();
+                    kuraRequestPayload.readFromByteArray(requestPayload);
+
+                    String jsonRequestBody = new String(kuraRequestPayload.getBody());
+
+                    if (jsonRequestBody.contains("nginx")) {
+                        responseTopic = $EDC + clientAccount + "/" + callbackParam.getClientId() + INVENTORY_V1_REPLY + callbackParam.getRequestId();
+
+                        KuraPayload kuraResponsePayload = new KuraPayload();
+                        kuraResponsePayload.getMetrics().put("response.code", 200);
+
+                        responsePayload = kuraResponsePayload.toByteArray();
+
+                        mqttClient.publish(responseTopic, responsePayload, 0, false);
+                    }
+                } else if (topic.equals(inventoryGetInventoryImagesEntries)) {
+                    callbackParam = extractCallback(requestPayload);
+
+                    responseTopic = $EDC + clientAccount + "/" + callbackParam.getClientId() + INVENTORY_V1_REPLY + callbackParam.getRequestId();
+
+                    byte[] responseBody = Files.readAllBytes(Paths.get(getClass().getResource("/mqtt/INVENTORY-V1_GET_inventory_images_reply.json").toURI()));
+
+                    KuraPayload kuraResponsePayload = new KuraPayload();
+                    kuraResponsePayload.setBody(responseBody);
+                    kuraResponsePayload.getMetrics().put("response.code", 200);
+
+                    responsePayload = kuraResponsePayload.toByteArray();
+
+                    mqttClient.publish(responseTopic, responsePayload, 0, false);
+
                 } else if (topic.equals(inventoryGetInventorySystemPackagesEntries)) {
                     callbackParam = extractCallback(requestPayload);
 
