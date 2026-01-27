@@ -17,6 +17,7 @@ import java.util.Set;
 import org.eclipse.kapua.service.authentication.token.AccessToken;
 import org.eclipse.kapua.service.authentication.token.LoginInfo;
 import org.eclipse.kapua.service.authorization.access.AccessPermission;
+import org.eclipse.kapua.service.authorization.group.GroupPermission;
 import org.eclipse.kapua.service.authorization.role.RolePermission;
 
 public class LoginInfoImpl implements LoginInfo {
@@ -24,6 +25,9 @@ public class LoginInfoImpl implements LoginInfo {
     private AccessToken accessToken;
     private Set<RolePermission> rolePermissions;
     private Set<AccessPermission> accessPermissions;
+
+    private Set<RolePermission> groupRolePermissions;
+    private Set<GroupPermission> groupPermissions;
 
     @Override
     public AccessToken getAccessToken() {
@@ -55,4 +59,23 @@ public class LoginInfoImpl implements LoginInfo {
         this.accessPermissions = accessPermissions;
     }
 
+    @Override
+    public Set<RolePermission> getGroupRolePermission() {
+        return groupRolePermissions;
+    }
+
+    @Override
+    public void setGroupRolePermission(Set<RolePermission> groupRolePermissions) {
+        this.groupRolePermissions = groupRolePermissions;
+    }
+
+    @Override
+    public Set<GroupPermission> getGroupPermission() {
+        return groupPermissions;
+    }
+
+    @Override
+    public void setGroupPermission(Set<GroupPermission> groupPermissions) {
+        this.groupPermissions = groupPermissions;
+    }
 }

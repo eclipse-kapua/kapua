@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.eclipse.kapua.KapuaSerializable;
 import org.eclipse.kapua.service.authorization.access.AccessPermission;
+import org.eclipse.kapua.service.authorization.group.GroupPermission;
 import org.eclipse.kapua.service.authorization.role.RolePermission;
 
 @XmlRootElement
@@ -43,4 +44,16 @@ public interface LoginInfo extends KapuaSerializable {
     Set<AccessPermission> getAccessPermission();
 
     void setAccessPermission(Set<AccessPermission> accessPermissions);
+
+    @XmlElement(name = "groupRolePermission")
+    Set<RolePermission> getGroupRolePermission();
+
+    void setGroupRolePermission(Set<RolePermission> groupRolePermissions);
+
+    @XmlElement(name = "groupPermission")
+    Set<GroupPermission> getGroupPermission();
+
+    void setGroupPermission(Set<GroupPermission> groupPermissions);
+
+
 }

@@ -42,6 +42,7 @@ import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.security.KapuaSession;
 import org.eclipse.kapua.commons.util.KapuaDelayUtil;
+import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.model.query.predicate.AttributePredicate;
 import org.eclipse.kapua.service.authentication.AuthenticationCredentials;
@@ -81,6 +82,11 @@ import org.eclipse.kapua.service.authorization.access.AccessRoleFactory;
 import org.eclipse.kapua.service.authorization.access.AccessRoleListResult;
 import org.eclipse.kapua.service.authorization.access.AccessRoleQuery;
 import org.eclipse.kapua.service.authorization.access.AccessRoleService;
+import org.eclipse.kapua.service.authorization.group.GroupPermissionListResult;
+import org.eclipse.kapua.service.authorization.group.GroupPermissionService;
+import org.eclipse.kapua.service.authorization.group.GroupRole;
+import org.eclipse.kapua.service.authorization.group.GroupRoleListResult;
+import org.eclipse.kapua.service.authorization.group.GroupRoleService;
 import org.eclipse.kapua.service.authorization.role.RolePermissionAttributes;
 import org.eclipse.kapua.service.authorization.role.RolePermissionFactory;
 import org.eclipse.kapua.service.authorization.role.RolePermissionListResult;
@@ -135,6 +141,8 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
     private final AccessPermissionService accessPermissionService;
     private final AccessPermissionFactory accessPermissionFactory;
 
+    private final GroupRoleService groupRoleService;
+    private final GroupPermissionService groupPermissionService;
     private final UserService userService;
 
     private final Set<CredentialsConverter> credentialsConverters;
@@ -157,6 +165,8 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
             RolePermissionFactory rolePermissionFactory,
             AccessPermissionService accessPermissionService,
             AccessPermissionFactory accessPermissionFactory,
+            GroupRoleService groupRoleService,
+            GroupPermissionService groupPermissionService,
             UserService userService,
             Set<CredentialsConverter> credentialsConverters,
             KapuaAuthenticationSetting kapuaAuthenticationSetting) {
@@ -173,9 +183,12 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
         this.rolePermissionFactory = rolePermissionFactory;
         this.accessPermissionService = accessPermissionService;
         this.accessPermissionFactory = accessPermissionFactory;
+        this.groupRoleService = groupRoleService;
+        this.groupPermissionService = groupPermissionService;
         this.userService = userService;
         this.credentialsConverters = credentialsConverters;
         this.kapuaAuthenticationSetting = kapuaAuthenticationSetting;
+
         this.jwtConsumer = new JwtConsumerBuilder()
                 .setSkipAllValidators()
                 .setDisableRequireSignature()
@@ -438,6 +451,24 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
         accessPermissionQuery.setPredicate(accessPermissionQuery.attributePredicate(AccessPermissionAttributes.ACCESS_INFO_ID, accessInfo.getId()));
         AccessPermissionListResult accessPermissions = KapuaSecurityUtils.doPrivileged(() -> accessPermissionService.query(accessPermissionQuery));
         loginInfo.setAccessPermission(Sets.newHashSet(accessPermissions.getItems()));
+
+        // User Groups
+        User user = KapuaSecurityUtils.doPrivileged(() -> userService.find(accessToken.getScopeId(), accessToken.getUserId()));
+
+        for (KapuaId groupId : user.getGroupIds()) {
+            // Group Role
+            GroupRoleListResult userGroupRoles = KapuaSecurityUtils.doPrivileged(() -> groupRoleService.findByGroupId(user.getScopeId(), groupId));
+
+            // Group RolePermission
+            for (GroupRole userGroupRole : userGroupRoles.getItems()) {
+                RolePermissionListResult groupRolePermissions = KapuaSecurityUtils.doPrivileged(() -> rolePermissionService.findByRoleId(userGroupRole.getScopeId(), userGroupRole.getRoleId()));
+                loginInfo.setGroupRolePermission(Sets.newHashSet(groupRolePermissions.getItems()));
+            }
+
+            // GroupPermission
+            GroupPermissionListResult groupPermissions = groupPermissionService.findByGroupId(user.getScopeId(), groupId);
+            loginInfo.setGroupPermission(Sets.newHashSet(groupPermissions.getItems()));
+        }
 
         return loginInfo;
     }
