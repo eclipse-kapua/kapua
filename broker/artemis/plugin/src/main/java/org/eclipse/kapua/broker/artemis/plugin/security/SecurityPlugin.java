@@ -177,8 +177,6 @@ public class SecurityPlugin implements ActiveMQSecurityManager5 {
         if (connectionInfo.getClientId()==null) {
             logger.warn("Client Id is null for connection id {} - login denied", connectionId);
             return null;
-//            throw new SecurityException("Invalid Client Id!");
-//            return authenticateExternalConnCallable(connectionInfo, connectionId, username, password, remotingConnection);
         }
         else {
             String fullClientId = Utils.getFullClientId(getScopeId(username), connectionInfo.getClientId());
