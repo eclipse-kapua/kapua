@@ -19,7 +19,6 @@ import org.eclipse.kapua.service.user.UserCreator;
 import org.eclipse.kapua.service.user.UserStatus;
 import org.eclipse.kapua.service.user.UserType;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -79,7 +78,7 @@ public class UserCreatorImpl extends AbstractKapuaNamedEntityCreator<User> imple
     @Override
     public Set<KapuaId> getTagIds() {
         if (tagIds == null) {
-            tagIds = Collections.emptySet();
+            tagIds = new HashSet<>();
         }
 
         return tagIds;
