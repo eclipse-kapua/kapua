@@ -17,6 +17,8 @@ import org.eclipse.kapua.service.device.management.inventory.model.bundle.Device
 import org.eclipse.kapua.service.device.management.inventory.model.bundle.DeviceInventoryBundles;
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainer;
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainers;
+import org.eclipse.kapua.service.device.management.inventory.model.image.DeviceInventoryImage;
+import org.eclipse.kapua.service.device.management.inventory.model.image.DeviceInventoryImages;
 import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventory;
 import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventoryItem;
 import org.eclipse.kapua.service.device.management.inventory.model.packages.DeviceInventoryPackage;
@@ -113,5 +115,20 @@ public interface DeviceInventoryManagementFactory extends KapuaObjectFactory {
      */
     DeviceInventoryPackages newDeviceInventoryPackages();
 
+    /**
+     * Instantiates a new {@link DeviceInventoryImage}.
+     *
+     * @return The newly instantiated {@link DeviceInventoryImage}
+     * @since 2.0.0
+     */
+    DeviceInventoryImage newDeviceInventoryImage();
+
+    /**
+     * Instantiates a new {@link DeviceInventoryImages}.
+     *
+     * @return The newly instantiated {@link DeviceInventoryImages}
+     * @since 2.0.0
+     */
+    DeviceInventoryImages newDeviceInventoryImages();
 
 }

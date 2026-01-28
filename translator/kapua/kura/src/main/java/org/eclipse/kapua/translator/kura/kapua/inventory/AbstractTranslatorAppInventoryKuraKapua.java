@@ -16,6 +16,7 @@ import org.eclipse.kapua.service.device.call.kura.model.inventory.InventoryMetri
 import org.eclipse.kapua.service.device.call.kura.model.inventory.KuraInventoryItems;
 import org.eclipse.kapua.service.device.call.kura.model.inventory.bundles.KuraInventoryBundles;
 import org.eclipse.kapua.service.device.call.kura.model.inventory.containers.KuraInventoryContainers;
+import org.eclipse.kapua.service.device.call.kura.model.inventory.images.KuraInventoryImages;
 import org.eclipse.kapua.service.device.call.kura.model.inventory.packages.KuraInventoryPackages;
 import org.eclipse.kapua.service.device.call.kura.model.inventory.system.KuraInventorySystemPackages;
 import org.eclipse.kapua.service.device.call.message.kura.app.response.KuraResponseChannel;
@@ -30,6 +31,8 @@ import org.eclipse.kapua.service.device.management.inventory.model.bundle.Device
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainer;
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainerState;
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainers;
+import org.eclipse.kapua.service.device.management.inventory.model.image.DeviceInventoryImage;
+import org.eclipse.kapua.service.device.management.inventory.model.image.DeviceInventoryImages;
 import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventory;
 import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventoryItem;
 import org.eclipse.kapua.service.device.management.inventory.model.packages.DeviceInventoryPackage;
@@ -122,6 +125,28 @@ public class AbstractTranslatorAppInventoryKuraKapua<M extends InventoryResponse
         });
 
         return deviceInventoryBundles;
+    }
+
+    /**
+     * Translates {@link KuraInventoryImages} to {@link DeviceInventoryImages}
+     *
+     * @param kuraInventoryImages The {@link KuraInventoryImages} to translate.
+     * @return The translated {@link DeviceInventoryImages}.
+     * @since 2.0.0
+     */
+    protected DeviceInventoryImages translate(KuraInventoryImages kuraInventoryImages) {
+        DeviceInventoryImages deviceInventoryImages = deviceInventoryFactory.newDeviceInventoryImages();
+
+        kuraInventoryImages.getInventoryImages().forEach(kuraInventoryImage -> {
+            DeviceInventoryImage deviceInventoryImage = deviceInventoryFactory.newDeviceInventoryImage();
+            deviceInventoryImage.setName(kuraInventoryImage.getName());
+            deviceInventoryImage.setVersion(kuraInventoryImage.getVersion());
+            deviceInventoryImage.setImageType(kuraInventoryImage.getType());
+
+            deviceInventoryImages.addInventoryImage(deviceInventoryImage);
+        });
+
+        return deviceInventoryImages;
     }
 
     /**

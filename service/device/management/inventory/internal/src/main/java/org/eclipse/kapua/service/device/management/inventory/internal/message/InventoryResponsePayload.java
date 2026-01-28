@@ -23,6 +23,7 @@ import org.eclipse.kapua.service.device.management.commons.setting.DeviceManagem
 import org.eclipse.kapua.service.device.management.commons.setting.DeviceManagementSettingKey;
 import org.eclipse.kapua.service.device.management.inventory.model.bundle.DeviceInventoryBundles;
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainers;
+import org.eclipse.kapua.service.device.management.inventory.model.image.DeviceInventoryImages;
 import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventory;
 import org.eclipse.kapua.service.device.management.inventory.model.packages.DeviceInventoryPackages;
 import org.eclipse.kapua.service.device.management.inventory.model.system.DeviceInventorySystemPackages;
@@ -134,6 +135,20 @@ public class InventoryResponsePayload extends KapuaResponsePayloadImpl implement
     }
 
     /**
+     * Sets the {@link DeviceInventoryImages} in the {@link #getBody()}.
+     *
+     * @param inventoryImages
+     *         The {@link DeviceInventoryImages} in the {@link #getBody()}.
+     * @throws Exception
+     *         if writing errors.
+     * @since 2.0.0
+     */
+    public void setDeviceInventoryImages(@NotNull DeviceInventoryImages inventoryImages) throws Exception {
+        String bodyString = xmlUtil.marshal(inventoryImages);
+        setBody(bodyString.getBytes(charEncoding));
+    }
+
+    /**
      * Gets the {@link DeviceInventorySystemPackages} from the {@link #getBody()}.
      *
      * @return The {@link DeviceInventorySystemPackages} from the {@link #getBody()}.
@@ -179,6 +194,23 @@ public class InventoryResponsePayload extends KapuaResponsePayloadImpl implement
 
         String bodyString = new String(getBody(), charEncoding);
         return Optional.ofNullable(xmlUtil.unmarshal(bodyString, DeviceInventoryPackages.class));
+    }
+
+    /**
+     * Gets the {@link DeviceInventoryImages} from the {@link #getBody()}.
+     *
+     * @return The {@link DeviceInventoryImages} from the {@link #getBody()}.
+     * @throws Exception
+     *         if reading {@link #getBody()} errors.
+     * @since 2.0.0
+     */
+    public Optional<DeviceInventoryImages> getDeviceInventoryImages() throws Exception {
+        if (!hasBody()) {
+            return Optional.empty();
+        }
+
+        String bodyString = new String(getBody(), charEncoding);
+        return Optional.ofNullable(xmlUtil.unmarshal(bodyString, DeviceInventoryImages.class));
     }
 
     /**

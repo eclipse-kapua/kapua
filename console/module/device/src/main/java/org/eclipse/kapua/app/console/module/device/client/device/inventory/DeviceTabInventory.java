@@ -46,6 +46,7 @@ public class DeviceTabInventory extends KapuaTabItem<GwtDevice> {
     private DeviceTabInventoryTabBundles inventoryBundlesTab;
     private DeviceTabInventoryTabContainer inventoryContainerTab;
     private DeviceTabInventoryTabSystemPackages inventorySystemPackagesTab;
+    private DeviceTabInventoryTabImage inventoryTabImage;
     private DeviceTabInventoryTabDeploymentPackages inventoryDeploymentPackageTab;
 
 
@@ -149,6 +150,19 @@ public class DeviceTabInventory extends KapuaTabItem<GwtDevice> {
             }
         });
         tabsPanel.add(inventoryContainerTab);
+        // Images Sub-tab
+        inventoryTabImage = new DeviceTabInventoryTabImage(this);
+        inventoryTabImage.setBorders(false);
+        inventoryTabImage.setLayout(new FitLayout());
+        inventoryTabImage.addListener(Events.Select, new Listener<ComponentEvent>() {
+
+            @Override
+            public void handleEvent(ComponentEvent be) {
+                setEntity(selectedEntity);
+                refresh();
+            }
+        });
+        tabsPanel.add(inventoryTabImage);
         // System Packages Sub-tab
         inventorySystemPackagesTab = new DeviceTabInventoryTabSystemPackages(this);
         inventorySystemPackagesTab.setBorders(false);
@@ -197,6 +211,10 @@ public class DeviceTabInventory extends KapuaTabItem<GwtDevice> {
 
             if (tabsPanel.getSelectedItem().equals(inventoryContainerTab)) {
                 inventoryContainerTab.refresh();
+            }
+
+            if (tabsPanel.getSelectedItem().equals(inventoryTabImage)) {
+                inventoryTabImage.refresh();
             }
 
             if (tabsPanel.getSelectedItem().equals(inventorySystemPackagesTab)) {
