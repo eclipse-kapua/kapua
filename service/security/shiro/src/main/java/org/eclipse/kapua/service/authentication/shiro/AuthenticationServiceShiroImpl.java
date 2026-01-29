@@ -466,7 +466,7 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
             }
 
             // GroupPermission
-            GroupPermissionListResult groupPermissions = groupPermissionService.findByGroupId(user.getScopeId(), groupId);
+            GroupPermissionListResult groupPermissions = KapuaSecurityUtils.doPrivileged(() -> groupPermissionService.findByGroupId(user.getScopeId(), groupId));
             loginInfo.setGroupPermission(Sets.newHashSet(groupPermissions.getItems()));
         }
         // loginInfo.getGroupPermission() is supposed to return a not null set
