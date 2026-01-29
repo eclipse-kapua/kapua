@@ -1,0 +1,19 @@
+{
+  "images": [
+    {
+      "name": "nginx",
+      "version": "latest",
+      "type": "CONTAINER_IMAGE"
+    },
+    {
+      "name": "alpine",
+      "version": "latest",
+      "type": "CONTAINER_IMAGE"
+    },
+    {
+      "name": "redis",
+      "version": "latest",
+      "type": "CONTAINER_IMAGE"
+    }
+  ]
+}

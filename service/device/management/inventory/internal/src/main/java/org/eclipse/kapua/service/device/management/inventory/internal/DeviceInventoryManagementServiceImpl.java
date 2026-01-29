@@ -30,6 +30,8 @@ import org.eclipse.kapua.service.device.management.inventory.internal.message.In
 import org.eclipse.kapua.service.device.management.inventory.internal.message.InventoryContainerExecRequestMessage;
 import org.eclipse.kapua.service.device.management.inventory.internal.message.InventoryContainersResponseMessage;
 import org.eclipse.kapua.service.device.management.inventory.internal.message.InventoryEmptyRequestMessage;
+import org.eclipse.kapua.service.device.management.inventory.internal.message.InventoryImageDeleteRequestMessage;
+import org.eclipse.kapua.service.device.management.inventory.internal.message.InventoryImagesResponseMessage;
 import org.eclipse.kapua.service.device.management.inventory.internal.message.InventoryListResponseMessage;
 import org.eclipse.kapua.service.device.management.inventory.internal.message.InventoryNoContentResponseMessage;
 import org.eclipse.kapua.service.device.management.inventory.internal.message.InventoryPackagesResponseMessage;
@@ -42,6 +44,8 @@ import org.eclipse.kapua.service.device.management.inventory.model.bundle.Device
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainer;
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainerAction;
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainers;
+import org.eclipse.kapua.service.device.management.inventory.model.image.DeviceInventoryImage;
+import org.eclipse.kapua.service.device.management.inventory.model.image.DeviceInventoryImages;
 import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventory;
 import org.eclipse.kapua.service.device.management.inventory.model.packages.DeviceInventoryPackages;
 import org.eclipse.kapua.service.device.management.inventory.model.system.DeviceInventorySystemPackages;
@@ -470,6 +474,117 @@ public class DeviceInventoryManagementServiceImpl extends AbstractDeviceManageme
         createDeviceEvent(scopeId, deviceId, inventoryRequestMessage, responseMessage);
         // Check response
         return checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getDeviceInventoryPackages().orElse(deviceInventoryManagementFactory.newDeviceInventoryPackages()));
+    }
+
+    @Override
+    public DeviceInventoryImages getImages(KapuaId scopeId, KapuaId deviceId, Long timeout)
+            throws KapuaException {
+        // Argument Validation
+        ArgumentValidator.notNull(scopeId, SCOPE_ID);
+        ArgumentValidator.notNull(deviceId, DEVICE_ID);
+        // Check Access
+        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.read, scopeId));
+        // Prepare the request
+        InventoryRequestChannel inventoryRequestChannel = new InventoryRequestChannel();
+        inventoryRequestChannel.setAppName(DeviceInventoryAppProperties.APP_NAME);
+        inventoryRequestChannel.setVersion(DeviceInventoryAppProperties.APP_VERSION);
+        inventoryRequestChannel.setMethod(KapuaMethod.READ);
+        inventoryRequestChannel.setResource("images");
+
+        InventoryRequestPayload inventoryRequestPayload = new InventoryRequestPayload();
+
+        InventoryEmptyRequestMessage inventoryRequestMessage = new InventoryEmptyRequestMessage() {
+            @Override
+            public Class<InventoryImagesResponseMessage> getResponseClass() {
+                return InventoryImagesResponseMessage.class;
+            }
+        };
+
+        inventoryRequestMessage.setScopeId(scopeId);
+        inventoryRequestMessage.setDeviceId(deviceId);
+        inventoryRequestMessage.setCapturedOn(new Date());
+        inventoryRequestMessage.setPayload(inventoryRequestPayload);
+        inventoryRequestMessage.setChannel(inventoryRequestChannel);
+
+        // Build request
+        DeviceCallBuilder<InventoryRequestChannel, InventoryRequestPayload, InventoryEmptyRequestMessage, InventoryImagesResponseMessage> inventoryDeviceCallBuilder =
+                DeviceCallBuilder
+                        .newBuilder()
+                        .withRequestMessage(inventoryRequestMessage)
+                        .withTimeoutOrDefault(timeout);
+
+        // Do get
+        InventoryImagesResponseMessage responseMessage;
+        try {
+            responseMessage = inventoryDeviceCallBuilder.send();
+        } catch (Exception e) {
+            LOG.error("Error while getting DeviceInventoryImages for Device {}. Error: {}", deviceId, e.getMessage(), e);
+            throw e;
+        }
+
+        // Create event
+        createDeviceEvent(scopeId, deviceId, inventoryRequestMessage, responseMessage);
+        // Check response
+        return checkResponseAcceptedOrThrowError(responseMessage, () -> responseMessage.getPayload().getDeviceInventoryImages().orElse(deviceInventoryManagementFactory.newDeviceInventoryImages()));
+    }
+
+    public void deleteImage(KapuaId scopeId, KapuaId deviceId, DeviceInventoryImage image, Long timeout) throws KapuaException {
+        // Argument Validation
+        ArgumentValidator.notNull(scopeId, SCOPE_ID);
+        ArgumentValidator.notNull(deviceId, DEVICE_ID);
+        ArgumentValidator.notNull(image, "deviceInventoryContainer");
+        ArgumentValidator.notNull(image.getName(), "deviceInventoryContainer.name");
+        ArgumentValidator.notNull(image.getVersion(), "deviceInventoryContainer.version");
+        // Check Access
+        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
+        // Prepare the request
+        InventoryRequestChannel inventoryRequestChannel = new InventoryRequestChannel();
+        inventoryRequestChannel.setAppName(DeviceInventoryAppProperties.APP_NAME);
+        inventoryRequestChannel.setVersion(DeviceInventoryAppProperties.APP_VERSION);
+        inventoryRequestChannel.setMethod(KapuaMethod.EXECUTE);
+        inventoryRequestChannel.setResource("images/_delete");
+
+        InventoryRequestPayload inventoryRequestPayload = new InventoryRequestPayload();
+        try {
+            inventoryRequestPayload.setDeviceInventoryImage(image);
+        } catch (Exception e) {
+            throw new DeviceManagementRequestContentException(e, image);
+        }
+
+        InventoryImageDeleteRequestMessage inventoryRequestMessage = new InventoryImageDeleteRequestMessage() {
+            @Override
+            public Class<InventoryNoContentResponseMessage> getResponseClass() {
+                return InventoryNoContentResponseMessage.class;
+            }
+        };
+
+        inventoryRequestMessage.setScopeId(scopeId);
+        inventoryRequestMessage.setDeviceId(deviceId);
+        inventoryRequestMessage.setCapturedOn(new Date());
+        inventoryRequestMessage.setPayload(inventoryRequestPayload);
+        inventoryRequestMessage.setChannel(inventoryRequestChannel);
+
+        // Build request
+        DeviceCallBuilder<InventoryRequestChannel, InventoryRequestPayload, InventoryImageDeleteRequestMessage, InventoryNoContentResponseMessage> inventoryDeviceCallBuilder =
+                DeviceCallBuilder
+                        .newBuilder()
+                        .withRequestMessage(inventoryRequestMessage)
+                        .withTimeoutOrDefault(timeout);
+
+        // Do exec
+        InventoryNoContentResponseMessage responseMessage;
+        try {
+            responseMessage = inventoryDeviceCallBuilder.send();
+        } catch (Exception e) {
+            LOG.error("Error while deleting image {} on Device {}. Error: {}", image, deviceId, e);
+            throw e;
+        }
+
+        // Create event
+        createDeviceEvent(scopeId, deviceId, inventoryRequestMessage, responseMessage);
+        // Check response
+        checkResponseAcceptedOrThrowError(responseMessage);
+
     }
 
 

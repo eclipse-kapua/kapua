@@ -21,6 +21,10 @@ import org.eclipse.kapua.service.device.management.inventory.model.container.Dev
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainers;
 import org.eclipse.kapua.service.device.management.inventory.model.container.internal.DeviceInventoryContainerImpl;
 import org.eclipse.kapua.service.device.management.inventory.model.container.internal.DeviceInventoryContainersImpl;
+import org.eclipse.kapua.service.device.management.inventory.model.image.DeviceInventoryImage;
+import org.eclipse.kapua.service.device.management.inventory.model.image.DeviceInventoryImages;
+import org.eclipse.kapua.service.device.management.inventory.model.image.internal.DeviceInventoryImageImpl;
+import org.eclipse.kapua.service.device.management.inventory.model.image.internal.DeviceInventoryImagesImpl;
 import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventory;
 import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventoryItem;
 import org.eclipse.kapua.service.device.management.inventory.model.inventory.internal.DeviceInventoryImpl;
@@ -92,5 +96,15 @@ public class DeviceInventoryManagementFactoryImpl implements DeviceInventoryMana
     @Override
     public DeviceInventoryPackages newDeviceInventoryPackages() {
         return new DeviceInventoryPackagesImpl();
+    }
+
+    @Override
+    public DeviceInventoryImage newDeviceInventoryImage() {
+        return new DeviceInventoryImageImpl();
+    }
+
+    @Override
+    public DeviceInventoryImages newDeviceInventoryImages() {
+        return new DeviceInventoryImagesImpl();
     }
 }

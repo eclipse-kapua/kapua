@@ -24,12 +24,15 @@ import org.eclipse.kapua.service.device.management.inventory.model.bundle.Device
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainer;
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainerAction;
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainers;
+import org.eclipse.kapua.service.device.management.inventory.model.image.DeviceInventoryImage;
+import org.eclipse.kapua.service.device.management.inventory.model.image.DeviceInventoryImages;
 import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventory;
 import org.eclipse.kapua.service.device.management.inventory.model.packages.DeviceInventoryPackages;
 import org.eclipse.kapua.service.device.management.inventory.model.system.DeviceInventorySystemPackages;
 import org.eclipse.kapua.service.device.registry.Device;
 
 import javax.inject.Inject;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -153,6 +156,50 @@ public class DeviceManagementInventory extends AbstractKapuaResource {
             @PathParam("deviceId") EntityId deviceId,
             @QueryParam("timeout") @DefaultValue("30000") Long timeout) throws KapuaException {
         return deviceInventoryManagementService.getContainers(scopeId, deviceId, timeout);
+    }
+
+    /**
+     * Gets the {@link DeviceInventoryImages} present on the {@link Device}.
+     *
+     * @param scopeId  The {@link Device#getScopeId()}.
+     * @param deviceId The {@link Device#getId()}.
+     * @param timeout  The timeout of the operation in milliseconds
+     * @return The {@link DeviceInventoryImages}.
+     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @since 2.0.0
+     */
+    @GET
+    @Path("images")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public DeviceInventoryImages getInventoryImages(
+            @PathParam("scopeId") ScopeId scopeId,
+            @PathParam("deviceId") EntityId deviceId,
+            @QueryParam("timeout") @DefaultValue("30000") Long timeout) throws KapuaException {
+        return deviceInventoryManagementService.getImages(scopeId, deviceId, timeout);
+    }
+
+    /**
+     * Deletes a {@link DeviceInventoryImage} present on the {@link Device}.
+     *
+     * @param scopeId                  The {@link Device#getScopeId()}.
+     * @param deviceId                 The {@link Device#getId()}.
+     * @param deviceInventoryImage The {@link DeviceInventoryContainer} to delete.
+     * @param timeout                  The timeout of the operation in milliseconds
+     * @return The {@link Response#noContent()} if succeeded.
+     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @since 2.0.0
+     */
+    @DELETE
+    @Path("images/_delete")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public Response deleteInventoryImage(
+            @PathParam("scopeId") ScopeId scopeId,
+            @PathParam("deviceId") EntityId deviceId,
+            @QueryParam("timeout") @DefaultValue("30000") Long timeout,
+            DeviceInventoryImage deviceInventoryImage) throws KapuaException {
+        deviceInventoryManagementService.deleteImage(scopeId, deviceId, deviceInventoryImage, timeout);
+
+        return returnNoContent();
     }
 
     /**

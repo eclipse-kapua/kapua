@@ -22,6 +22,7 @@ import org.eclipse.kapua.app.console.module.api.shared.model.GwtXSRFToken;
 import org.eclipse.kapua.app.console.module.device.shared.model.management.inventory.GwtInventoryBundle;
 import org.eclipse.kapua.app.console.module.device.shared.model.management.inventory.GwtInventoryContainer;
 import org.eclipse.kapua.app.console.module.device.shared.model.management.inventory.GwtInventoryDeploymentPackage;
+import org.eclipse.kapua.app.console.module.device.shared.model.management.inventory.GwtInventoryImage;
 import org.eclipse.kapua.app.console.module.device.shared.model.management.inventory.GwtInventoryItem;
 import org.eclipse.kapua.app.console.module.device.shared.model.management.inventory.GwtInventorySystemPackage;
 import org.eclipse.kapua.app.console.module.device.shared.service.GwtDeviceInventoryManagementService;
@@ -37,6 +38,8 @@ import org.eclipse.kapua.service.device.management.inventory.model.container.Dev
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainerAction;
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainerState;
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainers;
+import org.eclipse.kapua.service.device.management.inventory.model.image.DeviceInventoryImage;
+import org.eclipse.kapua.service.device.management.inventory.model.image.DeviceInventoryImages;
 import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventory;
 import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventoryItem;
 import org.eclipse.kapua.service.device.management.inventory.model.packages.DeviceInventoryPackage;
@@ -161,6 +164,55 @@ public class GwtDeviceInventoryManagementServiceImpl extends KapuaRemoteServiceS
             }
 
             return new BaseListLoadResult<GwtInventoryContainer>(gwtInventoryContainers);
+        } catch (Exception exception) {
+            throw KapuaExceptionHandler.buildExceptionFromError(exception);
+        }
+    }
+
+    @Override
+    public ListLoadResult<GwtInventoryImage> findDeviceImages(String scopeIdString, String deviceIdString)
+            throws GwtKapuaException {
+        try {
+            KapuaId scopeId = KapuaEid.parseCompactId(scopeIdString);
+            KapuaId deviceId = KapuaEid.parseCompactId(deviceIdString);
+
+            DeviceInventoryImages inventoryImages = DEVICE_INVENTORY_MANAGEMENT_SERVICE.getImages(scopeId, deviceId, null);
+
+            List<GwtInventoryImage> gwtInventoryImages = new ArrayList<GwtInventoryImage>();
+            for (DeviceInventoryImage inventoryImage : inventoryImages.getInventoryImages()) {
+                GwtInventoryImage gwtInventoryImage = new GwtInventoryImage();
+                gwtInventoryImage.setName(inventoryImage.getName().isEmpty() ? "<none>" : inventoryImage.getName());
+                gwtInventoryImage.setVersion(inventoryImage.getVersion().isEmpty() ? "<none>" : inventoryImage.getVersion());
+                gwtInventoryImage.setType(inventoryImage.getImageType());
+
+                gwtInventoryImages.add(gwtInventoryImage);
+            }
+
+            return new BaseListLoadResult<GwtInventoryImage>(gwtInventoryImages);
+        } catch (Exception exception) {
+            throw KapuaExceptionHandler.buildExceptionFromError(exception);
+        }
+    }
+
+    public void deleteDeviceImage(GwtXSRFToken xsrfToken, String scopeIdString, String deviceIdString, GwtInventoryImage gwtInventoryImage)
+            throws GwtKapuaException {
+        checkXSRFToken(xsrfToken);
+
+        try {
+            KapuaId scopeId = KapuaEid.parseCompactId(scopeIdString);
+            KapuaId deviceId = KapuaEid.parseCompactId(deviceIdString);
+
+            DeviceInventoryImage deviceInventoryImage = DEVICE_INVENTORY_MANAGEMENT_FACTORY.newDeviceInventoryImage();
+            deviceInventoryImage.setName(gwtInventoryImage.getName().equals("&lt;none&gt;") ? "" : gwtInventoryImage.getName()); //I use "&lt;none&gt;" in the GWT model to represent the '<' and '>' characters
+            deviceInventoryImage.setVersion(gwtInventoryImage.getVersion().equals("&lt;none&gt;") ? "" : gwtInventoryImage.getVersion()); //I use "&lt;none&gt;" in the GWT model to represent the '<' and '>' characters
+            deviceInventoryImage.setImageType(gwtInventoryImage.getType());
+
+            DEVICE_INVENTORY_MANAGEMENT_SERVICE.deleteImage(
+                    scopeId,
+                    deviceId,
+                    deviceInventoryImage,
+                    null);
+
         } catch (Exception exception) {
             throw KapuaExceptionHandler.buildExceptionFromError(exception);
         }
