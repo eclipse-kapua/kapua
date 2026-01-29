@@ -469,6 +469,14 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
             GroupPermissionListResult groupPermissions = groupPermissionService.findByGroupId(user.getScopeId(), groupId);
             loginInfo.setGroupPermission(Sets.newHashSet(groupPermissions.getItems()));
         }
+        // loginInfo.getGroupPermission() is supposed to return a not null set
+        if (loginInfo.getGroupPermission() == null) {
+           loginInfo.setGroupPermission(Sets.newHashSet());
+        }
+        // loginInfo.getGroupPermission() is supposed to return a not null set
+        if (loginInfo.getGroupRolePermission() == null) {
+           loginInfo.setGroupRolePermission(Sets.newHashSet());
+        }
 
         return loginInfo;
     }
