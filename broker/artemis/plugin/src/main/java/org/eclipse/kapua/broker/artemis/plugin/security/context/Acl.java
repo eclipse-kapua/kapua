@@ -39,10 +39,10 @@ public class Acl {
     private final HierarchicalRepository<KapuaPrincipal> admin;
 
     public Acl(LoginMetric loginMetric, KapuaPrincipal principal, List<AuthAcl> authAcls) throws KapuaIllegalArgumentException {
-        wildcardConfiguration = new WildcardConfiguration();
-        wildcardConfiguration.setSingleWord(SINGLE_WORD);
-        wildcardConfiguration.setAnyWords(ANY_WORDS);
-        wildcardConfiguration.setDelimiter(SEPARATOR);
+        wildcardConfiguration = new WildcardConfiguration().
+            setSingleWord(SINGLE_WORD).
+            setAnyWords(ANY_WORDS).
+            setDelimiter(SEPARATOR);
         if (principal == null) {
             throw new KapuaIllegalArgumentException("principal", null);
         }

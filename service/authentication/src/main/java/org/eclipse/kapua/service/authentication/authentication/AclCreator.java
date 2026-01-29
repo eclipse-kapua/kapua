@@ -32,7 +32,6 @@ public class AclCreator {
     protected final static String HASH = "#";
 
     protected String addressClassifier;
-    protected String addressClassifierEscaped;
     protected String addressClassifierHash;
 
     protected String aclCtrlAccReply;
@@ -48,15 +47,14 @@ public class AclCreator {
     @Inject
     public AclCreator() {
         addressClassifier = SystemSetting.getInstance().getMessageClassifier();
-        addressClassifierEscaped = "\\" + SystemSetting.getInstance().getMessageClassifier();
-        addressClassifierHash = addressClassifierEscaped + "/" + HASH;
-        aclCtrlAccReply = addressClassifierEscaped + "/{0}/+/+/REPLY/#";
-        aclCtrlAccCliMqttLifeCycle = addressClassifierEscaped + "/{0}/{1}/MQTT/#";
-        aclCtrlAcc = addressClassifierEscaped + "/{0}/#";
-        aclCtrlAccCli = addressClassifierEscaped + "/{0}/{1}/#";
+        addressClassifierHash = addressClassifier + "/" + HASH;
+        aclCtrlAccReply = addressClassifier + "/{0}/+/+/REPLY/#";
+        aclCtrlAccCliMqttLifeCycle = addressClassifier + "/{0}/{1}/MQTT/#";
+        aclCtrlAcc = addressClassifier + "/{0}/#";
+        aclCtrlAccCli = addressClassifier + "/{0}/{1}/#";
         aclDataAcc = "{0}/#";
         aclDataAccCli = "{0}/{1}/#";
-        aclCtrlAccNotify = addressClassifierEscaped + "/{0}/+/+/NOTIFY/{1}/#";
+        aclCtrlAccNotify = addressClassifier + "/{0}/+/+/NOTIFY/{1}/#";
     }
 
     public List<AuthAcl> buildAcls(boolean[] permission, String accountName, String clientId, StringBuilder aclDestinationsLog) {
