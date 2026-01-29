@@ -434,23 +434,32 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
 
         // AccessInfo
         AccessInfo accessInfo = KapuaSecurityUtils.doPrivileged(() -> accessInfoService.findByUserId(accessToken.getScopeId(), accessToken.getUserId()));
+        if (accessInfo != null) {
+            // AccessRole
+            AccessRoleQuery accessRoleQuery = accessRoleFactory.newQuery(accessToken.getScopeId());
+            accessRoleQuery.setPredicate(accessRoleQuery.attributePredicate(AccessRoleAttributes.ACCESS_INFO_ID, accessInfo.getId()));
+            AccessRoleListResult accessRoleListResult = KapuaSecurityUtils.doPrivileged(() -> accessRoleService.query(accessRoleQuery));
 
-        // AccessRole
-        AccessRoleQuery accessRoleQuery = accessRoleFactory.newQuery(accessToken.getScopeId());
-        accessRoleQuery.setPredicate(accessRoleQuery.attributePredicate(AccessRoleAttributes.ACCESS_INFO_ID, accessInfo.getId()));
-        AccessRoleListResult accessRoleListResult = KapuaSecurityUtils.doPrivileged(() -> accessRoleService.query(accessRoleQuery));
+            // RolePermission
+            RolePermissionQuery rolePermissionQuery = rolePermissionFactory.newQuery(accessToken.getScopeId());
+            rolePermissionQuery.setPredicate(rolePermissionQuery.attributePredicate(RolePermissionAttributes.ROLE_ID, accessRoleListResult.getItems().stream().map(AccessRole::getRoleId).collect(Collectors.toList())));
+            RolePermissionListResult rolePermissions = KapuaSecurityUtils.doPrivileged(() -> rolePermissionService.query(rolePermissionQuery));
+            loginInfo.setRolePermission(Sets.newHashSet(rolePermissions.getItems()));
 
-        // RolePermission
-        RolePermissionQuery rolePermissionQuery = rolePermissionFactory.newQuery(accessToken.getScopeId());
-        rolePermissionQuery.setPredicate(rolePermissionQuery.attributePredicate(RolePermissionAttributes.ROLE_ID, accessRoleListResult.getItems().stream().map(AccessRole::getRoleId).collect(Collectors.toList())));
-        RolePermissionListResult rolePermissions = KapuaSecurityUtils.doPrivileged(() -> rolePermissionService.query(rolePermissionQuery));
-        loginInfo.setRolePermission(Sets.newHashSet(rolePermissions.getItems()));
-
-        // AccessPermission
-        AccessPermissionQuery accessPermissionQuery = accessPermissionFactory.newQuery(accessToken.getScopeId());
-        accessPermissionQuery.setPredicate(accessPermissionQuery.attributePredicate(AccessPermissionAttributes.ACCESS_INFO_ID, accessInfo.getId()));
-        AccessPermissionListResult accessPermissions = KapuaSecurityUtils.doPrivileged(() -> accessPermissionService.query(accessPermissionQuery));
-        loginInfo.setAccessPermission(Sets.newHashSet(accessPermissions.getItems()));
+            // AccessPermission
+            AccessPermissionQuery accessPermissionQuery = accessPermissionFactory.newQuery(accessToken.getScopeId());
+            accessPermissionQuery.setPredicate(accessPermissionQuery.attributePredicate(AccessPermissionAttributes.ACCESS_INFO_ID, accessInfo.getId()));
+            AccessPermissionListResult accessPermissions = KapuaSecurityUtils.doPrivileged(() -> accessPermissionService.query(accessPermissionQuery));
+            loginInfo.setAccessPermission(Sets.newHashSet(accessPermissions.getItems()));
+        }
+        // loginInfo.getAccessPermission() is supposed to return a not null set
+        if (loginInfo.getAccessPermission() == null) {
+            loginInfo.setAccessPermission(Sets.newHashSet());
+        }
+        // loginInfo.getRolePermission() is supposed to return a not null set
+        if (loginInfo.getRolePermission() == null) {
+            loginInfo.setRolePermission(Sets.newHashSet());
+        }
 
         // User Groups
         User user = KapuaSecurityUtils.doPrivileged(() -> userService.find(accessToken.getScopeId(), accessToken.getUserId()));
