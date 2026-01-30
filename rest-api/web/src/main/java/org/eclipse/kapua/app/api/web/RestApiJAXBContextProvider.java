@@ -177,6 +177,8 @@ import org.eclipse.kapua.service.device.call.kura.model.inventory.bundles.KuraIn
 import org.eclipse.kapua.service.device.call.kura.model.inventory.bundles.KuraInventoryBundles;
 import org.eclipse.kapua.service.device.call.kura.model.inventory.containers.KuraInventoryContainer;
 import org.eclipse.kapua.service.device.call.kura.model.inventory.containers.KuraInventoryContainers;
+import org.eclipse.kapua.service.device.call.kura.model.inventory.images.KuraInventoryImage;
+import org.eclipse.kapua.service.device.call.kura.model.inventory.images.KuraInventoryImages;
 import org.eclipse.kapua.service.device.call.kura.model.inventory.packages.KuraInventoryPackage;
 import org.eclipse.kapua.service.device.call.kura.model.inventory.packages.KuraInventoryPackages;
 import org.eclipse.kapua.service.device.call.kura.model.inventory.system.KuraInventorySystemPackage;
@@ -199,6 +201,8 @@ import org.eclipse.kapua.service.device.management.inventory.model.bundle.Device
 import org.eclipse.kapua.service.device.management.inventory.model.bundle.DeviceInventoryBundles;
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainer;
 import org.eclipse.kapua.service.device.management.inventory.model.container.DeviceInventoryContainers;
+import org.eclipse.kapua.service.device.management.inventory.model.image.DeviceInventoryImage;
+import org.eclipse.kapua.service.device.management.inventory.model.image.DeviceInventoryImages;
 import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventory;
 import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventoryItem;
 import org.eclipse.kapua.service.device.management.inventory.model.inventory.DeviceInventoryXmlRegistry;
@@ -502,6 +506,10 @@ public class RestApiJAXBContextProvider implements JAXBContextProvider {
                     KuraInventorySystemPackages.class,
                     KuraInventorySystemPackage.class,
                     DeviceInventoryXmlRegistry.class,
+                    DeviceInventoryImages.class,
+                    DeviceInventoryImage.class,
+                    KuraInventoryImages.class,
+                    KuraInventoryImage.class,
 
                     // Device Management Keystore
                     DeviceKeystores.class,
