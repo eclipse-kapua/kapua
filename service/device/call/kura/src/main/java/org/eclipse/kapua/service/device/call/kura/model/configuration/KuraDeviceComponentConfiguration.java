@@ -21,10 +21,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
+import org.eclipse.kapua.service.device.call.kura.model.configuration.json.KuraJsonConfigPropertiesDeserializer;
 import org.eclipse.kapua.service.device.call.kura.model.configuration.xml.KuraXmlConfigPropertiesAdapter;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
@@ -50,16 +51,15 @@ public class KuraDeviceComponentConfiguration {
     /**
      * The raw ObjectClassDefinition as parsed from the MetaType Information XML resource associated to this Component.
      */
-    @JsonIgnore
     @XmlElementRef(type = KapuaTocd.class)
     private KapuaTocd definition;
 
     /**
      * The Dictionary of properties currently used by this component.
      */
-    @JsonIgnore
     @XmlElement(name = "properties")
     @XmlJavaTypeAdapter(KuraXmlConfigPropertiesAdapter.class)
+    @JsonDeserialize(using = KuraJsonConfigPropertiesDeserializer.class)
     private Map<String, Object> properties;
 
     // Required by JAXB
