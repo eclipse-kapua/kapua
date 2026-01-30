@@ -27,6 +27,7 @@ import org.eclipse.kapua.service.device.call.kura.model.configuration.Configurat
 import org.eclipse.kapua.service.device.call.kura.model.configuration.KuraDeviceComponentConfiguration;
 import org.eclipse.kapua.service.device.call.kura.model.configuration.KuraDeviceConfiguration;
 import org.eclipse.kapua.service.device.call.kura.model.configuration.KuraPassword;
+import org.eclipse.kapua.service.device.call.kura.model.wire.WireMetrics;
 import org.eclipse.kapua.service.device.call.message.kura.app.response.KuraResponseChannel;
 import org.eclipse.kapua.service.device.call.message.kura.app.response.KuraResponseMessage;
 import org.eclipse.kapua.service.device.call.message.kura.app.response.KuraResponsePayload;
@@ -47,6 +48,7 @@ import org.eclipse.kapua.translator.exception.InvalidPayloadException;
  */
 public class TranslatorAppConfigurationKuraKapua extends AbstractSimpleTranslatorResponseKuraKapua<ConfigurationResponseChannel, ConfigurationResponsePayload, ConfigurationResponseMessage> {
 
+    private boolean isWire;
     @Inject
     public TranslatorAppConfigurationKuraKapua(DeviceManagementSetting deviceManagementSetting) {
         super(deviceManagementSetting, ConfigurationResponseMessage.class, ConfigurationResponsePayload.class);
@@ -55,8 +57,12 @@ public class TranslatorAppConfigurationKuraKapua extends AbstractSimpleTranslato
     @Override
     protected ConfigurationResponseChannel translateChannel(KuraResponseChannel kuraResponseChannel) throws InvalidChannelException {
         try {
-            translatorKuraKapuaUtils.validateKuraResponseChannel(kuraResponseChannel, ConfigurationMetrics.APP_ID, ConfigurationMetrics.APP_VERSION);
-
+            if (kuraResponseChannel.getAppId().contains("WIRE")) {
+                translatorKuraKapuaUtils.validateKuraResponseChannel(kuraResponseChannel, WireMetrics.APP_ID, WireMetrics.APP_VERSION);
+                isWire = true;
+            } else {
+                translatorKuraKapuaUtils.validateKuraResponseChannel(kuraResponseChannel, ConfigurationMetrics.APP_ID, ConfigurationMetrics.APP_VERSION);
+            }
             return new ConfigurationResponseChannel();
         } catch (Exception e) {
             throw new InvalidChannelException(e, kuraResponseChannel);
@@ -69,8 +75,12 @@ public class TranslatorAppConfigurationKuraKapua extends AbstractSimpleTranslato
 
         try {
             if (kuraResponsePayload.hasBody()) {
-                KuraDeviceConfiguration kuraDeviceConfiguration = readXmlBodyAs(kuraResponsePayload.getBody(), KuraDeviceConfiguration.class);
-
+                KuraDeviceConfiguration kuraDeviceConfiguration;
+                if (isWire) {
+                    kuraDeviceConfiguration = readJsonBodyAs(kuraResponsePayload.getBody(), KuraDeviceConfiguration.class);
+                } else {
+                    kuraDeviceConfiguration = readXmlBodyAs(kuraResponsePayload.getBody(), KuraDeviceConfiguration.class);
+                }
                 configurationResponsePayload.setDeviceConfigurations(translate(kuraDeviceConfiguration));
             }
 

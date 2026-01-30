@@ -30,6 +30,7 @@ import org.eclipse.kapua.service.device.call.kura.model.configuration.Configurat
 import org.eclipse.kapua.service.device.call.kura.model.configuration.KuraDeviceComponentConfiguration;
 import org.eclipse.kapua.service.device.call.kura.model.configuration.KuraDeviceConfiguration;
 import org.eclipse.kapua.service.device.call.kura.model.configuration.KuraPassword;
+import org.eclipse.kapua.service.device.call.kura.model.wire.WireMetrics;
 import org.eclipse.kapua.service.device.call.message.kura.app.request.KuraRequestChannel;
 import org.eclipse.kapua.service.device.call.message.kura.app.request.KuraRequestMessage;
 import org.eclipse.kapua.service.device.call.message.kura.app.request.KuraRequestPayload;
@@ -53,6 +54,7 @@ public class TranslatorAppConfigurationKapuaKura extends AbstractTranslatorKapua
     protected DeviceConfigurationFactory deviceConfigurationFactory;
     @Inject
     private XmlUtil xmlUtil;
+    private boolean isWire;
 
     @Override
     protected KuraRequestChannel translateChannel(ConfigurationRequestChannel kapuaChannel) throws InvalidChannelException {
@@ -62,10 +64,16 @@ public class TranslatorAppConfigurationKapuaKura extends AbstractTranslatorKapua
             // Build resources
             List<String> resources = new ArrayList<>();
             if (kapuaChannel.getConfigurationId() == null) {
-                resources.add("configurations");
-                String componentId = kapuaChannel.getComponentId();
-                if (componentId != null) {
-                    resources.add(componentId);
+                if (kapuaChannel.getAppName().getValue().equals("WIRE")) {
+                    kuraRequestChannel = TranslatorKapuaKuraUtils.buildBaseRequestChannel(WireMetrics.APP_ID, WireMetrics.APP_VERSION, kapuaChannel.getMethod());
+                    resources.add("graph/snapshot");
+                    isWire = true;
+                } else {
+                    resources.add("configurations");
+                    String componentId = kapuaChannel.getComponentId();
+                    if (componentId != null) {
+                        resources.add(componentId);
+                    }
                 }
             } else if (kapuaChannel.getConfigurationId() != null) {
                 resources.add("snapshots");
@@ -95,7 +103,12 @@ public class TranslatorAppConfigurationKapuaKura extends AbstractTranslatorKapua
                 KuraDeviceConfiguration kuraDeviceConfiguration = translate(kapuaDeviceConfiguration);
                 byte[] body;
                 try {
-                    body = xmlUtil.marshal(kuraDeviceConfiguration).getBytes();
+                    if (isWire) {
+                        body = getJsonMapper().writeValueAsBytes(kuraDeviceConfiguration);
+                    } else {
+                        body = xmlUtil.marshal(kuraDeviceConfiguration).getBytes();
+                    }
+
                 } catch (Exception e) {
                     throw new InvalidPayloadException(e, kapuaPayload);
                 }
