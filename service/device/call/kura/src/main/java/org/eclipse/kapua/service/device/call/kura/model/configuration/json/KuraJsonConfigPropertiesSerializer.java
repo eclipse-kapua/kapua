@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 public class KuraJsonConfigPropertiesSerializer extends JsonSerializer<Map<String, Object>> {
@@ -34,27 +35,20 @@ public class KuraJsonConfigPropertiesSerializer extends JsonSerializer<Map<Strin
             if (propertyValue != null) {
                 String type = determineType(propertyValue);
 
-                // Write value as the appropriate JSON type
+                // Write value
                 gen.writeFieldName("value");
-                if (propertyValue instanceof Integer) {
-                    gen.writeNumber((Integer) propertyValue);
-                } else if (propertyValue instanceof Long) {
-                    gen.writeNumber((Long) propertyValue);
-                } else if (propertyValue instanceof Double) {
-                    gen.writeNumber((Double) propertyValue);
-                } else if (propertyValue instanceof Float) {
-                    gen.writeNumber((Float) propertyValue);
-                } else if (propertyValue instanceof Byte) {
-                    gen.writeNumber((Byte) propertyValue);
-                } else if (propertyValue instanceof Short) {
-                    gen.writeNumber((Short) propertyValue);
-                } else if (propertyValue instanceof Boolean) {
-                    gen.writeBoolean((Boolean) propertyValue);
-                } else if (propertyValue instanceof Character) {
-                    gen.writeString(propertyValue.toString());
+
+                // Handle arrays
+                if (propertyValue instanceof List) {
+                    gen.writeStartArray();
+                    for (Object item : (List<?>) propertyValue) {
+                        writeValue(gen, item);
+                    }
+                    gen.writeEndArray();
                 } else {
-                    gen.writeString(propertyValue.toString());
+                    writeValue(gen, propertyValue);
                 }
+
                 gen.writeStringField("type", type);
             } else {
                 gen.writeNullField("value");
@@ -67,7 +61,37 @@ public class KuraJsonConfigPropertiesSerializer extends JsonSerializer<Map<Strin
         gen.writeEndObject();
     }
 
+    private void writeValue(JsonGenerator gen, Object value) throws IOException {
+        if (value instanceof Integer) {
+            gen.writeNumber((Integer) value);
+        } else if (value instanceof Long) {
+            gen.writeNumber((Long) value);
+        } else if (value instanceof Double) {
+            gen.writeNumber((Double) value);
+        } else if (value instanceof Float) {
+            gen.writeNumber((Float) value);
+        } else if (value instanceof Byte) {
+            gen.writeNumber((Byte) value);
+        } else if (value instanceof Short) {
+            gen.writeNumber((Short) value);
+        } else if (value instanceof Boolean) {
+            gen.writeBoolean((Boolean) value);
+        } else {
+            gen.writeString(value.toString());
+        }
+    }
+
     private String determineType(Object value) {
+        // Handle arrays - get type from first element
+        if (value instanceof List) {
+            List<?> list = (List<?>) value;
+            if (list.isEmpty()) {
+                return "STRING";
+            }
+            return determineType(list.get(0));
+        }
+
+        // Single values
         if (value instanceof Integer) {
             return "INTEGER";
         } else if (value instanceof Long) {
@@ -85,7 +109,7 @@ public class KuraJsonConfigPropertiesSerializer extends JsonSerializer<Map<Strin
         } else if (value instanceof Character) {
             return "CHAR";
         } else {
-            return "STRING"; // Default for String and PASSWORD
+            return "STRING";
         }
     }
 }
