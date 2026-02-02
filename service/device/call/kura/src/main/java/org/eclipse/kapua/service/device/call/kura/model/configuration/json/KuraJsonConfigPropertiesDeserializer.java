@@ -29,12 +29,11 @@ public class KuraJsonConfigPropertiesDeserializer extends JsonDeserializer<Map<S
     public Map<String, Object> deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
         Map<String, Object> result = new HashMap<>();
 
-        JsonToken currentToken = jp.getCurrentToken();
-        if (currentToken == null) {
-            currentToken = jp.nextToken();
+        if (jp.getCurrentToken() == null) {
+            jp.nextToken();
         }
 
-        if (currentToken != JsonToken.START_OBJECT) {
+        if (jp.getCurrentToken() != JsonToken.START_OBJECT) {
             ctxt.reportWrongTokenException(this, JsonToken.START_OBJECT, "Expected START_OBJECT");
             return result;
         }
@@ -43,140 +42,117 @@ public class KuraJsonConfigPropertiesDeserializer extends JsonDeserializer<Map<S
             String propertyName = jp.getCurrentName();
             jp.nextToken();
 
-            Object value = null;
-            String type = null;
+            PropertyHolder holder = parseProperty(jp);
 
-            while (jp.nextToken() != JsonToken.END_OBJECT) {
-                String fieldName = jp.getCurrentName();
-                jp.nextToken();
-
-                if ("value".equals(fieldName)) {
-                    // Check if value is an array
-                    if (jp.currentToken() == JsonToken.START_ARRAY) {
-                        List<Object> arrayValues = new ArrayList<>();
-                        while (jp.nextToken() != JsonToken.END_ARRAY) {
-                            if (jp.currentToken() == JsonToken.VALUE_NUMBER_INT) {
-                                arrayValues.add(jp.getNumberValue());
-                            } else if (jp.currentToken() == JsonToken.VALUE_NUMBER_FLOAT) {
-                                arrayValues.add(jp.getDoubleValue());
-                            } else if (jp.currentToken() == JsonToken.VALUE_TRUE || jp.currentToken() == JsonToken.VALUE_FALSE) {
-                                arrayValues.add(jp.getBooleanValue());
-                            } else {
-                                arrayValues.add(jp.getValueAsString());
-                            }
-                        }
-                        value = arrayValues;
-                    } else {
-                        value = jp.getValueAsString();
-                    }
-                } else if ("type".equals(fieldName)) {
-                    type = jp.getValueAsString();
-                }
-            }
-
-            if (value != null && type != null) {
-                result.put(propertyName, convertValue(value, type));
-            } else if (value != null) {
-                result.put(propertyName, value);
+            if (holder.value != null && holder.type != null) {
+                result.put(propertyName, convertToType(holder.value, holder.type));
+            } else if (holder.value != null) {
+                result.put(propertyName, holder.value);
             }
         }
 
         return result;
     }
 
-    private Object convertValue(Object value, String type) {
-        if (type == null) {
-            return value;
-        }
+    private PropertyHolder parseProperty(JsonParser jp) throws IOException {
+        PropertyHolder holder = new PropertyHolder();
 
-        // Handle array values
+        while (jp.nextToken() != JsonToken.END_OBJECT) {
+            String fieldName = jp.getCurrentName();
+            jp.nextToken();
+
+            if ("value".equals(fieldName)) {
+                holder.value = parseValue(jp);
+            } else if ("type".equals(fieldName)) {
+                holder.type = jp.getValueAsString();
+            }
+        }
+        return holder;
+    }
+
+    private Object parseValue(JsonParser jp) throws IOException {
+        if (jp.currentToken() == JsonToken.START_ARRAY) {
+            List<Object> values = new ArrayList<>();
+            while (jp.nextToken() != JsonToken.END_ARRAY) {
+                values.add(parsePrimitive(jp));
+            }
+            return values;
+        }
+        return parsePrimitive(jp);
+    }
+
+    private Object parsePrimitive(JsonParser jp) throws IOException {
+        switch (jp.currentToken()) {
+            case VALUE_NUMBER_INT:
+                return jp.getNumberValue();
+            case VALUE_NUMBER_FLOAT:
+                return jp.getDoubleValue();
+            case VALUE_TRUE:
+            case VALUE_FALSE:
+                return jp.getBooleanValue();
+            case VALUE_STRING:
+                return jp.getText();
+            case VALUE_NULL:
+            default:
+                return null;
+        }
+    }
+
+    private Object convertToType(Object value, String type) {
         if (value instanceof List) {
-            List<?> list = (List<?>) value;
-            return convertArrayValue(list, type);
+            List<Object> converted = new ArrayList<>();
+            for (Object item : (List<?>) value) {
+                converted.add(convertSingleValue(item, type));
+            }
+            return converted;
+        }
+        return convertSingleValue(value, type);
+    }
+
+    private Object convertSingleValue(Object value, String type) {
+        if (value == null) {
+            return null;
         }
 
-        // Handle single values
-        if (!(value instanceof String)) {
-            return value; // Already parsed as correct type
-        }
-
-        String strValue = (String) value;
         try {
             switch (type.toUpperCase()) {
                 case "INTEGER":
-                    return Integer.parseInt(strValue);
+                    return toNumber(value).intValue();
                 case "LONG":
-                    return Long.parseLong(strValue);
+                    return toNumber(value).longValue();
                 case "DOUBLE":
+                    return toNumber(value).doubleValue();
                 case "FLOAT":
-                    return Double.parseDouble(strValue);
-                case "BOOLEAN":
-                    return Boolean.parseBoolean(strValue);
+                    return toNumber(value).floatValue();
                 case "BYTE":
-                    return Byte.parseByte(strValue);
+                    return toNumber(value).byteValue();
                 case "SHORT":
-                    return Short.parseShort(strValue);
+                    return toNumber(value).shortValue();
+                case "BOOLEAN":
+                    return value instanceof Boolean ? value : Boolean.parseBoolean(value.toString());
                 case "CHAR":
-                    return strValue.charAt(0);
+                    String str = value.toString();
+                    return str.isEmpty() ? null : str.charAt(0);
                 case "STRING":
                 case "PASSWORD":
                 default:
-                    return strValue;
+                    return value.toString();
             }
-        } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            return strValue;
+        } catch (Exception e) {
+            return value;
         }
     }
 
-    private Object convertArrayValue(List<?> list, String type) {
-        if (list.isEmpty()) {
-            return list;
+    private Number toNumber(Object value) {
+        if (value instanceof Number) {
+            return (Number) value;
         }
-
-        // If first element is already the correct type, assume all are correct
-        Object firstElement = list.get(0);
-        if (isCorrectType(firstElement, type)) {
-            return list;
-        }
-
-        // Convert string representations to correct types
-        List<Object> convertedList = new ArrayList<>();
-        for (Object item : list) {
-            if (item instanceof String) {
-                convertedList.add(convertValue(item, type));
-            } else {
-                convertedList.add(item);
-            }
-        }
-        return convertedList;
+        return Double.parseDouble(value.toString());
     }
 
-    private boolean isCorrectType(Object value, String type) {
-        if (value == null) {
-            return true;
-        }
-
-        switch (type.toUpperCase()) {
-            case "INTEGER":
-                return value instanceof Integer;
-            case "LONG":
-                return value instanceof Long;
-            case "DOUBLE":
-            case "FLOAT":
-                return value instanceof Double || value instanceof Float;
-            case "BOOLEAN":
-                return value instanceof Boolean;
-            case "BYTE":
-                return value instanceof Byte;
-            case "SHORT":
-                return value instanceof Short;
-            case "CHAR":
-                return value instanceof Character;
-            case "STRING":
-            case "PASSWORD":
-            default:
-                return value instanceof String;
-        }
+    private static class PropertyHolder {
+        Object value;
+        String type;
     }
 
 }

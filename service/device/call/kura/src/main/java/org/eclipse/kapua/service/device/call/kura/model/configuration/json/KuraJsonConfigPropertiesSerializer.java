@@ -17,7 +17,8 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
-import java.util.List;
+import java.lang.reflect.Array;
+import java.util.Collection;
 import java.util.Map;
 
 public class KuraJsonConfigPropertiesSerializer extends JsonSerializer<Map<String, Object>> {
@@ -27,53 +28,68 @@ public class KuraJsonConfigPropertiesSerializer extends JsonSerializer<Map<Strin
         gen.writeStartObject();
 
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
-            String propertyName = entry.getKey();
-            Object propertyValue = entry.getValue();
-
-            gen.writeObjectFieldStart(propertyName);
-
-            if (propertyValue != null) {
-                String type = determineType(propertyValue);
-
-                // Write value
-                gen.writeFieldName("value");
-
-                // Handle arrays
-                if (propertyValue instanceof List) {
-                    gen.writeStartArray();
-                    for (Object item : (List<?>) propertyValue) {
-                        writeValue(gen, item);
-                    }
-                    gen.writeEndArray();
-                } else {
-                    writeValue(gen, propertyValue);
-                }
-
-                gen.writeStringField("type", type);
-            } else {
-                gen.writeNullField("value");
-                gen.writeStringField("type", "STRING");
-            }
-
+            gen.writeObjectFieldStart(entry.getKey());
+            writeProperty(gen, entry.getValue());
             gen.writeEndObject();
         }
 
         gen.writeEndObject();
     }
 
-    private void writeValue(JsonGenerator gen, Object value) throws IOException {
-        if (value instanceof Integer) {
-            gen.writeNumber((Integer) value);
-        } else if (value instanceof Long) {
-            gen.writeNumber((Long) value);
-        } else if (value instanceof Double) {
-            gen.writeNumber((Double) value);
-        } else if (value instanceof Float) {
-            gen.writeNumber((Float) value);
-        } else if (value instanceof Byte) {
-            gen.writeNumber((Byte) value);
-        } else if (value instanceof Short) {
-            gen.writeNumber((Short) value);
+    private void writeProperty(JsonGenerator gen, Object value) throws IOException {
+        gen.writeFieldName("value");
+
+        if (value == null) {
+            gen.writeNull();
+            gen.writeStringField("type", "STRING");
+            return;
+        }
+
+        if (value.getClass().isArray()) {
+            writeArray(gen, value);
+        } else if (value instanceof Collection) {
+            writeCollection(gen, (Collection<?>) value); //TODO: maybe not needed
+        } else {
+            writePrimitive(gen, value);
+            gen.writeStringField("type", determineType(value));
+        }
+    }
+
+    private void writeArray(JsonGenerator gen, Object array) throws IOException {
+        int length = Array.getLength(array);
+        gen.writeStartArray();
+        Object firstElement = null;
+        for (int i = 0; i < length; i++) {
+            Object item = Array.get(array, i);
+            if (i == 0) {
+                firstElement = item;
+            }
+            writePrimitive(gen, item);
+        }
+        gen.writeEndArray();
+        gen.writeStringField("type", determineType(firstElement));
+    }
+
+    private void writeCollection(JsonGenerator gen, Collection<?> collection) throws IOException {
+        gen.writeStartArray();
+        Object firstElement = null;
+        boolean first = true;
+        for (Object item : collection) {
+            if (first) {
+                firstElement = item;
+                first = false;
+            }
+            writePrimitive(gen, item);
+        }
+        gen.writeEndArray();
+        gen.writeStringField("type", determineType(firstElement));
+    }
+
+    private void writePrimitive(JsonGenerator gen, Object value) throws IOException {
+        if (value == null) {
+            gen.writeNull();
+        } else if (value instanceof Number) {
+            writeNumber(gen, (Number) value);
         } else if (value instanceof Boolean) {
             gen.writeBoolean((Boolean) value);
         } else {
@@ -81,18 +97,26 @@ public class KuraJsonConfigPropertiesSerializer extends JsonSerializer<Map<Strin
         }
     }
 
-    private String determineType(Object value) {
-        // Handle arrays - get type from first element
-        if (value instanceof List) {
-            List<?> list = (List<?>) value;
-            if (list.isEmpty()) {
-                return "STRING";
-            }
-            return determineType(list.get(0));
-        }
-
-        // Single values
+    private void writeNumber(JsonGenerator gen, Number value) throws IOException {
         if (value instanceof Integer) {
+            gen.writeNumber(value.intValue());
+        } else if (value instanceof Long) {
+            gen.writeNumber(value.longValue());
+        } else if (value instanceof Double) {
+            gen.writeNumber(value.doubleValue());
+        } else if (value instanceof Float) {
+            gen.writeNumber(value.floatValue());
+        } else if (value instanceof Byte || value instanceof Short) {
+            gen.writeNumber(value.intValue());
+        } else {
+            gen.writeNumber(value.doubleValue());
+        }
+    }
+
+    private String determineType(Object value) {
+        if (value == null) {
+            return "STRING";
+        } else if (value instanceof Integer) {
             return "INTEGER";
         } else if (value instanceof Long) {
             return "LONG";
