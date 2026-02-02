@@ -18,7 +18,9 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class KuraJsonConfigPropertiesDeserializer extends JsonDeserializer<Map<String, Object>> {
@@ -27,7 +29,6 @@ public class KuraJsonConfigPropertiesDeserializer extends JsonDeserializer<Map<S
     public Map<String, Object> deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
         Map<String, Object> result = new HashMap<>();
 
-        // We expect to be at START_OBJECT for the properties object
         JsonToken currentToken = jp.getCurrentToken();
         if (currentToken == null) {
             currentToken = jp.nextToken();
@@ -38,27 +39,41 @@ public class KuraJsonConfigPropertiesDeserializer extends JsonDeserializer<Map<S
             return result;
         }
 
-        // Iterate through each property
         while (jp.nextToken() != JsonToken.END_OBJECT) {
             String propertyName = jp.getCurrentName();
-            jp.nextToken(); // Move to START_OBJECT of property value
+            jp.nextToken();
 
-            String value = null;
+            Object value = null;
             String type = null;
 
-            // Read the property object {value: ..., type: ...}
             while (jp.nextToken() != JsonToken.END_OBJECT) {
                 String fieldName = jp.getCurrentName();
-                jp.nextToken(); // Move to field value
+                jp.nextToken();
 
                 if ("value".equals(fieldName)) {
-                    value = jp.getValueAsString();
+                    // Check if value is an array
+                    if (jp.currentToken() == JsonToken.START_ARRAY) {
+                        List<Object> arrayValues = new ArrayList<>();
+                        while (jp.nextToken() != JsonToken.END_ARRAY) {
+                            if (jp.currentToken() == JsonToken.VALUE_NUMBER_INT) {
+                                arrayValues.add(jp.getNumberValue());
+                            } else if (jp.currentToken() == JsonToken.VALUE_NUMBER_FLOAT) {
+                                arrayValues.add(jp.getDoubleValue());
+                            } else if (jp.currentToken() == JsonToken.VALUE_TRUE || jp.currentToken() == JsonToken.VALUE_FALSE) {
+                                arrayValues.add(jp.getBooleanValue());
+                            } else {
+                                arrayValues.add(jp.getValueAsString());
+                            }
+                        }
+                        value = arrayValues;
+                    } else {
+                        value = jp.getValueAsString();
+                    }
                 } else if ("type".equals(fieldName)) {
                     type = jp.getValueAsString();
                 }
             }
 
-            // Convert and store the value
             if (value != null && type != null) {
                 result.put(propertyName, convertValue(value, type));
             } else if (value != null) {
@@ -69,27 +84,98 @@ public class KuraJsonConfigPropertiesDeserializer extends JsonDeserializer<Map<S
         return result;
     }
 
-    private Object convertValue(String value, String type) {
+    private Object convertValue(Object value, String type) {
         if (type == null) {
             return value;
         }
+
+        // Handle array values
+        if (value instanceof List) {
+            List<?> list = (List<?>) value;
+            return convertArrayValue(list, type);
+        }
+
+        // Handle single values
+        if (!(value instanceof String)) {
+            return value; // Already parsed as correct type
+        }
+
+        String strValue = (String) value;
         try {
             switch (type.toUpperCase()) {
                 case "INTEGER":
-                    return Integer.parseInt(value);
+                    return Integer.parseInt(strValue);
                 case "LONG":
-                    return Long.parseLong(value);
+                    return Long.parseLong(strValue);
                 case "DOUBLE":
                 case "FLOAT":
-                    return Double.parseDouble(value);
+                    return Double.parseDouble(strValue);
                 case "BOOLEAN":
-                    return Boolean.parseBoolean(value);
+                    return Boolean.parseBoolean(strValue);
+                case "BYTE":
+                    return Byte.parseByte(strValue);
+                case "SHORT":
+                    return Short.parseShort(strValue);
+                case "CHAR":
+                    return strValue.charAt(0);
                 case "STRING":
+                case "PASSWORD":
                 default:
-                    return value;
+                    return strValue;
             }
-        } catch (NumberFormatException e) {
-            return value;
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            return strValue;
+        }
+    }
+
+    private Object convertArrayValue(List<?> list, String type) {
+        if (list.isEmpty()) {
+            return list;
+        }
+
+        // If first element is already the correct type, assume all are correct
+        Object firstElement = list.get(0);
+        if (isCorrectType(firstElement, type)) {
+            return list;
+        }
+
+        // Convert string representations to correct types
+        List<Object> convertedList = new ArrayList<>();
+        for (Object item : list) {
+            if (item instanceof String) {
+                convertedList.add(convertValue(item, type));
+            } else {
+                convertedList.add(item);
+            }
+        }
+        return convertedList;
+    }
+
+    private boolean isCorrectType(Object value, String type) {
+        if (value == null) {
+            return true;
+        }
+
+        switch (type.toUpperCase()) {
+            case "INTEGER":
+                return value instanceof Integer;
+            case "LONG":
+                return value instanceof Long;
+            case "DOUBLE":
+            case "FLOAT":
+                return value instanceof Double || value instanceof Float;
+            case "BOOLEAN":
+                return value instanceof Boolean;
+            case "BYTE":
+                return value instanceof Byte;
+            case "SHORT":
+                return value instanceof Short;
+            case "CHAR":
+                return value instanceof Character;
+            case "STRING":
+            case "PASSWORD":
+            default:
+                return value instanceof String;
         }
     }
 
