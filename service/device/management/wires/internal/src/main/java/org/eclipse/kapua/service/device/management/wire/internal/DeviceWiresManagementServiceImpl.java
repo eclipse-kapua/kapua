@@ -27,6 +27,7 @@ import org.eclipse.kapua.service.device.management.configuration.message.interna
 import org.eclipse.kapua.service.device.management.configuration.message.internal.ConfigurationRequestMessage;
 import org.eclipse.kapua.service.device.management.configuration.message.internal.ConfigurationRequestPayload;
 import org.eclipse.kapua.service.device.management.configuration.message.internal.ConfigurationResponseMessage;
+import org.eclipse.kapua.service.device.management.exception.DeviceManagementRequestContentException;
 import org.eclipse.kapua.service.device.management.message.KapuaMethod;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.device.registry.event.DeviceEventFactory;
@@ -118,6 +119,53 @@ public class DeviceWiresManagementServiceImpl extends AbstractDeviceManagementTr
 
     @Override
     public void put(KapuaId scopeId, KapuaId deviceId, DeviceConfiguration wireGraphConfig, Long timeout) throws KapuaException {
+        // Argument Validation
+        ArgumentValidator.notNull(scopeId, SCOPE_ID);
+        ArgumentValidator.notNull(deviceId, DEVICE_ID);
+        ArgumentValidator.notNull(wireGraphConfig, "componentConfiguration"); //TODO rename?
+        // Check Access
+        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
+        // Prepare the request
+        ConfigurationRequestChannel configurationRequestChannel = new ConfigurationRequestChannel();
+        configurationRequestChannel.setAppName(DeviceWireAppProperties.APP_NAME);
+        configurationRequestChannel.setVersion(DeviceWireAppProperties.APP_VERSION);
+        configurationRequestChannel.setMethod(KapuaMethod.WRITE);
+
+        ConfigurationRequestPayload configurationRequestPayload = new ConfigurationRequestPayload();
+
+        try {
+            configurationRequestPayload.setDeviceConfigurations(wireGraphConfig);
+        } catch (Exception e) {
+            throw new DeviceManagementRequestContentException(e, wireGraphConfig);
+        }
+
+        ConfigurationRequestMessage configurationRequestMessage = new ConfigurationRequestMessage();
+        configurationRequestMessage.setScopeId(scopeId);
+        configurationRequestMessage.setDeviceId(deviceId);
+        configurationRequestMessage.setCapturedOn(new Date());
+        configurationRequestMessage.setPayload(configurationRequestPayload);
+        configurationRequestMessage.setChannel(configurationRequestChannel);
+
+        // Build request
+        DeviceCallBuilder<ConfigurationRequestChannel, ConfigurationRequestPayload, ConfigurationRequestMessage, ConfigurationResponseMessage> configurationDeviceCallBuilder =
+                DeviceCallBuilder
+                        .newBuilder()
+                        .withRequestMessage(configurationRequestMessage)
+                        .withTimeoutOrDefault(timeout);
+
+        // Do put
+        ConfigurationResponseMessage responseMessage;
+        try {
+            responseMessage = configurationDeviceCallBuilder.send();
+        } catch (Exception e) {
+            LOG.error("Error while putting DeviceConfiguration {} for Device {}. Error: {}", wireGraphConfig, deviceId, e.getMessage(), e);
+            throw e;
+        }
+
+        // Create event
+        createDeviceEvent(scopeId, deviceId, configurationRequestMessage, responseMessage);
+        // Check response
+        checkResponseAcceptedOrThrowError(responseMessage);
     }
 
     @Override
