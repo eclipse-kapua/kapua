@@ -22,8 +22,10 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 import org.eclipse.kapua.service.device.call.kura.model.configuration.json.KuraJsonConfigPropertiesDeserializer;
+import org.eclipse.kapua.service.device.call.kura.model.configuration.json.KuraJsonConfigPropertiesSerializer;
 import org.eclipse.kapua.service.device.call.kura.model.configuration.xml.KuraXmlConfigPropertiesAdapter;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -60,6 +62,7 @@ public class KuraDeviceComponentConfiguration {
     @XmlElement(name = "properties")
     @XmlJavaTypeAdapter(KuraXmlConfigPropertiesAdapter.class)
     @JsonDeserialize(using = KuraJsonConfigPropertiesDeserializer.class)
+    @JsonSerialize(using = KuraJsonConfigPropertiesSerializer.class)
     private Map<String, Object> properties;
 
     // Required by JAXB

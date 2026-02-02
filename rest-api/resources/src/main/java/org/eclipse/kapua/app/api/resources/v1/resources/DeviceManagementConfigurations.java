@@ -63,7 +63,7 @@ public class DeviceManagementConfigurations extends AbstractKapuaResource {
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,
             @QueryParam("timeout") @DefaultValue("30000") Long timeout) throws KapuaException {
-        return wiresManagementService.get(scopeId, deviceId, timeout);
+        return wiresManagementService.get(scopeId, deviceId, timeout); //TODO: change here
 //        return getComponent(scopeId, deviceId, null, timeout);
     }
 
@@ -85,7 +85,8 @@ public class DeviceManagementConfigurations extends AbstractKapuaResource {
             @PathParam("deviceId") EntityId deviceId,
             @QueryParam("timeout") @DefaultValue("30000") Long timeout,
             DeviceConfiguration deviceConfiguration) throws KapuaException {
-        configurationService.put(scopeId, deviceId, deviceConfiguration, timeout);
+//        configurationService.put(scopeId, deviceId, deviceConfiguration, timeout);
+        wiresManagementService.put(scopeId, deviceId, deviceConfiguration, timeout);
 
         return returnNoContent();
     }
