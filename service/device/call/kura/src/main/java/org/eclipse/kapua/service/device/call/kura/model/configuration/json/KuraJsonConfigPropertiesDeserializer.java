@@ -76,7 +76,7 @@ public class KuraJsonConfigPropertiesDeserializer extends JsonDeserializer<Map<S
             while (jp.nextToken() != JsonToken.END_ARRAY) {
                 values.add(parsePrimitive(jp));
             }
-            return values;
+            return values.toArray();
         }
         return parsePrimitive(jp);
     }
@@ -99,14 +99,41 @@ public class KuraJsonConfigPropertiesDeserializer extends JsonDeserializer<Map<S
     }
 
     private Object convertToType(Object value, String type) {
-        if (value instanceof List) {
-            List<Object> converted = new ArrayList<>();
-            for (Object item : (List<?>) value) {
-                converted.add(convertSingleValue(item, type));
+        if (value.getClass().isArray()) {
+            int length = java.lang.reflect.Array.getLength(value);
+            Class<?> componentType = getClassForType(type);
+            Object converted = java.lang.reflect.Array.newInstance(componentType, length);
+            for (int i = 0; i < length; i++) {
+                java.lang.reflect.Array.set(converted, i, convertSingleValue(java.lang.reflect.Array.get(value, i), type));
             }
             return converted;
         }
         return convertSingleValue(value, type);
+    }
+
+    private Class<?> getClassForType(String type) {
+        switch (type.toUpperCase()) {
+            case "INTEGER":
+                return Integer.class;
+            case "LONG":
+                return Long.class;
+            case "DOUBLE":
+                return Double.class;
+            case "FLOAT":
+                return Float.class;
+            case "BYTE":
+                return Byte.class;
+            case "SHORT":
+                return Short.class;
+            case "BOOLEAN":
+                return Boolean.class;
+            case "CHAR":
+                return Character.class;
+            case "STRING":
+            case "PASSWORD":
+            default:
+                return String.class;
+        }
     }
 
     private Object convertSingleValue(Object value, String type) {
