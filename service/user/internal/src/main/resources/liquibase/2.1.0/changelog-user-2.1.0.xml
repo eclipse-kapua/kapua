@@ -18,6 +18,7 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd"
         logicalFilePath="KapuaDB/changelog-user-2.1.0.xml">
 
+    <include relativeToChangelogFile="true" file="./user-groups.xml"/>
     <include relativeToChangelogFile="true" file="./user-tag.xml"/>
 
 </databaseChangeLog>

@@ -13,6 +13,7 @@
 package org.eclipse.kapua.service.user.internal;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
 import org.eclipse.kapua.KapuaDuplicateExternalIdException;
 import org.eclipse.kapua.KapuaDuplicateExternalUsernameException;
 import org.eclipse.kapua.KapuaDuplicateNameException;
@@ -20,6 +21,7 @@ import org.eclipse.kapua.KapuaDuplicateNameInAnotherAccountError;
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaIllegalArgumentException;
+import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
@@ -31,6 +33,14 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.model.type.DateConverter;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
+import org.eclipse.kapua.service.authorization.CheckStrategy;
+import org.eclipse.kapua.service.authorization.group.Group;
+import org.eclipse.kapua.service.authorization.group.GroupAttributes;
+import org.eclipse.kapua.service.authorization.group.GroupFactory;
+import org.eclipse.kapua.service.authorization.group.GroupListResult;
+import org.eclipse.kapua.service.authorization.group.GroupQuery;
+import org.eclipse.kapua.service.authorization.group.GroupService;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.tag.Tag;
 import org.eclipse.kapua.service.tag.TagAttributes;
@@ -47,6 +57,8 @@ import org.eclipse.kapua.storage.TxContext;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -61,6 +73,11 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
 
     private final AuthorizationService authorizationService;
     private final PermissionFactory permissionFactory;
+
+    private final GroupService groupService;
+    private final GroupFactory groupFactory;
+
+    protected final ServiceConfigurationManager serviceConfigurationManager;
     private final TagService tagService;
     private final TagFactory tagFactory;
 
@@ -69,12 +86,18 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
     public UserServiceValidationUtilsImpl(
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
+            GroupService groupService,
+            GroupFactory groupFactory,
+            ServiceConfigurationManager serviceConfigurationManager,
             TagService tagService,
             TagFactory tagFactory,
             UserRepository userRepository
     ) {
         this.authorizationService = authorizationService;
         this.permissionFactory = permissionFactory;
+        this.groupService = groupService;
+        this.groupFactory = groupFactory;
+        this.serviceConfigurationManager = serviceConfigurationManager;
         this.tagService = tagService;
         this.tagFactory = tagFactory;
         this.userRepository = userRepository;
@@ -90,6 +113,9 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
         ArgumentValidator.lengthRange(userCreator.getName(), 3, 255, "userCreator.name");
         ArgumentValidator.match(userCreator.getEmail(), CommonsValidationRegex.EMAIL_REGEXP, "userCreator.email");
         ArgumentValidator.notNull(userCreator.getStatus(), "userCreator.status");
+
+        // .groupsIds
+        validateGroupIds(userCreator.getScopeId(), userCreator.getGroupIds());
 
         // .tagIds
         validateTagIds(userCreator.getScopeId(), userCreator.getTagIds());
@@ -111,18 +137,26 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
 
         //
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.USER, Actions.write, userCreator.getScopeId()));
+        // Check that current Subject can manage all the target Groups
+        Set<Permission> groupPermissions = buildSetPermissionsFromGroupIds(Domains.USER, Actions.write, userCreator.getScopeId(), userCreator.getGroupIds());
+        authorizationService.checkPermissions(groupPermissions);
     }
 
     @Override
     public void validateCreateInTransaction(TxContext txContext, UserCreator userCreator) throws KapuaException {
+        // Check entity limit
+        serviceConfigurationManager.checkAllowedEntities(txContext, userCreator.getScopeId(), "Users");
 
-        // Check duplicate name in scope
+        //
+        // Check duplicates
+
+        // .name
+        // in scope
         if (userRepository.countEntitiesWithNameInScope(txContext, userCreator.getScopeId(), userCreator.getName()) > 0) {
             throw new KapuaDuplicateNameException(userCreator.getName());
         }
 
-        // Check duplicate name in other scopes
+        // in other scopes
         if (userRepository.countEntitiesWithName(txContext, userCreator.getName()) > 0) {
             throw new KapuaDuplicateNameInAnotherAccountError(userCreator.getName());
         }
@@ -181,7 +215,7 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
 
         //
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.USER, Actions.write, user.getScopeId()));
+        authorizationService.checkPermission(permissionFactory.newPermission(Domains.USER, Actions.write, user.getScopeId(), Group.ANY));
     }
 
     @Override
@@ -192,6 +226,11 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
                 userRepository
                         .find(txContext, user.getScopeId(), user.getId())
                         .orElseThrow(() -> new KapuaEntityNotFoundException(User.TYPE, user.getId()));
+
+        //
+        // Check fields
+        // .groupIds
+        validateGroupIds(user.getScopeId(), user.getGroupIds());
 
         //
         // Check not updatable fields
@@ -236,6 +275,10 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
                 throw new KapuaDuplicateExternalUsernameException(user.getExternalUsername());
             }
         }
+
+        //
+        // Check Access
+        checkAccessGroupIds(txContext, user);
     }
 
     @Override
@@ -245,7 +288,7 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
         ArgumentValidator.notNull(userId, "userId");
 
         // Check access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.USER, Actions.read, scopeId));
+        authorizationService.checkPermission(permissionFactory.newPermission(Domains.USER, Actions.read, scopeId, Group.ANY));
     }
 
     @Override
@@ -272,7 +315,9 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
     public void validateFindByFieldPostConditions(User user) throws KapuaException {
         // Check access
         if (user != null) {
-            authorizationService.checkPermission(permissionFactory.newPermission(Domains.USER, Actions.read, user.getScopeId()));
+            Set<Permission> groupPermissions = buildSetPermissionsFromGroupIds(Domains.USER, Actions.read, user.getScopeId(), user.getGroupIds());
+
+            authorizationService.checkPermissions(groupPermissions, CheckStrategy.AT_LEAST_ONE_OF);
         }
     }
 
@@ -282,7 +327,7 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
         ArgumentValidator.notNull(query, "query");
 
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.USER, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(permissionFactory.newPermission(Domains.USER, Actions.read, query.getScopeId(), Group.ANY));
     }
 
     @Override
@@ -291,7 +336,7 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
         ArgumentValidator.notNull(query, "query");
 
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.USER, Actions.read, query.getScopeId()));
+        authorizationService.checkPermission(permissionFactory.newPermission(Domains.USER, Actions.read, query.getScopeId(), Group.ANY));
     }
 
     @Override
@@ -301,7 +346,7 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
         ArgumentValidator.notNull(userId, "id");
 
         // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.USER, Actions.delete, scopeId));
+        authorizationService.checkPermission(permissionFactory.newPermission(Domains.USER, Actions.delete, scopeId, Group.ANY));
     }
 
     @Override
@@ -310,6 +355,12 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
         User user = userRepository
                 .find(txContext, scopeId, userId)
                 .orElseThrow(() -> new KapuaEntityNotFoundException(User.TYPE, userId));
+
+        //
+        // Validate permission on Groups
+        Set<KapuaId> groupIds = findCurrentGroupIds(txContext, scopeId, userId);
+        Set<Permission> groupPermissions = buildSetPermissionsFromGroupIds(Domains.USER, Actions.delete, scopeId, groupIds);
+        authorizationService.checkPermissions(groupPermissions);
 
         //
         // Check delete on admin User
@@ -371,6 +422,94 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
     }
 
     /**
+     * Checks that the given Group exists.
+     *
+     * @param scopeId The {@link Group#getScopeId()}
+     * @param groupId The {@link Group#getId()}
+     * @throws KapuaException
+     * @since 2.1.0
+     */
+    private void checkGroupExistence(KapuaId scopeId, KapuaId groupId) throws KapuaException {
+        if (groupId != null) {
+            Group group = KapuaSecurityUtils.doPrivileged(() -> groupService.find(scopeId, groupId));
+
+            if (group == null) {
+                throw new KapuaEntityNotFoundException(Group.TYPE, groupId);
+            }
+        }
+    }
+
+    private void validateGroupIds(KapuaId scopeId, Set<KapuaId> groupIds) throws KapuaException {
+        //
+        // Check existence of target Groups
+        if (!groupIds.isEmpty()) {
+
+            GroupQuery groupQuery = groupFactory.newQuery(scopeId);
+            groupQuery.setPredicate(groupQuery.attributePredicate(GroupAttributes.ENTITY_ID, groupIds));
+
+            GroupListResult dbGroups = KapuaSecurityUtils.doPrivileged(() -> groupService.query(groupQuery));
+            if (groupIds.size() != dbGroups.getSize()) {
+                // Some groups have not been found
+                Set<KapuaId> dbGroupIds =
+                        dbGroups.getItems()
+                                .stream()
+                                .map(Group::getId)
+                                .collect(Collectors.toSet());
+
+                for (KapuaId groupId : groupIds) {
+                    if (!dbGroupIds.contains(groupId)) {
+                        throw new KapuaEntityNotFoundException(Group.TYPE, groupId);
+                    }
+                }
+            }
+        }
+    }
+
+    private void checkAccessGroupIds(TxContext txContext, User user) throws KapuaException {
+        //
+        // Check that current User can manage at least one of the current Groups of the User
+        Set<KapuaId> currentGroupIds = findCurrentGroupIds(txContext, user.getScopeId(), user.getId());
+
+        Set<Permission> currentGroupPermissions =
+                currentGroupIds.stream()
+                        .map(groupId -> permissionFactory.newPermission(Domains.USER, Actions.write, user.getScopeId(), groupId))
+                        .collect(Collectors.toSet());
+
+        authorizationService.checkPermissions(currentGroupPermissions, CheckStrategy.AT_LEAST_ONE_OF);
+
+        //
+        // Check access to Groups that have been changed
+        Set<KapuaId> updatedGroupIds = new HashSet<>();
+
+        // Added groups - all Groups present in the updated User but not on DB
+        updatedGroupIds.addAll(
+                user.getGroupIds()
+                        .stream()
+                        .filter(groupId -> !currentGroupIds.contains(groupId))
+                        .collect(Collectors.toSet())
+        );
+
+        // Removed groups - all Groups not present in the updated User but exists on DB
+        updatedGroupIds.addAll(
+                currentGroupIds
+                        .stream()
+                        .filter(currentGroupId1-> !user.getGroupIds().contains(currentGroupId1))
+                        .collect(Collectors.toSet())
+        );
+
+        // If any of the Group have been changed, check authorization for those Groups
+        if (!updatedGroupIds.isEmpty()) {
+            Set<Permission> groupPermissions =
+                    updatedGroupIds
+                            .stream()
+                            .map(groupId -> permissionFactory.newPermission(Domains.USER, Actions.write, user.getScopeId(), groupId))
+                            .collect(Collectors.toSet());
+
+            authorizationService.checkPermissions(groupPermissions);
+        }
+    }
+
+    /**
      * Applies validation logics to {@link User#getTagIds()} attribute.
      * <p>
      * Requirements are:
@@ -408,4 +547,49 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
             }
         }
     }
+
+
+    /**
+     * Finds the current Set of {@link Group} ids assigned to the given {@link User}.
+     *
+     * @param scopeId  The {@link User#getScopeId()}
+     * @param userId The {@link User#getId()}
+     * @return The Set of {@link Group} ids found.
+     * @throws KapuaException if any error occurs while looking for the Group.
+     * @since 2.1.0
+     */
+    private Set<KapuaId> findCurrentGroupIds(TxContext tx, KapuaId scopeId, KapuaId userId) throws KapuaException {
+        try {
+            Optional<User> optionalUser = userRepository.find(tx, scopeId, userId);
+
+            return optionalUser
+                    .map(User::getGroupIds)
+                    .orElse(Collections.emptySet());
+        } catch (Exception e) {
+            throw KapuaException.internalError(e, "Error while searching groupId");
+        }
+    }
+
+    /**
+     * Builds a set of {@link Permission} from a collection of Group Ids
+     *
+     * @param domain The {@link Permission#getDomain()}
+     * @param action The {@link Permission#getAction()}
+     * @param scopeId The {@link Permission#getTargetScopeId()}
+     * @param groupIds The collection of Group Ids
+     *
+     * @return The set of {@link Permission}
+     * @since 2.1.0
+     */
+    private Set<Permission> buildSetPermissionsFromGroupIds(String domain, Actions action, KapuaId scopeId, Collection<KapuaId> groupIds) {
+        if (groupIds.isEmpty()) {
+            return Sets.newHashSet(permissionFactory.newPermission(domain, action, scopeId));
+        }
+        else {
+            return groupIds.stream()
+                    .map(groupId -> permissionFactory.newPermission(domain, action, scopeId, groupId))
+                    .collect(Collectors.toSet());
+        }
+    }
+
 }
