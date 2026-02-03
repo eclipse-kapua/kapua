@@ -46,6 +46,8 @@ import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.tag.TagFactory;
+import org.eclipse.kapua.service.tag.TagService;
 import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserRepository;
 import org.eclipse.kapua.service.user.UserService;
@@ -121,6 +123,9 @@ public class UserLocatorConfiguration {
                 final RootUserTester mockRootUserTester = Mockito.mock(RootUserTester.class);
                 bind(RootUserTester.class).toInstance(mockRootUserTester);
 
+                final TagService mockTagService = Mockito.mock(TagService.class);
+                final TagFactory mockTagFactory = Mockito.mock(TagFactory.class);
+
                 final UserRepository userRepository = new UserImplJpaRepository(new KapuaJpaRepositoryConfiguration());
                 final KapuaJpaRepositoryConfiguration jpaRepoConfig = new KapuaJpaRepositoryConfiguration();
                 final TxManager txManager = new KapuaJpaTxManagerFactory(maxInsertAttempts).create("kapua-user");
@@ -146,6 +151,8 @@ public class UserLocatorConfiguration {
                                 new UserServiceValidationUtilsImpl(
                                     mockedAuthorization,
                                     mockPermissionFactory,
+                                    mockTagService,
+                                    mockTagFactory,
                                     userRepository
                                 ),
                                 new UserImplJpaRepository(jpaRepoConfig),

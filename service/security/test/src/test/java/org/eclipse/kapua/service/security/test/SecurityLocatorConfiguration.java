@@ -84,6 +84,8 @@ import org.eclipse.kapua.service.authorization.role.shiro.RoleImplJpaRepository;
 import org.eclipse.kapua.service.authorization.role.shiro.RolePermissionFactoryImpl;
 import org.eclipse.kapua.service.authorization.role.shiro.RolePermissionImplJpaRepository;
 import org.eclipse.kapua.service.authorization.role.shiro.RoleServiceImpl;
+import org.eclipse.kapua.service.tag.TagFactory;
+import org.eclipse.kapua.service.tag.TagService;
 import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserService;
 import org.eclipse.kapua.service.user.internal.UserFactoryImpl;
@@ -190,6 +192,9 @@ public class SecurityLocatorConfiguration {
                         credentialServiceConfigurationManager);
                 final PasswordValidator passwordValidator = new PasswordValidatorImpl(accountPasswordLengthProvider);
 
+                final TagService mockTagService = Mockito.mock(TagService.class);
+                final TagFactory mockTagFactory = Mockito.mock(TagFactory.class);
+
                 bind(CredentialService.class).toInstance(new CredentialServiceImpl(
                         credentialServiceConfigurationManager,
                         mockedAuthorization,
@@ -239,6 +244,8 @@ public class SecurityLocatorConfiguration {
                         new UserServiceValidationUtilsImpl(
                                 mockedAuthorization,
                                 mockPermissionFactory,
+                                mockTagService,
+                                mockTagFactory,
                                 new UserImplJpaRepository(jpaRepoConfig)
                         ),
                         new UserImplJpaRepository(jpaRepoConfig),

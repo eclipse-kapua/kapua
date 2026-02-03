@@ -19,7 +19,9 @@ import org.eclipse.kapua.service.user.UserCreator;
 import org.eclipse.kapua.service.user.UserStatus;
 import org.eclipse.kapua.service.user.UserType;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * {@link UserCreator} implementation.
@@ -30,6 +32,7 @@ public class UserCreatorImpl extends AbstractKapuaNamedEntityCreator<User> imple
 
     private static final long serialVersionUID = 4664940282892151008L;
 
+    private Set<KapuaId> tagIds;
     private UserStatus status;
     private String displayName;
     private String email;
@@ -54,6 +57,20 @@ public class UserCreatorImpl extends AbstractKapuaNamedEntityCreator<User> imple
 
     public UserCreatorImpl(KapuaId scopeId) {
         this(scopeId, null);
+    }
+
+    @Override
+    public Set<KapuaId> getTagIds() {
+        if (tagIds == null) {
+            tagIds = Collections.emptySet();
+        }
+
+        return tagIds;
+    }
+
+    @Override
+    public void setTagIds(Set<KapuaId> tagIds) {
+        this.tagIds = tagIds;
     }
 
     @Override

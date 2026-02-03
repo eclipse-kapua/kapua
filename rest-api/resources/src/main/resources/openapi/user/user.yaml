@@ -35,6 +35,11 @@ components:
         - $ref: '../openapi.yaml#/components/schemas/kapuaNamedEntityCreator'
         - type: object
           properties:
+            tagIds:
+              type: array
+              items:
+                allOf:
+                  - $ref: '../openapi.yaml#/components/schemas/kapuaId'
             status:
               type: string
               enum:

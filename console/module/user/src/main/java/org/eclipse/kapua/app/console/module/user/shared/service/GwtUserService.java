@@ -100,4 +100,11 @@ public interface GwtUserService extends RemoteService {
     PagingLoadResult<GwtUser> getUsersForRole(PagingLoadConfig pagingLoadConfig, GwtAccessRoleQuery query) throws GwtKapuaException;
 
     public PagingLoadResult<GwtUser> getUsersForAccount(PagingLoadConfig loadConfig, GwtUserQuery gwtUserQuery, String accountId) throws GwtKapuaException;
+
+    // Tags
+
+    void addUserTag(GwtXSRFToken xsrfToken, String scopeIdString, String userIdString, String tagIdString) throws GwtKapuaException;
+
+    void deleteUserTag(GwtXSRFToken xsfrToken, String scopeIdString, String userIdString, String tagId) throws GwtKapuaException;
+
 }

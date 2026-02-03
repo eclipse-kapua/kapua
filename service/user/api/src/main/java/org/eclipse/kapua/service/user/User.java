@@ -14,15 +14,19 @@ package org.eclipse.kapua.service.user;
 
 import org.eclipse.kapua.model.KapuaEntity;
 import org.eclipse.kapua.model.KapuaNamedEntity;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
 import org.eclipse.kapua.model.xml.DateXmlAdapter;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * {@link User} {@link KapuaEntity} definition.
@@ -41,6 +45,25 @@ public interface User extends KapuaNamedEntity {
     default String getType() {
         return TYPE;
     }
+
+    /**
+     * Gets the set of Tag id assigned to this entity.
+     *
+     * @return The set Tag id assigned to this entity.
+     * @since 2.1.0
+     */
+    @XmlElementWrapper(name = "tagIds")
+    @XmlElement(name = "tagId")
+    @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    Set<KapuaId> getTagIds();
+
+    /**
+     * Sets the set of Tag id of this entity.
+     *
+     * @param tagIds The set Tag id to assign.
+     * @since 2.1.0
+     */
+    void setTagIds(Set<KapuaId> tagIds);
 
     /**
      * Gets the {@link UserStatus}
