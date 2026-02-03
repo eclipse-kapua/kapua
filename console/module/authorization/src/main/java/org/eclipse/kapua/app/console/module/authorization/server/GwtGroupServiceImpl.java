@@ -17,12 +17,14 @@ import com.extjs.gxt.ui.client.data.BasePagingLoadResult;
 import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import org.eclipse.kapua.KapuaDuplicateNameException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.server.KapuaRemoteServiceServlet;
 import org.eclipse.kapua.app.console.module.api.server.util.KapuaExceptionHandler;
 import org.eclipse.kapua.app.console.module.api.server.util.UserCreatedByModifiedByUtils;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtGroupedNVPair;
+import org.eclipse.kapua.app.console.module.api.shared.model.GwtXSRFToken;
 import org.eclipse.kapua.app.console.module.api.shared.util.GwtKapuaCommonsModelConverter;
 import org.eclipse.kapua.app.console.module.api.shared.util.KapuaGwtCommonsModelConverter;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
@@ -42,12 +44,15 @@ import org.eclipse.kapua.service.authorization.group.GroupQuery;
 import org.eclipse.kapua.service.authorization.group.GroupService;
 import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
+import org.eclipse.kapua.service.tag.Tag;
+import org.eclipse.kapua.service.tag.TagService;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class GwtGroupServiceImpl extends KapuaRemoteServiceServlet implements GwtGroupService {
 
@@ -253,6 +258,64 @@ public class GwtGroupServiceImpl extends KapuaRemoteServiceServlet implements Gw
             return query(loadConfig, gwtGroupQuery);
         } catch (KapuaException e) {
             throw KapuaExceptionHandler.buildExceptionFromError(e);
+        }
+    }
+
+
+    @Override
+    public void addGroupTag(GwtXSRFToken xsrfToken, String scopeIdString, String groupIdString, String tagIdString) throws GwtKapuaException {
+        // Checking validity of the given XSRF Token
+        checkXSRFToken(xsrfToken);
+
+        try {
+            KapuaId scopeId = KapuaEid.parseCompactId(scopeIdString);
+            KapuaId groupId = KapuaEid.parseCompactId(groupIdString);
+            KapuaId tagId = KapuaEid.parseCompactId(tagIdString);
+
+            KapuaLocator locator = KapuaLocator.getInstance();
+            GroupService groupService = locator.getService(GroupService.class);
+            TagService tagService = locator.getService(TagService.class);
+            Group group = groupService.find(scopeId, groupId);
+
+            Set<KapuaId> tagIds = group.getTagIds();
+            if (tagIds.contains(tagId)) {
+                Tag tag = tagService.find(scopeId, tagId);
+                if (tag != null) {
+                    throw new KapuaDuplicateNameException(tag.getName());
+                }
+            }
+            tagIds.add(tagId);
+            group.setTagIds(tagIds);
+
+            groupService.update(group);
+
+        } catch (Throwable t) {
+            throw KapuaExceptionHandler.buildExceptionFromError(t);
+        }
+    }
+
+    @Override
+    public void deleteGroupTag(GwtXSRFToken xsrfToken, String scopeIdString, String groupIdString, String tagIdString) throws GwtKapuaException {
+        // Checking validity of the given XSRF Token
+        checkXSRFToken(xsrfToken);
+
+        try {
+            KapuaId scopeId = KapuaEid.parseCompactId(scopeIdString);
+            KapuaId groupId = KapuaEid.parseCompactId(groupIdString);
+            KapuaId tagId = KapuaEid.parseCompactId(tagIdString);
+
+            KapuaLocator locator = KapuaLocator.getInstance();
+            GroupService groupService = locator.getService(GroupService.class);
+
+            Group group = groupService.find(scopeId, groupId);
+
+            Set<KapuaId> tagIds = group.getTagIds();
+            tagIds.remove(tagId);
+            group.setTagIds(tagIds);
+
+            groupService.update(group);
+        } catch (Throwable t) {
+            throw KapuaExceptionHandler.buildExceptionFromError(t);
         }
     }
 }

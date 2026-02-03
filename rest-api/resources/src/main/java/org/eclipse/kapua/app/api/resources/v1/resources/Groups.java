@@ -37,6 +37,7 @@ import org.eclipse.kapua.model.query.SortOrder;
 import org.eclipse.kapua.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.authorization.group.Group;
+import org.eclipse.kapua.service.authorization.group.GroupAttributes;
 import org.eclipse.kapua.service.authorization.group.GroupCreator;
 import org.eclipse.kapua.service.authorization.group.GroupFactory;
 import org.eclipse.kapua.service.authorization.group.GroupListResult;
@@ -66,6 +67,7 @@ public class Groups extends AbstractKapuaResource {
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public GroupListResult simpleQuery(
             @PathParam("scopeId") ScopeId scopeId,
+            @QueryParam("tagId") EntityId tagId,
             @QueryParam("name") String name,
             @QueryParam("askTotalCount") boolean askTotalCount,
             @QueryParam("matchTerm") String matchTerm,
@@ -76,6 +78,10 @@ public class Groups extends AbstractKapuaResource {
         GroupQuery query = groupFactory.newQuery(scopeId);
 
         AndPredicate andPredicate = query.andPredicate();
+        if (tagId != null) {
+            andPredicate.and(query.attributePredicate(GroupAttributes.TAG_IDS, tagId));
+        }
+
         if (!Strings.isNullOrEmpty(name)) {
             andPredicate.and(query.attributePredicate(KapuaNamedEntityAttributes.NAME, name));
         }
