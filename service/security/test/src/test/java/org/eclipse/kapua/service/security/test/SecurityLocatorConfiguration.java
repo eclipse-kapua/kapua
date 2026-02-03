@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2020, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -70,10 +70,12 @@ import org.eclipse.kapua.service.authorization.access.shiro.AccessInfoFactoryImp
 import org.eclipse.kapua.service.authorization.access.shiro.AccessRoleFactoryImpl;
 import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
 import org.eclipse.kapua.service.authorization.group.GroupFactory;
+import org.eclipse.kapua.service.authorization.group.GroupRepository;
 import org.eclipse.kapua.service.authorization.group.GroupService;
 import org.eclipse.kapua.service.authorization.group.shiro.GroupFactoryImpl;
 import org.eclipse.kapua.service.authorization.group.shiro.GroupImplJpaRepository;
 import org.eclipse.kapua.service.authorization.group.shiro.GroupServiceImpl;
+import org.eclipse.kapua.service.authorization.group.shiro.GroupServiceValidationUtilsImpl;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.authorization.permission.shiro.PermissionValidator;
@@ -173,13 +175,23 @@ public class SecurityLocatorConfiguration {
                 bind(RoleFactory.class).toInstance(new RoleFactoryImpl());
                 bind(RolePermissionFactory.class).toInstance(new RolePermissionFactoryImpl());
 
+                GroupRepository groupRepository = new GroupImplJpaRepository(jpaRepoConfig);
+
                 bind(GroupService.class).toInstance(
                     new GroupServiceImpl(
                         txManager,
                         Mockito.mock(ServiceConfigurationManager.class),
                         mockedAuthorization,
                         mockPermissionFactory,
-                        new GroupImplJpaRepository(jpaRepoConfig)
+                        new GroupServiceValidationUtilsImpl(
+                            mockedAuthorization,
+                            mockPermissionFactory,
+                            Mockito.mock(ServiceConfigurationManager.class),
+                            Mockito.mock(TagService.class),
+                            Mockito.mock(TagFactory.class),
+                            groupRepository
+                            ),
+                        groupRepository
                     )
                 );
 

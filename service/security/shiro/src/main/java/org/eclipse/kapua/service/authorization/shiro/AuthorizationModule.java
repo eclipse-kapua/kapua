@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2021, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2021, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -76,6 +76,8 @@ import org.eclipse.kapua.service.authorization.group.GroupService;
 import org.eclipse.kapua.service.authorization.group.shiro.GroupFactoryImpl;
 import org.eclipse.kapua.service.authorization.group.shiro.GroupImplJpaRepository;
 import org.eclipse.kapua.service.authorization.group.shiro.GroupServiceImpl;
+import org.eclipse.kapua.service.authorization.group.shiro.GroupServiceValidationUtils;
+import org.eclipse.kapua.service.authorization.group.shiro.GroupServiceValidationUtilsImpl;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.authorization.permission.shiro.PermissionFactoryImpl;
 import org.eclipse.kapua.service.authorization.permission.shiro.PermissionValidator;
@@ -96,6 +98,8 @@ import org.eclipse.kapua.service.authorization.role.shiro.RoleServiceImpl;
 import org.eclipse.kapua.service.authorization.shiro.claims.ClaimsFetcher;
 import org.eclipse.kapua.service.authorization.shiro.claims.ClaimsFetcherImpl;
 import org.eclipse.kapua.service.authorization.shiro.setting.KapuaAuthorizationSetting;
+import org.eclipse.kapua.service.tag.TagFactory;
+import org.eclipse.kapua.service.tag.TagService;
 import org.eclipse.kapua.storage.TxManager;
 
 import com.google.inject.Provides;
@@ -316,15 +320,37 @@ public class AuthorizationModule extends AbstractKapuaModule {
             PermissionFactory permissionFactory,
             AuthorizationService authorizationService,
             Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
+            GroupServiceValidationUtils groupServiceValidationUtils,
             GroupRepository groupRepository,
             KapuaJpaTxManagerFactory jpaTxManagerFactory
     ) {
         return new GroupServiceImpl(
             jpaTxManagerFactory.create("kapua-authorization"),
             serviceConfigurationManagersByServiceClass.get(GroupService.class),
+            authorizationService,
+            permissionFactory,
+            groupServiceValidationUtils,
+            groupRepository);
+    }
+
+    @Provides
+    @Singleton
+    public GroupServiceValidationUtils groupServiceValidationUtils(
+            AuthorizationService authorizationService,
+            PermissionFactory permissionFactory,
+            Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
+            TagService tagService,
+            TagFactory tagFactory,
+            GroupRepository userRepository
+    ) {
+        return new GroupServiceValidationUtilsImpl(
                 authorizationService,
                 permissionFactory,
-                groupRepository);
+                serviceConfigurationManagersByServiceClass.get(GroupService.class),
+                tagService,
+                tagFactory,
+                userRepository
+        );
     }
 
     @Provides
