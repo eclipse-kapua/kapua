@@ -46,6 +46,7 @@ import org.eclipse.kapua.service.authentication.shiro.setting.KapuaAuthenticatio
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.access.GroupQueryHelper;
 import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
+import org.eclipse.kapua.service.authorization.group.GroupFactory;
 import org.eclipse.kapua.service.authorization.group.GroupService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
@@ -191,30 +192,35 @@ public class DeviceRegistryLocatorConfiguration {
                         mockedAuthorization,
                         permissionFactory,
                         Mockito.mock(GroupService.class),
+                        Mockito.mock(GroupFactory.class),
                         deviceConnectionService,
                         deviceEventService,
-                        new DeviceImplJpaRepository(jpaRepoConfig),
                         new DeviceFactoryImpl(),
+                        new DeviceImplJpaRepository(jpaRepoConfig),
+                        Mockito.mock(ServiceConfigurationManager.class),
                         new TagServiceImpl(
                                 permissionFactory,
                                 mockedAuthorization,
                                 Mockito.mock(ServiceConfigurationManager.class),
                                 new KapuaJpaTxManagerFactory(maxInsertAttempts).create("kapua-tag"),
                                 new TagImplJpaRepository(jpaRepoConfig),
-                                new TagFactoryImpl())
+                                new TagFactoryImpl()),
+                        new TagFactoryImpl()
                 );
 
                 bind(DeviceValidation.class).toInstance(deviceValidation);
-                bind(DeviceRegistryService.class).toInstance(new DeviceRegistryServiceImpl(
+                bind(DeviceRegistryService.class).toInstance(
+                    new DeviceRegistryServiceImpl(
+                        txManager,
                         Mockito.mock(ServiceConfigurationManager.class),
                         mockedAuthorization,
                         permissionFactory,
-                        txManager,
-                        new DeviceImplJpaRepository(jpaRepoConfig),
-                        new DeviceFactoryImpl(),
-                        Mockito.mock(GroupQueryHelper.class),
-                        eventStorer,
-                        deviceValidation)
+                            new DeviceFactoryImpl(),
+                            deviceValidation,
+                            new DeviceImplJpaRepository(jpaRepoConfig),
+                            Mockito.mock(GroupQueryHelper.class),
+                        eventStorer
+                    )
                 );
             }
         };

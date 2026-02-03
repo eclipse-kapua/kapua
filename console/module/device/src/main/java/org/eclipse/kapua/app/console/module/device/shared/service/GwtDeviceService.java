@@ -110,6 +110,14 @@ public interface GwtDeviceService extends RemoteService {
     void deleteDevice(GwtXSRFToken xsfrToken, String scopeIdString, String clientId)
             throws GwtKapuaException;
 
+    // Groups
+
+    void addDeviceGroup(GwtXSRFToken xsrfToken, String scopeIdString, String deviceIdString, String groupIdString) throws GwtKapuaException;
+
+    void deleteDeviceGroup(GwtXSRFToken xsfrToken, String scopeIdString, String deviceIdString, String groupIdString) throws GwtKapuaException;
+
+    // Tags
+
     /**
      * Adds the association between the Tag and the Device
      *

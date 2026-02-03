@@ -42,4 +42,6 @@ public interface GwtGroupService extends RemoteService {
 
     List<GwtGroup> findAll(String scopeId) throws GwtKapuaException;
 
+    PagingLoadResult<GwtGroup> findByDeviceId(PagingLoadConfig loadConfig, String gwtScopeId, String gwtDeviceId) throws GwtKapuaException;
+
 }

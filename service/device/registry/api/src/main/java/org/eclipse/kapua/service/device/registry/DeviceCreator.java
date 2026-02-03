@@ -17,6 +17,7 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -40,38 +41,7 @@ import org.eclipse.kapua.service.device.registry.event.DeviceEvent;
  */
 @XmlRootElement(name = "deviceCreator")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(propOrder = {
-        "groupId",
-        "clientId",
-        "status",
-        "connectionId",
-        "lastEventId",
-        "displayName",
-        "serialNumber",
-        "modelId",
-        "modelName",
-        "imei",
-        "imsi",
-        "iccid",
-        "biosVersion",
-        "firmwareVersion",
-        "osVersion",
-        "jvmVersion",
-        "osgiFrameworkVersion",
-        "applicationFrameworkVersion",
-        "connectionInterface",
-        "connectionIp",
-        "applicationIdentifiers",
-        "acceptEncoding",
-        "customAttribute1",
-        "customAttribute2",
-        "customAttribute3",
-        "customAttribute4",
-        "customAttribute5",
-        "extendedProperties",
-        "tagIds",
-        "tamperStatus"
-}, factoryClass = DeviceXmlRegistry.class, factoryMethod = "newDeviceCreator")
+@XmlType(factoryClass = DeviceXmlRegistry.class, factoryMethod = "newDeviceCreator")
 public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
 
     /**
@@ -79,7 +49,9 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      *
      * @return The {@link Group#getId()}.
      * @since 1.0.0
+     * @deprecated Since 2.1.0. Please use {@link #getGroupIds()}
      */
+    @Deprecated
     @XmlElement(name = "groupId")
     @XmlJavaTypeAdapter(KapuaIdAdapter.class)
     KapuaId getGroupId();
@@ -89,8 +61,47 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      *
      * @param groupId The {@link Group#getId()}.
      * @since 1.0.0
+     * @deprecated Since 2.1.0. Please use {@link #setGroupIds(Set)}
      */
+    @Deprecated
     void setGroupId(KapuaId groupId);
+
+    /**
+     * Gets the set of Group id assigned to this entity.
+     *
+     * @return The set Group id assigned to this entity.
+     * @since 2.1.0
+     */
+    @XmlElementWrapper(name = "groupIds")
+    @XmlElement(name = "groupId")
+    @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    Set<KapuaId> getGroupIds();
+
+    /**
+     * Gets the list of tags associated with the device.
+     *
+     * @return The list of tags.
+     * @since 2.0.0
+     */
+    @XmlElement(name = "tagIds")
+    @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    Set<KapuaId> getTagIds();
+
+    /**
+     * Sets the list of tags associated with the device.
+     *
+     * @param tags The list of tags.
+     * @since 2.0.0
+     */
+    void setTagIds(Set<KapuaId> tags);
+
+    /**
+     * Sets the set of Group id of this entity.
+     *
+     * @param groupIds The set Group id to assign.
+     * @since 2.1.0
+     */
+    void setGroupIds(Set<KapuaId> groupIds);
 
     /**
      * Gets the client identifier.
@@ -578,22 +589,4 @@ public interface DeviceCreator extends KapuaUpdatableEntityCreator<Device> {
      */
     void setTamperStatus(String tamperStatus);
 
-
-    /**
-     * Gets the list of tags associated with the device.
-     *
-     * @return The list of tags.
-     * @since 2.0.0
-     */
-    @XmlElement(name = "tagIds")
-    @XmlJavaTypeAdapter(KapuaIdAdapter.class)
-    Set<KapuaId> getTagIds();
-
-    /**
-     * Sets the list of tags associated with the device.
-     *
-     * @param tags The list of tags.
-     * @since 2.0.0
-     */
-    void setTagIds(Set<KapuaId> tags);
 }

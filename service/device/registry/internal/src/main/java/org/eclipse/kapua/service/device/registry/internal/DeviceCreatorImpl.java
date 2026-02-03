@@ -19,6 +19,7 @@ import java.util.Set;
 import javax.validation.constraints.NotNull;
 
 import org.eclipse.kapua.commons.model.AbstractKapuaUpdatableEntityCreator;
+import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceCreator;
@@ -34,6 +35,9 @@ public class DeviceCreatorImpl extends AbstractKapuaUpdatableEntityCreator<Devic
 
     private static final long serialVersionUID = 8497299443773395462L;
     private KapuaId groupId;
+
+    private Set<KapuaId> groupIds;
+    private Set<KapuaId> tagIds;
     private String clientId;
     private DeviceStatus status = DeviceStatus.ENABLED;
     private KapuaId connectionId;
@@ -62,7 +66,6 @@ public class DeviceCreatorImpl extends AbstractKapuaUpdatableEntityCreator<Devic
     private String customAttribute5;
     private List<DeviceExtendedProperty> extendedProperties;
     private String tamperStatus;
-    private Set<KapuaId> tagIds;
 
     /**
      * Constructor.
@@ -82,6 +85,38 @@ public class DeviceCreatorImpl extends AbstractKapuaUpdatableEntityCreator<Devic
     @Override
     public void setGroupId(KapuaId groupId) {
         this.groupId = groupId;
+    }
+
+    @Override
+    public void setGroupIds(Set<KapuaId> groupIds) {
+        this.groupIds = new HashSet<>();
+
+        for (KapuaId groupId : groupIds) {
+            this.groupIds.add(KapuaEid.parseKapuaId(groupId));
+        }
+    }
+
+    @Override
+    public Set<KapuaId> getGroupIds() {
+        Set<KapuaId> groupIds = new HashSet<>();
+
+        if (this.groupIds != null) {
+            for (KapuaId groupId : this.groupIds) {
+                groupIds.add(KapuaEid.parseKapuaId(groupId));
+            }
+        }
+
+        return groupIds;
+    }
+
+    @Override
+    public Set<KapuaId> getTagIds() {
+        return tagIds == null ? new HashSet<>() : tagIds;
+    }
+
+    @Override
+    public void setTagIds(Set<KapuaId> tagIds) {
+        this.tagIds = tagIds;
     }
 
     @Override
@@ -371,15 +406,5 @@ public class DeviceCreatorImpl extends AbstractKapuaUpdatableEntityCreator<Devic
     @Override
     public void setTamperStatus(String tamperStatus) {
         this.tamperStatus = tamperStatus;
-    }
-
-    @Override
-    public Set<KapuaId> getTagIds() {
-        return tagIds == null ? new HashSet<>() : tagIds;
-    }
-
-    @Override
-    public void setTagIds(Set<KapuaId> tagIds) {
-        this.tagIds = tagIds;
     }
 }
