@@ -191,6 +191,7 @@ public class SecurityLocatorConfiguration {
                             Mockito.mock(TagFactory.class),
                             groupRepository
                             ),
+                        mockGroupQueryHelper,
                         groupRepository
                     )
                 );
