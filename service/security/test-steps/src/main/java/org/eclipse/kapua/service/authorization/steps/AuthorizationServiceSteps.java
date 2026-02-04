@@ -1033,41 +1033,47 @@ public class AuthorizationServiceSteps extends TestBase {
         createPermissionsForDomain(permList, true);
     }
 
-    private void createPermissionsForDomain(String permList, boolean restrictToLastCreatedGroup) {
+    private void createPermissionsForDomain(String permissionListString, boolean restrictToLastCreatedGroup) {
         // Split the parameter string and make sure there is at least one item
-        String[] tmpList = permList.toLowerCase().split(",");
-        Assert.assertNotNull(tmpList);
-        Assert.assertNotEquals(0, tmpList.length);
+        String[] permissionList = permissionListString.toLowerCase().split(",");
+        Assert.assertNotNull(permissionList);
+        Assert.assertNotEquals(0, permissionList.length);
+
         // Parse the items and fill the list
         Set<Permission> permissions = new HashSet<>();
-        KapuaId currId = (KapuaId) stepData.get(LAST_ACCOUNT_ID);
+        KapuaId lastAccountId = (KapuaId) stepData.get(LAST_ACCOUNT_ID);
+
         // Get the current domain
-        Domain curDomain = (Domain) stepData.get(DOMAIN);
-        for (String perm : tmpList) {
-            switch (perm.trim()) {
+        Domain selectedDomain = (Domain) stepData.get(DOMAIN);
+        Assert.assertNotNull("Given Domain not found", selectedDomain);
+
+        // Generate permission
+        for (String permission : permissionList) {
+            switch (permission.trim()) {
                 case "read":
-                    permissions.add(permissionFactory.newPermission(curDomain.getDomain().getName(), Actions.read, currId));
+                    permissions.add(permissionFactory.newPermission(selectedDomain.getDomain().getName(), Actions.read, lastAccountId));
                     break;
                 case "write":
-                    permissions.add(permissionFactory.newPermission(curDomain.getDomain().getName(), Actions.write, currId));
+                    permissions.add(permissionFactory.newPermission(selectedDomain.getDomain().getName(), Actions.write, lastAccountId));
                     break;
                 case "delete":
-                    permissions.add(permissionFactory.newPermission(curDomain.getDomain().getName(), Actions.delete, currId));
+                    permissions.add(permissionFactory.newPermission(selectedDomain.getDomain().getName(), Actions.delete, lastAccountId));
                     break;
                 case "connect":
-                    permissions.add(permissionFactory.newPermission(curDomain.getDomain().getName(), Actions.connect, currId));
+                    permissions.add(permissionFactory.newPermission(selectedDomain.getDomain().getName(), Actions.connect, lastAccountId));
                     break;
                 case "execute":
-                    permissions.add(permissionFactory.newPermission(curDomain.getDomain().getName(), Actions.execute, currId));
+                    permissions.add(permissionFactory.newPermission(selectedDomain.getDomain().getName(), Actions.execute, lastAccountId));
                     break;
                 case "all":
-                    permissions.add(permissionFactory.newPermission(curDomain.getDomain().getName(), null, currId));
+                    permissions.add(permissionFactory.newPermission(selectedDomain.getDomain().getName(), null, lastAccountId));
                     break;
             }
         }
         // Make sure that there is at least one valid item
         Assert.assertFalse(permissions.isEmpty());
         stepData.put(PERMISSIONS, permissions);
+
         if (restrictToLastCreatedGroup) {
             restrictPermissionsToSpecificGroup();
         }
