@@ -15,6 +15,7 @@ package org.eclipse.kapua.service.device.call.kura.model.configuration.json;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import org.eclipse.kapua.service.device.call.kura.model.configuration.KuraPassword;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -92,6 +93,8 @@ public class KuraJsonConfigPropertiesSerializer extends JsonSerializer<Map<Strin
             writeNumber(gen, (Number) value);
         } else if (value instanceof Boolean) {
             gen.writeBoolean((Boolean) value);
+        } else if (value instanceof KuraPassword) {
+            gen.writeString(((KuraPassword) value).getPassword());
         } else {
             gen.writeString(value.toString());
         }
@@ -132,6 +135,8 @@ public class KuraJsonConfigPropertiesSerializer extends JsonSerializer<Map<Strin
             return "BOOLEAN";
         } else if (value instanceof Character) {
             return "CHAR";
+        } else if (value instanceof KuraPassword) {
+            return "PASSWORD";
         } else {
             return "STRING";
         }
