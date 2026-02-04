@@ -187,6 +187,11 @@ paths:
   ### Device Configuration Store ###
   /{scopeId}/devices/{deviceId}/configurations/_settings:
     $ref: './deviceConfiguration/deviceConfiguration-scopeId-deviceId-_settings.yaml#/paths/~1{scopeId}~1devices~1{deviceId}~1configurations~1_settings'
+  ### Device Wires ###
+  /{scopeId}/devices/{deviceId}/graph/snapshot:
+    $ref: './deviceWireGraph/deviceWires-scopeId-deviceId.yaml#/paths/~1{scopeId}~1devices~1{deviceId}~1graph~1snapshot'
+  /{scopeId}/devices/{deviceId}/graph:
+    $ref: './deviceWireGraph/deviceWires-scopeId-deviceId.yaml#/paths/~1{scopeId}~1devices~1{deviceId}~1graph'
   ### Device Inventory ###
   /{scopeId}/devices/{deviceId}/inventory:
     $ref: './deviceInventory/deviceInventory-scopeId-deviceId.yaml#/paths/~1{scopeId}~1devices~1{deviceId}~1inventory'

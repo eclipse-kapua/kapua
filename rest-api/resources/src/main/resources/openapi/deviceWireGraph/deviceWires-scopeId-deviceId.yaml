@@ -1,0 +1,102 @@
+openapi: 3.0.3
+
+info:
+  title: Eclipse Kapua REST API - Device Management - Configuration
+  version: '1.0'
+  contact:
+    name: Eclipse Kapua Dev Team
+    url: https://eclipse.org/kapua
+    email: kapua-dev@eclipse.org
+  license:
+    name: Eclipse Public License 2.0
+    url: https://www.eclipse.org/legal/epl-2.0
+
+paths:
+  /{scopeId}/devices/{deviceId}/graph/snapshot:
+    get:
+      tags:
+        - Device Management - Wires
+      summary: Read the Wire Graph Configuration
+      operationId: deviceWireGraphRead
+      parameters:
+        - $ref: '../openapi.yaml#/components/parameters/scopeId'
+        - $ref: '../device/device.yaml#/components/parameters/deviceId'
+        - $ref: '../device/device.yaml#/components/parameters/timeout'
+      responses:
+        200:
+          description: The wire graph configuration on a single Device
+          content:
+            application/json:
+              schema:
+                $ref: '../deviceConfiguration/deviceConfiguration.yaml#/components/schemas/componentConfigurations'
+            application/xml:
+              schema:
+                $ref: '../deviceConfiguration/deviceConfiguration.yaml#/components/schemas/componentConfigurations'
+        400:
+          $ref: '../openapi.yaml#/components/responses/illegalArgument'
+        401:
+          $ref: '../openapi.yaml#/components/responses/unauthenticated'
+        403:
+          $ref: '../openapi.yaml#/components/responses/subjectUnauthorized'
+        404:
+          $ref: '../openapi.yaml#/components/responses/entityNotFound'
+        500:
+          $ref: '../openapi.yaml#/components/responses/kapuaError'
+    put:
+      tags:
+        - Device Management - Wires
+      summary: Update the Wire Graph Configuration
+      operationId: deviceWireGraphPut
+      parameters:
+        - $ref: '../openapi.yaml#/components/parameters/scopeId'
+        - $ref: '../device/device.yaml#/components/parameters/deviceId'
+        - $ref: '../device/device.yaml#/components/parameters/timeout'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '../deviceConfiguration/deviceConfiguration.yaml#/components/schemas/componentConfigurations'
+          application/xml:
+            schema:
+              $ref: '../deviceConfiguration/deviceConfiguration.yaml#/components/schemas/componentConfigurations'
+        required: true
+      responses:
+        204:
+          description: The updated wire graph on a single Device
+        400:
+          $ref: '../openapi.yaml#/components/responses/illegalArgument'
+        401:
+          $ref: '../openapi.yaml#/components/responses/unauthenticated'
+        403:
+          $ref: '../openapi.yaml#/components/responses/subjectUnauthorized'
+        404:
+          $ref: '../openapi.yaml#/components/responses/entityNotFound'
+        409:
+          $ref: '../openapi.yaml#/components/responses/conflictDeviceNotConnected'
+        500:
+          $ref: '../openapi.yaml#/components/responses/kapuaError'
+  /{scopeId}/devices/{deviceId}/graph:
+    delete:
+      tags:
+        - Device Management - Wires
+      summary: Delete the Wire Graph Configuration
+      operationId: deviceWireGraphDelete
+      parameters:
+        - $ref: '../openapi.yaml#/components/parameters/scopeId'
+        - $ref: '../device/device.yaml#/components/parameters/deviceId'
+        - $ref: '../device/device.yaml#/components/parameters/timeout'
+      responses:
+        204:
+          description: The Wire Graph Configuration has been deleted on a single Device
+        400:
+          $ref: '../openapi.yaml#/components/responses/illegalArgument'
+        401:
+          $ref: '../openapi.yaml#/components/responses/unauthenticated'
+        403:
+          $ref: '../openapi.yaml#/components/responses/subjectUnauthorized'
+        404:
+          $ref: '../openapi.yaml#/components/responses/entityNotFound'
+        409:
+          $ref: '../openapi.yaml#/components/responses/conflictDeviceNotConnected'
+        500:
+          $ref: '../openapi.yaml#/components/responses/kapuaError'

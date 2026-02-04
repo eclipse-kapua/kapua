@@ -22,7 +22,6 @@ import org.eclipse.kapua.service.device.management.configuration.DeviceConfigura
 import org.eclipse.kapua.service.device.management.configuration.DeviceConfigurationManagementService;
 import org.eclipse.kapua.service.device.management.configuration.store.DeviceConfigurationStoreService;
 import org.eclipse.kapua.service.device.management.configuration.store.settings.DeviceConfigurationStoreSettings;
-import org.eclipse.kapua.service.device.management.wire.DeviceWiresManagementService;
 import org.eclipse.kapua.service.device.registry.Device;
 
 import javax.inject.Inject;
@@ -43,8 +42,6 @@ public class DeviceManagementConfigurations extends AbstractKapuaResource {
     @Inject
     public DeviceConfigurationManagementService configurationService;
     @Inject
-    public DeviceWiresManagementService wiresManagementService;
-    @Inject
     public DeviceConfigurationStoreService deviceConfigurationStoreService;
 
     /**
@@ -63,8 +60,7 @@ public class DeviceManagementConfigurations extends AbstractKapuaResource {
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,
             @QueryParam("timeout") @DefaultValue("30000") Long timeout) throws KapuaException {
-        return wiresManagementService.get(scopeId, deviceId, timeout); //TODO: change here
-//        return getComponent(scopeId, deviceId, null, timeout);
+        return getComponent(scopeId, deviceId, null, timeout);
     }
 
     /**
@@ -85,8 +81,7 @@ public class DeviceManagementConfigurations extends AbstractKapuaResource {
             @PathParam("deviceId") EntityId deviceId,
             @QueryParam("timeout") @DefaultValue("30000") Long timeout,
             DeviceConfiguration deviceConfiguration) throws KapuaException {
-//        configurationService.put(scopeId, deviceId, deviceConfiguration, timeout);
-        wiresManagementService.put(scopeId, deviceId, deviceConfiguration, timeout);
+        configurationService.put(scopeId, deviceId, deviceConfiguration, timeout);
 
         return returnNoContent();
     }
