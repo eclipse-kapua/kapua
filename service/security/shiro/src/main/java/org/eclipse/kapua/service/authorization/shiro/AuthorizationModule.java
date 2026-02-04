@@ -341,6 +341,7 @@ public class AuthorizationModule extends AbstractKapuaModule {
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
             Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
+            DomainRegistryService domainRegistryService,
             TagService tagService,
             TagFactory tagFactory,
             GroupRepository userRepository
@@ -349,6 +350,7 @@ public class AuthorizationModule extends AbstractKapuaModule {
                 authorizationService,
                 permissionFactory,
                 serviceConfigurationManagersByServiceClass.get(GroupService.class),
+                domainRegistryService,
                 tagService,
                 tagFactory,
                 userRepository

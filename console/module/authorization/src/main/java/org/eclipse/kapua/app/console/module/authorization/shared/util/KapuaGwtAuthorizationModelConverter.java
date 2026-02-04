@@ -52,6 +52,7 @@ public class KapuaGwtAuthorizationModelConverter {
         // Convert other attributes
         gwtGroup.setGroupName(group.getName());
         gwtGroup.setGroupDescription(group.getDescription());
+        gwtGroup.setDomain(group.getDomain());
 
         return gwtGroup;
     }

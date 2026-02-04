@@ -12,6 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.authorization.client.group;
 
+import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
+import com.extjs.gxt.ui.client.event.SelectionChangedListener;
+import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.widget.form.ComboBox;
+import com.extjs.gxt.ui.client.widget.form.LabelField;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaErrorCode;
@@ -27,20 +32,31 @@ import org.eclipse.kapua.app.console.module.api.client.util.validator.TextFieldV
 import org.eclipse.kapua.app.console.module.api.client.util.validator.TextFieldValidator.FieldType;
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
 import org.eclipse.kapua.app.console.module.authorization.client.messages.ConsoleGroupMessages;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtDomain;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupCreator;
+import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtDomainRegistryService;
+import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtDomainRegistryServiceAsync;
 import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtGroupService;
 import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtGroupServiceAsync;
+
+import java.util.List;
 
 public class GroupAddDialog extends EntityAddEditDialog {
 
     private static final ConsoleGroupMessages MSGS = GWT.create(ConsoleGroupMessages.class);
     private static final ConsoleMessages CONSOLE_MSGS = GWT.create(ConsoleMessages.class);
 
+    private static final GwtDomainRegistryServiceAsync DOMAIN_SERVICE = GWT.create(GwtDomainRegistryService.class);
+
     private static final GwtGroupServiceAsync GWT_GROUP_SERVICE = GWT.create(GwtGroupService.class);
 
     protected KapuaTextField<String> groupNameField;
     protected KapuaTextField<String> groupDescriptionField;
+
+    protected ComboBox<GwtDomain> domainsCombo;
+
+    protected LabelField domainsLabel;
 
     public GroupAddDialog(GwtSession currentSession) {
         super(currentSession);
@@ -50,7 +66,10 @@ public class GroupAddDialog extends EntityAddEditDialog {
     @Override
     public void createBody() {
         submitButton.disable();
+
         FormPanel groupFormPanel = new FormPanel(FORM_LABEL_WIDTH);
+
+        // Name
         groupNameField = new KapuaTextField<String>();
         groupNameField.setAllowBlank(false);
         groupNameField.setMinLength(3);
@@ -60,6 +79,7 @@ public class GroupAddDialog extends EntityAddEditDialog {
         groupNameField.setToolTip(MSGS.dialogAddFieldNameTooltip());
         groupFormPanel.add(groupNameField);
 
+        // Description
         groupDescriptionField = new KapuaTextField<String>();
         groupDescriptionField.setAllowBlank(true);
         groupDescriptionField.setMaxLength(255);
@@ -67,6 +87,56 @@ public class GroupAddDialog extends EntityAddEditDialog {
         groupDescriptionField.setFieldLabel(MSGS.dialogAddFieldDescription());
         groupNameField.setToolTip(MSGS.dialogAddFieldDescriptionTooltip());
         groupFormPanel.add(groupDescriptionField);
+
+        // Domain
+        domainsCombo = new ComboBox<GwtDomain>();
+        domainsCombo.setStore(new ListStore<GwtDomain>());
+        domainsCombo.setEditable(false);
+        domainsCombo.setTypeAhead(false);
+        domainsCombo.setAllowBlank(false);
+        domainsCombo.disable();
+        domainsCombo.setFieldLabel("* Domain");
+        domainsCombo.setTriggerAction(ComboBox.TriggerAction.ALL);
+        domainsCombo.setEmptyText("Loading Domains...");
+        domainsCombo.setToolTip("Select a target domain for the Group");
+        domainsCombo.setDisplayField("domainName");
+        domainsCombo.addSelectionChangedListener(new SelectionChangedListener<GwtDomain>() {
+
+            @Override
+            public void selectionChanged(SelectionChangedEvent<GwtDomain> selectionChangedEvent) {
+                setSubmitButtonState();
+            }
+        });
+        groupFormPanel.add(domainsCombo);
+
+        // Load domains
+        DOMAIN_SERVICE.findAll(new AsyncCallback<List<GwtDomain>>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                exitStatus = false;
+                if (!isPermissionErrorMessage(caught)) {
+                    exitMessage = MSGS.dialogAddError(caught.getLocalizedMessage());
+                }
+                hide();
+            }
+
+            @Override
+            public void onSuccess(List<GwtDomain> result) {
+                domainsCombo.setEmptyText("Select a Domain...");
+
+                domainsCombo.getStore().add(result);
+                domainsCombo.enable();
+            }
+        });
+
+        domainsLabel = new LabelField();
+        domainsLabel.setFieldLabel("Domain");
+        domainsLabel.setLabelSeparator(":");
+        domainsLabel.hide();
+        groupFormPanel.add(domainsLabel);
+
+        // Add form panel to main body
         bodyPanel.add(groupFormPanel);
     }
 
@@ -79,9 +149,9 @@ public class GroupAddDialog extends EntityAddEditDialog {
     @Override
     protected void preSubmit() {
         validateGroups();
+
         super.preSubmit();
     }
-
 
     @Override
     public void submit() {
@@ -89,6 +159,8 @@ public class GroupAddDialog extends EntityAddEditDialog {
         gwtGroupCreator.setScopeId(currentSession.getSelectedAccountId());
         gwtGroupCreator.setName(groupNameField.getValue());
         gwtGroupCreator.setDescription(groupDescriptionField.getValue());
+        gwtGroupCreator.setDomain(domainsCombo.getValue().getDomainName());
+
         GWT_GROUP_SERVICE.create(gwtGroupCreator, new AsyncCallback<GwtGroup>() {
 
             @Override
@@ -129,5 +201,4 @@ public class GroupAddDialog extends EntityAddEditDialog {
     public String getInfoMessage() {
         return MSGS.dialogAddInfo();
     }
-
 }

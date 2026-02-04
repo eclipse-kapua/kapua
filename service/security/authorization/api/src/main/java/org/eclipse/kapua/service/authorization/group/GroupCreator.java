@@ -30,4 +30,20 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlType(factoryClass = GroupXmlRegistry.class, factoryMethod = "newGroupCreator")
 public interface GroupCreator extends KapuaNamedEntityCreator<Group> {
+
+    /**
+     * Gets the target domain
+     *
+     * @return The target domain
+     * @since 2.1.0
+     */
+    String getDomain();
+
+    /**
+     * Sets the target domain
+     *
+     * @param domain The target domain
+     * @since 2.1.0
+     */
+    void setDomain(String domain);
 }

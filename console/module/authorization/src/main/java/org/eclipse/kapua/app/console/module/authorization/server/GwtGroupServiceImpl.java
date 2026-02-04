@@ -18,6 +18,7 @@ import com.extjs.gxt.ui.client.data.ListLoadResult;
 import com.extjs.gxt.ui.client.data.PagingLoadConfig;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
 import org.eclipse.kapua.KapuaDuplicateNameException;
+import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.server.KapuaRemoteServiceServlet;
@@ -37,6 +38,7 @@ import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.group.Group;
+import org.eclipse.kapua.service.authorization.group.GroupAttributes;
 import org.eclipse.kapua.service.authorization.group.GroupCreator;
 import org.eclipse.kapua.service.authorization.group.GroupFactory;
 import org.eclipse.kapua.service.authorization.group.GroupListResult;
@@ -72,6 +74,8 @@ public class GwtGroupServiceImpl extends KapuaRemoteServiceServlet implements Gw
 
             GroupCreator groupCreator = GROUP_FACTORY.newCreator(scopeId, gwtGroupCreator.getName());
             groupCreator.setDescription(gwtGroupCreator.getDescription());
+            groupCreator.setDomain(gwtGroupCreator.getDomain());
+
             Group group = GROUP_SERVICE.create(groupCreator);
 
             return KapuaGwtAuthorizationModelConverter.convertGroup(group);
@@ -88,17 +92,18 @@ public class GwtGroupServiceImpl extends KapuaRemoteServiceServlet implements Gw
 
             Group group = GROUP_SERVICE.find(scopeId, groupId);
 
-            GwtGroup gwtGroupUpdated = null;
-            if (group != null) {
-                group.setName(gwtGroup.getGroupName());
-                group.setDescription(gwtGroup.getUnescapedDescription());
-
-                GROUP_SERVICE.update(group);
-
-                gwtGroupUpdated = KapuaGwtAuthorizationModelConverter.convertGroup(GROUP_SERVICE.find(group.getScopeId(), group.getId()));
+            if (group == null) {
+                throw new KapuaEntityNotFoundException(Group.TYPE, groupId);
             }
 
-            return gwtGroupUpdated;
+            group.setName(gwtGroup.getGroupName());
+            group.setDescription(gwtGroup.getUnescapedDescription());
+            group.setDomain(gwtGroup.getDomain());
+            group.setOptlock(gwtGroup.getOptlock());
+
+            GROUP_SERVICE.update(group);
+
+            return KapuaGwtAuthorizationModelConverter.convertGroup(GROUP_SERVICE.find(group.getScopeId(), group.getId()));
         } catch (Exception e) {
             throw KapuaExceptionHandler.buildExceptionFromError(e);
         }
@@ -178,6 +183,7 @@ public class GwtGroupServiceImpl extends KapuaRemoteServiceServlet implements Gw
                 // Id", KapuaGwtAuthenticationModelConverter.convertKapuaId(group.getScopeId())));
                 gwtGroupDescription.add(new GwtGroupedNVPair("accessGroupInfo", "accessGroupName", group.getName()));
                 gwtGroupDescription.add(new GwtGroupedNVPair("accessGroupInfo", "accessGroupDescription", group.getDescription()));
+                gwtGroupDescription.add(new GwtGroupedNVPair("accessGroupInfo", "accessGroupDomain", group.getDomain()));
                 gwtGroupDescription.add(new GwtGroupedNVPair(ENTITY_INFO, "accessGroupCreatedOn", group.getCreatedOn()));
                 gwtGroupDescription.add(new GwtGroupedNVPair(ENTITY_INFO, "accessGroupCreatedBy", UserCreatedByModifiedByUtils.resolveFromId(group.getCreatedBy())));
                 gwtGroupDescription.add(new GwtGroupedNVPair(ENTITY_INFO, "accessGroupModifiedOn", group.getModifiedOn()));
@@ -193,19 +199,34 @@ public class GwtGroupServiceImpl extends KapuaRemoteServiceServlet implements Gw
 
     @Override
     public List<GwtGroup> findAll(String scopeId) throws GwtKapuaException {
+        return findAll(scopeId, null);
+    }
+
+    @Override
+    public List<GwtGroup> findAll(String scopeId, String domain) throws GwtKapuaException {
         try {
             GroupQuery query = GROUP_FACTORY.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(scopeId));
+
+            if (domain != null) {
+                query.setPredicate(
+                        query.attributePredicate(GroupAttributes.DOMAIN, domain)
+                );
+            }
+
             GroupListResult result = GROUP_SERVICE.query(query);
 
             List<GwtGroup> groupList = new ArrayList<GwtGroup>();
             for (Group group : result.getItems()) {
                 groupList.add(KapuaGwtAuthorizationModelConverter.convertGroup(group));
             }
+
             return groupList;
         } catch (KapuaException e) {
             throw KapuaExceptionHandler.buildExceptionFromError(e);
         }
     }
+
+
 
     @Override
     public PagingLoadResult<GwtGroup> findByDeviceId(PagingLoadConfig loadConfig, String gwtScopeId, String gwtDeviceId) throws GwtKapuaException {

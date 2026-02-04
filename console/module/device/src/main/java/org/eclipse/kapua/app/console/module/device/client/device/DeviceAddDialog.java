@@ -196,7 +196,7 @@ public class DeviceAddDialog extends EntityAddEditDialog {
         if (currentSession.hasPermission(GroupSessionPermission.read())) {
             groupCombo.addListener(Events.Select, comboBoxListener);
 
-            gwtGroupService.findAll(currentSession.getSelectedAccountId(), new AsyncCallback<List<GwtGroup>>() {
+            gwtGroupService.findAll(currentSession.getSelectedAccountId(), "device", new AsyncCallback<List<GwtGroup>>() {
 
                 @Override
                 public void onFailure(Throwable caught) {
