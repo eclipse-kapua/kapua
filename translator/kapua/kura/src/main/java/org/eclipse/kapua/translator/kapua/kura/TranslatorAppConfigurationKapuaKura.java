@@ -40,6 +40,7 @@ import org.eclipse.kapua.service.device.management.configuration.DeviceConfigura
 import org.eclipse.kapua.service.device.management.configuration.message.internal.ConfigurationRequestChannel;
 import org.eclipse.kapua.service.device.management.configuration.message.internal.ConfigurationRequestMessage;
 import org.eclipse.kapua.service.device.management.configuration.message.internal.ConfigurationRequestPayload;
+import org.eclipse.kapua.service.device.management.message.KapuaMethod;
 import org.eclipse.kapua.translator.exception.InvalidChannelException;
 import org.eclipse.kapua.translator.exception.InvalidPayloadException;
 
@@ -66,7 +67,11 @@ public class TranslatorAppConfigurationKapuaKura extends AbstractTranslatorKapua
             if (kapuaChannel.getConfigurationId() == null) {
                 if (kapuaChannel.getAppName().getValue().equals("WIRE")) {
                     kuraRequestChannel = TranslatorKapuaKuraUtils.buildBaseRequestChannel(WireMetrics.APP_ID, WireMetrics.APP_VERSION, kapuaChannel.getMethod());
-                    resources.add("graph/snapshot");
+                    if (kapuaChannel.getMethod() == KapuaMethod.DEL) {
+                        resources.add("graph");
+                    } else {
+                        resources.add("graph/snapshot");
+                    }
                     isWire = true;
                 } else {
                     resources.add("configurations");

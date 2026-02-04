@@ -122,7 +122,7 @@ public class DeviceWiresManagementServiceImpl extends AbstractDeviceManagementTr
         // Argument Validation
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
-        ArgumentValidator.notNull(wireGraphConfig, "componentConfiguration"); //TODO rename?
+        ArgumentValidator.notNull(wireGraphConfig, "wireGraphConfiguration");
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
         // Prepare the request
@@ -158,7 +158,7 @@ public class DeviceWiresManagementServiceImpl extends AbstractDeviceManagementTr
         try {
             responseMessage = configurationDeviceCallBuilder.send();
         } catch (Exception e) {
-            LOG.error("Error while putting DeviceConfiguration {} for Device {}. Error: {}", wireGraphConfig, deviceId, e.getMessage(), e);
+            LOG.error("Error while putting Device Wire Graph {} for Device {}. Error: {}", wireGraphConfig, deviceId, e.getMessage(), e);
             throw e;
         }
 
@@ -170,6 +170,45 @@ public class DeviceWiresManagementServiceImpl extends AbstractDeviceManagementTr
 
     @Override
     public void del(KapuaId scopeId, KapuaId deviceId, Long timeout) throws KapuaException {
+        // Argument Validation
+        ArgumentValidator.notNull(scopeId, SCOPE_ID);
+        ArgumentValidator.notNull(deviceId, DEVICE_ID);
+        // Check Access
+        authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.delete, scopeId));
+        // Prepare the request
+        ConfigurationRequestChannel configurationRequestChannel = new ConfigurationRequestChannel();
+        configurationRequestChannel.setAppName(DeviceWireAppProperties.APP_NAME);
+        configurationRequestChannel.setVersion(DeviceWireAppProperties.APP_VERSION);
+        configurationRequestChannel.setMethod(KapuaMethod.DEL);
+
+        ConfigurationRequestPayload configurationRequestPayload = new ConfigurationRequestPayload();
+
+        ConfigurationRequestMessage configurationRequestMessage = new ConfigurationRequestMessage();
+        configurationRequestMessage.setScopeId(scopeId);
+        configurationRequestMessage.setDeviceId(deviceId);
+        configurationRequestMessage.setCapturedOn(new Date());
+        configurationRequestMessage.setPayload(configurationRequestPayload);
+        configurationRequestMessage.setChannel(configurationRequestChannel);
+
+        // Build request
+        DeviceCallBuilder<ConfigurationRequestChannel, ConfigurationRequestPayload, ConfigurationRequestMessage, ConfigurationResponseMessage> configurationDeviceCallBuilder =
+                DeviceCallBuilder
+                        .newBuilder()
+                        .withRequestMessage(configurationRequestMessage)
+                        .withTimeoutOrDefault(timeout);
+
+        ConfigurationResponseMessage responseMessage;
+        try {
+            responseMessage = configurationDeviceCallBuilder.send();
+        } catch (Exception e) {
+            LOG.error("Error while getting Device Wire Graph for Device {}. Error: {}", deviceId, e.getMessage(), e);
+            throw e;
+        }
+
+        // Create event
+        createDeviceEvent(scopeId, deviceId, configurationRequestMessage, responseMessage);
+        // Check response
+        checkResponseAcceptedOrThrowError(responseMessage);
     }
 
 }
