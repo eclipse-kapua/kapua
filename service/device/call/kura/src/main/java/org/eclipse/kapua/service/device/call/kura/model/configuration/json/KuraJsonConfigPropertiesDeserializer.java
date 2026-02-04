@@ -16,6 +16,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import org.eclipse.kapua.service.device.call.kura.model.configuration.KuraPassword;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -129,8 +130,9 @@ public class KuraJsonConfigPropertiesDeserializer extends JsonDeserializer<Map<S
                 return Boolean.class;
             case "CHAR":
                 return Character.class;
-            case "STRING":
             case "PASSWORD":
+                return KuraPassword.class;
+            case "STRING":
             default:
                 return String.class;
         }
@@ -160,8 +162,9 @@ public class KuraJsonConfigPropertiesDeserializer extends JsonDeserializer<Map<S
                 case "CHAR":
                     String str = value.toString();
                     return str.isEmpty() ? null : str.charAt(0);
-                case "STRING":
                 case "PASSWORD":
+                    return new KuraPassword(value.toString());
+                case "STRING":
                 default:
                     return value.toString();
             }
