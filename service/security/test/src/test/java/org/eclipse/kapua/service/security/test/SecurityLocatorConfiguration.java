@@ -69,6 +69,9 @@ import org.eclipse.kapua.service.authorization.access.GroupQueryHelper;
 import org.eclipse.kapua.service.authorization.access.shiro.AccessInfoFactoryImpl;
 import org.eclipse.kapua.service.authorization.access.shiro.AccessRoleFactoryImpl;
 import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
+import org.eclipse.kapua.service.authorization.domain.shiro.DomainFactoryImpl;
+import org.eclipse.kapua.service.authorization.domain.shiro.DomainImplJpaRepository;
+import org.eclipse.kapua.service.authorization.domain.shiro.DomainRegistryServiceImpl;
 import org.eclipse.kapua.service.authorization.group.GroupFactory;
 import org.eclipse.kapua.service.authorization.group.GroupRepository;
 import org.eclipse.kapua.service.authorization.group.GroupService;
@@ -187,7 +190,13 @@ public class SecurityLocatorConfiguration {
                             mockedAuthorization,
                             mockPermissionFactory,
                             Mockito.mock(ServiceConfigurationManager.class),
-                            Mockito.mock(DomainRegistryService.class),
+                            new DomainRegistryServiceImpl(
+                                mockedAuthorization,
+                                mockPermissionFactory,
+                                txManager,
+                                new DomainImplJpaRepository(jpaRepoConfig),
+                                new DomainFactoryImpl()
+                            ),
                             Mockito.mock(TagService.class),
                             Mockito.mock(TagFactory.class),
                             groupRepository
