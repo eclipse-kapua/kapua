@@ -20,21 +20,24 @@ import io.cucumber.junit.CucumberOptions;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-        features = { "classpath:features/authorization/AccessInfoService.feature",
-                     "classpath:features/authorization/DomainService.feature",
-                     "classpath:features/authorization/GroupService.feature",
-                     "classpath:features/authorization/MiscAuthorization.feature",
-                     "classpath:features/authorization/RoleService.feature"
-                   },
-        glue = { "org.eclipse.kapua.qa.common",
-                 "org.eclipse.kapua.service.authorization.steps",
-                 "org.eclipse.kapua.service.account.steps",
-                 "org.eclipse.kapua.service.user.steps",
-                 "org.eclipse.kapua.service.device.registry.steps"
-               },
-        plugin = {"pretty",
-                  "html:target/cucumber/AuthorizationServiceI9n",
-                  "json:target/AuthorizationServiceI9n_cucumber.json"
-                 },
+        features = {
+            "classpath:features/authorization/AccessInfoService.feature",
+            "classpath:features/authorization/DomainService.feature",
+            "classpath:features/authorization/GroupService.feature",
+            "classpath:features/authorization/MiscAuthorization.feature",
+            "classpath:features/authorization/RoleService.feature"
+        },
+        glue = {
+            "org.eclipse.kapua.qa.common",
+            "org.eclipse.kapua.service.authorization.steps",
+            "org.eclipse.kapua.service.account.steps",
+            "org.eclipse.kapua.service.user.steps",
+            "org.eclipse.kapua.service.device.registry.steps"
+        },
+        plugin = {
+            "pretty",
+            "html:target/cucumber/AuthorizationServiceI9n",
+            "json:target/AuthorizationServiceI9n_cucumber.json"
+        },
         monochrome = true)
 public class RunAuthorizationServiceI9nTest {}

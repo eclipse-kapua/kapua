@@ -97,6 +97,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 // Implementation of Gherkin steps used to test miscellaneous Shiro
 // authorization functionality.
@@ -840,6 +841,7 @@ public class AuthorizationServiceSteps extends TestBase {
         for (CucGroup tmpGrp : groups) {
             tmpGrp.doParse();
             groupCreator = groupFactory.newCreator(tmpGrp.getScopeId(), tmpGrp.getName());
+            groupCreator.setDomain("device");
             try {
                 group = groupService.create(groupCreator);
                 stepData.put(GROUP_CREATOR, groupCreator);
@@ -984,6 +986,7 @@ public class AuthorizationServiceSteps extends TestBase {
         Assert.assertNotNull(groupCreator);
         Assert.assertEquals(groupCreator.getScopeId(), group.getScopeId());
         Assert.assertEquals(groupCreator.getName(), group.getName());
+        Assert.assertEquals(groupCreator.getDomain(), group.getDomain());
         Assert.assertNotNull(group.getCreatedBy());
         Assert.assertNotNull(group.getCreatedOn());
         Assert.assertNotNull(group.getModifiedBy());
@@ -998,6 +1001,7 @@ public class AuthorizationServiceSteps extends TestBase {
         Assert.assertNotNull(groupSecond.getId());
         Assert.assertEquals(group.getScopeId(), groupSecond.getScopeId());
         Assert.assertEquals(group.getName(), groupSecond.getName());
+        Assert.assertEquals(group.getDomain(), group.getDomain());
         Assert.assertEquals(group.getCreatedBy(), groupSecond.getCreatedBy());
         Assert.assertEquals(group.getCreatedOn(), groupSecond.getCreatedOn());
         Assert.assertEquals(group.getModifiedBy(), groupSecond.getModifiedBy());
@@ -1012,6 +1016,7 @@ public class AuthorizationServiceSteps extends TestBase {
         Assert.assertNotNull(groupSecond.getId());
         Assert.assertEquals(group.getScopeId(), groupSecond.getScopeId());
         Assert.assertEquals(group.getName(), groupSecond.getName());
+        Assert.assertEquals(group.getDomain(), groupSecond.getDomain());
         Assert.assertEquals(group.getCreatedBy(), groupSecond.getCreatedBy());
         Assert.assertEquals(group.getCreatedOn(), groupSecond.getCreatedOn());
         Assert.assertEquals(group.getModifiedBy(), groupSecond.getModifiedBy());
@@ -1798,6 +1803,7 @@ public class AuthorizationServiceSteps extends TestBase {
     public void iCreateAGroupWithName(String groupName) throws Exception {
         GroupCreator groupCreator = groupFactory.newCreator(getCurrentScopeId());
         groupCreator.setName(groupName);
+        groupCreator.setDomain("device");
         try {
             primeException();
             stepData.remove(GROUP);
@@ -1815,6 +1821,7 @@ public class AuthorizationServiceSteps extends TestBase {
         for (int i = 0; i < invalidCharacters.length(); i++) {
             String groupName = GROUP + invalidCharacters.charAt(i);
             groupCreator.setName(groupName);
+            groupCreator.setDomain("device");
             try {
                 primeException();
                 stepData.remove(GROUP);
@@ -2364,6 +2371,7 @@ public class AuthorizationServiceSteps extends TestBase {
         GroupCreator groupCreator = groupFactory.newCreator(getCurrentScopeId());
         groupCreator.setName(groupName);
         groupCreator.setDescription(groupDescription);
+        groupCreator.setDomain("device");
         try {
             primeException();
             stepData.remove(GROUP);
@@ -2418,6 +2426,7 @@ public class AuthorizationServiceSteps extends TestBase {
         Assert.assertEquals(description1, group.getDescription());
         group.setDescription(description2);
         try {
+            TimeUnit.MILLISECONDS.sleep(1L); // Used to make entity.modifiedOn differ on fast machines
             Group groupSecond = groupService.update(group);
             stepData.put(GROUP_SECOND, groupSecond);
         } catch (KapuaException ex) {
@@ -2432,6 +2441,7 @@ public class AuthorizationServiceSteps extends TestBase {
             String groupName = GROUP_NAME + invalidSymbols.charAt(i);
             groupCreator.setName(groupName);
             groupCreator.setDescription(description);
+            groupCreator.setDomain("device");
             try {
                 primeException();
                 stepData.remove(GROUP);
@@ -2468,6 +2478,7 @@ public class AuthorizationServiceSteps extends TestBase {
             String groupDescription = "description" + invalidSymbols.charAt(i);
             groupCreator.setDescription(groupDescription);
             groupCreator.setName(GROUP_NAME + i);
+            groupCreator.setDomain("device");
             try {
                 primeException();
                 stepData.remove(GROUP);
@@ -2486,6 +2497,7 @@ public class AuthorizationServiceSteps extends TestBase {
             String groupDescription = "description" + invalidSymbols.charAt(i);
             groupCreator.setDescription(groupDescription);
             groupCreator.setName(GROUP_NAME + i);
+            groupCreator.setDomain("device");
             try {
                 primeException();
                 stepData.remove(GROUP);
