@@ -58,6 +58,8 @@
         <class>org.eclipse.kapua.service.authorization.domain.shiro.DomainImpl</class>
 
         <class>org.eclipse.kapua.service.authorization.group.shiro.GroupImpl</class>
+        <class>org.eclipse.kapua.service.authorization.group.shiro.GroupPermissionImpl</class>
+        <class>org.eclipse.kapua.service.authorization.group.shiro.GroupRoleImpl</class>
 
         <class>org.eclipse.kapua.service.authorization.permission.shiro.PermissionImpl</class>
 

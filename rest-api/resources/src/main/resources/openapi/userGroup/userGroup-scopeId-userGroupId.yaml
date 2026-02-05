@@ -1,0 +1,98 @@
+openapi: 3.0.3
+
+info:
+  title: Eclipse Kapua REST API - User Groups
+  version: '1.0'
+  contact:
+    name: Eclipse Kapua Dev Team
+    url: https://eclipse.org/kapua
+    email: kapua-dev@eclipse.org
+  license:
+    name: Eclipse Public License 2.0
+    url: https://www.eclipse.org/legal/epl-2.0
+
+paths:
+  /{scopeId}/userGroups/{userGroupId}:
+    get:
+      tags:
+        - User Group
+      summary: Get a single User Group
+      operationId: userGroupGet
+      parameters:
+        - $ref: '../openapi.yaml#/components/parameters/scopeId'
+        - $ref: './userGroup.yaml#/components/parameters/userGroupId'
+      responses:
+        200:
+          description: The details of the desired User Group
+          content:
+            application/json:
+              schema:
+                $ref: './userGroup.yaml#/components/schemas/userGroup'
+        400:
+          $ref: '../openapi.yaml#/components/responses/illegalArgument'
+        401:
+          $ref: '../openapi.yaml#/components/responses/unauthenticated'
+        403:
+          $ref: '../openapi.yaml#/components/responses/subjectUnauthorized'
+        404:
+          $ref: '../openapi.yaml#/components/responses/entityNotFound'
+        500:
+          $ref: '../openapi.yaml#/components/responses/kapuaError'
+    put:
+      tags:
+        - User Group
+      summary: Update a single User Group
+      operationId: userGroupUpdate
+      parameters:
+        - $ref: '../openapi.yaml#/components/parameters/scopeId'
+        - $ref: './userGroup.yaml#/components/parameters/userGroupId'
+      requestBody:
+        description: An object containing the new properties for the User Group to update
+        content:
+          application/json:
+            schema:
+              $ref: './userGroup.yaml#/components/schemas/userGroup'
+            example:
+              type: userGroup
+              optlock: 1
+              name: User Group 1
+              description: A User Group
+        required: true
+      responses:
+        200:
+          description: The details of the updated User Group
+          content:
+            application/json:
+              schema:
+                $ref: './userGroup.yaml#/components/schemas/userGroup'
+        400:
+          $ref: '../openapi.yaml#/components/responses/illegalArgument'
+        401:
+          $ref: '../openapi.yaml#/components/responses/unauthenticated'
+        403:
+          $ref: '../openapi.yaml#/components/responses/subjectUnauthorized'
+        404:
+          $ref: '../openapi.yaml#/components/responses/entityNotFound'
+        500:
+          $ref: '../openapi.yaml#/components/responses/kapuaError'
+    delete:
+      tags:
+        - User Group
+      summary: Delete a single User Group
+      operationId: userGroupDelete
+      parameters:
+        - $ref: '../openapi.yaml#/components/parameters/scopeId'
+        - $ref: './userGroup.yaml#/components/parameters/userGroupId'
+      responses:
+        204:
+          description: The User Group has been deleted
+        400:
+          $ref: '../openapi.yaml#/components/responses/illegalArgument'
+        401:
+          $ref: '../openapi.yaml#/components/responses/unauthenticated'
+        403:
+          $ref: '../openapi.yaml#/components/responses/subjectUnauthorized'
+        404:
+          $ref: '../openapi.yaml#/components/responses/entityNotFound'
+        500:
+          $ref: '../openapi.yaml#/components/responses/kapuaError'

@@ -19,7 +19,6 @@ import org.eclipse.kapua.service.KapuaEntityService;
 import org.eclipse.kapua.service.KapuaUpdatableEntityService;
 import org.eclipse.kapua.service.authentication.user.PasswordResetRequest;
 import org.eclipse.kapua.service.config.KapuaConfigurableService;
-import org.eclipse.kapua.service.user.User;
 
 import java.util.Set;
 
@@ -33,10 +32,10 @@ public interface CredentialService extends KapuaEntityService<Credential, Creden
         KapuaConfigurableService {
 
     /**
-     * Gets the {@link Credential}s filtered by {@link User#getId()}.
+     * Gets the {@link Credential}s filtered by User#getId.
      *
      * @param scopeId The {@link Credential#getScopeId()}
-     * @param userId The {@link User#getId()}
+     * @param userId The User#getId
      * @return The {@link CredentialListResult}
      * @throws KapuaException
      * @since 1.0.0
@@ -47,7 +46,7 @@ public interface CredentialService extends KapuaEntityService<Credential, Creden
      * Gets the {@link Credential}s filtered by given parameters
      *
      * @param scopeId The {@link Credential#getScopeId()}
-     * @param userId The {@link User#getId()}
+     * @param userId The User#getId
      * @param credentialType The {@link Credential#getCredentialType()}
      * @return The {@link CredentialListResult}
      * @throws KapuaException
@@ -117,7 +116,7 @@ public interface CredentialService extends KapuaEntityService<Credential, Creden
     Credential findWithKey(KapuaId scopeId, KapuaId credentialId) throws KapuaException;
 
     /**
-     * Resets the password of a {@link User}, according to the given {@link PasswordResetRequest}
+     * Resets the password of a User, according to the given {@link PasswordResetRequest}
      *
      * @param scopeId              The {@link Credential#getScopeId()}
      * @param userId               The {@link Credential#getUserId()}

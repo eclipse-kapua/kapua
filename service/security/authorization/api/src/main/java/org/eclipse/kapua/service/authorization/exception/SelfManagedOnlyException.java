@@ -12,10 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.exception;
 
-import org.eclipse.kapua.service.user.User;
-
 /**
- * {@link KapuaAuthorizationException} to {@code throw} when an operation can only be performed on the {@link User} which is currently logged.
+ * {@link KapuaAuthorizationException} to {@code throw} when an operation can only be performed on the User which is currently logged.
  *
  * @since 1.4.0
  */

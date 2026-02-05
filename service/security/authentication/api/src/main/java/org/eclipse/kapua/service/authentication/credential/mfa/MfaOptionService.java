@@ -17,7 +17,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.KapuaEntityService;
 import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.KapuaUpdatableEntityService;
-import org.eclipse.kapua.service.user.User;
 
 /**
  * {@link MfaOption} {@link KapuaService} definition.
@@ -30,19 +29,19 @@ public interface MfaOptionService extends KapuaEntityService<MfaOption, MfaOptio
     /**
      * Return the {@link MfaOption} result looking by user identifier (and also scope identifier)
      *
-     * @param scopeId The {@link User#getScopeId()}.
-     * @param userId  The {@link User#getId()}
-     * @return The {@link MfaOption} of the {@link User}, if found.
+     * @param scopeId The User#getScopeId()}.
+     * @param userId  The User#getId()}
+     * @return The {@link MfaOption} of the User, if found.
      * @throws KapuaException
      * @since 1.3.0
      */
     MfaOption findByUserId(KapuaId scopeId, KapuaId userId) throws KapuaException;
 
     /**
-     * Enables the trust machine for a {@link User}
+     * Enables the trust machine for a User
      *
-     * @param scopeId The {@link User#getScopeId()}
-     * @param userId  The {@link User#getId()}
+     * @param scopeId The User#getScopeId
+     * @param userId  The User#getId
      * @return the value of the {@link MfaOption#getTrustKey()} in plain text
      * @since 1.3.0
      */
@@ -58,10 +57,10 @@ public interface MfaOptionService extends KapuaEntityService<MfaOption, MfaOptio
     void disableTrust(KapuaId scopeId, KapuaId mfaOptionId) throws KapuaException;
 
     /**
-     * Disables the trust machine of a {@link User}
+     * Disables the trust machine of a User
      *
-     * @param scopeId The {@link User#getScopeId()}
-     * @param userId  The {@link User#getId()}
+     * @param scopeId The User#getScopeId
+     * @param userId  The User#getId
      * @since 1.3.0
      */
     void disableTrustByUserId(KapuaId scopeId, KapuaId userId) throws KapuaException;

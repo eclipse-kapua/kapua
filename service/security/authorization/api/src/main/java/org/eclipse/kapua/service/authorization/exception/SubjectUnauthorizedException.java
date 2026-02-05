@@ -13,12 +13,11 @@
 package org.eclipse.kapua.service.authorization.exception;
 
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.user.User;
 
 import javax.validation.constraints.NotNull;
 
 /**
- * {@link KapuaAuthorizationException} to {@code throw} when a {@link User} does not have the required {@link Permission}.
+ * {@link KapuaAuthorizationException} to {@code throw} when a {@link javax.security.auth.Subject} does not have the required {@link Permission}.
  *
  * @since 1.0.0
  */
@@ -29,7 +28,7 @@ public class SubjectUnauthorizedException extends KapuaAuthorizationException {
     /**
      * Constructor.
      *
-     * @param permission The {@link Permission} that the {@link User} is missing.
+     * @param permission The {@link Permission} that the {@link javax.security.auth.Subject} is missing.
      * @since 1.0.0
      */
     public SubjectUnauthorizedException(@NotNull Permission permission) {
@@ -39,9 +38,9 @@ public class SubjectUnauthorizedException extends KapuaAuthorizationException {
     }
 
     /**
-     * Gets the {@link Permission} that the {@link User} is missing.
+     * Gets the {@link Permission} that the {@link javax.security.auth.Subject} is missing.
      *
-     * @return The {@link Permission} that the {@link User} is missing.
+     * @return The {@link Permission} that the {@link javax.security.auth.Subject} is missing.
      * @since 1.0.0
      */
     public Permission getPermission() {

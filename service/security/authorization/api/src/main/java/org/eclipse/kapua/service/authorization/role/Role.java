@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * {@link Role} {@link org.eclipse.kapua.model.KapuaEntity} definition.
  * <p>
- * {@link Role} is a collection of {@link RolePermission}s that can be assigned to one or more {@link org.eclipse.kapua.service.user.User}s (using {@link AccessInfo}).
+ * {@link Role} is a collection of {@link RolePermission}s that can be assigned to one or more Users (using {@link AccessInfo}).
  *
  * @since 1.0.0
  */

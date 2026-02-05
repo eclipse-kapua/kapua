@@ -45,24 +45,24 @@ public class PermissionValidator {
         if (!permissions.isEmpty()) {
             DomainListResult domains = domainService.query(domainFactory.newQuery(null));
 
-            for (Permission p : permissions) {
-                if (p.getGroupId() != null && p.getForwardable()) {
+            for (Permission permission : permissions) {
+                if (permission.getGroupId() != null && permission.getForwardable()) {
                     throw new KapuaIllegalArgumentException(PermissionAttributes.FORWARDABLE, "true");
                 }
-                if (p.getDomain() != null) {
+                if (permission.getDomain() != null) {
                     boolean matched = false;
                     for (Domain domain : domains.getItems()) {
-                        if (domain.getName().equals(p.getDomain())) {
+                        if (domain.getName().equals(permission.getDomain())) {
                             matched = true;
-                            if (!domain.getGroupable() && p.getGroupId() != null) {
-                                throw new KapuaIllegalArgumentException(PermissionAttributes.GROUP_ID, p.getGroupId().toStringId());
+                            if (!domain.getGroupable() && permission.getGroupId() != null) {
+                                throw new KapuaIllegalArgumentException(PermissionAttributes.GROUP_ID, permission.getGroupId().toStringId());
                             }
                             break;
                         }
                     }
 
                     if (!matched) {
-                        throw new KapuaIllegalArgumentException(PermissionAttributes.DOMAIN, p.getDomain());
+                        throw new KapuaIllegalArgumentException(PermissionAttributes.DOMAIN, permission.getDomain());
                     }
                 }
             }

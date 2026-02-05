@@ -13,13 +13,12 @@
 package org.eclipse.kapua.service.authentication.exception;
 
 import org.eclipse.kapua.service.authentication.credential.Credential;
-import org.eclipse.kapua.service.user.User;
 
 /**
  * {@link KapuaAuthenticationException} to {@code throw} when a {@link Credential} with {@link Credential#getCredentialType()} is {@code PASSWORD}
- * gets created for {@link User} that has already one {@link Credential} with {@link Credential#getCredentialType()} is {@code PASSWORD}.
+ * gets created for User that has already one {@link Credential} with {@link Credential#getCredentialType()} is {@code PASSWORD}.
  * <p>
- * A {@link User} can only have one {@link Credential} with {@link Credential#getCredentialType()} set as {@code PASSWORD}.
+ * A User can only have one {@link Credential} with {@link Credential#getCredentialType()} set as {@code PASSWORD}.
  *
  * @since 2.0.0
  */

@@ -21,4 +21,7 @@
     <include relativeToChangelogFile="true" file="./athz-group-tag.xml"/>
     <include relativeToChangelogFile="true" file="./athz-group-domain.xml"/>
 
+    <include relativeToChangelogFile="true" file="./athz-group_permission-create_table.xml"/>
+    <include relativeToChangelogFile="true" file="./athz-group_role-create_table.xml"/>
+
 </databaseChangeLog>
