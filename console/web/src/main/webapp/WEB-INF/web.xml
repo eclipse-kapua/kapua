@@ -51,6 +51,7 @@
         <url-pattern>/auth/*</url-pattern>
         <url-pattern>/certificateInfo/*</url-pattern>
         <url-pattern>/device/*</url-pattern>
+        <url-pattern>/deviceGroup/*</url-pattern>
         <url-pattern>/deviceManagement/*</url-pattern>
         <url-pattern>/deviceManagementInventory/*</url-pattern>
         <url-pattern>/deviceManagementKeystore/*</url-pattern>
@@ -210,6 +211,15 @@
     <servlet-mapping>
         <servlet-name>deviceServlet</servlet-name>
         <url-pattern>/device</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>deviceGroupServlet</servlet-name>
+        <servlet-class>org.eclipse.kapua.app.console.module.device.server.GwtDeviceGroupServiceImpl</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>deviceGroupServlet</servlet-name>
+        <url-pattern>/deviceGroup</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -374,7 +384,6 @@
         <servlet-name>userGroupServlet</servlet-name>
         <url-pattern>/userGroup</url-pattern>
     </servlet-mapping>
-
 
     <servlet>
         <servlet-name>assetServlet</servlet-name>

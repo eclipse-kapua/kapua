@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2025, 2025 Eurotech and/or its affiliates and others
+ * Copyright (c) 2017, 2022 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -14,31 +14,29 @@ package org.eclipse.kapua.app.console.module.device.client.device.group;
 
 import org.eclipse.kapua.app.console.module.api.client.ui.view.descriptor.AbstractEntityTabDescriptor;
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
-import org.eclipse.kapua.app.console.module.authorization.shared.model.permission.GroupSessionPermission;
-import org.eclipse.kapua.app.console.module.device.client.device.DeviceView;
-import org.eclipse.kapua.app.console.module.device.shared.model.GwtDevice;
-import org.eclipse.kapua.app.console.module.device.shared.model.permission.DeviceGroupSessionPermission;
+import org.eclipse.kapua.app.console.module.authorization.client.tabs.groups.GroupTabTags;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
+import org.eclipse.kapua.app.console.module.tag.shared.model.permission.TagSessionPermission;
 
-public class DeviceTabGroupsDescriptor extends AbstractEntityTabDescriptor<GwtDevice, DeviceTabGroups, DeviceView> {
+public class DeviceGroupTabTagsDescriptor extends AbstractEntityTabDescriptor<GwtGroup, GroupTabTags, DeviceGroupView> {
 
     @Override
-    public DeviceTabGroups getTabViewInstance(DeviceView view, GwtSession currentSession) {
-        return new DeviceTabGroups(currentSession);
+    public GroupTabTags getTabViewInstance(DeviceGroupView view, GwtSession currentSession) {
+        return new GroupTabTags(currentSession);
     }
 
     @Override
     public String getViewId() {
-        return "device.groups";
+        return "group.tags";
     }
 
     @Override
     public Integer getOrder() {
-        return 150;
+        return 200;
     }
 
     @Override
     public Boolean isEnabled(GwtSession currentSession) {
-        return currentSession.hasPermission(GroupSessionPermission.read()) ||
-                currentSession.hasPermission(DeviceGroupSessionPermission.read());
+        return currentSession.hasPermission(TagSessionPermission.read());
     }
 }

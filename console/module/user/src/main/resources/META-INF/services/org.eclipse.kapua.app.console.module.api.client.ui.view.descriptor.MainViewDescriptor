@@ -11,3 +11,4 @@
 #     Eurotech - initial API and implementation
 #################################################################################
 org.eclipse.kapua.app.console.module.user.client.UserViewDescriptor
+org.eclipse.kapua.app.console.module.user.client.group.UserGroupViewDescriptor

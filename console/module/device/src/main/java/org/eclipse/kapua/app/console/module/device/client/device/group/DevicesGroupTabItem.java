@@ -10,7 +10,7 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.app.console.module.device.client.group.device;
+package org.eclipse.kapua.app.console.module.device.client.device.group;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Element;

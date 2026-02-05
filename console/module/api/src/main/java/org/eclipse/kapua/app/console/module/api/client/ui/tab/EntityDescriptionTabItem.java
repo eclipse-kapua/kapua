@@ -56,6 +56,7 @@ public abstract class EntityDescriptionTabItem<M extends GwtEntityModel> extends
 
     public EntityDescriptionTabItem(GwtSession currentSession) {
         super(currentSession, MSGS.entityTabDescriptionTitle(), new KapuaIcon(IconSet.INFO));
+
         groupingView = new GroupingView();
     }
 
@@ -134,6 +135,7 @@ public abstract class EntityDescriptionTabItem<M extends GwtEntityModel> extends
     @Override
     public void setEntity(M t) {
         super.setEntity(t);
+
     }
 
     protected void setGroupViewText(String message) {
