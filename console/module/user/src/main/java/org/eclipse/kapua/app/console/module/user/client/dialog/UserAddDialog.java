@@ -54,6 +54,7 @@ import org.eclipse.kapua.app.console.module.user.client.messages.ConsoleUserMess
 import org.eclipse.kapua.app.console.module.user.shared.model.GwtUser;
 import org.eclipse.kapua.app.console.module.user.shared.model.GwtUser.GwtUserStatus;
 import org.eclipse.kapua.app.console.module.user.shared.model.GwtUserCreator;
+import org.eclipse.kapua.app.console.module.user.shared.model.permission.UserGroupSessionPermission;
 import org.eclipse.kapua.app.console.module.user.shared.service.GwtUserService;
 import org.eclipse.kapua.app.console.module.user.shared.service.GwtUserServiceAsync;
 
@@ -184,7 +185,8 @@ public class UserAddDialog extends EntityAddEditDialog {
         groupCombo.setValueField("id");
         groupCombo.setEmptyText("Select An Access Group");
 
-        if (currentSession.hasPermission(GroupSessionPermission.read())) {
+        if (currentSession.hasPermission(GroupSessionPermission.read()) ||
+                currentSession.hasPermission(UserGroupSessionPermission.read())) {
             Listener<BaseEvent> comboBoxListener = new Listener<BaseEvent>() {
 
                 @Override
@@ -195,7 +197,7 @@ public class UserAddDialog extends EntityAddEditDialog {
 
             groupCombo.addListener(Events.Select, comboBoxListener);
 
-            GWT_GROUP_SERVICE.findAll(currentSession.getSelectedAccountId(), "user", new AsyncCallback<List<GwtGroup>>() {
+            GWT_USER_SERVICE.findAllGroups(currentSession.getSelectedAccountId(), new AsyncCallback<List<GwtGroup>>() {
 
                 @Override
                 public void onFailure(Throwable caught) {

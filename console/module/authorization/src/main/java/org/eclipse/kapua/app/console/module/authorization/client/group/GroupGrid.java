@@ -29,7 +29,6 @@ import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
 import org.eclipse.kapua.app.console.module.authorization.client.messages.ConsoleGroupMessages;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupQuery;
-import org.eclipse.kapua.app.console.module.authorization.shared.model.permission.GroupSessionPermission;
 import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtGroupService;
 import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtGroupServiceAsync;
 
@@ -49,19 +48,6 @@ public class GroupGrid extends EntityGrid<GwtGroup> {
         super(entityView, currentSession);
         query = new GwtGroupQuery();
         query.setScopeId(currentSession.getSelectedAccountId());
-    }
-
-    @Override
-    protected void selectionChangedEvent(GwtGroup selectedItem) {
-        super.selectionChangedEvent(selectedItem);
-        getToolbar().getAddEntityButton().setEnabled(currentSession.hasPermission(GroupSessionPermission.write()));
-        if (selectedItem != null) {
-            getToolbar().getEditEntityButton().setEnabled(currentSession.hasPermission(GroupSessionPermission.write()));
-            getToolbar().getDeleteEntityButton().setEnabled(currentSession.hasPermission(GroupSessionPermission.delete()));
-        } else {
-            getToolbar().getEditEntityButton().setEnabled(false);
-            getToolbar().getDeleteEntityButton().setEnabled(false);
-        }
     }
 
     @Override

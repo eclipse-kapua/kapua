@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -17,7 +17,6 @@ import org.eclipse.kapua.app.api.core.model.CountResult;
 import org.eclipse.kapua.app.api.core.model.EntityId;
 import org.eclipse.kapua.app.api.core.model.ScopeId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
-import org.eclipse.kapua.model.KapuaEntityAttributes;
 import org.eclipse.kapua.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.authorization.group.GroupRole;
@@ -169,7 +168,7 @@ public class UserGroupRoles extends AbstractKapuaResource {
 
         AndPredicate andPredicate = query.andPredicate(
                 query.attributePredicate(GroupRoleAttributes.GROUP_ID, userGroupId),
-                query.attributePredicate(KapuaEntityAttributes.ENTITY_ID, groupRoleId)
+                query.attributePredicate(GroupRoleAttributes.ROLE_ID, groupRoleId)
         );
 
         query.setPredicate(andPredicate);
