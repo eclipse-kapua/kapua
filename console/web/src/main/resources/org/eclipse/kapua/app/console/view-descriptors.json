@@ -68,7 +68,9 @@
     "tabs": [
       "org.eclipse.kapua.app.console.module.authorization.client.group.GroupTabDescriptionDescriptor",
       "org.eclipse.kapua.app.console.module.authorization.client.tabs.groups.GroupTabTagsDescriptor",
-      "org.eclipse.kapua.app.console.module.device.client.group.device.DevicesGroupTabItemDescriptor"
+      "org.eclipse.kapua.app.console.module.device.client.group.device.DevicesGroupTabItemDescriptor",
+      "org.eclipse.kapua.app.console.module.user.client.group.tab.permission.UserGroupTabDescriptionDescriptor",
+      "org.eclipse.kapua.app.console.module.user.client.group.tab.roles.UserGroupTabItemRoleDescriptor"
     ]
   },
   {

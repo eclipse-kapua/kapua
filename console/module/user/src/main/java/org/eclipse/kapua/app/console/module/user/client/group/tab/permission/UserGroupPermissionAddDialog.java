@@ -1,0 +1,329 @@
+/*******************************************************************************
+ * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ *
+ * This program and the accompanying materials are made
+ * available under the terms of the Eclipse Public License 2.0
+ * which is available at https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     Eurotech - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.kapua.app.console.module.user.client.group.tab.permission;
+
+import com.extjs.gxt.ui.client.event.SelectionChangedEvent;
+import com.extjs.gxt.ui.client.event.SelectionChangedListener;
+import com.extjs.gxt.ui.client.store.ListStore;
+import com.extjs.gxt.ui.client.widget.form.CheckBox;
+import com.extjs.gxt.ui.client.widget.form.CheckBoxGroup;
+import com.extjs.gxt.ui.client.widget.form.ComboBox;
+import com.extjs.gxt.ui.client.widget.form.ComboBox.TriggerAction;
+import com.extjs.gxt.ui.client.widget.form.LabelField;
+import com.extjs.gxt.ui.client.widget.form.SimpleComboBox;
+import com.extjs.gxt.ui.client.widget.form.SimpleComboValue;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import org.eclipse.kapua.app.console.module.api.client.GwtKapuaErrorCode;
+import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
+import org.eclipse.kapua.app.console.module.api.client.messages.ConsoleMessages;
+import org.eclipse.kapua.app.console.module.api.client.ui.dialog.entity.EntityAddEditDialog;
+import org.eclipse.kapua.app.console.module.api.client.ui.panel.FormPanel;
+import org.eclipse.kapua.app.console.module.api.client.util.ConsoleInfo;
+import org.eclipse.kapua.app.console.module.api.client.util.DialogUtils;
+import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
+import org.eclipse.kapua.app.console.module.authorization.client.messages.ConsolePermissionMessages;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtDomain;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupPermission;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupPermissionCreator;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtPermission;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtPermission.GwtAction;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.permission.GroupSessionPermission;
+import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtDomainRegistryService;
+import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtDomainRegistryServiceAsync;
+import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtGroupService;
+import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtGroupServiceAsync;
+import org.eclipse.kapua.app.console.module.user.shared.service.GwtUserGroupService;
+import org.eclipse.kapua.app.console.module.user.shared.service.GwtUserGroupServiceAsync;
+
+import java.util.List;
+
+public class UserGroupPermissionAddDialog extends EntityAddEditDialog {
+
+    private static final ConsolePermissionMessages MSGS = GWT.create(ConsolePermissionMessages.class);
+    private static final ConsoleMessages CMSGS = GWT.create(ConsoleMessages.class);
+
+    private static final GwtDomainRegistryServiceAsync GWT_DOMAIN_SERVICE = GWT.create(GwtDomainRegistryService.class);
+    private static final GwtUserGroupServiceAsync GWT_USER_GROUP_SERVICE = GWT.create(GwtUserGroupService.class);
+    private static final GwtGroupServiceAsync GWT_GROUP_SERVICE = GWT.create(GwtGroupService.class);
+
+    private ComboBox<GwtDomain> domainsCombo;
+    private SimpleComboBox<GwtAction> actionsCombo;
+    private ComboBox<GwtGroup> groupsCombo;
+    private CheckBoxGroup forwardableChecboxGroup;
+    private CheckBox forwardableChecbox;
+
+    private final GwtDomain allDomain = new GwtDomain(null, "ALL");
+    private final GwtAction allAction = GwtAction.ALL;
+    private final GwtGroup allGroup;
+
+    private GwtGroup gwtUserGroup;
+
+    public UserGroupPermissionAddDialog(GwtSession currentSession, GwtGroup gwtUserGroup) {
+        super(currentSession);
+
+        this.gwtUserGroup = gwtUserGroup;
+
+        allGroup = new GwtGroup();
+        allGroup.setId(null);
+        allGroup.setGroupName("ALL");
+
+        DialogUtils.resizeDialog(this, 500, 240);
+    }
+
+    @Override
+    protected void onRender(Element parent, int pos) {
+        super.onRender(parent, pos);
+    }
+
+    @Override
+    public void createBody() {
+        FormPanel permissionFormPanel = new FormPanel(FORM_LABEL_WIDTH);
+
+        // Domain
+        domainsCombo = new ComboBox<GwtDomain>();
+        domainsCombo.setStore(new ListStore<GwtDomain>());
+        domainsCombo.setEditable(false);
+        domainsCombo.setTypeAhead(false);
+        domainsCombo.setAllowBlank(false);
+        domainsCombo.disable();
+        domainsCombo.setFieldLabel(MSGS.dialogAddPermissionDomain());
+        domainsCombo.setToolTip(MSGS.permissionAddDialogDomainTooltip());
+        domainsCombo.setTriggerAction(TriggerAction.ALL);
+        domainsCombo.setEmptyText(MSGS.dialogAddPermissionLoading());
+        domainsCombo.setDisplayField("domainName");
+
+        GWT_DOMAIN_SERVICE.findAll(new AsyncCallback<List<GwtDomain>>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                exitStatus = false;
+                if (!isPermissionErrorMessage(caught)) {
+                    exitMessage = MSGS.dialogAddPermissionErrorDomains(caught.getLocalizedMessage());
+                }
+                hide();
+            }
+
+            @Override
+            public void onSuccess(List<GwtDomain> result) {
+                domainsCombo.getStore().add(allDomain);
+                domainsCombo.getStore().add(result);
+                domainsCombo.setValue(allDomain);
+                domainsCombo.enable();
+            }
+        });
+
+        domainsCombo.addSelectionChangedListener(new SelectionChangedListener<GwtDomain>() {
+
+            @Override
+            public void selectionChanged(SelectionChangedEvent<GwtDomain> se) {
+                final GwtDomain selectedDomain = se.getSelectedItem();
+
+                GWT_DOMAIN_SERVICE.findActionsByDomainName(selectedDomain.getDomainName(), new AsyncCallback<List<GwtAction>>() {
+
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        exitStatus = false;
+                        if (!isPermissionErrorMessage(caught)) {
+                            exitMessage = MSGS.dialogAddPermissionErrorActions(caught.getLocalizedMessage());
+                        }
+                        hide();
+                    }
+
+                    @Override
+                    public void onSuccess(List<GwtAction> result) {
+                        actionsCombo.removeAll();
+                        actionsCombo.add(allAction);
+                        actionsCombo.add(result);
+                        actionsCombo.setSimpleValue(allAction);
+                        actionsCombo.enable();
+                        groupsCombo.clearInvalid();
+
+                        if (allDomain.equals(selectedDomain)) {
+                            groupsCombo.setEnabled(true);
+                            groupsCombo.setValue(allGroup);
+                        } else if (selectedDomain.getGroupable()) {
+                            groupsCombo.setEnabled(selectedDomain.getGroupable());
+                            groupsCombo.setValue(allGroup);
+
+                            if (currentSession.hasPermission(GroupSessionPermission.read())) {
+                                GWT_GROUP_SERVICE.findAll(currentSession.getSelectedAccountId(), selectedDomain.getDomainName(), new AsyncCallback<List<GwtGroup>>() {
+
+                                    @Override
+                                    public void onFailure(Throwable caught) {
+                                        exitStatus = false;
+                                        if (!isPermissionErrorMessage(caught)) {
+                                            exitMessage = MSGS.dialogAddPermissionErrorGroups(caught.getLocalizedMessage());
+                                        }
+                                        hide();
+                                    }
+
+                                    @Override
+                                    public void onSuccess(List<GwtGroup> result) {
+                                        groupsCombo.getStore().removeAll();
+                                        groupsCombo.getStore().add(allGroup);
+                                        groupsCombo.getStore().add(result);
+                                        groupsCombo.setValue(allGroup);
+                                        groupsCombo.enable();
+                                    }
+                                });
+
+                                groupsCombo.addSelectionChangedListener(new SelectionChangedListener<GwtGroup>() {
+
+                                    @Override
+                                    public void selectionChanged(SelectionChangedEvent<GwtGroup> se) {
+                                        domainsCombo.clearInvalid();
+                                        actionsCombo.clearInvalid();
+                                        groupsCombo.clearInvalid();
+                                    }
+                                });
+
+                            } else {
+                                groupsCombo.getStore().removeAll();
+                                groupsCombo.getStore().add(allGroup);
+                                groupsCombo.setValue(allGroup);
+                            }
+                        } else {
+                            groupsCombo.setEnabled(selectedDomain.getGroupable());
+                            groupsCombo.setRawValue(MSGS.dialogAddPermissionGroupIdNotGroupable());
+                        }
+                    }
+                });
+
+            }
+        });
+        permissionFormPanel.add(domainsCombo);
+
+        // Action
+        actionsCombo = new SimpleComboBox<GwtAction>();
+        actionsCombo.disable();
+        actionsCombo.setTypeAhead(false);
+        actionsCombo.setAllowBlank(false);
+        actionsCombo.setEditable(false);
+        actionsCombo.setFieldLabel(MSGS.dialogAddPermissionAction());
+        actionsCombo.setToolTip(MSGS.permissionAddDialogActionTooltip());
+        actionsCombo.setTriggerAction(TriggerAction.ALL);
+        actionsCombo.setEmptyText(MSGS.dialogAddPermissionLoading());
+
+        actionsCombo.addSelectionChangedListener(new SelectionChangedListener<SimpleComboValue<GwtAction>>() {
+
+            @Override
+            public void selectionChanged(SelectionChangedEvent<SimpleComboValue<GwtAction>> se) {
+                domainsCombo.clearInvalid();
+                actionsCombo.clearInvalid();
+                groupsCombo.clearInvalid();
+            }
+        });
+
+        permissionFormPanel.add(actionsCombo);
+
+        // Target Scope Id
+        LabelField labelField = new LabelField();
+        labelField.setFieldLabel("Target Scope");
+        labelField.setLabelSeparator(":");
+        labelField.setToolTip("The scope on which the permission is given.");
+        labelField.setValue(currentSession.getSelectedAccountName());
+        permissionFormPanel.add(labelField);
+
+        // Groups
+        groupsCombo = new ComboBox<GwtGroup>();
+        groupsCombo.setStore(new ListStore<GwtGroup>());
+        groupsCombo.setEditable(false);
+        groupsCombo.setTypeAhead(false);
+        groupsCombo.setAllowBlank(false);
+        groupsCombo.setDisplayField("groupName");
+        groupsCombo.setValueField("id");
+        groupsCombo.setFieldLabel(MSGS.dialogAddPermissionGroupId());
+        groupsCombo.setToolTip(MSGS.permissionAddDialogGroupTooltip());
+        groupsCombo.setTriggerAction(TriggerAction.ALL);
+        groupsCombo.setEmptyText(MSGS.dialogAddPermissionLoading());
+        groupsCombo.disable();
+        permissionFormPanel.add(groupsCombo);
+
+        // Forwardable
+        forwardableChecbox = new CheckBox();
+        forwardableChecbox.setBoxLabel("");
+        forwardableChecbox.setToolTip(MSGS.permissionAddDialogForwardableTooltip());
+
+        forwardableChecboxGroup = new CheckBoxGroup();
+        forwardableChecboxGroup.setFieldLabel(MSGS.dialogAddPermissionForwardable());
+        forwardableChecboxGroup.add(forwardableChecbox);
+        permissionFormPanel.add(forwardableChecboxGroup);
+
+        // Add form panel to body
+        bodyPanel.add(permissionFormPanel);
+    }
+
+    @Override
+    public void submit() {
+
+        GwtPermission gwtPermission = new GwtPermission();
+        gwtPermission.setDomain(domainsCombo.getValue().getDomainId());
+        gwtPermission.setAction(actionsCombo.getValue().getValue().toString());
+        gwtPermission.setTargetScopeId(currentSession.getSelectedAccountId());
+        gwtPermission.setGroupId(groupsCombo.getValue() != null ? groupsCombo.getValue().getId() : null);
+        gwtPermission.setForwardable(forwardableChecboxGroup.getValue() != null);
+
+        GwtGroupPermissionCreator gwtGroupPermissionCreator = new GwtGroupPermissionCreator();
+        gwtGroupPermissionCreator.setScopeId(currentSession.getSelectedAccountId());
+        gwtGroupPermissionCreator.setGroupId(gwtUserGroup.getId());
+        gwtGroupPermissionCreator.setPermission(gwtPermission);
+
+        GWT_USER_GROUP_SERVICE.createPermission(xsrfToken, gwtGroupPermissionCreator, new AsyncCallback<GwtGroupPermission>() {
+
+            @Override
+            public void onSuccess(GwtGroupPermission gwtGroupPermission) {
+                exitStatus = true;
+                exitMessage = MSGS.dialogAddPermissionConfirmation();
+                hide();
+            }
+
+            @Override
+            public void onFailure(Throwable cause) {
+                unmask();
+
+                submitButton.enable();
+                cancelButton.enable();
+                status.hide();
+
+                exitStatus = false;
+                if (!isPermissionErrorMessage(cause)) {
+                    if ((cause instanceof GwtKapuaException) &&
+                            (GwtKapuaErrorCode.ENTITY_UNIQUENESS.equals(((GwtKapuaException) cause).getCode()))) {
+                        exitMessage = MSGS.dialogAddPermissionAlreadyExists();
+                    } else {
+                        exitMessage = MSGS.dialogAddError(MSGS.dialogAddPermissionError(cause.getLocalizedMessage()));
+                    }
+                }
+                domainsCombo.markInvalid(exitMessage);
+                actionsCombo.markInvalid(exitMessage);
+                if (groupsCombo.isEnabled()) {
+                    groupsCombo.markInvalid(exitMessage);
+                }
+                ConsoleInfo.display(CMSGS.error(), exitMessage);
+            }
+        });
+    }
+
+    @Override
+    public String getHeaderMessage() {
+        return MSGS.dialogAddPermissionHeader();
+    }
+
+    @Override
+    public String getInfoMessage() {
+        return "Select the permission that should be granted to the Group";
+    }
+}
