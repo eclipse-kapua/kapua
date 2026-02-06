@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright (c) 2017, 2022 Eurotech and/or its affiliates and others
+    Copyright (c) 2017, 2025 Eurotech and/or its affiliates and others
 
     This program and the accompanying materials are made
     available under the terms of the Eclipse Public License 2.0
@@ -23,5 +23,6 @@
     <include relativeToChangelogFile="true" file="./1.2.0/changelog-user-1.2.0.xml"/>
     <include relativeToChangelogFile="true" file="./1.5.0/changelog-user-1.5.0.xml"/>
     <include relativeToChangelogFile="true" file="./2.0.0/changelog-user-2.0.0.xml"/>
+    <include relativeToChangelogFile="true" file="./2.1.0/changelog-user-2.1.0.xml"/>
 
 </databaseChangeLog>

@@ -92,6 +92,7 @@ public class UserServiceImpl extends KapuaConfigurableServiceBase implements Use
 
             // Create User
             User user = userFactory.newEntity(userCreator.getScopeId());
+            user.setTagIds(userCreator.getTagIds());
             user.setName(userCreator.getName());
             user.setDisplayName(userCreator.getDisplayName());
             user.setEmail(userCreator.getEmail());

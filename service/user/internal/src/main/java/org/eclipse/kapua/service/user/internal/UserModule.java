@@ -38,6 +38,8 @@ import org.eclipse.kapua.model.domain.Domain;
 import org.eclipse.kapua.model.domain.DomainEntry;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.tag.TagFactory;
+import org.eclipse.kapua.service.tag.TagService;
 import org.eclipse.kapua.service.user.UserFactory;
 import org.eclipse.kapua.service.user.UserRepository;
 import org.eclipse.kapua.service.user.UserService;
@@ -122,11 +124,15 @@ public class UserModule extends AbstractKapuaModule {
     public UserServiceValidationUtils userServiceValidationUtils(
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
+            TagService tagService,
+            TagFactory tagFactory,
             UserRepository userRepository
     ) {
         return new UserServiceValidationUtilsImpl(
                 authorizationService,
                 permissionFactory,
+                tagService,
+                tagFactory,
                 userRepository
         );
     }
