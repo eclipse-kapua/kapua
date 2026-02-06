@@ -27,7 +27,6 @@ components:
       allOf:
         - $ref: '../openapi.yaml#/components/schemas/kapuaNamedEntity'
         - $ref: '#/components/schemas/userCreator'
-        - type: object
           example:
             $ref: '#/components/examples/user/value'
     userCreator:
@@ -35,6 +34,11 @@ components:
         - $ref: '../openapi.yaml#/components/schemas/kapuaNamedEntityCreator'
         - type: object
           properties:
+            groupIds:
+              type: array
+              items:
+                allOf:
+                  - $ref: '../openapi.yaml#/components/schemas/kapuaId'
             tagIds:
               type: array
               items:

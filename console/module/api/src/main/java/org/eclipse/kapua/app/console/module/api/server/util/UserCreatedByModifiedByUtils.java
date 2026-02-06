@@ -128,7 +128,7 @@ public class UserCreatedByModifiedByUtils {
         User resolvedUser = KapuaSecurityUtils.doPrivileged(new Callable<User>() {
             @Override
             public User call() throws Exception {
-                return USER_SERVICE.find(userId);
+                return USER_SERVICE.findById(userId);
             }
         });
 

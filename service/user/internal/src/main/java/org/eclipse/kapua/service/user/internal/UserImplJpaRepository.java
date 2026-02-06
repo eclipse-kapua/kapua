@@ -31,7 +31,7 @@ public class UserImplJpaRepository
     }
 
     @Override
-    public Optional<User> find(TxContext txContext, KapuaId userId) {
+    public Optional<User> findById(TxContext txContext, KapuaId userId) {
         return find(txContext, KapuaId.ANY, userId);
     }
 

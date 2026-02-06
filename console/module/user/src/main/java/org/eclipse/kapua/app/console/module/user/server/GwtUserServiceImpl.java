@@ -43,6 +43,8 @@ import org.eclipse.kapua.service.authentication.credential.CredentialFactory;
 import org.eclipse.kapua.service.authentication.credential.CredentialService;
 import org.eclipse.kapua.service.authentication.credential.CredentialStatus;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
+import org.eclipse.kapua.service.authorization.group.Group;
+import org.eclipse.kapua.service.authorization.group.GroupService;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.authorization.role.RoleService;
 import org.eclipse.kapua.service.device.registry.DeviceFactory;
@@ -66,6 +68,7 @@ import org.eclipse.kapua.service.user.UserService;
 import org.eclipse.kapua.service.user.UserType;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -104,7 +107,7 @@ public class GwtUserServiceImpl extends KapuaRemoteServiceServlet implements Gwt
 
         GwtUser gwtUser = null;
         try {
-            KapuaId scopeId = KapuaEid.parseCompactId(gwtUserCreator.getScopeId());
+            KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(gwtUserCreator.getScopeId());
 
             UserCreator userCreator = USER_FACTORY.newCreator(scopeId, gwtUserCreator.getUsername());
             userCreator.setUserType(GwtKapuaUserModelConverter.convertUserType(gwtUserCreator.getUserType()));
@@ -115,8 +118,17 @@ public class GwtUserServiceImpl extends KapuaRemoteServiceServlet implements Gwt
             userCreator.setStatus(GwtKapuaUserModelConverter.convertUserStatus(gwtUserCreator.getUserStatus()));
             userCreator.setExternalId(gwtUserCreator.getExternalId());
             userCreator.setExternalUsername(gwtUserCreator.getExternalUsername());
+
+            // GroupId
+            if (gwtUserCreator.getGroupId() != null) {
+                Set<KapuaId> groupIds = new HashSet<KapuaId>();
+                groupIds.add(GwtKapuaCommonsModelConverter.convertKapuaId(gwtUserCreator.getGroupId()));
+                userCreator.setGroupIds(groupIds);
+            }
+
             // Create the User
             User user = USER_SERVICE.create(userCreator);
+
             // Create credentials
             if (UserType.INTERNAL.equals(user.getUserType()) &&
                     gwtUserCreator.getPassword() != null) {
@@ -131,12 +143,11 @@ public class GwtUserServiceImpl extends KapuaRemoteServiceServlet implements Gwt
                 CREDENTIAL_SERVICE.create(credentialCreator);
             }
 
-            gwtUser = KapuaGwtUserModelConverter.convertUser(USER_SERVICE.find(user.getScopeId(), user.getId()));
+            return KapuaGwtUserModelConverter.convertUser(USER_SERVICE.find(user.getScopeId(), user.getId()));
         } catch (Throwable t) {
-            KapuaExceptionHandler.handle(t);
+            throw KapuaExceptionHandler.buildExceptionFromError(t);
         }
 
-        return gwtUser;
     }
 
     @Override
@@ -362,6 +373,63 @@ public class GwtUserServiceImpl extends KapuaRemoteServiceServlet implements Gwt
             }
 
             return new BasePagingLoadResult<GwtUser>(gwtUsers, loadConfig.getOffset(), users.getTotalCount().intValue());
+        } catch (Throwable t) {
+            throw KapuaExceptionHandler.buildExceptionFromError(t);
+        }
+    }
+
+    @Override
+    public void addUserGroup(GwtXSRFToken xsrfToken, String scopeIdString, String userIdString, String groupIdString) throws GwtKapuaException {
+        // Checking validity of the given XSRF Token
+        checkXSRFToken(xsrfToken);
+
+        try {
+            KapuaId scopeId = KapuaEid.parseCompactId(scopeIdString);
+            KapuaId userId = KapuaEid.parseCompactId(userIdString);
+            KapuaId groupId = KapuaEid.parseCompactId(groupIdString);
+
+            KapuaLocator locator = KapuaLocator.getInstance();
+            UserService userRegistryService = locator.getService(UserService.class);
+            User user = userRegistryService.find(scopeId, userId);
+
+            Set<KapuaId> groupIds = user.getGroupIds();
+            if (groupIds.contains(groupId)) {
+                GroupService groupService = locator.getService(GroupService.class);
+
+                Group group = groupService.find(scopeId, groupId);
+                if (group != null) {
+                    throw new KapuaDuplicateNameException(group.getName());
+                }
+            }
+            groupIds.add(groupId);
+            user.setGroupIds(groupIds);
+
+            userRegistryService.update(user);
+        } catch (Throwable t) {
+            throw KapuaExceptionHandler.buildExceptionFromError(t);
+        }
+    }
+
+    @Override
+    public void deleteUserGroup(GwtXSRFToken xsrfToken, String scopeIdString, String userIdString, String groupIdString) throws GwtKapuaException {
+        // Checking validity of the given XSRF Token
+        checkXSRFToken(xsrfToken);
+
+        try {
+            KapuaId scopeId = KapuaEid.parseCompactId(scopeIdString);
+            KapuaId userId = KapuaEid.parseCompactId(userIdString);
+            KapuaId groupId = KapuaEid.parseCompactId(groupIdString);
+
+            KapuaLocator locator = KapuaLocator.getInstance();
+            UserService userRegistryService = locator.getService(UserService.class);
+
+            User user = userRegistryService.find(scopeId, userId);
+
+            Set<KapuaId> groupIds = user.getGroupIds();
+            groupIds.remove(groupId);
+            user.setGroupIds(groupIds);
+
+            userRegistryService.update(user);
         } catch (Throwable t) {
             throw KapuaExceptionHandler.buildExceptionFromError(t);
         }

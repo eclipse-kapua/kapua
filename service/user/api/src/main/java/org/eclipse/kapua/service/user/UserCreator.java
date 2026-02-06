@@ -38,6 +38,25 @@ import java.util.Set;
 public interface UserCreator extends KapuaNamedEntityCreator<User> {
 
     /**
+     * Gets the set of Group id assigned to this entity.
+     *
+     * @return The set Group id assigned to this entity.
+     * @since 2.1.0
+     */
+    @XmlElementWrapper(name = "groupIds")
+    @XmlElement(name = "groupId")
+    @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    Set<KapuaId> getGroupIds();
+
+    /**
+     * Sets the set of Group id of this entity.
+     *
+     * @param groupIds The set Group id to assign.
+     * @since 2.1.0
+     */
+    void setGroupIds(Set<KapuaId> groupIds);
+
+    /**
      * Gets the set of Tag id assigned to this entity.
      *
      * @return The set Tag id assigned to this entity.

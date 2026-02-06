@@ -37,6 +37,9 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.domain.Domain;
 import org.eclipse.kapua.model.domain.DomainEntry;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
+import org.eclipse.kapua.service.authorization.access.GroupQueryHelper;
+import org.eclipse.kapua.service.authorization.group.GroupFactory;
+import org.eclipse.kapua.service.authorization.group.GroupService;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.tag.TagFactory;
 import org.eclipse.kapua.service.tag.TagService;
@@ -66,25 +69,28 @@ public class UserModule extends AbstractKapuaModule {
 
     @ProvidesIntoSet
     public Domain userDomain() {
-        return new DomainEntry(Domains.USER, UserService.class.getName(), false, Actions.read, Actions.delete, Actions.write);
+        return new DomainEntry(Domains.USER, UserService.class.getName(), true, Actions.read, Actions.delete, Actions.write);
     }
 
     @Provides
     @Singleton
     public UserService userService(
+            KapuaJpaTxManagerFactory jpaTxManagerFactory,
             Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
+            GroupQueryHelper groupQueryHelper,
+            UserFactory userFactory,
             UserServiceValidationUtils userServiceValidationUtils,
             UserRepository userRepository,
-            UserFactory userFactory,
-            EventStorer eventStorer,
-            KapuaJpaTxManagerFactory jpaTxManagerFactory) {
+            EventStorer eventStorer
+    ) {
         return new UserServiceImpl(
                 jpaTxManagerFactory.create("kapua-user"),
                 serviceConfigurationManagersByServiceClass.get(UserService.class),
                 authorizationService,
                 permissionFactory,
+                groupQueryHelper,
                 userFactory,
                 userServiceValidationUtils,
                 userRepository,
@@ -124,6 +130,9 @@ public class UserModule extends AbstractKapuaModule {
     public UserServiceValidationUtils userServiceValidationUtils(
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
+            GroupService groupService,
+            GroupFactory groupFactory,
+            Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
             TagService tagService,
             TagFactory tagFactory,
             UserRepository userRepository
@@ -131,6 +140,9 @@ public class UserModule extends AbstractKapuaModule {
         return new UserServiceValidationUtilsImpl(
                 authorizationService,
                 permissionFactory,
+                groupService,
+                groupFactory,
+                serviceConfigurationManagersByServiceClass.get(UserService.class),
                 tagService,
                 tagFactory,
                 userRepository

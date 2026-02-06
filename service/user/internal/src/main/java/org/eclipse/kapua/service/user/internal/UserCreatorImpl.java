@@ -32,7 +32,9 @@ public class UserCreatorImpl extends AbstractKapuaNamedEntityCreator<User> imple
 
     private static final long serialVersionUID = 4664940282892151008L;
 
+    private Set<KapuaId> groupIds;
     private Set<KapuaId> tagIds;
+
     private UserStatus status;
     private String displayName;
     private String email;
@@ -53,6 +55,20 @@ public class UserCreatorImpl extends AbstractKapuaNamedEntityCreator<User> imple
 
         setStatus(UserStatus.ENABLED);
         setUserType(UserType.INTERNAL);
+    }
+
+    @Override
+    public Set<KapuaId> getGroupIds() {
+        if (groupIds == null) {
+            groupIds = Collections.emptySet();
+        }
+
+        return groupIds;
+    }
+
+    @Override
+    public void setGroupIds(Set<KapuaId> groupIds) {
+        this.groupIds = groupIds;
     }
 
     public UserCreatorImpl(KapuaId scopeId) {

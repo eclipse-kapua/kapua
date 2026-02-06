@@ -160,6 +160,9 @@ public class UserEditDialog extends UserAddDialog {
 
     private void populateEditDialog(GwtUser gwtUser) {
 
+        // GroupId
+        groupCombo.hide();
+
         // Username
         usernameLabel.show();
         username.hide();
