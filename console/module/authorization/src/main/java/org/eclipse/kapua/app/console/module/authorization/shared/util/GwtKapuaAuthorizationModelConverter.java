@@ -82,32 +82,47 @@ public class GwtKapuaAuthorizationModelConverter {
     private GwtKapuaAuthorizationModelConverter() {
     }
 
-    public static GroupQuery convertGroupQuery(PagingLoadConfig loadConfig,
-                                               GwtGroupQuery gwtGroupQuery) {
+    public static GroupQuery convertGroupQuery(PagingLoadConfig loadConfig, GwtGroupQuery gwtGroupQuery) {
         KapuaLocator locator = KapuaLocator.getInstance();
         GroupFactory groupFactory = locator.getFactory(GroupFactory.class);
 
         GroupQuery query = groupFactory.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(gwtGroupQuery.getScopeId()));
+        AndPredicate andPredicate = query.andPredicate();
 
-        AndPredicate predicate = query.andPredicate();
+        // .id
+        if (!gwtGroupQuery.getIds().isEmpty()) {
+            int i = 0;
+            KapuaId[] tagIds = new KapuaId[gwtGroupQuery.getIds().size()];
+            for (String gwtTagId : gwtGroupQuery.getIds()) {
+                tagIds[i++] = GwtKapuaCommonsModelConverter.convertKapuaId(gwtTagId);
+            }
+
+            andPredicate.and(query.attributePredicate(GroupAttributes.ENTITY_ID, tagIds));
+        }
+
+        // .name
         if (gwtGroupQuery.getName() != null && !gwtGroupQuery.getName().isEmpty()) {
-            predicate.and(query.attributePredicate(GroupAttributes.NAME, gwtGroupQuery.getName(), Operator.LIKE));
+            andPredicate.and(query.attributePredicate(GroupAttributes.NAME, gwtGroupQuery.getName(), Operator.LIKE));
         }
+
+        // .description
         if (gwtGroupQuery.getDescription() != null && !gwtGroupQuery.getDescription().isEmpty()) {
-            predicate.and(query.attributePredicate(GroupAttributes.DESCRIPTION, gwtGroupQuery.getDescription(), Operator.LIKE));
+            andPredicate.and(query.attributePredicate(GroupAttributes.DESCRIPTION, gwtGroupQuery.getDescription(), Operator.LIKE));
         }
+
         String sortField = StringUtils.isEmpty(loadConfig.getSortField()) ? GroupAttributes.NAME : loadConfig.getSortField();
         if (sortField.equals("groupName")) {
             sortField = GroupAttributes.NAME;
         } else if (sortField.equals("createdOnFormatted")) {
             sortField = GroupAttributes.CREATED_ON;
         }
+
         SortOrder sortOrder = loadConfig.getSortDir().equals(SortDir.DESC) ? SortOrder.DESCENDING : SortOrder.ASCENDING;
         FieldSortCriteria sortCriteria = query.fieldSortCriteria(sortField, sortOrder);
         query.setSortCriteria(sortCriteria);
         query.setOffset(loadConfig.getOffset());
         query.setLimit(loadConfig.getLimit());
-        query.setPredicate(predicate);
+        query.setPredicate(andPredicate);
         query.setAskTotalCount(true);
 
         return query;

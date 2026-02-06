@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2025 Eurotech and/or its affiliates and others
+ * Copyright (c) 2017, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -24,6 +24,7 @@ import org.eclipse.kapua.app.console.module.api.server.util.KapuaExceptionHandle
 import org.eclipse.kapua.app.console.module.api.server.util.UserCreatedByModifiedByUtils;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtGroupedNVPair;
 import org.eclipse.kapua.app.console.module.api.shared.util.GwtKapuaCommonsModelConverter;
+import org.eclipse.kapua.app.console.module.api.shared.util.KapuaGwtCommonsModelConverter;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupCreator;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupQuery;
@@ -39,6 +40,8 @@ import org.eclipse.kapua.service.authorization.group.GroupFactory;
 import org.eclipse.kapua.service.authorization.group.GroupListResult;
 import org.eclipse.kapua.service.authorization.group.GroupQuery;
 import org.eclipse.kapua.service.authorization.group.GroupService;
+import org.eclipse.kapua.service.device.registry.Device;
+import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +60,6 @@ public class GwtGroupServiceImpl extends KapuaRemoteServiceServlet implements Gw
 
     @Override
     public GwtGroup create(GwtGroupCreator gwtGroupCreator) throws GwtKapuaException {
-        GwtGroup gwtGroup = null;
         try {
             KapuaId scopeId = KapuaEid.parseCompactId(gwtGroupCreator.getScopeId());
 
@@ -65,51 +67,53 @@ public class GwtGroupServiceImpl extends KapuaRemoteServiceServlet implements Gw
             groupCreator.setDescription(gwtGroupCreator.getDescription());
             Group group = GROUP_SERVICE.create(groupCreator);
 
-            gwtGroup = KapuaGwtAuthorizationModelConverter.convertGroup(group);
+            return KapuaGwtAuthorizationModelConverter.convertGroup(group);
         } catch (Exception e) {
-            KapuaExceptionHandler.handle(e);
+            throw KapuaExceptionHandler.buildExceptionFromError(e);
         }
-        return gwtGroup;
     }
 
     @Override
     public GwtGroup update(GwtGroup gwtGroup) throws GwtKapuaException {
-        GwtGroup gwtGroupUpdated = null;
         try {
             KapuaId scopeId = KapuaEid.parseCompactId(gwtGroup.getScopeId());
             KapuaId groupId = KapuaEid.parseCompactId(gwtGroup.getId());
 
             Group group = GROUP_SERVICE.find(scopeId, groupId);
 
+            GwtGroup gwtGroupUpdated = null;
             if (group != null) {
                 group.setName(gwtGroup.getGroupName());
                 group.setDescription(gwtGroup.getUnescapedDescription());
+
                 GROUP_SERVICE.update(group);
+
                 gwtGroupUpdated = KapuaGwtAuthorizationModelConverter.convertGroup(GROUP_SERVICE.find(group.getScopeId(), group.getId()));
             }
+
+            return gwtGroupUpdated;
         } catch (Exception e) {
-            KapuaExceptionHandler.handle(e);
+            throw KapuaExceptionHandler.buildExceptionFromError(e);
         }
-        return gwtGroupUpdated;
     }
 
     @Override
     public GwtGroup find(String scopeShortId, String groupShortId) throws GwtKapuaException {
-        GwtGroup gwtGroup = null;
         try {
             KapuaId scopeId = KapuaEid.parseCompactId(scopeShortId);
             KapuaId groupId = KapuaEid.parseCompactId(groupShortId);
 
             Group group = GROUP_SERVICE.find(scopeId, groupId);
 
+            GwtGroup gwtGroup = null;
             if (group != null) {
                 gwtGroup = KapuaGwtAuthorizationModelConverter.convertGroup(group);
             }
-        } catch (Exception e) {
-            KapuaExceptionHandler.handle(e);
-        }
 
-        return gwtGroup;
+            return gwtGroup;
+        } catch (Exception e) {
+            throw KapuaExceptionHandler.buildExceptionFromError(e);
+        }
     }
 
     @Override
@@ -142,14 +146,13 @@ public class GwtGroupServiceImpl extends KapuaRemoteServiceServlet implements Gw
 
     @Override
     public void delete(String scopeIdString, String groupIdString) throws GwtKapuaException {
-
         try {
             KapuaId scopeId = KapuaEid.parseCompactId(scopeIdString);
             KapuaId groupId = GwtKapuaCommonsModelConverter.convertKapuaId(groupIdString);
 
             GROUP_SERVICE.delete(scopeId, groupId);
         } catch (Exception e) {
-            KapuaExceptionHandler.handle(e);
+            throw KapuaExceptionHandler.buildExceptionFromError(e);
         }
 
     }
@@ -183,17 +186,44 @@ public class GwtGroupServiceImpl extends KapuaRemoteServiceServlet implements Gw
 
     @Override
     public List<GwtGroup> findAll(String scopeId) throws GwtKapuaException {
-        List<GwtGroup> groupList = new ArrayList<GwtGroup>();
-        GroupQuery query = GROUP_FACTORY.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(scopeId));
         try {
+            GroupQuery query = GROUP_FACTORY.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(scopeId));
             GroupListResult result = GROUP_SERVICE.query(query);
+
+            List<GwtGroup> groupList = new ArrayList<GwtGroup>();
             for (Group group : result.getItems()) {
                 groupList.add(KapuaGwtAuthorizationModelConverter.convertGroup(group));
             }
+            return groupList;
         } catch (KapuaException e) {
-            KapuaExceptionHandler.handle(e);
+            throw KapuaExceptionHandler.buildExceptionFromError(e);
         }
-        return groupList;
     }
 
+    @Override
+    public PagingLoadResult<GwtGroup> findByDeviceId(PagingLoadConfig loadConfig, String gwtScopeId, String gwtDeviceId) throws GwtKapuaException {
+        try {
+            KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(gwtScopeId);
+            KapuaId deviceId = GwtKapuaCommonsModelConverter.convertKapuaId(gwtDeviceId);
+
+            DeviceRegistryService deviceRegistryService = LOCATOR.getService(DeviceRegistryService.class);
+            Device device = deviceRegistryService.find(scopeId, deviceId);
+            if (device.getGroupIds().isEmpty()) {
+                return new BasePagingLoadResult<GwtGroup>(new ArrayList<GwtGroup>(), 0, 0);
+            }
+
+            GwtGroupQuery gwtGroupQuery = new GwtGroupQuery();
+            gwtGroupQuery.setScopeId(gwtScopeId);
+
+            List<String> gwtGroupIds = new ArrayList<String>();
+            for (KapuaId groupId : device.getGroupIds()) {
+                gwtGroupIds.add(KapuaGwtCommonsModelConverter.convertKapuaId(groupId));
+            }
+            gwtGroupQuery.setIds(gwtGroupIds);
+
+            return query(loadConfig, gwtGroupQuery);
+        } catch (KapuaException e) {
+            throw KapuaExceptionHandler.buildExceptionFromError(e);
+        }
+    }
 }

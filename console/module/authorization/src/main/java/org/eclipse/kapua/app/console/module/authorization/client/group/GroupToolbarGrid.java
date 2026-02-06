@@ -24,7 +24,10 @@ public class GroupToolbarGrid extends EntityCRUDToolbar<GwtGroup> {
 
     public GroupToolbarGrid(GwtSession currentSession) {
         super(currentSession);
+    }
 
+    public GroupToolbarGrid(GwtSession currentSession, boolean slaveEntity) {
+        super(currentSession, slaveEntity);
     }
 
     @Override

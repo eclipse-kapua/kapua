@@ -149,12 +149,12 @@ public class DeviceExporterServlet extends HttpServlet {
 
             String groupId = request.getParameter("accessGroup");
             if (groupId != null && !groupId.isEmpty()) {
-                andPred = andPred.and(query.attributePredicate(DeviceAttributes.GROUP_ID, KapuaEid.parseCompactId(groupId)));
+                andPred = andPred.and(query.attributePredicate(DeviceAttributes.GROUP_IDS, new KapuaId[] {KapuaEid.parseCompactId(groupId)} ));
             }
 
             String tagId = request.getParameter("tag");
             if (tagId != null && !tagId.isEmpty()) {
-                andPred = andPred.and(query.attributePredicate(DeviceAttributes.TAG_IDS, new KapuaId[]{KapuaEid.parseCompactId(tagId)}));
+                andPred = andPred.and(query.attributePredicate(DeviceAttributes.TAG_IDS, new KapuaId[] {KapuaEid.parseCompactId(tagId)} ));
             }
 
             String sortAttribute = request.getParameter("sortAttribute");

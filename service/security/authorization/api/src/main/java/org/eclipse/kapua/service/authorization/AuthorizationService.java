@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.kapua.KapuaException;
@@ -21,14 +21,13 @@ import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 
 /**
- * AuthenticationService exposes APIs to manage User object under an Account.<br> It includes APIs to create, update, find, list and delete Users.<br> Instances of the UserService can be acquired
- * through the ServiceLocator.
+ * AuthenticationService definition.
+ *
+ * It provides methods to check if the current Subject/User has the {@link Permission} to perform a certain action
  *
  * @since 1.0.0
  */
 public interface AuthorizationService extends KapuaService {
-
-    Set<String> fetchUserClaims(KapuaId inScope) throws KapuaException ;
 
     /**
      * Returns if the user (the current logged user retrieved by thread context) is allowed to perform the operation identified by provided the permission.
@@ -50,9 +49,9 @@ public interface AuthorizationService extends KapuaService {
      * @return an array representing the current user permissions.
      * @throws KapuaException
      *         If there is no logged context.
-     * @since 1.0.0
+     * @since 1.2.0
      */
-    boolean[] isPermitted(List<Permission> permission) throws KapuaException;
+    boolean[] isPermitted(Collection<Permission> permission) throws KapuaException;
 
     /**
      * Checks if the user (the current logged user retrieved by thread context) is allowed to perform the operation identified by provided the permission.
@@ -64,4 +63,38 @@ public interface AuthorizationService extends KapuaService {
      * @since 1.0.0
      */
     void checkPermission(Permission permission) throws KapuaException;
+
+    /**
+     * Checks if the User (the current logged user retrieved by thread context) is allowed to perform the operation identified by provided permissions.
+     *
+     * @param permissions
+     *         The permission to check.
+     * @throws KapuaException
+     *         if there is no logged context or if the user has no right for the provided permission.
+     * @since 2.1.0
+     */
+    void checkPermissions(Collection<Permission> permissions) throws KapuaException;
+
+    /**
+     * Checks if the User (the current logged user retrieved by thread context) is allowed to perform the operation identified by provided permissions.
+     *
+     * @param permissions
+     *         The permission to check.
+     * @param checkStrategy
+     *         The {@link CheckStrategy} to use.
+     * @throws KapuaException
+     *         if there is no logged context or if the user has no right for the provided permission.
+     * @since 2.1.0
+     */
+    void checkPermissions(Collection<Permission> permissions, CheckStrategy checkStrategy) throws KapuaException;
+
+    /**
+     * Gets the claims of the current Subject in the given Scope.
+     *
+     * @param inScope The Account scope for which the claims are requested
+     * @return The set of claims of the current Subject.
+     * @since 2.1.0
+     */
+    Set<String> fetchUserClaims(KapuaId inScope) throws KapuaException ;
+
 }

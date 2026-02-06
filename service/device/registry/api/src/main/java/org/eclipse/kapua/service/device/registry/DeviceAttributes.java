@@ -29,6 +29,13 @@ public class DeviceAttributes extends KapuaUpdatableEntityAttributes {
     public static final String GROUP_ID = "groupId";
 
     /**
+     * Group ids.
+     *
+     * @since 2.1.0
+     */
+    public static final String GROUP_IDS = "groupIds";
+
+    /**
      * Tag id.
      *
      * @since 1.0.0
