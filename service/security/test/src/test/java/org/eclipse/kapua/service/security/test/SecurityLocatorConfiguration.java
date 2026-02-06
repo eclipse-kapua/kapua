@@ -171,13 +171,16 @@ public class SecurityLocatorConfiguration {
                 bind(RoleFactory.class).toInstance(new RoleFactoryImpl());
                 bind(RolePermissionFactory.class).toInstance(new RolePermissionFactoryImpl());
 
-                bind(GroupService.class).toInstance(new GroupServiceImpl(
-                        mockPermissionFactory,
-                        mockedAuthorization,
-                        Mockito.mock(ServiceConfigurationManager.class),
+                bind(GroupService.class).toInstance(
+                    new GroupServiceImpl(
                         txManager,
+                        Mockito.mock(ServiceConfigurationManager.class),
+                        mockedAuthorization,
+                        mockPermissionFactory,
                         new GroupImplJpaRepository(jpaRepoConfig)
-                ));
+                    )
+                );
+
                 bind(GroupFactory.class).toInstance(new GroupFactoryImpl());
                 final CredentialFactoryImpl credentialFactory = new CredentialFactoryImpl();
                 bind(CredentialFactory.class).toInstance(credentialFactory);
