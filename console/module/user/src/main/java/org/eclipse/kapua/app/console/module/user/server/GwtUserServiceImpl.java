@@ -27,6 +27,7 @@ import org.eclipse.kapua.app.console.module.api.shared.model.GwtGroupedNVPair;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtXSRFToken;
 import org.eclipse.kapua.app.console.module.api.shared.util.GwtKapuaCommonsModelConverter;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtAccessRoleQuery;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
 import org.eclipse.kapua.app.console.module.user.shared.model.GwtUser;
 import org.eclipse.kapua.app.console.module.user.shared.model.GwtUserCreator;
 import org.eclipse.kapua.app.console.module.user.shared.model.GwtUserQuery;
@@ -43,8 +44,6 @@ import org.eclipse.kapua.service.authentication.credential.CredentialFactory;
 import org.eclipse.kapua.service.authentication.credential.CredentialService;
 import org.eclipse.kapua.service.authentication.credential.CredentialStatus;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.group.Group;
-import org.eclipse.kapua.service.authorization.group.GroupService;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.authorization.role.RoleService;
 import org.eclipse.kapua.service.device.registry.DeviceFactory;
@@ -66,6 +65,12 @@ import org.eclipse.kapua.service.user.UserListResult;
 import org.eclipse.kapua.service.user.UserQuery;
 import org.eclipse.kapua.service.user.UserService;
 import org.eclipse.kapua.service.user.UserType;
+import org.eclipse.kapua.service.user.group.UserGroup;
+import org.eclipse.kapua.service.user.group.UserGroupAttributes;
+import org.eclipse.kapua.service.user.group.UserGroupFactory;
+import org.eclipse.kapua.service.user.group.UserGroupListResult;
+import org.eclipse.kapua.service.user.group.UserGroupQuery;
+import org.eclipse.kapua.service.user.group.UserGroupService;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -97,6 +102,9 @@ public class GwtUserServiceImpl extends KapuaRemoteServiceServlet implements Gwt
 
     private static final UserService USER_SERVICE = LOCATOR.getService(UserService.class);
     private static final UserFactory USER_FACTORY = LOCATOR.getFactory(UserFactory.class);
+
+    private static final UserGroupService USER_GROUP_SERVICE = LOCATOR.getService(UserGroupService.class);
+    private static final UserGroupFactory USER_GROUP_FACTORY = LOCATOR.getFactory(UserGroupFactory.class);
 
     private static final String USER_INFO = "userInfo";
     private static final String ENTITY_INFO = "entityInfo";
@@ -379,6 +387,53 @@ public class GwtUserServiceImpl extends KapuaRemoteServiceServlet implements Gwt
     }
 
     @Override
+    public List<GwtGroup> findAllGroups(String scopeId) throws GwtKapuaException {
+        try {
+            UserGroupQuery query = USER_GROUP_FACTORY.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(scopeId));
+
+            UserGroupListResult result = USER_GROUP_SERVICE.query(query);
+
+            List<GwtGroup> userGroupList = new ArrayList<GwtGroup>();
+            for (UserGroup userGroup : result.getItems()) {
+                userGroupList.add(KapuaGwtUserModelConverter.convertUserGroup(userGroup));
+            }
+
+            return userGroupList;
+        } catch (KapuaException e) {
+            throw KapuaExceptionHandler.buildExceptionFromError(e);
+        }
+    }
+
+    @Override
+    public PagingLoadResult<GwtGroup> findGroupsByUserId(PagingLoadConfig loadConfig, String scopeIdString, String userIdString) throws GwtKapuaException {
+        try {
+            KapuaId scopeId = GwtKapuaCommonsModelConverter.convertKapuaId(scopeIdString);
+            KapuaId userId = GwtKapuaCommonsModelConverter.convertKapuaId(userIdString);
+
+            UserService userRegistryService = LOCATOR.getService(UserService.class);
+            User user = userRegistryService.find(scopeId, userId);
+            if (user.getGroupIds().isEmpty()) {
+                return new BasePagingLoadResult<GwtGroup>(new ArrayList<GwtGroup>(), 0, 0);
+            }
+
+            UserGroupQuery userGroupQuery = USER_GROUP_FACTORY.newQuery(scopeId);
+            userGroupQuery.setPredicate(userGroupQuery.attributePredicate(UserGroupAttributes.ENTITY_ID, user.getGroupIds()));
+            userGroupQuery.setAskTotalCount(true);
+
+            UserGroupListResult userGroups = USER_GROUP_SERVICE.query(userGroupQuery);
+
+            List<GwtGroup> gwtGroups = new ArrayList<GwtGroup>();
+            for (UserGroup userGroup : userGroups.getItems()) {
+                gwtGroups.add(KapuaGwtUserModelConverter.convertUserGroup(userGroup));
+            }
+
+            return new BasePagingLoadResult<GwtGroup>(gwtGroups, loadConfig.getOffset(), userGroups.getTotalCount().intValue());
+        } catch (KapuaException e) {
+            throw KapuaExceptionHandler.buildExceptionFromError(e);
+        }
+    }
+
+    @Override
     public void addUserGroup(GwtXSRFToken xsrfToken, String scopeIdString, String userIdString, String groupIdString) throws GwtKapuaException {
         // Checking validity of the given XSRF Token
         checkXSRFToken(xsrfToken);
@@ -394,13 +449,14 @@ public class GwtUserServiceImpl extends KapuaRemoteServiceServlet implements Gwt
 
             Set<KapuaId> groupIds = user.getGroupIds();
             if (groupIds.contains(groupId)) {
-                GroupService groupService = locator.getService(GroupService.class);
+                UserGroupService userGroupService = locator.getService(UserGroupService.class);
 
-                Group group = groupService.find(scopeId, groupId);
-                if (group != null) {
-                    throw new KapuaDuplicateNameException(group.getName());
+                UserGroup userGroup = userGroupService.find(scopeId, groupId);
+                if (userGroup != null) {
+                    throw new KapuaDuplicateNameException(userGroup.getName());
                 }
             }
+
             groupIds.add(groupId);
             user.setGroupIds(groupIds);
 

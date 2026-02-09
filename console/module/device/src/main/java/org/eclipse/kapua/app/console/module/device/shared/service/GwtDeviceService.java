@@ -20,6 +20,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtGroupedNVPair;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtXSRFToken;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
 import org.eclipse.kapua.app.console.module.device.shared.model.GwtDevice;
 import org.eclipse.kapua.app.console.module.device.shared.model.GwtDeviceCreator;
 import org.eclipse.kapua.app.console.module.device.shared.model.GwtDeviceQuery;
@@ -111,6 +112,10 @@ public interface GwtDeviceService extends RemoteService {
             throws GwtKapuaException;
 
     // Groups
+
+    List<GwtGroup> findAllGroups(String scopeId) throws GwtKapuaException;
+
+    PagingLoadResult<GwtGroup> findGroupsByDeviceId(PagingLoadConfig loadConfig, String scopeIdString, String deviceIdString) throws GwtKapuaException;
 
     void addDeviceGroup(GwtXSRFToken xsrfToken, String scopeIdString, String deviceIdString, String groupIdString) throws GwtKapuaException;
 

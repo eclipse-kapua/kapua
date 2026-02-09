@@ -23,15 +23,15 @@ import org.eclipse.kapua.app.console.module.api.client.ui.view.AbstractEntityVie
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
 import org.eclipse.kapua.app.console.module.authorization.client.group.GroupGrid;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
-import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtGroupService;
-import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtGroupServiceAsync;
 import org.eclipse.kapua.app.console.module.user.shared.model.GwtUser;
+import org.eclipse.kapua.app.console.module.user.shared.service.GwtUserService;
+import org.eclipse.kapua.app.console.module.user.shared.service.GwtUserServiceAsync;
 
 import java.util.ArrayList;
 
 public class UserGroupGrid extends GroupGrid {
 
-    private static final GwtGroupServiceAsync GWT_GROUP_SERVICE = GWT.create(GwtGroupService.class);
+    private static final GwtUserServiceAsync GWT_USER_SERVICE = GWT.create(GwtUserService.class);
 
     private UserGroupToolbar userGroupToolbar;
     private GwtUser selectedUser;
@@ -64,7 +64,7 @@ public class UserGroupGrid extends GroupGrid {
             @Override
             protected void load(Object loadConfig, AsyncCallback<PagingLoadResult<GwtGroup>> callback) {
                 if (selectedUser != null) {
-                    GWT_GROUP_SERVICE.findByUserId((PagingLoadConfig) loadConfig, currentSession.getSelectedAccountId(), selectedUser.getId(), callback);
+                    GWT_USER_SERVICE.findGroupsByUserId((PagingLoadConfig) loadConfig, currentSession.getSelectedAccountId(), selectedUser.getId(), callback);
                 } else {
                     callback.onSuccess(new BasePagingLoadResult<GwtGroup>(new ArrayList<GwtGroup>()));
                 }
@@ -83,6 +83,7 @@ public class UserGroupGrid extends GroupGrid {
 
     public void setSelectedUser(GwtUser selectedUser) {
         this.selectedUser = selectedUser;
+
         userGroupToolbar.setSelectedUser(selectedUser);
     }
 

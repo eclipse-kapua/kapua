@@ -63,7 +63,7 @@ public class DeviceGroupToolbar extends GroupToolbarGrid {
             deleteEntityButton.setEnabled(selectedDevice != null && selectedEntity != null
                     && currentSession.hasPermission(DeviceSessionPermission.write()));
         }
-        if (addEntityButton != null) {
+        if (refreshEntityButton != null) {
             refreshEntityButton.setEnabled(selectedDevice != null);
         }
     }
@@ -78,15 +78,14 @@ public class DeviceGroupToolbar extends GroupToolbarGrid {
         deleteEntityButton.setText("Remove");
 
         addEntityButton.setEnabled(
-            selectedDevice != null
-            // selectedDevice != null &&
-            // currentSession.hasPermission(DeviceSessionPermission.write())
+             selectedDevice != null &&
+             currentSession.hasPermission(DeviceSessionPermission.write())
         );
 
         deleteEntityButton.setEnabled(
             selectedDevice != null &&
-            selectedEntity != null
-            // currentSession.hasPermission(DeviceSessionPermission.delete())
+            selectedEntity != null &&
+             currentSession.hasPermission(DeviceSessionPermission.delete())
         );
     }
 }

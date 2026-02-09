@@ -461,6 +461,22 @@ paths:
     $ref: './userGroup/userGroup-scopeId-_query.yaml#/paths/~1{scopeId}~1userGroups~1_query'
   /{scopeId}/userGroups/{userGroupId}:
     $ref: './userGroup/userGroup-scopeId-userGroupId.yaml#/paths/~1{scopeId}~1userGroups~1{userGroupId}'
+  /{scopeId}/userGroups/{userGroupId}/permissions:
+    $ref: './userGroup/userGroup-scopeId-userGroupId-permissions.yaml#/paths/~1{scopeId}~1userGroups~1{userGroupId}~1permissions'
+  /{scopeId}/userGroups/{userGroupId}/permissions/_count:
+    $ref: './userGroup/userGroup-scopeId-userGroupId-permissions-_count.yaml#/paths/~1{scopeId}~1userGroups~1{userGroupId}~1permissions~1_count'
+  /{scopeId}/userGroups/{userGroupId}/permissions/_query:
+    $ref: './userGroup/userGroup-scopeId-userGroupId-permissions-_query.yaml#/paths/~1{scopeId}~1userGroups~1{userGroupId}~1permissions~1_query'
+  /{scopeId}/userGroups/{userGroupId}/permissions/{groupPermissionId}:
+    $ref: './userGroup/userGroup-scopeId-userGroupId-permissions-groupPermissionId.yaml#/paths/~1{scopeId}~1userGroups~1{userGroupId}~1permissions~1{groupPermissionId}'
+  /{scopeId}/userGroups/{userGroupId}/roles:
+    $ref: './userGroup/userGroup-scopeId-userGroupId-roles.yaml#/paths/~1{scopeId}~1userGroups~1{userGroupId}~1roles'
+  /{scopeId}/userGroups/{userGroupId}/roles/_count:
+    $ref: './userGroup/userGroup-scopeId-userGroupId-roles-_count.yaml#/paths/~1{scopeId}~1userGroups~1{userGroupId}~1roles~1_count'
+  /{scopeId}/userGroups/{userGroupId}/roles/_query:
+    $ref: './userGroup/userGroup-scopeId-userGroupId-roles-_query.yaml#/paths/~1{scopeId}~1userGroups~1{userGroupId}~1roles~1_query'
+  /{scopeId}/userGroups/{userGroupId}/roles/{groupRoleId}:
+    $ref: './userGroup/userGroup-scopeId-userGroupId-roles-groupRoleId.yaml#/paths/~1{scopeId}~1userGroups~1{userGroupId}~1roles~1{groupRoleId}'
   ### Users Mfa ###
   /{scopeId}/users/{userId}/mfa:
     $ref: './usersMfa/users-scopeId-userId-mfa.yaml#/paths/~1{scopeId}~1users~1{userId}~1mfa'
@@ -1112,6 +1128,18 @@ components:
       $ref: './group/group.yaml#/components/schemas/groupCreator'
     groupListResult:
       $ref: './group/group.yaml#/components/schemas/groupListResult'
+    groupPermission:
+      $ref: './group/group.yaml#/components/schemas/groupPermission'
+    groupPermissionCreator:
+      $ref: './group/group.yaml#/components/schemas/groupPermissionCreator'
+    groupPermissionListResult:
+      $ref: './group/group.yaml#/components/schemas/groupPermissionListResult'
+    groupRole:
+      $ref: './group/group.yaml#/components/schemas/groupRole'
+    groupRoleCreator:
+      $ref: './group/group.yaml#/components/schemas/groupCreator'
+    groupRoleListResult:
+      $ref: './group/group.yaml#/components/schemas/groupRoleListResult'
     ### Job Entities ###
     job:
       $ref: './job/job.yaml#/components/schemas/job'

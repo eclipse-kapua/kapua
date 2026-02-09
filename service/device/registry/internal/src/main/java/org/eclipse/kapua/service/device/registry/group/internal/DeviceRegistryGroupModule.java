@@ -15,14 +15,23 @@ package org.eclipse.kapua.service.device.registry.group.internal;
 import com.google.inject.Provides;
 import com.google.inject.multibindings.ProvidesIntoSet;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
+import org.eclipse.kapua.commons.jpa.KapuaJpaTxManagerFactory;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.domain.Domain;
 import org.eclipse.kapua.model.domain.DomainEntry;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
+import org.eclipse.kapua.service.authorization.access.AccessPermissionFactory;
+import org.eclipse.kapua.service.authorization.access.AccessPermissionService;
+import org.eclipse.kapua.service.authorization.access.GroupQueryHelper;
 import org.eclipse.kapua.service.authorization.group.GroupFactory;
+import org.eclipse.kapua.service.authorization.group.GroupPermissionFactory;
+import org.eclipse.kapua.service.authorization.group.GroupPermissionService;
 import org.eclipse.kapua.service.authorization.group.GroupService;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.role.RolePermissionFactory;
+import org.eclipse.kapua.service.authorization.role.RolePermissionService;
+import org.eclipse.kapua.service.device.registry.DeviceRepository;
 import org.eclipse.kapua.service.device.registry.group.DeviceGroup;
 import org.eclipse.kapua.service.device.registry.group.DeviceGroupFactory;
 import org.eclipse.kapua.service.device.registry.group.DeviceGroupService;
@@ -54,25 +63,45 @@ public class DeviceRegistryGroupModule extends AbstractKapuaModule {
     DeviceGroupServiceValidationUtils deviceGroupServiceValidationUtils(
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
-            GroupService groupService
+            GroupService groupService,
+            AccessPermissionService accessPermissionService,
+            AccessPermissionFactory accessPermissionFactory,
+            RolePermissionService rolePermissionService,
+            RolePermissionFactory rolePermissionFactory,
+            GroupPermissionService groupPermissionService,
+            GroupPermissionFactory groupPermissionFactory,
+            DeviceRepository deviceRepository,
+            KapuaJpaTxManagerFactory jpaTxManagerFactory
     ) {
         return new DeviceGroupServiceValidationUtilsImpl(
             authorizationService,
             permissionFactory,
-            groupService
+            groupService,
+            accessPermissionService,
+            accessPermissionFactory,
+            rolePermissionService,
+            rolePermissionFactory,
+            groupPermissionService,
+            groupPermissionFactory,
+            deviceRepository,
+            jpaTxManagerFactory.create("kapua-device")
         );
     }
 
     @Provides
     @Singleton
     DeviceGroupService deviceGroupService(
+            KapuaJpaTxManagerFactory jpaTxManagerFactory,
             GroupService groupService,
             GroupFactory groupFactory,
+            GroupQueryHelper groupQueryHelper,
             DeviceGroupServiceValidationUtils deviceGroupServiceValidationUtils
     ) {
         return new DeviceGroupServiceImpl(
+            jpaTxManagerFactory.create("kapua-device"),
             groupService,
             groupFactory,
+            groupQueryHelper,
             deviceGroupServiceValidationUtils
         );
     }

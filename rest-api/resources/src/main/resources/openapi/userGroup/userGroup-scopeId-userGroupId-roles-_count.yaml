@@ -1,0 +1,36 @@
+openapi: 3.0.3
+
+info:
+  title: Eclipse Kapua REST API - User Group
+  version: '1.0'
+  contact:
+    name: Eclipse Kapua Dev Team
+    url: https://eclipse.org/kapua
+    email: kapua-dev@eclipse.org
+  license:
+    name: Eclipse Public License 2.0
+    url: https://www.eclipse.org/legal/epl-2.0
+
+paths:
+  /{scopeId}/userGroups/{userGroupId}/roles/_count:
+    post:
+      tags:
+        - User Group Role
+      summary: Count the User Group Roles
+      operationId: userGroupRoleCount
+      parameters:
+        - $ref: '../openapi.yaml#/components/parameters/scopeId'
+        - $ref: './userGroup.yaml#/components/parameters/userGroupId'
+      requestBody:
+        $ref: '../openapi.yaml#/components/requestBodies/kapuaQuery'
+      responses:
+        200:
+          $ref: '../openapi.yaml#/components/responses/countResult'
+        400:
+          $ref: '../openapi.yaml#/components/responses/illegalArgument'
+        401:
+          $ref: '../openapi.yaml#/components/responses/unauthenticated'
+        403:
+          $ref: '../openapi.yaml#/components/responses/subjectUnauthorized'
+        500:
+          $ref: '../openapi.yaml#/components/responses/kapuaError'

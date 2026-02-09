@@ -17,6 +17,7 @@ import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.permission.GroupSessionPermission;
 import org.eclipse.kapua.app.console.module.device.client.device.DeviceView;
 import org.eclipse.kapua.app.console.module.device.shared.model.GwtDevice;
+import org.eclipse.kapua.app.console.module.device.shared.model.permission.DeviceGroupSessionPermission;
 
 public class DeviceTabGroupsDescriptor extends AbstractEntityTabDescriptor<GwtDevice, DeviceTabGroups, DeviceView> {
 
@@ -37,6 +38,7 @@ public class DeviceTabGroupsDescriptor extends AbstractEntityTabDescriptor<GwtDe
 
     @Override
     public Boolean isEnabled(GwtSession currentSession) {
-        return currentSession.hasPermission(GroupSessionPermission.read());
+        return currentSession.hasPermission(GroupSessionPermission.read()) ||
+                currentSession.hasPermission(DeviceGroupSessionPermission.read());
     }
 }
