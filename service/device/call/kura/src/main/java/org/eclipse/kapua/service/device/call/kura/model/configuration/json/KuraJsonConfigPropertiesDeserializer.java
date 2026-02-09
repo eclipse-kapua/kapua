@@ -16,173 +16,139 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import org.eclipse.kapua.service.device.call.kura.model.configuration.KuraPassword;
+import org.eclipse.kapua.service.device.call.kura.model.configuration.xml.KuraXmlConfigPropertiesAdapted;
+import org.eclipse.kapua.service.device.call.kura.model.configuration.xml.KuraXmlConfigPropertiesAdapter;
+import org.eclipse.kapua.service.device.call.kura.model.configuration.xml.XmlConfigPropertyAdapted;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Custom JSON deserializer for Kura configuration properties.<br>
+ * This deserializer reads a JSON structure that includes both the property values and their corresponding types, based on the XML adapted form used in Kura.<br>
+ * It converts this JSON structure back into a Map that can be used in
+ * the Kura configuration context.<br>
+ * This approach ensures that the type information is preserved during deserialization, allowing for accurate reconstruction of
+ * the original properties map.
+ *
+ * example JSON input for a property named "exampleProperty" of type INTEGER with value 42:
+ * {
+ * "exampleProperty": {
+ * "value": 42,
+ * "type": "INTEGER"
+ * }
+ * }
+ *
+ * see https://esf.eurotech.com/docs/configuration-v2-rest-apis-and-conf-v2-request-handler#configurationproperties
+ *
+ * @since 2.1.0
+ */
 public class KuraJsonConfigPropertiesDeserializer extends JsonDeserializer<Map<String, Object>> {
+
+    private static final String TYPE_FIELD_NAME_JSON = "type";
+    private static final String VALUE_FIELD_NAME_JSON = "value";
 
     @Override
     public Map<String, Object> deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
-        Map<String, Object> result = new HashMap<>();
-
+        List<XmlConfigPropertyAdapted> adaptedProperties = new ArrayList<>();
+        //initial safeguard to handle null or empty JSON content
         if (jp.getCurrentToken() == null) {
             jp.nextToken();
         }
-
         if (jp.getCurrentToken() != JsonToken.START_OBJECT) {
             ctxt.reportWrongTokenException(this, JsonToken.START_OBJECT, "Expected START_OBJECT");
-            return result;
+            return new java.util.HashMap<>();
         }
 
-        while (jp.nextToken() != JsonToken.END_OBJECT) {
+        while (jp.nextToken() != JsonToken.END_OBJECT) {  //read each property and create the corresponding XmlConfigPropertyAdapted
             String propertyName = jp.getCurrentName();
             jp.nextToken();
 
-            PropertyHolder holder = parseProperty(jp);
-
-            if (holder.value != null && holder.type != null) {
-                result.put(propertyName, convertToType(holder.value, holder.type));
-            } else if (holder.value != null) {
-                result.put(propertyName, holder.value);
+            XmlConfigPropertyAdapted adaptedProperty = readProperty(jp, propertyName);
+            if (adaptedProperty != null) {
+                adaptedProperties.add(adaptedProperty);
             }
         }
 
-        return result;
+        KuraXmlConfigPropertiesAdapted adapted = new KuraXmlConfigPropertiesAdapted();
+        adapted.setProperties(adaptedProperties.toArray(new XmlConfigPropertyAdapted[0]));
+
+        try {
+            return new KuraXmlConfigPropertiesAdapter().unmarshal(adapted);
+        } catch (Exception e) {
+            throw new IOException("Error unmarshalling properties from XML adapted form", e);
+        }
     }
 
-    private PropertyHolder parseProperty(JsonParser jp) throws IOException {
-        PropertyHolder holder = new PropertyHolder();
+    private XmlConfigPropertyAdapted readProperty(JsonParser jp, String propertyName) throws IOException {
+        XmlConfigPropertyAdapted property = new XmlConfigPropertyAdapted();
+        property.setName(propertyName);
 
-        while (jp.nextToken() != JsonToken.END_OBJECT) {
+        String typeString = null;
+        List<String> values = new ArrayList<>();
+
+        while (jp.nextToken() != JsonToken.END_OBJECT) { //Read the "value" and "type" fields for the property (value could be array)
             String fieldName = jp.getCurrentName();
             jp.nextToken();
 
-            if ("value".equals(fieldName)) {
-                holder.value = parseValue(jp);
-            } else if ("type".equals(fieldName)) {
-                holder.type = jp.getValueAsString();
+            if (VALUE_FIELD_NAME_JSON.equals(fieldName)) {
+                if (jp.currentToken() == JsonToken.START_ARRAY) {
+                    property.setArray(true);
+                    while (jp.nextToken() != JsonToken.END_ARRAY) {
+                        values.add(readPrimitiveValue(jp));
+                    }
+                } else {
+                    property.setArray(false);
+                    values.add(readPrimitiveValue(jp));
+                }
+            } else if (TYPE_FIELD_NAME_JSON.equals(fieldName)) {
+                typeString = jp.getValueAsString();
             }
         }
-        return holder;
-    }
 
-    private Object parseValue(JsonParser jp) throws IOException {
-        if (jp.currentToken() == JsonToken.START_ARRAY) {
-            List<Object> values = new ArrayList<>();
-            while (jp.nextToken() != JsonToken.END_ARRAY) {
-                values.add(parsePrimitive(jp));
-            }
-            return values.toArray();
+        if (typeString != null) {
+            property.setType(parseType(typeString)); //parse the type string to the corresponding enum value
+        } else {
+            property.setType(XmlConfigPropertyAdapted.ConfigPropertyType.stringType);
         }
-        return parsePrimitive(jp);
+
+        property.setValues(values.toArray(new String[0]));
+
+        return property;
     }
 
-    private Object parsePrimitive(JsonParser jp) throws IOException {
-        switch (jp.currentToken()) {
-            case VALUE_NUMBER_INT:
-                return jp.getNumberValue();
-            case VALUE_NUMBER_FLOAT:
-                return jp.getDoubleValue();
-            case VALUE_TRUE:
-            case VALUE_FALSE:
-                return jp.getBooleanValue();
-            case VALUE_STRING:
-                return jp.getText();
-            case VALUE_NULL:
-            default:
-                return null;
-        }
-    }
-
-    private Object convertToType(Object value, String type) {
-        if (value.getClass().isArray()) {
-            int length = java.lang.reflect.Array.getLength(value);
-            Class<?> componentType = getClassForType(type);
-            Object converted = java.lang.reflect.Array.newInstance(componentType, length);
-            for (int i = 0; i < length; i++) {
-                java.lang.reflect.Array.set(converted, i, convertSingleValue(java.lang.reflect.Array.get(value, i), type));
-            }
-            return converted;
-        }
-        return convertSingleValue(value, type);
-    }
-
-    private Class<?> getClassForType(String type) {
-        switch (type.toUpperCase()) {
-            case "INTEGER":
-                return Integer.class;
-            case "LONG":
-                return Long.class;
-            case "DOUBLE":
-                return Double.class;
-            case "FLOAT":
-                return Float.class;
-            case "BYTE":
-                return Byte.class;
-            case "SHORT":
-                return Short.class;
-            case "BOOLEAN":
-                return Boolean.class;
-            case "CHAR":
-                return Character.class;
-            case "PASSWORD":
-                return KuraPassword.class;
-            case "STRING":
-            default:
-                return String.class;
-        }
-    }
-
-    private Object convertSingleValue(Object value, String type) {
-        if (value == null) {
+    private String readPrimitiveValue(JsonParser jp) throws IOException {
+        if (jp.currentToken() == JsonToken.VALUE_NULL) {
             return null;
         }
+        return jp.getValueAsString();
+    }
 
-        try {
-            switch (type.toUpperCase()) {
-                case "INTEGER":
-                    return toNumber(value).intValue();
-                case "LONG":
-                    return toNumber(value).longValue();
-                case "DOUBLE":
-                    return toNumber(value).doubleValue();
-                case "FLOAT":
-                    return toNumber(value).floatValue();
-                case "BYTE":
-                    return toNumber(value).byteValue();
-                case "SHORT":
-                    return toNumber(value).shortValue();
-                case "BOOLEAN":
-                    return value instanceof Boolean ? value : Boolean.parseBoolean(value.toString());
-                case "CHAR":
-                    String str = value.toString();
-                    return str.isEmpty() ? null : str.charAt(0);
-                case "PASSWORD":
-                    return new KuraPassword(value.toString());
-                case "STRING":
-                default:
-                    return value.toString();
-            }
-        } catch (Exception e) {
-            return value;
+    private XmlConfigPropertyAdapted.ConfigPropertyType parseType(String typeString) {
+        switch (typeString.toUpperCase()) {
+            case "INTEGER":
+                return XmlConfigPropertyAdapted.ConfigPropertyType.integerType;
+            case "LONG":
+                return XmlConfigPropertyAdapted.ConfigPropertyType.longType;
+            case "DOUBLE":
+                return XmlConfigPropertyAdapted.ConfigPropertyType.doubleType;
+            case "FLOAT":
+                return XmlConfigPropertyAdapted.ConfigPropertyType.floatType;
+            case "BYTE":
+                return XmlConfigPropertyAdapted.ConfigPropertyType.byteType;
+            case "SHORT":
+                return XmlConfigPropertyAdapted.ConfigPropertyType.shortType;
+            case "BOOLEAN":
+                return XmlConfigPropertyAdapted.ConfigPropertyType.booleanType;
+            case "CHAR":
+                return XmlConfigPropertyAdapted.ConfigPropertyType.charType;
+            case "PASSWORD":
+                return XmlConfigPropertyAdapted.ConfigPropertyType.passwordType;
+            case "STRING":
+            default:
+                return XmlConfigPropertyAdapted.ConfigPropertyType.stringType;
         }
     }
-
-    private Number toNumber(Object value) {
-        if (value instanceof Number) {
-            return (Number) value;
-        }
-        return Double.parseDouble(value.toString());
-    }
-
-    private static class PropertyHolder {
-        Object value;
-        String type;
-    }
-
 }
