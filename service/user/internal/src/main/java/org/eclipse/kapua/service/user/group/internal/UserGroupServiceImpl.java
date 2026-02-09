@@ -88,14 +88,7 @@ public class UserGroupServiceImpl implements UserGroupService {
         Group group = KapuaSecurityUtils.doPrivileged(() -> groupService.create(groupCreator));
 
         // Convert
-        UserGroup userGroup = new UserGroupImpl(group.getScopeId());
-        userGroup.setId(group.getId());
-        userGroup.setTagIds(group.getTagIds());
-        userGroup.setName(group.getName());
-        userGroup.setDescription(group.getDescription());
-        userGroup.setEntityAttributes(group.getEntityAttributes());
-        userGroup.setEntityProperties(group.getEntityProperties());
-        userGroup.setOptlock(group.getOptlock());
+        UserGroup userGroup = mapToUserGroup(group);
 
         // Return result
         return userGroup;
@@ -121,14 +114,7 @@ public class UserGroupServiceImpl implements UserGroupService {
         Group updatedGroup = KapuaSecurityUtils.doPrivileged(() -> groupService.update(group));
 
         // Convert
-        UserGroup updatedUserGroup = new UserGroupImpl(updatedGroup.getScopeId());
-        updatedUserGroup.setId(updatedGroup.getId());
-        updatedUserGroup.setTagIds(updatedGroup.getTagIds());
-        updatedUserGroup.setName(updatedGroup.getName());
-        updatedUserGroup.setDescription(updatedGroup.getDescription());
-        updatedUserGroup.setEntityAttributes(updatedGroup.getEntityAttributes());
-        updatedUserGroup.setEntityProperties(updatedGroup.getEntityProperties());
-        updatedUserGroup.setOptlock(updatedGroup.getOptlock());
+        UserGroup updatedUserGroup = mapToUserGroup(updatedGroup);
 
         // Return result
         return updatedUserGroup;
@@ -147,14 +133,7 @@ public class UserGroupServiceImpl implements UserGroupService {
         }
 
         // Convert
-        UserGroup userGroup = new UserGroupImpl(group.getScopeId());
-        userGroup.setId(group.getId());
-        userGroup.setTagIds(group.getTagIds());
-        userGroup.setName(group.getName());
-        userGroup.setDescription(group.getDescription());
-        userGroup.setEntityAttributes(group.getEntityAttributes());
-        userGroup.setEntityProperties(group.getEntityProperties());
-        userGroup.setOptlock(group.getOptlock());
+        UserGroup userGroup = mapToUserGroup(group);
 
         // Validate post-conditions
         userGroupServiceValidationUtils.validateFindPostConditions(userGroup);
@@ -205,14 +184,7 @@ public class UserGroupServiceImpl implements UserGroupService {
             groups.getItems()
                   .stream()
                   .map((group)-> {
-                      UserGroup userGroup = new UserGroupImpl(group.getScopeId());
-                      userGroup.setId(group.getId());
-                      userGroup.setTagIds(group.getTagIds());
-                      userGroup.setName(group.getName());
-                      userGroup.setDescription(group.getDescription());
-                      userGroup.setEntityAttributes(group.getEntityAttributes());
-                      userGroup.setEntityProperties(group.getEntityProperties());
-                      userGroup.setOptlock(group.getOptlock());
+                      UserGroup userGroup = mapToUserGroup(group);
 
                       return userGroup;
                   }
@@ -265,5 +237,17 @@ public class UserGroupServiceImpl implements UserGroupService {
 
         // Do delete
         KapuaSecurityUtils.doPrivileged(() -> groupService.delete(scopeId, userGroupId));
+    }
+
+    private static UserGroup mapToUserGroup(Group group) {
+        UserGroup userGroup = new UserGroupImpl(group.getScopeId());
+        userGroup.setId(group.getId());
+        userGroup.setTagIds(group.getTagIds());
+        userGroup.setName(group.getName());
+        userGroup.setDescription(group.getDescription());
+        userGroup.setEntityAttributes(group.getEntityAttributes());
+        userGroup.setEntityProperties(group.getEntityProperties());
+        userGroup.setOptlock(group.getOptlock());
+        return userGroup;
     }
 }

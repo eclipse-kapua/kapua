@@ -77,18 +77,22 @@ public abstract class EntityGrid<M extends GwtEntityModel> extends ContentPanel 
 
     protected EntityGrid(AbstractEntityView<M> entityView, GwtSession currentSession) {
         super(new FitLayout());
+
         // Set other properties
         this.parentEntityView = entityView;
         this.currentSession = currentSession;
+
         // Container borders
         setBorders(false);
         setBodyBorder(true);
         setHeaderVisible(false);
+
         // CRUD toolbar
         entityCRUDToolbar = getToolbar();
         if (entityCRUDToolbar != null) {
             setTopComponent(entityCRUDToolbar);
         }
+
         // Paging toolbar
         entityPagingToolbar = getPagingToolbar();
         if (entityPagingToolbar != null) {
@@ -99,6 +103,7 @@ public abstract class EntityGrid<M extends GwtEntityModel> extends ContentPanel 
     @Override
     protected void onRender(Element target, int index) {
         super.onRender(target, index);
+
         // Configure Entity Grid
         if (!entityGridConfigured) {
             configureEntityGrid();
@@ -106,8 +111,10 @@ public abstract class EntityGrid<M extends GwtEntityModel> extends ContentPanel 
 
         // Force layout so the entityGrid gets rendered and its listeners initialized
         layout();
+
         // Bind the grid to CRUD toolbar
         entityCRUDToolbar.setEntityGrid(this);
+
         // Grid selection mode
         final GridSelectionModel<M> selectionModel = entityGrid.getSelectionModel();
         selectionModel.setSelectionMode(selectionMode);
@@ -134,11 +141,11 @@ public abstract class EntityGrid<M extends GwtEntityModel> extends ContentPanel 
                 }
             }
         });
+
         // Do first load
         if (refreshOnRender) {
             refresh();
         }
-        setEmptyGridText(getEmptyGridText());
     }
 
     public String getEmptyGridText() {
@@ -190,20 +197,27 @@ public abstract class EntityGrid<M extends GwtEntityModel> extends ContentPanel 
 
         // Data Store
         entityStore = new ListStore<M>(entityLoader);
+
         // Grid Data Load Listener
         EntityGridLoadListener<M> entityGridLoadListener = new EntityGridLoadListener<M>(this, entityStore, EntityFilterPanel.getSearchButton(), EntityFilterPanel.getResetButton());
         entityGridLoadListener.setKeepSelectedOnLoad(keepSelectedItemsAfterLoad);
 
         entityLoader.addLoadListener(entityGridLoadListener);
+
         // Bind Entity Paging Toolbar
         if (entityPagingToolbar != null) {
             entityPagingToolbar.bind(entityLoader);
         }
+
         // Configure columns
         ColumnModel columnModel = new ColumnModel(getColumns());
+
         // Set grid
         entityGrid = new KapuaGrid<M>(entityStore, columnModel);
         add(entityGrid);
+
+        // Misc
+        setEmptyGridText(getEmptyGridText());
 
         entityGridConfigured = true;
     }
@@ -227,7 +241,10 @@ public abstract class EntityGrid<M extends GwtEntityModel> extends ContentPanel 
 
     public void setFilterPanel(EntityFilterPanel<M> filterPanel) {
         this.filterPanel = filterPanel;
-        entityCRUDToolbar.setFilterPanel(filterPanel);
+
+        if (entityCRUDToolbar != null) {
+            entityCRUDToolbar.setFilterPanel(filterPanel);
+        }
     }
 
     protected void selectionChangedEvent(M selectedItem) {

@@ -43,7 +43,7 @@ public class GroupViewDescriptor extends AbstractEntityViewDescriptor<GwtGroup> 
 
     @Override
     public EntityView<GwtGroup> getViewInstance(GwtSession currentSession) {
-        return new GroupView(currentSession);
+        return new GroupView(currentSession, new AccessGroupDataProvider());
     }
 
     @Override

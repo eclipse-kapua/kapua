@@ -16,30 +16,35 @@ import org.eclipse.kapua.app.console.module.api.client.ui.dialog.KapuaDialog;
 import org.eclipse.kapua.app.console.module.api.client.ui.widget.EntityCRUDToolbar;
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
-import org.eclipse.kapua.app.console.module.authorization.shared.model.permission.GroupSessionPermission;
 
 import com.google.gwt.user.client.Element;
 
 public class GroupToolbarGrid extends EntityCRUDToolbar<GwtGroup> {
 
-    public GroupToolbarGrid(GwtSession currentSession) {
+    private EntityGroupDataProvider entityGroupDataProvider;
+
+    public GroupToolbarGrid(GwtSession currentSession, EntityGroupDataProvider entityGroupDataProvider) {
         super(currentSession);
+
+        this.entityGroupDataProvider = entityGroupDataProvider;
     }
 
-    public GroupToolbarGrid(GwtSession currentSession, boolean slaveEntity) {
+    public GroupToolbarGrid(GwtSession currentSession, EntityGroupDataProvider entityGroupDataProvider, boolean slaveEntity) {
         super(currentSession, slaveEntity);
+
+        this.entityGroupDataProvider = entityGroupDataProvider;
     }
 
     @Override
     protected KapuaDialog getAddDialog() {
-
-        return new GroupAddDialog(currentSession);
+        return new GroupAddDialog(currentSession, entityGroupDataProvider);
     }
 
     @Override
     protected void onRender(Element target, int index) {
         super.onRender(target, index);
-        getAddEntityButton().setEnabled(currentSession.hasPermission(GroupSessionPermission.write()));
+
+        getAddEntityButton().setEnabled(currentSession.hasPermission(entityGroupDataProvider.getEntityGroupAddSessionPermission()));
     }
 
     @Override
@@ -47,7 +52,7 @@ public class GroupToolbarGrid extends EntityCRUDToolbar<GwtGroup> {
         GwtGroup selectedGroup = gridSelectionModel.getSelectedItem();
         GroupEditDialog dialog = null;
         if (selectedGroup != null) {
-            dialog = new GroupEditDialog(currentSession, selectedGroup);
+            dialog = new GroupEditDialog(currentSession, entityGroupDataProvider, selectedGroup);
         }
         return dialog;
     }
@@ -57,9 +62,12 @@ public class GroupToolbarGrid extends EntityCRUDToolbar<GwtGroup> {
         GwtGroup selectedGroup = gridSelectionModel.getSelectedItem();
         GroupDeleteDialog dialog = null;
         if (selectedGroup != null) {
-            dialog = new GroupDeleteDialog(selectedGroup);
+            dialog = new GroupDeleteDialog(entityGroupDataProvider, selectedGroup);
         }
         return dialog;
     }
 
+    protected void setEntityGroupDataProvider(EntityGroupDataProvider entityGroupDataProvider) {
+        this.entityGroupDataProvider = entityGroupDataProvider;
+    }
 }

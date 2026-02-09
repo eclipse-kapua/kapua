@@ -20,7 +20,7 @@ public class GroupTabDescriptionDescriptor extends AbstractEntityTabDescriptor<G
 
     @Override
     public GroupTabDescription getTabViewInstance(GroupView view, GwtSession currentSession) {
-        return new GroupTabDescription(currentSession);
+        return new GroupTabDescription(currentSession, new AccessGroupDataProvider());
     }
 
     @Override

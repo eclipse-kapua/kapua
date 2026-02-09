@@ -49,6 +49,9 @@ public class KapuaGwtAuthorizationModelConverter {
      * @since 1.0.0
      */
     public static GwtGroup convertGroup(Group group) {
+        if (group == null) {
+            return null;
+        }
 
         GwtGroup gwtGroup = new GwtGroup();
         // Covert commons attributes

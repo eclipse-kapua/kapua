@@ -10,11 +10,12 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.app.console.module.device.client.device.group;
+package org.eclipse.kapua.app.console.module.device.client.device.group.tabs;
 
 import com.google.gwt.user.client.Element;
 import org.eclipse.kapua.app.console.module.api.client.ui.dialog.KapuaDialog;
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
+import org.eclipse.kapua.app.console.module.authorization.client.group.AccessGroupDataProvider;
 import org.eclipse.kapua.app.console.module.authorization.client.group.GroupToolbarGrid;
 import org.eclipse.kapua.app.console.module.device.shared.model.GwtDevice;
 import org.eclipse.kapua.app.console.module.device.shared.model.permission.DeviceSessionPermission;
@@ -24,7 +25,7 @@ public class DeviceGroupToolbar extends GroupToolbarGrid {
     private GwtDevice selectedDevice;
 
     public DeviceGroupToolbar(GwtSession currentSession) {
-        super(currentSession, true);
+        super(currentSession, new AccessGroupDataProvider(), true);
 
         setEditButtonVisible(false);
     }

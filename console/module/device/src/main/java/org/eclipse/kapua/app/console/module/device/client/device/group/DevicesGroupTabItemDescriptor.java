@@ -10,19 +10,18 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.app.console.module.device.client.group.device;
+package org.eclipse.kapua.app.console.module.device.client.device.group;
 
 import org.eclipse.kapua.app.console.module.api.client.ui.view.descriptor.AbstractEntityTabDescriptor;
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
-import org.eclipse.kapua.app.console.module.authorization.client.group.GroupView;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
 import org.eclipse.kapua.app.console.module.device.shared.model.permission.DeviceSessionPermission;
 
-public class DevicesGroupTabItemDescriptor extends AbstractEntityTabDescriptor<GwtGroup, DevicesGroupTabItem, GroupView> {
+public class DevicesGroupTabItemDescriptor extends AbstractEntityTabDescriptor<GwtGroup, DevicesGroupTabItem, DeviceGroupView> {
 
     @Override
     public String getViewId() {
-        return "group.devices";
+        return "deviceGroup.devices";
     }
 
     @Override
@@ -31,7 +30,7 @@ public class DevicesGroupTabItemDescriptor extends AbstractEntityTabDescriptor<G
     }
 
     @Override
-    public DevicesGroupTabItem getTabViewInstance(GroupView view, GwtSession currentSession) {
+    public DevicesGroupTabItem getTabViewInstance(DeviceGroupView view, GwtSession currentSession) {
         return new DevicesGroupTabItem(currentSession);
     }
 

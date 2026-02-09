@@ -35,6 +35,7 @@ import org.eclipse.kapua.app.console.module.authorization.shared.service.GwtGrou
 import org.eclipse.kapua.app.console.module.authorization.shared.util.GwtKapuaAuthorizationModelConverter;
 import org.eclipse.kapua.app.console.module.authorization.shared.util.KapuaGwtAuthorizationModelConverter;
 import org.eclipse.kapua.commons.model.id.KapuaEid;
+import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.group.Group;
@@ -55,9 +56,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 public class GwtGroupServiceImpl extends KapuaRemoteServiceServlet implements GwtGroupService {
 
+    private static final String ENTITY_INFO = "entityInfo";
     private static final long serialVersionUID = 929002466564699535L;
 
     private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
@@ -65,7 +68,6 @@ public class GwtGroupServiceImpl extends KapuaRemoteServiceServlet implements Gw
     private static final GroupService GROUP_SERVICE = LOCATOR.getService(GroupService.class);
     private static final GroupFactory GROUP_FACTORY = LOCATOR.getFactory(GroupFactory.class);
 
-    private static final String ENTITY_INFO = "entityInfo";
 
     @Override
     public GwtGroup create(GwtGroupCreator gwtGroupCreator) throws GwtKapuaException {
@@ -117,12 +119,7 @@ public class GwtGroupServiceImpl extends KapuaRemoteServiceServlet implements Gw
 
             Group group = GROUP_SERVICE.find(scopeId, groupId);
 
-            GwtGroup gwtGroup = null;
-            if (group != null) {
-                gwtGroup = KapuaGwtAuthorizationModelConverter.convertGroup(group);
-            }
-
-            return gwtGroup;
+            return KapuaGwtAuthorizationModelConverter.convertGroup(group);
         } catch (Exception e) {
             throw KapuaExceptionHandler.buildExceptionFromError(e);
         }
@@ -166,7 +163,6 @@ public class GwtGroupServiceImpl extends KapuaRemoteServiceServlet implements Gw
         } catch (Exception e) {
             throw KapuaExceptionHandler.buildExceptionFromError(e);
         }
-
     }
 
     @Override
@@ -289,14 +285,20 @@ public class GwtGroupServiceImpl extends KapuaRemoteServiceServlet implements Gw
         checkXSRFToken(xsrfToken);
 
         try {
-            KapuaId scopeId = KapuaEid.parseCompactId(scopeIdString);
-            KapuaId groupId = KapuaEid.parseCompactId(groupIdString);
+            final KapuaId scopeId = KapuaEid.parseCompactId(scopeIdString);
+            final KapuaId groupId = KapuaEid.parseCompactId(groupIdString);
             KapuaId tagId = KapuaEid.parseCompactId(tagIdString);
 
             KapuaLocator locator = KapuaLocator.getInstance();
-            GroupService groupService = locator.getService(GroupService.class);
+            final GroupService groupService = locator.getService(GroupService.class);
             TagService tagService = locator.getService(TagService.class);
-            Group group = groupService.find(scopeId, groupId);
+            Group group = KapuaSecurityUtils.doPrivileged(new Callable<Group>() {
+
+                @Override
+                public Group call() throws KapuaException {
+                    return groupService.find(scopeId, groupId);
+                }
+            });
 
             Set<KapuaId> tagIds = group.getTagIds();
             if (tagIds.contains(tagId)) {

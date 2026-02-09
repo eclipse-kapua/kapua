@@ -23,6 +23,7 @@ import org.eclipse.kapua.app.console.module.api.client.ui.view.AbstractEntityVie
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
 import org.eclipse.kapua.app.console.module.authorization.client.group.GroupGrid;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
+import org.eclipse.kapua.app.console.module.user.client.group.UserGroupDataProvider;
 import org.eclipse.kapua.app.console.module.user.shared.model.GwtUser;
 import org.eclipse.kapua.app.console.module.user.shared.service.GwtUserService;
 import org.eclipse.kapua.app.console.module.user.shared.service.GwtUserServiceAsync;
@@ -37,7 +38,7 @@ public class UserGroupGrid extends GroupGrid {
     private GwtUser selectedUser;
 
     protected UserGroupGrid(AbstractEntityView<GwtGroup> entityView, GwtSession currentSession, GwtUser selectedUser) {
-        super(entityView, currentSession);
+        super(entityView, new UserGroupDataProvider(), currentSession);
 
         this.selectedUser = selectedUser;
 

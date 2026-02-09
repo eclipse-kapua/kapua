@@ -18,6 +18,10 @@ import org.eclipse.kapua.app.console.module.api.client.ui.dialog.SimpleDialog;
 
 public abstract class EntityDeleteDialog extends SimpleDialog {
 
+    public EntityDeleteDialog() {
+        setDisabledFormPanelEvents(true);
+    }
+
     @Override
     public void createBody() {
     }
