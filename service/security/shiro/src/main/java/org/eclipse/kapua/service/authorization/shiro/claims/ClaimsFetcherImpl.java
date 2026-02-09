@@ -20,12 +20,10 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authentication.AuthenticationService;
 import org.eclipse.kapua.service.authentication.token.LoginInfo;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.access.AccessPermission;
 import org.eclipse.kapua.service.authorization.domain.DomainFactory;
 import org.eclipse.kapua.service.authorization.domain.DomainRegistryService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
-import org.eclipse.kapua.service.authorization.role.RolePermission;
 
 import javax.inject.Inject;
 import java.util.HashSet;
@@ -51,11 +49,13 @@ public class ClaimsFetcherImpl implements ClaimsFetcher {
     private Set<Domain> knownDomains;
 
     @Inject
-    public ClaimsFetcherImpl(AuthorizationService authorizationService,
-                               AuthenticationService authenticationService,
-                               PermissionFactory permissionFactory,
-                               DomainRegistryService domainService,
-                               DomainFactory domainFactory) {
+    public ClaimsFetcherImpl(
+            AuthorizationService authorizationService,
+            AuthenticationService authenticationService,
+            PermissionFactory permissionFactory,
+            DomainRegistryService domainService,
+            DomainFactory domainFactory
+    ) {
         this.authorizationService = authorizationService;
         this.authenticationService = authenticationService;
         this.permissionFactory = permissionFactory;
@@ -69,29 +69,59 @@ public class ClaimsFetcherImpl implements ClaimsFetcher {
             this.knownDomains = KapuaSecurityUtils.doPrivileged(() -> new HashSet<>(domainService.query(domainFactory.newQuery(null)).getItems()));
         }
 
+        //
+        // Retrieve all permissions from both AccessPermissions and RolePermissions
         LoginInfo loginInfo = authenticationService.getLoginInfo();
-        //Retrieve all permissions from both AccessPermissions and RolePermissions
-        Set<AccessPermission> accessPermissions = loginInfo.getAccessPermission();
-        Set<RolePermission> accessRolePermissions = loginInfo.getRolePermission();
-        Set<Permission> permissions = accessPermissions.stream().map(ap -> (Permission) ap.getPermission()).collect(Collectors.toSet());
-        Set<Permission> permissionsRole = accessRolePermissions.stream().map(ap -> (Permission) ap.getPermission()).collect(Collectors.toSet());
-        permissions.addAll(permissionsRole);
 
+        Set<Permission> allPermissions = new HashSet<>();
+
+        allPermissions.addAll(
+                loginInfo.getAccessPermission()
+                        .stream()
+                        .map(accessPermission -> (Permission) accessPermission.getPermission())
+                        .collect(Collectors.toList())
+        );
+
+        allPermissions.addAll(
+                loginInfo.getRolePermission()
+                        .stream()
+                        .map(rolePermission -> (Permission) rolePermission.getPermission())
+                        .collect(Collectors.toList())
+        );
+
+        allPermissions.addAll(
+                loginInfo.getGroupPermission()
+                        .stream()
+                        .map(groupPermission -> (Permission) groupPermission.getPermission())
+                        .collect(Collectors.toList())
+        );
+
+        allPermissions.addAll(
+                loginInfo.getGroupRolePermission()
+                        .stream()
+                        .map(groupRolePermission -> (Permission) groupRolePermission.getPermission())
+                        .collect(Collectors.toList())
+        );
+
+        //
+        // Resolve claims from list of Permissions
         Set<String> claims = new java.util.HashSet<>();
         Queue<String> domains = new java.util.LinkedList<>();
         Queue<Actions> actions = new java.util.LinkedList<>();
+        for (Permission permission : allPermissions) {
 
-        for (Permission p : permissions) {
-            resolveDomain(p, domains); //Resolve domains considering the "*" a possibility
+            resolveDomain(permission, domains); //Resolve domains considering the "*" a possibility
+
             while (!domains.isEmpty()) {
-                String d = domains.poll();
-                resolveAction(p, d, actions); //Resolve actions considering the "*" a possibility
+                String domain = domains.poll();
+                resolveAction(permission, domain, actions); //Resolve actions considering the "*" a possibility
+
                 while (!actions.isEmpty()) {
-                    Actions a = actions.poll();
+                    Actions action = actions.poll();
                     try {
-                        final Permission permission = permissionFactory.newPermission(d, a, inScope, p.getGroupId()); //GroupId could be null (no group) or a specific group
-                        if (authorizationService.isPermitted(permission)) {
-                            claims.add(String.format("%s:%s", d, a));
+                        final Permission permissionToCheck = permissionFactory.newPermission(domain, action, inScope, permission.getGroupId()); //GroupId could be null (no group) or a specific group
+                        if (authorizationService.isPermitted(permissionToCheck)) {
+                            claims.add(String.format("%s:%s", domain, action));
                         }
                     } catch (KapuaException e) {
                         // Ignore (don't add claim)

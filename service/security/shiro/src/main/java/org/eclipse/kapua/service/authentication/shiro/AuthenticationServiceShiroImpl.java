@@ -42,6 +42,7 @@ import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.security.KapuaSession;
 import org.eclipse.kapua.commons.util.KapuaDelayUtil;
+import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.model.query.predicate.AttributePredicate;
 import org.eclipse.kapua.service.authentication.AuthenticationCredentials;
@@ -81,6 +82,11 @@ import org.eclipse.kapua.service.authorization.access.AccessRoleFactory;
 import org.eclipse.kapua.service.authorization.access.AccessRoleListResult;
 import org.eclipse.kapua.service.authorization.access.AccessRoleQuery;
 import org.eclipse.kapua.service.authorization.access.AccessRoleService;
+import org.eclipse.kapua.service.authorization.group.GroupPermissionListResult;
+import org.eclipse.kapua.service.authorization.group.GroupPermissionService;
+import org.eclipse.kapua.service.authorization.group.GroupRole;
+import org.eclipse.kapua.service.authorization.group.GroupRoleListResult;
+import org.eclipse.kapua.service.authorization.group.GroupRoleService;
 import org.eclipse.kapua.service.authorization.role.RolePermissionAttributes;
 import org.eclipse.kapua.service.authorization.role.RolePermissionFactory;
 import org.eclipse.kapua.service.authorization.role.RolePermissionListResult;
@@ -135,6 +141,8 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
     private final AccessPermissionService accessPermissionService;
     private final AccessPermissionFactory accessPermissionFactory;
 
+    private final GroupRoleService groupRoleService;
+    private final GroupPermissionService groupPermissionService;
     private final UserService userService;
 
     private final Set<CredentialsConverter> credentialsConverters;
@@ -157,6 +165,8 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
             RolePermissionFactory rolePermissionFactory,
             AccessPermissionService accessPermissionService,
             AccessPermissionFactory accessPermissionFactory,
+            GroupRoleService groupRoleService,
+            GroupPermissionService groupPermissionService,
             UserService userService,
             Set<CredentialsConverter> credentialsConverters,
             KapuaAuthenticationSetting kapuaAuthenticationSetting) {
@@ -173,9 +183,12 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
         this.rolePermissionFactory = rolePermissionFactory;
         this.accessPermissionService = accessPermissionService;
         this.accessPermissionFactory = accessPermissionFactory;
+        this.groupRoleService = groupRoleService;
+        this.groupPermissionService = groupPermissionService;
         this.userService = userService;
         this.credentialsConverters = credentialsConverters;
         this.kapuaAuthenticationSetting = kapuaAuthenticationSetting;
+
         this.jwtConsumer = new JwtConsumerBuilder()
                 .setSkipAllValidators()
                 .setDisableRequireSignature()
@@ -421,23 +434,58 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
 
         // AccessInfo
         AccessInfo accessInfo = KapuaSecurityUtils.doPrivileged(() -> accessInfoService.findByUserId(accessToken.getScopeId(), accessToken.getUserId()));
+        if (accessInfo != null) {
+            // AccessRole
+            AccessRoleQuery accessRoleQuery = accessRoleFactory.newQuery(accessToken.getScopeId());
+            accessRoleQuery.setPredicate(accessRoleQuery.attributePredicate(AccessRoleAttributes.ACCESS_INFO_ID, accessInfo.getId()));
+            AccessRoleListResult accessRoleListResult = KapuaSecurityUtils.doPrivileged(() -> accessRoleService.query(accessRoleQuery));
 
-        // AccessRole
-        AccessRoleQuery accessRoleQuery = accessRoleFactory.newQuery(accessToken.getScopeId());
-        accessRoleQuery.setPredicate(accessRoleQuery.attributePredicate(AccessRoleAttributes.ACCESS_INFO_ID, accessInfo.getId()));
-        AccessRoleListResult accessRoleListResult = KapuaSecurityUtils.doPrivileged(() -> accessRoleService.query(accessRoleQuery));
+            // RolePermission
+            RolePermissionQuery rolePermissionQuery = rolePermissionFactory.newQuery(accessToken.getScopeId());
+            rolePermissionQuery.setPredicate(rolePermissionQuery.attributePredicate(RolePermissionAttributes.ROLE_ID, accessRoleListResult.getItems().stream().map(AccessRole::getRoleId).collect(Collectors.toList())));
+            RolePermissionListResult rolePermissions = KapuaSecurityUtils.doPrivileged(() -> rolePermissionService.query(rolePermissionQuery));
+            loginInfo.setRolePermission(Sets.newHashSet(rolePermissions.getItems()));
 
-        // RolePermission
-        RolePermissionQuery rolePermissionQuery = rolePermissionFactory.newQuery(accessToken.getScopeId());
-        rolePermissionQuery.setPredicate(rolePermissionQuery.attributePredicate(RolePermissionAttributes.ROLE_ID, accessRoleListResult.getItems().stream().map(AccessRole::getRoleId).collect(Collectors.toList())));
-        RolePermissionListResult rolePermissions = KapuaSecurityUtils.doPrivileged(() -> rolePermissionService.query(rolePermissionQuery));
-        loginInfo.setRolePermission(Sets.newHashSet(rolePermissions.getItems()));
+            // AccessPermission
+            AccessPermissionQuery accessPermissionQuery = accessPermissionFactory.newQuery(accessToken.getScopeId());
+            accessPermissionQuery.setPredicate(accessPermissionQuery.attributePredicate(AccessPermissionAttributes.ACCESS_INFO_ID, accessInfo.getId()));
+            AccessPermissionListResult accessPermissions = KapuaSecurityUtils.doPrivileged(() -> accessPermissionService.query(accessPermissionQuery));
+            loginInfo.setAccessPermission(Sets.newHashSet(accessPermissions.getItems()));
+        }
+        // loginInfo.getAccessPermission() is supposed to return a not null set
+        if (loginInfo.getAccessPermission() == null) {
+            loginInfo.setAccessPermission(Sets.newHashSet());
+        }
+        // loginInfo.getRolePermission() is supposed to return a not null set
+        if (loginInfo.getRolePermission() == null) {
+            loginInfo.setRolePermission(Sets.newHashSet());
+        }
 
-        // AccessPermission
-        AccessPermissionQuery accessPermissionQuery = accessPermissionFactory.newQuery(accessToken.getScopeId());
-        accessPermissionQuery.setPredicate(accessPermissionQuery.attributePredicate(AccessPermissionAttributes.ACCESS_INFO_ID, accessInfo.getId()));
-        AccessPermissionListResult accessPermissions = KapuaSecurityUtils.doPrivileged(() -> accessPermissionService.query(accessPermissionQuery));
-        loginInfo.setAccessPermission(Sets.newHashSet(accessPermissions.getItems()));
+        // User Groups
+        User user = KapuaSecurityUtils.doPrivileged(() -> userService.find(accessToken.getScopeId(), accessToken.getUserId()));
+
+        for (KapuaId groupId : user.getGroupIds()) {
+            // Group Role
+            GroupRoleListResult userGroupRoles = KapuaSecurityUtils.doPrivileged(() -> groupRoleService.findByGroupId(user.getScopeId(), groupId));
+
+            // Group RolePermission
+            for (GroupRole userGroupRole : userGroupRoles.getItems()) {
+                RolePermissionListResult groupRolePermissions = KapuaSecurityUtils.doPrivileged(() -> rolePermissionService.findByRoleId(userGroupRole.getScopeId(), userGroupRole.getRoleId()));
+                loginInfo.setGroupRolePermission(Sets.newHashSet(groupRolePermissions.getItems()));
+            }
+
+            // GroupPermission
+            GroupPermissionListResult groupPermissions = KapuaSecurityUtils.doPrivileged(() -> groupPermissionService.findByGroupId(user.getScopeId(), groupId));
+            loginInfo.setGroupPermission(Sets.newHashSet(groupPermissions.getItems()));
+        }
+        // loginInfo.getGroupPermission() is supposed to return a not null set
+        if (loginInfo.getGroupPermission() == null) {
+           loginInfo.setGroupPermission(Sets.newHashSet());
+        }
+        // loginInfo.getGroupPermission() is supposed to return a not null set
+        if (loginInfo.getGroupRolePermission() == null) {
+           loginInfo.setGroupRolePermission(Sets.newHashSet());
+        }
 
         return loginInfo;
     }
