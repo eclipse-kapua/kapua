@@ -15,130 +15,136 @@ package org.eclipse.kapua.service.device.call.kura.model.configuration.json;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import org.eclipse.kapua.service.device.call.kura.model.configuration.KuraPassword;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Map;
 
+import org.eclipse.kapua.service.device.call.kura.model.configuration.xml.KuraXmlConfigPropertiesAdapted;
+import org.eclipse.kapua.service.device.call.kura.model.configuration.xml.KuraXmlConfigPropertiesAdapter;
+import org.eclipse.kapua.service.device.call.kura.model.configuration.xml.XmlConfigPropertyAdapted;
+
+/**
+ * Custom JSON serializer for Kura configuration properties.<br>
+ * This serializer converts the Map properties into a JSON structure that includes both the
+ * property values and their corresponding types, based on the XML adapted form used in Kura.<br>
+ * This approach ensures that the type information is preserved during serialization, allowing for accurate
+ * deserialization later on.
+ *
+ * example JSON output for a property named "exampleProperty" of type INTEGER with value 42:
+ * {
+ *  "exampleProperty": {
+ *  "value": 42,
+ *  "type": "INTEGER"
+ *  }
+ *  }
+ *
+ * see https://esf.eurotech.com/docs/configuration-v2-rest-apis-and-conf-v2-request-handler#configurationproperties
+ *
+ * @since 2.1.0
+ */
 public class KuraJsonConfigPropertiesSerializer extends JsonSerializer<Map<String, Object>> {
+
+    private static final String TYPE_FIELD_NAME_JSON = "type";
+    private static final String VALUE_FIELD_NAME_JSON = "value";
 
     @Override
     public void serialize(Map<String, Object> properties, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-        gen.writeStartObject();
-
-        for (Map.Entry<String, Object> entry : properties.entrySet()) {
-            gen.writeObjectFieldStart(entry.getKey());
-            writeProperty(gen, entry.getValue());
-            gen.writeEndObject();
+        KuraXmlConfigPropertiesAdapted adapted;
+        try {
+            adapted = new KuraXmlConfigPropertiesAdapter().marshal(properties);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Error marshalling wire graph configuration properties to XML adapted form", e);
         }
-
+        gen.writeStartObject();
+        Arrays.stream(adapted.getProperties()).forEach(adaptedProperty -> {
+            try {
+                writeProperty(gen, adaptedProperty);
+            } catch (IOException e) {
+                throw new IllegalArgumentException("Error marshalling specific wire graph configuration property", e);
+            }
+        });
         gen.writeEndObject();
     }
 
-    private void writeProperty(JsonGenerator gen, Object value) throws IOException {
-        gen.writeFieldName("value");
+    private void writeProperty(JsonGenerator gen, XmlConfigPropertyAdapted propertyAdapted) throws IOException {
+        gen.writeObjectFieldStart(propertyAdapted.getName());
+        gen.writeFieldName(VALUE_FIELD_NAME_JSON);
 
-        if (value == null) {
+        String[] values = propertyAdapted.getValues();
+        if (values == null || values.length == 0) {
             gen.writeNull();
-            gen.writeStringField("type", "STRING");
+            gen.writeStringField(TYPE_FIELD_NAME_JSON, "STRING");
+            gen.writeEndObject();
             return;
         }
 
-        if (value.getClass().isArray()) {
-            writeArray(gen, value);
-        } else if (value instanceof Collection) {
-            writeCollection(gen, (Collection<?>) value); //TODO: maybe not needed
+        XmlConfigPropertyAdapted.ConfigPropertyType type = propertyAdapted.getType();
+
+        if (propertyAdapted.getArray() && values.length > 1) {
+            gen.writeStartArray();
+            for (String value : values) {
+                writeTypedValue(gen, value, type);
+            }
+            gen.writeEndArray();
         } else {
-            writePrimitive(gen, value);
-            gen.writeStringField("type", determineType(value));
+            writeTypedValue(gen, values[0], type);
         }
+
+        gen.writeStringField(TYPE_FIELD_NAME_JSON, getTypeString(type));
+        gen.writeEndObject();
     }
 
-    private void writeArray(JsonGenerator gen, Object array) throws IOException {
-        int length = Array.getLength(array);
-        gen.writeStartArray();
-        Object firstElement = null;
-        for (int i = 0; i < length; i++) {
-            Object item = Array.get(array, i);
-            if (i == 0) {
-                firstElement = item;
-            }
-            writePrimitive(gen, item);
-        }
-        gen.writeEndArray();
-        gen.writeStringField("type", determineType(firstElement));
-    }
-
-    private void writeCollection(JsonGenerator gen, Collection<?> collection) throws IOException {
-        gen.writeStartArray();
-        Object firstElement = null;
-        boolean first = true;
-        for (Object item : collection) {
-            if (first) {
-                firstElement = item;
-                first = false;
-            }
-            writePrimitive(gen, item);
-        }
-        gen.writeEndArray();
-        gen.writeStringField("type", determineType(firstElement));
-    }
-
-    private void writePrimitive(JsonGenerator gen, Object value) throws IOException {
+    private void writeTypedValue(JsonGenerator gen, String value, XmlConfigPropertyAdapted.ConfigPropertyType type) throws IOException {
         if (value == null) {
             gen.writeNull();
-        } else if (value instanceof Number) {
-            writeNumber(gen, (Number) value);
-        } else if (value instanceof Boolean) {
-            gen.writeBoolean((Boolean) value);
-        } else if (value instanceof KuraPassword) {
-            gen.writeString(((KuraPassword) value).getPassword());
-        } else {
-            gen.writeString(value.toString());
+            return;
+        }
+
+        switch (type) {
+            case integerType:
+                gen.writeNumber(Integer.parseInt(value));
+                break;
+            case longType:
+                gen.writeNumber(Long.parseLong(value));
+                break;
+            case doubleType:
+                gen.writeNumber(Double.parseDouble(value));
+                break;
+            case floatType:
+                gen.writeNumber(Float.parseFloat(value));
+                break;
+            case byteType:
+                gen.writeNumber(Byte.parseByte(value));
+                break;
+            case shortType:
+                gen.writeNumber(Short.parseShort(value));
+                break;
+            case booleanType:
+                gen.writeBoolean(Boolean.parseBoolean(value));
+                break;
+            case charType:
+            case passwordType:
+            case stringType:
+            default:
+                gen.writeString(value);
+                break;
         }
     }
 
-    private void writeNumber(JsonGenerator gen, Number value) throws IOException {
-        if (value instanceof Integer) {
-            gen.writeNumber(value.intValue());
-        } else if (value instanceof Long) {
-            gen.writeNumber(value.longValue());
-        } else if (value instanceof Double) {
-            gen.writeNumber(value.doubleValue());
-        } else if (value instanceof Float) {
-            gen.writeNumber(value.floatValue());
-        } else if (value instanceof Byte || value instanceof Short) {
-            gen.writeNumber(value.intValue());
-        } else {
-            gen.writeNumber(value.doubleValue());
-        }
-    }
-
-    private String determineType(Object value) {
-        if (value == null) {
-            return "STRING";
-        } else if (value instanceof Integer) {
-            return "INTEGER";
-        } else if (value instanceof Long) {
-            return "LONG";
-        } else if (value instanceof Double) {
-            return "DOUBLE";
-        } else if (value instanceof Float) {
-            return "FLOAT";
-        } else if (value instanceof Byte) {
-            return "BYTE";
-        } else if (value instanceof Short) {
-            return "SHORT";
-        } else if (value instanceof Boolean) {
-            return "BOOLEAN";
-        } else if (value instanceof Character) {
-            return "CHAR";
-        } else if (value instanceof KuraPassword) {
-            return "PASSWORD";
-        } else {
-            return "STRING";
+    private String getTypeString(XmlConfigPropertyAdapted.ConfigPropertyType type) {
+        switch (type) {
+            case integerType: return "INTEGER";
+            case longType: return "LONG";
+            case doubleType: return "DOUBLE";
+            case floatType: return "FLOAT";
+            case byteType: return "BYTE";
+            case shortType: return "SHORT";
+            case booleanType: return "BOOLEAN";
+            case charType: return "CHAR";
+            case passwordType: return "PASSWORD";
+            case stringType:
+            default: return "STRING";
         }
     }
 }
