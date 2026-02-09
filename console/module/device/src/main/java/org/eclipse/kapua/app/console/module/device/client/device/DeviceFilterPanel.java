@@ -272,7 +272,7 @@ public class DeviceFilterPanel extends EntityFilterPanel<GwtDevice> {
             groupsCombo.setStyleAttribute(CssLiterals.MARGIN_BOTTOM, "10px");
             groupsCombo.setTriggerAction(TriggerAction.ALL);
             groupsCombo.setValue(allGroup);
-            GROUP_SERVICE.findAll(currentSession.getSelectedAccountId(), new AsyncCallback<List<GwtGroup>>() {
+            GROUP_SERVICE.findAll(currentSession.getSelectedAccountId(), "device", new AsyncCallback<List<GwtGroup>>() {
 
                 @Override
                 public void onFailure(Throwable caught) {

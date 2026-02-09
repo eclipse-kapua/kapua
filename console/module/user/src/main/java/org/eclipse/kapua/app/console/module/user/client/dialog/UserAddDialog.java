@@ -195,7 +195,7 @@ public class UserAddDialog extends EntityAddEditDialog {
 
             groupCombo.addListener(Events.Select, comboBoxListener);
 
-            GWT_GROUP_SERVICE.findAll(currentSession.getSelectedAccountId(), new AsyncCallback<List<GwtGroup>>() {
+            GWT_GROUP_SERVICE.findAll(currentSession.getSelectedAccountId(), "user", new AsyncCallback<List<GwtGroup>>() {
 
                 @Override
                 public void onFailure(Throwable caught) {

@@ -27,6 +27,8 @@ public class GroupCreatorImpl extends AbstractKapuaNamedEntityCreator<Group> imp
 
     private static final long serialVersionUID = -4676187845961673421L;
 
+    private String domain;
+
     /**
      * Constructor
      *
@@ -35,11 +37,20 @@ public class GroupCreatorImpl extends AbstractKapuaNamedEntityCreator<Group> imp
      * @since 1.0.0
      */
     public GroupCreatorImpl(KapuaId scopeId, String name) {
-        super(scopeId);
-        setName(name);
+        super(scopeId, name);
     }
 
     public GroupCreatorImpl(KapuaId scopeId) {
         super(scopeId);
+    }
+
+    @Override
+    public String getDomain() {
+        return domain;
+    }
+
+    @Override
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
 }

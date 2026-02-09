@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2025 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -69,4 +69,20 @@ public interface Group extends KapuaNamedEntity {
      * @since 2.1.0
      */
     void setTagIds(Set<KapuaId> tagIds);
+
+    /**
+     * Gets the target domain
+     *
+     * @return The target domain
+     * @since 2.1.0
+     */
+    String getDomain();
+
+    /**
+     * Sets the target domain
+     *
+     * @param domain The target domain
+     * @since 2.1.0
+     */
+    void setDomain(String domain);
 }

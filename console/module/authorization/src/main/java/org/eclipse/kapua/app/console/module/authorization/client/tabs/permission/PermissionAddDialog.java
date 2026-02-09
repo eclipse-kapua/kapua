@@ -176,6 +176,44 @@ public class PermissionAddDialog extends EntityAddEditDialog {
                         } else if (selectedDomain.getGroupable()) {
                             groupsCombo.setEnabled(selectedDomain.getGroupable());
                             groupsCombo.setValue(allGroup);
+
+                            if (currentSession.hasPermission(GroupSessionPermission.read())) {
+                                GWT_GROUP_SERVICE.findAll(currentSession.getSelectedAccountId(), selectedDomain.getDomainName(), new AsyncCallback<List<GwtGroup>>() {
+
+                                    @Override
+                                    public void onFailure(Throwable caught) {
+                                        exitStatus = false;
+                                        if (!isPermissionErrorMessage(caught)) {
+                                            exitMessage = MSGS.dialogAddPermissionErrorGroups(caught.getLocalizedMessage());
+                                        }
+                                        hide();
+                                    }
+
+                                    @Override
+                                    public void onSuccess(List<GwtGroup> result) {
+                                        groupsCombo.getStore().removeAll();
+                                        groupsCombo.getStore().add(allGroup);
+                                        groupsCombo.getStore().add(result);
+                                        groupsCombo.setValue(allGroup);
+                                        groupsCombo.enable();
+                                    }
+                                });
+
+                                groupsCombo.addSelectionChangedListener(new SelectionChangedListener<GwtGroup>() {
+
+                                    @Override
+                                    public void selectionChanged(SelectionChangedEvent<GwtGroup> se) {
+                                        domainsCombo.clearInvalid();
+                                        actionsCombo.clearInvalid();
+                                        groupsCombo.clearInvalid();
+                                    }
+                                });
+
+                            } else {
+                                groupsCombo.getStore().removeAll();
+                                groupsCombo.getStore().add(allGroup);
+                                groupsCombo.setValue(allGroup);
+                            }
                         } else {
                             groupsCombo.setEnabled(selectedDomain.getGroupable());
                             groupsCombo.setRawValue(MSGS.dialogAddPermissionGroupIdNotGroupable());
@@ -229,43 +267,8 @@ public class PermissionAddDialog extends EntityAddEditDialog {
         groupsCombo.setTriggerAction(TriggerAction.ALL);
         groupsCombo.setEmptyText(MSGS.dialogAddPermissionLoading());
         groupsCombo.disable();
-        if (currentSession.hasPermission(GroupSessionPermission.read())) {
-            GWT_GROUP_SERVICE.findAll(currentSession.getSelectedAccountId(), new AsyncCallback<List<GwtGroup>>() {
+        permissionFormPanel.add(groupsCombo);
 
-                @Override
-                public void onFailure(Throwable caught) {
-                    exitStatus = false;
-                    if (!isPermissionErrorMessage(caught)) {
-                        exitMessage = MSGS.dialogAddPermissionErrorGroups(caught.getLocalizedMessage());
-                    }
-                    hide();
-                }
-
-                @Override
-                public void onSuccess(List<GwtGroup> result) {
-                    groupsCombo.getStore().removeAll();
-                    groupsCombo.getStore().add(allGroup);
-                    groupsCombo.getStore().add(result);
-                    groupsCombo.setValue(allGroup);
-                    groupsCombo.enable();
-                }
-            });
-
-            groupsCombo.addSelectionChangedListener(new SelectionChangedListener<GwtGroup>() {
-
-                @Override
-                public void selectionChanged(SelectionChangedEvent<GwtGroup> se) {
-                    domainsCombo.clearInvalid();
-                    actionsCombo.clearInvalid();
-                    groupsCombo.clearInvalid();
-                }
-            });
-            permissionFormPanel.add(groupsCombo);
-        } else {
-            groupsCombo.getStore().removeAll();
-            groupsCombo.getStore().add(allGroup);
-            groupsCombo.setValue(allGroup);
-        }
         // Forwardable
         forwardableChecbox = new CheckBox();
         forwardableChecbox.setBoxLabel("");

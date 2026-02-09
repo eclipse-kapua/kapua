@@ -92,6 +92,9 @@ public class GroupGrid extends EntityGrid<GwtGroup> {
         columnConfig = new ColumnConfig("description", MSGS.gridGroupColumnHeaderDescription(), 200);
         columnConfigs.add(columnConfig);
 
+        columnConfig = new ColumnConfig("domain", "Domain", 200);
+        columnConfigs.add(columnConfig);
+
         columnConfig = new ColumnConfig("createdOnFormatted", MSGS.gridGroupColumnHeaderCreatedOn(), 200);
         columnConfigs.add(columnConfig);
 

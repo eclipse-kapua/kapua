@@ -39,8 +39,11 @@ public class GroupEditDialog extends GroupAddDialog {
 
     @Override
     public void createBody() {
-
         super.createBody();
+
+        domainsCombo.removeFromParent();
+        domainsLabel.show();
+
         populateEditDialog(selectedGroup);
     }
 
@@ -48,6 +51,7 @@ public class GroupEditDialog extends GroupAddDialog {
     public void submit() {
         selectedGroup.setGroupName(groupNameField.getValue());
         selectedGroup.setGroupDescription(KapuaSafeHtmlUtils.htmlUnescape(groupDescriptionField.getValue()));
+
         GWT_GROUP_SERVICE.update(selectedGroup, new AsyncCallback<GwtGroup>() {
 
             @Override
@@ -91,7 +95,8 @@ public class GroupEditDialog extends GroupAddDialog {
     private void populateEditDialog(GwtGroup gwtGroup) {
         groupNameField.setValue(gwtGroup.getGroupName());
         groupDescriptionField.setValue(gwtGroup.getUnescapedDescription());
+        domainsLabel.setText(gwtGroup.getDomain());
+
         formPanel.clearDirtyFields();
     }
-
 }
