@@ -83,7 +83,6 @@
     <bean id="defaultAuthenticator" class="org.eclipse.kapua.service.authentication.authentication.DefaultAuthenticator">
         <constructor-arg name="adminAuthenticationLogic" ref="adminAuthenticationLogic"/>
         <constructor-arg name="userAuthenticationLogic" ref="userAuthenticationLogic"/>
-        <constructor-arg name="deviceRegistryService" ref="deviceRegistryService"/>
         <constructor-arg name="authenticationMetric" ref="authenticationMetric"/>
         <constructor-arg name="serviceAuthenticationSetting" ref="serviceAuthenticationSetting"/>
         <constructor-arg name="systemSetting" ref="systemSetting"/>
