@@ -18,16 +18,20 @@ import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtAccess
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtAccessRole;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtDomain;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroup;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupPermission;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtPermission;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtPermission.GwtAction;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtRole;
 import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtRolePermission;
+import org.eclipse.kapua.app.console.module.authorization.shared.model.GwtGroupRole;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.service.authorization.access.AccessInfo;
 import org.eclipse.kapua.service.authorization.access.AccessPermission;
 import org.eclipse.kapua.service.authorization.access.AccessRole;
 import org.eclipse.kapua.service.authorization.domain.Domain;
 import org.eclipse.kapua.service.authorization.group.Group;
+import org.eclipse.kapua.service.authorization.group.GroupPermission;
+import org.eclipse.kapua.service.authorization.group.GroupRole;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.role.Role;
 import org.eclipse.kapua.service.authorization.role.RolePermission;
@@ -55,6 +59,56 @@ public class KapuaGwtAuthorizationModelConverter {
         gwtGroup.setDomain(group.getDomain());
 
         return gwtGroup;
+    }
+
+    public static GwtGroupPermission convertGroupPermission(GroupPermission groupPermission) {
+        if (groupPermission == null) {
+            return null;
+        }
+
+        GwtGroupPermission gwtGroupPermission = new GwtGroupPermission();
+
+        KapuaGwtCommonsModelConverter.convertEntity(groupPermission, gwtGroupPermission);
+
+        gwtGroupPermission.setGroupId(KapuaGwtCommonsModelConverter.convertKapuaId(groupPermission.getGroupId()));
+
+        gwtGroupPermission.setPermissionDomain(groupPermission.getPermission().getDomain());
+
+        if (groupPermission.getPermission().getAction() != null) {
+            gwtGroupPermission.setPermissionAction(groupPermission.getPermission().getAction().toString());
+        } else {
+            gwtGroupPermission.setPermissionAction("ALL");
+        }
+
+        if (groupPermission.getPermission().getTargetScopeId() != null) {
+            gwtGroupPermission.setPermissionTargetScopeId(groupPermission.getPermission().getTargetScopeId().toCompactId());
+        } else {
+            gwtGroupPermission.setPermissionTargetScopeId("ALL");
+        }
+
+        if (groupPermission.getPermission().getGroupId() != null) {
+            gwtGroupPermission.setPermissionGroupId(groupPermission.getPermission().getGroupId().toCompactId());
+        } else {
+            gwtGroupPermission.setPermissionGroupId("ALL");
+        }
+
+        gwtGroupPermission.setPermissionForwardable(groupPermission.getPermission().getForwardable());
+
+        // Return converted entity
+        return gwtGroupPermission;
+    }
+
+    public static GwtGroupRole convertGroupRole(GroupRole groupRole) {
+        GwtGroupRole gwtGroupRole = new GwtGroupRole();
+
+        // Covert commons attributes
+        KapuaGwtCommonsModelConverter.convertEntity(groupRole, gwtGroupRole);
+
+        gwtGroupRole.setUserGroupId(groupRole.getGroupId().toCompactId());
+        gwtGroupRole.setRoleId(groupRole.getRoleId().toCompactId());
+
+        // Return converted entity
+        return gwtGroupRole;
     }
 
     /**
