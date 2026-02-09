@@ -83,6 +83,7 @@ public class DeviceGroupServiceImpl implements DeviceGroupService {
         groupCreator.setName(deviceGroupCreator.getName());
         groupCreator.setDescription(deviceGroupCreator.getDescription());
         groupCreator.setDomain(Domains.DEVICE);
+        groupCreator.setTagIds(deviceGroupCreator.getTagIds());
 
         // Do create
         Group group = KapuaSecurityUtils.doPrivileged(() -> groupService.create(groupCreator));

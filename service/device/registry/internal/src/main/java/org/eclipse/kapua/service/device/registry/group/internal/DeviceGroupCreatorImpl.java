@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.registry.group.internal;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.kapua.commons.model.AbstractKapuaNamedEntityCreator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.device.registry.group.DeviceGroup;
@@ -24,6 +27,10 @@ import org.eclipse.kapua.service.device.registry.group.DeviceGroupCreator;
  */
 public class DeviceGroupCreatorImpl extends AbstractKapuaNamedEntityCreator<DeviceGroup> implements DeviceGroupCreator {
 
+    private static final long serialVersionUID = 2736033455537233881L;
+
+    private Set<KapuaId> tagIds;
+
     /**
      * Constructor.
      *
@@ -34,4 +41,18 @@ public class DeviceGroupCreatorImpl extends AbstractKapuaNamedEntityCreator<Devi
         super(scopeId);
     }
 
+
+    @Override
+    public Set<KapuaId> getTagIds() {
+        if (tagIds == null) {
+            tagIds = new HashSet<>();
+        }
+
+        return tagIds;
+    }
+
+    @Override
+    public void setTagIds(Set<KapuaId> tagIds) {
+        this.tagIds = tagIds;
+    }
 }
