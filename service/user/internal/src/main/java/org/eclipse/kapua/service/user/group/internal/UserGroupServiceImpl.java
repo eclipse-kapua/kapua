@@ -83,6 +83,7 @@ public class UserGroupServiceImpl implements UserGroupService {
         groupCreator.setName(userGroupCreator.getName());
         groupCreator.setDescription(userGroupCreator.getDescription());
         groupCreator.setDomain(Domains.USER);
+        groupCreator.setTagIds(userGroupCreator.getTagIds());
 
         // Do create
         Group group = KapuaSecurityUtils.doPrivileged(() -> groupService.create(groupCreator));

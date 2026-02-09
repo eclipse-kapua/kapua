@@ -13,6 +13,7 @@
 package org.eclipse.kapua.service.user.group.internal;
 
 import org.eclipse.kapua.commons.model.AbstractKapuaNamedEntity;
+import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.group.Group;
 import org.eclipse.kapua.service.user.group.UserGroup;
@@ -55,17 +56,25 @@ public class UserGroupImpl extends AbstractKapuaNamedEntity implements UserGroup
     }
 
     @Override
-    public Set<KapuaId> getTagIds() {
-        if (tagIds == null) {
-            tagIds = new HashSet<>();
-        }
+    public void setTagIds(Set<KapuaId> tagIds) {
+        this.tagIds = new HashSet<>();
 
-        return tagIds;
+        for (KapuaId id : tagIds) {
+            this.tagIds.add(KapuaEid.parseKapuaId(id));
+        }
     }
 
     @Override
-    public void setTagIds(Set<KapuaId> tagIds) {
-        this.tagIds = tagIds;
+    public Set<KapuaId> getTagIds() {
+        Set<KapuaId> tagIds = new HashSet<>();
+
+        if (this.tagIds != null) {
+            for (KapuaId deviceTagId : this.tagIds) {
+                tagIds.add(new KapuaEid(deviceTagId));
+            }
+        }
+
+        return tagIds;
     }
 
     /**
