@@ -144,6 +144,13 @@ public final class GroupServiceValidationUtilsImpl implements GroupServiceValida
     }
 
     @Override
+    public void validateFindPostconditions(Group group) {
+        if (group != null) {
+
+        }
+    }
+
+    @Override
     public void validateQueryPreconditions(KapuaQuery query) throws KapuaException {
         // Argument Validation
         ArgumentValidator.notNull(query, "query");
