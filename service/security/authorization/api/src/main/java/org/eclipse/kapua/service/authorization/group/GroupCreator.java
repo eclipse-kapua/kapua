@@ -13,11 +13,18 @@
 package org.eclipse.kapua.service.authorization.group;
 
 import org.eclipse.kapua.model.KapuaNamedEntityCreator;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.model.id.KapuaIdAdapter;
+
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * {@link GroupCreator} definition.
@@ -46,4 +53,23 @@ public interface GroupCreator extends KapuaNamedEntityCreator<Group> {
      * @since 2.1.0
      */
     void setDomain(String domain);
+
+    /**
+     * Gets the set of Tag id assigned to this entity.
+     *
+     * @return The set Tag id assigned to this entity.
+     * @since 2.1.0
+     */
+    @XmlElementWrapper(name = "tagIds")
+    @XmlElement(name = "tagId")
+    @XmlJavaTypeAdapter(KapuaIdAdapter.class)
+    Set<KapuaId> getTagIds();
+
+    /**
+     * Sets the set of Tag id of this entity.
+     *
+     * @param tagIds The set Tag id to assign.
+     * @since 2.1.0
+     */
+    void setTagIds(Set<KapuaId> tagIds);
 }
