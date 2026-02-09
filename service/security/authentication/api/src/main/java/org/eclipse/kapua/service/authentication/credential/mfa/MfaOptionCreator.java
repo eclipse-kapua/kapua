@@ -15,7 +15,6 @@ package org.eclipse.kapua.service.authentication.credential.mfa;
 import org.eclipse.kapua.model.KapuaEntityCreator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdAdapter;
-import org.eclipse.kapua.service.user.User;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -35,9 +34,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public interface MfaOptionCreator extends KapuaEntityCreator<MfaOption> {
 
     /**
-     * Gets the {@link User#getId()}
+     * Gets the User#getId
      *
-     * @return The {@link User#getId()}
+     * @return The User#getId
      * @since 1.3.0
      */
     @XmlElement(name = "userId")
@@ -45,9 +44,9 @@ public interface MfaOptionCreator extends KapuaEntityCreator<MfaOption> {
     KapuaId getUserId();
 
     /**
-     * Sets the {@link User#getId()}
+     * Sets the User#getId
      *
-     * @param userId The {@link User#getId()}
+     * @param userId The User#getId
      * @since 1.3.0
      */
     void setUserId(KapuaId userId);

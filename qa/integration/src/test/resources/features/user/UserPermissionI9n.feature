@@ -544,19 +544,19 @@ Feature: User Permission tests
       | name    | displayName  | email             | phoneNumber     | status  | userType |
       | kapua-a | Kapua User a | kapua_a@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
     When I count the domain entries in the database
-    Then I count 21
+    Then I count 23
     And I create the domain
       | name        | actions             |
       | test_domain | read, write, delete |
     When I search for the last created domain
     Then The domain matches the creator
     When I count the domain entries in the database
-    Then I count 22
+    Then I count 24
     When I delete the last created domain
     And I search for the last created domain
     Then There is no domain
     When I count the domain entries in the database
-    Then I count 21
+    Then I count 23
     And I logout
 
   Scenario: Add Domain domain permissions to new user
@@ -590,7 +590,7 @@ Feature: User Permission tests
     When I search for the last created domain
     And An exception was thrown
     When I count the domain entries in the database
-    Then I count 21
+    Then I count 23
     And I logout
     When I login as user with name "kapua-sys" and password "kapua-password"
     And I select account "kapua-sys"
@@ -598,7 +598,7 @@ Feature: User Permission tests
       | name         | actions             |
       | test_domain2 | read, write, delete |
     When I count the domain entries in the database
-    Then I count 22
+    Then I count 24
     Then I logout
     When I login as user with name "kapua-a" and password "ToManySecrets123#"
     Then I search for the last created domain
@@ -607,7 +607,7 @@ Feature: User Permission tests
     When I delete the last created domain
     Then An exception was thrown
     When I count the domain entries in the database
-    Then I count 22
+    Then I count 24
     And I logout
 
   Scenario: Add Credential domain permissions to new user

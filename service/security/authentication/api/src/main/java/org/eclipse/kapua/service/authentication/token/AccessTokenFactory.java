@@ -29,7 +29,7 @@ public interface AccessTokenFactory extends KapuaEntityFactory<AccessToken, Acce
      * Instantiates a new {@link AccessTokenCreator}.
      *
      * @param scopeId      The scope {@link KapuaId} to set into the{@link AccessToken}.
-     * @param userId       The {@link org.eclipse.kapua.service.user.User} {@link KapuaId} to set into the{@link AccessToken}.
+     * @param userId       The User {@link KapuaId} to set into the{@link AccessToken}.
      * @param tokenId      The token id to set into the{@link AccessToken}.
      * @param expiresOn    The expiration date to set into the{@link AccessToken}.
      * @param refreshToken The refresh token to set into the{@link AccessToken}.

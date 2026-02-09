@@ -28,7 +28,7 @@ public interface CredentialFactory extends KapuaEntityFactory<Credential, Creden
      * Instantiates a new {@link Credential}.
      *
      * @param scopeId          The scope {@link KapuaId} to set into the {@link Credential}.
-     * @param userId           The {@link org.eclipse.kapua.service.user.User} {@link KapuaId} to set into the {@link Credential}.
+     * @param userId           The User {@link KapuaId} to set into the {@link Credential}.
      * @param credentialType   The {@link Credential} type to set into the {@link Credential}.
      * @param credentialKey    The key to set into the {@link Credential}.
      * @param credentialStatus The {@link CredentialStatus} to set into the {@link Credential}.
@@ -42,7 +42,7 @@ public interface CredentialFactory extends KapuaEntityFactory<Credential, Creden
      * Instantiates a new {@link CredentialCreator}.
      *
      * @param scopeId          The scope {@link KapuaId} to set into the {@link CredentialCreator}.
-     * @param userId           The {@link org.eclipse.kapua.service.user.User} {@link KapuaId} to set into the {@link CredentialCreator}.
+     * @param userId           The User {@link KapuaId} to set into the {@link CredentialCreator}.
      * @param credentialType   The {@link Credential} type to set into the {@link CredentialCreator}.
      * @param credentialKey    The key to set into the {@link CredentialCreator}.
      * @param credentialStatus The {@link CredentialStatus} to set into the {@link CredentialCreator}.

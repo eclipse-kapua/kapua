@@ -17,7 +17,6 @@ import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdAdapter;
 import org.eclipse.kapua.service.authorization.domain.Domain;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.user.User;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -31,7 +30,7 @@ import java.util.Set;
 
 /**
  * {@link AccessInfo} creator definition.<br>
- * It is used to assign a set of {@link Domain}s and {@link Permission}s to the referenced {@link User}.<br>
+ * It is used to assign a set of {@link Domain}s and {@link Permission}s to the referenced User.<br>
  *
  * @since 1.0.0
  */

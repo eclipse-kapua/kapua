@@ -22,6 +22,7 @@ public class Domains {
     public static final String DATASTORE = "datastore";
     public static final String DEVICE = "device";
     public static final String DEVICE_CONNECTION = "device_connection";
+    public static final String DEVICE_GROUP = "device_group";
     public static final String DEVICE_EVENT = "device_event";
     public static final String DEVICE_LIFECYCLE = "device_lifecycle";
     public static final String DEVICE_MANAGEMENT = "device_management";
@@ -29,13 +30,18 @@ public class Domains {
     public static final String DOMAIN = "domain";
     public static final String ENDPOINT_INFO = "endpoint_info";
     public static final String EVENT_STORE = "event_store";
+
     public static final String GROUP = "group";
+
     public static final String JOB = "job";
     public static final String ROLE = "role";
     public static final String SCHEDULER = "scheduler";
     public static final String STREAM = "stream";
     public static final String TAG = "tag";
+
+
     public static final String USER = "user";
+    public static final String USER_GROUP = "user_group";
 
     //For Sonar, sic!
     private Domains() {
