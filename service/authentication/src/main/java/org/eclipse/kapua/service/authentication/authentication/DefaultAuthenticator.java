@@ -19,7 +19,6 @@ import org.eclipse.kapua.client.security.bean.AuthContext;
 import org.eclipse.kapua.client.security.metric.AuthLoginMetric;
 import org.eclipse.kapua.client.security.metric.AuthMetric;
 import org.eclipse.kapua.commons.model.id.KapuaEid;
-import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.commons.setting.system.SystemSettingKey;
 import org.eclipse.kapua.commons.util.KapuaDateUtils;
@@ -29,8 +28,6 @@ import org.eclipse.kapua.event.ServiceEventBusException;
 import org.eclipse.kapua.service.authentication.setting.ServiceAuthenticationSetting;
 import org.eclipse.kapua.service.authentication.setting.ServiceAuthenticationSettingKey;
 import org.eclipse.kapua.service.device.registry.Device;
-import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
-import org.eclipse.kapua.service.device.registry.DeviceStatus;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +50,6 @@ public class DefaultAuthenticator implements Authenticator {
         DISCONNECT
     }
 
-    private final DeviceRegistryService deviceRegistryService;
     private final AuthMetric authenticationMetric;
     protected final AdminAuthenticationLogic adminAuthenticationLogic;
     protected final UserAuthenticationLogic userAuthenticationLogic;
@@ -68,14 +64,12 @@ public class DefaultAuthenticator implements Authenticator {
      */
     @Inject
     public DefaultAuthenticator(
-            DeviceRegistryService deviceRegistryService,
             AuthMetric authenticationMetric,
             AdminAuthenticationLogic adminAuthenticationLogic,
             UserAuthenticationLogic userAuthenticationLogic,
             SystemSetting systemSetting,
             ServiceAuthenticationSetting serviceAuthenticationSetting,
             ServiceEventBus serviceEventBus) {
-        this.deviceRegistryService = deviceRegistryService;
         this.authenticationMetric = authenticationMetric;
         this.adminAuthenticationLogic = adminAuthenticationLogic;
         this.userAuthenticationLogic = userAuthenticationLogic;
@@ -92,12 +86,6 @@ public class DefaultAuthenticator implements Authenticator {
     @Override
     public List<AuthAcl> connect(AuthContext authContext) throws KapuaException {
         List<AuthAcl> authorizationEntries = null;
-        Device device = KapuaSecurityUtils.doPrivileged(() ->
-                deviceRegistryService.findByClientId(KapuaEid.parseCompactId(authContext.getScopeId()), authContext.getClientId()));
-        if (device != null && DeviceStatus.DISABLED.equals(device.getStatus())) {
-            logger.warn("Device {} is disabled", authContext.getClientId());
-            throw new SecurityException("Device is disabled");
-        }
         if (isAdminUser(authContext)) {
             updateMetricAndCheckForStealingLink(authContext, authenticationMetric.getAdminLogin());
             authorizationEntries = adminAuthenticationLogic.connect(authContext);

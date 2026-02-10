@@ -17,6 +17,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
+import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.util.ThreadContext;
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaErrorCodes;
@@ -43,6 +44,9 @@ import org.eclipse.kapua.service.authentication.exception.KapuaAuthenticationErr
 import org.eclipse.kapua.service.authentication.exception.KapuaAuthenticationException;
 import org.eclipse.kapua.service.authentication.token.AccessToken;
 import org.eclipse.kapua.service.device.authentication.api.DeviceConnectionCredentialAdapter;
+import org.eclipse.kapua.service.device.registry.Device;
+import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
+import org.eclipse.kapua.service.device.registry.DeviceStatus;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnection;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnectionService;
 import org.eclipse.kapua.service.user.User;
@@ -66,6 +70,7 @@ public class AuthenticationServiceBackEndCall {
     private AuthenticationService authenticationService;
     private AccountService accountService;
     private DeviceConnectionService deviceConnectionService;
+    private DeviceRegistryService deviceRegistryService;
     private UserService userService;
 
     @Inject
@@ -76,14 +81,28 @@ public class AuthenticationServiceBackEndCall {
         authenticationService = locator.getService(AuthenticationService.class);
         accountService = locator.getService(AccountService.class);
         deviceConnectionService = locator.getService(DeviceConnectionService.class);
+        deviceRegistryService = locator.getService(DeviceRegistryService.class);
         userService = locator.getService(UserService.class);
         authenticationMetric = locator.getComponent(AuthMetric.class);
     }
 
     public AuthResponse brokerConnect(AuthRequest authRequest) {
         try {
-            logger.info("Login for clientId {} - user: {} - password: {} - client certificates: {}", authRequest.getClientId(), authRequest.getUsername(), Strings.isNullOrEmpty(authRequest.getPassword()) ? "no" : "yes", authRequest.getCertificates() != null ? "yes" : "no");
+            logger.info("Login for clientId {} - user: {} - password: {} - client certificates: {}",
+                    authRequest.getClientId(), authRequest.getUsername(), authRequest.getScopeId(), Strings.isNullOrEmpty(authRequest.getPassword()) ? "no" : "yes", authRequest.getCertificates() != null ? "yes" : "no");
             ThreadContext.unbindSubject();
+            //the scopeId in authRequest is evaluated only once disconnect is called. So do a user find to get scopeId.
+            User user = KapuaSecurityUtils.doPrivileged(() -> userService.findByName(authRequest.getUsername()));
+            //simplified check. Not use KapuaAuthenticatingRealm#checkUser
+            if (user == null) {
+                throw new UnknownAccountException();
+            }
+            Device device = KapuaSecurityUtils.doPrivileged(() ->
+                deviceRegistryService.findByClientId(user.getScopeId(), authRequest.getClientId()));
+            if (device != null && DeviceStatus.DISABLED.equals(device.getStatus())) {
+                logger.warn("Device {} is disabled", authRequest.getClientId());
+                throw new SecurityException("Device is disabled");
+            }
             String deviceConnectionAuthType = extractAuthTypeFromAuthRequest(authRequest);
             LoginCredentials authenticationCredentials = buildLoginCredentialsFromAuthType(authRequest, deviceConnectionAuthType);
             AccessToken accessToken = authenticationService.login(authenticationCredentials);
