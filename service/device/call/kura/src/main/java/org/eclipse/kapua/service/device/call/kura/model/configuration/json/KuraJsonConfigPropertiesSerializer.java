@@ -81,7 +81,7 @@ public class KuraJsonConfigPropertiesSerializer extends JsonSerializer<Map<Strin
 
         XmlConfigPropertyAdapted.ConfigPropertyType type = propertyAdapted.getType();
 
-        if (propertyAdapted.getArray() && values.length > 1) {
+        if (propertyAdapted.getArray()) {
             gen.writeStartArray();
             for (String value : values) {
                 writeTypedValue(gen, value, type);
