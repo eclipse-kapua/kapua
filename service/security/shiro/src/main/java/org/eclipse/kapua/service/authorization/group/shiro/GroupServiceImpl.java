@@ -100,6 +100,7 @@ public class GroupServiceImpl extends KapuaConfigurableServiceBase implements Gr
             group.setName(groupCreator.getName());
             group.setDescription(groupCreator.getDescription());
             group.setDomain(groupCreator.getDomain());
+            group.setTagIds(groupCreator.getTagIds());
 
             return groupRepository.create(tx, group);
         });

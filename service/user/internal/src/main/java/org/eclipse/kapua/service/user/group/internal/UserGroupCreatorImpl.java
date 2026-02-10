@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.user.group.internal;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.kapua.commons.model.AbstractKapuaNamedEntityCreator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.user.group.UserGroup;
@@ -24,6 +27,10 @@ import org.eclipse.kapua.service.user.group.UserGroupCreator;
  */
 public class UserGroupCreatorImpl extends AbstractKapuaNamedEntityCreator<UserGroup> implements UserGroupCreator {
 
+    private static final long serialVersionUID = 7080526107362000587L;
+
+    private Set<KapuaId> tagIds;
+
     /**
      * Constructor.
      *
@@ -34,4 +41,17 @@ public class UserGroupCreatorImpl extends AbstractKapuaNamedEntityCreator<UserGr
         super(scopeId);
     }
 
+    @Override
+    public Set<KapuaId> getTagIds() {
+        if (tagIds == null) {
+            tagIds = new HashSet<>();
+        }
+
+        return tagIds;
+    }
+
+    @Override
+    public void setTagIds(Set<KapuaId> tagIds) {
+        this.tagIds = tagIds;
+    }
 }

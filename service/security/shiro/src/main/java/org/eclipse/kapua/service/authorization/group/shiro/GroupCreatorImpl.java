@@ -12,6 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authorization.group.shiro;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.kapua.commons.model.AbstractKapuaNamedEntityCreator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.domain.DomainCreator;
@@ -28,6 +31,7 @@ public class GroupCreatorImpl extends AbstractKapuaNamedEntityCreator<Group> imp
     private static final long serialVersionUID = -4676187845961673421L;
 
     private String domain;
+    private Set<KapuaId> tagIds;
 
     /**
      * Constructor
@@ -52,5 +56,19 @@ public class GroupCreatorImpl extends AbstractKapuaNamedEntityCreator<Group> imp
     @Override
     public void setDomain(String domain) {
         this.domain = domain;
+    }
+
+    @Override
+    public Set<KapuaId> getTagIds() {
+        if (tagIds == null) {
+            tagIds = new HashSet<>();
+        }
+
+        return tagIds;
+    }
+
+    @Override
+    public void setTagIds(Set<KapuaId> tagIds) {
+        this.tagIds = tagIds;
     }
 }
