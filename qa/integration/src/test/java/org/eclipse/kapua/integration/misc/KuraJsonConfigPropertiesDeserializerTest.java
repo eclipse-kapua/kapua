@@ -199,7 +199,6 @@ public class KuraJsonConfigPropertiesDeserializerTest {
 
     @Test
     public void testDeserializePassword() throws Exception {
-        // 🔐 Test con tipo PASSWORD
         String json = "{\n" +
                 "    \"passwordProp\": {\n" +
                 "        \"value\": \"secret123\",\n" +
