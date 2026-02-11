@@ -27,7 +27,7 @@ import org.eclipse.kapua.service.device.call.kura.model.configuration.xml.XmlCon
 /**
  * Custom JSON serializer for Kura configuration properties.<br>
  * This serializer converts the Map properties into a JSON structure that includes both the
- * property values and their corresponding types, based on the XML adapted form used in Kura.<br>
+ * property values and their corresponding types<br>
  * This approach ensures that the type information is preserved during serialization, allowing for accurate
  * deserialization later on.
  *
@@ -41,6 +41,7 @@ import org.eclipse.kapua.service.device.call.kura.model.configuration.xml.XmlCon
  *
  * see https://esf.eurotech.com/docs/configuration-v2-rest-apis-and-conf-v2-request-handler#configurationproperties
  *
+ * Internally, the serializer first converts the Map properties into an intermediate representation using XmlConfigPropertyAdapted objects, which are then serialized into the final JSON format.<br>
  * @since 2.1.0
  */
 public class KuraJsonConfigPropertiesSerializer extends JsonSerializer<Map<String, Object>> {

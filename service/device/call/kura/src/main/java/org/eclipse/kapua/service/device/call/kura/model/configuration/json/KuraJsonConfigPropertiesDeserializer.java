@@ -27,9 +27,8 @@ import java.util.Map;
 
 /**
  * Custom JSON deserializer for Kura configuration properties.<br>
- * This deserializer reads a JSON structure that includes both the property values and their corresponding types, based on the XML adapted form used in Kura.<br>
- * It converts this JSON structure back into a Map that can be used in
- * the Kura configuration context.<br>
+ * This deserializer reads a JSON structure that includes both the property values and their corresponding types, based on the format used in Kura.<br>
+ * It converts this JSON structure back into a Map that can be used internally<br>
  * This approach ensures that the type information is preserved during deserialization, allowing for accurate reconstruction of
  * the original properties map.
  *
@@ -43,6 +42,7 @@ import java.util.Map;
  *
  * see https://esf.eurotech.com/docs/configuration-v2-rest-apis-and-conf-v2-request-handler#configurationproperties
  *
+ * Internally, the deserializer first reads the JSON structure and creates an intermediate representation using XmlConfigPropertyAdapted objects, which are then converted to the final Map format using the KuraXmlConfigPropertiesAdapter unmarshaller.<br>
  * @since 2.1.0
  */
 public class KuraJsonConfigPropertiesDeserializer extends JsonDeserializer<Map<String, Object>> {
