@@ -90,6 +90,9 @@ public class KuraDevice implements MqttCallback {
     private String keystorePostKeystoresEntriesCsr;
     private String keystoreDelKeystoresEntries;
 
+    private String wiresGetEntries;
+    private String wiresPutEntries;
+
     /**
      * URI of mqtt broker.
      */
@@ -227,6 +230,9 @@ public class KuraDevice implements MqttCallback {
         keystorePostKeystoresEntriesKeypair = "$EDC/kapua-sys/rpione3/KEYS-V1/POST/keystores/entries/keypair";
         keystorePostKeystoresEntriesCsr = "$EDC/kapua-sys/rpione3/KEYS-V1/POST/keystores/entries/csr";
         keystoreDelKeystoresEntries = "$EDC/kapua-sys/rpione3/KEYS-V1/DEL/keystores/entries";
+
+        wiresGetEntries = "$EDC/kapua-sys/rpione3/WIRE-V1/GET/graph/snapshot";
+        wiresPutEntries = "$EDC/kapua-sys/rpione3/WIRE-V1/PUT/graph/snapshot";
 
         mqttClientSetup();
     }
@@ -467,6 +473,28 @@ public class KuraDevice implements MqttCallback {
                 responsePayload = Files.readAllBytes(Paths.get(getClass().getResource("/mqtt/KapuaPool-client-id_CONF-V1_PUT_configurations.mqtt").toURI()));
 
                 configurationChanged = true;
+                mqttClient.publish(responseTopic, responsePayload, 0, false);
+            }
+            //WIRE-V1
+            else if (topic.equals(wiresGetEntries)) {
+                callbackParam = extractCallback(requestPayload);
+                responseTopic = $EDC + clientAccount + "/" + callbackParam.getClientId() + "/WIRE-V1/REPLY/" + callbackParam.getRequestId();
+
+                byte[] responseBody = Files.readAllBytes(Paths.get(getClass().getResource("/mqtt/WIRES-V1_GET_wires_configuration_reply.json").toURI()));
+                KuraPayload kuraResponsePayload = new KuraPayload();
+                kuraResponsePayload.setBody(responseBody);
+                kuraResponsePayload.getMetrics().put("response.code", 200);
+                responsePayload = kuraResponsePayload.toByteArray();
+
+                mqttClient.publish(responseTopic, responsePayload, 0, false);
+            }
+            else if (topic.equals(wiresPutEntries)) {
+                callbackParam = extractCallback(requestPayload);
+                responseTopic = $EDC + clientAccount + "/" + callbackParam.getClientId() + "/WIRE-V1/REPLY/" + callbackParam.getRequestId();
+                KuraPayload kuraResponsePayload = new KuraPayload();
+                kuraResponsePayload.getMetrics().put("response.code", 200);
+                responsePayload = kuraResponsePayload.toByteArray();
+
                 mqttClient.publish(responseTopic, responsePayload, 0, false);
             }
             // DEPLOY-V2
