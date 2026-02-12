@@ -29,7 +29,7 @@ Feature: Device Management Wire Graph Service Tests
   # Tests
   #
 
-  Scenario: Request Wire Graph to a Device
+  Scenario: Wiregraph operations - get, upload, delete
 
     Given I login as user with name "kapua-sys" and password "kapua-password"
     And I start the Kura Mock
@@ -43,6 +43,8 @@ Feature: Device Management Wire Graph Service Tests
     And There is a component configurations with id "customComponent" and a property named "factoryPid" with value "com.eurotech.framework.internal.example.wire.component.ExampleWireComponent"
     And There is a component configurations with id "customComponent" and a password property named "passwordProperty" with value "passwordValue"
     And There is a component configurations with id "customComponent" and a array property named "stringArrayProperty" which contains the value "test"
+    Then Last received Wire graph is uploaded and no exception is thrown
+    Then Wire graph is deleted and no exception is thrown
     Then KuraMock is disconnected
     And I logout
 
