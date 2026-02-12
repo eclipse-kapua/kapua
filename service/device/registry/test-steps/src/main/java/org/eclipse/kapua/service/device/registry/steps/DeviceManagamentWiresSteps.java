@@ -70,27 +70,49 @@ public class DeviceManagamentWiresSteps extends TestBase {
             Device device = deviceRegistryService.findByClientId(SYS_SCOPE_ID, kuraDevice.getClientId());
             if (device != null) {
                 DeviceConfiguration deviceConfiguration = deviceWiresManagementService.get(device.getScopeId(), device.getId(), null);
-                List<DeviceComponentConfiguration> configurationItems = deviceConfiguration.getComponentConfigurations();
-                stepData.put(WIRES_ITEMS, configurationItems);
+                stepData.put(WIRES_ITEMS, deviceConfiguration);
+            }
+        }
+    }
+
+    @When("Last received Wire graph is uploaded and no exception is thrown")
+    public void wireGraphUploaded() throws Exception {
+        List<KuraDevice> kuraDevices = (List<KuraDevice>) stepData.get(KURA_DEVICES);
+        for (KuraDevice kuraDevice : kuraDevices) {
+            Device device = deviceRegistryService.findByClientId(SYS_SCOPE_ID, kuraDevice.getClientId());
+            if (device != null) {
+                DeviceConfiguration lastReceivedWireGraph = ((DeviceConfiguration)stepData.get(WIRES_ITEMS));
+                deviceWiresManagementService.put(device.getScopeId(), device.getId(), lastReceivedWireGraph, null); //exception would be thrown if Kura device did not receive the put request
+            }
+        }
+    }
+
+    @When("Wire graph is deleted and no exception is thrown")
+    public void wireGraphDeleted() throws Exception {
+        List<KuraDevice> kuraDevices = (List<KuraDevice>) stepData.get(KURA_DEVICES);
+        for (KuraDevice kuraDevice : kuraDevices) {
+            Device device = deviceRegistryService.findByClientId(SYS_SCOPE_ID, kuraDevice.getClientId());
+            if (device != null) {
+                deviceWiresManagementService.del(device.getScopeId(), device.getId(), null); //exception would be thrown if Kura device did not receive the delete request
             }
         }
     }
 
     @Then("Wire component configurations are received")
     public void graphConfigurationsReceived() {
-        List<DeviceComponentConfiguration> componentConfigurations = (List<DeviceComponentConfiguration>) stepData.get(WIRES_ITEMS);
+        List<DeviceComponentConfiguration> componentConfigurations = ((DeviceConfiguration)stepData.get(WIRES_ITEMS)).getComponentConfigurations();
         Assert.assertNotNull(componentConfigurations);
     }
 
     @Then("Component configurations are {long}")
     public void configurationSizeIs(long size) {
-        List<DeviceComponentConfiguration> componentConfigurations = (List<DeviceComponentConfiguration>) stepData.get(WIRES_ITEMS);
+        List<DeviceComponentConfiguration> componentConfigurations = ((DeviceConfiguration)stepData.get(WIRES_ITEMS)).getComponentConfigurations();
         Assert.assertEquals(size, componentConfigurations.size());
     }
 
     @Then("There is a component configurations with id {string} and a property named {string} with value {string}")
     public void componentConfigurationIdNameValue(String id, String propertyName, String propertyValue) {
-        List<DeviceComponentConfiguration> componentConfigurations = (List<DeviceComponentConfiguration>) stepData.get(WIRES_ITEMS);
+        List<DeviceComponentConfiguration> componentConfigurations = ((DeviceConfiguration)stepData.get(WIRES_ITEMS)).getComponentConfigurations();
         DeviceComponentConfiguration componentConfiguration = componentConfigurations.stream().filter(c -> c.getId().equals(id)).findAny().orElse(null);
         Map<String, Object> properties = componentConfiguration.getProperties();
         Assert.assertNotNull(componentConfiguration);
@@ -101,7 +123,7 @@ public class DeviceManagamentWiresSteps extends TestBase {
 
     @Then("There is a component configurations with id {string} and a password property named {string} with value {string}")
     public void componentConfigurationIdPasswordValue(String id, String propertyName, String propertyValue) {
-        List<DeviceComponentConfiguration> componentConfigurations = (List<DeviceComponentConfiguration>) stepData.get(WIRES_ITEMS);
+        List<DeviceComponentConfiguration> componentConfigurations = ((DeviceConfiguration)stepData.get(WIRES_ITEMS)).getComponentConfigurations();
         DeviceComponentConfiguration componentConfiguration = componentConfigurations.stream().filter(c -> c.getId().equals(id)).findAny().orElse(null);
         Map<String, Object> properties = componentConfiguration.getProperties();
         Assert.assertNotNull(componentConfiguration);
@@ -115,7 +137,7 @@ public class DeviceManagamentWiresSteps extends TestBase {
 
     @Then("There is a component configurations with id {string} and a array property named {string} which contains the value {string}")
     public void componentConfigurationIdArrayValue(String id, String propertyName, String propertyValue) {
-        List<DeviceComponentConfiguration> componentConfigurations = (List<DeviceComponentConfiguration>) stepData.get(WIRES_ITEMS);
+        List<DeviceComponentConfiguration> componentConfigurations = ((DeviceConfiguration)stepData.get(WIRES_ITEMS)).getComponentConfigurations();
         DeviceComponentConfiguration componentConfiguration = componentConfigurations.stream().filter(c -> c.getId().equals(id)).findAny().orElse(null);
         Map<String, Object> properties = componentConfiguration.getProperties();
         Assert.assertNotNull(componentConfiguration);

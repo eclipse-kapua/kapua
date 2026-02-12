@@ -92,6 +92,7 @@ public class KuraDevice implements MqttCallback {
 
     private String wiresGetEntries;
     private String wiresPutEntries;
+    private String wiresDeleteEntries;
 
     /**
      * URI of mqtt broker.
@@ -233,6 +234,7 @@ public class KuraDevice implements MqttCallback {
 
         wiresGetEntries = "$EDC/kapua-sys/rpione3/WIRE-V1/GET/graph/snapshot";
         wiresPutEntries = "$EDC/kapua-sys/rpione3/WIRE-V1/PUT/graph/snapshot";
+        wiresDeleteEntries = "$EDC/kapua-sys/rpione3/WIRE-V1/DEL/graph";
 
         mqttClientSetup();
     }
@@ -487,8 +489,15 @@ public class KuraDevice implements MqttCallback {
                 responsePayload = kuraResponsePayload.toByteArray();
 
                 mqttClient.publish(responseTopic, responsePayload, 0, false);
-            }
-            else if (topic.equals(wiresPutEntries)) {
+            } else if (topic.equals(wiresPutEntries)) {
+                callbackParam = extractCallback(requestPayload);
+                responseTopic = $EDC + clientAccount + "/" + callbackParam.getClientId() + "/WIRE-V1/REPLY/" + callbackParam.getRequestId();
+                KuraPayload kuraResponsePayload = new KuraPayload();
+                kuraResponsePayload.getMetrics().put("response.code", 200);
+                responsePayload = kuraResponsePayload.toByteArray();
+
+                mqttClient.publish(responseTopic, responsePayload, 0, false);
+            } else if (topic.equals(wiresDeleteEntries)) {
                 callbackParam = extractCallback(requestPayload);
                 responseTopic = $EDC + clientAccount + "/" + callbackParam.getClientId() + "/WIRE-V1/REPLY/" + callbackParam.getRequestId();
                 KuraPayload kuraResponsePayload = new KuraPayload();
