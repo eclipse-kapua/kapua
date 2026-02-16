@@ -54,7 +54,7 @@ public class DeviceRegistryGroupModule extends AbstractKapuaModule {
 
     @ProvidesIntoSet
     public Domain deviceDomain() {
-        return new DomainEntry(Domains.DEVICE_GROUP, DeviceGroup.class.getName(), true, Actions.read, Actions.delete, Actions.write);
+        return new DomainEntry(Domains.DEVICE_GROUP, DeviceGroup.class.getName(), false, Actions.read, Actions.delete, Actions.write);
     }
 
 
