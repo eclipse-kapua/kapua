@@ -57,7 +57,7 @@ public class UserGroupModule extends AbstractKapuaModule {
 
     @ProvidesIntoSet
     public Domain userDomain() {
-        return new DomainEntry(Domains.USER_GROUP, UserGroup.class.getName(), true, Actions.read, Actions.delete, Actions.write);
+        return new DomainEntry(Domains.USER_GROUP, UserGroup.class.getName(), false, Actions.read, Actions.delete, Actions.write);
     }
 
 
