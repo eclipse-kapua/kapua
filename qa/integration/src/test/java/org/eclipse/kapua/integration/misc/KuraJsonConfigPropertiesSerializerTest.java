@@ -191,7 +191,7 @@ public class KuraJsonConfigPropertiesSerializerTest {
         String json = objectMapper.writeValueAsString(wrapper);
 
         Assert.assertTrue(json.contains("\"passwordProp\""));
-        Assert.assertTrue(json.contains("\"value\":\"c2VjcmV0MTIz\"")); //base64 encoded (because the XML adapter encodes the value...no worries when passed to ESF considering the XML adapter decodes it back)
+        Assert.assertTrue(json.contains("\"value\":\"secret123\""));
         Assert.assertTrue(json.contains("\"type\":\"PASSWORD\""));
     }
 
