@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 
+import org.eclipse.kapua.commons.crypto.CryptoUtil;
+import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.service.device.call.kura.model.configuration.xml.KuraXmlConfigPropertiesAdapted;
 import org.eclipse.kapua.service.device.call.kura.model.configuration.xml.KuraXmlConfigPropertiesAdapter;
 import org.eclipse.kapua.service.device.call.kura.model.configuration.xml.XmlConfigPropertyAdapted;
@@ -28,8 +30,8 @@ import org.eclipse.kapua.service.device.call.kura.model.configuration.xml.XmlCon
  * Custom JSON serializer for Kura configuration properties.<br>
  * This serializer converts the Map properties into a JSON structure that includes both the
  * property values and their corresponding types<br>
- * This approach ensures that the type information is preserved during serialization, allowing for accurate
- * deserialization later on.
+ * The resulting JSON adheres to the CONF-V2 format used in Kura, ensuring compatibility with Kura's configuration management.<br>
+ * see https://esf.eurotech.com/docs/configuration-v2-rest-apis-and-conf-v2-request-handler#configurationproperties
  *
  * example JSON output for a property named "exampleProperty" of type INTEGER with value 42:
  * {
@@ -39,8 +41,6 @@ import org.eclipse.kapua.service.device.call.kura.model.configuration.xml.XmlCon
  *  }
  *  }
  *
- * see https://esf.eurotech.com/docs/configuration-v2-rest-apis-and-conf-v2-request-handler#configurationproperties
- *
  * Internally, the serializer first converts the Map properties into an intermediate representation using XmlConfigPropertyAdapted objects, which are then serialized into the final JSON format.<br>
  * @since 2.1.0
  */
@@ -48,15 +48,25 @@ public class KuraJsonConfigPropertiesSerializer extends JsonSerializer<Map<Strin
 
     private static final String TYPE_FIELD_NAME_JSON = "type";
     private static final String VALUE_FIELD_NAME_JSON = "value";
+    private final CryptoUtil cryptoUtil = KapuaLocator.getInstance().getComponent(CryptoUtil.class);
 
     @Override
     public void serialize(Map<String, Object> properties, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-        KuraXmlConfigPropertiesAdapted adapted;
+        KuraXmlConfigPropertiesAdapted adapted = writeKuraPropertiesFromMap(properties);
+        writeJsonStringFromKuraProperty(adapted, gen);
+    }
+
+    //read the map and creates the corresponding XmlConfigPropertyAdapted object
+    private KuraXmlConfigPropertiesAdapted writeKuraPropertiesFromMap(Map<String, Object> properties) {
         try {
-            adapted = new KuraXmlConfigPropertiesAdapter().marshal(properties);
+            return (new KuraXmlConfigPropertiesAdapter().marshal(properties));
         } catch (Exception e) {
             throw new IllegalArgumentException("Error marshalling wire graph configuration properties to XML adapted form", e);
         }
+    }
+
+    //from the XmlConfigPropertyAdapted object creates the JSON string (effective serialize/marshall)
+    private void writeJsonStringFromKuraProperty(KuraXmlConfigPropertiesAdapted adapted, JsonGenerator gen) throws IOException {
         gen.writeStartObject();
         Arrays.stream(adapted.getProperties()).forEach(adaptedProperty -> {
             try {
@@ -85,18 +95,18 @@ public class KuraJsonConfigPropertiesSerializer extends JsonSerializer<Map<Strin
         if (propertyAdapted.getArray()) {
             gen.writeStartArray();
             for (String value : values) {
-                writeTypedValue(gen, value, type);
+                writeTypedValue(gen, value, type, propertyAdapted.isEncrypted());
             }
             gen.writeEndArray();
         } else {
-            writeTypedValue(gen, values[0], type);
+            writeTypedValue(gen, values[0], type, propertyAdapted.isEncrypted());
         }
 
         gen.writeStringField(TYPE_FIELD_NAME_JSON, getTypeString(type));
         gen.writeEndObject();
     }
 
-    private void writeTypedValue(JsonGenerator gen, String value, XmlConfigPropertyAdapted.ConfigPropertyType type) throws IOException {
+    private void writeTypedValue(JsonGenerator gen, String value, XmlConfigPropertyAdapted.ConfigPropertyType type, boolean isBase64Encrypted) throws IOException {
         if (value == null) {
             gen.writeNull();
             return;
@@ -124,8 +134,14 @@ public class KuraJsonConfigPropertiesSerializer extends JsonSerializer<Map<Strin
             case booleanType:
                 gen.writeBoolean(Boolean.parseBoolean(value));
                 break;
-            case charType:
             case passwordType:
+                if (isBase64Encrypted) { // if the original XmlConfigPropertyAdapted property is encrypted, we need to decode the value before writing it to JSON. (Kura expects the value plain text in JSON CONF-V2)
+                    gen.writeString(cryptoUtil.decodeBase64(value));
+                } else {
+                    gen.writeString(value);
+                }
+                break;
+            case charType:
             case stringType:
             default:
                 gen.writeString(value);
