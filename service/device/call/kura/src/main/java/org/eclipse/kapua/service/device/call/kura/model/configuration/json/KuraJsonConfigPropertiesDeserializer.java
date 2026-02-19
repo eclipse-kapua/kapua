@@ -29,8 +29,7 @@ import java.util.Map;
  * Custom JSON deserializer for Kura configuration properties.<br>
  * This deserializer reads a JSON structure that includes both the property values and their corresponding types, based on the format used in Kura.<br>
  * It converts this JSON structure back into a Map that can be used internally<br>
- * This approach ensures that the type information is preserved during deserialization, allowing for accurate reconstruction of
- * the original properties map.
+ * We assume that input JSON adheres to the CONF-V2 format used in Kura, ensuring compatibility with Kura's configuration management.<br>
  *
  * example JSON input for a property named "exampleProperty" of type INTEGER with value 42:
  * {
@@ -52,17 +51,23 @@ public class KuraJsonConfigPropertiesDeserializer extends JsonDeserializer<Map<S
 
     @Override
     public Map<String, Object> deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
-        List<XmlConfigPropertyAdapted> adaptedProperties = new ArrayList<>();
         //initial safeguard to handle null or empty JSON content
         if (jp.getCurrentToken() == null) {
             jp.nextToken();
         }
         if (jp.getCurrentToken() != JsonToken.START_OBJECT) {
             ctxt.reportWrongTokenException(this, JsonToken.START_OBJECT, "Expected START_OBJECT");
-            return new java.util.HashMap<>();
         }
 
-        while (jp.nextToken() != JsonToken.END_OBJECT) {  //read each property and create the corresponding XmlConfigPropertyAdapted
+        KuraXmlConfigPropertiesAdapted adapted = writeKuraPropertiesFromJsonString(jp);
+        return writeMapFromKuraProperties(adapted);
+    }
+
+    //read each property and create the corresponding XmlConfigPropertyAdapted object
+    private KuraXmlConfigPropertiesAdapted writeKuraPropertiesFromJsonString(JsonParser jp) throws IOException {
+        List<XmlConfigPropertyAdapted> adaptedProperties = new ArrayList<>();
+
+        while (jp.nextToken() != JsonToken.END_OBJECT) {
             String propertyName = jp.getCurrentName();
             jp.nextToken();
 
@@ -74,7 +79,11 @@ public class KuraJsonConfigPropertiesDeserializer extends JsonDeserializer<Map<S
 
         KuraXmlConfigPropertiesAdapted adapted = new KuraXmlConfigPropertiesAdapted();
         adapted.setProperties(adaptedProperties.toArray(new XmlConfigPropertyAdapted[0]));
+        return adapted;
+    }
 
+    //from the XmlConfigPropertyAdapted object creates the Map (effective desrialize/unmarshal)
+    private Map<String, Object> writeMapFromKuraProperties(KuraXmlConfigPropertiesAdapted adapted) throws IOException {
         try {
             return new KuraXmlConfigPropertiesAdapter().unmarshal(adapted);
         } catch (Exception e) {
@@ -82,6 +91,9 @@ public class KuraJsonConfigPropertiesDeserializer extends JsonDeserializer<Map<S
         }
     }
 
+
+    //Note that, in the case the property is a password, the "isEncrypted" field will be false (set by constructor)
+    //This is correct, because CONF-V2 DTOs have such properties in clear, not encrypted
     private XmlConfigPropertyAdapted readProperty(JsonParser jp, String propertyName) throws IOException {
         XmlConfigPropertyAdapted property = new XmlConfigPropertyAdapted();
         property.setName(propertyName);
