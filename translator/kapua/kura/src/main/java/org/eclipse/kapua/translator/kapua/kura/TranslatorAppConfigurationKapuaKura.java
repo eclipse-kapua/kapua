@@ -55,7 +55,7 @@ public class TranslatorAppConfigurationKapuaKura extends AbstractTranslatorKapua
     protected DeviceConfigurationFactory deviceConfigurationFactory;
     @Inject
     private XmlUtil xmlUtil;
-    private boolean isWire;
+    private final ThreadLocal<Boolean> isWire = new ThreadLocal<>(); //ThreadLocal should not be necessary until new translator instances are created for each request/thread, but kept here for safety (from what I understand, now translators classes and TranslatorHub are not Singletons)
 
     @Override
     protected KuraRequestChannel translateChannel(ConfigurationRequestChannel kapuaChannel) throws InvalidChannelException {
@@ -72,7 +72,7 @@ public class TranslatorAppConfigurationKapuaKura extends AbstractTranslatorKapua
                     } else {
                         resources.add("graph/snapshot");
                     }
-                    isWire = true;
+                    isWire.set(true);
                 } else {
                     resources.add("configurations");
                     String componentId = kapuaChannel.getComponentId();
@@ -108,7 +108,7 @@ public class TranslatorAppConfigurationKapuaKura extends AbstractTranslatorKapua
                 KuraDeviceConfiguration kuraDeviceConfiguration = translate(kapuaDeviceConfiguration);
                 byte[] body;
                 try {
-                    if (isWire) {
+                    if (Boolean.TRUE.equals(isWire.get())) {
                         body = getJsonMapper().writeValueAsBytes(kuraDeviceConfiguration);
                     } else {
                         body = xmlUtil.marshal(kuraDeviceConfiguration).getBytes();
@@ -127,6 +127,9 @@ public class TranslatorAppConfigurationKapuaKura extends AbstractTranslatorKapua
             throw ipe;
         } catch (Exception e) {
             throw new InvalidPayloadException(e, kapuaPayload);
+        } finally {
+            // Clean up ThreadLocal to prevent memory leaks
+            isWire.remove();
         }
     }
 
