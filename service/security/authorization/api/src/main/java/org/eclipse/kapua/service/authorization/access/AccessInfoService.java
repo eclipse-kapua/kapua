@@ -16,6 +16,9 @@ import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.KapuaEntityService;
+import org.eclipse.kapua.service.authorization.permission.Permission;
+
+import java.util.Set;
 
 /**
  * {@link AccessInfo} service definition.
@@ -61,6 +64,17 @@ public interface AccessInfoService extends KapuaEntityService<AccessInfo, Access
     @Override
     AccessInfo find(KapuaId scopeId, KapuaId accessInfoId)
             throws KapuaException;
+
+    /**
+     * Fetch all {@link Permission}s linked to the given {@link AccessInfo}
+     *
+     * @param scopeId The {@link AccessInfo#getScopeId()}
+     * @param accessInfoId The {@link AccessInfo#getId()}
+     * @return The Set of {@link Permission} retrieved
+     * @throws KapuaException
+     * @since 2.1.0
+     */
+    Set<Permission> fetchPermissions(KapuaId scopeId, KapuaId accessInfoId) throws KapuaException;
 
     /**
      * Returns the {@link AccessInfoListResult} with elements matching the provided query.
