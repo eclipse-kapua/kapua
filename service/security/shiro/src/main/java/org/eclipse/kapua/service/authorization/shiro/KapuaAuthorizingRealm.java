@@ -26,17 +26,10 @@ import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.model.query.KapuaListResult;
 import org.eclipse.kapua.service.authorization.access.AccessInfo;
-import org.eclipse.kapua.service.authorization.access.AccessInfoAttributes;
 import org.eclipse.kapua.service.authorization.access.AccessInfoFactory;
-import org.eclipse.kapua.service.authorization.access.AccessInfoQuery;
 import org.eclipse.kapua.service.authorization.access.AccessInfoService;
-import org.eclipse.kapua.service.authorization.access.AccessPermission;
-import org.eclipse.kapua.service.authorization.access.AccessPermissionListResult;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionService;
-import org.eclipse.kapua.service.authorization.access.AccessRole;
-import org.eclipse.kapua.service.authorization.access.AccessRoleListResult;
 import org.eclipse.kapua.service.authorization.access.AccessRoleService;
 import org.eclipse.kapua.service.authorization.group.GroupPermission;
 import org.eclipse.kapua.service.authorization.group.GroupPermissionListResult;
@@ -44,6 +37,7 @@ import org.eclipse.kapua.service.authorization.group.GroupPermissionService;
 import org.eclipse.kapua.service.authorization.group.GroupRole;
 import org.eclipse.kapua.service.authorization.group.GroupRoleListResult;
 import org.eclipse.kapua.service.authorization.group.GroupRoleService;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.shiro.PermissionImpl;
 import org.eclipse.kapua.service.authorization.role.Role;
 import org.eclipse.kapua.service.authorization.role.RolePermission;
@@ -54,6 +48,9 @@ import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The JPA-based application's one and only configured Apache Shiro Realm.
@@ -111,83 +108,34 @@ public class KapuaAuthorizingRealm extends AuthorizingRealm {
             throw new AuthenticationException();
         }
 
-        // Get user access infos
-        AccessInfoQuery accessInfoQuery = accessInfoFactory.newQuery(user.getScopeId());
-        accessInfoQuery.setPredicate(accessInfoQuery.attributePredicate(AccessInfoAttributes.USER_ID, user.getId()));
-
-        final KapuaListResult<AccessInfo> accessInfos;
+        // Get User AccessInfo
+        AccessInfo accessInfo;
         try {
-            accessInfos = KapuaSecurityUtils.doPrivileged(() -> accessInfoService.query(accessInfoQuery));
-        } catch (AuthenticationException e) {
-            throw e;
-        } catch (Exception e) {
+            accessInfo = KapuaSecurityUtils.doPrivileged(() -> accessInfoService.findByUserId(user.getScopeId(), user.getId()));
+        }
+        catch (Exception e) {
             throw new ShiroException("Error while find access info!", e);
         }
+
         // Check existence
-        if (accessInfos == null) {
+        if (accessInfo == null) {
             throw new UnknownAccountException();
         }
-        // Create SimpleAuthorizationInfo with principals permissions
+
+        // Create SimpleAuthorizationInfo with principal's permissions
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
 
-        // Get user roles set and related permissions
-        for (AccessInfo accessInfo : accessInfos.getItems()) {
+        try {
+            Set<Permission> accessInfoPermission = KapuaSecurityUtils.doPrivileged(() -> accessInfoService.fetchPermissions(accessInfo.getScopeId(), accessInfo.getId()));
 
-            // Access Permissions
-            AccessPermissionListResult accessPermissions;
-            try {
-                accessPermissions = KapuaSecurityUtils.doPrivileged(() -> accessPermissionService.findByAccessInfoId(accessInfo.getScopeId(), accessInfo.getId()));
-            } catch (AuthenticationException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new ShiroException("Error while find access permissions!", e);
-            }
-
-            for (AccessPermission accessPermission : accessPermissions.getItems()) {
-                PermissionImpl p = accessPermission.getPermission();
-                logger.trace("User: {} has permission: {}", username, p);
-                info.addObjectPermission(permissionMapper.mapPermission(p));
-            }
-
-            // Access Role Id
-            AccessRoleListResult accessRoles;
-            try {
-                accessRoles = KapuaSecurityUtils.doPrivileged(() -> accessRoleService.findByAccessInfoId(accessInfo.getScopeId(), accessInfo.getId()));
-            } catch (AuthenticationException e) {
-                throw e;
-            } catch (Exception e) {
-                throw new ShiroException("Error while find access role ids!", e);
-            }
-
-            for (AccessRole accessRole : accessRoles.getItems()) {
-
-                KapuaId roleId = accessRole.getRoleId();
-
-                Role role;
-                try {
-                    role = KapuaSecurityUtils.doPrivileged(() -> roleService.find(accessRole.getScopeId(), roleId));
-                } catch (AuthenticationException e) {
-                    throw e;
-                } catch (Exception e) {
-                    throw new ShiroException("Error while find role ids!", e);
-                }
-
-                info.addRole(role.getName());
-
-                final RolePermissionListResult rolePermissions;
-                try {
-                    rolePermissions = KapuaSecurityUtils.doPrivileged(() -> rolePermissionService.findByRoleId(role.getScopeId(), role.getId()));
-                } catch (Exception e) {
-                    throw new ShiroException("Error while find role permission!", e);
-                }
-
-                for (RolePermission rolePermission : rolePermissions.getItems()) {
-
-                    PermissionImpl p = rolePermission.getPermission();
-                    logger.trace("Role: {} has permission: {}", role, p);
-                    info.addObjectPermission(permissionMapper.mapPermission(p));
-                }
-            }
+            info.addObjectPermissions(
+                accessInfoPermission
+                        .stream()
+                        .map(permissionMapper::mapPermission)
+                        .collect(Collectors.toSet())
+            );
+        } catch (Exception e) {
+            throw new ShiroException("Error while fetching Permission for AccessInfo!", e);
         }
 
         // Group Permissions and Roles
