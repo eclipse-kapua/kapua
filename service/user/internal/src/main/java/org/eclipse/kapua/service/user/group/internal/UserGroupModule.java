@@ -98,6 +98,9 @@ public class UserGroupModule extends AbstractKapuaModule {
             GroupService groupService,
             GroupFactory groupFactory,
             GroupQueryHelper groupQueryHelper,
+            GroupPermissionService groupPermissionService,
+            GroupRoleService groupRoleService,
+            RolePermissionService rolePermissionService,
             UserGroupServiceValidationUtils userGroupServiceValidationUtils
     ) {
         return new UserGroupServiceImpl(
@@ -105,6 +108,9 @@ public class UserGroupModule extends AbstractKapuaModule {
             groupService,
             groupFactory,
             groupQueryHelper,
+            groupPermissionService,
+            groupRoleService,
+            rolePermissionService,
             userGroupServiceValidationUtils
         );
     }

@@ -25,9 +25,17 @@ import org.eclipse.kapua.service.authorization.group.GroupAttributes;
 import org.eclipse.kapua.service.authorization.group.GroupCreator;
 import org.eclipse.kapua.service.authorization.group.GroupFactory;
 import org.eclipse.kapua.service.authorization.group.GroupListResult;
+import org.eclipse.kapua.service.authorization.group.GroupPermissionListResult;
+import org.eclipse.kapua.service.authorization.group.GroupPermissionService;
 import org.eclipse.kapua.service.authorization.group.GroupQuery;
 import org.eclipse.kapua.service.authorization.group.GroupRepository;
+import org.eclipse.kapua.service.authorization.group.GroupRole;
+import org.eclipse.kapua.service.authorization.group.GroupRoleListResult;
+import org.eclipse.kapua.service.authorization.group.GroupRoleService;
 import org.eclipse.kapua.service.authorization.group.GroupService;
+import org.eclipse.kapua.service.authorization.permission.Permission;
+import org.eclipse.kapua.service.authorization.role.RolePermissionListResult;
+import org.eclipse.kapua.service.authorization.role.RolePermissionService;
 import org.eclipse.kapua.service.user.group.UserGroup;
 import org.eclipse.kapua.service.user.group.UserGroupCreator;
 import org.eclipse.kapua.service.user.group.UserGroupListResult;
@@ -36,6 +44,7 @@ import org.eclipse.kapua.storage.TxManager;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -50,6 +59,9 @@ public class UserGroupServiceImpl implements UserGroupService {
     private final GroupService groupService;
     private final GroupFactory groupFactory;
     private final GroupQueryHelper groupQueryHelper;
+    private final GroupPermissionService groupPermissionService;
+    private final GroupRoleService groupRoleService;
+    private final RolePermissionService rolePermissionService;
     private final UserGroupServiceValidationUtils userGroupServiceValidationUtils;
 
     /**
@@ -64,12 +76,18 @@ public class UserGroupServiceImpl implements UserGroupService {
             GroupService groupService,
             GroupFactory groupFactory,
             GroupQueryHelper groupQueryHelper,
+            GroupPermissionService groupPermissionService,
+            GroupRoleService groupRoleService,
+            RolePermissionService rolePermissionService,
             UserGroupServiceValidationUtils userGroupServiceValidationUtils
     ) {
         this.txManager = txManager;
         this.groupService = groupService;
         this.groupFactory = groupFactory;
         this.groupQueryHelper = groupQueryHelper;
+        this.groupPermissionService = groupPermissionService;
+        this.groupRoleService = groupRoleService;
+        this.rolePermissionService = rolePermissionService;
         this.userGroupServiceValidationUtils = userGroupServiceValidationUtils;
     }
 
@@ -141,6 +159,43 @@ public class UserGroupServiceImpl implements UserGroupService {
 
         // Return result
         return userGroup;
+    }
+
+    @Override
+    public Set<Permission> fetchPermissions(KapuaId scopeId, KapuaId userGroupId) throws KapuaException {
+        // Validate preconditions
+        userGroupServiceValidationUtils.validateFetchPermissionPreConditions(scopeId, userGroupId);
+
+        //
+        // Retrieve Permissions
+
+        // From GroupPermission
+        GroupPermissionListResult groupPermissions = groupPermissionService.findByGroupId(scopeId, userGroupId);
+
+        Set<Permission> userGroupPermissions = groupPermissions
+                .getItems()
+                .stream()
+                .map(groupPermission -> (Permission) groupPermission.getPermission())
+                .collect(Collectors.toSet());
+
+        // From GroupRoles
+        GroupRoleListResult groupRoles = groupRoleService.findByGroupId(scopeId, userGroupId);
+
+        for (GroupRole groupRole : groupRoles.getItems()) {
+            RolePermissionListResult rolePermissions = rolePermissionService.findByRoleId(groupRole.getScopeId(), groupRole.getRoleId());
+
+            userGroupPermissions.addAll(
+                    rolePermissions
+                            .getItems()
+                            .stream()
+                            .map(rolePermission -> (Permission) rolePermission.getPermission())
+                            .collect(Collectors.toSet())
+            );
+        }
+
+        //
+        // Return result
+        return userGroupPermissions;
     }
 
     @Override
