@@ -52,11 +52,7 @@ import org.eclipse.kapua.service.authentication.exception.KapuaAuthenticationExc
 import org.eclipse.kapua.service.authentication.registration.RegistrationService;
 import org.eclipse.kapua.service.authorization.access.AccessInfo;
 import org.eclipse.kapua.service.authorization.access.AccessInfoService;
-import org.eclipse.kapua.service.authorization.access.AccessPermission;
-import org.eclipse.kapua.service.authorization.access.AccessPermissionListResult;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionService;
-import org.eclipse.kapua.service.authorization.access.AccessRole;
-import org.eclipse.kapua.service.authorization.access.AccessRoleListResult;
 import org.eclipse.kapua.service.authorization.access.AccessRoleService;
 import org.eclipse.kapua.service.authorization.group.GroupPermission;
 import org.eclipse.kapua.service.authorization.group.GroupPermissionListResult;
@@ -79,6 +75,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 public class GwtAuthorizationServiceImpl extends KapuaRemoteServiceServlet implements GwtAuthorizationService {
@@ -322,6 +319,7 @@ public class GwtAuthorizationServiceImpl extends KapuaRemoteServiceServlet imple
         if (trustKey != null && !trustKey.isEmpty()) {
             gwtSession.setTrustKey(kapuaSession.getAccessToken().getTrustKey());
         }
+
         // Load permissions
         KapuaSecurityUtils.doPrivileged(new ThrowingRunnable() {
 
@@ -331,22 +329,10 @@ public class GwtAuthorizationServiceImpl extends KapuaRemoteServiceServlet imple
 
                 if (userAccessInfo != null) {
 
-                    // Permission info
-                    AccessPermissionListResult accessPermissions = ACCESS_PERMISSION_SERVICE.findByAccessInfoId(userAccessInfo.getScopeId(), userAccessInfo.getId());
-                    for (AccessPermission accessPermission : accessPermissions.getItems()) {
-                        gwtSession.addSessionPermission(convert(accessPermission.getPermission()));
-                    }
+                    Set<Permission> accessPermissions = ACCESS_INFO_SERVICE.fetchPermissions(userAccessInfo.getScopeId(), userAccessInfo.getId());
 
-                    // Role info
-                    AccessRoleListResult accessRoles = ACCESS_ROLE_SERVICE.findByAccessInfoId(userAccessInfo.getScopeId(), userAccessInfo.getId());
-
-                    for (AccessRole accessRole : accessRoles.getItems()) {
-                        Role role = ROLE_SERVICE.find(accessRole.getScopeId(), accessRole.getRoleId());
-
-                        RolePermissionListResult rolePermissions = ROLE_PERMISSION_SERVICE.findByRoleId(role.getScopeId(), role.getId());
-                        for (RolePermission rp : rolePermissions.getItems()) {
-                            gwtSession.addSessionPermission(convert(rp.getPermission()));
-                        }
+                    for (Permission permission : accessPermissions) {
+                        gwtSession.addSessionPermission(convert(permission));
                     }
                 }
 

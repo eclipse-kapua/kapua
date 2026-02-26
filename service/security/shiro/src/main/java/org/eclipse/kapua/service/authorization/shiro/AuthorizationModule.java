@@ -535,10 +535,9 @@ public class AuthorizationModule extends AbstractKapuaModule {
     @Singleton
     GroupQueryHelper groupQueryHelper(
             KapuaJpaTxManagerFactory jpaTxManagerFactory,
+            AccessInfoService accessInfoService,
             AccessInfoFactory accessInfoFactory,
             AccessInfoRepository accessInfoRepository,
-            AccessPermissionRepository accessPermissionRepository,
-            AccessRoleRepository accessRoleRepository,
             GroupPermissionRepository groupPermissionRepository,
             GroupRoleRepository groupRoleRepository,
             DomainRepository domainRepository,
@@ -548,10 +547,9 @@ public class AuthorizationModule extends AbstractKapuaModule {
     ) {
         return new GroupQueryHelperImpl(
             jpaTxManagerFactory.create("kapua-authorization"),
+            accessInfoService,
             accessInfoFactory,
             accessInfoRepository,
-            accessPermissionRepository,
-            accessRoleRepository,
             groupPermissionRepository,
             groupRoleRepository,
             domainRepository,
