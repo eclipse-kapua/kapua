@@ -31,7 +31,6 @@ import org.eclipse.kapua.service.authorization.group.GroupPermissionListResult;
 import org.eclipse.kapua.service.authorization.group.GroupPermissionQuery;
 import org.eclipse.kapua.service.authorization.group.GroupPermissionService;
 import org.eclipse.kapua.service.authorization.group.GroupRepository;
-import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.authorization.permission.shiro.PermissionValidator;
 import org.eclipse.kapua.storage.TxManager;
@@ -78,22 +77,22 @@ public class GroupPermissionServiceImpl implements GroupPermissionService {
     @Override
     public GroupPermission create(GroupPermissionCreator groupPermissionCreator)
             throws KapuaException {
+        //
         // Argument validation
         ArgumentValidator.notNull(groupPermissionCreator, "groupPermissionCreator");
         ArgumentValidator.notNull(groupPermissionCreator.getGroupId(), "groupPermissionCreator.groupId");
         ArgumentValidator.notNull(groupPermissionCreator.getPermission(), "groupPermissionCreator.permission");
 
-        // Check Group
+        //
+        // Check access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.ACCESS_INFO, Actions.write, groupPermissionCreator.getScopeId()));
 
-        // If permission are created out of the group permission scope, check that the current user has the permission on the external scopeId.
-        final Permission permission = groupPermissionCreator.getPermission();
-        if (permission.getTargetScopeId() == null || !permission.getTargetScopeId().equals(groupPermissionCreator.getScopeId())) {
-            authorizationService.checkPermission(permission);
-        }
+        //
+        // Validate Permission
+        permissionValidator.validatePermission(groupPermissionCreator.getScopeId(), groupPermissionCreator.getPermission());
 
-        permissionValidator.validatePermission(permission);
-
+        //
+        // Do create
         return txManager.execute(tx -> {
             // Check duplicates
             GroupPermissionQuery query = new GroupPermissionQueryImpl(groupPermissionCreator.getScopeId());
@@ -122,7 +121,8 @@ public class GroupPermissionServiceImpl implements GroupPermissionService {
 
                 throw new KapuaEntityUniquenessException(GroupPermission.TYPE, uniquesFieldValues);
             }
-            // Do create
+
+            // Create
             Group group =
                 groupRepository
                     .find(tx, groupPermissionCreator.getScopeId(), groupPermissionCreator.getGroupId())

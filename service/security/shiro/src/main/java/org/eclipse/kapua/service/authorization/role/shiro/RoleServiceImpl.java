@@ -146,7 +146,7 @@ public class RoleServiceImpl extends KapuaConfigurableServiceBase implements Rol
             }
 
             // Check that the given permission matches the definition of the Domains.
-            permissionValidator.validatePermissions(roleCreator.getPermissions());
+            permissionValidator.validatePermissions(roleCreator.getScopeId(), roleCreator.getPermissions());
 
             // Do create
             Role newRole = new RoleImpl(roleCreator.getScopeId());
