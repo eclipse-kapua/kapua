@@ -27,25 +27,11 @@ import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.authorization.access.AccessInfo;
-import org.eclipse.kapua.service.authorization.access.AccessInfoFactory;
 import org.eclipse.kapua.service.authorization.access.AccessInfoService;
-import org.eclipse.kapua.service.authorization.access.AccessPermissionService;
-import org.eclipse.kapua.service.authorization.access.AccessRoleService;
-import org.eclipse.kapua.service.authorization.group.GroupPermission;
-import org.eclipse.kapua.service.authorization.group.GroupPermissionListResult;
-import org.eclipse.kapua.service.authorization.group.GroupPermissionService;
-import org.eclipse.kapua.service.authorization.group.GroupRole;
-import org.eclipse.kapua.service.authorization.group.GroupRoleListResult;
-import org.eclipse.kapua.service.authorization.group.GroupRoleService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.permission.shiro.PermissionImpl;
-import org.eclipse.kapua.service.authorization.role.Role;
-import org.eclipse.kapua.service.authorization.role.RolePermission;
-import org.eclipse.kapua.service.authorization.role.RolePermissionListResult;
-import org.eclipse.kapua.service.authorization.role.RolePermissionService;
-import org.eclipse.kapua.service.authorization.role.RoleService;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserService;
+import org.eclipse.kapua.service.user.group.UserGroupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,14 +68,8 @@ public class KapuaAuthorizingRealm extends AuthorizingRealm {
         // Get Services
         KapuaLocator locator = KapuaLocator.getInstance();
         UserService userService = locator.getService(UserService.class);
+        UserGroupService userGroupService = locator.getService(UserGroupService.class);
         AccessInfoService accessInfoService = locator.getService(AccessInfoService.class);
-        AccessInfoFactory accessInfoFactory = locator.getFactory(AccessInfoFactory.class);
-        AccessRoleService accessRoleService = locator.getService(AccessRoleService.class);
-        AccessPermissionService accessPermissionService = locator.getService(AccessPermissionService.class);
-        RoleService roleService = locator.getService(RoleService.class);
-        RolePermissionService rolePermissionService = locator.getService(RolePermissionService.class);
-        GroupPermissionService groupPermissionService = locator.getService(GroupPermissionService.class);
-        GroupRoleService groupRoleService = locator.getService(GroupRoleService.class);
 
         // Get the associated user by name
         final User user;
@@ -140,56 +120,19 @@ public class KapuaAuthorizingRealm extends AuthorizingRealm {
 
         // Group Permissions and Roles
         // For each User Group
-        for (KapuaId groupId : user.getGroupIds()) {
+        try {
+            for (KapuaId groupId : user.getGroupIds()) {
+                Set<Permission> userGroupPermission = KapuaSecurityUtils.doPrivileged(() -> userGroupService.fetchPermissions(user.getScopeId(), groupId));
 
-            // Read from Permission granted to the User Group
-            GroupPermissionListResult userGroupPermissions = null;
-            try {
-                userGroupPermissions = KapuaSecurityUtils.doPrivileged(() -> groupPermissionService.findByGroupId(user.getScopeId(), groupId));
-            } catch (KapuaException e) {
-                throw new ShiroException("Error while find Group Permissions!", e);
+                info.addObjectPermissions(
+                        userGroupPermission
+                                .stream()
+                                .map(permissionMapper::mapPermission)
+                                .collect(Collectors.toSet())
+                );
             }
-
-            for (GroupPermission userGroupPermission : userGroupPermissions.getItems()) {
-                info.addObjectPermission(permissionMapper.mapPermission(userGroupPermission.getPermission()));
-            }
-
-            // Read from Roles granted to the User Group
-            GroupRoleListResult userGroupRoles = null;
-            try {
-                userGroupRoles = KapuaSecurityUtils.doPrivileged(() -> groupRoleService.findByGroupId(user.getScopeId(), groupId));
-            } catch (KapuaException e) {
-                throw new ShiroException("Error while find Group Roles!", e);
-            }
-
-            for (GroupRole userGroupRole : userGroupRoles.getItems()) {
-                KapuaId userGroupRoleId = userGroupRole.getRoleId();
-
-                Role role;
-                try {
-                    role = KapuaSecurityUtils.doPrivileged(() -> roleService.find(userGroupRole.getScopeId(), userGroupRoleId));
-                } catch (AuthenticationException e) {
-                    throw e;
-                } catch (Exception e) {
-                    throw new ShiroException("Error while find role!", e);
-                }
-
-                info.addRole(role.getName());
-
-                RolePermissionListResult rolePermissions = null;
-                try {
-                    rolePermissions = KapuaSecurityUtils.doPrivileged(() -> rolePermissionService.findByRoleId(role.getScopeId(), userGroupRoleId));
-                } catch (KapuaException e) {
-                    throw new ShiroException("Error while find role ids!", e);
-                }
-
-                for (RolePermission rolePermission : rolePermissions.getItems()) {
-
-                    PermissionImpl p = rolePermission.getPermission();
-                    logger.trace("Role: {} has permission: {}", role, p);
-                    info.addObjectPermission(permissionMapper.mapPermission(p));
-                }
-            }
+        } catch (Exception e) {
+            throw new ShiroException("Error while fetching Permission for UserGroups!", e);
         }
 
         // Return authorization info

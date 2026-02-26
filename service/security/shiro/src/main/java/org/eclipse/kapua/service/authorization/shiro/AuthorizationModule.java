@@ -113,6 +113,7 @@ import org.eclipse.kapua.service.authorization.shiro.setting.KapuaAuthorizationS
 import org.eclipse.kapua.service.tag.TagFactory;
 import org.eclipse.kapua.service.tag.TagService;
 import org.eclipse.kapua.service.user.UserService;
+import org.eclipse.kapua.service.user.group.UserGroupService;
 import org.eclipse.kapua.storage.TxManager;
 
 import com.google.inject.Provides;
@@ -538,24 +539,18 @@ public class AuthorizationModule extends AbstractKapuaModule {
             AccessInfoService accessInfoService,
             AccessInfoFactory accessInfoFactory,
             AccessInfoRepository accessInfoRepository,
-            GroupPermissionRepository groupPermissionRepository,
-            GroupRoleRepository groupRoleRepository,
             DomainRepository domainRepository,
-            RoleRepository roleRepository,
-            RolePermissionRepository rolePermissionRepository,
-            UserService userService
+            UserService userService,
+            UserGroupService userGroupService
     ) {
         return new GroupQueryHelperImpl(
             jpaTxManagerFactory.create("kapua-authorization"),
             accessInfoService,
             accessInfoFactory,
             accessInfoRepository,
-            groupPermissionRepository,
-            groupRoleRepository,
             domainRepository,
-            roleRepository,
-            rolePermissionRepository,
-            userService
+            userService,
+            userGroupService
         );
     }
 }
