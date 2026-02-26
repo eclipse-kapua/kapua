@@ -23,7 +23,6 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.authorization.permission.shiro.PermissionValidator;
 import org.eclipse.kapua.service.authorization.role.Role;
@@ -46,7 +45,7 @@ import java.util.Map;
 /**
  * {@link RolePermission} service implementation.
  *
- * @since 1.0
+ * @since 1.0.0
  */
 @Singleton
 public class RolePermissionServiceImpl implements RolePermissionService {
@@ -59,10 +58,13 @@ public class RolePermissionServiceImpl implements RolePermissionService {
     private final PermissionValidator permissionValidator;
 
     public RolePermissionServiceImpl(
-            AuthorizationService authorizationService, PermissionFactory permissionFactory, TxManager txManager,
+            AuthorizationService authorizationService,
+            PermissionFactory permissionFactory,
+            TxManager txManager,
             RoleRepository roleRepository,
             RolePermissionRepository rolePermissionRepository,
-            PermissionValidator permissionValidator) {
+            PermissionValidator permissionValidator
+    ) {
         this.authorizationService = authorizationService;
         this.permissionFactory = permissionFactory;
         this.txManager = txManager;
@@ -74,23 +76,27 @@ public class RolePermissionServiceImpl implements RolePermissionService {
     @Override
     public RolePermission create(RolePermissionCreator rolePermissionCreator)
             throws KapuaException {
+        //
+        // Argument validation
         ArgumentValidator.notNull(rolePermissionCreator, "rolePermissionCreator");
         ArgumentValidator.notNull(rolePermissionCreator.getRoleId(), "rolePermissionCreator.roleId");
         ArgumentValidator.notNull(rolePermissionCreator.getPermission(), "rolePermissionCreator.permission");
+
+        //
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.ROLE, Actions.write, rolePermissionCreator.getScopeId()));
 
+        //
+        // Validate Permission
+        permissionValidator.validatePermission(rolePermissionCreator.getScopeId(), rolePermissionCreator.getPermission());
+
+        //
+        // Do create
         return txManager.execute(tx -> {
             // Check role existence
             final Role role = roleRepository.find(tx, rolePermissionCreator.getScopeId(), rolePermissionCreator.getRoleId())
                     .orElseThrow(() -> new KapuaEntityNotFoundException(Role.TYPE, rolePermissionCreator.getRoleId()));
-            // Check that the given permission matches the definition of the Domains.
-            permissionValidator.validatePermission(rolePermissionCreator.getPermission());
-            // If permission are created out of the role permission scope, check that the current user has the permission on the external scopeId.
-            Permission permission = rolePermissionCreator.getPermission();
-            if (permission.getTargetScopeId() == null || !permission.getTargetScopeId().equals(rolePermissionCreator.getScopeId())) {
-                authorizationService.checkPermission(permission);
-            }
+
             // Check duplicates
             RolePermissionQuery query = new RolePermissionQueryImpl(rolePermissionCreator.getScopeId());
             query.setPredicate(
