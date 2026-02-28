@@ -171,12 +171,7 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-commons-rest-errors</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-commons-rest-filters</artifactId>
+            <artifactId>kapua-commons-jersey-rest</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -291,6 +286,10 @@
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
             <artifactId>kapua-rest-api-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-commons-jersey-web</artifactId>
         </dependency>
 
         <dependency>

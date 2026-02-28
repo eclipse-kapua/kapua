@@ -24,8 +24,5 @@
         <package>org.eclipse.kapua.security</package>
         <package>org.eclipse.kapua.translator</package>
         <package>org.eclipse.kapua.transport</package>
-        <excludes>
-            <package>org.eclipse.kapua.job.engine.client</package>
-        </excludes>
     </packages>
 </locator-config>

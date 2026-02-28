@@ -12,24 +12,26 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.core.model;
 
-import com.google.inject.Provides;
-import org.eclipse.kapua.app.api.core.settings.KapuaApiCoreSetting;
-import org.eclipse.kapua.app.api.core.settings.KapuaApiCoreSettingKeys;
-import org.eclipse.kapua.commons.core.AbstractKapuaModule;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.eclipse.kapua.commons.core.AbstractKapuaModule;
+import org.eclipse.kapua.commons.jersey.rest.KapuaCommonApiCoreSetting;
+import org.eclipse.kapua.commons.jersey.rest.KapuaCommonApiCoreSettingKeys;
+
+import com.google.inject.Provides;
+
 public class TestModule extends AbstractKapuaModule {
+
     @Override
     protected void configureModule() {
-        bind(KapuaApiCoreSetting.class).in(Singleton.class);
+        bind(KapuaCommonApiCoreSetting.class).in(Singleton.class);
     }
 
     @Provides
     @Named("showStackTrace")
-    Boolean showStackTrace(KapuaApiCoreSetting kapuaApiCoreSetting) {
-        return kapuaApiCoreSetting.getBoolean(KapuaApiCoreSettingKeys.API_EXCEPTION_STACKTRACE_SHOW, false);
+    Boolean showStackTrace(KapuaCommonApiCoreSetting kapuaCommonApiCoreSetting) {
+        return kapuaCommonApiCoreSetting.getBoolean(KapuaCommonApiCoreSettingKeys.API_EXCEPTION_STACKTRACE_SHOW, false);
     }
 
     @Provides

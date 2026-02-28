@@ -42,17 +42,7 @@
             <groupId>org.eclipse.kapua</groupId>
             <artifactId>kapua-client-gateway-provider-mqtt</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-client-gateway-spi</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-
+        
         <dependency>
             <groupId>org.fusesource.mqtt-client</groupId>
             <artifactId>mqtt-client</artifactId>

@@ -26,9 +26,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.app.api.core.model.ScopeId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
 import org.eclipse.kapua.commons.configuration.ServiceConfigurationsFacade;
+import org.eclipse.kapua.commons.jersey.rest.model.ScopeId;
 import org.eclipse.kapua.service.config.ServiceComponentConfiguration;
 import org.eclipse.kapua.service.config.ServiceConfiguration;
 
@@ -42,7 +42,12 @@ public class ServiceConfigurations extends AbstractKapuaResource {
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public ServiceConfiguration get(@PathParam("scopeId") ScopeId scopeId) throws KapuaException {
         final ServiceConfiguration res = serviceConfigurationsFacade.fetchAllConfigurations(scopeId);
-        Collections.sort(res.getComponentConfigurations(), Comparator.comparing(ServiceComponentConfiguration::getName));
+
+        Collections.sort(
+                res.getComponentConfigurations(),
+                Comparator.comparing(ServiceComponentConfiguration::getName)
+        );
+
         return res;
     }
 

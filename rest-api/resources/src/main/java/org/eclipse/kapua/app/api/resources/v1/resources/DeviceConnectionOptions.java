@@ -13,8 +13,8 @@
 package org.eclipse.kapua.app.api.resources.v1.resources;
 
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.app.api.core.model.EntityId;
-import org.eclipse.kapua.app.api.core.model.ScopeId;
+import org.eclipse.kapua.commons.jersey.rest.model.EntityId;
+import org.eclipse.kapua.commons.jersey.rest.model.ScopeId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
 import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.device.registry.connection.DeviceConnection;
@@ -38,15 +38,17 @@ public class DeviceConnectionOptions extends AbstractKapuaResource {
     /**
      * Returns the {@link DeviceConnectionOption} specified by the given parameters.
      *
-     * @param scopeId      The {@link ScopeId} of the requested {@link DeviceConnectionOption}.
-     * @param connectionId The {@link DeviceConnectionOption} id of the request
-     *                     {@link DeviceConnectionOption}.
+     * @param scopeId
+     *         The {@link ScopeId} of the requested {@link DeviceConnectionOption}.
+     * @param connectionId
+     *         The {@link DeviceConnectionOption} id of the request {@link DeviceConnectionOption}.
      * @return The requested {@link DeviceConnectionOption} object.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @GET
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public DeviceConnectionOption find(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("connectionId") EntityId connectionId) throws KapuaException {
@@ -58,14 +60,17 @@ public class DeviceConnectionOptions extends AbstractKapuaResource {
     /**
      * Returns the DeviceConnection specified by the "deviceConnectionId" path parameter.
      *
-     * @param scopeId            The {@link ScopeId} of the requested {@link DeviceConnection}.
-     * @param deviceConnectionId The id of the requested DeviceConnection.
+     * @param scopeId
+     *         The {@link ScopeId} of the requested {@link DeviceConnection}.
+     * @param deviceConnectionId
+     *         The id of the requested DeviceConnection.
      * @return The requested DeviceConnection object.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @PUT
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public DeviceConnectionOption update(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("connectionId") EntityId deviceConnectionId,

@@ -14,8 +14,8 @@
 package org.eclipse.kapua.app.api.resources.v1.resources;
 
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.app.api.core.model.EntityId;
-import org.eclipse.kapua.app.api.core.model.ScopeId;
+import org.eclipse.kapua.commons.jersey.rest.model.EntityId;
+import org.eclipse.kapua.commons.jersey.rest.model.ScopeId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
 import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.device.management.request.DeviceRequestManagementService;
@@ -40,20 +40,23 @@ public class DeviceManagementRequests extends AbstractKapuaResource {
     public DeviceRequestManagementService requestService;
 
     /**
-     * Sends a request message to a device.
-     * This call is generally used to perform remote management of resources
-     * attached to the device such sensors and registries.
+     * Sends a request message to a device. This call is generally used to perform remote management of resources attached to the device such sensors and registries.
      *
-     * @param scopeId        The {@link ScopeId} of the {@link Device}.
-     * @param deviceId       The {@link Device} ID.
-     * @param timeout        The timeout of the request execution
-     * @param requestMessage The input request
+     * @param scopeId
+     *         The {@link ScopeId} of the {@link Device}.
+     * @param deviceId
+     *         The {@link Device} ID.
+     * @param timeout
+     *         The timeout of the request execution
+     * @param requestMessage
+     *         The input request
      * @return The response output.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      */
     @POST
-    @Consumes({MediaType.APPLICATION_XML})
-    @Produces({MediaType.APPLICATION_XML})
+    @Consumes({ MediaType.APPLICATION_XML })
+    @Produces({ MediaType.APPLICATION_XML })
     public GenericResponseMessage sendRequest(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,

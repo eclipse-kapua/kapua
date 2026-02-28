@@ -16,10 +16,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.eclipse.kapua.app.api.core.auth.KapuaTokenAuthenticationFilter;
+import org.eclipse.kapua.commons.jersey.rest.filters.KapuaTokenAuthenticationFilter;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.security.KapuaSession;
-import org.eclipse.kapua.job.engine.client.filter.SessionInfoHttpHeaders;
+import org.eclipse.kapua.job.engine.SessionInfoHttpHeaders;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdFactory;

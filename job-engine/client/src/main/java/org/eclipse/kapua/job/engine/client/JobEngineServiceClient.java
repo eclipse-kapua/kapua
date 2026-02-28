@@ -12,9 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.job.engine.client;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -30,42 +32,42 @@ import javax.ws.rs.core.Response.Status.Family;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.kapua.EntityNotFoundExceptionInfo;
+import org.eclipse.kapua.ExceptionInfo;
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaErrorCodes;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaRuntimeException;
-import org.eclipse.kapua.commons.rest.model.IsJobRunningMultipleResponse;
-import org.eclipse.kapua.commons.rest.model.IsJobRunningResponse;
-import org.eclipse.kapua.commons.rest.model.MultipleJobIdRequest;
-import org.eclipse.kapua.commons.rest.model.errors.CleanJobDataExceptionInfo;
-import org.eclipse.kapua.commons.rest.model.errors.EntityNotFoundExceptionInfo;
-import org.eclipse.kapua.commons.rest.model.errors.ExceptionInfo;
-import org.eclipse.kapua.commons.rest.model.errors.JobAlreadyRunningExceptionInfo;
-import org.eclipse.kapua.commons.rest.model.errors.JobInvalidTargetExceptionInfo;
-import org.eclipse.kapua.commons.rest.model.errors.JobMissingStepExceptionInfo;
-import org.eclipse.kapua.commons.rest.model.errors.JobMissingTargetExceptionInfo;
-import org.eclipse.kapua.commons.rest.model.errors.JobNotRunningExceptionInfo;
-import org.eclipse.kapua.commons.rest.model.errors.JobResumingExceptionInfo;
-import org.eclipse.kapua.commons.rest.model.errors.JobRunningExceptionInfo;
-import org.eclipse.kapua.commons.rest.model.errors.JobStartingExceptionInfo;
-import org.eclipse.kapua.commons.rest.model.errors.JobStoppingExceptionInfo;
 import org.eclipse.kapua.commons.util.xml.XmlUtil;
+import org.eclipse.kapua.job.engine.IsJobRunningMultipleResponse;
+import org.eclipse.kapua.job.engine.IsJobRunningResponse;
 import org.eclipse.kapua.job.engine.JobEngineService;
 import org.eclipse.kapua.job.engine.JobStartOptions;
+import org.eclipse.kapua.job.engine.MultipleJobIdRequest;
 import org.eclipse.kapua.job.engine.client.filter.SessionInfoFilter;
 import org.eclipse.kapua.job.engine.client.settings.JobEngineClientSetting;
 import org.eclipse.kapua.job.engine.client.settings.JobEngineClientSettingKeys;
 import org.eclipse.kapua.job.engine.exception.CleanJobDataException;
+import org.eclipse.kapua.job.engine.exception.CleanJobDataExceptionInfo;
 import org.eclipse.kapua.job.engine.exception.JobAlreadyRunningException;
+import org.eclipse.kapua.job.engine.exception.JobAlreadyRunningExceptionInfo;
 import org.eclipse.kapua.job.engine.exception.JobEngineException;
 import org.eclipse.kapua.job.engine.exception.JobInvalidTargetException;
+import org.eclipse.kapua.job.engine.exception.JobInvalidTargetExceptionInfo;
 import org.eclipse.kapua.job.engine.exception.JobMissingStepException;
+import org.eclipse.kapua.job.engine.exception.JobMissingStepExceptionInfo;
 import org.eclipse.kapua.job.engine.exception.JobMissingTargetException;
+import org.eclipse.kapua.job.engine.exception.JobMissingTargetExceptionInfo;
 import org.eclipse.kapua.job.engine.exception.JobNotRunningException;
+import org.eclipse.kapua.job.engine.exception.JobNotRunningExceptionInfo;
 import org.eclipse.kapua.job.engine.exception.JobResumingException;
+import org.eclipse.kapua.job.engine.exception.JobResumingExceptionInfo;
 import org.eclipse.kapua.job.engine.exception.JobRunningException;
+import org.eclipse.kapua.job.engine.exception.JobRunningExceptionInfo;
 import org.eclipse.kapua.job.engine.exception.JobStartingException;
+import org.eclipse.kapua.job.engine.exception.JobStartingExceptionInfo;
 import org.eclipse.kapua.job.engine.exception.JobStoppingException;
+import org.eclipse.kapua.job.engine.exception.JobStoppingExceptionInfo;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.glassfish.jersey.moxy.json.MoxyJsonFeature;
 import org.slf4j.Logger;
@@ -163,10 +165,11 @@ public class JobEngineServiceClient implements JobEngineService {
             String responseText = checkResponse("POST", path, response);
 
             IsJobRunningMultipleResponse isJobRunningMultipleResponse = xmlUtil.unmarshalJson(responseText, IsJobRunningMultipleResponse.class);
-
-            return isJobRunningMultipleResponse.getList()
-                    .stream()
-                    .collect(Collectors.toMap(IsJobRunningResponse::getJobId, IsJobRunningResponse::isRunning));
+            Map<KapuaId, Boolean> res = new HashMap<>();
+            Optional.ofNullable(isJobRunningMultipleResponse.getList())
+                    .orElse(new ArrayList<>())
+                    .forEach(r -> res.put(r.getJobId(), r.isRunning()));
+            return res;
         } catch (ClientErrorException | JAXBException | SAXException e) {
             throw KapuaException.internalError(e);
         }

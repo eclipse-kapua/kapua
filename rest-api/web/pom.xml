@@ -115,11 +115,11 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-commons-rest-errors</artifactId>
+            <artifactId>kapua-commons-jersey-web</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-commons-rest-filters</artifactId>
+            <artifactId>kapua-commons-jersey-rest</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.kapua</groupId>

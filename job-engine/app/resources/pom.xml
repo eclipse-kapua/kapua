@@ -38,11 +38,11 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-rest-api-core</artifactId>
+            <artifactId>kapua-commons-jersey-rest</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-commons-rest-model</artifactId>
+            <groupId>org.glassfish.jersey.bundles</groupId>
+            <artifactId>jaxrs-ri</artifactId>
         </dependency>
     </dependencies>
 </project>

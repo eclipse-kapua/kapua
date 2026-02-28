@@ -13,10 +13,11 @@
 package org.eclipse.kapua.app.api.resources.v1.resources;
 
 import com.google.common.base.Strings;
+
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.app.api.core.model.CountResult;
-import org.eclipse.kapua.app.api.core.model.EntityId;
-import org.eclipse.kapua.app.api.core.model.ScopeId;
+import org.eclipse.kapua.commons.jersey.rest.model.CountResult;
+import org.eclipse.kapua.commons.jersey.rest.model.EntityId;
+import org.eclipse.kapua.commons.jersey.rest.model.ScopeId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
 import org.eclipse.kapua.model.query.SortOrder;
 import org.eclipse.kapua.service.KapuaService;
@@ -49,17 +50,23 @@ public class JobTriggerDefinitions extends AbstractKapuaResource {
     /**
      * Gets the {@link TriggerDefinition} list for a given {@link Job}.
      *
-     * @param scopeId   The {@link ScopeId} in which to search results.
-     * @param sortParam The name of the parameter that will be used as a sorting key
-     * @param sortDir   The sort direction. Can be ASCENDING (default), DESCENDING. Case-insensitive.
-     * @param offset    The result set offset.
-     * @param limit     The result set limit.
+     * @param scopeId
+     *         The {@link ScopeId} in which to search results.
+     * @param sortParam
+     *         The name of the parameter that will be used as a sorting key
+     * @param sortDir
+     *         The sort direction. Can be ASCENDING (default), DESCENDING. Case-insensitive.
+     * @param offset
+     *         The result set offset.
+     * @param limit
+     *         The result set limit.
      * @return The {@link TriggerDefinitionListResult} of all the jobs triggers associated to the current selected job.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.5.0
      */
     @GET
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public TriggerDefinitionListResult simpleQuery(
             @PathParam("scopeId") ScopeId scopeId,
             @QueryParam("sortParam") String sortParam,
@@ -82,16 +89,19 @@ public class JobTriggerDefinitions extends AbstractKapuaResource {
     /**
      * Queries the results with the given {@link TriggerDefinitionQuery} parameter.
      *
-     * @param scopeId The {@link ScopeId} in which to search results.
-     * @param query   The {@link TriggerDefinitionQuery} to use to filter results.
+     * @param scopeId
+     *         The {@link ScopeId} in which to search results.
+     * @param query
+     *         The {@link TriggerDefinitionQuery} to use to filter results.
      * @return The {@link TriggerDefinitionListResult} of all the result matching the given {@link TriggerDefinitionQuery} parameter.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.5.0
      */
     @POST
     @Path("_query")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public TriggerDefinitionListResult query(
             @PathParam("scopeId") ScopeId scopeId,
             TriggerDefinitionQuery query) throws KapuaException {
@@ -102,16 +112,19 @@ public class JobTriggerDefinitions extends AbstractKapuaResource {
     /**
      * Counts the results with the given {@link TriggerDefinitionQuery} parameter.
      *
-     * @param scopeId The {@link ScopeId} in which to search results.
-     * @param query   The {@link TriggerDefinitionQuery} to use to filter results.
+     * @param scopeId
+     *         The {@link ScopeId} in which to search results.
+     * @param query
+     *         The {@link TriggerDefinitionQuery} to use to filter results.
      * @return The count of all the result matching the given {@link TriggerDefinitionQuery} parameter.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.5.0
      */
     @POST
     @Path("_count")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public CountResult count(
             @PathParam("scopeId") ScopeId scopeId,
             TriggerDefinitionQuery query) throws KapuaException {
@@ -123,15 +136,18 @@ public class JobTriggerDefinitions extends AbstractKapuaResource {
     /**
      * Returns the Job specified by the "jobId" path parameter.
      *
-     * @param scopeId             The {@link ScopeId} of the requested {@link Job}.
-     * @param triggerDefinitionId The id of the requested Trigger Definition.
+     * @param scopeId
+     *         The {@link ScopeId} of the requested {@link Job}.
+     * @param triggerDefinitionId
+     *         The id of the requested Trigger Definition.
      * @return The requested Job object.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.5.0
      */
     @GET
     @Path("{triggerDefinitionId}")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public TriggerDefinition find(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("triggerDefinitionId") EntityId triggerDefinitionId) throws KapuaException {

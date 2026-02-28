@@ -69,7 +69,6 @@
             <groupId>commons-configuration</groupId>
             <artifactId>commons-configuration</artifactId>
         </dependency>
-
         <!-- -->
         <!-- Logging -->
         <dependency>

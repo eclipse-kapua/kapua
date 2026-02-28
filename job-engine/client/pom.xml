@@ -35,10 +35,6 @@
             <artifactId>kapua-job-engine-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-commons-rest-model</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-client</artifactId>
         </dependency>

@@ -28,7 +28,7 @@
     </listener>
 
     <listener>
-        <listener-class>org.eclipse.kapua.job.engine.app.web.JobEngineRestApiListener</listener-class>
+        <listener-class>org.eclipse.kapua.commons.jersey.web.ServiceBundleContextListener</listener-class>
     </listener>
 
     <!-- -->
@@ -45,7 +45,7 @@
 
     <filter>
         <filter-name>CORSResponseFilter</filter-name>
-        <filter-class>org.eclipse.kapua.commons.rest.filters.CORSResponseFilter</filter-class>
+        <filter-class>org.eclipse.kapua.commons.jersey.rest.filters.CORSResponseFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>CORSResponseFilter</filter-name>
@@ -54,7 +54,7 @@
 
     <filter>
         <filter-name>KapuaSessionCleanUpFilter</filter-name>
-        <filter-class>org.eclipse.kapua.commons.rest.filters.KapuaSessionCleanupFilter</filter-class>
+        <filter-class>org.eclipse.kapua.commons.jersey.rest.filters.KapuaSessionCleanupFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>KapuaSessionCleanUpFilter</filter-name>

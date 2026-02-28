@@ -13,8 +13,8 @@
 package org.eclipse.kapua.app.api.resources.v1.resources;
 
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.app.api.core.model.EntityId;
-import org.eclipse.kapua.app.api.core.model.ScopeId;
+import org.eclipse.kapua.commons.jersey.rest.model.EntityId;
+import org.eclipse.kapua.commons.jersey.rest.model.ScopeId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
 import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.device.management.configuration.DeviceConfiguration;
@@ -45,15 +45,19 @@ public class DeviceManagementSnapshots extends AbstractKapuaResource {
     /**
      * Returns the list of all the Snapshots available on the device.
      *
-     * @param scopeId  The {@link ScopeId} of the {@link Device}.
-     * @param deviceId The id of the device
-     * @param timeout  The timeout of the operation
+     * @param scopeId
+     *         The {@link ScopeId} of the {@link Device}.
+     * @param deviceId
+     *         The id of the device
+     * @param timeout
+     *         The timeout of the operation
      * @return The list of Snapshot Ids.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @GET
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public DeviceSnapshots get(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,
@@ -64,17 +68,22 @@ public class DeviceManagementSnapshots extends AbstractKapuaResource {
     /**
      * Updates the configuration of a device rolling back a given snapshot ID.
      *
-     * @param scopeId    The {@link ScopeId} of the {@link Device}.
-     * @param deviceId   The {@link Device} ID.
-     * @param snapshotId the ID of the snapshot to rollback to.
-     * @param timeout    The timeout of the operation
+     * @param scopeId
+     *         The {@link ScopeId} of the {@link Device}.
+     * @param deviceId
+     *         The {@link Device} ID.
+     * @param snapshotId
+     *         the ID of the snapshot to rollback to.
+     * @param timeout
+     *         The timeout of the operation
      * @return HTTP 200 if operation has completed successfully.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @POST
     @Path("{snapshotId}/_rollback")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public Response rollback(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,
@@ -88,17 +97,22 @@ public class DeviceManagementSnapshots extends AbstractKapuaResource {
     /**
      * Gets the configuration of a device given the snapshot ID.
      *
-     * @param scopeId    The {@link ScopeId} of the {@link Device}.
-     * @param deviceId   The {@link Device} ID.
-     * @param snapshotId the ID of the snapshot to rollback to.
-     * @param timeout    The timeout of the operation
+     * @param scopeId
+     *         The {@link ScopeId} of the {@link Device}.
+     * @param deviceId
+     *         The {@link Device} ID.
+     * @param snapshotId
+     *         the ID of the snapshot to rollback to.
+     * @param timeout
+     *         The timeout of the operation
      * @return HTTP 200 if operation has completed successfully.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.0.0
      */
     @GET
     @Path("{snapshotId}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
     public DeviceConfiguration download(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,

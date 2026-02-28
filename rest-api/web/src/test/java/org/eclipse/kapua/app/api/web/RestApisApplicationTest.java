@@ -14,9 +14,10 @@ package org.eclipse.kapua.app.api.web;
 
 import javax.xml.bind.JAXBException;
 
-import org.eclipse.kapua.app.api.core.KapuaSerializableBodyWriter;
-import org.eclipse.kapua.app.api.core.ListBodyWriter;
-import org.eclipse.kapua.app.api.core.MoxyJsonConfigContextResolver;
+import org.eclipse.kapua.commons.jersey.rest.JaxbContextResolver;
+import org.eclipse.kapua.commons.jersey.rest.KapuaSerializableBodyWriter;
+import org.eclipse.kapua.commons.jersey.rest.ListBodyWriter;
+import org.eclipse.kapua.commons.jersey.rest.MoxyJsonConfigContextResolver;
 import org.eclipse.kapua.qa.markers.junit.JUnitTests;
 import org.glassfish.jersey.server.filter.UriConnegFilter;
 import org.glassfish.jersey.server.spi.ContainerLifecycleListener;
@@ -35,7 +36,6 @@ public class RestApisApplicationTest {
                 restApisApplication.getProperties().toString());
         Assert.assertTrue("True expected.", restApisApplication.isRegistered(UriConnegFilter.class));
         Assert.assertTrue("True expected.", restApisApplication.isRegistered(JaxbContextResolver.class));
-        //        Assert.assertTrue("True expected.", restApisApplication.isRegistered(RestApiJAXBContextProvider.class));
         Assert.assertTrue("True expected.", restApisApplication.isRegistered(KapuaSerializableBodyWriter.class));
         Assert.assertTrue("True expected.", restApisApplication.isRegistered(ListBodyWriter.class));
         Assert.assertTrue("True expected.", restApisApplication.isRegistered(MoxyJsonConfigContextResolver.class));

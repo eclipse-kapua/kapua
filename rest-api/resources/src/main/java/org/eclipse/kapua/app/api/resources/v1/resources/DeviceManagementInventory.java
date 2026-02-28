@@ -13,8 +13,8 @@
 package org.eclipse.kapua.app.api.resources.v1.resources;
 
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.app.api.core.model.EntityId;
-import org.eclipse.kapua.app.api.core.model.ScopeId;
+import org.eclipse.kapua.commons.jersey.rest.model.EntityId;
+import org.eclipse.kapua.commons.jersey.rest.model.ScopeId;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
 import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.device.management.inventory.DeviceInventoryManagementService;
@@ -52,15 +52,19 @@ public class DeviceManagementInventory extends AbstractKapuaResource {
     /**
      * Gets the {@link DeviceInventory} present on the {@link Device}.
      *
-     * @param scopeId  The {@link Device#getScopeId()}.
-     * @param deviceId The {@link Device#getId()}.
-     * @param timeout  The timeout of the operation in milliseconds
+     * @param scopeId
+     *         The {@link Device#getScopeId()}.
+     * @param deviceId
+     *         The {@link Device#getId()}.
+     * @param timeout
+     *         The timeout of the operation in milliseconds
      * @return The {@link DeviceInventory}.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.5.0
      */
     @GET
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public DeviceInventory getInventory(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,
@@ -71,16 +75,20 @@ public class DeviceManagementInventory extends AbstractKapuaResource {
     /**
      * Gets the {@link DeviceInventoryBundles} present on the {@link Device}.
      *
-     * @param scopeId  The {@link Device#getScopeId()}.
-     * @param deviceId The {@link Device#getId()}.
-     * @param timeout  The timeout of the operation in milliseconds
+     * @param scopeId
+     *         The {@link Device#getScopeId()}.
+     * @param deviceId
+     *         The {@link Device#getId()}.
+     * @param timeout
+     *         The timeout of the operation in milliseconds
      * @return The {@link DeviceInventoryBundles}.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.5.0
      */
     @GET
     @Path("bundles")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public DeviceInventoryBundles getInventoryBundles(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,
@@ -91,17 +99,22 @@ public class DeviceManagementInventory extends AbstractKapuaResource {
     /**
      * Starts a  {@link DeviceInventoryBundle} present on the {@link Device}.
      *
-     * @param scopeId               The {@link Device#getScopeId()}.
-     * @param deviceId              The {@link Device#getId()}.
-     * @param deviceInventoryBundle The {@link DeviceInventoryBundle} to start.
-     * @param timeout               The timeout of the operation in milliseconds
+     * @param scopeId
+     *         The {@link Device#getScopeId()}.
+     * @param deviceId
+     *         The {@link Device#getId()}.
+     * @param deviceInventoryBundle
+     *         The {@link DeviceInventoryBundle} to start.
+     * @param timeout
+     *         The timeout of the operation in milliseconds
      * @return The {@link Response#noContent()} if succeeded.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.5.0
      */
     @POST
     @Path("bundles/_start")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public Response startInventoryBundles(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,
@@ -116,17 +129,22 @@ public class DeviceManagementInventory extends AbstractKapuaResource {
     /**
      * Starts a  {@link DeviceInventoryBundle} present on the {@link Device}.
      *
-     * @param scopeId               The {@link Device#getScopeId()}.
-     * @param deviceId              The {@link Device#getId()}.
-     * @param deviceInventoryBundle The {@link DeviceInventoryBundle} to start.
-     * @param timeout               The timeout of the operation in milliseconds
+     * @param scopeId
+     *         The {@link Device#getScopeId()}.
+     * @param deviceId
+     *         The {@link Device#getId()}.
+     * @param deviceInventoryBundle
+     *         The {@link DeviceInventoryBundle} to start.
+     * @param timeout
+     *         The timeout of the operation in milliseconds
      * @return The {@link Response#noContent()} if succeeded.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.5.0
      */
     @POST
     @Path("bundles/_stop")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public Response stopInventoryBundles(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,
@@ -141,16 +159,20 @@ public class DeviceManagementInventory extends AbstractKapuaResource {
     /**
      * Gets the {@link DeviceInventoryContainers} present on the {@link Device}.
      *
-     * @param scopeId  The {@link Device#getScopeId()}.
-     * @param deviceId The {@link Device#getId()}.
-     * @param timeout  The timeout of the operation in milliseconds
+     * @param scopeId
+     *         The {@link Device#getScopeId()}.
+     * @param deviceId
+     *         The {@link Device#getId()}.
+     * @param timeout
+     *         The timeout of the operation in milliseconds
      * @return The {@link DeviceInventoryContainers}.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 2.0.0
      */
     @GET
     @Path("containers")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public DeviceInventoryContainers getInventoryContainers(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,
@@ -205,17 +227,22 @@ public class DeviceManagementInventory extends AbstractKapuaResource {
     /**
      * Starts a  {@link DeviceInventoryContainer} present on the {@link Device}.
      *
-     * @param scopeId                  The {@link Device#getScopeId()}.
-     * @param deviceId                 The {@link Device#getId()}.
-     * @param deviceInventoryContainer The {@link DeviceInventoryContainer} to start.
-     * @param timeout                  The timeout of the operation in milliseconds
+     * @param scopeId
+     *         The {@link Device#getScopeId()}.
+     * @param deviceId
+     *         The {@link Device#getId()}.
+     * @param deviceInventoryContainer
+     *         The {@link DeviceInventoryContainer} to start.
+     * @param timeout
+     *         The timeout of the operation in milliseconds
      * @return The {@link Response#noContent()} if succeeded.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 2.0.0
      */
     @POST
     @Path("containers/_start")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public Response startInventoryContainers(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,
@@ -230,17 +257,22 @@ public class DeviceManagementInventory extends AbstractKapuaResource {
     /**
      * Starts a  {@link DeviceInventoryContainer} present on the {@link Device}.
      *
-     * @param scopeId                  The {@link Device#getScopeId()}.
-     * @param deviceId                 The {@link Device#getId()}.
-     * @param deviceInventoryContainer The {@link DeviceInventoryContainer} to start.
-     * @param timeout                  The timeout of the operation in milliseconds
+     * @param scopeId
+     *         The {@link Device#getScopeId()}.
+     * @param deviceId
+     *         The {@link Device#getId()}.
+     * @param deviceInventoryContainer
+     *         The {@link DeviceInventoryContainer} to start.
+     * @param timeout
+     *         The timeout of the operation in milliseconds
      * @return The {@link Response#noContent()} if succeeded.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 2.0.0
      */
     @POST
     @Path("containers/_stop")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public Response stopInventoryContainers(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,
@@ -255,16 +287,20 @@ public class DeviceManagementInventory extends AbstractKapuaResource {
     /**
      * Gets the {@link DeviceInventoryPackages} present on the {@link Device}.
      *
-     * @param scopeId  The {@link Device#getScopeId()}.
-     * @param deviceId The {@link Device#getId()}.
-     * @param timeout  The timeout of the operation in milliseconds
+     * @param scopeId
+     *         The {@link Device#getScopeId()}.
+     * @param deviceId
+     *         The {@link Device#getId()}.
+     * @param timeout
+     *         The timeout of the operation in milliseconds
      * @return The {@link DeviceInventoryPackages}.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.5.0
      */
     @GET
     @Path("packages")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public DeviceInventoryPackages getInventoryPackages(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,
@@ -275,16 +311,20 @@ public class DeviceManagementInventory extends AbstractKapuaResource {
     /**
      * Gets the {@link DeviceInventorySystemPackages} present on the {@link Device}.
      *
-     * @param scopeId  The {@link Device#getScopeId()}.
-     * @param deviceId The {@link Device#getId()}.
-     * @param timeout  The timeout of the operation in milliseconds
+     * @param scopeId
+     *         The {@link Device#getScopeId()}.
+     * @param deviceId
+     *         The {@link Device#getId()}.
+     * @param timeout
+     *         The timeout of the operation in milliseconds
      * @return The {@link DeviceInventorySystemPackages}.
-     * @throws KapuaException Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
      * @since 1.5.0
      */
     @GET
     @Path("system")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public DeviceInventorySystemPackages getInventorySystemPackages(
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("deviceId") EntityId deviceId,

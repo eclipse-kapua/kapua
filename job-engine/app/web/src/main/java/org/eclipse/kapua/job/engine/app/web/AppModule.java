@@ -20,6 +20,8 @@ import org.eclipse.kapua.commons.ContainerIdResolver;
 import org.eclipse.kapua.commons.DefaultContainerIdResolver;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.core.JaxbClassProvider;
+import org.eclipse.kapua.commons.jersey.rest.KapuaCommonApiCoreSetting;
+import org.eclipse.kapua.commons.jersey.rest.KapuaCommonApiCoreSettingKeys;
 import org.eclipse.kapua.commons.liquibase.DatabaseCheckUpdate;
 import org.eclipse.kapua.commons.util.xml.JAXBContextProvider;
 import org.eclipse.kapua.commons.util.xml.JAXBContextProviderImpl;
@@ -44,6 +46,12 @@ public class AppModule extends AbstractKapuaModule {
     @ProvidesIntoSet
     JaxbClassProvider jaxbClassesAutoDiscoverer(LocatorConfig locatorConfig) {
         return new XmlRootAnnotatedJaxbClassesScanner(locatorConfig);
+    }
+
+    @Provides
+    @Named("showStackTrace")
+    Boolean showStackTrace(KapuaCommonApiCoreSetting kapuaCommonApiCoreSetting) {
+        return kapuaCommonApiCoreSetting.getBoolean(KapuaCommonApiCoreSettingKeys.API_EXCEPTION_STACKTRACE_SHOW, false);
     }
 
     @Provides

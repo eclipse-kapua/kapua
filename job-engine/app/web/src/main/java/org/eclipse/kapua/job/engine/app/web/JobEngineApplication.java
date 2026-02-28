@@ -12,7 +12,13 @@
  *******************************************************************************/
 package org.eclipse.kapua.job.engine.app.web;
 
-import org.eclipse.kapua.commons.rest.errors.ExceptionConfigurationProvider;
+import java.util.HashMap;
+
+import javax.inject.Singleton;
+import javax.ws.rs.core.MediaType;
+
+import org.eclipse.kapua.commons.jersey.rest.ExceptionConfigurationProvider;
+import org.eclipse.kapua.commons.jersey.rest.ExceptionConfigurationProviderImpl;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.locator.guice.GuiceLocatorImpl;
 import org.glassfish.hk2.api.ServiceLocator;
@@ -26,13 +32,11 @@ import org.glassfish.jersey.server.spi.ContainerLifecycleListener;
 import org.jvnet.hk2.guice.bridge.api.GuiceBridge;
 import org.jvnet.hk2.guice.bridge.api.GuiceIntoHK2Bridge;
 
-import javax.inject.Singleton;
-import javax.ws.rs.core.MediaType;
-import java.util.HashMap;
-
 public class JobEngineApplication extends ResourceConfig {
+
     public JobEngineApplication() {
         register(new AbstractBinder() {
+
             @Override
             protected void configure() {
                 this.bind(ExceptionConfigurationProviderImpl.class)
@@ -40,7 +44,7 @@ public class JobEngineApplication extends ResourceConfig {
                         .in(Singleton.class);
             }
         });
-        packages("org.eclipse.kapua.commons.rest", "org.eclipse.kapua.job.engine.app", "org.eclipse.kapua.app.api.core");
+        packages("org.eclipse.kapua.commons.jersey", "org.eclipse.kapua.job.engine.app");
 
         // Bind media type to resource extension
         HashMap<String, MediaType> mappedMediaTypes = new HashMap<>();

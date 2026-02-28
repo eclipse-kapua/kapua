@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.consumer.lifecycle.listener;
 
+import javax.inject.Inject;
+
 import org.apache.camel.spi.UriEndpoint;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.consumer.lifecycle.MetricsLifecycle;
@@ -25,14 +27,10 @@ import org.eclipse.kapua.service.device.registry.lifecycle.DeviceLifeCycleServic
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-
 /**
  * Device messages listener (device life cycle).
  * <p>
- * Manage:<br>
- * - BIRTH/DC/LWT/APPS device messages<br>
- * Republish of the lifecycle messages (once processed by the broker) isn't supported yet (see #136).
+ * Manage:<br> - BIRTH/DC/LWT/APPS device messages<br> Republish of the lifecycle messages (once processed by the broker) isn't supported yet (see #136).
  *
  * @since 1.0.0
  */
@@ -56,7 +54,8 @@ public class DeviceMessageListener {
     /**
      * Process a birth message.
      *
-     * @param birthMessage The birth message to process.
+     * @param birthMessage
+     *         The birth message to process.
      * @since 1.0.0
      */
     public void processBirthMessage(CamelKapuaMessage<KapuaBirthMessage> birthMessage) {
@@ -81,7 +80,8 @@ public class DeviceMessageListener {
     /**
      * Process a disconnect message.
      *
-     * @param disconnectMessage The disconnect message to process.
+     * @param disconnectMessage
+     *         The disconnect message to process.
      * @since 1.0.0
      */
     public void processDisconnectMessage(CamelKapuaMessage<KapuaDisconnectMessage> disconnectMessage) {
@@ -97,7 +97,8 @@ public class DeviceMessageListener {
     /**
      * Process an application message.
      *
-     * @param appsMessage The apps message to process.
+     * @param appsMessage
+     *         The apps message to process.
      * @since 1.0.0
      */
     public void processAppsMessage(CamelKapuaMessage<KapuaAppsMessage> appsMessage) {
@@ -113,7 +114,8 @@ public class DeviceMessageListener {
     /**
      * Process a missing message.
      *
-     * @param missingMessage The missing message to process.
+     * @param missingMessage
+     *         The missing message to process.
      * @since 1.0.0
      */
     public void processMissingMessage(CamelKapuaMessage<KapuaMissingMessage> missingMessage) {

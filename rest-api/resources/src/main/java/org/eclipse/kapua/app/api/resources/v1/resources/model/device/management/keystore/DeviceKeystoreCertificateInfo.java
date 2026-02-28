@@ -12,8 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.resources.v1.resources.model.device.management.keystore;
 
-import org.eclipse.kapua.app.api.core.model.EntityId;
-import org.eclipse.kapua.app.api.core.model.ScopeId;
+import org.eclipse.kapua.commons.jersey.rest.model.EntityId;
+import org.eclipse.kapua.commons.jersey.rest.model.ScopeId;
 import org.eclipse.kapua.app.api.resources.v1.resources.DeviceManagementKeystores;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdAdapter;
@@ -31,8 +31,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 /**
  * {@link DeviceKeystoreCertificateInfo} definition.
  * <p>
- * Collects all parameters available on {@link DeviceKeystoreManagementService#createKeystoreCertificate(KapuaId, KapuaId, String, String, KapuaId, Long)}
- * to allow to be {@link HttpMethod#POST}ed in {@link DeviceManagementKeystores#createDeviceKeystoreCertificate(ScopeId, EntityId, Long, DeviceKeystoreCertificateInfo)}.
+ * Collects all parameters available on {@link DeviceKeystoreManagementService#createKeystoreCertificate(KapuaId, KapuaId, String, String, KapuaId, Long)} to allow to be {@link HttpMethod#POST}ed in
+ * {@link DeviceManagementKeystores#createDeviceKeystoreCertificate(ScopeId, EntityId, Long, DeviceKeystoreCertificateInfo)}.
  *
  * @since 1.5.0
  */
@@ -65,7 +65,8 @@ public class DeviceKeystoreCertificateInfo {
     /**
      * Sets the target {@link DeviceKeystore#getId()}.
      *
-     * @param keystoreId The target {@link DeviceKeystore#getId()}.
+     * @param keystoreId
+     *         The target {@link DeviceKeystore#getId()}.
      * @since 1.5.0
      */
     public void setKeystoreId(String keystoreId) {
@@ -85,7 +86,8 @@ public class DeviceKeystoreCertificateInfo {
     /**
      * Sets the target {@link DeviceKeystoreCertificate#getAlias()}
      *
-     * @param alias The target {@link DeviceKeystoreCertificate#getAlias()}
+     * @param alias
+     *         The target {@link DeviceKeystoreCertificate#getAlias()}
      * @since 1.5.0
      */
     public void setAlias(String alias) {
@@ -106,7 +108,8 @@ public class DeviceKeystoreCertificateInfo {
     /**
      * Sets the {@link CertificateInfo#getId()}.
      *
-     * @param certificateInfoId The {@link CertificateInfo#getId()}.
+     * @param certificateInfoId
+     *         The {@link CertificateInfo#getId()}.
      * @since 1.5.0
      */
     public void setCertificateInfoId(KapuaId certificateInfoId) {
