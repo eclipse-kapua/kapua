@@ -17,7 +17,6 @@ import org.apache.shiro.ShiroException;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -35,6 +34,7 @@ import org.eclipse.kapua.service.user.group.UserGroupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -97,25 +97,20 @@ public class KapuaAuthorizingRealm extends AuthorizingRealm {
             throw new ShiroException("Error while find access info!", e);
         }
 
-        // Check existence
-        if (accessInfo == null) {
-            throw new UnknownAccountException();
-        }
+        Set<org.apache.shiro.authz.Permission> shiroObjectPermissions = new HashSet<>();
+        if (accessInfo != null) {
+            try {
+                Set<Permission> accessInfoPermission = KapuaSecurityUtils.doPrivileged(() -> accessInfoService.fetchPermissions(accessInfo.getScopeId(), accessInfo.getId()));
 
-        // Create SimpleAuthorizationInfo with principal's permissions
-        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-
-        try {
-            Set<Permission> accessInfoPermission = KapuaSecurityUtils.doPrivileged(() -> accessInfoService.fetchPermissions(accessInfo.getScopeId(), accessInfo.getId()));
-
-            info.addObjectPermissions(
-                accessInfoPermission
+                shiroObjectPermissions.addAll(
+                    accessInfoPermission
                         .stream()
                         .map(permissionMapper::mapPermission)
                         .collect(Collectors.toSet())
-            );
-        } catch (Exception e) {
-            throw new ShiroException("Error while fetching Permission for AccessInfo!", e);
+                );
+            } catch (Exception e) {
+                throw new ShiroException("Error while fetching Permission for AccessInfo!", e);
+            }
         }
 
         // Group Permissions and Roles
@@ -124,11 +119,11 @@ public class KapuaAuthorizingRealm extends AuthorizingRealm {
             for (KapuaId groupId : user.getGroupIds()) {
                 Set<Permission> userGroupPermission = KapuaSecurityUtils.doPrivileged(() -> userGroupService.fetchPermissions(user.getScopeId(), groupId));
 
-                info.addObjectPermissions(
-                        userGroupPermission
-                                .stream()
-                                .map(permissionMapper::mapPermission)
-                                .collect(Collectors.toSet())
+                shiroObjectPermissions.addAll(
+                    userGroupPermission
+                        .stream()
+                        .map(permissionMapper::mapPermission)
+                        .collect(Collectors.toSet())
                 );
             }
         } catch (Exception e) {
@@ -136,6 +131,8 @@ public class KapuaAuthorizingRealm extends AuthorizingRealm {
         }
 
         // Return authorization info
+        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+        info.addObjectPermissions(shiroObjectPermissions);
         return info;
     }
 
