@@ -98,7 +98,7 @@ public abstract class KapuaAuthenticatingRealm extends AuthenticatingRealm {
             throw new UnknownAccountException();
         }
 
-        if (account.getStatus() != null && account.getStatus().equals(AccountStatus.DISABLED)) {
+        if (account.getStatus().equals(AccountStatus.DISABLED)) {
             throw new DisabledAccountException();
         }
 

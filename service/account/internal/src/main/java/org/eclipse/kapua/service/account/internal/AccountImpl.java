@@ -172,6 +172,9 @@ public class AccountImpl extends AbstractKapuaNamedEntity implements Account {
 
     @Override
     public AccountStatus getStatus() {
+        if (status == null) { //we assume that if status=null Account is enabled, so I do this to return a DTO representing this
+            status = AccountStatus.ENABLED;
+        }
         return status;
     }
 
