@@ -16,6 +16,7 @@ import org.eclipse.kapua.commons.model.AbstractKapuaNamedEntityCreator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountCreator;
+import org.eclipse.kapua.service.account.AccountStatus;
 
 import java.util.Date;
 
@@ -41,6 +42,7 @@ public class AccountCreatorImpl extends AbstractKapuaNamedEntityCreator<Account>
     private String organizationCountry;
 
     private Date expirationDate;
+    private AccountStatus status;
 
     /**
      * Constructor.
@@ -171,5 +173,15 @@ public class AccountCreatorImpl extends AbstractKapuaNamedEntityCreator<Account>
     @Override
     public void setExpirationDate(Date expirationDate) {
         this.expirationDate = expirationDate;
+    }
+
+    @Override
+    public AccountStatus getStatus() {
+        return status;
+    }
+
+    @Override
+    public void setStatus(AccountStatus status) {
+        this.status = status;
     }
 }

@@ -113,4 +113,21 @@ public interface Account extends KapuaNamedEntity {
      */
     List<Account> getChildAccounts();
 
+    /**
+     * Gets the {@link AccountStatus}.
+     *
+     * @return The {@link AccountStatus}.
+     * @since 2.0.0
+     */
+    @XmlElement(name = "status")
+    AccountStatus getStatus();
+
+    /**
+     * Sets the {@link AccountStatus}.
+     *
+     * @param status The {@link AccountStatus}.
+     * @since 2.0.0
+     */
+    void setStatus(AccountStatus status);
+
 }

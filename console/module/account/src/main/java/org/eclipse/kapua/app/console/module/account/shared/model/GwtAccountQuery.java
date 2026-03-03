@@ -36,6 +36,7 @@ public class GwtAccountQuery extends GwtQuery {
     private String organizationCity;
     private String organizationStateProvinceCountry;
     private String organizationCountry;
+    private String status;
 
     public String getName() {
         return name;
@@ -139,5 +140,13 @@ public class GwtAccountQuery extends GwtQuery {
 
     public void setOrganizationCountry(String organizationCountry) {
         this.organizationCountry = organizationCountry;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

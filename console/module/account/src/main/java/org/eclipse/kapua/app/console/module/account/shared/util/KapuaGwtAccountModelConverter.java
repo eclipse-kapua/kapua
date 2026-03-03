@@ -16,6 +16,7 @@ import org.eclipse.kapua.app.console.module.account.shared.model.GwtAccount;
 import org.eclipse.kapua.app.console.module.account.shared.model.GwtOrganization;
 import org.eclipse.kapua.app.console.module.api.shared.util.KapuaGwtCommonsModelConverter;
 import org.eclipse.kapua.service.account.Account;
+import org.eclipse.kapua.service.account.AccountStatus;
 import org.eclipse.kapua.service.account.Organization;
 
 import java.util.ArrayList;
@@ -56,6 +57,7 @@ public class KapuaGwtAccountModelConverter {
         gwtAccount.setCity(account.getOrganization().getCity());
         gwtAccount.setStateProvince(account.getOrganization().getStateProvinceCounty());
         gwtAccount.setCountry(account.getOrganization().getCountry());
+        gwtAccount.setAccountStatus(account.getStatus() == null ? AccountStatus.ENABLED.name() : account.getStatus().name());
         // Return converted entity
         return gwtAccount;
     }

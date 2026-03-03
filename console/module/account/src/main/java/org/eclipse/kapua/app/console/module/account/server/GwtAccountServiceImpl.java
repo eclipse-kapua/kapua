@@ -73,6 +73,7 @@ import org.eclipse.kapua.service.account.AccountCreator;
 import org.eclipse.kapua.service.account.AccountFactory;
 import org.eclipse.kapua.service.account.AccountQuery;
 import org.eclipse.kapua.service.account.AccountService;
+import org.eclipse.kapua.service.account.AccountStatus;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.exception.SubjectUnauthorizedException;
 import org.eclipse.kapua.service.authorization.permission.Permission;
@@ -147,6 +148,7 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
             accountCreator.setOrganizationStateProvinceCounty(gwtAccountCreator.getOrganizationStateProvinceCounty());
             accountCreator.setOrganizationCountry(gwtAccountCreator.getOrganizationCountry());
             accountCreator.setExpirationDate(gwtAccountCreator.getExpirationDate());
+            accountCreator.setStatus(AccountStatus.valueOf(gwtAccountCreator.getAccountStatus()));
             // Create the Account
             final Account account = ACCOUNT_SERVICE.create(accountCreator);
             // Create roles
@@ -312,6 +314,7 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
             account.getOrganization().setStateProvinceCounty(gwtAccount.getGwtOrganization().getStateProvinceCounty());
             account.getOrganization().setCountry(gwtAccount.getGwtOrganization().getCountry());
             account.setExpirationDate(gwtAccount.getExpirationDate());
+            account.setStatus(AccountStatus.valueOf(gwtAccount.getAccountStatus()));
             account.setOptlock(gwtAccount.getOptlock());
 
             account = ACCOUNT_SERVICE.update(account);

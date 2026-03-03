@@ -33,6 +33,7 @@ public interface AccountMapper {
     @KapuaBaseMapper.IgnoreKapuaNamedEntityReadonlyFields
     @Mapping(target = "parentAccountPath", ignore = true)
     @Mapping(target = "expirationDate", ignore = true)
+    @Mapping(target = "status", ignore = true)
     @Mapping(target = "childAccounts", ignore = true)
     void merge(@MappingTarget Account account, CurrentAccountUpdateRequest request);
 

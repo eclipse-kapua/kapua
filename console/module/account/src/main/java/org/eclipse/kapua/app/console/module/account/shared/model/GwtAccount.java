@@ -23,40 +23,14 @@ import java.util.List;
 public class GwtAccount extends GwtUpdatableEntityModel implements Serializable {
 
     private static final long serialVersionUID = -5999185569672904770L;
-    // Defines value for service plan
-    public static final int ADMIN_ACCOUNT_ID = 1;
-    public static final int SERVICE_PLAN_UNLIMITED = -1;
-    public static final int SERVICE_PLAN_DISABLED = 0;
 
     public enum GwtAccountStatus implements IsSerializable {
-        BEING_PROVISIONED, ENABLED, DISABLED, BEING_DELETED;
+        ENABLED, DISABLED;
 
         GwtAccountStatus() {
         }
     }
 
-    public enum GwtAccountProvisioningStatus implements IsSerializable {
-        WAITING_TO_START, IN_PROGRESS, FAILED, COMPLETED;
-
-        GwtAccountProvisioningStatus() {
-        }
-    }
-
-    public enum GwtAccountDataIndexBy implements IsSerializable {
-        SERVER_TIMESTAMP, DEVICE_TIMESTAMP;
-
-        GwtAccountDataIndexBy() {
-        }
-    }
-
-    public enum GwtAccountMetricsIndexBy implements IsSerializable {
-        TIMESTAMP, VALUE, NONE;
-
-        GwtAccountMetricsIndexBy() {
-        }
-    }
-
-    private String brokerUrl;
     private GwtOrganization gwtOrganization;
 
     public GwtAccount() {
@@ -211,6 +185,14 @@ public class GwtAccount extends GwtUpdatableEntityModel implements Serializable 
 
     public void setCountry(String country) {
         set("country", country);
+    }
+
+    public String getAccountStatus() {
+        return get("gwtAccountStatus");
+    }
+
+    public void setAccountStatus(String gwtAccountStatus) {
+        set("gwtAccountStatus", gwtAccountStatus);
     }
 
 }

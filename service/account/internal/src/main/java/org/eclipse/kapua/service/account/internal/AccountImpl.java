@@ -22,6 +22,8 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
@@ -35,6 +37,7 @@ import javax.persistence.TemporalType;
 import org.eclipse.kapua.commons.model.AbstractKapuaNamedEntity;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.account.Account;
+import org.eclipse.kapua.service.account.AccountStatus;
 import org.eclipse.kapua.service.account.Organization;
 
 /**
@@ -81,6 +84,10 @@ public class AccountImpl extends AbstractKapuaNamedEntity implements Account {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "expiration_date", nullable = false)
     private Date expirationDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private AccountStatus status;
 
     /**
      * Constructor.
@@ -131,6 +138,7 @@ public class AccountImpl extends AbstractKapuaNamedEntity implements Account {
         setParentAccountPath(account.getParentAccountPath());
         setChildAccounts(account.getChildAccounts());
         setExpirationDate(account.getExpirationDate());
+        setStatus(account.getStatus());
     }
 
     @Override
@@ -160,6 +168,16 @@ public class AccountImpl extends AbstractKapuaNamedEntity implements Account {
         }
 
         return new ArrayList<>(childAccounts);
+    }
+
+    @Override
+    public AccountStatus getStatus() {
+        return status;
+    }
+
+    @Override
+    public void setStatus(AccountStatus status) {
+        this.status = status;
     }
 
     private void setChildAccounts(List<Account> childAccounts) {

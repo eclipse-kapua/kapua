@@ -46,6 +46,7 @@ import org.eclipse.kapua.service.account.AccountCreator;
 import org.eclipse.kapua.service.account.AccountListResult;
 import org.eclipse.kapua.service.account.AccountRepository;
 import org.eclipse.kapua.service.account.AccountService;
+import org.eclipse.kapua.service.account.AccountStatus;
 import org.eclipse.kapua.service.account.AccountUpdateRequest;
 import org.eclipse.kapua.service.account.CurrentAccountUpdateRequest;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
@@ -158,6 +159,12 @@ public class AccountServiceImpl
             final Account accountImpl = new AccountImpl(accountCreator.getScopeId(), accountCreator.getName());
             accountImpl.setOrganization(organizationImpl);
             accountImpl.setExpirationDate(accountCreator.getExpirationDate());
+            if (accountCreator.getStatus() == null) {
+                accountImpl.setStatus(AccountStatus.ENABLED);
+            } else {
+                accountImpl.setStatus(accountCreator.getStatus());
+            }
+
             final Account createdAccount = accountRepository.create(tx, accountImpl);
             String parentAccountPath = parentAccount.getParentAccountPath() + "/" + createdAccount.getId();
             createdAccount.setParentAccountPath(parentAccountPath);

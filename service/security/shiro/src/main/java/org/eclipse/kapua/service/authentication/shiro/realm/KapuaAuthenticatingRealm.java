@@ -27,6 +27,7 @@ import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountService;
+import org.eclipse.kapua.service.account.AccountStatus;
 import org.eclipse.kapua.service.authentication.credential.Credential;
 import org.eclipse.kapua.service.authentication.credential.CredentialService;
 import org.eclipse.kapua.service.authentication.credential.CredentialStatus;
@@ -95,6 +96,10 @@ public abstract class KapuaAuthenticatingRealm extends AuthenticatingRealm {
         // Check existence
         if (account == null) {
             throw new UnknownAccountException();
+        }
+
+        if (account.getStatus() != null && account.getStatus().equals(AccountStatus.DISABLED)) {
+            throw new DisabledAccountException();
         }
 
         // Check account expired

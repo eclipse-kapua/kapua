@@ -35,6 +35,7 @@ public class GwtAccountCreator extends GwtEntityCreator {
     private String organizationStateProvinceCounty;
     private String organizationCountry;
     private Date expirationDate;
+    private String accountStatus;
 
     public GwtAccountCreator() {
     }
@@ -157,5 +158,13 @@ public class GwtAccountCreator extends GwtEntityCreator {
 
     public void setExpirationDate(Date expirationDate) {
         this.expirationDate = expirationDate;
+    }
+
+    public String getAccountStatus() {
+        return accountStatus;
+    }
+
+    public void setAccountStatus(String accountStatus) {
+        this.accountStatus = accountStatus;
     }
 }
