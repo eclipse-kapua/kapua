@@ -13,6 +13,7 @@
 package org.eclipse.kapua.service.authorization.access.shiro;
 
 import org.eclipse.kapua.KapuaEntityNotFoundException;
+import org.eclipse.kapua.KapuaEntityUniquenessException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
@@ -47,6 +48,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * {@link AccessInfoService} implementation based on JPA.
@@ -96,9 +102,16 @@ public class AccessInfoServiceImpl implements AccessInfoService {
     @Override
     public AccessInfo create(AccessInfoCreator accessInfoCreator)
             throws KapuaException {
+        //
+        // Argument validation
         ArgumentValidator.notNull(accessInfoCreator, "accessInfoCreator");
-        // Check Access
+        ArgumentValidator.notNull(accessInfoCreator.getScopeId(), "accessInfoCreator.scopeId");
+        ArgumentValidator.notNull(accessInfoCreator.getUserId(), "accessInfoCreator.userId");
+
+        //
+        // Check access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.ACCESS_INFO, Actions.write, accessInfoCreator.getScopeId()));
+
         // If permission are created out of the access info scope, check that the current user has the permission on the external scopeId.
         if (accessInfoCreator.getPermissions() != null) {
             for (Permission p : accessInfoCreator.getPermissions()) {
@@ -109,13 +122,25 @@ public class AccessInfoServiceImpl implements AccessInfoService {
         }
 
         permissionValidator.validatePermissions(accessInfoCreator.getPermissions());
+
         return txManager.execute(tx -> {
+            Optional<AccessInfo> optionalAccessInfo = accessInfoRepository.findByUserId(tx, accessInfoCreator.getScopeId(), accessInfoCreator.getUserId());
+
+            if (optionalAccessInfo.isPresent()) {
+                List<Map.Entry<String, Object>> uniquesFieldValues = new ArrayList<>();
+
+                uniquesFieldValues.add(new AbstractMap.SimpleEntry<>(AccessInfoAttributes.SCOPE_ID, accessInfoCreator.getScopeId()));
+                uniquesFieldValues.add(new AbstractMap.SimpleEntry<>(AccessInfoAttributes.USER_ID, accessInfoCreator.getUserId()));
+
+                throw new KapuaEntityUniquenessException(AccessInfo.TYPE, uniquesFieldValues);
+            }
+
             if (accessInfoCreator.getRoleIds() != null) {
                 for (KapuaId roleId : accessInfoCreator.getRoleIds()) {
                     // This checks also that the role belong to the same scopeId in which the access info is created
-                    Role role = roleRepository.find(tx, accessInfoCreator.getScopeId(), roleId)
-                            // If role is not present then roleId does not exist, or it is in another Account scope.
-                            .orElseThrow(() -> new KapuaEntityNotFoundException(Role.TYPE, roleId));
+                    roleRepository.find(tx, accessInfoCreator.getScopeId(), roleId)
+                        // If role is not present then roleId does not exist, or it is in another Account scope.
+                        .orElseThrow(() -> new KapuaEntityNotFoundException(Role.TYPE, roleId));
                 }
             }
 

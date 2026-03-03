@@ -282,7 +282,7 @@ Scenario: Initialize test environment
       | name     | displayName  | email              | phoneNumber     |
       | kapua-u1 | Kapua User 1 | kapua_u1@kapua.com | +386 31 323 555 |
     Then I create the access info entity
-    Then I create the access info entity
+    And I expect the exception "KapuaEntityUniquenessException" with the text "Duplicate accessInfo entry for values"
     Then I create the access info entity
     Given Scope with ID 20
     When I configure the user service for the account with the id 20
@@ -290,6 +290,7 @@ Scenario: Initialize test environment
       | boolean | infiniteChildEntities      | true  |
       | integer | maxNumberChildEntities     | 5     |
     Then I create the access info entity
+    And I expect the exception "KapuaEntityUniquenessException" with the text "Duplicate accessInfo entry for values"
     Then I create the access info entity
     Given Scope with ID 30
     When I configure the user service for the account with the id 30
@@ -298,9 +299,9 @@ Scenario: Initialize test environment
       | integer | maxNumberChildEntities     | 5     |
     Then I create the access info entity
     When I count the access info entities for scope 10
-    Then I count 3
+    Then I count 1
     When I count the access info entities for scope 20
-    Then I count 2
+    Then I count 1
     When I count the access info entities for scope 30
     Then I count 1
     When I count the access info entities for scope 42
@@ -308,8 +309,7 @@ Scenario: Initialize test environment
     Then I logout
 
   Scenario: Query for all the access info entities of a specific user
-  It must be possible to find all the access info entities that belong
-  to a specific user.
+  It only be possible to create one access info for a User.
 
     When I login as user with name "kapua-sys" and password "kapua-password"
     Given Scope with ID 1
@@ -321,19 +321,10 @@ Scenario: Initialize test environment
       | name     | displayName  | email              | phoneNumber     |
       | kapua-u1 | Kapua User 1 | kapua_u1@kapua.com | +386 31 323 555 |
     And I create the access info entity
-    And I create the access info entity
-    And I create the access info entity
-    And I create the access info entity
-    When I query for the access info entities for the last user
-    Then I count 4
-    Given I have the following user
-      | name     | displayName  | email              | phoneNumber     |
-      | kapua-u2 | Kapua User 2 | kapua_u2@kapua.com | +386 31 323 555 |
-    And I create the access info entity
-    And I create the access info entity
+    And I expect the exception "KapuaEntityUniquenessException" with the text "Duplicate accessInfo entry for values"
     And I create the access info entity
     When I query for the access info entities for the last user
-    Then I count 3
+    Then I count 1
     Then I logout
 
   Scenario: Query for all the access info entities of an invalid user
