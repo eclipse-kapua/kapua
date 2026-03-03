@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.user.steps;
 
+import com.google.common.base.MoreObjects;
 import com.google.inject.Singleton;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
@@ -25,7 +26,6 @@ import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
-import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.id.KapuaIdImpl;
 import org.eclipse.kapua.model.query.KapuaQuery;
@@ -55,11 +55,14 @@ import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionFactory;
 import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionService;
 import org.eclipse.kapua.service.authentication.credential.mfa.shiro.MfaOptionFactoryImpl;
 import org.eclipse.kapua.service.authentication.credential.shiro.CredentialQueryImpl;
+import org.eclipse.kapua.service.authorization.access.AccessInfo;
 import org.eclipse.kapua.service.authorization.access.AccessInfoCreator;
 import org.eclipse.kapua.service.authorization.access.AccessInfoFactory;
 import org.eclipse.kapua.service.authorization.access.AccessInfoService;
 import org.eclipse.kapua.service.authorization.access.AccessPermission;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionAttributes;
+import org.eclipse.kapua.service.authorization.access.AccessPermissionCreator;
+import org.eclipse.kapua.service.authorization.access.AccessPermissionFactory;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionQuery;
 import org.eclipse.kapua.service.authorization.access.AccessPermissionService;
 import org.eclipse.kapua.service.authorization.access.shiro.AccessPermissionQueryImpl;
@@ -128,6 +131,7 @@ public class UserServiceSteps extends TestBase {
     private CredentialFactory credentialFactory;
     private CredentialsFactory credentialsFactory;
     private AccessPermissionService accessPermissionService;
+    private AccessPermissionFactory accessPermissionFactory;
 
     @Inject
     public UserServiceSteps(StepData stepData) {
@@ -151,6 +155,7 @@ public class UserServiceSteps extends TestBase {
         credentialFactory = locator.getFactory(CredentialFactory.class);
         credentialsFactory = locator.getFactory(CredentialsFactory.class);
         accessPermissionService = locator.getService(AccessPermissionService.class);
+        accessPermissionFactory = locator.getFactory(AccessPermissionFactory.class);
     }
 
     @Before
@@ -845,7 +850,29 @@ public class UserServiceSteps extends TestBase {
         KapuaSecurityUtils.doPrivileged(() -> {
             primeException();
             try {
-                accessInfoService.create(accessInfoCreatorCreator(permissionList, user, account));
+                AccessInfo accessInfo = accessInfoService.findByUserId(user.getUser().getScopeId(), user.getUser().getId());
+
+                // If AccessInfo does not exist, create a new one.
+                if (accessInfo == null) {
+                    accessInfoService.create(accessInfoCreatorCreator(permissionList, user, account));
+                }
+                // If Access info exists, add to the existing one.
+                else {
+                    for (CucPermission cucPermission : permissionList) {
+
+                        AccessPermissionCreator accessPermissionCreator = accessPermissionFactory.newCreator(accessInfo.getScopeId());
+                        accessPermissionCreator.setAccessInfoId(accessInfo.getId());
+                        accessPermissionCreator.setPermission(
+                            permissionFactory.newPermission(
+                                cucPermission.getDomain(),
+                                cucPermission.getAction(),
+                                MoreObjects.firstNonNull(cucPermission.getTargetScopeId(), account.getId())
+                            )
+                        );
+
+                        accessPermissionService.create(accessPermissionCreator);
+                    }
+                }
             } catch (KapuaException ke) {
                 verifyException(ke);
             }
@@ -864,28 +891,32 @@ public class UserServiceSteps extends TestBase {
      * @return AccessInfoCreator instance for creating user permissions
      */
     private AccessInfoCreator accessInfoCreatorCreator(List<CucPermission> permissionList, ComparableUser user, Account account) throws KapuaException {
-        AccessInfoCreator accessInfoCreator = accessInfoFactory.newCreator(account.getId());
-        accessInfoCreator.setUserId(user.getUser().getId());
-        accessInfoCreator.setScopeId(user.getUser().getScopeId());
         Set<Permission> permissions = new HashSet<>();
         if (permissionList != null) {
             for (CucPermission cucPermission : permissionList) {
                 stepData.remove(LAST_PERMISSION_ADDED_TO_USER);
-                Actions action = cucPermission.getAction();
-                KapuaId targetScopeId = cucPermission.getTargetScopeId();
-                if (targetScopeId == null) {
-                    targetScopeId = (KapuaEid) account.getId();
-                }
-                Permission permission = permissionFactory.newPermission(cucPermission.getDomain(),
-                        action, targetScopeId);
+
+                Permission permission =
+                    permissionFactory.newPermission(
+                        cucPermission.getDomain(),
+                        cucPermission.getAction(),
+                        MoreObjects.firstNonNull(cucPermission.getTargetScopeId(), account.getId())
+                );
                 permissions.add(permission);
+
                 stepData.put(LAST_PERMISSION_ADDED_TO_USER, permission);
             }
         } else {
-            Permission permission = permissionFactory.newPermission((String) null, null, null);
-            permissions.add(permission);
+            permissions.add(
+                permissionFactory.newPermission(null, null, null)
+            );
         }
+
+        AccessInfoCreator accessInfoCreator = accessInfoFactory.newCreator(account.getId());
+        accessInfoCreator.setUserId(user.getUser().getId());
+        accessInfoCreator.setScopeId(user.getUser().getScopeId());
         accessInfoCreator.setPermissions(permissions);
+
         return accessInfoCreator;
     }
 
