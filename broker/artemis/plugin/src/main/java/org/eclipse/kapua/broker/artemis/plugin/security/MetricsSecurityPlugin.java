@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2022, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.broker.artemis.plugin.security;
 
+import com.codahale.metrics.Counter;
 import com.codahale.metrics.Gauge;
 import org.apache.activemq.artemis.core.server.ActiveMQServer;
 import org.eclipse.kapua.KapuaException;
@@ -33,9 +34,14 @@ public class MetricsSecurityPlugin {
     private static final String TOTAL_MESSAGE = "total_message";
     private static final String TOTAL_MESSAGE_ACKNOWLEDGED = "total_message_acknowledged";
     private static final String TOTAL_MESSAGE_ADDED = "total_message_added";
+    private static final String SECURITY_PLUGIN_EVENT = "security_plugin_event";
 
     private final MetricsService metricsService;
     private final String metricModuleName;
+
+    private Counter processedEvent;
+    private Counter dequeuedEvent;
+    private Counter enqueuedEvent;
 
     @Inject
     public MetricsSecurityPlugin(
@@ -55,6 +61,21 @@ public class MetricsSecurityPlugin {
         metricsService.registerGauge(() -> server.getTotalMessageCount(), metricModuleName, LoginMetric.COMPONENT_LOGIN, TOTAL_MESSAGE, MetricsLabel.SIZE);
         metricsService.registerGauge(() -> server.getTotalMessagesAcknowledged(), metricModuleName, LoginMetric.COMPONENT_LOGIN, TOTAL_MESSAGE_ACKNOWLEDGED, MetricsLabel.SIZE);
         metricsService.registerGauge(() -> server.getTotalMessagesAdded(), metricModuleName, LoginMetric.COMPONENT_LOGIN, TOTAL_MESSAGE_ADDED, MetricsLabel.SIZE);
+
+        processedEvent = metricsService.getCounter(metricModuleName, SECURITY_PLUGIN_EVENT, "processed");
+        dequeuedEvent = metricsService.getCounter(metricModuleName, SECURITY_PLUGIN_EVENT, "dequeued");
+        enqueuedEvent = metricsService.getCounter(metricModuleName, SECURITY_PLUGIN_EVENT, "enqueued");
     }
 
+    public Counter getProcessedEvent() {
+        return processedEvent;
+    }
+
+    public Counter getDequeuedEvent() {
+        return dequeuedEvent;
+    }
+
+    public Counter getEnqueuedEvent() {
+        return enqueuedEvent;
+    }
 }

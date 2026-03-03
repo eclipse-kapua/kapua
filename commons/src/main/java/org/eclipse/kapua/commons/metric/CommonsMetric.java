@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2022, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -14,8 +14,6 @@ package org.eclipse.kapua.commons.metric;
 
 import com.codahale.metrics.Counter;
 import org.eclipse.kapua.KapuaException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -26,8 +24,6 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class CommonsMetric {
-
-    private static final Logger logger = LoggerFactory.getLogger(CommonsMetric.class);
 
     private final String module;
     //cache
@@ -52,12 +48,6 @@ public class CommonsMetric {
     private Counter cacheRemoval;
     private Counter cacheError;
 
-    //events
-    public static final String EVENT = "event";
-    private Counter processedEvent;
-    private Counter enqueuedEvent;
-    private Counter dequeuedEvent;
-
     @Inject
     public CommonsMetric(MetricsService metricsService,
                          @Named("metricModuleName") String metricModuleName) throws KapuaException {
@@ -75,10 +65,6 @@ public class CommonsMetric {
         cacheHit = metricsService.getCounter(module, CACHE_ENTITY, "hit");
         cacheRemoval = metricsService.getCounter(module, CACHE_ENTITY, "removed");
         cacheError = metricsService.getCounter(module, CACHE_ENTITY, "error");
-
-        processedEvent = metricsService.getCounter(module, EVENT, "processed");
-        dequeuedEvent = metricsService.getCounter(module, EVENT, "dequeued");
-        enqueuedEvent = metricsService.getCounter(module, EVENT, "enqueued");
     }
 
     public String getModule() {
@@ -124,18 +110,6 @@ public class CommonsMetric {
 
     public Counter getCacheError() {
         return cacheError;
-    }
-
-    public Counter getProcessedEvent() {
-        return processedEvent;
-    }
-
-    public Counter getDequeuedEvent() {
-        return dequeuedEvent;
-    }
-
-    public Counter getEnqueuedEvent() {
-        return enqueuedEvent;
     }
 
 }
