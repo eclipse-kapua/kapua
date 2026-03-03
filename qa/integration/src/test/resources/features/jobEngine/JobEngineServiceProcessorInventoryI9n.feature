@@ -72,6 +72,27 @@ Feature: Job Engine Service - Inventory Step Processors
     Then I confirm that job has 1 job execution
     And I confirm that job target in job has step index 0 and status "PROCESS_OK"
 
+  Scenario: Image Delete
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I start the Kura Mock
+    And Device birth message is sent
+    And Device "rpione3" is connected within 10s
+    And I create a job with the name "TestJob"
+    And I add device targets to job
+      | rpione3 |
+    And I search for step definition with the name
+      | Image Delete |
+    And I add job step to job with name "Test Step - Image Delete" and with selected job step definition and properties
+      | name     | type              | value |
+      | imageName | java.lang.String  | nginx    |
+      | imageVersion | java.lang.String  | latest    |
+      | timeout  | java.lang.Long    | 5000  |
+    When I start a job
+    And I wait job to finish its execution up to 10s
+    Then I confirm that job has 1 job execution
+    And I confirm that job target in job has step index 0 and status "PROCESS_OK"
+
   @teardown
   Scenario: Tear down test resources
     Given I logout
