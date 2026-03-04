@@ -49,6 +49,7 @@ import org.eclipse.kapua.service.account.AccountFactory;
 import org.eclipse.kapua.service.account.AccountListResult;
 import org.eclipse.kapua.service.account.AccountQuery;
 import org.eclipse.kapua.service.account.AccountService;
+import org.eclipse.kapua.service.account.AccountStatus;
 import org.eclipse.kapua.service.account.Organization;
 import org.junit.Assert;
 
@@ -746,7 +747,7 @@ public class AccountServiceSteps extends TestBase {
             primeException();
             try {
                 Account account = accountService.create(accountCreatorCreator(cucAccount.getName(),
-                        cucAccount.getScopeId(), cucAccount.getExpirationDate()));
+                        cucAccount.getScopeId(), cucAccount.getExpirationDate(), cucAccount.getStatus()));
                 accountList.add(account);
             } catch (KapuaException ke) {
                 verifyException(ke);
@@ -767,7 +768,7 @@ public class AccountServiceSteps extends TestBase {
      *         acount scope id
      * @return
      */
-    private AccountCreator accountCreatorCreator(String name, BigInteger scopeId, Date expiration) {
+    private AccountCreator accountCreatorCreator(String name, BigInteger scopeId, Date expiration, AccountStatus status) {
 
         AccountCreator accountCreator = accountFactory.newCreator(new KapuaEid(scopeId));
         accountCreator.setName(name);
@@ -776,6 +777,10 @@ public class AccountServiceSteps extends TestBase {
 
         if (expiration != null) {
             accountCreator.setExpirationDate(expiration);
+        }
+
+        if (status != null) {
+            accountCreator.setStatus(status);
         }
 
         return accountCreator;

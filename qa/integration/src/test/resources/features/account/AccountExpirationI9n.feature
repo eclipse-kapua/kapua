@@ -515,6 +515,73 @@ Feature: Account expiration features
     Then An exception was thrown
     And I logout
 
+
+  Scenario: Account status is disabled
+  Create disabled account, verify login is not possible.
+    When I login as user with name "kapua-sys" and password "kapua-password"
+    And I configure account service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 50    |
+    And I configure user service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 30    |
+    Given Account
+      | name      | scopeId | status |
+      | account-a | 1       | DISABLED |
+    And I configure account service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 10    |
+    And I configure user service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And User A
+      | name    | displayName  | email             | phoneNumber     | status  | userType |
+      | kapua-a | Kapua User A | kapua_a@kapua.com | +386 31 323 444 | ENABLED | INTERNAL |
+    And I add credentials
+      | name    | password          | enabled |
+      | kapua-a | ToManySecrets123# | false   |
+    And I logout
+    Given I expect the exception "KapuaAuthenticationException" with the text "The provided LoginCredentials are DISABLED."
+    When I login as user with name "kapua-a" and password "ToManySecrets123#"
+    Then An exception was thrown
+    And I logout
+
+  Scenario: Account status is enabled
+  Create enabled account, verify login is possible
+    When I login as user with name "kapua-sys" and password "kapua-password"
+    And I configure account service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 50    |
+    And I configure user service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 30    |
+    Given Account
+      | name      | scopeId | status |
+      | account-a | 1       | ENABLED |
+    And I configure account service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 10    |
+    And I configure user service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And User A
+      | name    | displayName  | email             | phoneNumber     | status  | userType |
+      | kapua-a | Kapua User A | kapua_a@kapua.com | +386 31 323 444 | ENABLED | INTERNAL |
+    And I add credentials
+      | name    | password          | enabled |
+      | kapua-a | ToManySecrets123# | false   |
+    And I logout
+    And No exception was thrown
+    And I logout
+
   @teardown
   Scenario: Reset Security Context for all scenarios
     Given Clean Locator Instance

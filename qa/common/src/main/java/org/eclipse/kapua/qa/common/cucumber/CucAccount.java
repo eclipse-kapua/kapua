@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.qa.common.cucumber;
 
+import org.eclipse.kapua.service.account.AccountStatus;
+
 import java.math.BigInteger;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -31,10 +33,15 @@ public class CucAccount {
 
     private String expirationDate;
 
-    public CucAccount(String name, BigInteger scopeId, String expirationDate) {
+    private AccountStatus status;
+
+    public CucAccount(String name, BigInteger scopeId, String expirationDate, String status) {
         this.name = name;
         this.scopeId = scopeId;
         this.expirationDate = expirationDate;
+        if (status != null) {
+            this.status = AccountStatus.valueOf(status);
+        }
     }
 
     public String getName() {
@@ -55,6 +62,14 @@ public class CucAccount {
 
     public void setExpirationDate(String date) {
         this.expirationDate = date;
+    }
+
+    public AccountStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AccountStatus status) {
+        this.status = status;
     }
 
     public Date getExpirationDate() {
