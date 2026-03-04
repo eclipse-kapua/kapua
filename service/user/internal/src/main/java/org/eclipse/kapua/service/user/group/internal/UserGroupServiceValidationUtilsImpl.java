@@ -161,6 +161,23 @@ public final class UserGroupServiceValidationUtilsImpl implements UserGroupServi
     }
 
     @Override
+    public void validateFetchPermissionPreConditions(KapuaId scopeId, KapuaId userGroupId) throws KapuaException {
+        // Argument validation
+        ArgumentValidator.notNull(scopeId, "scopeId");
+        ArgumentValidator.notNull(userGroupId, "userGroupId");
+
+        // Check access
+        Set<Permission> permissions = Sets.newHashSet(
+                permissionFactory.newPermission(Domains.GROUP, Actions.read, scopeId),
+                permissionFactory.newPermission(Domains.USER_GROUP, Actions.read, scopeId)
+        );
+        authorizationService.checkPermissions(permissions, CheckStrategy.AT_LEAST_ONE_OF);
+
+        // Check correct domain
+        checkGroupDomainIsUser(scopeId, userGroupId);
+    }
+
+    @Override
     public void validateQueryPreConditions(KapuaQuery query) throws KapuaException {
         // Argument Validation
         ArgumentValidator.notNull(query, "query");
