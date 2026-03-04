@@ -582,6 +582,39 @@ Feature: Account expiration features
     And No exception was thrown
     And I logout
 
+  Scenario: Cannot disable account with enabled child accounts
+  Create a parent account with ENABLED status and one or more ENABLED child accounts.
+  Attempting to change the parent status to DISABLED should fail because it has enabled children.
+
+    When I login as user with name "kapua-sys" and password "kapua-password"
+    And I configure account service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5    |
+    Given Account
+      | name           | scopeId | status  |
+      | parent-account | 1       | ENABLED |
+    And I configure account service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5    |
+    Given I select account "parent-account"
+    And Account
+      | name         | status  |
+      | child-one    | ENABLED |
+    And I configure account service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5   |
+    And Account
+      | name         | status  |
+      | child-two    | ENABLED |
+    Given I select account "parent-account"
+    Given I expect the exception "KapuaIllegalArgumentException" with the text "Cannot disable an account with some enabled child accounts"
+    When I change the status of account "parent-account" to "DISABLED"
+    Then An exception was thrown
+    And I logout
+
   @teardown
   Scenario: Reset Security Context for all scenarios
     Given Clean Locator Instance

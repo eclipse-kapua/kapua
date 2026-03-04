@@ -318,6 +318,19 @@ public class AccountServiceSteps extends TestBase {
         }
     }
 
+    @When("I change the status of account {string} to {string}")
+    public void changeAccountStatus(String accountName, String status) throws Exception {
+        try {
+            primeException();
+            Account tmpAcc = accountService.findByName(accountName);
+            tmpAcc.setStatus(AccountStatus.valueOf(status));
+            accountService.update(tmpAcc);
+        } catch (KapuaException ex) {
+            verifyException(ex);
+        }
+    }
+
+
     @When("I change the scope Id for account {string} to {int}")
     public void changeParentPathForAccount(String name, int scopeId) throws Exception {
         Account tmpAcc = accountService.findByName(name);

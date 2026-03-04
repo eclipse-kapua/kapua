@@ -142,9 +142,6 @@ public class AccountServiceImpl
                             accountCreator.getExpirationDate() != null ? accountCreator.getExpirationDate().toString() : NO_EXPIRATION_DATE_SET);
                 }
             }
-            if (parentAccount.getStatus() != null && parentAccount.getStatus() == AccountStatus.DISABLED) {
-                throw new KapuaIllegalArgumentException(AccountAttributes.STATUS, "Cannot create a child account under a disabled parent account");
-            }
             // Do create
             final OrganizationImpl organizationImpl = new OrganizationImpl();
             organizationImpl.setName(accountCreator.getOrganizationName());
