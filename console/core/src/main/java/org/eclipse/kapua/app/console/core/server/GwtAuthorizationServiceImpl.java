@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2017, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -52,33 +52,18 @@ import org.eclipse.kapua.service.authentication.exception.KapuaAuthenticationExc
 import org.eclipse.kapua.service.authentication.registration.RegistrationService;
 import org.eclipse.kapua.service.authorization.access.AccessInfo;
 import org.eclipse.kapua.service.authorization.access.AccessInfoService;
-import org.eclipse.kapua.service.authorization.access.AccessPermission;
-import org.eclipse.kapua.service.authorization.access.AccessPermissionListResult;
-import org.eclipse.kapua.service.authorization.access.AccessPermissionService;
-import org.eclipse.kapua.service.authorization.access.AccessRole;
-import org.eclipse.kapua.service.authorization.access.AccessRoleListResult;
-import org.eclipse.kapua.service.authorization.access.AccessRoleService;
-import org.eclipse.kapua.service.authorization.group.GroupPermission;
-import org.eclipse.kapua.service.authorization.group.GroupPermissionListResult;
-import org.eclipse.kapua.service.authorization.group.GroupPermissionService;
-import org.eclipse.kapua.service.authorization.group.GroupRole;
-import org.eclipse.kapua.service.authorization.group.GroupRoleListResult;
-import org.eclipse.kapua.service.authorization.group.GroupRoleService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.authorization.role.Role;
-import org.eclipse.kapua.service.authorization.role.RolePermission;
-import org.eclipse.kapua.service.authorization.role.RolePermissionListResult;
-import org.eclipse.kapua.service.authorization.role.RolePermissionService;
-import org.eclipse.kapua.service.authorization.role.RoleService;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettingsKey;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserService;
+import org.eclipse.kapua.service.user.group.UserGroupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 public class GwtAuthorizationServiceImpl extends KapuaRemoteServiceServlet implements GwtAuthorizationService {
@@ -94,21 +79,13 @@ public class GwtAuthorizationServiceImpl extends KapuaRemoteServiceServlet imple
     private static final AccountService ACCOUNT_SERVICE = LOCATOR.getService(AccountService.class);
 
     private static final AuthenticationService AUTHENTICATION_SERVICE = LOCATOR.getService(AuthenticationService.class);
+    private static final RegistrationService REGISTRATION_SERVICE = LOCATOR.getService(RegistrationService.class);
     private static final CredentialsFactory CREDENTIALS_FACTORY = LOCATOR.getFactory(CredentialsFactory.class);
 
     private static final AccessInfoService ACCESS_INFO_SERVICE = LOCATOR.getService(AccessInfoService.class);
-    private static final AccessPermissionService ACCESS_PERMISSION_SERVICE = LOCATOR.getService(AccessPermissionService.class);
-
-    private static final AccessRoleService ACCESS_ROLE_SERVICE = LOCATOR.getService(AccessRoleService.class);
-    private static final RoleService ROLE_SERVICE = LOCATOR.getService(RoleService.class);
-    private static final RolePermissionService ROLE_PERMISSION_SERVICE = LOCATOR.getService(RolePermissionService.class);
-
-    private static final GroupPermissionService GROUP_PERMISSION_SERVICE = LOCATOR.getService(GroupPermissionService.class);
-    private static final GroupRoleService GROUP_ROLE_SERVICE = LOCATOR.getService(GroupRoleService.class);
-
-    private static final RegistrationService REGISTRATION_SERVICE = LOCATOR.getService(RegistrationService.class);
 
     private static final UserService USER_SERVICE = LOCATOR.getService(UserService.class);
+    private static final UserGroupService USER_GROUP_SERVICE = LOCATOR.getService(UserGroupService.class);
     private static final DatastoreSettings DATASTORE_SETTINGS = LOCATOR.getComponent(DatastoreSettings.class);
 
     /**
@@ -322,6 +299,7 @@ public class GwtAuthorizationServiceImpl extends KapuaRemoteServiceServlet imple
         if (trustKey != null && !trustKey.isEmpty()) {
             gwtSession.setTrustKey(kapuaSession.getAccessToken().getTrustKey());
         }
+
         // Load permissions
         KapuaSecurityUtils.doPrivileged(new ThrowingRunnable() {
 
@@ -329,50 +307,26 @@ public class GwtAuthorizationServiceImpl extends KapuaRemoteServiceServlet imple
             public void run() throws Exception {
                 AccessInfo userAccessInfo = ACCESS_INFO_SERVICE.findByUserId(user.getScopeId(), user.getId());
 
+                // From AccessInfo
                 if (userAccessInfo != null) {
+                    Set<Permission> accessPermissions = ACCESS_INFO_SERVICE.fetchPermissions(userAccessInfo.getScopeId(), userAccessInfo.getId());
 
-                    // Permission info
-                    AccessPermissionListResult accessPermissions = ACCESS_PERMISSION_SERVICE.findByAccessInfoId(userAccessInfo.getScopeId(), userAccessInfo.getId());
-                    for (AccessPermission accessPermission : accessPermissions.getItems()) {
-                        gwtSession.addSessionPermission(convert(accessPermission.getPermission()));
-                    }
-
-                    // Role info
-                    AccessRoleListResult accessRoles = ACCESS_ROLE_SERVICE.findByAccessInfoId(userAccessInfo.getScopeId(), userAccessInfo.getId());
-
-                    for (AccessRole accessRole : accessRoles.getItems()) {
-                        Role role = ROLE_SERVICE.find(accessRole.getScopeId(), accessRole.getRoleId());
-
-                        RolePermissionListResult rolePermissions = ROLE_PERMISSION_SERVICE.findByRoleId(role.getScopeId(), role.getId());
-                        for (RolePermission rp : rolePermissions.getItems()) {
-                            gwtSession.addSessionPermission(convert(rp.getPermission()));
-                        }
+                    for (Permission permission : accessPermissions) {
+                        gwtSession.addSessionPermission(convert(permission));
                     }
                 }
 
-                // Group Access
+                // From UserGroups
                 for (KapuaId userGroupId : user.getGroupIds()) {
-                    // Group Permission
-                    GroupPermissionListResult userGroupPermissions = GROUP_PERMISSION_SERVICE.findByGroupId(user.getScopeId(), userGroupId);
+                    Set<Permission> groupPermission = USER_GROUP_SERVICE.fetchPermissions(user.getScopeId(), userGroupId);
 
-                    for (GroupPermission userGroupPermission : userGroupPermissions.getItems()) {
-                        gwtSession.addSessionPermission(convert(userGroupPermission.getPermission()));
-                    }
-
-                    // Group Roles
-                    GroupRoleListResult userGroupRoles = GROUP_ROLE_SERVICE.findByGroupId(user.getScopeId(), userGroupId);
-
-                    for (GroupRole userGroupRole : userGroupRoles.getItems()) {
-                        Role role = ROLE_SERVICE.find(userGroupRole.getScopeId(), userGroupRole.getRoleId());
-
-                        RolePermissionListResult rolePermissions = ROLE_PERMISSION_SERVICE.findByRoleId(role.getScopeId(), role.getId());
-                        for (RolePermission rp : rolePermissions.getItems()) {
-                            gwtSession.addSessionPermission(convert(rp.getPermission()));
-                        }
+                    for (Permission permission : groupPermission) {
+                        gwtSession.addSessionPermission(convert(permission));
                     }
                 }
             }
         });
+
         // Return session
         return gwtSession;
     }

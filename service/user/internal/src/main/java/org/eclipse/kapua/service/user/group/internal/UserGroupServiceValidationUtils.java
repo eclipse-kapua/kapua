@@ -62,6 +62,16 @@ public interface UserGroupServiceValidationUtils {
     void validateFindPostConditions(UserGroup userGroup);
 
     /**
+     * Validates inputs for {@link UserGroupServiceImpl#fetchPermissions(KapuaId, KapuaId)}
+     *
+     * @param scopeId The {@link UserGroup#getScopeId()}
+     * @param userGroupId The {@link UserGroup#getId()}
+     * @throws KapuaException
+     * @since 2.1.0
+     */
+    void validateFetchPermissionPreConditions(KapuaId scopeId, KapuaId userGroupId) throws KapuaException;
+
+    /**
      * Validates {@link KapuaQuery} for {@link UserGroupServiceImpl#query(KapuaQuery)}
      *
      * @param query The {@link KapuaQuery} to validate
