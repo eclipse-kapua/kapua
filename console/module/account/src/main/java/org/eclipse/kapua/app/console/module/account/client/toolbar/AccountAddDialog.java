@@ -356,8 +356,12 @@ public class AccountAddDialog extends EntityAddEditDialog {
                                 if (gwtCause.getCode().equals(GwtKapuaErrorCode.DUPLICATE_NAME)
                                         || gwtCause.getCode().equals(GwtKapuaErrorCode.ENTITY_ALREADY_EXIST_IN_ANOTHER_ACCOUNT)) {
                                     accountNameField.markInvalid(gwtCause.getMessage());
-                                } else if (gwtCause.getCode().equals(GwtKapuaErrorCode.ILLEGAL_ARGUMENT) && gwtCause.getArguments()[0].equals("expirationDate")) {
-                                    expirationDateField.markInvalid(MSGS.conflictingExpirationDate());
+                                } else if (gwtCause.getCode().equals(GwtKapuaErrorCode.ILLEGAL_ARGUMENT)) {
+                                    if (gwtCause.getArguments()[0].equals("expirationDate")) {
+                                        expirationDateField.markInvalid(MSGS.conflictingExpirationDate());
+                                    } else if (gwtCause.getArguments()[0].equals("status")) {
+                                        statusCombo.markInvalid(gwtCause.getArguments()[1] != null ? (gwtCause.getArguments()[1]) : "an error occurred");
+                                    }
                                 }
                             }
                             FailureHandler.handleFormException(formPanel, cause);

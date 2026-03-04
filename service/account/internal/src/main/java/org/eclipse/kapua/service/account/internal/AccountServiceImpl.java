@@ -142,6 +142,9 @@ public class AccountServiceImpl
                             accountCreator.getExpirationDate() != null ? accountCreator.getExpirationDate().toString() : NO_EXPIRATION_DATE_SET);
                 }
             }
+            if (parentAccount.getStatus() != null && parentAccount.getStatus() == AccountStatus.DISABLED) {
+                throw new KapuaIllegalArgumentException(AccountAttributes.STATUS, "Cannot create a child account under a disabled parent account");
+            }
             // Do create
             final OrganizationImpl organizationImpl = new OrganizationImpl();
             organizationImpl.setName(accountCreator.getOrganizationName());
@@ -229,6 +232,7 @@ public class AccountServiceImpl
             // Editing child
             authorizationService.checkPermission(permissionFactory.newPermission(Domains.ACCOUNT, Actions.write, account.getScopeId()));
 
+            validateStatusAccount(tx, account, request);
             validateExpirationDate(tx, account, request);
 
             accountMapper.merge(account, request);
@@ -236,6 +240,17 @@ public class AccountServiceImpl
             // Do update
             return accountRepository.update(tx, account, account);
         });
+    }
+
+    private void validateStatusAccount(TxContext tx, Account oldAccount, AccountUpdateRequest request) throws KapuaException {
+        if (request.status == AccountStatus.DISABLED) {
+            // Check that all the children account are not enabled
+            // We only check direct children to optimize the check, as if there are enabled children it means that there is at least one enabled direct child, so we can avoid to check all the tree
+            final AccountListResult childrenAccounts = accountRepository.query(tx, new AccountQueryImpl(oldAccount.getId()));
+            if (childrenAccounts.getItems().stream().anyMatch(childAccount -> childAccount.getStatus() == AccountStatus.ENABLED)) {
+                throw new KapuaIllegalArgumentException(AccountAttributes.STATUS, "Cannot disable an account with some enabled child accounts");
+            }
+        }
     }
 
     private void validateExpirationDate(TxContext tx, Account oldAccount, AccountUpdateRequest request) throws KapuaException {
