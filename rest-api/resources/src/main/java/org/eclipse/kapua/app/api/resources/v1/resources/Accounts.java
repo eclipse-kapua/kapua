@@ -35,6 +35,7 @@ import org.eclipse.kapua.model.KapuaNamedEntityAttributes;
 import org.eclipse.kapua.model.query.SortOrder;
 import org.eclipse.kapua.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.model.query.predicate.MatchPredicate;
+import org.eclipse.kapua.model.query.predicate.OrPredicate;
 import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountAttributes;
@@ -45,6 +46,7 @@ import org.eclipse.kapua.service.account.AccountQuery;
 import org.eclipse.kapua.service.account.AccountService;
 
 import com.google.common.base.Strings;
+import org.eclipse.kapua.service.account.AccountStatus;
 
 @Path("{scopeId}/accounts")
 public class Accounts extends AbstractKapuaResource {
@@ -84,6 +86,7 @@ public class Accounts extends AbstractKapuaResource {
             @QueryParam("matchTerm") String matchTerm,
             @QueryParam("recursive") boolean recursive, //
             @QueryParam("sortParam") String sortParam,
+            @QueryParam("status") AccountStatus status,
             @QueryParam("sortDir") @DefaultValue("ASCENDING") SortOrder sortDir,
             @QueryParam("askTotalCount") boolean askTotalCount,
             @QueryParam("offset") @DefaultValue("0") int offset, //
@@ -102,6 +105,18 @@ public class Accounts extends AbstractKapuaResource {
         }
         if (!Strings.isNullOrEmpty(sortParam)) {
             query.setSortCriteria(query.fieldSortCriteria(sortParam, sortDir));
+        }
+        if (status != null) {
+            if (status.equals(AccountStatus.ENABLED)) {
+                // we assume that if status=null Account is enabled, so I want to include also those accounts in the result
+                OrPredicate orPredicate = query.orPredicate();
+                orPredicate.or(query.attributePredicate(AccountAttributes.STATUS, AccountStatus.ENABLED));
+                orPredicate.or(query.attributePredicate(AccountAttributes.STATUS, null));
+                andPredicate.and(orPredicate);
+            } else {
+                // DISABLED require exact match
+                andPredicate.and(query.attributePredicate(AccountAttributes.STATUS, status));
+            }
         }
         if (matchTerm != null && !matchTerm.isEmpty()) {
             andPredicate.and(new MatchPredicate<String>() {

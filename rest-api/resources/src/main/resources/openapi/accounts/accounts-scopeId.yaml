@@ -35,6 +35,11 @@ paths:
         - $ref: '../openapi.yaml#/components/parameters/sortParam'
         - $ref: '../openapi.yaml#/components/parameters/sortDir'
         - $ref: '../openapi.yaml#/components/parameters/askTotalCount'
+        - name: status
+          in: query
+          description: The account status to filter results
+          schema:
+           $ref: './accounts.yaml#/components/schemas/statusAccount'
         - $ref: '../openapi.yaml#/components/parameters/limit'
         - $ref: '../openapi.yaml#/components/parameters/offset'
         - name: matchTerm
