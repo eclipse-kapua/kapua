@@ -265,7 +265,7 @@ public final class DeviceGroupServiceValidationUtilsImpl implements DeviceGroupS
         // Check Group Domain is `device`
         Group group = KapuaSecurityUtils.doPrivileged(() -> groupService.find(scopeId, deviceGroupId));
 
-        if (group == null || !group.getDomain().equals("device")) {
+        if (group != null && !group.getDomain().equals("device")) {
             throw new KapuaEntityNotFoundException(DeviceGroup.TYPE, deviceGroupId);
         }
     }
