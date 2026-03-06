@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019, 2025 Eurotech and/or its affiliates and others
+ * Copyright (c) 2019, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -41,7 +41,6 @@ import org.eclipse.kapua.broker.artemis.plugin.security.setting.BrokerSettingKey
 import org.eclipse.kapua.client.security.context.SessionContext;
 import org.eclipse.kapua.client.security.context.Utils;
 import org.eclipse.kapua.commons.core.ServiceModuleBundle;
-import org.eclipse.kapua.commons.metric.CommonsMetric;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.commons.setting.system.SystemSettingKey;
 import org.eclipse.kapua.commons.util.KapuaDateUtils;
@@ -117,9 +116,6 @@ public class ServerPlugin implements ActiveMQServerPlugin {
         this.publishInfoMessageSizeLimit = brokerSetting.getInt(BrokerSettingKey.PUBLISHED_MESSAGE_SIZE_LOG_THRESHOLD, DEFAULT_PUBLISHED_MESSAGE_SIZE_LOG_THRESHOLD);
         serverContext = kapuaLocator.getComponent(ServerContext.class);
         deviceConnectionEventListenerService = kapuaLocator.getComponent(DeviceConnectionEventListenerService.class);
-        brokerEventHandler = new BrokerEventHandler(kapuaLocator.getComponent(CommonsMetric.class));
-        brokerEventHandler.registerConsumer((brokerEvent) -> disconnectClient(brokerEvent));
-        brokerEventHandler.start();
     }
 
     @Override
@@ -128,6 +124,11 @@ public class ServerPlugin implements ActiveMQServerPlugin {
         try {
             String clusterName = SystemSetting.getInstance().getString(SystemSettingKey.CLUSTER_NAME);
             serverContext.init(server);
+            KapuaLocator kapuaLocator = KapuaLocator.getInstance();
+            //metricsSecurityPlugin (singleton) initialized by serverContext.init(server)
+            brokerEventHandler = new BrokerEventHandler("ServerPlugin", 0l, 10000l, kapuaLocator.getComponent(MetricsSecurityPlugin.class));
+            brokerEventHandler.registerConsumer((brokerEvent) -> disconnectClient(brokerEvent));
+            brokerEventHandler.start();
             acceptorHandler = new AcceptorHandler(server,
                     brokerSetting.getMap(String.class, BrokerSettingKey.ACCEPTORS));
             //init activateCallback to handle acceptor initialization instead of calling it from here
