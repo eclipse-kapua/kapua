@@ -282,7 +282,7 @@ public final class UserGroupServiceValidationUtilsImpl implements UserGroupServi
         // Check Group Domain is `user`
         Group group = KapuaSecurityUtils.doPrivileged(() -> groupService.find(scopeId, userGroupId));
 
-        if (group == null || !group.getDomain().equals("user")) {
+        if (group != null && !group.getDomain().equals("user")) {
             throw new KapuaEntityNotFoundException(UserGroup.TYPE, userGroupId);
         }
     }
