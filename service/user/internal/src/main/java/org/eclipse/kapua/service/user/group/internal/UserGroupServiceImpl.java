@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2025, 2025 Eurotech and/or its affiliates and others
+ * Copyright (c) 2025, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -106,11 +106,8 @@ public class UserGroupServiceImpl implements UserGroupService {
         // Do create
         Group group = KapuaSecurityUtils.doPrivileged(() -> groupService.create(groupCreator));
 
-        // Convert
-        UserGroup userGroup = mapToUserGroup(group);
-
         // Return result
-        return userGroup;
+        return new UserGroupImpl(group);
     }
 
     @Override
@@ -132,11 +129,8 @@ public class UserGroupServiceImpl implements UserGroupService {
         // Do update
         Group updatedGroup = KapuaSecurityUtils.doPrivileged(() -> groupService.update(group));
 
-        // Convert
-        UserGroup updatedUserGroup = mapToUserGroup(updatedGroup);
-
         // Return result
-        return updatedUserGroup;
+        return new UserGroupImpl(updatedGroup);
     }
 
     @Override
@@ -152,7 +146,7 @@ public class UserGroupServiceImpl implements UserGroupService {
         }
 
         // Convert
-        UserGroup userGroup = mapToUserGroup(group);
+        UserGroup userGroup = new UserGroupImpl(group);
 
         // Validate post-conditions
         userGroupServiceValidationUtils.validateFindPostConditions(userGroup);
@@ -239,12 +233,8 @@ public class UserGroupServiceImpl implements UserGroupService {
         userGroups.addItems(
             groups.getItems()
                   .stream()
-                  .map((group)-> {
-                      UserGroup userGroup = mapToUserGroup(group);
-
-                      return userGroup;
-                  }
-            ).collect(Collectors.toList())
+                  .map(UserGroupImpl::new)
+            .collect(Collectors.toList())
         );
 
         // Return result
@@ -293,17 +283,5 @@ public class UserGroupServiceImpl implements UserGroupService {
 
         // Do delete
         KapuaSecurityUtils.doPrivileged(() -> groupService.delete(scopeId, userGroupId));
-    }
-
-    private static UserGroup mapToUserGroup(Group group) {
-        UserGroup userGroup = new UserGroupImpl(group.getScopeId());
-        userGroup.setId(group.getId());
-        userGroup.setTagIds(group.getTagIds());
-        userGroup.setName(group.getName());
-        userGroup.setDescription(group.getDescription());
-        userGroup.setEntityAttributes(group.getEntityAttributes());
-        userGroup.setEntityProperties(group.getEntityProperties());
-        userGroup.setOptlock(group.getOptlock());
-        return userGroup;
     }
 }

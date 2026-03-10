@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2025, 2025 Eurotech and/or its affiliates and others
+ * Copyright (c) 2025, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -88,18 +88,8 @@ public class DeviceGroupServiceImpl implements DeviceGroupService {
         // Do create
         Group group = KapuaSecurityUtils.doPrivileged(() -> groupService.create(groupCreator));
 
-        // Convert
-        DeviceGroup deviceGroup = new DeviceGroupImpl(group.getScopeId());
-        deviceGroup.setId(group.getId());
-        deviceGroup.setTagIds(group.getTagIds());
-        deviceGroup.setName(group.getName());
-        deviceGroup.setDescription(group.getDescription());
-        deviceGroup.setEntityAttributes(group.getEntityAttributes());
-        deviceGroup.setEntityProperties(group.getEntityProperties());
-        deviceGroup.setOptlock(group.getOptlock());
-
         // Return result
-        return deviceGroup;
+        return new DeviceGroupImpl(group);
     }
 
     @Override
@@ -121,18 +111,8 @@ public class DeviceGroupServiceImpl implements DeviceGroupService {
         // Do update
         Group updatedGroup = KapuaSecurityUtils.doPrivileged(() -> groupService.update(group));
 
-        // Convert
-        DeviceGroup updatedDeviceGroup = new DeviceGroupImpl(updatedGroup.getScopeId());
-        updatedDeviceGroup.setId(updatedGroup.getId());
-        updatedDeviceGroup.setTagIds(updatedGroup.getTagIds());
-        updatedDeviceGroup.setName(updatedGroup.getName());
-        updatedDeviceGroup.setDescription(updatedGroup.getDescription());
-        updatedDeviceGroup.setEntityAttributes(updatedGroup.getEntityAttributes());
-        updatedDeviceGroup.setEntityProperties(updatedGroup.getEntityProperties());
-        updatedDeviceGroup.setOptlock(updatedGroup.getOptlock());
-
         // Return result
-        return updatedDeviceGroup;
+        return new DeviceGroupImpl(updatedGroup);
     }
 
     @Override
@@ -148,14 +128,7 @@ public class DeviceGroupServiceImpl implements DeviceGroupService {
         }
 
         // Convert
-        DeviceGroup deviceGroup = new DeviceGroupImpl(group.getScopeId());
-        deviceGroup.setId(group.getId());
-        deviceGroup.setTagIds(group.getTagIds());
-        deviceGroup.setName(group.getName());
-        deviceGroup.setDescription(group.getDescription());
-        deviceGroup.setEntityAttributes(group.getEntityAttributes());
-        deviceGroup.setEntityProperties(group.getEntityProperties());
-        deviceGroup.setOptlock(group.getOptlock());
+        DeviceGroup deviceGroup = new DeviceGroupImpl(group);
 
         // Validate post-conditions
         deviceGroupServiceValidationUtils.validateFindPostConditions(deviceGroup);
@@ -205,19 +178,8 @@ public class DeviceGroupServiceImpl implements DeviceGroupService {
         deviceGroups.addItems(
             groups.getItems()
                   .stream()
-                  .map((group)-> {
-                      DeviceGroup deviceGroup = new DeviceGroupImpl(group.getScopeId());
-                      deviceGroup.setId(group.getId());
-                      deviceGroup.setTagIds(group.getTagIds());
-                      deviceGroup.setName(group.getName());
-                      deviceGroup.setDescription(group.getDescription());
-                      deviceGroup.setEntityAttributes(group.getEntityAttributes());
-                      deviceGroup.setEntityProperties(group.getEntityProperties());
-                      deviceGroup.setOptlock(group.getOptlock());
-
-                      return deviceGroup;
-                  }
-            ).collect(Collectors.toList())
+                  .map(DeviceGroupImpl::new)
+            .collect(Collectors.toList())
         );
 
         // Return result
