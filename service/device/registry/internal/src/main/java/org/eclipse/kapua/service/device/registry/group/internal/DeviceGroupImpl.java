@@ -54,6 +54,27 @@ public class DeviceGroupImpl extends AbstractKapuaNamedEntity implements DeviceG
         setTagIds(deviceGroup.getTagIds());
     }
 
+    /**
+     * Map constructor
+     *
+     * @param group The {@link Group} to map
+     * @since 2.1.0
+     */
+    public DeviceGroupImpl(Group group) {
+        setScopeId(group.getScopeId());
+        setId(group.getId());
+        setCreatedBy(group.getCreatedBy());
+        setCreatedOn(group.getCreatedOn());
+        setModifiedBy(group.getModifiedBy());
+        setModifiedOn(group.getModifiedOn());
+        setTagIds(group.getTagIds());
+        setName(group.getName());
+        setDescription(group.getDescription());
+        setEntityAttributes(group.getEntityAttributes());
+        setEntityProperties(group.getEntityProperties());
+        setOptlock(group.getOptlock());
+    }
+
     @Override
     public Set<KapuaId> getTagIds() {
         if (tagIds == null) {

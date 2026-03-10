@@ -37,7 +37,7 @@ public class UserGroupImpl extends AbstractKapuaNamedEntity implements UserGroup
      * Constructor.
      *
      * @param scopeId the scope {@link KapuaId}
-     * @since 1.0.0
+     * @since 2.1.0
      */
     public UserGroupImpl(KapuaId scopeId) {
         super(scopeId);
@@ -47,12 +47,33 @@ public class UserGroupImpl extends AbstractKapuaNamedEntity implements UserGroup
      * Clone constructor.
      *
      * @param userGroup the {@link Group} to clone.
-     * @since 1.0.0
+     * @since 2.1.0
      */
     public UserGroupImpl(UserGroup userGroup) {
         super(userGroup);
 
         setTagIds(userGroup.getTagIds());
+    }
+
+    /**
+     * Map constructor
+     *
+     * @param group The {@link Group} to map
+     * @since 2.1.0
+     */
+    public UserGroupImpl(Group group) {
+        setScopeId(group.getScopeId());
+        setId(group.getId());
+        setCreatedBy(group.getCreatedBy());
+        setCreatedOn(group.getCreatedOn());
+        setModifiedBy(group.getModifiedBy());
+        setModifiedOn(group.getModifiedOn());
+        setTagIds(group.getTagIds());
+        setName(group.getName());
+        setDescription(group.getDescription());
+        setEntityAttributes(group.getEntityAttributes());
+        setEntityProperties(group.getEntityProperties());
+        setOptlock(group.getOptlock());
     }
 
     @Override
