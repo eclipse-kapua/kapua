@@ -137,7 +137,7 @@ public class TranslatorAppConfigurationKapuaKura extends AbstractTranslatorKapua
         kapuaDefinition.getAD().forEach(kapuaAd -> {
             TadImpl ad = new TadImpl();
             ad.setCardinality(kapuaAd.getCardinality());
-            ad.setDefault(ad.getDefault());
+            ad.setDefault(kapuaAd.getDefault());
             ad.setDescription(kapuaAd.getDescription());
             ad.setId(kapuaAd.getId());
             ad.setMax(kapuaAd.getMax());

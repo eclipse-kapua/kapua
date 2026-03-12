@@ -114,7 +114,7 @@ public class TranslatorAppConfigurationKuraKapua extends AbstractSimpleTranslato
         kuraDefinition.getAD().forEach(kuraAd -> {
             TadImpl ad = new TadImpl();
             ad.setCardinality(kuraAd.getCardinality());
-            ad.setDefault(ad.getDefault());
+            ad.setDefault(kuraAd.getDefault());
             ad.setDescription(kuraAd.getDescription());
             ad.setId(kuraAd.getId());
             ad.setMax(kuraAd.getMax());
