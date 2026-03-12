@@ -187,6 +187,11 @@ public interface StorableQuery {
      */
     void setSortFields(List<SortField> sortFields);
 
+
+    AggregationField getAggregationField();
+
+    void setAggregationField(AggregationField aggregationField);
+
     /**
      * Gets the included {@link StorableField}s according to the {@link StorableFetchStyle}.
      *

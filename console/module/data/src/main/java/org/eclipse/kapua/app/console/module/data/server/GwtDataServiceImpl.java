@@ -113,20 +113,10 @@ public class GwtDataServiceImpl extends KapuaRemoteServiceServlet implements Gwt
         List<GwtTopic> channelInfoList = new ArrayList<GwtTopic>();
         HashMap<String, GwtTopic> topicMap = new HashMap<String, GwtTopic>();
         ChannelInfoRegistryService channelInfoService = LOCATOR.getService(ChannelInfoRegistryService.class);
-        ChannelInfoQuery query = CHANNEL_INFO_FACTORY.newQuery(GwtKapuaCommonsModelConverter.convertKapuaId(scopeId));
-        int offset = 0;
-        int limit = 250;
         try {
-            query.setOffset(offset);
-            query.setLimit(limit);
-            ChannelInfoListResult result = channelInfoService.query(query);
-            while (result != null && !result.isEmpty()) {
-                for (ChannelInfo channel : result.getItems()) {
-                    addToMap(topicMap, channel);
-                }
-                offset += limit;
-                query.setOffset(offset);
-                result = channelInfoService.query(query);
+            List<String> channelNames = channelInfoService.fetchDistinctChannelNames(GwtKapuaCommonsModelConverter.convertKapuaId(scopeId));
+            for (String channelName : channelNames) {
+                    addToMap(topicMap, channelName);
             }
 
             for (Map.Entry<String, GwtTopic> entry : topicMap.entrySet()) {
@@ -220,8 +210,8 @@ public class GwtDataServiceImpl extends KapuaRemoteServiceServlet implements Gwt
         return updatedDevices;
     }
 
-    private void addToMap(HashMap<String, GwtTopic> topicMap, ChannelInfo channel) {
-        String[] topicParts = channel.getName().split("/");
+    private void addToMap(HashMap<String, GwtTopic> topicMap, String channelName) {
+        String[] topicParts = channelName.split("/");
         GwtTopic parent = null;
         String topicName = topicParts[0];
         String baseTopic = topicParts[0];

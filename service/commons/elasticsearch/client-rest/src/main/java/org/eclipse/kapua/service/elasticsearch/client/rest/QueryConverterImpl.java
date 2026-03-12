@@ -19,6 +19,7 @@ import org.eclipse.kapua.service.elasticsearch.client.QueryConverter;
 import org.eclipse.kapua.service.elasticsearch.client.SchemaKeys;
 import org.eclipse.kapua.service.elasticsearch.client.exception.QueryMappingException;
 import org.eclipse.kapua.service.storable.exception.MappingException;
+import org.eclipse.kapua.service.storable.model.query.AggregationField;
 import org.eclipse.kapua.service.storable.model.query.SortField;
 import org.eclipse.kapua.service.storable.model.query.StorableQuery;
 import org.eclipse.kapua.service.storable.model.utils.MappingUtils;
@@ -33,9 +34,9 @@ import java.util.List;
  */
 public class QueryConverterImpl implements QueryConverter {
 
-    private static ConvertOptions convertOptionsCount = new ConvertOptions(false, true, false, false, false);
+    private static ConvertOptions convertOptionsCount = new ConvertOptions(false, true, false, false, false, false);
     private static ConvertOptions convertOptionsDelete = convertOptionsCount;
-    private static ConvertOptions convertOptionsSearch = new ConvertOptions(true, true, true, true, true);
+    private static ConvertOptions convertOptionsSearch = new ConvertOptions(true, true, true, true, true, true);
 
     @Override
     public JsonNode convertQuery(Object query) throws QueryMappingException {
@@ -60,6 +61,22 @@ public class QueryConverterImpl implements QueryConverter {
         try {
             StorableQuery storableQuery = (StorableQuery) query;
             ObjectNode rootNode = MappingUtils.newObjectNode();
+
+            if (convertOptions.aggregationEnabled && storableQuery.getAggregationField() != null) {
+                AggregationField aggregationField = storableQuery.getAggregationField();
+                // Create the aggregations structure
+                ObjectNode aggsNode = MappingUtils.newObjectNode();
+                ObjectNode distinctChannelsNode = MappingUtils.newObjectNode();
+                ObjectNode termsNode = MappingUtils.newObjectNode();
+
+                // Configure the terms aggregation
+                termsNode.put(SchemaKeys.KEY_AGGREGATION_FIELD, aggregationField.getFieldName());
+                termsNode.put(SchemaKeys.KEY_AGGREGATION_SIZE, aggregationField.getSize());
+
+                distinctChannelsNode.set(SchemaKeys.KEY_AGGREGATION_TERMS, termsNode);
+                aggsNode.set(aggregationField.getAggregationName(), distinctChannelsNode);
+                rootNode.set(SchemaKeys.KEY_AGGREGATION_NODE, aggsNode);
+            }
 
             if (convertOptions.sourceEnabled) {
                 ObjectNode includesFields = MappingUtils.newObjectNode();
@@ -114,13 +131,15 @@ public class QueryConverterImpl implements QueryConverter {
         protected boolean sortEnabled;
         protected boolean fromEnabled;
         protected boolean sizeEnabled;
+        protected boolean aggregationEnabled;
 
-        ConvertOptions(boolean source,boolean query,boolean sort, boolean from, boolean size) {
+        ConvertOptions(boolean source, boolean query, boolean sort, boolean from, boolean size, boolean aggregationEnabled) {
             this.sourceEnabled = source;
             this.queryEnabled = query;
             this.sortEnabled = sort;
             this.fromEnabled = from;
             this.sizeEnabled = size;
+            this.aggregationEnabled = aggregationEnabled;
         }
 
     }

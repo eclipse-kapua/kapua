@@ -61,7 +61,6 @@ public interface QueryConverter {
      */
     JsonNode convertDeleteQuery(Object query) throws QueryMappingException;
 
-
     /**
      * Gets the query fetch style
      *
