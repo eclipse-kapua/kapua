@@ -38,7 +38,7 @@ import java.io.Closeable;
  *
  * @since 1.0.0
  */
-public interface ElasticsearchClient<C extends Closeable> {
+public interface ElasticsearchClientWrapper<C extends Closeable> {
 
     /**
      * Initializes the underlying Elasticsearch connection.
@@ -50,7 +50,7 @@ public interface ElasticsearchClient<C extends Closeable> {
     /**
      * Closes the underlying Elasticsearch connection.
      *
-     * @throws ClientUnavailableException If the {@link ElasticsearchClient} was not initialized and this is invoked.
+     * @throws ClientUnavailableException If the {@link ElasticsearchClientWrapper} was not initialized and this is invoked.
      * @since 1.0.0
      */
     void close() throws ClientUnavailableException;
@@ -64,13 +64,13 @@ public interface ElasticsearchClient<C extends Closeable> {
     C getClient();
 
     /**
-     * Sets the org.elasticsearch.Client to use with {@link ElasticsearchClient}.
+     * Sets the org.elasticsearch.Client to use with {@link ElasticsearchClientWrapper}.
      *
-     * @param client The org.elasticsearch.Client
+     * @param wrappedClient The org.elasticsearch.Client
      * @return Itself, to chain invocations.
      * @since 1.3.0
      */
-    ElasticsearchClient<C> withClient(C client);
+    ElasticsearchClientWrapper<C> withClient(C wrappedClient);
 
     /**
      * Gets the {@link ElasticsearchClientConfiguration}.
@@ -81,13 +81,13 @@ public interface ElasticsearchClient<C extends Closeable> {
     ElasticsearchClientConfiguration getClientConfiguration();
 
     /**
-     * Sets the {@link ElasticsearchClientConfiguration} to use with the {@link ElasticsearchClient}.
+     * Sets the {@link ElasticsearchClientConfiguration} to use with the {@link ElasticsearchClientWrapper}.
      *
      * @param clientConfiguration The {@link ElasticsearchClientConfiguration}.
      * @return Itself, to chain invocations.
      * @since 1.3.0
      */
-    ElasticsearchClient<C> withClientConfiguration(ElasticsearchClientConfiguration clientConfiguration);
+    ElasticsearchClientWrapper<C> withClientConfiguration(ElasticsearchClientConfiguration clientConfiguration);
 
     /**
      * Gets the {@link ModelContext}
@@ -104,7 +104,7 @@ public interface ElasticsearchClient<C extends Closeable> {
      * @return Itself, to chain invocations.
      * @since 1.3.0
      */
-    ElasticsearchClient<C> withModelContext(ModelContext modelContext);
+    ElasticsearchClientWrapper<C> withModelContext(ModelContext modelContext);
 
     /**
      * Gets the {@link QueryConverter}
@@ -121,7 +121,7 @@ public interface ElasticsearchClient<C extends Closeable> {
      * @return Itself, to chain invocations.
      * @since 1.3.0
      */
-    ElasticsearchClient<C> withModelConverter(QueryConverter modelConverter);
+    ElasticsearchClientWrapper<C> withModelConverter(QueryConverter modelConverter);
 
     /**
      * Inserts a document.
