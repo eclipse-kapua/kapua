@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.elasticsearch.client.exception;
 
-import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClient;
+import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientWrapper;
 import org.eclipse.kapua.service.elasticsearch.client.model.Request;
 
 /**
@@ -31,7 +31,7 @@ public class ClientActionResponseException extends ClientException {
      *
      * @param action       The action that generated the {@link ClientActionResponseException}.
      * @param reason       The reason of the {@link ClientActionResponseException}.
-     * @param responseCode The non-2xx response code returned from the {@link ElasticsearchClient}
+     * @param responseCode The non-2xx response code returned from the {@link ElasticsearchClientWrapper}
      * @since 1.3.0
      */
     public ClientActionResponseException(String action, String reason, String responseCode) {

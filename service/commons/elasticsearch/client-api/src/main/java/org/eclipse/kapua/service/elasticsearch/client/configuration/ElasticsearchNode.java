@@ -12,12 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.elasticsearch.client.configuration;
 
-import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClient;
+import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientWrapper;
 
 /**
  * {@link ElasticsearchNode} definition.
  * <p>
- * This is the collector of host and port for the {@link ElasticsearchClient}.
+ * This is the collector of host and port for the {@link ElasticsearchClientWrapper}.
  *
  * @since 1.3.0
  */
