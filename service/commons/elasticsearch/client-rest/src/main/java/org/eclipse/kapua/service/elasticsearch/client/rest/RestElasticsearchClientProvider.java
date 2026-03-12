@@ -39,7 +39,6 @@ import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientProvide
 import org.eclipse.kapua.service.elasticsearch.client.ModelContext;
 import org.eclipse.kapua.service.elasticsearch.client.QueryConverter;
 import org.eclipse.kapua.service.elasticsearch.client.configuration.ElasticsearchClientConfiguration;
-import org.eclipse.kapua.service.elasticsearch.client.configuration.ElasticsearchClientReconnectConfiguration;
 import org.eclipse.kapua.service.elasticsearch.client.configuration.ElasticsearchClientSslConfiguration;
 import org.eclipse.kapua.service.elasticsearch.client.configuration.ElasticsearchNode;
 import org.eclipse.kapua.service.elasticsearch.client.exception.ClientInitializationException;
@@ -64,36 +63,29 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+
 import java.util.stream.Collectors;
 
 /**
  * {@link ElasticsearchClientProvider} REST implementation.
  * <p>
- * Instantiates and manages the {@link RestElasticsearchClient}.
+ * Instantiates, in a Singleton fashion, and manages the {@link RestElasticsearchClientWrapper}.
  *
  * @since 1.0.0
  */
-public class RestElasticsearchClientProvider implements ElasticsearchClientProvider<RestElasticsearchClient> {
+public class RestElasticsearchClientProvider implements ElasticsearchClientProvider<RestElasticsearchClientWrapper> {
 
     static final Logger LOG = LoggerFactory.getLogger(RestElasticsearchClientProvider.class);
 
     private static final String PROVIDER_CANNOT_CLOSE_CLIENT_MSG = "Cannot close ElasticSearch REST client. Client is already closed or not initialized";
 
-    private RestElasticsearchClient restElasticsearchClient;
-    private RestClient internalElasticsearchRestClient;
+    private RestElasticsearchClientWrapper restElasticsearchClientWrapper;
 
     private ElasticsearchClientConfiguration elasticsearchClientConfiguration;
     private ModelContext modelContext;
     private QueryConverter modelConverter;
-
-    private ScheduledExecutorService reconnectExecutorTask;
-
     private MetricsEsClient metrics;
-    private boolean initialized;
+    private volatile boolean initialized;
 
     @Inject
     public RestElasticsearchClientProvider(MetricsEsClient metricsEsClient) {
@@ -169,25 +161,22 @@ public class RestElasticsearchClientProvider implements ElasticsearchClientProvi
                     .addParameter("Model Converter", modelConverter)
                     .printLog();
 
-            // Close the current client if already initialized.
-            close();
-
             // Init Kapua Elasticsearch Client
             try {
                 initClient();
             } catch (Exception e) {
-                throw new ClientProviderInitException(e, "Cannot init ElasticsearchClient");
+                throw new ClientProviderInitException(e, "Cannot init ElasticsearchClientWrapper");
             }
 
-            // Start a reconnect task
-            reconnectExecutorTask = Executors.newScheduledThreadPool(1);
-            reconnectExecutorTask.scheduleWithFixedDelay(() -> {
-                try {
-                    reconnectClientTask(this::initClient);
-                } catch (Exception e) {
-                    LOG.info(">>> Initializing Elasticsearch REST client... Connecting... Error: {}", e.getMessage(), e);
-                }
-            }, getClientReconnectConfiguration().getReconnectDelay(), getClientReconnectConfiguration().getReconnectDelay(), TimeUnit.MILLISECONDS);
+            // Start a reconnect task - commented because actually not needed now, maybe useful in the future
+//            reconnectExecutorTask = Executors.newScheduledThreadPool(1);
+//            reconnectExecutorTask.scheduleWithFixedDelay(() -> {
+//                try {
+//                    reconnectClientTask(this::initClient);
+//                } catch (Exception e) {
+//                    LOG.info(">>> Initializing Elasticsearch REST client... Connecting... Error: {}", e.getMessage(), e);
+//                }
+//            }, getClientReconnectConfiguration().getReconnectDelay(), getClientReconnectConfiguration().getReconnectDelay(), TimeUnit.MILLISECONDS);
             initialized = true;
             return this;
         }
@@ -214,32 +203,31 @@ public class RestElasticsearchClientProvider implements ElasticsearchClientProvi
     /**
      * Closes the {@link RestClient}.
      * <p>
-     * It takes care of stopping the {@link #reconnectExecutorTask}.
      *
      * @throws IOException
      *         see {@link RestClient#close()} javadoc.
      * @since 1.0.0
      */
     private void closeClient() throws IOException {
-        if (reconnectExecutorTask != null) {
-            reconnectExecutorTask.shutdown();
+//        if (reconnectExecutorTask != null) {
+//            reconnectExecutorTask.shutdown();
+//
+//            try {
+//                reconnectExecutorTask.awaitTermination(getClientReconnectConfiguration().getReconnectDelay(), TimeUnit.MILLISECONDS);
+//            } catch (InterruptedException e) {
+//                Thread.currentThread().interrupt();
+//            } finally {
+//                reconnectExecutorTask.shutdownNow();
+//            }
+//
+//            reconnectExecutorTask = null;
+//        }
 
+        if (restElasticsearchClientWrapper != null) {
             try {
-                reconnectExecutorTask.awaitTermination(getClientReconnectConfiguration().getReconnectDelay(), TimeUnit.MILLISECONDS);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+                restElasticsearchClientWrapper.close();
             } finally {
-                reconnectExecutorTask.shutdownNow();
-            }
-
-            reconnectExecutorTask = null;
-        }
-
-        if (internalElasticsearchRestClient != null) {
-            try {
-                internalElasticsearchRestClient.close();
-            } finally {
-                internalElasticsearchRestClient = null;
+                restElasticsearchClientWrapper = null;
             }
         }
     }
@@ -252,20 +240,21 @@ public class RestElasticsearchClientProvider implements ElasticsearchClientProvi
      * @throws Exception
      *         if the given {@link Callable} throws {@link Exception}.
      * @since 1.0.0
+     * Commented because actually not needed now, maybe useful in the future. It was referencing an internalElasticsearchRestClient that was never used in the codebase
      */
-    private void reconnectClientTask(Callable<RestClient> initClientMethod) throws Exception {
-        if (internalElasticsearchRestClient == null) {
-            synchronized (RestElasticsearchClientProvider.class) {
-                if (internalElasticsearchRestClient == null) {
-                    metrics.getClientReconnectCall().inc();
-
-                    LOG.info(">>> Initializing Elasticsearch REST client... Connecting...");
-                    internalElasticsearchRestClient = initClientMethod.call();
-                    LOG.info(">>> Initializing Elasticsearch REST client... Connecting... DONE!");
-                }
-            }
-        }
-    }
+//    private void reconnectClientTask(Callable<RestClient> initClientMethod) throws Exception {
+//        if (internalElasticsearchRestClient == null) {
+//            synchronized (RestElasticsearchClientProvider.class) {
+//                if (internalElasticsearchRestClient == null) {
+//                    metrics.getClientReconnectCall().inc();
+//
+//                    LOG.info(">>> Initializing Elasticsearch REST client... Connecting...");
+//                    internalElasticsearchRestClient = initClientMethod.call();
+//                    LOG.info(">>> Initializing Elasticsearch REST client... Connecting... DONE!");
+//                }
+//            }
+//        }
+//    }
 
     /**
      * Initializes the {@link RestClient} as per {@link ElasticsearchClientConfiguration}.
@@ -358,18 +347,18 @@ public class RestElasticsearchClientProvider implements ElasticsearchClientProvi
                     clientConfiguration.getRequestConfiguration().getSocketTimeoutMillis().ifPresent(timout -> requestConfigBuilder.setSocketTimeout(timout));
                     return requestConfigBuilder;
                 });
-        RestClient restClient = restClientBuilder.build();
+        org.elasticsearch.client.RestClient esRestClientWrapped = restClientBuilder.build();
 
         // Init Kapua Elasticsearch Client
-        restElasticsearchClient = new RestElasticsearchClient(metrics);
-        restElasticsearchClient
+        restElasticsearchClientWrapper = new RestElasticsearchClientWrapper(metrics);
+        restElasticsearchClientWrapper
                 .withClientConfiguration(clientConfiguration)
                 .withModelContext(modelContext)
                 .withModelConverter(modelConverter)
-                .withClient(restClient)
+                .withClient(esRestClientWrapped)
                 .init();
 
-        return restClient;
+        return esRestClientWrapped;
     }
 
     private HttpAsyncClientBuilder customizeHttpClient(HttpAsyncClientBuilder httpClientBuilder, SSLContext sslContext, CredentialsProvider credentialsProvider) {
@@ -396,31 +385,31 @@ public class RestElasticsearchClientProvider implements ElasticsearchClientProvi
     }
 
     @Override
-    public ElasticsearchClientProvider<RestElasticsearchClient> withClientConfiguration(ElasticsearchClientConfiguration elasticsearchClientConfiguration) {
+    public ElasticsearchClientProvider<RestElasticsearchClientWrapper> withClientConfiguration(ElasticsearchClientConfiguration elasticsearchClientConfiguration) {
         this.elasticsearchClientConfiguration = elasticsearchClientConfiguration;
         return this;
     }
 
     @Override
-    public ElasticsearchClientProvider<RestElasticsearchClient> withModelContext(ModelContext modelContext) {
+    public ElasticsearchClientProvider<RestElasticsearchClientWrapper> withModelContext(ModelContext modelContext) {
         this.modelContext = modelContext;
         return this;
     }
 
     @Override
-    public ElasticsearchClientProvider<RestElasticsearchClient> withModelConverter(QueryConverter modelConverter) {
+    public ElasticsearchClientProvider<RestElasticsearchClientWrapper> withModelConverter(QueryConverter modelConverter) {
         this.modelConverter = modelConverter;
         return this;
     }
 
     @Override
-    public RestElasticsearchClient getElasticsearchClient() throws ClientUnavailableException, ClientProviderInitException {
+    public RestElasticsearchClientWrapper getElasticsearchClient() throws ClientUnavailableException, ClientProviderInitException {
         this.init();
-        if (restElasticsearchClient == null) {
+        if (restElasticsearchClientWrapper == null) {
             throw new ClientUnavailableException("Client not initialized");
         }
 
-        return restElasticsearchClient;
+        return restElasticsearchClientWrapper;
     }
     // Private methods
 
@@ -494,9 +483,9 @@ public class RestElasticsearchClientProvider implements ElasticsearchClientProvi
      * @return The {@link ElasticsearchClientReconnectConfiguration}
      * @since 1.3.0
      */
-    private ElasticsearchClientReconnectConfiguration getClientReconnectConfiguration() {
-        return getClientConfiguration().getReconnectConfiguration();
-    }
+//    private ElasticsearchClientReconnectConfiguration getClientReconnectConfiguration() {
+//        return getClientConfiguration().getReconnectConfiguration();
+//    }
 
     /**
      * Initializes the {@link KeyStore}  as per  {@link ElasticsearchClientSslConfiguration} with the given {@link SSLContextBuilder}.

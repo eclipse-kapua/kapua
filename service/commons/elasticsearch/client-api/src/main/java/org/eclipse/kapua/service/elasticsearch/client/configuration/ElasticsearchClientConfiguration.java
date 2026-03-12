@@ -16,10 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClient;
+import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientWrapper;
 
 /**
- * The {@link ElasticsearchClientConfiguration} used to configure an instance of a {@link ElasticsearchClient}
+ * The {@link ElasticsearchClientConfiguration} used to configure an instance of a {@link ElasticsearchClientWrapper}
  *
  * @since 1.3.0
  */
@@ -38,9 +38,9 @@ public class ElasticsearchClientConfiguration {
     private ElasticsearchClientSslConfiguration sslConfiguration;
 
     /**
-     * Gets the module name which is managing the {@link ElasticsearchClient} instance.
+     * Gets the module name which is managing the {@link ElasticsearchClientWrapper} instance.
      *
-     * @return The module name which is managing the {@link ElasticsearchClient} instance.
+     * @return The module name which is managing the {@link ElasticsearchClientWrapper} instance.
      * @since 1.3.0
      */
     public String getModuleName() {
@@ -48,10 +48,10 @@ public class ElasticsearchClientConfiguration {
     }
 
     /**
-     * Sets the module name which is managing the {@link ElasticsearchClient} instance.
+     * Sets the module name which is managing the {@link ElasticsearchClientWrapper} instance.
      *
      * @param moduleName
-     *         The module name which is managing the {@link ElasticsearchClient} instance.
+     *         The module name which is managing the {@link ElasticsearchClientWrapper} instance.
      * @since 1.3.0
      */
     public void setModuleName(String moduleName) {

@@ -231,15 +231,15 @@ public abstract class ElasticsearchRepository<
 
 
     protected void doUpsertIndex(String indexName) {
-        final ElasticsearchClient elasticsearchClient;
+        final ElasticsearchClientWrapper elasticsearchClientWrapper;
         try {
-            elasticsearchClient = elasticsearchClientProviderInstance.getElasticsearchClient();
+            elasticsearchClientWrapper = elasticsearchClientProviderInstance.getElasticsearchClient();
             // Check existence of the kapua internal indexes
-            IndexResponse indexExistsResponse = elasticsearchClient.isIndexExists(new IndexRequest(indexName));
+            IndexResponse indexExistsResponse = elasticsearchClientWrapper.isIndexExists(new IndexRequest(indexName));
             if (!indexExistsResponse.isIndexExists()) {
-                elasticsearchClient.createIndex(indexName, getMappingSchema(indexName));
+                elasticsearchClientWrapper.createIndex(indexName, getMappingSchema(indexName));
                 logger.info("Index created: {}", indexExistsResponse);
-                elasticsearchClient.putMapping(indexName, getIndexSchema());
+                elasticsearchClientWrapper.putMapping(indexName, getIndexSchema());
             }
         } catch (ClientException | MappingException e) {
             throw new RuntimeException(e);

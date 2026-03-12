@@ -13,9 +13,10 @@
 package org.eclipse.kapua.service.datastore.internal.setting;
 
 import org.eclipse.kapua.commons.setting.AbstractKapuaSetting;
+import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientWrapper;
 
 /**
- * Datastore {@link org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClient} {@link org.eclipse.kapua.commons.setting.AbstractKapuaSetting}
+ * Datastore {@link ElasticsearchClientWrapper} {@link org.eclipse.kapua.commons.setting.AbstractKapuaSetting}
  *
  * @since 1.3.0
  */
