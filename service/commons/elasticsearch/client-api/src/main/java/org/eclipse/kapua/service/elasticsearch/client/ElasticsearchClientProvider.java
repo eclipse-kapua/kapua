@@ -18,12 +18,12 @@ import org.eclipse.kapua.service.elasticsearch.client.exception.ClientProviderIn
 import org.eclipse.kapua.service.elasticsearch.client.exception.ClientUnavailableException;
 
 /**
- * {@link ElasticsearchClient} wrapper definition.
+ * {@link ElasticsearchClientWrapper} wrapper definition.
  *
- * @param <C> {@link ElasticsearchClient} type.
+ * @param <C> {@link ElasticsearchClientWrapper} type.
  * @since 1.0.0
  */
-public interface ElasticsearchClientProvider<C extends ElasticsearchClient> {
+public interface ElasticsearchClientProvider<C extends ElasticsearchClientWrapper> {
 
     /**
      * Initializes the {@link ElasticsearchClientProvider}.
@@ -38,7 +38,7 @@ public interface ElasticsearchClientProvider<C extends ElasticsearchClient> {
     ElasticsearchClientProvider<C> init() throws ClientProviderInitException;
 
     /**
-     * Closes the {@link ElasticsearchClientProvider} and all {@link ElasticsearchClient}s
+     * Closes the {@link ElasticsearchClientProvider} and all {@link ElasticsearchClientWrapper}s
      *
      * @throws ClientClosingException in case of error while closing the client.
      * @since 1.0.0
@@ -46,7 +46,7 @@ public interface ElasticsearchClientProvider<C extends ElasticsearchClient> {
     void close() throws ClientClosingException;
 
     /**
-     * Sets the {@link ElasticsearchClientConfiguration} to use to instantiate and manage the {@link ElasticsearchClient}.
+     * Sets the {@link ElasticsearchClientConfiguration} to use to instantiate and manage the {@link ElasticsearchClientWrapper}.
      *
      * @param elasticsearchClientConfiguration The {@link ElasticsearchClientConfiguration}.
      * @return Itself, to chain invocations.
@@ -55,7 +55,7 @@ public interface ElasticsearchClientProvider<C extends ElasticsearchClient> {
     ElasticsearchClientProvider<C> withClientConfiguration(ElasticsearchClientConfiguration elasticsearchClientConfiguration);
 
     /**
-     * Sets the {@link ModelContext} to use in the {@link ElasticsearchClient}.
+     * Sets the {@link ModelContext} to use in the {@link ElasticsearchClientWrapper}.
      *
      * @param modelContext The {@link ElasticsearchClientConfiguration}.
      * @return Itself, to chain invocations.
@@ -64,7 +64,7 @@ public interface ElasticsearchClientProvider<C extends ElasticsearchClient> {
     ElasticsearchClientProvider<C> withModelContext(ModelContext modelContext);
 
     /**
-     * Sets the {@link QueryConverter} to use in the {@link ElasticsearchClient}/
+     * Sets the {@link QueryConverter} to use in the {@link ElasticsearchClientWrapper}/
      *
      * @param queryConverter The {@link QueryConverter}.
      * @return Itself, to chain invocations.
@@ -74,9 +74,9 @@ public interface ElasticsearchClientProvider<C extends ElasticsearchClient> {
 
 
     /**
-     * Gets an initialized {@link ElasticsearchClient} instance.
+     * Gets an initialized {@link ElasticsearchClientWrapper} instance.
      *
-     * @return An initialized {@link ElasticsearchClient} instance.
+     * @return An initialized {@link ElasticsearchClientWrapper} instance.
      * @throws ClientUnavailableException if the client has not being initialized.
      * @since 1.0.0
      */

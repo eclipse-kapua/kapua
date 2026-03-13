@@ -22,10 +22,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.ParseException;
 import org.apache.http.util.EntityUtils;
 import org.eclipse.kapua.commons.util.RandomUtils;
-import org.eclipse.kapua.service.elasticsearch.client.AbstractElasticsearchClient;
+import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientWrapper;
 import org.eclipse.kapua.service.elasticsearch.client.ModelContext;
 import org.eclipse.kapua.service.elasticsearch.client.QueryConverter;
 import org.eclipse.kapua.service.elasticsearch.client.SchemaKeys;
+import org.eclipse.kapua.service.elasticsearch.client.configuration.ElasticsearchClientConfiguration;
 import org.eclipse.kapua.service.elasticsearch.client.exception.ClientActionResponseException;
 import org.eclipse.kapua.service.elasticsearch.client.exception.ClientCommunicationException;
 import org.eclipse.kapua.service.elasticsearch.client.exception.ClientErrorCodes;
@@ -66,9 +67,14 @@ import java.util.concurrent.TimeoutException;
  *
  * @since 1.0.0
  */
-public class RestElasticsearchClient extends AbstractElasticsearchClient<RestClient> {
+public class RestElasticsearchClientWrapper implements ElasticsearchClientWrapper<org.elasticsearch.client.RestClient> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RestElasticsearchClient.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RestElasticsearchClientWrapper.class);
+
+    private RestClient wrappedClient;
+    private ElasticsearchClientConfiguration clientConfiguration;
+    private ModelContext modelContext;
+    private QueryConverter modelConverter;
 
     private static final Random RANDOM = RandomUtils.getInstance();
     private static final String MSG_EMPTY_ERROR = "Empty error message";
@@ -85,10 +91,8 @@ public class RestElasticsearchClient extends AbstractElasticsearchClient<RestCli
      * @since 1.0.0
      */
     @Inject
-    public RestElasticsearchClient(MetricsEsClient metricsEsClient) {
-        super("rest");
+    public RestElasticsearchClientWrapper(MetricsEsClient metricsEsClient) {
         this.metricsEsClient = metricsEsClient;
-
         objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
     }
@@ -108,14 +112,62 @@ public class RestElasticsearchClient extends AbstractElasticsearchClient<RestCli
 
     @Override
     public void close() {
-        if (client != null) {
+        if (wrappedClient != null) {
             try {
-                client.close();
+                wrappedClient.close();
             } catch (IOException e) {
                 LOG.error("Error closing client", e);
             }
         }
     }
+
+    // ------- BUILDER METHODS - START
+
+    @Override
+    public RestClient getClient() {
+        return this.wrappedClient;
+    }
+
+    @Override
+    public ElasticsearchClientWrapper<RestClient> withClient(RestClient client) {
+       this.wrappedClient = client;
+       return this;
+    }
+
+    @Override
+    public ElasticsearchClientConfiguration getClientConfiguration() {
+        return this.clientConfiguration;
+    }
+
+    @Override
+    public ElasticsearchClientWrapper<RestClient> withClientConfiguration(ElasticsearchClientConfiguration clientConfiguration) {
+        this.clientConfiguration = clientConfiguration;
+        return this;
+    }
+
+    @Override
+    public ModelContext getModelContext() {
+        return this.modelContext;
+    }
+
+    @Override
+    public ElasticsearchClientWrapper<RestClient> withModelContext(ModelContext modelContext) {
+        this.modelContext = modelContext;
+        return this;
+    }
+
+    @Override
+    public QueryConverter getModelConverter() {
+        return this.modelConverter;
+    }
+
+    @Override
+    public ElasticsearchClientWrapper<RestClient> withModelConverter(QueryConverter modelConverter) {
+        this.modelConverter = modelConverter;
+        return this;
+    }
+
+    // // ------- BUILDER METHODS - END
 
     @Override
     public InsertResponse insert(InsertRequest insertRequest) throws ClientException {
@@ -643,4 +695,5 @@ public class RestElasticsearchClient extends AbstractElasticsearchClient<RestCli
             throw new RequestEntityWriteError(e);
         }
     }
+
 }
