@@ -154,7 +154,7 @@ public class TagLocatorConfiguration {
                 classServiceConfigurationManagerMap.put(DeviceConnectionService.class, Mockito.mock(ServiceConfigurationManager.class));
 
                 final DeviceConnectionServiceImpl deviceConnectionService = new DeviceConnectionServiceImpl(
-                        classServiceConfigurationManagerMap,
+                        classServiceConfigurationManagerMap.get(DeviceConnectionService.class),
                         mockedAuthorization,
                         permissionFactory,
                         new DeviceConnectionFactoryImpl(),
