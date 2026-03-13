@@ -33,6 +33,15 @@ public class StringUtil {
     private static final char DELIMITER = ',';
     private static final char ESCAPE = '\\';
 
+    public static String joinWithComma(List<String> values) {
+        if (values!=null && values.size()>0) {
+            return String.join(",", values);
+        }
+        else {
+            return "";
+        }
+    }
+
     /**
      * Split the string using the delimiter {@link StringUtil#DELIMITER}
      *

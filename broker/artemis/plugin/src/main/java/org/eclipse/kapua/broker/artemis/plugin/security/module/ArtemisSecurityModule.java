@@ -10,11 +10,15 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.broker.artemis.plugin.security;
+package org.eclipse.kapua.broker.artemis.plugin.security.module;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.eclipse.kapua.broker.artemis.plugin.security.AddressAccessTracker;
+import org.eclipse.kapua.broker.artemis.plugin.security.MetricsSecurityPlugin;
+import org.eclipse.kapua.broker.artemis.plugin.security.PluginUtility;
+import org.eclipse.kapua.broker.artemis.plugin.security.ServerContext;
 import org.eclipse.kapua.broker.artemis.plugin.security.context.SecurityContext;
 import org.eclipse.kapua.broker.artemis.plugin.security.context.SecurityContext.LockType;
 import org.eclipse.kapua.broker.artemis.plugin.security.metric.LoginMetric;
