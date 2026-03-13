@@ -28,6 +28,7 @@ import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.security.KapuaSession;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.commons.setting.system.SystemSettingKey;
+import org.eclipse.kapua.commons.util.StringUtil;
 import org.eclipse.kapua.event.ServiceEvent;
 import org.eclipse.kapua.event.ServiceEventBus;
 import org.eclipse.kapua.event.ServiceEventBusException;
@@ -224,7 +225,8 @@ public class JMSServiceEventBus implements ServiceEventBus, ServiceEventBusDrive
 
         void start() throws JMSException, NamingException, ServiceEventBusException {
             stop();
-            String eventbusUrl = systemSetting.getString(SystemSettingKey.EVENT_BUS_URL);
+            String eventbusUrl = StringUtil.joinWithComma(
+                    systemSetting.getList(String.class, SystemSettingKey.SERVICE_BUS_URL));
             String eventbusUsername = systemSetting.getString(SystemSettingKey.EVENT_BUS_USERNAME);
             String eventbusPassword = systemSetting.getString(SystemSettingKey.EVENT_BUS_PASSWORD);
 

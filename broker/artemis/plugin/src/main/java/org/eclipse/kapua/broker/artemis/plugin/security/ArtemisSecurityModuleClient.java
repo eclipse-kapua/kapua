@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019, 2024 Eurotech and/or its affiliates and others
+ * Copyright (c) 2019, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -30,6 +30,7 @@ import org.eclipse.kapua.client.security.client.Client;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.commons.setting.system.SystemSettingKey;
+import org.eclipse.kapua.commons.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +58,8 @@ public class ArtemisSecurityModuleClient extends AbstractKapuaModule {
         logger.info("building serviceBusClient...");
         //TODO change configuration (use service broker for now)
         String clientId = "svc-ath-" + UUID.randomUUID().toString();
-        String url = systemSetting.getString(SystemSettingKey.SERVICE_BUS_URL, "amqp://events-broker:5672");
+        String url = StringUtil.joinWithComma(
+                systemSetting.getList(String.class, SystemSettingKey.SERVICE_BUS_URL));
         String username = systemSetting.getString(SystemSettingKey.SERVICE_BUS_USERNAME, "username");
         String password = systemSetting.getString(SystemSettingKey.SERVICE_BUS_PASSWORD, "password");
         logger.info("Connecting auth service client to: {}", url);
