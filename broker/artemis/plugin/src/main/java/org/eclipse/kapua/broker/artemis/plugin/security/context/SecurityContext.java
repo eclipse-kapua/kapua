@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2021, 2025 Eurotech and/or its affiliates and others
+ * Copyright (c) 2021, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -17,8 +17,6 @@ import org.apache.activemq.artemis.spi.core.protocol.RemotingConnection;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.broker.artemis.plugin.security.MetricsSecurityPlugin;
 import org.eclipse.kapua.broker.artemis.plugin.security.PluginUtility;
-import org.eclipse.kapua.broker.artemis.plugin.security.RunWithLock;
-import org.eclipse.kapua.broker.artemis.plugin.security.RunWithLock.LockType;
 import org.eclipse.kapua.broker.artemis.plugin.security.metric.LoginMetric;
 import org.eclipse.kapua.client.security.AuthErrorCodes;
 import org.eclipse.kapua.client.security.KapuaIllegalDeviceStateException;
@@ -30,11 +28,13 @@ import org.eclipse.kapua.client.security.context.Utils;
 import org.eclipse.kapua.commons.cache.LocalCache;
 import org.eclipse.kapua.commons.localevent.ExecutorWrapper;
 import org.eclipse.kapua.commons.util.KapuaDateUtils;
+import org.eclipse.kapua.commons.util.lock.RunWithLock;
 import org.eclipse.kapua.service.authentication.KapuaPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.security.auth.Subject;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -59,6 +59,11 @@ public final class SecurityContext {
 
     private PluginUtility pluginUtility;
 
+    public enum LockType {
+        CONNECTION_ID,
+        CLIENT_ID
+    }
+
     private enum ReportType {
         Full,
         Compact,
@@ -76,7 +81,7 @@ public final class SecurityContext {
     private final LocalCache<String, SessionContext> sessionContextCache;
     private final LocalCache<String, Acl> aclCache;
     private final MetricsSecurityPlugin metricsSecurityPlugin;
-    private final RunWithLock runWithLock;
+    private final RunWithLock<LockType> runWithLock;
 
     //use string as key since some method returns DefaultChannelId as connection id, some other a string
     //the string returned by some method as connection id is the asShortText of DefaultChannelId
@@ -97,7 +102,7 @@ public final class SecurityContext {
                            LocalCache<String, Acl> aclCache,
                            MetricsSecurityPlugin metricsSecurityPlugin,
                            PluginUtility pluginUtility,
-                           RunWithLock runWithLock) {
+                           @Named("securityRunWithLock") RunWithLock<LockType> runWithLock) {
         this.loginMetric = loginMetric;
         this.printData = printData;
         this.connectionTokenCache = connectionTokenCache;

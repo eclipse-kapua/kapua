@@ -23,7 +23,7 @@ import org.apache.activemq.artemis.core.security.CheckType;
 import org.apache.activemq.artemis.core.security.Role;
 import org.apache.activemq.artemis.spi.core.protocol.RemotingConnection;
 import org.apache.activemq.artemis.spi.core.security.ActiveMQSecurityManager5;
-import org.eclipse.kapua.broker.artemis.plugin.security.RunWithLock.LockType;
+import org.eclipse.kapua.broker.artemis.plugin.security.context.SecurityContext.LockType;
 import org.eclipse.kapua.broker.artemis.plugin.security.metric.LoginMetric;
 import org.eclipse.kapua.broker.artemis.plugin.security.metric.PublishMetric;
 import org.eclipse.kapua.broker.artemis.plugin.security.metric.SubscribeMetric;
