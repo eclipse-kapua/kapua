@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019, 2025 Eurotech and/or its affiliates and others
+ * Copyright (c) 2019, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -12,14 +12,17 @@
  *******************************************************************************/
 package org.eclipse.kapua.broker.artemis.plugin.security;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.eclipse.kapua.broker.artemis.plugin.security.context.SecurityContext;
+import org.eclipse.kapua.broker.artemis.plugin.security.context.SecurityContext.LockType;
 import org.eclipse.kapua.broker.artemis.plugin.security.metric.LoginMetric;
 import org.eclipse.kapua.broker.artemis.plugin.security.setting.BrokerSetting;
 import org.eclipse.kapua.broker.artemis.plugin.security.setting.BrokerSettingKey;
 import org.eclipse.kapua.commons.cache.LocalCache;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
+import org.eclipse.kapua.commons.util.lock.RunWithLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,8 +37,14 @@ public class ArtemisSecurityModule extends AbstractKapuaModule {
         bind(ServerContext.class).in(Singleton.class);
         bind(MetricsSecurityPlugin.class).in(Singleton.class);
         bind(PluginUtility.class).in(Singleton.class);
-        bind(RunWithLock.class).in(Singleton.class);
         bind(AddressAccessTracker.class).in(Singleton.class);
+    }
+
+    @Provides
+    @Singleton
+    @Named("securityRunWithLock")
+    RunWithLock<LockType> securityRunWithLock() {
+        return new RunWithLock<LockType>(LockType.class, 256);
     }
 
     @Provides
@@ -44,7 +53,7 @@ public class ArtemisSecurityModule extends AbstractKapuaModule {
             BrokerSetting brokerSettings,
             MetricsSecurityPlugin metricsSecurityPlugin,
             PluginUtility pluginUtility,
-            RunWithLock runWithLock) {
+            @Named("securityRunWithLock") RunWithLock<LockType> runWithLock) {
         int connectionTokenSize = brokerSettings.getInt(BrokerSettingKey.CACHE_CONNECTION_TOKEN_SIZE);
         int connectionTokenTtl = brokerSettings.getInt(BrokerSettingKey.CACHE_CONNECTION_TOKEN_TTL);
         int sessionContextSize = brokerSettings.getInt(BrokerSettingKey.CACHE_SESSION_CONTEXT_SIZE);

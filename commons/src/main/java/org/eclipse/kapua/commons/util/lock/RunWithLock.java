@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2022, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -10,7 +10,7 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.broker.artemis.plugin.security;
+package org.eclipse.kapua.commons.util.lock;
 
 import javax.inject.Inject;
 
@@ -23,26 +23,21 @@ import java.util.stream.Stream;
 
 /**
  * Helper class to run code encapsulated into a lock/unlock block
+ * E enum
  */
-public class RunWithLock {
+public class RunWithLock<E extends Enum<E>> {
 
-    public enum LockType {
-        CONNECTION_ID,
-        CLIENT_ID
-    }
-
-    //TODO make it configurable?
-    //TODO how many threads are available?
-    private static final int LOCKS_SIZE = 256;
-    private final Map<LockType, Lock[]> locks;
+    private final int lockSize;
+    private final Map<E, Lock[]> locks;
 
     @Inject
-    public RunWithLock() {
+    public RunWithLock(Class<E> enumType, int lockSize) {
+        this.lockSize = lockSize;
         locks = new HashMap<>();
         //init lock map
-        Stream.of(LockType.values()).forEach(value -> {
-            Lock[] tmp = new Lock[LOCKS_SIZE];
-            for (int i = 0; i < LOCKS_SIZE; i++) {
+        Stream.of(enumType.getEnumConstants()).forEach(value -> {
+            Lock[] tmp = new Lock[lockSize];
+            for (int i = 0; i < lockSize; i++) {
                 tmp[i] = new ReentrantLock(true);
             }
             locks.put(value, tmp);
@@ -59,7 +54,7 @@ public class RunWithLock {
      * @return
      * @throws Exception
      */
-    public <T> T run(LockType type, String key, Callable<T> callable) throws Exception {
+    public <T> T run(E type, String key, Callable<T> callable) throws Exception {
         Lock lock = getLock(type, key);
         try {
             lock.lock();
@@ -69,8 +64,8 @@ public class RunWithLock {
         }
     }
 
-    private Lock getLock(LockType type, String connectionId) {
-        return locks.get(type)[Math.abs(connectionId.hashCode() % LOCKS_SIZE)];
+    private Lock getLock(E type, String connectionId) {
+        return locks.get(type)[Math.abs(connectionId.hashCode() % lockSize)];
     }
 
 }
