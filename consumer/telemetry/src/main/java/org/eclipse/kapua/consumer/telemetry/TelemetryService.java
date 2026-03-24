@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2025 Eurotech and/or its affiliates and others
+ * Copyright (c) 2025, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -12,18 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.consumer.telemetry;
 
-import java.util.Map;
-
 import javax.inject.Inject;
 
 import org.apache.camel.Exchange;
-import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaIllegalArgumentException;
-import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
-import org.eclipse.kapua.service.account.Account;
-import org.eclipse.kapua.service.account.AccountService;
+import org.eclipse.kapua.consumer.telemetry.util.ServiceStatusChecker;
 import org.eclipse.kapua.service.client.message.MessageConstants;
-import org.eclipse.kapua.service.datastore.internal.mediator.MessageStoreConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -32,34 +26,17 @@ import org.springframework.stereotype.Component;
 public class TelemetryService {
 
     protected static final Logger logger = LoggerFactory.getLogger(TelemetryService.class);
-    private final ServiceConfigurationManager serviceConfigurationManager;
-    private final AccountService accountService;
+
+    private final ServiceStatusChecker serviceStatusChecker;
 
     @Inject
-    public TelemetryService(AccountService accountService, ServiceConfigurationManager serviceConfigurationManager) {
-        this.accountService = accountService;
-        this.serviceConfigurationManager = serviceConfigurationManager;
+    public TelemetryService(ServiceStatusChecker serviceStatusChecker) {
+        this.serviceStatusChecker = serviceStatusChecker;
     }
 
-    public boolean isDatastoreServiceEnabled(Exchange exchange) throws Exception {
-        Account account = extractAccount(exchange);
-        Map<String, Object> config = serviceConfigurationManager.getConfigValues(account.getId(), false);
-        Boolean enabled = (Boolean)config.get("enabled");
-        Integer ttl = (Integer)config.get("dataTTL");
-        return Boolean.TRUE.equals(enabled) && (ttl!=null && ttl.intValue()!=MessageStoreConfiguration.DISABLED);
-    }
-
-    private Account extractAccount(Exchange exchange) throws KapuaException {
-        String topic = exchange.getMessage().getHeader(MessageConstants.PROPERTY_ORIGINAL_TOPIC, String.class);
-        String accountName = extractAccountNameFromTopic(topic);
-        Account account = accountService.findByName(accountName);
-        if (account == null) {
-            logger.warn("Cannot find account for account name {}", accountName);
-            throw new KapuaIllegalArgumentException("account", "nill");
-        }
-        else {
-            return account;
-        }
+    public void setServiceEnabledLevel(Exchange exchange) throws Exception {
+        String accountName = extractAccountNameFromTopic(exchange.getMessage().getHeader(MessageConstants.PROPERTY_ORIGINAL_TOPIC, String.class));
+        exchange.getMessage().setHeader("serviceMessageAndAssetEnabled", serviceStatusChecker.getServiceEnabledLevel(exchange, accountName));
     }
 
     private String extractAccountNameFromTopic(String topic) throws KapuaIllegalArgumentException {
