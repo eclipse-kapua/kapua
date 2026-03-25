@@ -162,4 +162,12 @@ public class GwtPackageInstallRequest extends KapuaBaseModel {
     public String getInstallVerifierURI() {
         return get("installVerifierURI");
     }
+
+    public Boolean setInstall(Boolean install) {
+        return set("install", install);
+    }
+
+    public Boolean getInstall() {
+        return get("install");
+    }
 }
