@@ -29,11 +29,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-assembly-java-base</artifactId>
-            <type>pom</type>
-        </dependency>
-        <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>apache-artemis</artifactId>
             <classifier>bin</classifier>
