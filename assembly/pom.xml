@@ -33,6 +33,7 @@
 
     <modules>
         <module>java-base</module>
+        <module>java-base-17</module>
         <module>jetty-base</module>
         <module>sql</module>
 

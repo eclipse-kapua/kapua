@@ -30,12 +30,12 @@
         <!-- Compiler level and JDK for all modules -->
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.toolchain.jdk.version>11</maven.toolchain.jdk.version>
+        <maven.toolchain.jdk.version>17</maven.toolchain.jdk.version>
 
         <!-- Kapua Client compiler level and JDK -->
         <kapua-client.maven.compiler.source>11</kapua-client.maven.compiler.source>
         <kapua-client.maven.compiler.target>11</kapua-client.maven.compiler.target>
-        <kapua-client.maven.toolchain.jdk.version>11</kapua-client.maven.toolchain.jdk.version>
+        <kapua-client.maven.toolchain.jdk.version>17</kapua-client.maven.toolchain.jdk.version>
 
         <!-- Maven Javadoc Plugin compiler level -->
         <!-- See: https://bugs.openjdk.org/browse/JDK-8212233 -->
@@ -54,9 +54,9 @@
         <spring-boot.version>2.7.18</spring-boot.version>
 
         <aopalliance.version>1.0</aopalliance.version>
-        <activemq-openwire-legacy.version>5.18.7</activemq-openwire-legacy.version> <!-- Bumped version to address CVE-2025-27533 coming from 'org.apache.activemq:apache-artemis:tar.gz:bin:2.38.0' -->
-        <activemq-client.version>5.18.7</activemq-client.version> <!-- Bumped version to address CVE-2025-27533 coming from 'org.apache.activemq:apache-artemis:tar.gz:bin:2.38.0' -->
-        <artemis.version>2.38.0</artemis.version>
+        <activemq-openwire-legacy.version>5.19.4</activemq-openwire-legacy.version> <!-- CVE-2025-27533 free -->
+        <activemq-client.version>5.19.4</activemq-client.version> <!-- CVE-2025-27533 free -->
+        <artemis.version>2.53.0</artemis.version>
         <assertj.version>3.2.0</assertj.version>
         <checker-framework.version>3.15.0</checker-framework.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
