@@ -15,7 +15,6 @@ package org.eclipse.kapua.service.authentication;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.activemq.artemis.spi.core.security.jaas.UserPrincipal;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 
 import com.google.inject.Provides;
