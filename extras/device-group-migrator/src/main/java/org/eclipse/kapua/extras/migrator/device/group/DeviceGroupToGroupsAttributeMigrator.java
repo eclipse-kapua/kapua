@@ -58,13 +58,7 @@ public class DeviceGroupToGroupsAttributeMigrator {
             for (Device device : devices.getItems()) {
                 LOG.info("    Migrating Device {}/{}...", device.getId(), device.getClientId());
 
-                if (device.getGroupIds().isEmpty()) {
-                    device.setGroupIds(Sets.newHashSet(device.getGroupId()));
-                    LOG.info("    Migrating Device {}/{}... DONE!", device.getId(), device.getClientId());
-                }
-                else {
-                    LOG.info("    Migrating Device {}/{}... Was already migrated!", device.getId(), device.getClientId());
-                }
+                device.setGroupIds(Sets.newHashSet(device.getGroupId()));
 
                 deviceRegistryService.update(device);
             }

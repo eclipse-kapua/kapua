@@ -12,12 +12,17 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.registry.internal;
 
+import com.google.common.collect.Sets;
+import org.apache.commons.collections.CollectionUtils;
+import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.commons.configuration.KapuaConfigurableServiceBase;
 import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
 import org.eclipse.kapua.commons.jpa.EventStorer;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.model.id.KapuaEid;
+import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.event.ServiceEvent;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
@@ -33,9 +38,14 @@ import org.eclipse.kapua.service.device.registry.DeviceQuery;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
 import org.eclipse.kapua.service.device.registry.DeviceRepository;
 import org.eclipse.kapua.service.device.registry.common.DeviceValidation;
+import org.eclipse.kapua.storage.TxContext;
 import org.eclipse.kapua.storage.TxManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collections;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * {@link DeviceRegistryService} implementation.
@@ -81,6 +91,8 @@ public class DeviceRegistryServiceImpl
 
     @Override
     public Device create(DeviceCreator deviceCreator) throws KapuaException {
+        // Handle legacy DeviceCreator.groupIds usage
+        handleLegacyCreatorGroupIdAttribute(deviceCreator);
 
         // Validate precondition
         deviceValidation.validateCreatePreconditions(deviceCreator);
@@ -141,6 +153,9 @@ public class DeviceRegistryServiceImpl
         // Do update
         return txManager.execute(
             tx -> {
+                // Handle legacy Device.groupIds usage
+                handleLegacyCreatorGroupIdAttribute(tx, device);
+
                 // Validate in-transaction conditions
                 deviceValidation.validateUpdateInTransaction(tx, device);
 
@@ -255,6 +270,75 @@ public class DeviceRegistryServiceImpl
     //
     // Private methods
     //
+
+    /**
+     * Handles legacy use of {@link DeviceCreator#getGroupId()}.
+     *
+     * @param deviceCreator The source {@link DeviceCreator}
+     * @throws KapuaIllegalArgumentException If both {@link DeviceCreator#getGroupIds()} and {@link DeviceCreator#getGroupIds()} are used.
+     * @since 6.1.0
+     */
+    private static void handleLegacyCreatorGroupIdAttribute(DeviceCreator deviceCreator) throws KapuaIllegalArgumentException {
+        ArgumentValidator.notNull(deviceCreator, "deviceCreator");
+
+        if (deviceCreator.getGroupId() != null && !deviceCreator.getGroupIds().isEmpty()) {
+            throw new KapuaIllegalArgumentException("deviceCreator.groupId", deviceCreator.getGroupId().toString());
+        }
+
+        if (deviceCreator.getGroupId() != null) {
+            deviceCreator.setGroupIds(Sets.newHashSet(deviceCreator.getGroupId()));
+        }
+    }
+
+    /**
+     * Handles legacy use of {@link Device#getGroupId()}.
+     *
+     * @param device The source {@link Device}
+     * @since 6.1.0
+     */
+    private void handleLegacyCreatorGroupIdAttribute(TxContext txContext, Device device) throws KapuaIllegalArgumentException, KapuaEntityNotFoundException {
+        ArgumentValidator.notNull(device, "device");
+
+        Optional<Device> optionalCurrentDevice = deviceRepository.find(txContext, device.getScopeId(), device.getId());
+
+        Device currentDevice = optionalCurrentDevice.orElseThrow(() -> new KapuaEntityNotFoundException(Device.TYPE, device.getId()));
+
+        if (
+            Objects.equals(device.getGroupId(), currentDevice.getGroupId()) &&
+            CollectionUtils.isEqualCollection(device.getGroupIds(), currentDevice.getGroupIds())
+        ) {
+            // No changes to the values. Nothing to do
+            return;
+        }
+
+        if (
+            Objects.equals(device.getGroupId(), currentDevice.getGroupId()) &&
+            !CollectionUtils.isEqualCollection(device.getGroupIds(), currentDevice.getGroupIds())
+        ) {
+            // Device.groupIds has been changed. User has already migrated therefore we can remove value for Device.groupId
+            device.setGroupId(null);
+            return;
+        }
+
+        if (
+            !Objects.equals(device.getGroupId(), currentDevice.getGroupId()) &&
+            CollectionUtils.isEqualCollection(device.getGroupIds(), currentDevice.getGroupIds())
+        ) {
+            // Device.groupId has been changed. User is still using legacy Device.groupId and we need to reflect that change into Device.groupIds
+            if (device.getGroupId() == null) {
+                // Device.groupId has been removed
+                device.setGroupIds(Collections.emptySet());
+            }
+            else {
+                // Device.groupId has been added
+                device.setGroupIds(Sets.newHashSet(device.getGroupId()));
+            }
+            return;
+        }
+
+        // If both have been changed, this is a mixed usage, so it is not allowed.
+        throw new KapuaIllegalArgumentException("device.groupId", device.getGroupId() != null ? device.getGroupId().toString() : null);
+    }
 
     private void deleteDeviceByGroupId(KapuaId scopeId, KapuaId groupId) throws KapuaException {
         DeviceQuery query = deviceFactory.newQuery(scopeId);
