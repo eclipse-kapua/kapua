@@ -67,6 +67,7 @@ public class PackageInstallDialog extends TabbedDialog {
     private FormPanel operationOptionsForm;
     private Text operationInfoText;
     private CheckBox operationRebootField;
+    private CheckBox installAfterDownloadField;
     private KapuaNumberField operationRebootDelayField;
 
     private FormPanel advancedOptionsForm;
@@ -219,6 +220,14 @@ public class PackageInstallDialog extends TabbedDialog {
                 }
             });
 
+            installAfterDownloadField = new CheckBox();
+            installAfterDownloadField.setName("install");
+            installAfterDownloadField.setFieldLabel(DEVICE_MSGS.packageInstallAfterDownload());
+            installAfterDownloadField.setToolTip(DEVICE_MSGS.packageInstallAfterDownloadTip());
+            installAfterDownloadField.setBoxLabel("");
+            installAfterDownloadField.setValue(Boolean.TRUE);
+
+            operationOptionsForm.add(installAfterDownloadField, formData);
             operationOptionsForm.add(operationRebootField, formData);
 
             operationRebootDelayField = new KapuaNumberField();
@@ -370,6 +379,8 @@ public class PackageInstallDialog extends TabbedDialog {
 
         // Options info
         gwtPackageInstallRequest.setReboot(operationRebootField.getValue());
+
+        gwtPackageInstallRequest.setInstall(installAfterDownloadField.getValue());
 
         Number nValue = operationRebootDelayField.getValue();
         if (nValue != null) {
