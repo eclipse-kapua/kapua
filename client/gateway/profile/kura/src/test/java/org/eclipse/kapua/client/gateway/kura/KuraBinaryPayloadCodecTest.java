@@ -24,9 +24,10 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.mockito.Mockito;
 
-
 @Category(JUnitTests.class)
 public class KuraBinaryPayloadCodecTest {
+
+    private static final int BYTE_BUFFER_SIZE = 1024;
 
     KuraBinaryPayloadCodec.Builder builder;
     Payload payload;
@@ -45,7 +46,7 @@ public class KuraBinaryPayloadCodecTest {
 
     @Test(expected = NullPointerException.class)
     public void encodeNullPayloadTest() throws Exception {
-        ByteBuffer byteBuffer = Mockito.mock(ByteBuffer.class);
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(BYTE_BUFFER_SIZE);
         builder.build().encode(null, byteBuffer);
     }
 
@@ -64,7 +65,7 @@ public class KuraBinaryPayloadCodecTest {
 
     @Test
     public void encodeMergedBufferTest() throws Exception {
-        ByteBuffer byteBuffer = Mockito.mock(ByteBuffer.class);
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(BYTE_BUFFER_SIZE);
         Mockito.when(payload.getTimestamp()).thenReturn(Instant.ofEpochSecond(10L));
 
         Assert.assertNotNull("Null not expected.", builder.build().encode(payload, byteBuffer));
@@ -87,7 +88,7 @@ public class KuraBinaryPayloadCodecTest {
 
     @Test
     public void decodeTest() throws Exception {
-        ByteBuffer byteBuffer = Mockito.mock(ByteBuffer.class);
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(0);
 
         Assert.assertNotNull("Null not expected.", builder.build().decode(byteBuffer));
         Assert.assertThat("Instance of Payload expected.", builder.build().decode(byteBuffer), IsInstanceOf.instanceOf(Payload.class));

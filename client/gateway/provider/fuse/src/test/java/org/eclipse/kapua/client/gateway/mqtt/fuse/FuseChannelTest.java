@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2017, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -34,9 +34,10 @@ import java.nio.ByteBuffer;
 import java.util.HashSet;
 import java.util.Set;
 
-
 @Category(JUnitTests.class)
 public class FuseChannelTest {
+
+    private static final int BYTE_BUFFER_SIZE = 1024;
 
     private FuseChannel.Builder builder;
 
@@ -126,7 +127,7 @@ public class FuseChannelTest {
         FuseChannel fuseChannel = builder.build();
         final String topic = "string";
         fuseChannel.handleInit(Mockito.mock(Channel.Context.class));
-        final ByteBuffer payload = Mockito.mock(ByteBuffer.class);
+        final ByteBuffer payload = ByteBuffer.allocateDirect(BYTE_BUFFER_SIZE);
         fuseChannel.publishMqtt(topic, payload);
     }
 
@@ -134,7 +135,7 @@ public class FuseChannelTest {
     public void publishMqttTopicNullTest() throws Exception {
         FuseChannel fuseChannel = builder.build();
         fuseChannel.handleInit(Mockito.mock(Channel.Context.class));
-        final ByteBuffer payload = Mockito.mock(ByteBuffer.class);
+        final ByteBuffer payload = ByteBuffer.allocateDirect(BYTE_BUFFER_SIZE);
         fuseChannel.publishMqtt(null, payload);
     }
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2020, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -20,7 +20,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.mockito.Mockito;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -32,6 +31,8 @@ import java.util.TreeMap;
 
 @Category(JUnitTests.class)
 public class MetricsTest {
+
+    private static final int BYTE_BUFFER_SIZE = 1024;
 
     KuraPayloadProto.KuraPayload.Builder builder;
 
@@ -83,13 +84,13 @@ public class MetricsTest {
 
     @Test(expected = NullPointerException.class)
     public void buildBodyNullBuilderTest() {
-        ByteBuffer byteBuffer = Mockito.mock(ByteBuffer.class);
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(BYTE_BUFFER_SIZE);
         Metrics.buildBody(null, byteBuffer);
     }
 
     @Test
     public void buildBodyTest() {
-        ByteBuffer body = Mockito.mock(ByteBuffer.class);
+        ByteBuffer body = ByteBuffer.allocateDirect(BYTE_BUFFER_SIZE);
         ByteString expectedByteString = builder.getBody();
 
         Metrics.buildBody(builder, body);
