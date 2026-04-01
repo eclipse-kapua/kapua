@@ -36,9 +36,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletionStage;
 
-
 @Category(JUnitTests.class)
 public class AbstractMqttChannelTest {
+
+    private static final int BYTE_BUFFER_SIZE = 1024;
 
     private BinaryPayloadCodec codec;
     private MqttNamespace namespace;
@@ -241,7 +242,7 @@ public class AbstractMqttChannelTest {
         segments.add("STRING");
         segments.add("0123456789");
         final Topic topic = Topic.of(segments);
-        final ByteBuffer buffer = Mockito.mock(ByteBuffer.class);
+        final ByteBuffer buffer = ByteBuffer.allocateDirect(BYTE_BUFFER_SIZE);
         Assert.assertNull("Expected null value.", mqttChannel.publish(applicationId, topic, buffer));
     }
 
@@ -252,14 +253,14 @@ public class AbstractMqttChannelTest {
         segments.add("STRING");
         segments.add("0123456789");
         final Topic topic = Topic.of(segments);
-        final ByteBuffer buffer = Mockito.mock(ByteBuffer.class);
+        final ByteBuffer buffer = ByteBuffer.allocateDirect(BYTE_BUFFER_SIZE);
         Assert.assertNull("Expected null value.", mqttChannel.publish(null, topic, buffer));
     }
 
     @Test
     public void publishTopicNullTest() {
         final String applicationId = "appId";
-        final ByteBuffer buffer = Mockito.mock(ByteBuffer.class);
+        final ByteBuffer buffer = ByteBuffer.allocateDirect(BYTE_BUFFER_SIZE);
         Assert.assertNull("Expected null value.", mqttChannel.publish(applicationId, null, buffer));
     }
 
@@ -362,7 +363,7 @@ public class AbstractMqttChannelTest {
     @Test
     public void handleMessage() throws Exception {
         final MessageHandler handler = Mockito.mock(MessageHandler.class);
-        final ByteBuffer buffer = Mockito.mock(ByteBuffer.class);
+        final ByteBuffer buffer = ByteBuffer.allocateDirect(BYTE_BUFFER_SIZE);
         mqttChannel.handleMessage(handler, buffer);
         Mockito.verify(handler, Mockito.times(1)).handleMessage(codec.decode(buffer));
     }

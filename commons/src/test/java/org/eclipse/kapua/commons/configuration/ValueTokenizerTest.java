@@ -194,7 +194,7 @@ public class ValueTokenizerTest {
     public void validateWithNullValueTest() {
         ValueTokenizer valueTokenizer = new ValueTokenizer("asdf");
         String message = valueTokenizer.validate(null);
-        Assert.assertEquals("Internal error: null", message);
+        validateInternalErrorMessage(message);
     }
 
     @Test
@@ -227,7 +227,7 @@ public class ValueTokenizerTest {
         KapuaTad tad = new KapuaTad();
         tad.setCardinality(0);
         String message = valueTokenizer.validate(tad);
-        Assert.assertEquals("Internal error: null", message);
+        validateInternalErrorMessage(message);
     }
 
     @Test
@@ -236,7 +236,7 @@ public class ValueTokenizerTest {
         KapuaTad tad = new KapuaTad();
         tad.setCardinality(2);
         String message = valueTokenizer.validate(tad);
-        Assert.assertEquals("Internal error: null", message);
+        validateInternalErrorMessage(message);
     }
 
     @Test
@@ -254,7 +254,7 @@ public class ValueTokenizerTest {
         KapuaTad tad = new KapuaTad();
         tad.setCardinality(10);
         String message = valueTokenizer.validate(tad);
-        Assert.assertEquals("Internal error: null", message);
+        validateInternalErrorMessage(message);
     }
 
     @Test
@@ -821,6 +821,10 @@ public class ValueTokenizerTest {
         KapuaToption option = null;
         tad.addOption(option);
         String message = valueTokenizer.validate(tad);
-        Assert.assertEquals("Internal error: null", message);
+        validateInternalErrorMessage(message);
+    }
+
+    private void validateInternalErrorMessage(String message) {
+        Assert.assertTrue("Error message should start with 'Internal error: '", message.startsWith("Internal error: "));
     }
 }

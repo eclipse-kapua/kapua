@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2022 Red Hat Inc and others.
+ * Copyright (c) 2017, 2026 Red Hat Inc and others.
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -17,7 +17,6 @@ import org.hamcrest.core.IsInstanceOf;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.mockito.Mockito;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -27,6 +26,8 @@ import java.nio.ByteBuffer;
 
 @Category(JUnitTests.class)
 public class BuffersTest {
+
+    private static final int BYTE_BUFFER_SIZE = 1024;
 
     @Test
     public void buffersTest() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
@@ -56,7 +57,7 @@ public class BuffersTest {
 
     @Test
     public void toByteArrayTest() {
-        ByteBuffer byteBuffer = Mockito.mock(ByteBuffer.class);
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(BYTE_BUFFER_SIZE);
         Assert.assertThat("Instance of Buffers expected.", Buffers.toByteArray(byteBuffer), IsInstanceOf.instanceOf(byte[].class));
     }
 }

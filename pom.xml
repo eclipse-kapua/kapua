@@ -277,6 +277,11 @@
                         <systemPropertyVariables>
                             <commons.settings.hotswap>true</commons.settings.hotswap>
                         </systemPropertyVariables>
+                        <argLine>
+                            ${argLine}
+                            --add-opens java.base/java.lang=ALL-UNNAMED
+                            --add-opens java.base/java.util.concurrent=ALL-UNNAMED
+                        </argLine>
                     </configuration>
                 </plugin>
                 <plugin>

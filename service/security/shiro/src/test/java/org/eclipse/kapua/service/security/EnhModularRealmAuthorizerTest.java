@@ -233,7 +233,7 @@ public class EnhModularRealmAuthorizerTest {
             enhModularRealmAuthorizer2.isPermitted(principals, (List) null);
             Assert.fail("Exception expected.");
         } catch (Exception e) {
-            Assert.assertEquals("NullPointerException expected.", new NullPointerException().toString(), e.toString());
+            Assert.assertTrue("NullPointerException expected.", e instanceof NullPointerException);
         }
     }
 
@@ -256,7 +256,7 @@ public class EnhModularRealmAuthorizerTest {
             enhModularRealmAuthorizer2.isPermitted(null, (List) null);
             Assert.fail("Exception expected.");
         } catch (Exception e) {
-            Assert.assertEquals("NullPointerException expected.", new NullPointerException().toString(), e.toString());
+            Assert.assertTrue("NullPointerException expected.", e instanceof NullPointerException);
         }
     }
 
