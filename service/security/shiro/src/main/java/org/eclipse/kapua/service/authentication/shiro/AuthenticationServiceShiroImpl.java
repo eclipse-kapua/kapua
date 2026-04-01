@@ -87,6 +87,8 @@ import org.eclipse.kapua.service.authorization.group.GroupPermissionService;
 import org.eclipse.kapua.service.authorization.group.GroupRole;
 import org.eclipse.kapua.service.authorization.group.GroupRoleListResult;
 import org.eclipse.kapua.service.authorization.group.GroupRoleService;
+import org.eclipse.kapua.service.authorization.role.RolePermission;
+import org.eclipse.kapua.service.authorization.group.GroupPermission;
 import org.eclipse.kapua.service.authorization.role.RolePermissionAttributes;
 import org.eclipse.kapua.service.authorization.role.RolePermissionFactory;
 import org.eclipse.kapua.service.authorization.role.RolePermissionListResult;
@@ -464,6 +466,9 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
         // User Groups
         User user = KapuaSecurityUtils.doPrivileged(() -> userService.find(accessToken.getScopeId(), accessToken.getUserId()));
 
+        Set<RolePermission> allGroupRolePermissions = Sets.newHashSet();
+        Set<GroupPermission> allGroupPermissions = Sets.newHashSet();
+
         for (KapuaId groupId : user.getGroupIds()) {
             // Group Role
             GroupRoleListResult userGroupRoles = KapuaSecurityUtils.doPrivileged(() -> groupRoleService.findByGroupId(user.getScopeId(), groupId));
@@ -471,21 +476,16 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
             // Group RolePermission
             for (GroupRole userGroupRole : userGroupRoles.getItems()) {
                 RolePermissionListResult groupRolePermissions = KapuaSecurityUtils.doPrivileged(() -> rolePermissionService.findByRoleId(userGroupRole.getScopeId(), userGroupRole.getRoleId()));
-                loginInfo.setGroupRolePermission(Sets.newHashSet(groupRolePermissions.getItems()));
+                allGroupRolePermissions.addAll(groupRolePermissions.getItems());
             }
 
             // GroupPermission
             GroupPermissionListResult groupPermissions = KapuaSecurityUtils.doPrivileged(() -> groupPermissionService.findByGroupId(user.getScopeId(), groupId));
-            loginInfo.setGroupPermission(Sets.newHashSet(groupPermissions.getItems()));
+            allGroupPermissions.addAll(groupPermissions.getItems());
         }
-        // loginInfo.getGroupPermission() is supposed to return a not null set
-        if (loginInfo.getGroupPermission() == null) {
-           loginInfo.setGroupPermission(Sets.newHashSet());
-        }
-        // loginInfo.getGroupPermission() is supposed to return a not null set
-        if (loginInfo.getGroupRolePermission() == null) {
-           loginInfo.setGroupRolePermission(Sets.newHashSet());
-        }
+
+        loginInfo.setGroupRolePermission(allGroupRolePermissions);
+        loginInfo.setGroupPermission(allGroupPermissions);
 
         return loginInfo;
     }
