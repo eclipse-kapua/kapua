@@ -200,7 +200,7 @@ public class GwtDeviceManagementServiceImpl extends KapuaRemoteServiceServlet im
             packageDownloadRequest.setPassword(gwtPackageInstallRequest.getPassword());
             packageDownloadRequest.setFileHash(gwtPackageInstallRequest.getFileHash());
             packageDownloadRequest.setFileType(FileType.valueOf(gwtPackageInstallRequest.getFileType()));
-            packageDownloadRequest.setInstall(true); // Always install
+            packageDownloadRequest.setInstall(gwtPackageInstallRequest.getInstall());
             packageDownloadRequest.setReboot(gwtPackageInstallRequest.isReboot());
             packageDownloadRequest.setRebootDelay(gwtPackageInstallRequest.getRebootDelay());
 
