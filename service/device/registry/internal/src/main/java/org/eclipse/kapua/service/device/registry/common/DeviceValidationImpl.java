@@ -123,9 +123,6 @@ public final class DeviceValidationImpl implements DeviceValidation {
         // .tagIds
         validateTagIds(deviceCreator.getScopeId(), deviceCreator.getTagIds());
 
-        // .groupId
-        validateDeviceCreatorGroupId(deviceCreator);
-
         // .groupIds
         validateGroupIds(deviceCreator.getScopeId(), deviceCreator.getGroupIds());
 
@@ -281,10 +278,6 @@ public final class DeviceValidationImpl implements DeviceValidation {
 
         //
         // Check access
-
-        // Check that current Subject can manage the target Group of the Device
-        // authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE, Actions.write, deviceCreator.getScopeId(), deviceCreator.getGroupId()));
-
         // Check that current Subject can manage all the target Groups
         Set<Permission> groupPermissions = buildSetPermissionsFromGroupIds(Domains.DEVICE, Actions.write, deviceCreator.getScopeId(), deviceCreator.getGroupIds());
         authorizationService.checkPermissions(groupPermissions);
@@ -312,10 +305,8 @@ public final class DeviceValidationImpl implements DeviceValidation {
         ArgumentValidator.notNull(device.getScopeId(), "device.scopeId");
         ArgumentValidator.notNull(device.getId(), "device.id");
 
-        // .groupId
+        // .groupId AND .groupIds
         validateDeviceGroupId(device);
-
-        // .groupIds
         validateGroupIds(device.getScopeId(), device.getGroupIds());
 
         // .tagIds
@@ -480,7 +471,7 @@ public final class DeviceValidationImpl implements DeviceValidation {
     public void validateUpdateInTransaction(TxContext txContext, Device device) throws KapuaException {
 
         // .groupId
-        // checkAccessDeviceGroupId(txContext, device);
+        checkAccessDeviceGroupId(txContext, device);
 
         // .groupIds
         checkAccessDeviceGroupIds(txContext, device);
