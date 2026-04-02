@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (c) 2026, 2026 Eurotech and/or its affiliates and others
+
+    This program and the accompanying materials are made
+    available under the terms of the Eclipse Public License 2.0
+    which is available at https://www.eclipse.org/legal/epl-2.0/
+
+    SPDX-License-Identifier: EPL-2.0
+
+    Contributors:
+        Eurotech - initial API and implementation
+ -->
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0">
+
+    <persistence-unit name="kapua-device-group-to-device-groups-migrator" transaction-type="RESOURCE_LOCAL">
+
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+
+        <class>org.eclipse.kapua.extras.migrator.device.group.DeviceMigratorImpl</class>
+
+        <!-- Base classes and External classes -->
+        <class>org.eclipse.kapua.commons.model.id.KapuaEid</class>
+        <class>org.eclipse.kapua.commons.model.id.KapuaEid</class>
+        <class>org.eclipse.kapua.commons.model.AbstractKapuaEntity</class>
+        <class>org.eclipse.kapua.commons.model.AbstractKapuaNamedEntity</class>
+        <class>org.eclipse.kapua.commons.model.AbstractKapuaUpdatableEntity</class>
+
+        <properties>
+            <property name="javax.persistence.lock.timeout" value="1000"/>
+            <property name="eclipselink.logging.logger" value="org.eclipse.persistence.logging.slf4j.SLF4JLogger"/>
+        </properties>
+    </persistence-unit>
+</persistence>
