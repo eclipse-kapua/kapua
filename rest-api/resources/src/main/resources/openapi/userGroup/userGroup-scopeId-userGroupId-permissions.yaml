@@ -60,7 +60,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '../group/group.yaml#/components/schemas/groupPermissionListResult'
+                $ref: '../group/group.yaml#/components/schemas/groupPermission'
         400:
           $ref: '../openapi.yaml#/components/responses/illegalArgument'
         401:
