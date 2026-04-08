@@ -50,6 +50,8 @@ components:
             domain:
               description: The target domain of the group
               type: string
+          required:
+            - domain
           example:
             type: group
             id: Skm7PvmgOh0
@@ -59,6 +61,7 @@ components:
             modifiedOn: '2019-09-13T15:16:09.174Z'
             modifiedBy: AQ
             optlock: 1
+            tagIds: [ Skm7PvmgOh0 ]
             name: group-1
             description: An Access Group
             domain: device
@@ -67,10 +70,18 @@ components:
         - $ref: '../openapi.yaml#/components/schemas/kapuaNamedEntityCreator'
         - type: object
           properties:
+            tagIds:
+              type: array
+              items:
+                allOf:
+                  - $ref: '../openapi.yaml#/components/schemas/kapuaId'
             domain:
               description: The target domain of the group
               type: string
+          required:
+            - domain
           example:
+            tagIds: [ Skm7PvmgOh0 ]
             name: group-1
             description: An Access Group
             domain: device
