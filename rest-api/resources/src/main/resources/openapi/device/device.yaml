@@ -48,21 +48,23 @@ components:
         - $ref: '../openapi.yaml#/components/schemas/kapuaUpdatableEntity'
         - type: object
           properties:
-            tagIds:
-              type: array
-              items:
-                allOf:
-                  - $ref: '../openapi.yaml#/components/schemas/kapuaId'
-            groupIds:
-              type: array
-              items:
-                allOf:
-                  - $ref: '../openapi.yaml#/components/schemas/kapuaId'
             groupId:
               deprecated: true
+              description: The Group Id to which this Device is assigned to. Deprecated. Please make use of 'groupIds' property.
               allOf:
                 - $ref: '../openapi.yaml#/components/schemas/kapuaId'
-                - description: The ID of the Access Group to which this Device is assigned to
+            groupIds:
+              description: A list of Group Ids linked to the Device
+              type: array
+              items:
+                allOf:
+                  - $ref: '../openapi.yaml#/components/schemas/kapuaId'
+            tagIds:
+              description: A list of Tag Ids linked to the Device
+              type: array
+              items:
+                allOf:
+                  - $ref: '../openapi.yaml#/components/schemas/kapuaId'
             clientId:
               type: string
               readOnly: true
@@ -166,6 +168,8 @@ components:
         modifiedOn: '2019-09-12T12:08:12.179Z'
         modifiedBy: AQ
         optlock: 1
+        tagIds: [ dIVxI5QpFUI ]
+        groupIds: [ dIVxI5QpFUI, FJ6-FLuIcok ]
         clientId: testDevice
         connectionId: Gd1BfeWwh3s
         status: ENABLED
@@ -188,16 +192,28 @@ components:
             name: CPU Cores
             value: 4
         tamperStatus: NOT_TAMPERED
-        tagIds: [ ]
     deviceCreator:
       allOf:
         - $ref: '../openapi.yaml#/components/schemas/kapuaUpdatableEntityCreator'
         - type: object
           properties:
             groupId:
+              deprecated: true
+              description: The Group Id to which this Device is assigned to. Deprecated. Please make use of 'groupIds' property.
               allOf:
                 - $ref: '../openapi.yaml#/components/schemas/kapuaId'
-                - description: The ID of the Access Group to which this Device is assigned to
+            groupIds:
+              description: A list of Group Ids to link to the Device
+              type: array
+              items:
+                allOf:
+                  - $ref: '../openapi.yaml#/components/schemas/kapuaId'
+            tagIds:
+              description: A list of Tag Ids to link to the Device
+              type: array
+              items:
+                allOf:
+                  - $ref: '../openapi.yaml#/components/schemas/kapuaId'
             clientId:
               type: string
               readOnly: true
@@ -283,15 +299,11 @@ components:
             tamperStatus:
               description: The tamper status of the Device
               type: string
-            tagIds:
-              description: A list of tag ID to link to the Device
-              type: array
-              items:
-                allOf:
-                  - $ref: '../openapi.yaml#/components/schemas/kapuaId'
           required:
             - clientId
           example:
+            tagIds: [ dIVxI5QpFUI ]
+            groupIds: [ dIVxI5QpFUI, FJ6-FLuIcok ]
             clientId: testDevice
             status: ENABLED
             displayName: Test Device
@@ -306,7 +318,6 @@ components:
             acceptEncoding: gzip
             deviceCredentialsMode: LOOSE
             tamperStatus: NOT_TAMPERED
-            tagIds: []
     deviceListResult:
       allOf:
         - $ref: '../openapi.yaml#/components/schemas/kapuaListResult'
