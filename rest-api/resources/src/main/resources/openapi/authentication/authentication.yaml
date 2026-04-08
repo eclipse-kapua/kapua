@@ -16,6 +16,7 @@ paths: { }
 components:
   schemas:
     accessToken:
+      description: The token of a User session, obtained after a successful login.
       allOf:
         - $ref: '../openapi.yaml#/components/schemas/kapuaUpdatableEntity'
         - type: object
@@ -43,29 +44,30 @@ components:
     loginInfo:
       type: object
       properties:
+        accessToken:
+          $ref: '#/components/schemas/accessToken'
         accessPermission:
+          description: The list of Permission directly to the User
           type: array
           items:
             $ref: '../accessInfo/accessInfo.yaml#/components/schemas/accessPermission'
-        accessToken:
-          $ref: '#/components/schemas/accessToken'
         rolePermissions:
+          description: The list of Permission assigned to the User via Roles
+          type: array
+          items:
+            $ref: '../role/role.yaml#/components/schemas/rolePermission'
+        groupPermission:
+          description: The list of Permission assigned to the User via UserGroups
+          type: array
+          items:
+            $ref: '../group/group.yaml#/components/schemas/groupPermission'
+        groupRolePermissions:
+          description: The list of Permission assigned to the User via Roles assigned to UserGroups
           type: array
           items:
             $ref: '../role/role.yaml#/components/schemas/rolePermission'
       example:
         type: loginInfo
-        accessPermission:
-          - id: Jfzafs5eUuw
-            scopeId: AQ
-            createdOn: '2019-11-15T14:43:11.451Z'
-            createdBy: AQ
-            accessInfoId: IKfvOdNER6M
-            permission:
-              domain: datastore
-              action: read
-              targetScopeId: AQ
-              forwardable: false
         accessToken:
           id: RSP1npB7wZ4
           scopeId: AQ
@@ -79,6 +81,17 @@ components:
           expiresOn: '2019-11-15T15:13:27.506Z'
           refreshToken: e8a53e18-0c6b-4f3c-9929-409069a9c66e
           refreshExpiresOn: '2019-11-15T19:43:27.506Z'
+        accessPermission:
+          - id: Jfzafs5eUuw
+            scopeId: AQ
+            createdOn: '2019-11-15T14:43:11.451Z'
+            createdBy: AQ
+            accessInfoId: IKfvOdNER6M
+            permission:
+              domain: datastore
+              action: read
+              targetScopeId: AQ
+              forwardable: false
         rolePermission:
           - id: a716DxmV9TI
             scopeId: AQ
@@ -97,6 +110,37 @@ components:
             roleId: EUkieLf-Y8M
             permission:
               domain: user
+              targetScopeId: AQ
+              forwardable: false
+        groupPermission:
+          - id: Jfzafs5eUuw
+            scopeId: AQ
+            createdOn: '2019-11-15T14:43:11.451Z'
+            createdBy: AQ
+            groupId: O0X0yIQo6NU
+            permission:
+              domain: datastore
+              action: read
+              targetScopeId: AQ
+              forwardable: false
+        groupRolePermission:
+          - id: a716DxmV9TI
+            scopeId: AQ
+            createdOn: '2019-11-15T14:42:28.859Z'
+            createdBy: AQ
+            roleId: OgkB8tR0kF4
+            permission:
+              domain: device
+              action: write
+              targetScopeId: AQ
+              forwardable: false
+          - id: O0X0yIQo6NU
+            scopeId: AQ
+            createdOn: '2019-11-15T14:42:04.153Z'
+            createdBy: AQ
+            roleId: EUkieLf-Y8M
+            permission:
+              domain: job
               targetScopeId: AQ
               forwardable: false
     usernamePasswordCredentials:
