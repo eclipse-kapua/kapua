@@ -946,6 +946,10 @@ components:
     metricInfoListResult:
       $ref: './dataMetric/dataMetric.yaml#/components/schemas/metricInfoListResult'
     ### Device Entities ###
+    deviceExtendedProperty:
+      $ref: './device/device.yaml#/components/schemas/deviceExtendedProperty'
+    deviceStatus:
+      $ref: './device/device.yaml#/components/schemas/deviceStatus'
     fetchAttribute:
       $ref: './device/device.yaml#/components/schemas/fetchAttribute'
     device:
