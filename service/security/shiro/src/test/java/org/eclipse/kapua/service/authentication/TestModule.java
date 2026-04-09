@@ -17,13 +17,13 @@ import javax.inject.Singleton;
 
 import org.apache.activemq.artemis.spi.core.security.jaas.UserPrincipal;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
+
 import com.google.inject.Provides;
 
 public class TestModule extends AbstractKapuaModule {
 
     @Override
     protected void configureModule() {
-        bind(UserPrincipal.class).toInstance(new UserPrincipal(""));
     }
 
     @Provides
