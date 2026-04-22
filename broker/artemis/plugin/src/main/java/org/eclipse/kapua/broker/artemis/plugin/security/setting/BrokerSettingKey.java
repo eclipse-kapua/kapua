@@ -41,6 +41,16 @@ public enum BrokerSettingKey implements SettingKey {
      */
     ACCEPTORS("broker.acceptor"),
     /**
+     * Receive buffer size used by broker connectors (all, not distinguish between MQTT/AMQP internal/external)
+     */
+    //leave parameter_ as prefix for acceptor otherwise this parameter become one of the acceptors (acceptors are read by prefix from the config file)
+    RECEIVE_BUFFER_SIZE("broker.parameter_acceptor.buffer_size.receive"),
+    /**
+     * Send buffer size used by broker connectors (all, not distinguish between MQTT/AMQP internal/external)
+     */
+    //leave parameter_ as prefix for acceptor otherwise this parameter become one of the acceptors (acceptors are read by prefix from the config file)
+    SEND_BUFFER_SIZE("broker.parameter_acceptor.buffer_size.send"),
+    /**
      * Publish message info if the message size is over the specified threshold
      */
     PUBLISHED_MESSAGE_SIZE_LOG_THRESHOLD("broker.security.published.message_size.log_threshold"),

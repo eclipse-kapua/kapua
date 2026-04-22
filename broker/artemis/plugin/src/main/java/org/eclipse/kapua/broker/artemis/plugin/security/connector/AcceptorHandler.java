@@ -16,6 +16,9 @@ import org.apache.activemq.artemis.api.core.ActiveMQException;
 import org.apache.activemq.artemis.api.core.ActiveMQExceptionType;
 import org.apache.activemq.artemis.api.core.TransportConfiguration;
 import org.apache.activemq.artemis.core.server.ActiveMQServer;
+import org.eclipse.kapua.broker.artemis.plugin.security.setting.BrokerSetting;
+import org.eclipse.kapua.broker.artemis.plugin.security.setting.BrokerSettingKey;
+import org.eclipse.kapua.locator.KapuaLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +33,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AcceptorHandler {
 
     private final Logger logger = LoggerFactory.getLogger(AcceptorHandler.class);
+
+    private static final int RECEIVE_BUFFER_SIZE = 1048576;
+    private static final int SEND_BUFFER_SIZE = 1048576;
+
+    private int receiveBufferSize;
+    private int sendBufferSize;
 
     private ActiveMQServer server;
     //TODO should take care of concurrency?
@@ -48,6 +57,10 @@ public class AcceptorHandler {
         } else {
             this.definedAcceptors = new ConcurrentHashMap<>();
         }
+        //read buffer parameter
+        final BrokerSetting brokerSettings = KapuaLocator.getInstance().getComponent(BrokerSetting.class);
+        receiveBufferSize = brokerSettings.getInt(BrokerSettingKey.RECEIVE_BUFFER_SIZE, RECEIVE_BUFFER_SIZE);
+        sendBufferSize = brokerSettings.getInt(BrokerSettingKey.SEND_BUFFER_SIZE, SEND_BUFFER_SIZE);
     }
 
     /**
@@ -115,6 +128,13 @@ public class AcceptorHandler {
             logger.info("Adding acceptor... name: {} - uri: {}", name, uri);
             try {
                 if (server.getRemotingService().getAcceptor(name) == null || !server.getRemotingService().getAcceptor(name).isStarted()) {
+                    if (!uri.contains("tcpReceiveBufferSize")) {
+                        uri += ";tcpReceiveBufferSize=" + receiveBufferSize;
+                    }
+                    if (!uri.contains("tcpSendBufferSize")) {
+                        uri += ";tcpSendBufferSize=" + sendBufferSize;
+                    }
+                    logger.info("Adding acceptor (after buffer size tuning)... name: {} - uri: {}", name, uri);
                     server.getConfiguration().addAcceptorConfiguration(name, uri);
                     server.getRemotingService().createAcceptor(name, uri);
                     if (server.isStarted()) {
