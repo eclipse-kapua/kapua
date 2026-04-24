@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2023, 2024 Eurotech and/or its affiliates and others
+ * Copyright (c) 2023, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -12,7 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.connection.listener.internal;
 
-import org.eclipse.kapua.commons.core.ServiceModule;
 import org.eclipse.kapua.commons.event.ServiceEventClientConfiguration;
 import org.eclipse.kapua.commons.event.ServiceEventHouseKeeperFactory;
 import org.eclipse.kapua.commons.event.ServiceEventTransactionalModule;
@@ -20,7 +19,7 @@ import org.eclipse.kapua.commons.event.ServiceInspector;
 import org.eclipse.kapua.event.ServiceEventBus;
 import org.eclipse.kapua.service.device.connection.listener.DeviceConnectionEventListenerService;
 
-public class DeviceConnectionEventListenerServiceModule extends ServiceEventTransactionalModule implements ServiceModule {
+public class DeviceConnectionEventListenerServiceModule extends ServiceEventTransactionalModule {
 
     public DeviceConnectionEventListenerServiceModule(DeviceConnectionEventListenerService deviceConnectionEventListenerService, String eventAddress,
             ServiceEventHouseKeeperFactory serviceEventTransactionalHousekeeperFactory,

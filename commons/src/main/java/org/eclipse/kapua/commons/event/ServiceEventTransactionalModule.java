@@ -54,11 +54,11 @@ public abstract class ServiceEventTransactionalModule implements ServiceModule {
     public ServiceEventTransactionalModule(
             ServiceEventClientConfiguration[] serviceEventClientConfigurations,
             String internalAddress,
-            String subscriptionGroupId,
+            String componentId,
             ServiceEventHouseKeeperFactory serviceEventTransactionalHousekeeperFactory,
             ServiceEventBus serviceEventBus) {
         this.serviceEventBus = serviceEventBus;
-        this.serviceEventClientConfigurations = appendClientId(subscriptionGroupId, serviceEventClientConfigurations);
+        this.serviceEventClientConfigurations = appendComponentId(componentId, serviceEventClientConfigurations);
         this.internalAddress = internalAddress;
         this.houseKeeperFactory = serviceEventTransactionalHousekeeperFactory;
     }
@@ -79,10 +79,10 @@ public abstract class ServiceEventTransactionalModule implements ServiceModule {
                 }
                 // Listen to upstream service events
                 if (selc.getEventListener() != null) {
-                    serviceEventBus.subscribe(new Subscription(address, getSubscriptionName(address, selc.getClientName()), selc.getEventListener()));
+                    serviceEventBus.subscribe(new Subscription(address, getSubscriptionName(address, selc.getSubscriberGroup()), selc.getEventListener()));
                 }
-                servicesEntryList.add(new ServiceEntry(selc.getClientName(), address));
-                subscriberNames.add(selc.getClientName()); // Set because names must be unique
+                servicesEntryList.add(new ServiceEntry(selc.getSubscriberGroup(), address));
+                subscriberNames.add(selc.getSubscriberGroup()); // Set because names must be unique
             }
         } else {
             LOGGER.info("Configuration subscriptions are missing. No subscriptions added!");
@@ -143,16 +143,16 @@ public abstract class ServiceEventTransactionalModule implements ServiceModule {
         LOGGER.info("Stopping service event module... DONE");
     }
 
-    protected ServiceEventClientConfiguration[] appendClientId(String clientId, ServiceEventClientConfiguration[] configs) {
+    protected ServiceEventClientConfiguration[] appendComponentId(String componentId, ServiceEventClientConfiguration[] configs) {
         return Arrays.stream(configs).map(config -> {
             if (config.getEventListener() == null) {
                 // config for @RaiseServiceEvent
-                LOGGER.debug("Adding config for @RaiseServiceEvent - address: {}, name: {}, listener: {}", config.getAddress(), config.getClientName(), config.getEventListener());
+                LOGGER.info("Adding config for @RaiseServiceEvent - address: {}, name: {}, listener: {}", config.getAddress(), config.getSubscriberGroup(), config.getEventListener());
                 return config;
             } else {
                 // config for @ListenServiceEvent
-                String subscriberName = config.getClientName() + (clientId == null ? "" : "-" + clientId);
-                LOGGER.debug("Adding config for @ListenServiceEvent - address: {}, name: {}, listener: {}", config.getAddress(), subscriberName, config.getEventListener());
+                String subscriberName = config.getSubscriberGroup() + (componentId == null ? "" : "-" + componentId);
+                LOGGER.info("Adding config for @ListenServiceEvent - address: {}, name: {}, listener: {}", config.getAddress(), subscriberName, config.getEventListener());
                 return new ServiceEventClientConfiguration(config.getAddress(), subscriberName, config.getEventListener());
             }
         }).toArray(ServiceEventClientConfiguration[]::new);

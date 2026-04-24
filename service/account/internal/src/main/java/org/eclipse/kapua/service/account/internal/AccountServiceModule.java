@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2017, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -27,7 +27,7 @@ import org.eclipse.kapua.service.account.internal.setting.KapuaAccountSettingKey
  *
  * @since 1.0.0
  */
-public class AccountServiceModule extends ServiceEventTransactionalModule implements ServiceModule {
+public class AccountServiceModule extends ServiceEventTransactionalModule {
 
     public AccountServiceModule(
             AccountService accountService,

@@ -28,7 +28,7 @@ public class ServiceEventClientConfigurationTest {
     public void constructorRegularTest() {
         ServiceEventClientConfiguration serviceEventClientConfiguration = new ServiceEventClientConfiguration("address", "subscriberName", serviceEventBusListener);
         Assert.assertEquals("Expected and actual values are not equals!", "address", serviceEventClientConfiguration.getAddress());
-        Assert.assertEquals("Expected and actual values are not equals!", "subscriberName", serviceEventClientConfiguration.getClientName());
+        Assert.assertEquals("Expected and actual values are not equals!", "subscriberName", serviceEventClientConfiguration.getSubscriberGroup());
         Assert.assertEquals("Expected and actual values are not equals!", serviceEventBusListener, serviceEventClientConfiguration.getEventListener());
     }
 
@@ -36,7 +36,7 @@ public class ServiceEventClientConfigurationTest {
     public void constructorNullTest() {
         ServiceEventClientConfiguration serviceEventClientConfiguration = new ServiceEventClientConfiguration(null , null, null);
         Assert.assertNull("Null expected!", serviceEventClientConfiguration.getAddress());
-        Assert.assertNull("Null expected!", serviceEventClientConfiguration.getClientName());
+        Assert.assertNull("Null expected!", serviceEventClientConfiguration.getSubscriberGroup());
         Assert.assertNull("Null expected!", serviceEventClientConfiguration.getEventListener());
     }
 
@@ -44,7 +44,7 @@ public class ServiceEventClientConfigurationTest {
     public void constructorAddressNullTest() {
         ServiceEventClientConfiguration serviceEventClientConfiguration = new ServiceEventClientConfiguration(null , "subscriberName", serviceEventBusListener);
         Assert.assertNull("Null expected!", serviceEventClientConfiguration.getAddress());
-        Assert.assertEquals("Expected and actual values are not equals!", "subscriberName", serviceEventClientConfiguration.getClientName());
+        Assert.assertEquals("Expected and actual values are not equals!", "subscriberName", serviceEventClientConfiguration.getSubscriberGroup());
         Assert.assertEquals("Expected and actual values are not equals!", serviceEventBusListener, serviceEventClientConfiguration.getEventListener());
     }
 
@@ -52,7 +52,7 @@ public class ServiceEventClientConfigurationTest {
     public void constructorClientNameNullTest() {
         ServiceEventClientConfiguration serviceEventClientConfiguration = new ServiceEventClientConfiguration("address", null, serviceEventBusListener);
         Assert.assertEquals("Expected and actual values are not equals!", "address", serviceEventClientConfiguration.getAddress());
-        Assert.assertNull("Null expected!", serviceEventClientConfiguration.getClientName());
+        Assert.assertNull("Null expected!", serviceEventClientConfiguration.getSubscriberGroup());
         Assert.assertEquals("Expected and actual values are not equals!", serviceEventBusListener, serviceEventClientConfiguration.getEventListener());
     }
 
@@ -60,7 +60,7 @@ public class ServiceEventClientConfigurationTest {
     public void constructorServiceEventNullTest() {
         ServiceEventClientConfiguration serviceEventClientConfiguration = new ServiceEventClientConfiguration("address", "subscriberName", null);
         Assert.assertEquals("Expected and actual values are not equals!", "address", serviceEventClientConfiguration.getAddress());
-        Assert.assertEquals("Expected and actual values are not equals!", "subscriberName", serviceEventClientConfiguration.getClientName());
+        Assert.assertEquals("Expected and actual values are not equals!", "subscriberName", serviceEventClientConfiguration.getSubscriberGroup());
         Assert.assertNull("Null expected!", serviceEventClientConfiguration.getEventListener());
     }
 
@@ -68,7 +68,7 @@ public class ServiceEventClientConfigurationTest {
     public void constructorAddressAndNameNullTest() {
         ServiceEventClientConfiguration serviceEventClientConfiguration = new ServiceEventClientConfiguration(null, null, serviceEventBusListener);
         Assert.assertNull("Null expected!", serviceEventClientConfiguration.getAddress());
-        Assert.assertNull("Null expected!", serviceEventClientConfiguration.getClientName());
+        Assert.assertNull("Null expected!", serviceEventClientConfiguration.getSubscriberGroup());
         Assert.assertEquals("Expected and actual values are not equals!", serviceEventBusListener, serviceEventClientConfiguration.getEventListener());
     }
 
@@ -76,7 +76,7 @@ public class ServiceEventClientConfigurationTest {
     public void constructorNameAndServiceEventNullTest() {
         ServiceEventClientConfiguration serviceEventClientConfiguration = new ServiceEventClientConfiguration("address", null, null);
         Assert.assertEquals("Expected and actual values are not equals!", "address", serviceEventClientConfiguration.getAddress());
-        Assert.assertNull("Null expected!", serviceEventClientConfiguration.getClientName());
+        Assert.assertNull("Null expected!", serviceEventClientConfiguration.getSubscriberGroup());
         Assert.assertNull("Null expected!", serviceEventClientConfiguration.getEventListener());
     }
 
@@ -86,7 +86,7 @@ public class ServiceEventClientConfigurationTest {
         for (String value : permittedValues) {
             ServiceEventClientConfiguration serviceEventClientConfiguration = new ServiceEventClientConfiguration(value, value, serviceEventBusListener);
             Assert.assertEquals("Expected and actual values are not equals!", value, serviceEventClientConfiguration.getAddress());
-            Assert.assertEquals("Expected and actual values are not equals!", value, serviceEventClientConfiguration.getClientName());
+            Assert.assertEquals("Expected and actual values are not equals!", value, serviceEventClientConfiguration.getSubscriberGroup());
             Assert.assertEquals("Expected and actual values are not equals!", serviceEventBusListener, serviceEventClientConfiguration.getEventListener());
         }
     }
