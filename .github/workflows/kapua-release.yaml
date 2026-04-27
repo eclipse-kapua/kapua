@@ -1,15 +1,13 @@
-#name: Kapua Release
-
-#on:
-#  release:
-#    types: [published]
-
-name: Kapua Snapshot Release
+name: Eclipse Kapua Artifacts Release
 
 on:
-  push:
-    branches:
-      - release-1.6.13-P1
+  release:
+    types: [published]
+#  push:
+#    branches:
+#      - release-1.6.x
+#      - release-2.0.x
+#      - develop
 
 env:
   BUILD_OPTS: ""
