@@ -9,6 +9,9 @@ on:
 #      - release-2.0.x
 #      - develop
 
+permissions:
+  contents: read
+
 env:
   BUILD_OPTS: ""
   MAVEN_OPTS: "-Xmx4096m"
