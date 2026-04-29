@@ -24,6 +24,7 @@
     </parent>
 
     <artifactId>kapua-user-test</artifactId>
+    <name>${project.artifactId}</name>
 
     <build>
         <plugins>

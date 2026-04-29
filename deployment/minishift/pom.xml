@@ -23,6 +23,7 @@
     </parent>
 
     <artifactId>kapua-minishift</artifactId>
+    <name>${project.artifactId}</name>
     <packaging>pom</packaging>
 
     <build>

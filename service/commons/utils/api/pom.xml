@@ -23,6 +23,7 @@
     </parent>
 
     <artifactId>kapua-service-commons-utils-api</artifactId>
+    <name>${project.artifactId}</name>
 
     <dependencies>
         <!-- Internal Dependencies-->

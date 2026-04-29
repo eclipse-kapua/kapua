@@ -23,6 +23,7 @@
     </parent>
 
     <artifactId>kapua-service-storable-api</artifactId>
+    <name>${project.artifactId}</name>
 
     <dependencies>
         <!-- Base Service API-->

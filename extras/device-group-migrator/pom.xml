@@ -23,6 +23,7 @@
     </parent>
 
     <artifactId>kapua-device-group-migrator</artifactId>
+    <name>${project.artifactId}</name>
 
     <dependencies>
         <!-- -->

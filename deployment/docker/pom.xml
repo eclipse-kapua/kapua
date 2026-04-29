@@ -23,6 +23,7 @@
     </parent>
 
     <artifactId>kapua-docker</artifactId>
+    <name>${project.artifactId}</name>
     <packaging>pom</packaging>
 
     <build>

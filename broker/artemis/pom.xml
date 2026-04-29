@@ -21,9 +21,10 @@
         <groupId>org.eclipse.kapua</groupId>
         <version>2.0.0-SNAPSHOT</version>
     </parent>
-    <packaging>pom</packaging>
 
     <artifactId>kapua-broker-artemis</artifactId>
+    <name>${project.artifactId}</name>
+    <packaging>pom</packaging>
 
     <modules>
         <module>plugin</module>

@@ -24,6 +24,7 @@
     </parent>
 
     <artifactId>kapua-security-test</artifactId>
+    <name>${project.artifactId}</name>
 
     <build>
         <plugins>

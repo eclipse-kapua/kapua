@@ -23,6 +23,7 @@
     </parent>
 
     <artifactId>kapua-endpoint-internal</artifactId>
+    <name>${project.artifactId}</name>
 
     <dependencies>
         <!-- Implemented service interfaces -->

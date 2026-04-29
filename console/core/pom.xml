@@ -23,6 +23,7 @@
     </parent>
 
     <artifactId>kapua-console-core</artifactId>
+    <name>${project.artifactId}</name>
 
     <dependencies>
         <!-- Console modules -->
