@@ -23,6 +23,7 @@
     </parent>
 
     <artifactId>kapua-assembly-service-authentication</artifactId>
+    <name>${project.artifactId}</name>
     <packaging>pom</packaging>
 
     <dependencies>

@@ -24,6 +24,7 @@
     </parent>
 
     <artifactId>kapua-job-engine-client</artifactId>
+    <name>${project.artifactId}</name>
 
     <dependencies>
         <dependency>

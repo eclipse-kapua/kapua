@@ -23,6 +23,7 @@
     </parent>
 
     <artifactId>kapua-assembly-consumer-lifecycle</artifactId>
+    <name>${project.artifactId}</name>
     <packaging>pom</packaging>
 
     <dependencies>

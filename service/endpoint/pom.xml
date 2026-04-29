@@ -21,9 +21,10 @@
         <groupId>org.eclipse.kapua</groupId>
         <version>2.1.0-SNAPSHOT</version>
     </parent>
-    <packaging>pom</packaging>
 
     <artifactId>kapua-endpoint</artifactId>
+    <name>${project.artifactId}</name>
+    <packaging>pom</packaging>
 
     <modules>
         <module>api</module>

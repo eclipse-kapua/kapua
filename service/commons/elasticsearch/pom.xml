@@ -23,6 +23,7 @@
     </parent>
 
     <artifactId>kapua-service-elasticsearch</artifactId>
+    <name>${project.artifactId}</name>
     <packaging>pom</packaging>
 
     <modules>

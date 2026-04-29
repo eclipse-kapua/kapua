@@ -11,7 +11,8 @@
     Contributors:
         Eurotech - initial API and implementation
  -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -151,11 +152,10 @@
         <maven-deploy-plugin.version>2.8.2</maven-deploy-plugin.version>
         <maven-enforcer-plugin.version>1.4.1</maven-enforcer-plugin.version>
         <maven-frontend-plugin.version>1.8.0</maven-frontend-plugin.version>
-        <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+        <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <maven-install-plugin.version>2.5.2</maven-install-plugin.version>
         <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
         <maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
-        <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
         <maven-resources-plugin.version>3.3.0</maven-resources-plugin.version>
         <maven-shade-plugin.version>3.4.1</maven-shade-plugin.version>
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
@@ -163,6 +163,7 @@
         <maven-toolchains-plugin.version>3.1.0</maven-toolchains-plugin.version>
 
         <buildnumber-maven-plugin.version>3.0.0</buildnumber-maven-plugin.version>
+        <central-publishing-maven-plugin.version>0.10.0</central-publishing-maven-plugin.version>
         <checkstyle.version>7.6.1</checkstyle.version>
         <dependency-check-maven.version>7.4.4</dependency-check-maven.version>
         <docker-maven-plugin.version>0.44.0</docker-maven-plugin.version>
@@ -210,6 +211,10 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>${maven-deploy-plugin.version}</version>
+                    <configuration>
+                        <!-- Disable 'deploy-default' plugin execution -->
+                        <skip>true</skip>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -252,18 +257,6 @@
                     <version>${maven-javadoc-plugin.version}</version>
                     <configuration>
                         <source>${javadoc-plugin.maven.compiler.source}</source>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>${maven-release-plugin.version}</version>
-                    <configuration>
-                        <autoVersionSubmodules>true</autoVersionSubmodules>
-                        <releaseProfiles>javadoc,deploy,release,!console</releaseProfiles>
-                        <goals>deploy</goals>
-                        <preparationGoals>clean install</preparationGoals>
-                        <tagNameFormat>@{project.version}</tagNameFormat>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -317,6 +310,11 @@
                 </plugin>
 
                 <plugin>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>docker-maven-plugin</artifactId>
+                    <version>${docker-maven-plugin.version}</version>
+                </plugin>
+                <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
                     <version>${maven-bundle-plugin.version}</version>
@@ -334,15 +332,19 @@
                 </plugin>
 
                 <plugin>
-                    <groupId>org.sonatype.plugins</groupId>
-                    <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <version>${nexus-staging-maven-plugin.version}</version>
-                </plugin>
+                    <groupId>org.sonatype.central</groupId>
+                    <artifactId>central-publishing-maven-plugin</artifactId>
+                    <version>${central-publishing-maven-plugin.version}</version>
+                    <extensions>true</extensions>
+                    <configuration>
+                        <deploymentName>Eclipse Kapua ${project.version}</deploymentName>
+                        <publishingServerId>central</publishingServerId>
+                        <autoPublish>true</autoPublish>
+                        <waitUntil>published</waitUntil>
 
-                <plugin>
-                    <groupId>io.fabric8</groupId>
-                    <artifactId>docker-maven-plugin</artifactId>
-                    <version>${docker-maven-plugin.version}</version>
+                        <centralBaseUrl>https://central.sonatype.com</centralBaseUrl>
+                        <centralSnapshotsUrl>https://central.sonatype.com/repository/maven-snapshots/</centralSnapshotsUrl>
+                    </configuration>
                 </plugin>
 
                 <plugin>
@@ -363,6 +365,7 @@
                         <password>${db.password}</password>
                     </configuration>
                 </plugin>
+
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>license-maven-plugin</artifactId>
@@ -385,6 +388,7 @@
                         </execution>
                     </executions>
                 </plugin>
+
                 <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
@@ -538,6 +542,11 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>${central-publishing-maven-plugin.version}</version>
             </plugin>
             <plugin>
                 <groupId>de.dentrassi.maven</groupId>
@@ -2647,6 +2656,7 @@
                 <artifactId>spring-security-core</artifactId>
                 <version>${spring-security.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-crypto</artifactId>
@@ -2732,9 +2742,9 @@
             </modules>
         </profile>
 
-        <!-- Profile used only during release process. -->
+        <!-- Profile used only during release process to sign artifacts. -->
         <profile>
-            <id>release</id>
+            <id>sing</id>
             <build>
                 <plugins>
                     <plugin>
@@ -2769,28 +2779,6 @@
                                 </goals>
                             </execution>
                         </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <!-- Profile used only during deploy. -->
-        <profile>
-            <id>deploy</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <extensions>true</extensions>
-                        <configuration>
-                            <serverId>ossrh</serverId>
-                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-
-                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
-                            <keepStagingRepositoryOnFailure>true</keepStagingRepositoryOnFailure>
-                            <keepStagingRepositoryOnCloseRuleFailure>true</keepStagingRepositoryOnCloseRuleFailure>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -2933,12 +2921,12 @@
 
     <distributionManagement>
         <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <id>central</id>
+            <url>https://central.sonatype.com/repository/maven-snapshots/</url>
         </snapshotRepository>
         <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>central</id>
+            <url>https://central.sonatype.com/</url>
         </repository>
     </distributionManagement>
 

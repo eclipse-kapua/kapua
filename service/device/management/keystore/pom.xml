@@ -23,6 +23,7 @@
     </parent>
 
     <artifactId>kapua-device-management-keystore</artifactId>
+    <name>${project.artifactId}</name>
     <packaging>pom</packaging>
 
     <modules>
