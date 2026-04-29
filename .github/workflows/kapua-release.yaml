@@ -1,0 +1,54 @@
+name: Eclipse Kapua Artifacts Release
+
+on:
+  release:
+    types: [published]
+#  push:
+#    branches:
+#      - release-1.6.x
+#      - release-2.0.x
+#      - develop
+
+permissions:
+  contents: read
+
+env:
+  BUILD_OPTS: ""
+  MAVEN_OPTS: "-Xmx4096m"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4 # Checks out a copy of the repository on the ubuntu-latest machine
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 11
+      - uses: actions/setup-node@v4 # Installs Node and NPM
+        with:
+          node-version: 16
+      - name: Install Swagger CLI # Installs Swagger CLI to bundle OpenAPI files
+        run: 'npm install -g @apidevtools/swagger-cli'
+
+      - name: Set up Java and Maven Central credentials
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 11
+          server-id: central
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+
+#      - name: Set project version from tag
+#        run: mvn --batch-mode versions:set -DnewVersion=${{ github.event.release.tag_name }} -DgenerateBackupPoms=false
+
+      - name: Publish to Central
+        run: mvn -B clean deploy -DskipTests -Pjavadoc,sing
+        env:
+          MAVEN_USERNAME: ${{ secrets.CENTRAL_SONATYPE_TOKEN_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.CENTRAL_SONATYPE_TOKEN_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}

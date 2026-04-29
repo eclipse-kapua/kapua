@@ -23,6 +23,7 @@
     </parent>
 
     <artifactId>kapua-service-storable-internal</artifactId>
+    <name>${project.artifactId}</name>
 
     <dependencies>
         <!-- Implemented Interface-->

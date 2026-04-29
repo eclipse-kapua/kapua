@@ -23,6 +23,7 @@
     </parent>
 
     <artifactId>kapua-commons-rest-model</artifactId>
+    <name>${project.artifactId}</name>
 
     <dependencies>
         <!-- Internal dependencies -->

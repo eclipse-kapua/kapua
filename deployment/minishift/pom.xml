@@ -23,6 +23,19 @@
     </parent>
 
     <artifactId>kapua-minishift</artifactId>
+    <name>${project.artifactId}</name>
     <packaging>pom</packaging>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <configuration>
+                    <excludeArtifacts>${project.artifactId}</excludeArtifacts>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
