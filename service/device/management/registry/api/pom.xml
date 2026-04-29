@@ -23,6 +23,7 @@
     </parent>
 
     <artifactId>kapua-device-management-registry-api</artifactId>
+    <name>${project.artifactId}</name>
 
     <dependencies>
         <!-- Extended service interfaces -->

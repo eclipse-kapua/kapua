@@ -23,6 +23,7 @@
     </parent>
 
     <artifactId>kapua-job-test</artifactId>
+    <name>${project.artifactId}</name>
 
     <build>
         <plugins>

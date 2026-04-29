@@ -23,6 +23,7 @@
     </parent>
 
     <artifactId>kapua-locator</artifactId>
+    <name>${project.artifactId}</name>
     <packaging>pom</packaging>
 
     <modules>

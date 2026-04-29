@@ -24,6 +24,7 @@
     </parent>
 
     <artifactId>kapua-job-test-steps</artifactId>
+    <name>${project.artifactId}</name>
 
     <build>
         <plugins>

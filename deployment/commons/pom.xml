@@ -23,6 +23,7 @@
     </parent>
 
     <artifactId>kapua-deployment-commons</artifactId>
+    <name>${project.artifactId}</name>
     <packaging>pom</packaging>
 
     <build>

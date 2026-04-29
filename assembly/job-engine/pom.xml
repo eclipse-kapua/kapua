@@ -23,6 +23,7 @@
     </parent>
 
     <artifactId>kapua-assembly-job-engine</artifactId>
+    <name>${project.artifactId}</name>
     <packaging>pom</packaging>
 
     <dependencies>
