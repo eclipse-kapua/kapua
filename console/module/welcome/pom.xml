@@ -23,6 +23,7 @@
     </parent>
 
     <artifactId>kapua-console-module-welcome</artifactId>
+    <name>${project.artifactId}</name>
 
     <dependencies>
         <!-- Console modules -->
@@ -46,6 +47,15 @@
                     </i18nMessagesBundles>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <configuration>
+                    <excludeArtifacts>${project.artifactId}</excludeArtifacts>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 </project>
