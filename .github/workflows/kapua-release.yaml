@@ -21,19 +21,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4 # Checks out a copy of the repository on the ubuntu-latest machine
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v5 # Checks out a copy of the repository on the ubuntu-latest machine
+      - uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
           java-version: 11
-      - uses: actions/setup-node@v4 # Installs Node and NPM
+      - uses: actions/setup-node@v5 # Installs Node and NPM
         with:
           node-version: 16
       - name: Install Swagger CLI # Installs Swagger CLI to bundle OpenAPI files
         run: 'npm install -g @apidevtools/swagger-cli'
 
       - name: Set up Java and Maven Central credentials
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
           java-version: 11

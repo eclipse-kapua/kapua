@@ -11,7 +11,7 @@ runs:
       shell: bash
 
     - name: Save built Kapua artifacts
-      uses: actions/cache/save@v4
+      uses: actions/cache/save@v5
       with:
         path: ~/.m2/kapua-repository/org/eclipse/kapua
         key: ${{ runner.os }}-maven-${{ github.run_number }}-kapua-artifacts
