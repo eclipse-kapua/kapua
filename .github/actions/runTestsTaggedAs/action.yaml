@@ -47,4 +47,4 @@ runs:
       shell: bash
 
     - name: Code coverage results upload
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v6

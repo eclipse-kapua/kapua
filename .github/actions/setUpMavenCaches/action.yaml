@@ -10,7 +10,7 @@ runs:
   steps:
     - name: Cache Maven repository - External dependencies # Cache of external Maven dependencies to speed up build time
       id: cache-maven-external-deps
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ~/.m2/repository/
         key: ${{ runner.os }}-maven-develop-dependencies
@@ -18,7 +18,7 @@ runs:
     - name: Cache Maven repository - Kapua artifacts # Cache of built Kapua artifacts be reused in other jobs
       if: ${{ inputs.kapua-artifact-cache-enabled == 'true' }}
       id: cache-maven-kapua-artifacts
-      uses: actions/cache/restore@v4
+      uses: actions/cache/restore@v5
       with:
         path: ~/.m2/kapua-repository/org/eclipse/kapua
         key: ${{ runner.os }}-maven-${{ github.run_number }}-kapua-artifacts
