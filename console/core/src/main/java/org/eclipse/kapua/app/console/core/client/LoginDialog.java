@@ -55,6 +55,8 @@ public class LoginDialog extends Dialog {
     private static final ConsoleMessages CONSOLE_MESSAGES = GWT.create(ConsoleMessages.class);
     private static final ConsoleCoreMessages CONSOLE_CORE_MESSAGES = GWT.create(ConsoleCoreMessages.class);
 
+    public static final String ACCOUNT_ID_PARAM = "accountid";
+
     private static final GwtAuthorizationServiceAsync GWT_AUTHORIZATION_SERVICE = GWT.create(GwtAuthorizationService.class);
     private static final GwtSettingsServiceAsync GWT_SETTINGS_SERVICE = GWT.create(GwtSettingsService.class);
 
@@ -239,6 +241,8 @@ public class LoginDialog extends Dialog {
     }
 
     protected void doSsoLogin() {
+        final String accountId = Window.Location.getParameter(ACCOUNT_ID_PARAM);
+
         GWT_SETTINGS_SERVICE.getOpenIDLoginUri(new AsyncCallback<String>() {
 
             @Override
@@ -248,6 +252,9 @@ public class LoginDialog extends Dialog {
 
             @Override
             public void onSuccess(String result) {
+                if (accountId != null && !accountId.isEmpty()) {
+                    result = result + (result.contains("?") ? "&" : "?") + ACCOUNT_ID_PARAM + "=" + accountId;
+                }
                 Window.Location.assign(result);
             }
 
