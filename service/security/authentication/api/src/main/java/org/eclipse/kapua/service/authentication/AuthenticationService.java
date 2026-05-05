@@ -73,6 +73,17 @@ public interface AuthenticationService extends KapuaService {
     void verifyCredentials(LoginCredentials loginCredentials) throws KapuaException;
 
     /**
+     * Verifies the given {@link SessionCredentials}.
+     * <p>
+     * This does not establish a KapuaSession
+     *
+     * @param sessionCredentials The {@link SessionCredentials} to validate.
+     * @throws KapuaException
+     * @since 2.1.0
+     */
+    void verifyCredentials(SessionCredentials sessionCredentials) throws KapuaException;
+
+    /**
      * Checks if there is a session that is authenticated.
      *
      * @return {@code true} if session is authenticated, {@code false} otherwise.

@@ -331,6 +331,33 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
     }
 
     @Override
+    public void verifyCredentials(SessionCredentials sessionCredentials) throws KapuaException {
+        AuthenticationToken shiroAuthenticationToken = doMapToShiro(sessionCredentials);
+
+        // Login the user
+        Subject verifySubject = null;
+        try {
+            // Create custom subject to verify
+            verifySubject =
+                    new Subject
+                            .Builder()
+                            .session(new SimpleSession())
+                            .sessionCreationEnabled(false)
+                            .authenticated(false)
+                            .buildSubject();
+
+            // Login its token
+            verifySubject.login(shiroAuthenticationToken);
+
+            // Logout after verification has occurred
+            verifySubject.logout();
+
+        } catch (ShiroException se) {
+            handleTokenLoginException(se, verifySubject, shiroAuthenticationToken);
+        }
+    }
+
+    @Override
     public void logout()
             throws KapuaException {
         Subject currentUser = SecurityUtils.getSubject();
@@ -375,9 +402,13 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
 
     public AccessToken findAccessToken(String jwt) throws KapuaException {
         try {
-            final JwtContext jwtContext = jwtConsumer.process(jwt);
-            final String tokenIdentifier = Optional.ofNullable(jwtContext.getJwtClaims().getClaimValue(AccessTokenAttributes.TOKEN_IDENTIFIER, String.class))
-                    .orElseThrow(() -> new AuthenticationException());
+            JwtContext jwtContext = jwtConsumer.process(jwt);
+            String tokenIdentifier =
+                Optional.ofNullable(
+                        jwtContext.getJwtClaims()
+                                  .getClaimValue(AccessTokenAttributes.TOKEN_IDENTIFIER, String.class)
+                        ).orElseThrow(AuthenticationException::new);
+
             return KapuaSecurityUtils.doPrivileged(() -> accessTokenService.findByTokenId(tokenIdentifier));
         } catch (InvalidJwtException | MalformedClaimException e) {
             throw new AuthenticationException();
@@ -533,13 +564,13 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
      */
     private KapuaAuthenticationToken doMapToShiro(AuthenticationCredentials authenticationCredentials) throws KapuaAuthenticationException {
         // Parse login credentials
-        CredentialsConverter credentialsConverter = credentialsConverters
+        CredentialsConverter selectedCredentialsConverter = credentialsConverters
                 .stream()
-                .filter(ch -> ch.canProcess(authenticationCredentials))
+                .filter(credentialsConverter -> credentialsConverter.canProcess(authenticationCredentials))
                 .findFirst()
                 .orElseThrow(() -> new KapuaAuthenticationException(KapuaAuthenticationErrorCodes.INVALID_CREDENTIALS_TYPE_PROVIDED));
 
-        return credentialsConverter.convertToShiro(authenticationCredentials);
+        return selectedCredentialsConverter.convertToShiro(authenticationCredentials);
     }
 
     private void handleTokenLoginException(ShiroException se, Subject currentSubject, AuthenticationToken authenticationToken) throws KapuaException {
