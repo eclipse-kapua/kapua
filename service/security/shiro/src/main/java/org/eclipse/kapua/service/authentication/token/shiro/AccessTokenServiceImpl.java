@@ -175,18 +175,19 @@ public class AccessTokenServiceImpl implements AccessTokenService {
     }
 
     @Override
-    public AccessToken findByTokenId(String tokenId) throws KapuaException {
+    public AccessToken findByTokenIdentifier(String tokenIdentifier) throws KapuaException {
         // Argument Validation
-        ArgumentValidator.notNull(tokenId, "tokenId");
+        ArgumentValidator.notNull(tokenIdentifier, "tokenIdentifier");
+
         // Do find
-        Optional<AccessToken> accessToken = txManager.execute(tx -> accessTokenRepository.findByTokenId(tx, tokenId));
+        Optional<AccessToken> accessToken = txManager.execute(tx -> accessTokenRepository.findByTokenId(tx, tokenIdentifier));
+
         // Check Access
         if (accessToken.isPresent()) {
             authorizationService.checkPermission(permissionFactory.newPermission(Domains.ACCESS_TOKEN, Actions.read, accessToken.get().getScopeId()));
         }
 
-        return accessToken
-                .orElse(null);
+        return accessToken.orElse(null);
     }
 
     @Override

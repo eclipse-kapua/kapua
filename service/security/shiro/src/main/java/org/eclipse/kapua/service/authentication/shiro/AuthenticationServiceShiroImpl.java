@@ -409,7 +409,7 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
                                   .getClaimValue(AccessTokenAttributes.TOKEN_IDENTIFIER, String.class)
                         ).orElseThrow(AuthenticationException::new);
 
-            return KapuaSecurityUtils.doPrivileged(() -> accessTokenService.findByTokenId(tokenIdentifier));
+            return KapuaSecurityUtils.doPrivileged(() -> accessTokenService.findByTokenIdentifier(tokenIdentifier));
         } catch (InvalidJwtException | MalformedClaimException e) {
             throw new AuthenticationException();
         }
