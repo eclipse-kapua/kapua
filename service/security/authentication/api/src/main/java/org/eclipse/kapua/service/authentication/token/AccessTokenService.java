@@ -21,7 +21,7 @@ import org.eclipse.kapua.service.authentication.AuthenticationService;
 /**
  * {@link AccessToken} {@link KapuaEntityService} definition.
  *
- * @since 1.0
+ * @since 1.0.0
  */
 public interface AccessTokenService extends KapuaEntityService<AccessToken, AccessTokenCreator>, KapuaUpdatableEntityService<AccessToken> {
 
@@ -45,6 +45,28 @@ public interface AccessTokenService extends KapuaEntityService<AccessToken, Acce
      * @since 1.0.0
      */
     AccessToken findByTokenIdentifier(String tokenIdentifier) throws KapuaException;
+
+    /**
+     * Finds the {@link AccessToken} by the given {@link AccessToken#getTokenIdentifier()}
+     *
+     * @param tokenIdentifier The {@link AccessToken#getTokenIdentifier()}
+     * @return The found {@link AccessToken} or {@code null}
+     * @throws KapuaException
+     * @since 1.0.0
+     * @deprecated Since 2.1.0. Please make use of {@link #findByTokenIdentifier(String)}. The name of this method misleads which fields the find is performed on. This method looks at {@link AccessToken#getTokenIdentifier()}, not {@link AccessToken#getTokenId()}. To search by {@link AccessToken#getTokenId()} use {@link #findByJwt(String)}
+     */
+    @Deprecated
+    AccessToken findByTokenId(String tokenIdentifier) throws KapuaException;
+
+    /**
+     * Finds the {@link AccessToken} by the given {@link AccessToken#getTokenId()} aka JWT
+     *
+     * @param jwt The {@link AccessToken#getTokenId()}
+     * @return The found {@link AccessToken} or {@code null}
+     * @throws KapuaException
+     * @since 2.1.0
+     */
+    AccessToken findByJwt(String jwt) throws KapuaException;
 
     /**
      * Invalidates the {@link AccessToken} by {@link AccessToken#getId()}
