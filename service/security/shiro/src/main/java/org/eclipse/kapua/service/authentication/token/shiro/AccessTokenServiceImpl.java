@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -12,9 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.token.shiro;
 
+import org.apache.shiro.authc.AuthenticationException;
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.commons.model.domains.Domains;
+import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.event.ServiceEvent;
 import org.eclipse.kapua.model.KapuaEntityAttributes;
@@ -32,6 +35,11 @@ import org.eclipse.kapua.service.authentication.token.AccessTokenService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.storage.TxManager;
+import org.jose4j.jwt.MalformedClaimException;
+import org.jose4j.jwt.consumer.InvalidJwtException;
+import org.jose4j.jwt.consumer.JwtConsumer;
+import org.jose4j.jwt.consumer.JwtConsumerBuilder;
+import org.jose4j.jwt.consumer.JwtContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,17 +62,26 @@ public class AccessTokenServiceImpl implements AccessTokenService {
     private final AccessTokenRepository accessTokenRepository;
     private final AccessTokenFactory accessTokenFactory;
 
+    private final JwtConsumer jwtConsumer;
+
     public AccessTokenServiceImpl(
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
             TxManager txManager,
             AccessTokenRepository accessTokenRepository,
-            AccessTokenFactory accessTokenFactory) {
+            AccessTokenFactory accessTokenFactory
+    ) {
         this.authorizationService = authorizationService;
         this.permissionFactory = permissionFactory;
         this.txManager = txManager;
         this.accessTokenRepository = accessTokenRepository;
         this.accessTokenFactory = accessTokenFactory;
+
+        this.jwtConsumer = new JwtConsumerBuilder()
+                .setSkipAllValidators()
+                .setDisableRequireSignature()
+                .setSkipSignatureVerification()
+                .build();
     }
 
     @Override
@@ -188,6 +205,36 @@ public class AccessTokenServiceImpl implements AccessTokenService {
         }
 
         return accessToken.orElse(null);
+    }
+
+    @Override
+    public AccessToken findByTokenId(String tokenIdentifier) throws KapuaException {
+        return findByTokenIdentifier(tokenIdentifier);
+    }
+
+    @Override
+    public AccessToken findByJwt(String jwt) throws KapuaException {
+        // Argument Validation
+        ArgumentValidator.notNull(jwt, "jwt");
+
+        // Parse JWT
+        String tokenIdentifier;
+        try {
+            JwtContext jwtContext = jwtConsumer.process(jwt);
+
+            tokenIdentifier = jwtContext
+                .getJwtClaims()
+                .getClaimValue(AccessTokenAttributes.TOKEN_IDENTIFIER, String.class);
+
+            if (tokenIdentifier == null) {
+                throw new KapuaIllegalArgumentException("jwt", jwt);
+            }
+        } catch (InvalidJwtException | MalformedClaimException e) {
+            throw new AuthenticationException();
+        }
+
+        // Do find
+        return KapuaSecurityUtils.doPrivileged(() -> findByTokenIdentifier(tokenIdentifier));
     }
 
     @Override
