@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -19,40 +19,42 @@ import org.eclipse.kapua.service.KapuaUpdatableEntityService;
 import org.eclipse.kapua.service.authentication.AuthenticationService;
 
 /**
- * Access token service API
+ * {@link AccessToken} {@link KapuaEntityService} definition.
  *
  * @since 1.0
  */
 public interface AccessTokenService extends KapuaEntityService<AccessToken, AccessTokenCreator>, KapuaUpdatableEntityService<AccessToken> {
 
     /**
-     * Find all access token associated with the given userId.
+     * Finds all {@link AccessToken}s associated with the given userId
      *
-     * @param scopeId
-     * @param userId
-     * @return
+     * @param scopeId The User.scopeId
+     * @param userId The User.id
+     * @return The {@link AccessTokenListResult} with matching results
      * @throws KapuaException
-     * @since 1.0
+     * @since 1.0.0
      */
     AccessTokenListResult findByUserId(KapuaId scopeId, KapuaId userId) throws KapuaException;
 
     /**
-     * Find the access token by the given tokenId.
+     * Finds the {@link AccessToken} by the given {@link AccessToken#getTokenIdentifier()}
      *
-     * @param tokenId
-     * @return
+     * @param tokenIdentifier The {@link AccessToken#getTokenIdentifier()}
+     * @return The found {@link AccessToken} or {@code null}
      * @throws KapuaException
-     * @since 1.0
+     * @since 1.0.0
      */
-    AccessToken findByTokenId(String tokenId) throws KapuaException;
+    AccessToken findByTokenIdentifier(String tokenIdentifier) throws KapuaException;
 
     /**
-     * Invalidated the {@link AccessToken} by its id. After calling this method the token will be no longer valid and a new
+     * Invalidates the {@link AccessToken} by {@link AccessToken#getId()}
+     * <p>
+     * After calling this method the {@link AccessToken} will be no longer valid and a new
      * {@link AuthenticationService#login(org.eclipse.kapua.service.authentication.LoginCredentials)} invocation is required in order to get a new valid {@link AccessToken}.
      *
-     * @param scopeId The {@link KapuaId} scopeId of the {@link AccessToken} to delete.
-     * @param id      The {@link KapuaId} of the {@link AccessToken} to delete.
-     * @since 1.0
+     * @param scopeId The {@link AccessToken#getScopeId()}
+     * @param id      The {@link AccessToken#getId()}
+     * @since 1.0.0
      */
     void invalidate(KapuaId scopeId, KapuaId id) throws KapuaException;
 }

@@ -140,7 +140,7 @@ public class AccessTokenAuthenticatingRealm extends KapuaAuthenticatingRealm {
             final String tokenIdentifier = Optional.ofNullable(jwtClaims.getClaimValue(AccessTokenAttributes.TOKEN_IDENTIFIER))
                     .map(s -> (String) s)
                     .orElseThrow(() -> new ShiroException("Missing tokenIdentifier in jwt token"));
-            accessToken = KapuaSecurityUtils.doPrivileged(() -> accessTokenService.findByTokenId(tokenIdentifier));
+            accessToken = KapuaSecurityUtils.doPrivileged(() -> accessTokenService.findByTokenIdentifier(tokenIdentifier));
         } catch (KapuaException ke) {
             throw new AuthenticationException();
         }
