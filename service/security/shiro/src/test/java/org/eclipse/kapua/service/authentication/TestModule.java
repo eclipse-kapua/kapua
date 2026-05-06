@@ -16,7 +16,6 @@ import java.util.Collections;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.activemq.artemis.spi.core.security.jaas.UserPrincipal;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.util.xml.JAXBContextProvider;
 import org.eclipse.kapua.commons.util.xml.JAXBContextProviderImpl;
@@ -27,7 +26,6 @@ public class TestModule extends AbstractKapuaModule {
     @Override
     protected void configureModule() {
         bind(JAXBContextProvider.class).toInstance(new JAXBContextProviderImpl(Collections.emptySet()));
-        bind(UserPrincipal.class).toInstance(new UserPrincipal(""));
     }
 
     @Provides

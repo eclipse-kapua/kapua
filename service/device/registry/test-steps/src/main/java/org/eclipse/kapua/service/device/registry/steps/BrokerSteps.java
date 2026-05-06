@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.broker.artemis.plugin.security.setting.BrokerSetting;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.qa.common.StepData;
@@ -145,7 +144,6 @@ public class BrokerSteps extends TestBase {
      */
     private static DeviceConnectionService deviceConnectionService;
     private static DeviceAssetManagementService deviceAssetManagementService;
-    private BrokerSetting brokerSettings = new BrokerSetting();
     /**
      * Client simulating Kura device
      */
@@ -178,7 +176,6 @@ public class BrokerSteps extends TestBase {
     private void beforeInternal(Scenario scenario) {
         updateScenario(scenario);
         stepData.put(KURA_DEVICES, kuraDevices);
-        brokerSettings.resetInstance();
     }
 
     @After(value = "not (@setup or @teardown)", order = 10)

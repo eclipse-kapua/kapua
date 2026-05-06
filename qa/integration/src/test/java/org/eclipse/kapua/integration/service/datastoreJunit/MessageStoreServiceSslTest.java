@@ -49,8 +49,6 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.time.Instant;
@@ -65,7 +63,6 @@ import java.util.Objects;
 @Category(JUnitTests.class)
 public class MessageStoreServiceSslTest extends AbstractMessageStoreServiceTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(MessageStoreServiceSslTest.class);
 
     private final KapuaLocator locator = KapuaLocator.getInstance();
 

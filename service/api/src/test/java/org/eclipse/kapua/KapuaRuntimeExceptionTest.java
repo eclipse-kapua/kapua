@@ -165,7 +165,7 @@ public class KapuaRuntimeExceptionTest {
             KapuaRuntimeException.internalError(nullThrowable);
             Assert.fail("NullPointerException expected.");
         } catch (Exception e) {
-            Assert.assertEquals("NullPointerException expected.", new NullPointerException().toString(), e.toString());
+            Assert.assertTrue("NullPointerException expected.", e instanceof NullPointerException);
         }
     }
 

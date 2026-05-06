@@ -286,7 +286,7 @@ public class RestClientSteps {
     @Then("I expect no {string} header in the response")
     public void restResponseHeaderNotContaining(String headerName) {
         java.net.http.HttpHeaders headers = (java.net.http.HttpHeaders) stepData.get(REST_RESPONSE_HEADERS);
-        Assert.assertTrue(headers.firstValue(headerName).isEmpty());
+        Assert.assertFalse(headers.firstValue(headerName).isPresent());
     }
 
     @Then("REST response containing Account")

@@ -19,7 +19,6 @@ import io.cucumber.java.Scenario;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.broker.artemis.plugin.security.setting.BrokerSetting;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.qa.common.StepData;
 import org.eclipse.kapua.qa.common.TestBase;
@@ -58,7 +57,6 @@ public class DeviceManagementInventorySteps extends TestBase {
     private DeviceRegistryService deviceRegistryService;
 
     private DeviceInventoryManagementService deviceInventoryManagementService;
-    private BrokerSetting brokerSettings = KapuaLocator.getInstance().getComponent(BrokerSetting.class);
 
     @Inject
     public DeviceManagementInventorySteps(StepData stepData) {
@@ -72,8 +70,6 @@ public class DeviceManagementInventorySteps extends TestBase {
 
     @After(value = "@setup")
     public void setServices() {
-        brokerSettings.resetInstance();
-
         KapuaLocator locator = KapuaLocator.getInstance();
         deviceRegistryService = locator.getService(DeviceRegistryService.class);
         deviceInventoryManagementService = locator.getService(DeviceInventoryManagementService.class);
