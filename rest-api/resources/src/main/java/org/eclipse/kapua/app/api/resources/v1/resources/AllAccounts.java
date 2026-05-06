@@ -12,18 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.resources.v1.resources;
 
-import com.google.common.base.Strings;
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
-import org.eclipse.kapua.model.KapuaNamedEntityAttributes;
+import org.eclipse.kapua.app.api.core.resources.AccountAbstractKapuaResource;
 import org.eclipse.kapua.model.query.SortOrder;
-import org.eclipse.kapua.model.query.predicate.AndPredicate;
-import org.eclipse.kapua.model.query.predicate.MatchPredicate;
 import org.eclipse.kapua.service.KapuaService;
-import org.eclipse.kapua.service.account.AccountAttributes;
 import org.eclipse.kapua.service.account.AccountFactory;
 import org.eclipse.kapua.service.account.AccountListResult;
-import org.eclipse.kapua.service.account.AccountQuery;
 import org.eclipse.kapua.service.account.AccountService;
 
 import javax.inject.Inject;
@@ -33,11 +27,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import java.util.Arrays;
-import java.util.List;
 
 @Path("accounts")
-public class AllAccounts extends AbstractKapuaResource {
+public class AllAccounts extends AccountAbstractKapuaResource {
 
     @Inject
     public AccountService accountService;
@@ -45,7 +37,7 @@ public class AllAccounts extends AbstractKapuaResource {
     public AccountFactory accountFactory;
 
     /**
-     * Gets the {@link org.eclipse.kapua.service.account.Account} list in the scope.
+     * Gets the {@link org.eclipse.kapua.service.account.Account} list, searching in every scope of EC.
      *
      * @param name
      *         The {@link org.eclipse.kapua.service.account.Account} name in which to search results.
@@ -64,7 +56,7 @@ public class AllAccounts extends AbstractKapuaResource {
      */
     @GET
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    public AccountListResult simpleQuery( //TODO: lot of common code with other accounts query method, refactor
+    public AccountListResult simpleQuery(
             @QueryParam("name") String name, //
             @QueryParam("matchTerm") String matchTerm,
             @QueryParam("sortParam") String sortParam,
@@ -73,35 +65,6 @@ public class AllAccounts extends AbstractKapuaResource {
             @QueryParam("offset") @DefaultValue("0") int offset, //
             @QueryParam("limit") @DefaultValue("50") int limit) throws KapuaException {
 
-        AccountQuery allAccountsQuery = accountFactory.newQuery(null);
-        allAccountsQuery.setAskTotalCount(askTotalCount);
-
-        AndPredicate andPredicate = allAccountsQuery.andPredicate();
-        if (!Strings.isNullOrEmpty(name)) {
-            andPredicate.and(allAccountsQuery.attributePredicate(KapuaNamedEntityAttributes.NAME, name));
-        }
-        if (!Strings.isNullOrEmpty(sortParam)) {
-            allAccountsQuery.setSortCriteria(allAccountsQuery.fieldSortCriteria(sortParam, sortDir));
-        }
-        if (matchTerm != null && !matchTerm.isEmpty()) {
-            andPredicate.and(new MatchPredicate<String>() {
-
-                @Override
-                public List<String> getAttributeNames() {
-                    return Arrays.asList(AccountAttributes.NAME, AccountAttributes.ORGANIZATION_NAME, AccountAttributes.CONTACT_NAME, AccountAttributes.ORGANIZATION_EMAIL);
-                }
-
-                @Override
-                public String getMatchTerm() {
-                    return matchTerm;
-                }
-            });
-        }
-        allAccountsQuery.setPredicate(andPredicate);
-
-        allAccountsQuery.setOffset(offset);
-        allAccountsQuery.setLimit(limit);
-
-        return accountService.query(allAccountsQuery);
+        return queryAccounts(null, name, matchTerm, sortParam, sortDir, askTotalCount, offset, limit, accountFactory, accountService);
     }
 }
