@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,7 @@ package org.eclipse.kapua.service.authentication;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.authentication.token.AccessToken;
+import org.eclipse.kapua.service.authentication.token.AccessTokenService;
 import org.eclipse.kapua.service.authentication.token.LoginInfo;
 
 /**
@@ -23,7 +24,6 @@ import org.eclipse.kapua.service.authentication.token.LoginInfo;
  * @since 1.0.0
  */
 public interface AuthenticationService extends KapuaService {
-    // Session
 
     /**
      * Logins the provided {@link LoginCredentials}.
@@ -110,7 +110,6 @@ public interface AuthenticationService extends KapuaService {
      * @since 1.0.0
      */
     void logout() throws KapuaException;
-    // Access token
 
     /**
      * Gets the {@link AccessToken} identified by its {@link AccessToken#getTokenId()}.
@@ -120,7 +119,9 @@ public interface AuthenticationService extends KapuaService {
      * @return The found {@link AccessToken} or {@code null} if not present.
      * @throws KapuaException if the provided tokenId (JWT) is not valid in its header or payload content
      * @since 1.0.0
+     * @deprecated Since 2.1.0. It has been moved to {@link AccessTokenService#findByJwt(String)}
      */
+    @Deprecated
     AccessToken findAccessToken(String tokenId) throws KapuaException;
 
     /**

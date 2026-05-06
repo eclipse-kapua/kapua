@@ -34,17 +34,7 @@ import java.util.Date;
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(propOrder = { //
-        "tokenId", //
-        "userId", //
-        "expiresOn", //
-        "refreshToken", //
-        "refreshExpiresOn", //
-        "invalidatedOn", //
-        "trustKey"  //
-}, //
-        factoryClass = AccessTokenXmlRegistry.class, //
-        factoryMethod = "newAccessToken")
+@XmlType(factoryClass = AccessTokenXmlRegistry.class, factoryMethod = "newAccessToken")
 public interface AccessToken extends KapuaUpdatableEntity, Serializable {
 
     String TYPE = "accessToken";

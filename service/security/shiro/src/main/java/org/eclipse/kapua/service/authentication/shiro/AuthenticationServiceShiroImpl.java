@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -13,7 +13,6 @@
 package org.eclipse.kapua.service.authentication.shiro;
 
 import java.util.Date;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -106,12 +105,7 @@ import org.eclipse.kapua.service.user.UserService;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
-import org.jose4j.jwt.MalformedClaimException;
 import org.jose4j.jwt.NumericDate;
-import org.jose4j.jwt.consumer.InvalidJwtException;
-import org.jose4j.jwt.consumer.JwtConsumer;
-import org.jose4j.jwt.consumer.JwtConsumerBuilder;
-import org.jose4j.jwt.consumer.JwtContext;
 import org.jose4j.lang.JoseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -150,8 +144,6 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
     private final Set<CredentialsConverter> credentialsConverters;
     private final KapuaAuthenticationSetting kapuaAuthenticationSetting;
 
-    private final JwtConsumer jwtConsumer;
-
     @Inject
     public AuthenticationServiceShiroImpl(
             CredentialService credentialService,
@@ -171,7 +163,8 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
             GroupPermissionService groupPermissionService,
             UserService userService,
             Set<CredentialsConverter> credentialsConverters,
-            KapuaAuthenticationSetting kapuaAuthenticationSetting) {
+            KapuaAuthenticationSetting kapuaAuthenticationSetting
+    ) {
         this.credentialService = credentialService;
         this.mfaOptionService = mfaOptionService;
         this.accessTokenService = accessTokenService;
@@ -190,12 +183,6 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
         this.userService = userService;
         this.credentialsConverters = credentialsConverters;
         this.kapuaAuthenticationSetting = kapuaAuthenticationSetting;
-
-        this.jwtConsumer = new JwtConsumerBuilder()
-                .setSkipAllValidators()
-                .setDisableRequireSignature()
-                .setSkipSignatureVerification()
-                .build();
     }
 
     @Override
@@ -390,7 +377,7 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
                 accessToken = kapuaSession.getAccessToken();
 
                 if (accessToken == null) {
-                    accessToken = findAccessToken(jwt);
+                    accessToken = accessTokenService.findByJwt(jwt);
                 }
             }
         } finally {
@@ -400,19 +387,9 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
         return accessToken;
     }
 
+    @Override
     public AccessToken findAccessToken(String jwt) throws KapuaException {
-        try {
-            JwtContext jwtContext = jwtConsumer.process(jwt);
-            String tokenIdentifier =
-                Optional.ofNullable(
-                        jwtContext.getJwtClaims()
-                                  .getClaimValue(AccessTokenAttributes.TOKEN_IDENTIFIER, String.class)
-                        ).orElseThrow(AuthenticationException::new);
-
-            return KapuaSecurityUtils.doPrivileged(() -> accessTokenService.findByTokenId(tokenIdentifier));
-        } catch (InvalidJwtException | MalformedClaimException e) {
-            throw new AuthenticationException();
-        }
+        return accessTokenService.findByJwt(jwt);
     }
 
     @Override
@@ -433,7 +410,7 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
         Date now = new Date();
         AccessToken expiredAccessToken;
         try {
-            expiredAccessToken = findAccessToken(tokenId);
+            expiredAccessToken = accessTokenService.findByJwt(tokenId);
         } catch (AuthenticationException e) {
             throw new KapuaAuthenticationException(KapuaAuthenticationErrorCodes.REFRESH_ERROR, "");
         }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -13,7 +13,6 @@
 package org.eclipse.kapua.service.authentication.shiro.realm;
 
 import java.util.Date;
-import java.util.Optional;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.ShiroException;
@@ -121,11 +120,11 @@ public class AccessTokenAuthenticatingRealm extends KapuaAuthenticatingRealm {
             jwtClaims = jwtContext.getJwtClaims();
             // FIXME: JWT cert. could be cached to speed-up validation process
         } catch (KapuaException | MalformedClaimException ke) {
-            //As we are swallowing the original exception, let's at least log it
+            // As we are swallowing the original exception, lets at least log it
             logger.error("Error processing Auth Token(KapuaException)", ke);
             throw new AuthenticationException();
         } catch (InvalidJwtException e) {
-            //As we are swallowing the original exception, let's at least log it
+            // As we are swallowing the original exception, lets at least log it
             logger.error("Error processing Auth Token (InvalidJwtException)", e);
             if (e.hasErrorCode(ErrorCodes.EXPIRED)) {
                 throw new ExpiredAccessTokenException();
@@ -137,10 +136,13 @@ public class AccessTokenAuthenticatingRealm extends KapuaAuthenticatingRealm {
         // Find accessToken
         final AccessToken accessToken;
         try {
-            final String tokenIdentifier = Optional.ofNullable(jwtClaims.getClaimValue(AccessTokenAttributes.TOKEN_IDENTIFIER))
-                    .map(s -> (String) s)
-                    .orElseThrow(() -> new ShiroException("Missing tokenIdentifier in jwt token"));
-            accessToken = KapuaSecurityUtils.doPrivileged(() -> accessTokenService.findByTokenId(tokenIdentifier));
+            String tokenIdentifier = (String) jwtClaims.getClaimValue(AccessTokenAttributes.TOKEN_IDENTIFIER);
+
+            if (tokenIdentifier == null) {
+                throw new ShiroException("Missing tokenIdentifier in JWT token");
+            }
+
+            accessToken = KapuaSecurityUtils.doPrivileged(() -> accessTokenService.findByTokenIdentifier(tokenIdentifier));
         } catch (KapuaException ke) {
             throw new AuthenticationException();
         }
