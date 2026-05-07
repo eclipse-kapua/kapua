@@ -132,7 +132,9 @@ public interface AuthenticationService extends KapuaService {
      * @return A new {@link AccessToken}.
      * @throws KapuaException
      * @since 1.0.0
+     * @deprecated Since 2.1.0. Moved to {@link AccessTokenService#refreshAccessToken(String, String)}
      */
+    @Deprecated
     AccessToken refreshAccessToken(String tokenId, String refreshToken) throws KapuaException;
 
     /**

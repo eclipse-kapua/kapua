@@ -90,6 +90,8 @@ import org.eclipse.kapua.service.authentication.token.shiro.AccessTokenImplJpaRe
 import org.eclipse.kapua.service.authentication.token.shiro.AccessTokenServiceImpl;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.certificate.CertificateFactory;
+import org.eclipse.kapua.service.certificate.CertificateService;
 import org.eclipse.kapua.service.user.UserService;
 
 import com.google.inject.Provides;
@@ -207,13 +209,21 @@ public class AuthenticationModule extends AbstractKapuaModule {
             PermissionFactory permissionFactory,
             AccessTokenRepository accessTokenRepository,
             AccessTokenFactory accessTokenFactory,
-            KapuaJpaTxManagerFactory jpaTxManagerFactory) {
+            CertificateService certificateService,
+            CertificateFactory certificateFactory,
+            KapuaJpaTxManagerFactory jpaTxManagerFactory,
+            KapuaAuthenticationSetting kapuaAuthenticationSetting
+    ) {
         return new AccessTokenServiceImpl(
                 authorizationService,
                 permissionFactory,
-                jpaTxManagerFactory.create("kapua-authentication"),
                 accessTokenRepository,
-                accessTokenFactory);
+                accessTokenFactory,
+                certificateService,
+                certificateFactory,
+                jpaTxManagerFactory.create("kapua-authentication"),
+                kapuaAuthenticationSetting
+        );
     }
 
     @Provides

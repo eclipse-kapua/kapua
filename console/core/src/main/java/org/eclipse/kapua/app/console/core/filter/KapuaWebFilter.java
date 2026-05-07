@@ -23,6 +23,7 @@ import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.service.authentication.AuthenticationService;
 import org.eclipse.kapua.service.authentication.CredentialsFactory;
 import org.eclipse.kapua.service.authentication.token.AccessToken;
+import org.eclipse.kapua.service.authentication.token.AccessTokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +46,8 @@ public class KapuaWebFilter extends ShiroFilter {
     private static final Logger LOG = LoggerFactory.getLogger(KapuaWebFilter.class);
 
     private final AuthenticationService authenticationService = KapuaLocator.getInstance().getService(AuthenticationService.class);
+
+    private final AccessTokenService accessTokenService = KapuaLocator.getInstance().getService(AccessTokenService.class);
     private final CredentialsFactory credentialsFactory = KapuaLocator.getInstance().getFactory(CredentialsFactory.class);
 
     @Override
@@ -103,7 +106,7 @@ public class KapuaWebFilter extends ShiroFilter {
             SecurityUtils.getSubject().logout();
 
             // Get a new AccessToken from the current AccessToken.refreshToken
-            AccessToken refreshAccessToken = authenticationService.refreshAccessToken(accessToken.getTokenId(), accessToken.getRefreshToken());
+            AccessToken refreshAccessToken = accessTokenService.refreshAccessToken(accessToken.getTokenId(), accessToken.getRefreshToken());
 
             // Authenticate with the refreshed AccessToken
             authenticationService.authenticate(credentialsFactory.newAccessTokenCredentials(refreshAccessToken.getTokenId()));
