@@ -21,6 +21,7 @@ import org.eclipse.kapua.service.authentication.JwtCredentials;
 import org.eclipse.kapua.service.authentication.RefreshTokenCredentials;
 import org.eclipse.kapua.service.authentication.UsernamePasswordCredentials;
 import org.eclipse.kapua.service.authentication.token.AccessToken;
+import org.eclipse.kapua.service.authentication.token.AccessTokenService;
 import org.eclipse.kapua.service.authentication.token.LoginInfo;
 
 import javax.inject.Inject;
@@ -38,6 +39,9 @@ public class Authentication extends AbstractKapuaResource {
 
     @Inject
     private AuthenticationService authenticationService;
+
+    @Inject
+    private AccessTokenService accessTokenService;
 
     /**
      * Authenticates a {@link UsernamePasswordCredentials}.
@@ -145,7 +149,7 @@ public class Authentication extends AbstractKapuaResource {
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     @Path("refresh")
     public AccessToken refresh(RefreshTokenCredentials refreshTokenCredentials) throws KapuaException {
-        return authenticationService.refreshAccessToken(refreshTokenCredentials.getTokenId(), refreshTokenCredentials.getRefreshToken());
+        return accessTokenService.refreshAccessToken(refreshTokenCredentials.getTokenId(), refreshTokenCredentials.getRefreshToken());
     }
 
     /**
