@@ -19,7 +19,7 @@ public class InvalidatedAccessTokenException extends ExpiredCredentialsException
     private static final long serialVersionUID = 3922802106975119679L;
 
     public InvalidatedAccessTokenException() {
-        super("The provided access token has been invalidated in the past");
+        super("The provided AccessToken has been invalidated in the past");
     }
 
 }

@@ -66,12 +66,17 @@ public class CertificateServiceImpl implements CertificateService {
     private KapuaTocd emptyTocd;
 
     @Inject
-    public CertificateServiceImpl(AuthorizationService authorizationService, PermissionFactory permissionFactory, CertificateFactory certificateFactory,
-            KapuaCertificateSetting kapuaCertificateSetting) throws KapuaException {
+    public CertificateServiceImpl(
+        AuthorizationService authorizationService,
+        PermissionFactory permissionFactory,
+        CertificateFactory certificateFactory,
+        KapuaCertificateSetting kapuaCertificateSetting
+    ) throws KapuaException {
         this.authorizationService = authorizationService;
         this.permissionFactory = permissionFactory;
         this.certificateFactory = certificateFactory;
         this.kapuaCertificateSetting = kapuaCertificateSetting;
+
         KapuaSecurityUtils.doPrivileged(() -> {
             String privateKeyPath = kapuaCertificateSetting.getString(KapuaCertificateSettingKeys.CERTIFICATE_JWT_PRIVATE_KEY);
             String certificatePath = kapuaCertificateSetting.getString(KapuaCertificateSettingKeys.CERTIFICATE_JWT_CERTIFICATE);
@@ -86,7 +91,6 @@ public class CertificateServiceImpl implements CertificateService {
         });
 
         emptyTocd = new EmptyTocd(CertificateService.class.getName(), CertificateService.class.getSimpleName());
-
     }
 
     @Override

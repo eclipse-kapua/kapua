@@ -69,6 +69,27 @@ public interface AccessTokenService extends KapuaEntityService<AccessToken, Acce
     AccessToken findByJwt(String jwt) throws KapuaException;
 
     /**
+     * Generates a new {@link AccessToken} for the given User.
+     *
+     * @param scopeId The User.scopeId
+     * @param userId The User.id
+     * @return A new AccessToken for the given User.
+     * @since 2.1.0
+     */
+    AccessToken generateAccessToken(KapuaId scopeId, KapuaId userId) throws KapuaException;
+
+    /**
+     * Refreshes the current {@link AccessToken} with a new one.
+     *
+     * @param tokenId      The current {@link AccessToken#getTokenId()}
+     * @param refreshToken The current {@link AccessToken#getRefreshToken()}
+     * @return A new {@link AccessToken}.
+     * @throws KapuaException
+     * @since 2.1.0
+     */
+    AccessToken refreshAccessToken(String tokenId, String refreshToken) throws KapuaException;
+
+    /**
      * Invalidates the {@link AccessToken} by {@link AccessToken#getId()}
      * <p>
      * After calling this method the {@link AccessToken} will be no longer valid and a new
