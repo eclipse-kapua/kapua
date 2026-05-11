@@ -14,7 +14,6 @@ package org.eclipse.kapua.service.authentication.shiro;
 
 import java.util.Date;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -22,7 +21,6 @@ import javax.inject.Singleton;
 import com.google.common.collect.Sets;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.ShiroException;
-import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.DisabledAccountException;
 import org.apache.shiro.authc.ExpiredCredentialsException;
@@ -34,10 +32,8 @@ import org.apache.shiro.session.mgt.SimpleSession;
 import org.apache.shiro.subject.Subject;
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
-import org.eclipse.kapua.KapuaRuntimeException;
 import org.eclipse.kapua.KapuaUnauthenticatedException;
 import org.eclipse.kapua.commons.logging.LoggingMdcKeys;
-import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.commons.security.KapuaSession;
 import org.eclipse.kapua.commons.util.KapuaDelayUtil;
@@ -59,11 +55,8 @@ import org.eclipse.kapua.service.authentication.shiro.exceptions.MfaRequiredExce
 import org.eclipse.kapua.service.authentication.shiro.realm.CredentialsConverter;
 import org.eclipse.kapua.service.authentication.shiro.realm.KapuaAuthenticationToken;
 import org.eclipse.kapua.service.authentication.shiro.session.ShiroSessionKeys;
-import org.eclipse.kapua.service.authentication.shiro.setting.KapuaAuthenticationSetting;
-import org.eclipse.kapua.service.authentication.shiro.setting.KapuaAuthenticationSettingKeys;
 import org.eclipse.kapua.service.authentication.token.AccessToken;
 import org.eclipse.kapua.service.authentication.token.AccessTokenAttributes;
-import org.eclipse.kapua.service.authentication.token.AccessTokenCreator;
 import org.eclipse.kapua.service.authentication.token.AccessTokenFactory;
 import org.eclipse.kapua.service.authentication.token.AccessTokenQuery;
 import org.eclipse.kapua.service.authentication.token.AccessTokenService;
@@ -93,20 +86,8 @@ import org.eclipse.kapua.service.authorization.role.RolePermissionFactory;
 import org.eclipse.kapua.service.authorization.role.RolePermissionListResult;
 import org.eclipse.kapua.service.authorization.role.RolePermissionQuery;
 import org.eclipse.kapua.service.authorization.role.RolePermissionService;
-import org.eclipse.kapua.service.certificate.Certificate;
-import org.eclipse.kapua.service.certificate.CertificateAttributes;
-import org.eclipse.kapua.service.certificate.CertificateFactory;
-import org.eclipse.kapua.service.certificate.CertificateQuery;
-import org.eclipse.kapua.service.certificate.CertificateService;
-import org.eclipse.kapua.service.certificate.CertificateStatus;
-import org.eclipse.kapua.service.certificate.util.CertificateUtils;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserService;
-import org.jose4j.jws.AlgorithmIdentifiers;
-import org.jose4j.jws.JsonWebSignature;
-import org.jose4j.jwt.JwtClaims;
-import org.jose4j.jwt.NumericDate;
-import org.jose4j.lang.JoseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -126,9 +107,6 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
 
     private final AccessTokenService accessTokenService;
     private final AccessTokenFactory accessTokenFactory;
-    private final CertificateService certificateService;
-    private final CertificateFactory certificateFactory;
-
     private final AccessInfoService accessInfoService;
     private final AccessRoleService accessRoleService;
     private final AccessRoleFactory accessRoleFactory;
@@ -142,7 +120,6 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
     private final UserService userService;
 
     private final Set<CredentialsConverter> credentialsConverters;
-    private final KapuaAuthenticationSetting kapuaAuthenticationSetting;
 
     @Inject
     public AuthenticationServiceShiroImpl(
@@ -150,8 +127,6 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
             MfaOptionService mfaOptionService,
             AccessTokenService accessTokenService,
             AccessTokenFactory accessTokenFactory,
-            CertificateService certificateService,
-            CertificateFactory certificateFactory,
             AccessInfoService accessInfoService,
             AccessRoleService accessRoleService,
             AccessRoleFactory accessRoleFactory,
@@ -162,15 +137,12 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
             GroupRoleService groupRoleService,
             GroupPermissionService groupPermissionService,
             UserService userService,
-            Set<CredentialsConverter> credentialsConverters,
-            KapuaAuthenticationSetting kapuaAuthenticationSetting
+            Set<CredentialsConverter> credentialsConverters
     ) {
         this.credentialService = credentialService;
         this.mfaOptionService = mfaOptionService;
         this.accessTokenService = accessTokenService;
         this.accessTokenFactory = accessTokenFactory;
-        this.certificateService = certificateService;
-        this.certificateFactory = certificateFactory;
         this.accessInfoService = accessInfoService;
         this.accessRoleService = accessRoleService;
         this.accessRoleFactory = accessRoleFactory;
@@ -182,7 +154,6 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
         this.groupPermissionService = groupPermissionService;
         this.userService = userService;
         this.credentialsConverters = credentialsConverters;
-        this.kapuaAuthenticationSetting = kapuaAuthenticationSetting;
     }
 
     @Override
@@ -407,31 +378,7 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
 
     @Override
     public AccessToken refreshAccessToken(String tokenId, String refreshToken) throws KapuaException {
-        Date now = new Date();
-        AccessToken expiredAccessToken;
-        try {
-            expiredAccessToken = accessTokenService.findByJwt(tokenId);
-        } catch (AuthenticationException e) {
-            throw new KapuaAuthenticationException(KapuaAuthenticationErrorCodes.REFRESH_ERROR, "");
-        }
-        if (expiredAccessToken == null) {
-            throw new KapuaAuthenticationException(KapuaAuthenticationErrorCodes.REFRESH_ERROR, "");
-        } else if (expiredAccessToken.getInvalidatedOn() != null && now.after(expiredAccessToken.getInvalidatedOn())) {
-            throw new KapuaAuthenticationException(KapuaAuthenticationErrorCodes.REFRESH_ERROR, "The provided access token has been invalidated");
-        } else if (!expiredAccessToken.getRefreshToken().equals(refreshToken)) {
-            throw new KapuaAuthenticationException(KapuaAuthenticationErrorCodes.REFRESH_ERROR, "The provided refresh token doesn't match the one for this jwt");
-        } else if (expiredAccessToken.getRefreshExpiresOn() != null && now.after(expiredAccessToken.getRefreshExpiresOn())) {
-            throw new KapuaAuthenticationException(KapuaAuthenticationErrorCodes.REFRESH_ERROR, "The provided refresh token is expired");
-        }
-        KapuaSecurityUtils.doPrivileged(() -> {
-            try {
-                accessTokenService.invalidate(expiredAccessToken.getScopeId(), expiredAccessToken.getId());
-            } catch (KapuaEntityNotFoundException kenfe) {
-                // Exception should not be propagated it is sometimes expected behaviour
-            }
-            return null;
-        });
-        return createAccessToken((KapuaEid) expiredAccessToken.getScopeId(), (KapuaEid) expiredAccessToken.getUserId());
+        return accessTokenService.refreshAccessToken(tokenId, refreshToken);
     }
 
     @Override
@@ -592,48 +539,10 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
      */
     private AccessToken createAccessToken(Session session) throws KapuaException {
         // Extract userId and scope id from the shiro session
-        KapuaEid scopeId = (KapuaEid) session.getAttribute("scopeId");
-        KapuaEid userId = (KapuaEid) session.getAttribute("userId");
+        KapuaId scopeId = (KapuaId) session.getAttribute("scopeId");
+        KapuaId userId = (KapuaId) session.getAttribute("userId");
 
-        return createAccessToken(scopeId, userId);
-    }
-
-    /**
-     * Create and persist a {@link AccessToken} from a scopeId and a userId
-     *
-     * @param scopeId The scopeID
-     * @param userId  The userID
-     * @return The persisted {@link AccessToken}
-     * @throws KapuaException
-     * @since 1.0.0
-     */
-    private AccessToken createAccessToken(KapuaEid scopeId, KapuaEid userId) throws KapuaException {
-        // Retrieve TTL access token
-        long tokenTtl = kapuaAuthenticationSetting.getLong(KapuaAuthenticationSettingKeys.AUTHENTICATION_TOKEN_EXPIRE_AFTER);
-        long refreshTokenTtl = kapuaAuthenticationSetting.getLong(KapuaAuthenticationSettingKeys.AUTHENTICATION_REFRESH_TOKEN_EXPIRE_AFTER);
-
-        // Generate token
-        Date now = new Date();
-        String tokenId = UUID.randomUUID().toString();
-        String jwt = generateJwt(scopeId, userId, now, tokenTtl, tokenId);
-
-        // Persist token
-        AccessTokenCreator accessTokenCreator = accessTokenFactory.newCreator(scopeId,
-                userId,
-                jwt,
-                new Date(now.getTime() + tokenTtl),
-                UUID.randomUUID().toString(),
-                new Date(now.getTime() + refreshTokenTtl),
-                tokenId);
-
-        AccessToken accessToken;
-        try {
-            accessToken = KapuaSecurityUtils.doPrivileged(() -> accessTokenService.create(accessTokenCreator));
-        } catch (Exception e) {
-            throw KapuaException.internalError(e);
-        }
-
-        return accessToken;
+        return accessTokenService.generateAccessToken(scopeId, userId);
     }
 
     /**
@@ -649,9 +558,7 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
             UsernamePasswordCredentialsImpl usernamePasswordCredentials = UsernamePasswordCredentialsImpl.parse((UsernamePasswordCredentials) shiroAuthenticationToken);
 
             if (usernamePasswordCredentials.getTrustMe()) {
-                String trustKey = KapuaSecurityUtils.doPrivileged(() -> {
-                    return mfaOptionService.enableTrust(accessToken.getScopeId(), accessToken.getUserId());
-                });
+                String trustKey = KapuaSecurityUtils.doPrivileged(() -> mfaOptionService.enableTrust(accessToken.getScopeId(), accessToken.getUserId()));
 
                 accessToken.setTrustKey(trustKey);
             }
@@ -670,55 +577,6 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
         MDC.put(LoggingMdcKeys.ACCOUNT_NAME, (String) subjectSession.getAttribute(ShiroSessionKeys.ACCOUNT_NAME));
         MDC.put(LoggingMdcKeys.USER_ID, accessToken.getUserId().toCompactId());
         MDC.put(LoggingMdcKeys.USER_NAME, (String) subjectSession.getAttribute(ShiroSessionKeys.USER_NAME));
-    }
-
-    private String generateJwt(KapuaEid scopeId, KapuaEid userId, Date now, long ttl, String tokenId) {
-        // Build claims
-        JwtClaims claims = new JwtClaims();
-
-        // Reserved claims
-        String issuer = kapuaAuthenticationSetting.getString(KapuaAuthenticationSettingKeys.AUTHENTICATION_SESSION_JWT_ISSUER);
-        Date issuedAtDate = now; // Issued at claim
-        Date expiresOnDate = new Date(now.getTime() + ttl); // Expires claim.
-
-        claims.setIssuer(issuer);
-        claims.setIssuedAt(NumericDate.fromMilliseconds(issuedAtDate.getTime()));
-        claims.setExpirationTime(NumericDate.fromMilliseconds(expiresOnDate.getTime()));
-
-        // Jwts.builder().setIssuer(issuer)
-        // .setIssuedAt(issuedAtDate)
-        // .setExpiration(new Date(expiresOnDate))
-        // .setSubject(userId.getShortId()).claims.setClaim("sId", scopeId.getShortId());
-        claims.setSubject(userId.toCompactId());
-        claims.setClaim("sId", scopeId.toCompactId());
-        claims.setStringClaim(AccessTokenAttributes.TOKEN_IDENTIFIER, tokenId);
-
-        String jwt = null;
-        try {
-            CertificateQuery certificateQuery = certificateFactory.newQuery(scopeId);
-            certificateQuery.setPredicate(
-                    certificateQuery.andPredicate(
-                            certificateQuery.attributePredicate(CertificateAttributes.USAGE_NAME, "JWT"),
-                            certificateQuery.attributePredicate(CertificateAttributes.STATUS, CertificateStatus.VALID)
-                    )
-            );
-
-            certificateQuery.setIncludeInherited(true);
-            certificateQuery.setLimit(1);
-
-            Certificate certificate = KapuaSecurityUtils.doPrivileged(() -> certificateService.query(certificateQuery)).getFirstItem();
-            if (certificate == null) {
-                throw new KapuaAuthenticationException(KapuaAuthenticationErrorCodes.JWT_CERTIFICATE_NOT_FOUND);
-            }
-            JsonWebSignature jws = new JsonWebSignature();
-            jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
-            jws.setPayload(claims.toJson());
-            jws.setKey(CertificateUtils.stringToPrivateKey(certificate.getPrivateKey(), certificate.getPassword()));
-            jwt = jws.getCompactSerialization();
-        } catch (JoseException | KapuaException e) {
-            throw KapuaRuntimeException.internalError(e);
-        }
-        return jwt;
     }
 
     /**

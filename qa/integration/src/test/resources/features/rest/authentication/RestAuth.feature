@@ -54,7 +54,7 @@ Feature: REST API tests for User
     Then REST response code is 200
     When REST "GET" call at "/v1/_/users?offset=0&limit=50" with JSON ""
     Then REST response code is 401
-    And REST response containing text "The provided access token has been invalidated in the past"
+    And REST response containing text "The provided AccessToken has been invalidated in the past"
 
   Scenario: Auth. with access token fails when I wait the token TTL
 
@@ -73,7 +73,7 @@ Feature: REST API tests for User
     Given An authenticated user
     When I refresh access token using refresh token "foo" and jwt ""
     Then REST response code is 401
-    And REST response containing text "The provided refresh token doesn't match the one for this jwt"
+    And REST response containing text "The provided refresh token doesn't match the one for this AccessToken"
 
   Scenario: Refresh token using wrong parameters - previous refresh token (right), wrong jwt
 
@@ -100,7 +100,7 @@ Feature: REST API tests for User
     #now in step data I have the previous token that is invalidated on db
     When I refresh last access token
     Then REST response code is 401
-    And REST response containing text "The provided access token has been invalidated"
+    And REST response containing text "The provided AccessToken has been invalidated"
 
   @teardown
   Scenario: Stop full docker environment
