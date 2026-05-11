@@ -65,6 +65,16 @@ public interface AuthorizationService extends KapuaService {
     void checkPermission(Permission permission) throws KapuaException;
 
     /**
+     * Check if the given User is allowed to perform the operation identified by provided the permission
+     *
+     * @param userId The User.id
+     * @param permission The permission to check
+     * @throws KapuaException
+     * @since 2.1.0
+     */
+    void checkPermission(KapuaId userId, Permission permission) throws KapuaException;
+
+    /**
      * Checks if the User (the current logged user retrieved by thread context) is allowed to perform the operation identified by provided permissions.
      *
      * @param permissions

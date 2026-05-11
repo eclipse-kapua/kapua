@@ -23,6 +23,9 @@ import javax.inject.Singleton;
 
 import com.google.inject.Provider;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.SimplePrincipalCollection;
+import org.apache.shiro.subject.Subject;
+import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaRuntimeException;
 import org.eclipse.kapua.KapuaUnauthenticatedException;
@@ -34,6 +37,8 @@ import org.eclipse.kapua.service.authorization.CheckStrategy;
 import org.eclipse.kapua.service.authorization.exception.SubjectUnauthorizedException;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.shiro.claims.ClaimsFetcher;
+import org.eclipse.kapua.service.user.User;
+import org.eclipse.kapua.service.user.UserService;
 
 /**
  * {@link AuthorizationService} implementation.
@@ -43,14 +48,17 @@ import org.eclipse.kapua.service.authorization.shiro.claims.ClaimsFetcher;
 @Singleton
 public class AuthorizationServiceImpl implements AuthorizationService {
 
+    private final UserService userService;
     private final PermissionMapper permissionMapper;
     private final Provider<ClaimsFetcher> claimsFetcherProvider; //I want a lazy injection here, to avoid a potential circular dependency and because ClaimsFetcher may not be needed
 
     @Inject
     public AuthorizationServiceImpl(
+            UserService userService,
             PermissionMapper permissionMapper,
             Provider<ClaimsFetcher> claimsFetcherProvider
     ) {
+        this.userService = userService;
         this.permissionMapper = permissionMapper;
         this.claimsFetcherProvider = claimsFetcherProvider;
     }
@@ -95,6 +103,29 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     public void checkPermission(Permission permission)
             throws KapuaException {
         if (!isPermitted(permission)) {
+            throw new SubjectUnauthorizedException(permission);
+        }
+    }
+
+    @Override
+    public void checkPermission(KapuaId userId, Permission permission) throws KapuaException {
+        //
+        // Find User
+        User user = KapuaSecurityUtils.doPrivileged(()-> userService.findById(userId));
+
+        if (user == null) {
+            throw new KapuaEntityNotFoundException(User.TYPE, userId);
+        }
+
+        //
+        // Build subject on the fly
+        Subject.Builder subjectBuilder = new Subject.Builder();
+        subjectBuilder.principals(new SimplePrincipalCollection(user, KapuaAuthorizingRealm.REALM_NAME));
+        Subject subject = subjectBuilder.buildSubject();
+
+        //
+        // Check permission
+        if (!subject.isPermitted(permissionMapper.mapPermission(permission))) {
             throw new SubjectUnauthorizedException(permission);
         }
     }
