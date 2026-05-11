@@ -202,11 +202,15 @@ public class AuthorizationModule extends AbstractKapuaModule {
     @Provides
     @Singleton
     AuthorizationService authorizationService(
+            UserService userService,
             PermissionMapper permissionMapper,
-            @Named("defaultClaimsFetcher") Provider<ClaimsFetcher> claimsFetcher) {
+            @Named("defaultClaimsFetcher") Provider<ClaimsFetcher> claimsFetcher
+    ) {
         return new AuthorizationServiceImpl(
-                permissionMapper,
-                claimsFetcher);
+            userService,
+            permissionMapper,
+            claimsFetcher
+        );
     }
 
 
