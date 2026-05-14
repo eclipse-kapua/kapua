@@ -56,7 +56,7 @@ components:
           type: array
           items:
             $ref: '../role/role.yaml#/components/schemas/rolePermission'
-        groupPermission:
+        groupPermissions:
           description: The list of Permission assigned to the User via UserGroups
           type: array
           items:
