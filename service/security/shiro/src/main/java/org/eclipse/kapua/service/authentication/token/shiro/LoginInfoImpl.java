@@ -40,42 +40,85 @@ public class LoginInfoImpl implements LoginInfo {
     }
 
     @Override
-    public Set<RolePermission> getRolePermission() {
+    public Set<RolePermission> getRolePermissions() {
         return rolePermissions;
     }
 
     @Override
-    public void setRolePermission(Set<RolePermission> rolePermissions) {
+    public void setRolePermissions(Set<RolePermission> rolePermissions) {
         this.rolePermissions = rolePermissions;
     }
 
     @Override
-    public Set<AccessPermission> getAccessPermission() {
+    public Set<AccessPermission> getAccessPermissions() {
         return accessPermissions;
     }
 
     @Override
-    public void setAccessPermission(Set<AccessPermission> accessPermissions) {
+    public void setAccessPermissions(Set<AccessPermission> accessPermissions) {
         this.accessPermissions = accessPermissions;
     }
 
     @Override
-    public Set<RolePermission> getGroupRolePermission() {
+    public Set<RolePermission> getGroupRolePermissions() {
         return groupRolePermissions;
     }
 
     @Override
-    public void setGroupRolePermission(Set<RolePermission> groupRolePermissions) {
+    public void setGroupRolePermissions(Set<RolePermission> groupRolePermissions) {
         this.groupRolePermissions = groupRolePermissions;
     }
 
     @Override
-    public Set<GroupPermission> getGroupPermission() {
+    public Set<GroupPermission> getGroupPermissions() {
         return groupPermissions;
     }
 
     @Override
-    public void setGroupPermission(Set<GroupPermission> groupPermissions) {
+    public void setGroupPermissions(Set<GroupPermission> groupPermissions) {
         this.groupPermissions = groupPermissions;
+    }
+
+    //
+    // Deprecated getters and setters for various set of Permissions
+
+    @Override
+    public Set<RolePermission> getRolePermission() {
+        return getRolePermissions();
+    }
+
+    @Override
+    public void setRolePermission(Set<RolePermission> rolePermissions) {
+        setRolePermissions(rolePermissions);
+    }
+
+    @Override
+    public Set<AccessPermission> getAccessPermission() {
+        return getAccessPermissions();
+    }
+
+    @Override
+    public void setAccessPermission(Set<AccessPermission> accessPermissions) {
+        setAccessPermissions(accessPermissions);
+    }
+
+    @Override
+    public Set<RolePermission> getGroupRolePermission() {
+        return getGroupRolePermissions();
+    }
+
+    @Override
+    public void setGroupRolePermission(Set<RolePermission> groupRolePermissions) {
+        setGroupRolePermissions(groupRolePermissions);
+    }
+
+    @Override
+    public Set<GroupPermission> getGroupPermission() {
+        return getGroupPermissions();
+    }
+
+    @Override
+    public void setGroupPermission(Set<GroupPermission> groupPermissions) {
+        setGroupPermissions(groupPermissions);
     }
 }
