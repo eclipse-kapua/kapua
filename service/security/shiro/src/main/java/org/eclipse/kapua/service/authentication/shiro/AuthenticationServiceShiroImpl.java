@@ -409,14 +409,6 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
             AccessPermissionListResult accessPermissions = KapuaSecurityUtils.doPrivileged(() -> accessPermissionService.query(accessPermissionQuery));
             loginInfo.setAccessPermission(Sets.newHashSet(accessPermissions.getItems()));
         }
-        // loginInfo.getAccessPermission() is supposed to return a not null set
-        if (loginInfo.getAccessPermission() == null) {
-            loginInfo.setAccessPermission(Sets.newHashSet());
-        }
-        // loginInfo.getRolePermission() is supposed to return a not null set
-        if (loginInfo.getRolePermission() == null) {
-            loginInfo.setRolePermission(Sets.newHashSet());
-        }
 
         // User Groups
         User user = KapuaSecurityUtils.doPrivileged(() -> userService.find(accessToken.getScopeId(), accessToken.getUserId()));

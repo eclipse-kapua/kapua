@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.authentication.token.shiro;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.kapua.service.authentication.token.AccessToken;
@@ -41,6 +42,10 @@ public class LoginInfoImpl implements LoginInfo {
 
     @Override
     public Set<RolePermission> getRolePermissions() {
+        if (rolePermissions == null) {
+            rolePermissions = new HashSet<>();
+        }
+
         return rolePermissions;
     }
 
@@ -51,6 +56,10 @@ public class LoginInfoImpl implements LoginInfo {
 
     @Override
     public Set<AccessPermission> getAccessPermissions() {
+        if (accessPermissions == null) {
+            accessPermissions = new HashSet<>();
+        }
+
         return accessPermissions;
     }
 
@@ -61,6 +70,10 @@ public class LoginInfoImpl implements LoginInfo {
 
     @Override
     public Set<RolePermission> getGroupRolePermissions() {
+        if (groupRolePermissions == null) {
+            groupRolePermissions = new HashSet<>();
+        }
+
         return groupRolePermissions;
     }
 
@@ -71,6 +84,9 @@ public class LoginInfoImpl implements LoginInfo {
 
     @Override
     public Set<GroupPermission> getGroupPermissions() {
+        if (groupPermissions == null) {
+            groupPermissions = new HashSet<>();
+        }
         return groupPermissions;
     }
 
