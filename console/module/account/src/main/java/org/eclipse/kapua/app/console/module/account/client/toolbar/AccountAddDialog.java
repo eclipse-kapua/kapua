@@ -153,7 +153,7 @@ public class AccountAddDialog extends EntityAddEditDialog {
 
         // Account Status
         statusCombo = new SimpleComboBox<GwtAccount.GwtAccountStatus>();
-        statusCombo.setAllowBlank(false);
+        statusCombo.setAllowBlank(true);
         statusCombo.setName(MSGS.accountStatus());
         statusCombo.setFieldLabel(MSGS.accountStatus());
         statusCombo.setToolTip(MSGS.accountStatusTooltip());
@@ -161,7 +161,7 @@ public class AccountAddDialog extends EntityAddEditDialog {
         statusCombo.setTriggerAction(ComboBox.TriggerAction.ALL);
         statusCombo.add(GwtAccount.GwtAccountStatus.ENABLED);
         statusCombo.add(GwtAccount.GwtAccountStatus.DISABLED);
-        statusCombo.setSimpleValue(GwtAccount.GwtAccountStatus.ENABLED);
+//        statusCombo.setSimpleValue(GwtAccount.GwtAccountStatus.ENABLED);
 
         fieldSet.add(statusCombo);
 
@@ -336,7 +336,9 @@ public class AccountAddDialog extends EntityAddEditDialog {
         gwtAccountCreator.setOrganizationStateProvinceCounty(organizationStateProvinceCounty.getValue());
         gwtAccountCreator.setOrganizationCountry(organizationCountry.getValue());
         gwtAccountCreator.setScopeId(currentSession.getSelectedAccountId());
-        gwtAccountCreator.setAccountStatus(statusCombo.getSimpleValue().name());
+        gwtAccountCreator.setAccountStatus(
+                statusCombo.getSimpleValue() != null ? statusCombo.getSimpleValue().name() : null
+        );
 
         GWT_ACCOUNT_SERVICE.create(xsrfToken,
                 gwtAccountCreator,
@@ -359,8 +361,6 @@ public class AccountAddDialog extends EntityAddEditDialog {
                                 } else if (gwtCause.getCode().equals(GwtKapuaErrorCode.ILLEGAL_ARGUMENT)) {
                                     if (gwtCause.getArguments()[0].equals("expirationDate")) {
                                         expirationDateField.markInvalid(MSGS.conflictingExpirationDate());
-                                    } else if (gwtCause.getArguments()[0].equals("status")) {
-                                        statusCombo.markInvalid(gwtCause.getArguments()[1] != null ? (gwtCause.getArguments()[1]) : "an error occurred");
                                     }
                                 }
                             }

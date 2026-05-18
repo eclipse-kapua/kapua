@@ -25,7 +25,7 @@
         </preConditions>
 
         <addColumn tableName="act_account">
-            <column name="status" type="varchar(64)" defaultValue="ENABLED"/>
+            <column name="status" type="varchar(64)"/>
         </addColumn>
     </changeSet>
 

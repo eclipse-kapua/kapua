@@ -98,8 +98,12 @@ public abstract class KapuaAuthenticatingRealm extends AuthenticatingRealm {
             throw new UnknownAccountException();
         }
 
-        if (account.getStatus().equals(AccountStatus.DISABLED)) {
-            throw new DisabledAccountException();
+        try {
+            if (accountService.deriveAccountStatus(account).equals(AccountStatus.DISABLED)) {
+                throw new DisabledAccountException();
+            }
+        } catch (KapuaException ke) {
+            throw new ShiroException("Unexpected error while looking for the account status!", ke);
         }
 
         // Check account expired

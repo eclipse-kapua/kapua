@@ -137,8 +137,6 @@ public class AccountEditDialog extends AccountAddDialog {
                                     } else if (gwtCause.getArguments()[0].equals("notAllowedExpirationDate")) {
                                         expirationDateField.markInvalid(MSGS.notAllowedExpirationDate());
                                         ConsoleInfo.display("Error", MSGS.notAllowedExpirationDate());
-                                    } else if (gwtCause.getArguments()[0].equals("status")) {
-                                        statusCombo.markInvalid(gwtCause.getArguments()[1] != null ? (gwtCause.getArguments()[1]) : "an error occurred");
                                     }
                                     break;
                                 default:

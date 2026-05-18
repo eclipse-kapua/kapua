@@ -787,13 +787,10 @@ public class AccountServiceSteps extends TestBase {
         accountCreator.setName(name);
         accountCreator.setOrganizationName("ACME Inc.");
         accountCreator.setOrganizationEmail("some@one.com");
+        accountCreator.setStatus(status);
 
         if (expiration != null) {
             accountCreator.setExpirationDate(expiration);
-        }
-
-        if (status != null) {
-            accountCreator.setStatus(status);
         }
 
         return accountCreator;

@@ -26,6 +26,7 @@ import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaIllegalAccessException;
 import org.eclipse.kapua.KapuaIllegalArgumentException;
+import org.eclipse.kapua.KapuaIllegalStateException;
 import org.eclipse.kapua.KapuaRuntimeErrorCodes;
 import org.eclipse.kapua.commons.configuration.KapuaConfigurableServiceBase;
 import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
@@ -159,11 +160,7 @@ public class AccountServiceImpl
             final Account accountImpl = new AccountImpl(accountCreator.getScopeId(), accountCreator.getName());
             accountImpl.setOrganization(organizationImpl);
             accountImpl.setExpirationDate(accountCreator.getExpirationDate());
-            if (accountCreator.getStatus() == null) {
-                accountImpl.setStatus(AccountStatus.ENABLED);
-            } else {
-                accountImpl.setStatus(accountCreator.getStatus());
-            }
+            accountImpl.setStatus(accountCreator.getStatus());
 
             final Account createdAccount = accountRepository.create(tx, accountImpl);
             String parentAccountPath = parentAccount.getParentAccountPath() + "/" + createdAccount.getId();
@@ -241,6 +238,8 @@ public class AccountServiceImpl
 
     private void validateStatusAccount(TxContext tx, Account oldAccount, AccountUpdateRequest request) throws KapuaException {
         if (request.status == AccountStatus.DISABLED) {
+            //TODO: check also recursively for accounts with null status, until you have all direct children with disabled status
+
             // Check that all the children account are not enabled
             // We only check direct children to optimize the check, as if there are enabled children it means that there is at least one enabled direct child, so we can avoid to check all the tree
             final AccountListResult childrenAccounts = accountRepository.query(tx, new AccountQueryImpl(oldAccount.getId()));
@@ -401,6 +400,35 @@ public class AccountServiceImpl
             // Do find
             return accountRepository.findChildAccountsRecursive(tx, account.getParentAccountPath());
         });
+    }
+
+    @Override
+    public AccountStatus deriveAccountStatus(KapuaId accountId) throws KapuaException {
+        // Run the entire recursive status derivation inside a single transaction
+        Account account = KapuaSecurityUtils.doPrivileged(() -> txManager.execute(tx -> accountRepository.find(tx, KapuaId.ANY, accountId)
+                .orElseThrow(() -> new KapuaEntityNotFoundException(Account.TYPE, accountId))));
+        return txManager.execute(tx -> KapuaSecurityUtils.doPrivileged(() -> deriveAccountStatusInTx(account, tx)));
+    }
+
+    @Override
+    public AccountStatus deriveAccountStatus(Account account) throws KapuaException {
+        // Run the entire recursive status derivation inside a single transaction
+        return txManager.execute(tx -> KapuaSecurityUtils.doPrivileged(() -> deriveAccountStatusInTx(account, tx)));
+    }
+
+    private AccountStatus deriveAccountStatusInTx(Account account, TxContext tx) {
+        if (account.getStatus() != null) {
+            return account.getStatus();
+        }
+        if (account.getScopeId() == null) {
+            // level-0 accounts are always enabled
+            return AccountStatus.ENABLED;
+        }
+        Account parentAccount = accountRepository.find(tx, KapuaId.ANY, account.getScopeId()).orElse(null);
+        if (parentAccount == null) {
+            throw new KapuaIllegalStateException("impossible that a non level-0 account has no parent account");
+        }
+        return deriveAccountStatusInTx(parentAccount, tx);
     }
 
     @Override

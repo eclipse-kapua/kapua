@@ -148,7 +148,8 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
             accountCreator.setOrganizationStateProvinceCounty(gwtAccountCreator.getOrganizationStateProvinceCounty());
             accountCreator.setOrganizationCountry(gwtAccountCreator.getOrganizationCountry());
             accountCreator.setExpirationDate(gwtAccountCreator.getExpirationDate());
-            accountCreator.setStatus(AccountStatus.valueOf(gwtAccountCreator.getAccountStatus()));
+            String accountStatusStr = gwtAccountCreator.getAccountStatus();
+            accountCreator.setStatus(accountStatusStr != null ? AccountStatus.valueOf(accountStatusStr) : null);
             // Create the Account
             final Account account = ACCOUNT_SERVICE.create(accountCreator);
             // Create roles

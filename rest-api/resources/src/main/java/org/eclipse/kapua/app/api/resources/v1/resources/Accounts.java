@@ -107,6 +107,7 @@ public class Accounts extends AbstractKapuaResource {
             query.setSortCriteria(query.fieldSortCriteria(sortParam, sortDir));
         }
         if (status != null) {
+            //TODO: insert check for accounts with status=null to parents
             if (status.equals(AccountStatus.ENABLED)) {
                 // we assume that if status=null Account is enabled, so I want to include also those accounts in the result
                 OrPredicate orPredicate = query.orPredicate();

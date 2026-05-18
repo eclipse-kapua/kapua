@@ -57,7 +57,7 @@ public class KapuaGwtAccountModelConverter {
         gwtAccount.setCity(account.getOrganization().getCity());
         gwtAccount.setStateProvince(account.getOrganization().getStateProvinceCounty());
         gwtAccount.setCountry(account.getOrganization().getCountry());
-        gwtAccount.setAccountStatus(account.getStatus() == null ? AccountStatus.ENABLED.name() : account.getStatus().name());
+        gwtAccount.setAccountStatus(account.getStatus() == null ? AccountStatus.ENABLED.name() : account.getStatus().name()); //TODO: you should perform recursive call
         // Return converted entity
         return gwtAccount;
     }
