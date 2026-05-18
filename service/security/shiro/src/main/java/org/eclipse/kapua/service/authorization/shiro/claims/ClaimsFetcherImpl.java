@@ -76,28 +76,28 @@ public class ClaimsFetcherImpl implements ClaimsFetcher {
         Set<Permission> allPermissions = new HashSet<>();
 
         allPermissions.addAll(
-                loginInfo.getAccessPermission()
+                loginInfo.getAccessPermissions()
                         .stream()
                         .map(accessPermission -> (Permission) accessPermission.getPermission())
                         .collect(Collectors.toList())
         );
 
         allPermissions.addAll(
-                loginInfo.getRolePermission()
+                loginInfo.getRolePermissions()
                         .stream()
                         .map(rolePermission -> (Permission) rolePermission.getPermission())
                         .collect(Collectors.toList())
         );
 
         allPermissions.addAll(
-                loginInfo.getGroupPermission()
+                loginInfo.getGroupPermissions()
                         .stream()
                         .map(groupPermission -> (Permission) groupPermission.getPermission())
                         .collect(Collectors.toList())
         );
 
         allPermissions.addAll(
-                loginInfo.getGroupRolePermission()
+                loginInfo.getGroupRolePermissions()
                         .stream()
                         .map(groupRolePermission -> (Permission) groupRolePermission.getPermission())
                         .collect(Collectors.toList())

@@ -46,7 +46,7 @@ components:
       properties:
         accessToken:
           $ref: '#/components/schemas/accessToken'
-        accessPermission:
+        accessPermissions:
           description: The list of Permission directly to the User
           type: array
           items:
@@ -81,7 +81,7 @@ components:
           expiresOn: '2019-11-15T15:13:27.506Z'
           refreshToken: e8a53e18-0c6b-4f3c-9929-409069a9c66e
           refreshExpiresOn: '2019-11-15T19:43:27.506Z'
-        accessPermission:
+        accessPermissions:
           - id: Jfzafs5eUuw
             scopeId: AQ
             createdOn: '2019-11-15T14:43:11.451Z'
@@ -92,7 +92,7 @@ components:
               action: read
               targetScopeId: AQ
               forwardable: false
-        rolePermission:
+        rolePermissions:
           - id: a716DxmV9TI
             scopeId: AQ
             createdOn: '2019-11-15T14:42:28.859Z'
@@ -112,7 +112,7 @@ components:
               domain: user
               targetScopeId: AQ
               forwardable: false
-        groupPermission:
+        groupPermissions:
           - id: Jfzafs5eUuw
             scopeId: AQ
             createdOn: '2019-11-15T14:43:11.451Z'
@@ -123,7 +123,7 @@ components:
               action: read
               targetScopeId: AQ
               forwardable: false
-        groupRolePermission:
+        groupRolePermissions:
           - id: a716DxmV9TI
             scopeId: AQ
             createdOn: '2019-11-15T14:42:28.859Z'
