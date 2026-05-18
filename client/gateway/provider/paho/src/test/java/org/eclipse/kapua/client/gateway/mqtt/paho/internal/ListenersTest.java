@@ -28,7 +28,6 @@ import java.lang.reflect.Modifier;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-
 @Category(JUnitTests.class)
 public class ListenersTest {
     private Runnable success;

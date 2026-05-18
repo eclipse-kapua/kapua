@@ -62,7 +62,7 @@ public class AuthenticationRuntimeExceptionTest {
         try {
             authenticationRuntimeException.getMessage();
         } catch (Exception e) {
-            Assert.assertEquals("Expected and actual values should be the same.", new NullPointerException().toString(), e.toString());
+            Assert.assertTrue("NullPointerException expected.", e instanceof NullPointerException);
         }
     }
 
@@ -84,7 +84,7 @@ public class AuthenticationRuntimeExceptionTest {
         try {
             authenticationRuntimeException.getMessage();
         } catch (Exception e) {
-            Assert.assertEquals("Expected and actual values should be the same.", new NullPointerException().toString(), e.toString());
+            Assert.assertTrue("NullPointerException expected.", e instanceof NullPointerException);
         }
     }
 
@@ -119,7 +119,7 @@ public class AuthenticationRuntimeExceptionTest {
             try {
                 authenticationRuntimeException.getMessage();
             } catch (Exception e) {
-                Assert.assertEquals("Expected and actual values should be the same.", new NullPointerException().toString(), e.toString());
+                Assert.assertTrue("NullPointerException expected.", e instanceof NullPointerException);
             }
         }
     }

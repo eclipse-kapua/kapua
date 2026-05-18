@@ -1,18 +1,18 @@
 name: 'Set Up Runner'
 description: |
   Set up runner with tools required for the build
-  - Setup Java 11
+  - Setup Java 17
   - Setup Node 16
   - Install Swagger CLI
   - Add entries to /etc/hosts for tests
 runs:
   using: "composite"
   steps:
-    - name: Setup Java 11
-      uses: actions/setup-java@v5
+    - name: Setup Java 17
+      uses: actions/setup-java@v4
       with:
-        distribution: 'zulu'
-        java-version: 11
+        distribution: 'temurin'
+        java-version: 17
 
     - name: Setup Node 16
       uses: actions/setup-node@v5

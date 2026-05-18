@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF8"?>
 <!--
-    Copyright (c) 2017, 2022 Red Hat Inc and others
+    Copyright (c) 2017, 2026 Red Hat Inc and others
 
     This program and the accompanying materials are made
     available under the terms of the Eclipse Public License 2.0
@@ -48,6 +48,17 @@
         </provides>
         <configuration>
             <jdkHome>/usr/lib/jvm/java-1.8.0</jdkHome>
+        </configuration>
+    </toolchain>
+
+    <toolchain>
+        <type>jdk</type>
+        <provides>
+            <id>JavaSE-17</id>
+            <version>17</version>
+        </provides>
+        <configuration>
+            <jdkHome>/usr/lib/jvm/java-17</jdkHome>
         </configuration>
     </toolchain>
 </toolchains>

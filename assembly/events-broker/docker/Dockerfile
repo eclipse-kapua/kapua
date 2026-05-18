@@ -11,7 +11,7 @@
 #
 ###############################################################################
 
-FROM @docker.account@/java-base
+FROM @docker.account@/java-base-17
 
 COPY maven /
 

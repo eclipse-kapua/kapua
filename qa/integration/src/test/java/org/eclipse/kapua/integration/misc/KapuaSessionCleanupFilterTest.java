@@ -128,7 +128,7 @@ public class KapuaSessionCleanupFilterTest {
             kapuaSessionCleanupFilter.doFilter(request, response, null);
             Assert.fail("Exception expected.");
         } catch (Exception e) {
-            Assert.assertEquals("NullPointerException expected.", new NullPointerException().toString(), e.toString());
+            Assert.assertTrue("NullPointerException expected.", e instanceof NullPointerException);
         }
     }
 

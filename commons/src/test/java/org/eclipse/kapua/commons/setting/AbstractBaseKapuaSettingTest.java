@@ -188,7 +188,7 @@ public class AbstractBaseKapuaSettingTest {
             abstractBaseKapuaSetting.getMap(null, key, "Key");
             Assert.fail("NullPointerException expected.");
         } catch (Exception e) {
-            Assert.assertEquals("NullPointerException expected.", new NullPointerException().toString(), e.toString());
+            Assert.assertTrue("NullPointerException expected.", e instanceof NullPointerException);
         }
     }
 
@@ -206,7 +206,7 @@ public class AbstractBaseKapuaSettingTest {
             abstractBaseKapuaSetting.getMap(String.class, key, null);
             Assert.fail("NullPointerException expected.");
         } catch (Exception e) {
-            Assert.assertEquals("NullPointerException expected.", new NullPointerException().toString(), e.toString());
+            Assert.assertTrue("NullPointerException expected.", e instanceof NullPointerException);
         }
 
         map.put("Key.Key", "Value");
@@ -214,7 +214,7 @@ public class AbstractBaseKapuaSettingTest {
             abstractBaseKapuaSetting.getMap(String.class, key, null);
             Assert.fail("NullPointerException expected.");
         } catch (Exception e) {
-            Assert.assertEquals("NullPointerException expected.", new NullPointerException().toString(), e.toString());
+            Assert.assertTrue("NullPointerException expected.", e instanceof NullPointerException);
         }
     }
 
@@ -242,7 +242,7 @@ public class AbstractBaseKapuaSettingTest {
             abstractBaseKapuaSetting.getMap(null, key);
             Assert.fail("NullPointerException expected.");
         } catch (Exception e) {
-            Assert.assertEquals("NullPointerException expected.", new NullPointerException().toString(), e.toString());
+            Assert.assertTrue("NullPointerException expected.", e instanceof NullPointerException);
         }
     }
 

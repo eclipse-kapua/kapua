@@ -301,14 +301,14 @@ public class JsonKapuaDataMessageTest {
             jsonKapuaDataMessage1.setPayload((KapuaPayload) null);
             Assert.fail("NullPointerException expected.");
         } catch (Exception e) {
-            Assert.assertEquals("NullPointerException expected.", new NullPointerException().toString(), e.toString());
+            Assert.assertTrue("NullPointerException expected.", e instanceof NullPointerException);
         }
 
         try {
             jsonKapuaDataMessage2.setPayload((KapuaPayload) null);
             Assert.fail("NullPointerException expected.");
         } catch (Exception e) {
-            Assert.assertEquals("NullPointerException expected.", new NullPointerException().toString(), e.toString());
+            Assert.assertTrue("NullPointerException expected.", e instanceof NullPointerException);
         }
     }
 } 

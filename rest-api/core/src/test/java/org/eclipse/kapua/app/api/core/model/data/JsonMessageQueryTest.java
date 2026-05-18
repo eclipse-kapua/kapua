@@ -242,14 +242,14 @@ public class JsonMessageQueryTest {
             jsonMessageQuery1.getIncludes(null);
             Assert.fail("NullPointerException expected.");
         } catch (Exception e) {
-            Assert.assertEquals("NullPointerException expected.", new NullPointerException().toString(), e.toString());
+            Assert.assertTrue("NullPointerException expected.", e instanceof NullPointerException);
         }
 
         try {
             jsonMessageQuery2.getIncludes(null);
             Assert.fail("NullPointerException expected.");
         } catch (Exception e) {
-            Assert.assertEquals("NullPointerException expected.", new NullPointerException().toString(), e.toString());
+            Assert.assertTrue("NullPointerException expected.", e instanceof NullPointerException);
         }
     }
 
@@ -267,14 +267,14 @@ public class JsonMessageQueryTest {
             jsonMessageQuery1.getExcludes(null);
             Assert.fail("NullPointerException expected.");
         } catch (Exception e) {
-            Assert.assertEquals("NullPointerException expected.", new NullPointerException().toString(), e.toString());
+            Assert.assertTrue("NullPointerException expected.", e instanceof NullPointerException);
         }
 
         try {
             jsonMessageQuery2.getExcludes(null);
             Assert.fail("NullPointerException expected.");
         } catch (Exception e) {
-            Assert.assertEquals("NullPointerException expected.", new NullPointerException().toString(), e.toString());
+            Assert.assertTrue("NullPointerException expected.", e instanceof NullPointerException);
         }
     }
 
