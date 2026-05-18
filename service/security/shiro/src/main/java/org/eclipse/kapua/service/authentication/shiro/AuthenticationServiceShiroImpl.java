@@ -401,21 +401,13 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
             RolePermissionQuery rolePermissionQuery = rolePermissionFactory.newQuery(accessToken.getScopeId());
             rolePermissionQuery.setPredicate(rolePermissionQuery.attributePredicate(RolePermissionAttributes.ROLE_ID, accessRoleListResult.getItems().stream().map(AccessRole::getRoleId).collect(Collectors.toList())));
             RolePermissionListResult rolePermissions = KapuaSecurityUtils.doPrivileged(() -> rolePermissionService.query(rolePermissionQuery));
-            loginInfo.setRolePermission(Sets.newHashSet(rolePermissions.getItems()));
+            loginInfo.setRolePermissions(Sets.newHashSet(rolePermissions.getItems()));
 
             // AccessPermission
             AccessPermissionQuery accessPermissionQuery = accessPermissionFactory.newQuery(accessToken.getScopeId());
             accessPermissionQuery.setPredicate(accessPermissionQuery.attributePredicate(AccessPermissionAttributes.ACCESS_INFO_ID, accessInfo.getId()));
             AccessPermissionListResult accessPermissions = KapuaSecurityUtils.doPrivileged(() -> accessPermissionService.query(accessPermissionQuery));
-            loginInfo.setAccessPermission(Sets.newHashSet(accessPermissions.getItems()));
-        }
-        // loginInfo.getAccessPermission() is supposed to return a not null set
-        if (loginInfo.getAccessPermission() == null) {
-            loginInfo.setAccessPermission(Sets.newHashSet());
-        }
-        // loginInfo.getRolePermission() is supposed to return a not null set
-        if (loginInfo.getRolePermission() == null) {
-            loginInfo.setRolePermission(Sets.newHashSet());
+            loginInfo.setAccessPermissions(Sets.newHashSet(accessPermissions.getItems()));
         }
 
         // User Groups
@@ -439,8 +431,8 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
             allGroupPermissions.addAll(groupPermissions.getItems());
         }
 
-        loginInfo.setGroupRolePermission(allGroupRolePermissions);
-        loginInfo.setGroupPermission(allGroupPermissions);
+        loginInfo.setGroupRolePermissions(allGroupRolePermissions);
+        loginInfo.setGroupPermissions(allGroupPermissions);
 
         return loginInfo;
     }
