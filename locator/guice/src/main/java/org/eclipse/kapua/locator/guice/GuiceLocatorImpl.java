@@ -290,8 +290,14 @@ public class GuiceLocatorImpl extends KapuaLocator implements Closeable {
                         LOG.info("Running initializer with priority {} on 'class'.'method': '{}'.'{}'", kv.getKey(), methodAndObject.getValue().getClass().getName(),
                                 methodAndObject.getKey().getName());
                         methodAndObject.getKey().invoke(methodAndObject.getValue());
+                        LOG.info("Running initializer with priority {} on 'class'.'method': '{}'.'{}' (DONE)", kv.getKey(), methodAndObject.getValue().getClass().getName(),
+                                methodAndObject.getKey().getName());
                     } catch (Throwable e) {
-                        throw new RuntimeException(e);
+                        LOG.error("Running initializer ERROR: {}", e.getMessage(), e);
+                        //old code (this doesn't cause the exit of the jvm but breaks the init chain so it's not good in any case IHMO)
+                        //I think it's better to log the error and leave the jvm to proceed with the other initialization
+                        //otherwise a system.exit() it's the right choice?
+                        //throw new RuntimeException(e);
                     }
                 }));
     }
