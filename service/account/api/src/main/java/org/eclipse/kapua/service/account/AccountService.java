@@ -73,4 +73,8 @@ public interface AccountService extends KapuaEntityService<Account, AccountCreat
      * @throws KapuaException
      */
     AccountListResult findChildrenRecursively(@NotNull KapuaId scopeId) throws KapuaException;
+
+    AccountStatus deriveAccountStatus(KapuaId accountId) throws KapuaException;
+
+    AccountStatus deriveAccountStatus(Account account) throws KapuaException;
 }

@@ -43,6 +43,8 @@ components:
             parentAccountPath:
               type: string
               description: The full Scope ID Hierarchy for the Account
+            status:
+              $ref: '#/components/schemas/statusAccount'
           #            childAccounts:
           #              type: array
           #              items:
@@ -59,6 +61,7 @@ components:
             optlock: 2
             name: acme-inc
             expirationDate: '2019-12-31T00:00:00.000Z'
+            status: ENABLED
             organization:
               addressLine1: 123 Looney Tunes Drive
               addressLine2: Block 1
@@ -125,6 +128,12 @@ components:
         city: Somewhere City
         stateProvinceCounty: Green County, GC
         country: United States
+    statusAccount:
+      type: string
+      enum:
+        - ENABLED
+        - DISABLED
+      description: Account status, if disabled the account is locked.
     accountUpdateRequest:
       description: |
         An object that holds all the information necessary to update an Account, including the details about the Contacts of that account.\
@@ -137,6 +146,8 @@ components:
           type: string
           format: 'date-time'
           description: The Expiration date and time for the Account. If empty, the Account has no expiration
+        status:
+          $ref: '#/components/schemas/statusAccount'
         optlock:
           $ref: '../openapi.yaml#/components/schemas/optlock'
         organization:
@@ -145,6 +156,7 @@ components:
         description: Acme Inc.'s Account
         optlock: 2
         expirationDate: '2019-12-31T00:00:00.000Z'
+        status: DISABLED
         organization:
           name: ACME Inc.
           personName: Wile Ethelbert Coyote
@@ -201,6 +213,8 @@ components:
               type: string
               format: 'date-time'
               description: The Expiration date and time for the Account
+            status:
+              $ref: '#/components/schemas/statusAccount'
           required:
             - organizationName
             - organizationEmail
@@ -218,6 +232,7 @@ components:
             organizationPersonName: Wile Ethelbert Coyote
             organizationPhoneNumber: +1 (555) 123 4567
             expirationDate: '2019-12-31T00:00:00.000Z'
+            status: ENABLED
     accountListResult:
       allOf:
         - $ref: '../openapi.yaml#/components/schemas/kapuaListResult'

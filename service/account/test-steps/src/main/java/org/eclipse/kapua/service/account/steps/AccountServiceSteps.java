@@ -49,6 +49,7 @@ import org.eclipse.kapua.service.account.AccountFactory;
 import org.eclipse.kapua.service.account.AccountListResult;
 import org.eclipse.kapua.service.account.AccountQuery;
 import org.eclipse.kapua.service.account.AccountService;
+import org.eclipse.kapua.service.account.AccountStatus;
 import org.eclipse.kapua.service.account.Organization;
 import org.junit.Assert;
 
@@ -316,6 +317,19 @@ public class AccountServiceSteps extends TestBase {
             verifyException(ex);
         }
     }
+
+    @When("I change the status of account {string} to {string}")
+    public void changeAccountStatus(String accountName, String status) throws Exception {
+        try {
+            primeException();
+            Account tmpAcc = accountService.findByName(accountName);
+            tmpAcc.setStatus(AccountStatus.valueOf(status));
+            accountService.update(tmpAcc);
+        } catch (KapuaException ex) {
+            verifyException(ex);
+        }
+    }
+
 
     @When("I change the scope Id for account {string} to {int}")
     public void changeParentPathForAccount(String name, int scopeId) throws Exception {
@@ -746,7 +760,7 @@ public class AccountServiceSteps extends TestBase {
             primeException();
             try {
                 Account account = accountService.create(accountCreatorCreator(cucAccount.getName(),
-                        cucAccount.getScopeId(), cucAccount.getExpirationDate()));
+                        cucAccount.getScopeId(), cucAccount.getExpirationDate(), cucAccount.getStatus()));
                 accountList.add(account);
             } catch (KapuaException ke) {
                 verifyException(ke);
@@ -767,12 +781,13 @@ public class AccountServiceSteps extends TestBase {
      *         acount scope id
      * @return
      */
-    private AccountCreator accountCreatorCreator(String name, BigInteger scopeId, Date expiration) {
+    private AccountCreator accountCreatorCreator(String name, BigInteger scopeId, Date expiration, AccountStatus status) {
 
         AccountCreator accountCreator = accountFactory.newCreator(new KapuaEid(scopeId));
         accountCreator.setName(name);
         accountCreator.setOrganizationName("ACME Inc.");
         accountCreator.setOrganizationEmail("some@one.com");
+        accountCreator.setStatus(status);
 
         if (expiration != null) {
             accountCreator.setExpirationDate(expiration);

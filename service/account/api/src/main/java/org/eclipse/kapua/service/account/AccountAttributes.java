@@ -97,4 +97,9 @@ public class AccountAttributes extends KapuaNamedEntityAttributes {
      * @since 1.0.0
      */
     public static final String ORGANIZATION_COUNTRY = ORGANIZATION + ".country";
+
+    /**
+     * @since 2.0.0
+     */
+    public static final String STATUS = "status";
 }

@@ -16,9 +16,11 @@ import com.extjs.gxt.ui.client.Style.Scroll;
 import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.Listener;
+import com.extjs.gxt.ui.client.widget.form.ComboBox;
 import com.extjs.gxt.ui.client.widget.form.FieldSet;
 import com.extjs.gxt.ui.client.widget.form.LabelField;
 import com.extjs.gxt.ui.client.widget.form.NumberField;
+import com.extjs.gxt.ui.client.widget.form.SimpleComboBox;
 import com.extjs.gxt.ui.client.widget.layout.FormData;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.google.gwt.core.client.GWT;
@@ -61,6 +63,7 @@ public class AccountAddDialog extends EntityAddEditDialog {
     protected final KapuaTextField<String> accountNameField = new KapuaTextField<String>();
     protected final KapuaTextField<String> accountPassword = new KapuaTextField<String>();
     protected final KapuaDateField expirationDateField = new KapuaDateField(this);
+    protected SimpleComboBox<GwtAccount.GwtAccountStatus> statusCombo;
 
     // broker cluster
     protected final NumberField optlock = new NumberField();
@@ -78,6 +81,7 @@ public class AccountAddDialog extends EntityAddEditDialog {
     protected final KapuaTextField<String> organizationCity = new KapuaTextField<String>();
     protected final KapuaTextField<String> organizationStateProvinceCounty = new KapuaTextField<String>();
     protected final KapuaTextField<String> organizationCountry = new KapuaTextField<String>();
+
 
     public AccountAddDialog(GwtSession currentSession) {
         super(currentSession);
@@ -146,6 +150,20 @@ public class AccountAddDialog extends EntityAddEditDialog {
         fieldSet.add(expirationDateField, accountFieldsetFormData);
 
         accountFormPanel.add(fieldSet);
+
+        // Account Status
+        statusCombo = new SimpleComboBox<GwtAccount.GwtAccountStatus>();
+        statusCombo.setAllowBlank(true);
+        statusCombo.setName(MSGS.accountStatus());
+        statusCombo.setFieldLabel(MSGS.accountStatus());
+        statusCombo.setToolTip(MSGS.accountStatusTooltip());
+        statusCombo.setEditable(false);
+        statusCombo.setTriggerAction(ComboBox.TriggerAction.ALL);
+        statusCombo.add(GwtAccount.GwtAccountStatus.ENABLED);
+        statusCombo.add(GwtAccount.GwtAccountStatus.DISABLED);
+//        statusCombo.setSimpleValue(GwtAccount.GwtAccountStatus.ENABLED);
+
+        fieldSet.add(statusCombo);
 
         // //////////////////////////////////////////
         // Deployment Information field set
@@ -318,6 +336,9 @@ public class AccountAddDialog extends EntityAddEditDialog {
         gwtAccountCreator.setOrganizationStateProvinceCounty(organizationStateProvinceCounty.getValue());
         gwtAccountCreator.setOrganizationCountry(organizationCountry.getValue());
         gwtAccountCreator.setScopeId(currentSession.getSelectedAccountId());
+        gwtAccountCreator.setAccountStatus(
+                statusCombo.getSimpleValue() != null ? statusCombo.getSimpleValue().name() : null
+        );
 
         GWT_ACCOUNT_SERVICE.create(xsrfToken,
                 gwtAccountCreator,
@@ -337,8 +358,10 @@ public class AccountAddDialog extends EntityAddEditDialog {
                                 if (gwtCause.getCode().equals(GwtKapuaErrorCode.DUPLICATE_NAME)
                                         || gwtCause.getCode().equals(GwtKapuaErrorCode.ENTITY_ALREADY_EXIST_IN_ANOTHER_ACCOUNT)) {
                                     accountNameField.markInvalid(gwtCause.getMessage());
-                                } else if (gwtCause.getCode().equals(GwtKapuaErrorCode.ILLEGAL_ARGUMENT) && gwtCause.getArguments()[0].equals("expirationDate")) {
-                                    expirationDateField.markInvalid(MSGS.conflictingExpirationDate());
+                                } else if (gwtCause.getCode().equals(GwtKapuaErrorCode.ILLEGAL_ARGUMENT)) {
+                                    if (gwtCause.getArguments()[0].equals("expirationDate")) {
+                                        expirationDateField.markInvalid(MSGS.conflictingExpirationDate());
+                                    }
                                 }
                             }
                             FailureHandler.handleFormException(formPanel, cause);

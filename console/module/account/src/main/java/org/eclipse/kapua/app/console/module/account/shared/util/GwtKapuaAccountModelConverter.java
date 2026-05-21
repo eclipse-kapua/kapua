@@ -87,6 +87,10 @@ public class GwtKapuaAccountModelConverter {
             predicate.and(query.attributePredicate(AccountAttributes.ORGANIZATION_COUNTRY, gwtAccountQuery.getOrganizationCountry(), Operator.LIKE));
         }
 
+        if (gwtAccountQuery.getStatus() != null && !gwtAccountQuery.getStatus().isEmpty()) {
+            predicate.and(query.attributePredicate(AccountAttributes.STATUS, gwtAccountQuery.getStatus(), Operator.EQUAL));
+        }
+
         String sortField = StringUtils.isEmpty(loadConfig.getSortField()) ? AccountAttributes.NAME : loadConfig.getSortField();
         if (sortField.equals("modifiedOnFormatted")) {
             sortField = AccountAttributes.MODIFIED_ON;

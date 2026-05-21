@@ -85,6 +85,9 @@ public class AccountEditDialog extends AccountAddDialog {
         organizationCountry.setValue(selectedAccount.getGwtOrganization().getCountry());
         organizationCountry.setOriginalValue(selectedAccount.getGwtOrganization().getCountry());
 
+        statusCombo.setSimpleValue(GwtAccount.GwtAccountStatus.valueOf(selectedAccount.getAccountStatus()));
+        //statusCombo.setOriginalValue(GwtAccount.GwtAccountStatus.valueOf(selectedAccount.getAccountStatus()));
+
         accountClusterLabel.setVisible(true);
         optlock.setValue(selectedAccount.getOptlock());
     }
@@ -106,6 +109,7 @@ public class AccountEditDialog extends AccountAddDialog {
         gwtOrganization.setCountry(organizationCountry.getValue());
         selectedAccount.setGwtOrganization(gwtOrganization);
         selectedAccount.setExpirationDate(expirationDateField.getValue());
+        selectedAccount.setAccountStatus(statusCombo.getSimpleValue().name());
 
         GWT_ACCOUNT_SERVICE.update(xsrfToken,
                 selectedAccount,

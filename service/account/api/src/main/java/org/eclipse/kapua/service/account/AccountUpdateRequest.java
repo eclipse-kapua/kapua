@@ -34,6 +34,14 @@ public class AccountUpdateRequest extends KapuaNamedEntityUpdateRequest {
     public Date expirationDate;
 
     /**
+     * The account's status.
+     *
+     * @since 2.0.0
+     */
+    @XmlElement(name = "status")
+    public AccountStatus status;
+
+    /**
      * The details of this account's {@link Organization}.
      *
      * @since 1.0.0

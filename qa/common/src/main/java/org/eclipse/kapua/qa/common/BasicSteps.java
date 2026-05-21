@@ -205,7 +205,8 @@ public class BasicSteps extends TestBase {
         return new CucAccount(
                 entry.get("name"),
                 Util.parseBigInteger(entry.get("scopeId")),
-                entry.get("expirationDate"));
+                entry.get("expirationDate"),
+                entry.get("status"));
     }
 
     @DataTableType
