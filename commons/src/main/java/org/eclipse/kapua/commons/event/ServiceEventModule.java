@@ -83,10 +83,10 @@ public abstract class ServiceEventModule implements ServiceModule {
                 }
                 // Listen to upstream service events
                 if (selc.getEventListener() != null) {
-                    eventbus.subscribe(new Subscription(address, getSubscriptionName(address, selc.getClientName()), selc.getEventListener()));
+                    eventbus.subscribe(new Subscription(address, getSubscriptionName(address, selc.getSubscriberGroup()), selc.getEventListener()));
                 }
-                servicesEntryList.add(new ServiceEntry(selc.getClientName(), address));
-                subscriberNames.add(selc.getClientName()); // Set because names must be unique
+                servicesEntryList.add(new ServiceEntry(selc.getSubscriberGroup(), address));
+                subscriberNames.add(selc.getSubscriberGroup()); // Set because names must be unique
             }
         } else {
             LOGGER.info("Configuration subscriptions are missing. No subscriptions added!");
