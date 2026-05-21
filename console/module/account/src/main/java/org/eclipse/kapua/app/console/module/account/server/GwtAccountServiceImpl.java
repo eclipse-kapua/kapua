@@ -75,8 +75,13 @@ import org.eclipse.kapua.service.account.AccountQuery;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.exception.SubjectUnauthorizedException;
+import org.eclipse.kapua.service.authorization.group.GroupRoleCreator;
+import org.eclipse.kapua.service.authorization.group.GroupRoleFactory;
+import org.eclipse.kapua.service.authorization.group.GroupRoleService;
+import org.eclipse.kapua.service.authorization.group.GroupService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.authorization.role.Role;
 import org.eclipse.kapua.service.authorization.role.RoleCreator;
 import org.eclipse.kapua.service.authorization.role.RoleFactory;
 import org.eclipse.kapua.service.authorization.role.RoleService;
@@ -85,6 +90,10 @@ import org.eclipse.kapua.service.endpoint.EndpointInfo;
 import org.eclipse.kapua.service.endpoint.EndpointInfoFactory;
 import org.eclipse.kapua.service.endpoint.EndpointInfoListResult;
 import org.eclipse.kapua.service.endpoint.EndpointInfoService;
+import org.eclipse.kapua.service.user.group.UserGroup;
+import org.eclipse.kapua.service.user.group.UserGroupCreator;
+import org.eclipse.kapua.service.user.group.UserGroupFactory;
+import org.eclipse.kapua.service.user.group.UserGroupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,6 +131,11 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
     private static final RoleService ROLE_SERVICE = LOCATOR.getService(RoleService.class);
     private static final RoleFactory ROLE_FACTORY = LOCATOR.getFactory(RoleFactory.class);
 
+    private static final GroupService GROUP_SERVICE = LOCATOR.getService(GroupService.class);
+    private static final UserGroupFactory USER_GROUP_FACTORY= LOCATOR.getFactory(UserGroupFactory.class);
+    private static final UserGroupService USER_GROUP_SERVICE = LOCATOR.getService(UserGroupService.class);
+    private static final GroupRoleFactory GROUP_ROLE_FACTORY = LOCATOR.getFactory(GroupRoleFactory.class);
+    private static final GroupRoleService GROUP_ROLE_SERVICE = LOCATOR.getService(GroupRoleService.class);
 
     @Override
     public GwtAccount create(GwtXSRFToken xsrfToken, GwtAccountCreator gwtAccountCreator)
@@ -162,7 +176,7 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
                     adminRoleCreator.setScopeId(account.getId());
                     adminRoleCreator.setPermissions(Sets.newHashSet(adminPermission));
 
-                    ROLE_SERVICE.create(adminRoleCreator);
+                    Role adminRole = ROLE_SERVICE.create(adminRoleCreator);
 
                     // Thing
                     Permission thingPermission = PERMISSION_FACTORY.newPermission(Domains.BROKER, Actions.connect, account.getId(), null, false);
@@ -172,7 +186,31 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
                     thingRoleCreator.setScopeId(account.getId());
                     thingRoleCreator.setPermissions(Sets.newHashSet(thingPermission));
 
-                    ROLE_SERVICE.create(thingRoleCreator);
+                    Role thingRole = ROLE_SERVICE.create(thingRoleCreator);
+
+                    Integer maxNumberGroups = (Integer) GROUP_SERVICE.getConfigValues(account.getId()).get("maxNumberChildEntities");
+                    if (maxNumberGroups >= 2) {
+                        // Create "Admins" Group
+                        UserGroupCreator userGroupCreator = USER_GROUP_FACTORY.newCreator(account.getId());
+                        userGroupCreator.setName("Admins");
+                        userGroupCreator.setScopeId(account.getId());
+                        UserGroup adminGroup = USER_GROUP_SERVICE.create(userGroupCreator);
+                        // Link "Admins" group -> "Admin" role
+                        GroupRoleCreator groupRoleCreator = GROUP_ROLE_FACTORY.newCreator(account.getId());
+                        groupRoleCreator.setGroupId(adminGroup.getId());
+                        groupRoleCreator.setRoleId(adminRole.getId());
+                        GROUP_ROLE_SERVICE.create(groupRoleCreator);
+                        // Create "Things" group
+                        userGroupCreator = USER_GROUP_FACTORY.newCreator(account.getId());
+                        userGroupCreator.setName("Things");
+                        userGroupCreator.setScopeId(account.getId());
+                        UserGroup thingGroup = USER_GROUP_SERVICE.create(userGroupCreator);
+                        // Link "Things" group -> "Thing" role
+                        groupRoleCreator = GROUP_ROLE_FACTORY.newCreator(account.getId());
+                        groupRoleCreator.setGroupId(thingGroup.getId());
+                        groupRoleCreator.setRoleId(thingRole.getId());
+                        GROUP_ROLE_SERVICE.create(groupRoleCreator);
+                    }
                 }
             });
             // Convert Account to GwtAccount
