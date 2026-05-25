@@ -45,6 +45,12 @@ import java.util.Date;
         "lastMessageOn"})
 public interface MetricInfo extends Storable {
 
+    String TYPE = "MetricInfo";
+
+    @Override
+    default String getType() {
+        return TYPE;
+    }
 
     /**
      * Gets the {@link StorableId}
