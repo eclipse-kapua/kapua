@@ -277,6 +277,7 @@ public class GwtAuthorizationServiceImpl extends KapuaRemoteServiceServlet imple
         gwtSession.setSsoEnabled(ConsoleSsoLocator.getLocator(this).getService().isEnabled());
         LoginInfo loginInfo = AUTHENTICATION_SERVICE.getLoginInfo();
         gwtSession.setSsoBrokeringEnabledForSession(loginInfo.getSsoData() != null &&
+                !loginInfo.getSsoData().getBrokeringApiConnectionIssues() &&
                 loginInfo.getSsoData().getAccountSupportsBrokering() &&
                 loginInfo.getSsoData().getAccountSupportsDirectLogin());
         gwtSession.setDatastoreDisabled(DATASTORE_SETTINGS.getBoolean(DatastoreSettingsKey.DISABLE_DATASTORE, false));
