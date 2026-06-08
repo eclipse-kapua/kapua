@@ -71,6 +71,7 @@ public class GwtSettingsServiceImpl extends RemoteServiceServlet implements GwtS
             }
             SSOData ssoData = loginInfo.getSsoData();
             if (ssoData != null &&
+                    !ssoData.getBrokeringApiConnectionIssues() &&
                     ssoData.getAccountSupportsBrokering() &&
                     ssoData.getAccountSupportsDirectLogin() &&
                     ssoData.getUriSuffixDirectLogin() != null) {
