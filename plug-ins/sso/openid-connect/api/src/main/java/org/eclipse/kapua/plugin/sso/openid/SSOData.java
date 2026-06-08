@@ -33,7 +33,7 @@ import java.util.List;
  */
 @XmlRootElement(name = "ssoData")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlType(propOrder = {"accountSupportsBrokering", "accountSupportsDirectLogin", "uriSuffixDirectLogin", "companyDomainNames"})
+@XmlType(propOrder = {"accountSupportsBrokering", "accountSupportsDirectLogin", "uriSuffixDirectLogin", "companyDomainNames", "brokeringApiConnectionIssues"})
 public interface SSOData {
 
     @XmlTransient
@@ -61,4 +61,9 @@ public interface SSOData {
     List<String> getCompanyDomainNames();
 
     void setCompanyDomainNames(List<String> domains);
+
+    @XmlElement(name = "brokeringApiConnectionIssues")
+    boolean getBrokeringApiConnectionIssues();
+
+    void setBrokeringApiConnectionIssues(boolean brokeringApiConnectionIssues);
 }
