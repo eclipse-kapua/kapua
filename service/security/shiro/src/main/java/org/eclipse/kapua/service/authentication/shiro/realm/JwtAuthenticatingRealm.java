@@ -24,10 +24,14 @@ import org.apache.shiro.util.Destroyable;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
 import org.eclipse.kapua.locator.KapuaLocator;
+import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.plugin.sso.openid.JwtProcessor;
 import org.eclipse.kapua.plugin.sso.openid.OpenIDLocator;
 import org.eclipse.kapua.plugin.sso.openid.OpenIDService;
+import org.eclipse.kapua.plugin.sso.openid.SSOData;
 import org.eclipse.kapua.plugin.sso.openid.exception.OpenIDException;
+import org.eclipse.kapua.plugin.sso.openid.provider.setting.OpenIDSetting;
+import org.eclipse.kapua.plugin.sso.openid.provider.setting.OpenIDSettingKeys;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.authentication.ApiKeyCredentials;
 import org.eclipse.kapua.service.authentication.JwtCredentials;
@@ -61,6 +65,7 @@ public class JwtAuthenticatingRealm extends KapuaAuthenticatingRealm implements 
     private final UserService userService = KapuaLocator.getInstance().getService(UserService.class);
     private final OpenIDService openIDService = KapuaLocator.getInstance().getComponent(OpenIDLocator.class).getService();
     private final KapuaAuthenticationSetting authenticationSetting = KapuaLocator.getInstance().getComponent(KapuaAuthenticationSetting.class);
+    private final OpenIDSetting openIDSettings = KapuaLocator.getInstance().getComponent(OpenIDSetting.class);
     /**
      * JWT Processor.
      */
@@ -188,6 +193,25 @@ public class JwtAuthenticatingRealm extends KapuaAuthenticatingRealm implements 
     public boolean supports(AuthenticationToken authenticationToken) {
         return authenticationToken instanceof JwtCredentialsImpl;
     }
+
+    protected Account checkAccount(KapuaId accountId) {
+        Account account = super.checkAccount(accountId);
+        //check if platform supports brokering and if so, if the account of the user supports brokering
+        if (openIDSettings.getBoolean(OpenIDSettingKeys.SSO_OPENID_BROKERING_ENABLED, false)) {
+            SSOData ssoDataAccount = null;
+            try {
+                ssoDataAccount = openIDService.retrieveSSODataForAccount(accountId);
+            } catch (KapuaException e) {
+                throw new ShiroException("Unexpected error while looking for the account ssoData! Cannot verify if log-in via external user is enabled for this account", e);
+            }
+            if (ssoDataAccount != null &&
+                    !ssoDataAccount.getAccountSupportsBrokering()) {
+                throw new ShiroException("Unexpected error while looking for the account! It seems account has disabled brokering");
+            }
+        }
+        return account;
+    }
+
     // Private methods
 
     /**
