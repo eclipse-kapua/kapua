@@ -21,11 +21,11 @@ import org.eclipse.kapua.app.console.module.api.shared.model.GwtConfigComponent;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtXSRFToken;
 import org.eclipse.kapua.app.console.module.api.shared.service.GwtConsoleService;
 import org.eclipse.kapua.app.console.module.api.shared.util.GwtKapuaCommonsModelConverter;
+import org.eclipse.kapua.commons.configuration.ServiceConfigurationsFacade;
 import org.eclipse.kapua.commons.util.ResourceUtils;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.service.KapuaService;
-import org.eclipse.kapua.service.config.KapuaConfigurableService;
+import org.eclipse.kapua.service.config.ServiceComponentConfiguration;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -43,9 +43,12 @@ import java.util.ServiceLoader;
 
 public class GwtConsoleServiceImpl extends KapuaRemoteServiceServlet implements GwtConsoleService {
 
+    private static final KapuaLocator LOCATOR = KapuaLocator.getInstance();
+
     private static final ServiceLoader<MainViewDescriptor> MAIN_VIEW_DESCRIPTOR_CLASSES = ServiceLoader.load(MainViewDescriptor.class);
     private static final JsonArray MAIN_VIEW_DESCRIPTORS;
     private static JsonReader jsonReader;
+    private static final ServiceConfigurationsFacade FACADE_CONFIGURATION_SERVICE = LOCATOR.getComponent(ServiceConfigurationsFacade.class);
 
     static {
         jsonReader = null;
@@ -101,21 +104,15 @@ public class GwtConsoleServiceImpl extends KapuaRemoteServiceServlet implements 
     @Override
     public void updateComponentConfiguration(GwtXSRFToken xsrfToken, String scopeId, String parentScopeId, GwtConfigComponent configComponent) throws GwtKapuaException {
         String serviceClassName = configComponent.getComponentId();
-        KapuaLocator locator = KapuaLocator.getInstance();
         try {
-            Class<? extends KapuaService> serviceClass = Class.forName(serviceClassName).asSubclass(KapuaService.class);
-            KapuaService service = locator.getService(serviceClass);
-            if (service instanceof KapuaConfigurableService) {
-                KapuaConfigurableService configurableService = (KapuaConfigurableService) service;
-                // Checking validity of the given XSRF Token
-                checkXSRFToken(xsrfToken);
-                KapuaId kapuaScopeId = GwtKapuaCommonsModelConverter.convertKapuaId(scopeId);
-                KapuaId kapuaParentId = GwtKapuaCommonsModelConverter.convertKapuaId(parentScopeId);
-
-                // execute the update
-                Map<String, Object> configParameters = GwtKapuaCommonsModelConverter.convertConfigComponent(configComponent);
-                configurableService.setConfigValues(kapuaScopeId, kapuaParentId, configParameters);
-            }
+            // Checking validity of the given XSRF Token
+            checkXSRFToken(xsrfToken);
+            Map<String, Object> configParameters = GwtKapuaCommonsModelConverter.convertConfigComponent(configComponent);
+            ServiceComponentConfiguration toUpdate = new ServiceComponentConfiguration();
+            toUpdate.setId(serviceClassName);
+            toUpdate.setProperties(configParameters);
+            KapuaId kapuaScopeId = GwtKapuaCommonsModelConverter.convertKapuaId(scopeId);
+            FACADE_CONFIGURATION_SERVICE.update(kapuaScopeId, serviceClassName, toUpdate);
         } catch (Throwable t) {
             KapuaExceptionHandler.handle(t);
         }

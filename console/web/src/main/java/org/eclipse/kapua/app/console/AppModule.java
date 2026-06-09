@@ -18,10 +18,18 @@ import javax.inject.Singleton;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.ContainerIdResolver;
 import org.eclipse.kapua.commons.DefaultContainerIdResolver;
+import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
+import org.eclipse.kapua.commons.configuration.ServiceConfigurationsFacade;
+import org.eclipse.kapua.commons.configuration.ServiceConfigurationsFacadeImpl;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.util.xml.JAXBContextProvider;
 
 import com.google.inject.Provides;
+import org.eclipse.kapua.service.account.AccountService;
+import org.eclipse.kapua.service.authorization.AuthorizationService;
+import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+
+import java.util.Map;
 
 public class AppModule extends AbstractKapuaModule {
 
@@ -76,6 +84,14 @@ public class AppModule extends AbstractKapuaModule {
     @Named("userEvtSubscriptionGroupId")
     String userEvtSubscriptionGroupId(ContainerIdResolver containerIdResolver) {
         return getSubscriptionId(containerIdResolver);
+    }
+
+    @Provides
+    @Singleton
+    ServiceConfigurationsFacade serviceConfigurationsFacade(
+            Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass, AuthorizationService authorizationService,
+            PermissionFactory permissionFactory, AccountService accountService) {
+        return new ServiceConfigurationsFacadeImpl(serviceConfigurationManagersByServiceClass, authorizationService, permissionFactory, accountService);
     }
 
     private String getSubscriptionId(ContainerIdResolver containerIdResolver) {
