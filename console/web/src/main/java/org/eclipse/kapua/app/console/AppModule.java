@@ -13,18 +13,27 @@
 package org.eclipse.kapua.app.console;
 
 import com.google.inject.Provides;
-import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
+import java.util.Map;
 
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.ContainerIdResolver;
 import org.eclipse.kapua.commons.DefaultContainerIdResolver;
+import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
+import org.eclipse.kapua.commons.configuration.ServiceConfigurationsFacade;
+import org.eclipse.kapua.commons.configuration.ServiceConfigurationsFacadeImpl;
+import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.util.xml.JAXBContextProvider;
 import org.eclipse.kapua.commons.util.xml.XmlUtil;
+import org.eclipse.kapua.service.account.AccountService;
+import org.eclipse.kapua.service.authorization.AuthorizationService;
+import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+
 
 public class AppModule extends AbstractKapuaModule {
+
     @Override
     protected void configureModule() {
 
@@ -78,8 +87,12 @@ public class AppModule extends AbstractKapuaModule {
         return getSubscriptionId(containerIdResolver);
     }
 
-    private String getSubscriptionId(ContainerIdResolver containerIdResolver) {
-        return "console-" + containerIdResolver.getContainerId();
+    @Provides
+    @Singleton
+    ServiceConfigurationsFacade serviceConfigurationsFacade(
+            Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass, AuthorizationService authorizationService,
+            PermissionFactory permissionFactory, AccountService accountService) {
+        return new ServiceConfigurationsFacadeImpl(serviceConfigurationManagersByServiceClass, authorizationService, permissionFactory, accountService);
     }
 
     @Provides
@@ -88,5 +101,9 @@ public class AppModule extends AbstractKapuaModule {
         final JAXBContextProvider jaxbContextProvider = new ConsoleJAXBContextProvider();
         XmlUtil.setContextProvider(jaxbContextProvider);
         return jaxbContextProvider;
+    }
+
+    private String getSubscriptionId(ContainerIdResolver containerIdResolver) {
+        return "console-" + containerIdResolver.getContainerId();
     }
 }
