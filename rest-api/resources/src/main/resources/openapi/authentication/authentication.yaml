@@ -174,9 +174,6 @@ components:
               domain: job
               targetScopeId: AQ
               forwardable: false
-        ssoData:
-          supportsDirectLogin: false
-          uriSuffixDirectLogin: '?accountid=my-account'
     usernamePasswordCredentials:
       allOf:
       - type: object
