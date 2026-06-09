@@ -53,10 +53,10 @@ import org.eclipse.kapua.app.console.module.api.shared.model.GwtConfigParameter;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtGroupedNVPair;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtXSRFToken;
 import org.eclipse.kapua.app.console.module.api.shared.util.GwtKapuaCommonsModelConverter;
+import org.eclipse.kapua.commons.configuration.ServiceConfigurationsFacade;
 import org.eclipse.kapua.commons.model.domains.Domains;
 import org.eclipse.kapua.commons.model.id.KapuaEid;
 import org.eclipse.kapua.commons.security.KapuaSecurityUtils;
-import org.eclipse.kapua.commons.service.internal.KapuaServiceDisabledException;
 import org.eclipse.kapua.commons.util.ThrowingRunnable;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.config.metatype.EmptyTocd;
@@ -67,20 +67,19 @@ import org.eclipse.kapua.model.config.metatype.KapuaToption;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaListResult;
-import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountCreator;
 import org.eclipse.kapua.service.account.AccountFactory;
 import org.eclipse.kapua.service.account.AccountQuery;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
-import org.eclipse.kapua.service.authorization.exception.SubjectUnauthorizedException;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.service.authorization.role.RoleCreator;
 import org.eclipse.kapua.service.authorization.role.RoleFactory;
 import org.eclipse.kapua.service.authorization.role.RoleService;
-import org.eclipse.kapua.service.config.KapuaConfigurableService;
+import org.eclipse.kapua.service.config.ServiceComponentConfiguration;
+import org.eclipse.kapua.service.config.ServiceConfiguration;
 import org.eclipse.kapua.service.endpoint.EndpointInfo;
 import org.eclipse.kapua.service.endpoint.EndpointInfoFactory;
 import org.eclipse.kapua.service.endpoint.EndpointInfoListResult;
@@ -121,7 +120,7 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
 
     private static final RoleService ROLE_SERVICE = LOCATOR.getService(RoleService.class);
     private static final RoleFactory ROLE_FACTORY = LOCATOR.getFactory(RoleFactory.class);
-
+    private static final ServiceConfigurationsFacade FACADE_CONFIGURATION_SERVICE = LOCATOR.getComponent(ServiceConfigurationsFacade.class);
 
     @Override
     public GwtAccount create(GwtXSRFToken xsrfToken, GwtAccountCreator gwtAccountCreator)
@@ -407,17 +406,9 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
         List<GwtConfigComponent> gwtConfigs = new ArrayList<GwtConfigComponent>();
         try {
             KapuaId kapuaScopeId = GwtKapuaCommonsModelConverter.convertKapuaId(scopeId);
-            for (KapuaService service : LOCATOR.getServices()) {
-                if (service instanceof KapuaConfigurableService) {
-                    KapuaConfigurableService configurableService = (KapuaConfigurableService) service;
-                    KapuaTocd tocd;
-                    try {
-                        tocd = configurableService.getConfigMetadata(GwtKapuaCommonsModelConverter.convertKapuaId(scopeId));
-                    } catch (SubjectUnauthorizedException ex) {
-                        continue;
-                    } catch (KapuaServiceDisabledException ex) {
-                        continue;
-                    }
+            ServiceConfiguration serviceConfiguration = FACADE_CONFIGURATION_SERVICE.fetchAllConfigurations(kapuaScopeId);
+            for (ServiceComponentConfiguration serviceComponentConfiguration : serviceConfiguration.getComponentConfigurations()) {
+                KapuaTocd tocd = serviceComponentConfiguration.getDefinition();
                     if (tocd != null && !(tocd instanceof EmptyTocd)) {
                         GwtConfigComponent gwtConfig = new GwtConfigComponent();
                         gwtConfig.setId(tocd.getId());
@@ -433,7 +424,7 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
 
                         List<GwtConfigParameter> gwtParams = new ArrayList<GwtConfigParameter>();
                         gwtConfig.setParameters(gwtParams);
-                        Map<String, Object> values = configurableService.getConfigValues(kapuaScopeId);
+                        Map<String, Object> values = serviceComponentConfiguration.getProperties();
                         for (KapuaTad ad : tocd.getAD()) {
                             if (ad != null) {
                                 GwtConfigParameter gwtParam = new GwtConfigParameter();
@@ -484,7 +475,6 @@ public class GwtAccountServiceImpl extends KapuaRemoteServiceServlet implements 
                         }
                         gwtConfigs.add(gwtConfig);
                     }
-                }
             }
         } catch (Throwable t) {
             KapuaExceptionHandler.handle(t);
