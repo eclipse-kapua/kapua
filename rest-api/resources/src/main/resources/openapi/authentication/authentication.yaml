@@ -95,8 +95,6 @@ components:
           type: array
           items:
             $ref: '../role/role.yaml#/components/schemas/rolePermission'
-        ssoData:
-          $ref: '#/components/schemas/ssoData'
       example:
         type: loginInfo
         accessToken:
@@ -174,9 +172,6 @@ components:
               domain: job
               targetScopeId: AQ
               forwardable: false
-        ssoData:
-          supportsDirectLogin: false
-          uriSuffixDirectLogin: '?accountid=my-account'
     usernamePasswordCredentials:
       allOf:
       - type: object
