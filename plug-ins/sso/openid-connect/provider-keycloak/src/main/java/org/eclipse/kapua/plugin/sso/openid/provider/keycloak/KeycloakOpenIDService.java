@@ -26,7 +26,9 @@ public class KeycloakOpenIDService extends AbstractOpenIDService {
     private static final String KEYCLOAK_TOKEN_URI_SUFFIX = "/protocol/openid-connect/token";
     private static final String KEYCLOAK_USERINFO_URI_SUFFIX = "/protocol/openid-connect/userinfo";
     private static final String KEYCLOAK_LOGOUT_URI_SUFFIX = "/protocol/openid-connect/logout";
+
     private final KeycloakOpenIDUtils keycloakOpenIDUtils;
+
 
     public KeycloakOpenIDService(final OpenIDSetting ssoSettings,
                                  KeycloakOpenIDUtils keycloakOpenIDUtils) {

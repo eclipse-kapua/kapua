@@ -47,6 +47,7 @@ import org.eclipse.kapua.model.config.metatype.KapuaTicon;
 import org.eclipse.kapua.model.config.metatype.KapuaTmetadata;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
 import org.eclipse.kapua.model.config.metatype.KapuaToption;
+import org.eclipse.kapua.service.authentication.token.LoginInfo;
 import org.eclipse.kapua.service.device.call.kura.model.bundle.KuraBundle;
 import org.eclipse.kapua.service.device.call.kura.model.bundle.KuraBundles;
 import org.eclipse.kapua.service.device.call.kura.model.configuration.KuraDeviceComponentConfiguration;
@@ -231,6 +232,8 @@ public class ConsoleJAXBContextProvider implements JAXBContextProvider {
                         EventStoreRecordListResult.class,
                         EventStoreRecordQuery.class,
                         EventStoreXmlRegistry.class,
+
+                        LoginInfo.class
 
                 }, properties);
             }

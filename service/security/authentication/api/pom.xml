@@ -65,5 +65,9 @@
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-openid-api</artifactId>
+        </dependency>
     </dependencies>
 </project>
