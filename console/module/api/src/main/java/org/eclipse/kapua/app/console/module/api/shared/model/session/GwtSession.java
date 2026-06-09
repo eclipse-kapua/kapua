@@ -30,6 +30,7 @@ public class GwtSession extends KapuaBaseModel implements Serializable {
     private String buildVersion;
     private String buildNumber;
     private boolean ssoEnabled;
+    private boolean ssoBrokeringEnabled;
     private boolean datastoreDisabled;
 
     // Account info
@@ -109,6 +110,14 @@ public class GwtSession extends KapuaBaseModel implements Serializable {
 
     public void setSsoEnabled(boolean ssoEnabled) {
         this.ssoEnabled = ssoEnabled;
+    }
+
+    public boolean isSsoBrokeringEnabledForSession() {
+        return ssoBrokeringEnabled;
+    }
+
+    public void setSsoBrokeringEnabledForSession(boolean ssoBrokeringEnabled) {
+        this.ssoBrokeringEnabled=ssoBrokeringEnabled;
     }
 
     public boolean isDatastoreDisabled() {

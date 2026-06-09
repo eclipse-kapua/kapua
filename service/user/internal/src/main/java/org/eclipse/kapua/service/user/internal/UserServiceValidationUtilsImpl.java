@@ -32,6 +32,11 @@ import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.model.query.KapuaQuery;
 import org.eclipse.kapua.model.type.DateConverter;
+import org.eclipse.kapua.plugin.sso.openid.OpenIDLocator;
+import org.eclipse.kapua.plugin.sso.openid.OpenIDService;
+import org.eclipse.kapua.plugin.sso.openid.SSOData;
+import org.eclipse.kapua.plugin.sso.openid.provider.setting.OpenIDSetting;
+import org.eclipse.kapua.plugin.sso.openid.provider.setting.OpenIDSettingKeys;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.CheckStrategy;
 import org.eclipse.kapua.service.authorization.group.Group;
@@ -59,6 +64,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -82,6 +88,8 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
     private final TagFactory tagFactory;
 
     private final UserRepository userRepository;
+    private final OpenIDService openIDService;
+    private final OpenIDSetting openIDSetting;
 
     public UserServiceValidationUtilsImpl(
             AuthorizationService authorizationService,
@@ -91,7 +99,9 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
             ServiceConfigurationManager serviceConfigurationManager,
             TagService tagService,
             TagFactory tagFactory,
-            UserRepository userRepository
+            UserRepository userRepository,
+            OpenIDLocator openIDLocator,
+            OpenIDSetting openIDSetting
     ) {
         this.authorizationService = authorizationService;
         this.permissionFactory = permissionFactory;
@@ -101,6 +111,8 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
         this.tagService = tagService;
         this.tagFactory = tagFactory;
         this.userRepository = userRepository;
+        this.openIDService = openIDLocator.getService();
+        this.openIDSetting = openIDSetting;
     }
 
     @Override
@@ -123,12 +135,15 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
         // .userType
         ArgumentValidator.notNull(userCreator.getUserType(), "userCreator.userType");
         if (userCreator.getUserType() == UserType.EXTERNAL) {
-            if (userCreator.getExternalId() != null) {
-                ArgumentValidator.notEmptyOrNull(userCreator.getExternalId(), "userCreator.externalId");
-                ArgumentValidator.lengthRange(userCreator.getExternalId(), 3, 255, "userCreator.externalId");
+            if (openIDSetting.getBoolean(OpenIDSettingKeys.SSO_OPENID_BROKERING_ENABLED, false)) {
+                SSOData ssoDataAccount = openIDService.retrieveSSODataForAccount(userCreator.getScopeId());
+                if (ssoDataAccount.getAccountSupportsBrokering()) {
+                    validateExternalUserOnSSOBrokeringEnabled(ssoDataAccount, userCreator);
+                } else {
+                    validateExternalUserOnSSOBrokeringDisabled(userCreator);
+                }
             } else {
-                ArgumentValidator.notEmptyOrNull(userCreator.getExternalUsername(), "userCreator.externalUsername");
-                ArgumentValidator.lengthRange(userCreator.getExternalUsername(), 3, 255, "userCreator.externalUsername");
+                validateExternalUserOnSSOBrokeringDisabled(userCreator);
             }
         } else if (userCreator.getUserType() == UserType.INTERNAL) {
             ArgumentValidator.isEmptyOrNull(userCreator.getExternalId(), "userCreator.externalId");
@@ -435,6 +450,29 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
 
             if (group == null) {
                 throw new KapuaEntityNotFoundException(Group.TYPE, groupId);
+            }
+        }
+    }
+
+    private void validateExternalUserOnSSOBrokeringDisabled(UserCreator userCreator) throws KapuaException {
+        if (userCreator.getExternalId() != null) {
+            ArgumentValidator.notEmptyOrNull(userCreator.getExternalId(), "userCreator.externalId");
+            ArgumentValidator.lengthRange(userCreator.getExternalId(), 3, 255, "userCreator.externalId");
+        } else {
+            ArgumentValidator.notEmptyOrNull(userCreator.getExternalUsername(), "userCreator.externalUsername");
+            ArgumentValidator.lengthRange(userCreator.getExternalUsername(), 3, 255, "userCreator.externalUsername");
+        }
+    }
+
+    private void validateExternalUserOnSSOBrokeringEnabled(SSOData ssoDataAccount, UserCreator userCreator) throws KapuaException {
+        ArgumentValidator.notEmptyOrNull(userCreator.getExternalUsername(), "userCreator.externalUsername");
+        ArgumentValidator.isEmptyOrNull(userCreator.getExternalId(), "userCreator.externalId");
+        ArgumentValidator.match(userCreator.getExternalUsername(), CommonsValidationRegex.EMAIL_REGEXP, "userCreator.externalUsername"); //For the current brokering implementation, we expect an email as the external user "key"
+        List<String> domainsThisAccount = ssoDataAccount.getCompanyDomainNames();
+        if (domainsThisAccount != null && !domainsThisAccount.isEmpty()) {
+            String userMailDomain = userCreator.getExternalUsername().split("@")[1];
+            if (!domainsThisAccount.contains(userMailDomain)) {
+                throw new KapuaIllegalArgumentException("userCreator.externalUsername", userCreator.getExternalUsername());
             }
         }
     }

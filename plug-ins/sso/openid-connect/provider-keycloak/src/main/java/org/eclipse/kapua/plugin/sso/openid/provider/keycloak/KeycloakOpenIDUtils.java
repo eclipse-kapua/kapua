@@ -61,4 +61,22 @@ public class KeycloakOpenIDUtils {
         return providerUri;
     }
 
+    public String getKeycloakApiClientID() throws OpenIDIllegalArgumentException {
+        String clientId = keycloakOpenIDSetting.getString(KeycloakOpenIDSettingKeys.KEYCLOAK_CLIENT_ID_API);
+        if (Strings.isNullOrEmpty(clientId)) {
+            throw new OpenIDIllegalArgumentException(KeycloakOpenIDSettingKeys.KEYCLOAK_CLIENT_ID_API.key(), clientId);
+        }
+        return clientId;
+    }
+
+    public String getKeycloakApiClientSecret() throws OpenIDIllegalArgumentException {
+        String secret = keycloakOpenIDSetting.getString(KeycloakOpenIDSettingKeys.KEYCLOAK_CLIENT_ID_API_SECRET);
+        if (Strings.isNullOrEmpty(secret)) {
+            throw new OpenIDIllegalArgumentException(KeycloakOpenIDSettingKeys.KEYCLOAK_CLIENT_ID_API.key(), secret);
+        }
+        return secret;
+    }
+
+
+
 }

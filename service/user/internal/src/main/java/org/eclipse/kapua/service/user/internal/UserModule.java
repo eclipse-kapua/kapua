@@ -36,6 +36,8 @@ import org.eclipse.kapua.event.ServiceEventBusException;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.domain.Domain;
 import org.eclipse.kapua.model.domain.DomainEntry;
+import org.eclipse.kapua.plugin.sso.openid.OpenIDLocator;
+import org.eclipse.kapua.plugin.sso.openid.provider.setting.OpenIDSetting;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.access.GroupQueryHelper;
 import org.eclipse.kapua.service.authorization.group.GroupFactory;
@@ -135,7 +137,9 @@ public class UserModule extends AbstractKapuaModule {
             Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
             TagService tagService,
             TagFactory tagFactory,
-            UserRepository userRepository
+            UserRepository userRepository,
+            OpenIDLocator openIDLocator,
+            OpenIDSetting openIDSettings
     ) {
         return new UserServiceValidationUtilsImpl(
                 authorizationService,
@@ -145,7 +149,9 @@ public class UserModule extends AbstractKapuaModule {
                 serviceConfigurationManagersByServiceClass.get(UserService.class),
                 tagService,
                 tagFactory,
-                userRepository
+                userRepository,
+                openIDLocator,
+                openIDSettings
         );
     }
 
