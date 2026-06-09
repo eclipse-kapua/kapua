@@ -19,8 +19,13 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
+import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.util.log.ConfigurationPrinter;
+import org.eclipse.kapua.model.config.metatype.EmptyTocd;
+import org.eclipse.kapua.model.config.metatype.KapuaTocd;
+import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.plugin.sso.openid.OpenIDService;
+import org.eclipse.kapua.plugin.sso.openid.SSOData;
 import org.eclipse.kapua.plugin.sso.openid.exception.OpenIDException;
 import org.eclipse.kapua.plugin.sso.openid.exception.OpenIDIllegalArgumentException;
 import org.eclipse.kapua.plugin.sso.openid.exception.OpenIDTokenException;
@@ -47,6 +52,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -60,6 +66,7 @@ public abstract class AbstractOpenIDService implements OpenIDService {
 
     private static final String HIDDEN_SECRET = "****";
     private static final List<String> SECRET_TOKENS = Arrays.asList("access_token", "id_token", "refresh_token");
+    private final KapuaTocd emptyTocd = new EmptyTocd(OpenIDService.class.getName(), OpenIDService.class.getSimpleName());
 
     protected OpenIDSetting openIDSettings;
 
@@ -131,6 +138,14 @@ public abstract class AbstractOpenIDService implements OpenIDService {
      */
     protected String getClientSecret() {
         return openIDSettings.getString(OpenIDSettingKeys.SSO_OPENID_CLIENT_SECRET);
+    }
+
+    public SSOData retrieveSSODataForAccount(KapuaId accountId) throws KapuaException {
+        return null; //TODO: maybe return a better "empty" value...method should return an optional optimally
+    }
+
+    public boolean isBrokeringEnabledForAccount(KapuaId accountId) throws KapuaException {
+        return openIDSettings.getBoolean(OpenIDSettingKeys.SSO_OPENID_BROKERING_ENABLED, false);
     }
 
     @Override
@@ -410,6 +425,22 @@ public abstract class AbstractOpenIDService implements OpenIDService {
         reqLogger.addParameter("Error message", errorMessage);
 
         reqLogger.printLog();
+    }
+
+    //Default implementation for KapuaConfigurableService methods
+    @Override
+    public KapuaTocd getConfigMetadata(KapuaId scopeId) throws KapuaException {
+        return emptyTocd;
+    }
+
+    @Override
+    public Map<String, Object> getConfigValues(KapuaId scopeId) throws KapuaException {
+        return Collections.emptyMap();
+    }
+
+    @Override
+    public void setConfigValues(KapuaId scopeId, KapuaId parentId, Map<String, Object> values) throws KapuaException {
+        throw new UnsupportedOperationException();
     }
 
 }

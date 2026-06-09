@@ -69,7 +69,7 @@ WHERE NOT (scope_id = 1 AND id = 1);
 
 DELETE
 FROM athz_domain_actions
-WHERE domain_id NOT IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21);
+WHERE domain_id NOT IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23);
 
 DELETE
 FROM athz_domain

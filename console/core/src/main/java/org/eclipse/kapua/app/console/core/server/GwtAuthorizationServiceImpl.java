@@ -41,6 +41,7 @@ import org.eclipse.kapua.commons.util.ThrowingRunnable;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.plugin.sso.openid.provider.setting.OpenIDSetting;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authentication.AuthenticationService;
@@ -50,6 +51,7 @@ import org.eclipse.kapua.service.authentication.UsernamePasswordCredentials;
 import org.eclipse.kapua.service.authentication.exception.KapuaAuthenticationErrorCodes;
 import org.eclipse.kapua.service.authentication.exception.KapuaAuthenticationException;
 import org.eclipse.kapua.service.authentication.registration.RegistrationService;
+import org.eclipse.kapua.service.authentication.token.LoginInfo;
 import org.eclipse.kapua.service.authorization.access.AccessInfo;
 import org.eclipse.kapua.service.authorization.access.AccessInfoService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
@@ -87,6 +89,7 @@ public class GwtAuthorizationServiceImpl extends KapuaRemoteServiceServlet imple
     private static final UserService USER_SERVICE = LOCATOR.getService(UserService.class);
     private static final UserGroupService USER_GROUP_SERVICE = LOCATOR.getService(UserGroupService.class);
     private static final DatastoreSettings DATASTORE_SETTINGS = LOCATOR.getComponent(DatastoreSettings.class);
+    private static final OpenIDSetting OPENID_SETTING = LOCATOR.getComponent(OpenIDSetting.class);
 
     /**
      * Login call in response to the login dialog.
@@ -272,6 +275,10 @@ public class GwtAuthorizationServiceImpl extends KapuaRemoteServiceServlet imple
         gwtSession.setBuildVersion(commonsConfig.getString(SystemSettingKey.BUILD_REVISION));
         gwtSession.setBuildNumber(commonsConfig.getString(SystemSettingKey.BUILD_NUMBER));
         gwtSession.setSsoEnabled(ConsoleSsoLocator.getLocator(this).getService().isEnabled());
+        LoginInfo loginInfo = AUTHENTICATION_SERVICE.getLoginInfo();
+        gwtSession.setSsoBrokeringEnabledForSession(loginInfo.getSsoData() != null &&
+                loginInfo.getSsoData().getAccountSupportsBrokering() &&
+                loginInfo.getSsoData().getAccountSupportsDirectLogin());
         gwtSession.setDatastoreDisabled(DATASTORE_SETTINGS.getBoolean(DatastoreSettingsKey.DISABLE_DATASTORE, false));
 
         // Account Info
