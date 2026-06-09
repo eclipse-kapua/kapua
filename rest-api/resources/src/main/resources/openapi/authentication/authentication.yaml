@@ -52,6 +52,9 @@ components:
         accountSupportsDirectLogin:
           type: boolean
           description: Whether the logged account supports direct SSO login (without email and 2fa).
+        brokeringApiConnectionIssues:
+          type: boolean
+          description: Whether the openID brokering API is currently unreachable, which may cause SSO login issues.
         uriSuffixDirectLogin:
           type: string
           description:
@@ -65,6 +68,7 @@ components:
       example:
         accountSupportsBrokering: true
         accountSupportsDirectLogin: true
+        brokeringApiConnectionIssues: false
         uriSuffixDirectLogin: '?accountid=my-account-name'
         companyDomainNames:
           - 'company.com'
@@ -174,6 +178,15 @@ components:
               domain: job
               targetScopeId: AQ
               forwardable: false
+        ssoData:
+          accountSupportsBrokering: true
+          accountSupportsDirectLogin: true
+          brokeringApiConnectionIssues: false
+          uriSuffixDirectLogin: '?accountid=my-account-name'
+          companyDomainNames:
+            - 'company.com'
+            - 'company.org'
+            - 'anothercompanydomain.net'
     usernamePasswordCredentials:
       allOf:
       - type: object
