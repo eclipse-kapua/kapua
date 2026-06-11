@@ -51,12 +51,10 @@ import org.eclipse.kapua.service.authentication.UsernamePasswordCredentials;
 import org.eclipse.kapua.service.authentication.exception.KapuaAuthenticationErrorCodes;
 import org.eclipse.kapua.service.authentication.exception.KapuaAuthenticationException;
 import org.eclipse.kapua.service.authentication.registration.RegistrationService;
-import org.eclipse.kapua.service.authentication.token.LoginInfo;
 import org.eclipse.kapua.service.authorization.access.AccessInfo;
 import org.eclipse.kapua.service.authorization.access.AccessInfoService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
-import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettingsKey;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserService;
 import org.eclipse.kapua.service.user.group.UserGroupService;
@@ -275,12 +273,12 @@ public class GwtAuthorizationServiceImpl extends KapuaRemoteServiceServlet imple
         gwtSession.setBuildVersion(commonsConfig.getString(SystemSettingKey.BUILD_REVISION));
         gwtSession.setBuildNumber(commonsConfig.getString(SystemSettingKey.BUILD_NUMBER));
         gwtSession.setSsoEnabled(ConsoleSsoLocator.getLocator(this).getService().isEnabled());
-        LoginInfo loginInfo = AUTHENTICATION_SERVICE.getLoginInfo();
-        gwtSession.setSsoBrokeringEnabledForSession(loginInfo.getSsoData() != null &&
-                !loginInfo.getSsoData().getBrokeringApiConnectionIssues() &&
-                loginInfo.getSsoData().getAccountSupportsBrokering() &&
-                loginInfo.getSsoData().getAccountSupportsDirectLogin());
-        gwtSession.setDatastoreDisabled(DATASTORE_SETTINGS.getBoolean(DatastoreSettingsKey.DISABLE_DATASTORE, false));
+//        LoginInfo loginInfo = AUTHENTICATION_SERVICE.getLoginInfo();
+//        gwtSession.setSsoBrokeringEnabledForSession(loginInfo.getSsoData() != null &&
+//                !loginInfo.getSsoData().getBrokeringApiConnectionIssues() &&
+//                loginInfo.getSsoData().getAccountSupportsBrokering() &&
+//                loginInfo.getSsoData().getAccountSupportsDirectLogin());
+//        gwtSession.setDatastoreDisabled(DATASTORE_SETTINGS.getBoolean(DatastoreSettingsKey.DISABLE_DATASTORE, false));
 
         // Account Info
         gwtSession.setAccountId(gwtAccount.getId());

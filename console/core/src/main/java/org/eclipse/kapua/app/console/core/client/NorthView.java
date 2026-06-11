@@ -227,34 +227,36 @@ public class NorthView extends LayoutContainer {
                 userActionMenu.add(manageMfa);
 
                 userActionMenu.add(new SeparatorMenuItem());
-                // "Get SSO URL" menu item — only shown when SSO is enabled
-                if (currentSession.isSsoEnabled() &&
-                    currentSession.isSsoBrokeringEnabledForSession()) {
-                    KapuaMenuItem getSsoUrlMenuItem = new KapuaMenuItem();
-                    getSsoUrlMenuItem.setText(CONSOLE_CORE_MESSAGES.ssoUrlMenuItemLabel());
-                    getSsoUrlMenuItem.setIcon(IconSet.SIGN_IN);
-                    getSsoUrlMenuItem.addSelectionListener(new SelectionListener<MenuEvent>() {
+                //for now the "get sso link" is not rendered
 
-                        @Override
-                        public void componentSelected(MenuEvent ce) {
-                            GWT_SETTINGS_SERVICE.getOpenIDLoginOrganizationUri(new AsyncCallback<String>() {
-
-                                @Override
-                                public void onFailure(Throwable caught) {
-                                    FailureHandler.handle(caught);
-                                }
-
-                                @Override
-                                public void onSuccess(String ssoUrl) {
-                                    SsoUrlDialog dialog = new SsoUrlDialog(ssoUrl);
-                                    dialog.show();
-                                }
-                            });
-                        }
-                    });
-                    userActionMenu.add(getSsoUrlMenuItem);
-                    userActionMenu.add(new SeparatorMenuItem());
-                }
+//                // "Get SSO URL" menu item — only shown when SSO is enabled
+//                if (currentSession.isSsoEnabled() &&
+//                    currentSession.isSsoBrokeringEnabledForSession()) {
+//                    KapuaMenuItem getSsoUrlMenuItem = new KapuaMenuItem();
+//                    getSsoUrlMenuItem.setText(CONSOLE_CORE_MESSAGES.ssoUrlMenuItemLabel());
+//                    getSsoUrlMenuItem.setIcon(IconSet.SIGN_IN);
+//                    getSsoUrlMenuItem.addSelectionListener(new SelectionListener<MenuEvent>() {
+//
+//                        @Override
+//                        public void componentSelected(MenuEvent ce) {
+//                            GWT_SETTINGS_SERVICE.getOpenIDLoginOrganizationUri(new AsyncCallback<String>() {
+//
+//                                @Override
+//                                public void onFailure(Throwable caught) {
+//                                    FailureHandler.handle(caught);
+//                                }
+//
+//                                @Override
+//                                public void onSuccess(String ssoUrl) {
+//                                    SsoUrlDialog dialog = new SsoUrlDialog(ssoUrl);
+//                                    dialog.show();
+//                                }
+//                            });
+//                        }
+//                    });
+//                    userActionMenu.add(getSsoUrlMenuItem);
+//                    userActionMenu.add(new SeparatorMenuItem());
+//                }
 
                 // Logout menu item
                 KapuaMenuItem userLogoutMenuItem = new KapuaMenuItem();

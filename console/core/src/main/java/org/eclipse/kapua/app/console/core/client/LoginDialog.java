@@ -241,8 +241,22 @@ public class LoginDialog extends Dialog {
     }
 
     protected void doSsoLogin() {
-        final String accountId = Window.Location.getParameter(ACCOUNT_ID_PARAM);
+        String accountIdVal = Window.Location.getParameter("accountid");
 
+        //If not found, try the camelCase/mixedCase variant
+        //THIS IS VERY UGLY BUT USED FOR NOW UNTILE A BETTER IDEA IS IMPLEMENTED TO HAVE MORE FLEXIBILITY
+        if (accountIdVal == null || accountIdVal.isEmpty()) {
+            accountIdVal = Window.Location.getParameter("accountID");
+        }
+        if (accountIdVal == null || accountIdVal.isEmpty()) {
+            accountIdVal = Window.Location.getParameter("accountId");
+        }
+        if (accountIdVal == null || accountIdVal.isEmpty()) {
+            accountIdVal = Window.Location.getParameter("AccountId");
+        }
+
+        // Make it final so it can be safely accessed inside the anonymous inner class
+        final String accountId = accountIdVal;
         GWT_SETTINGS_SERVICE.getOpenIDLoginUri(new AsyncCallback<String>() {
 
             @Override

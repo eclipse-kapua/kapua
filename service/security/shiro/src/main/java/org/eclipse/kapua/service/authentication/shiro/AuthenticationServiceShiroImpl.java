@@ -42,9 +42,7 @@ import org.eclipse.kapua.model.query.predicate.AndPredicate;
 import org.eclipse.kapua.model.query.predicate.AttributePredicate;
 import org.eclipse.kapua.plugin.sso.openid.OpenIDLocator;
 import org.eclipse.kapua.plugin.sso.openid.OpenIDService;
-import org.eclipse.kapua.plugin.sso.openid.SSOData;
 import org.eclipse.kapua.plugin.sso.openid.provider.setting.OpenIDSetting;
-import org.eclipse.kapua.plugin.sso.openid.provider.setting.OpenIDSettingKeys;
 import org.eclipse.kapua.service.authentication.AuthenticationCredentials;
 import org.eclipse.kapua.service.authentication.AuthenticationService;
 import org.eclipse.kapua.service.authentication.LoginCredentials;
@@ -446,13 +444,14 @@ public class AuthenticationServiceShiroImpl implements AuthenticationService {
         loginInfo.setGroupRolePermissions(allGroupRolePermissions);
         loginInfo.setGroupPermissions(allGroupPermissions);
 
-        if (openIDSettings.getBoolean(OpenIDSettingKeys.SSO_OPENID_BROKERING_ENABLED, false)) {
-            KapuaId accountId = accessToken.getScopeId();
-            SSOData ssoDataAccount = openIDService.retrieveSSODataForAccount(accountId);
-            if (ssoDataAccount != null) {
-                loginInfo.setSsoData(ssoDataAccount);
-            }
-        }
+        //For now, we don't populate this
+//        if (openIDSettings.getBoolean(OpenIDSettingKeys.SSO_OPENID_BROKERING_ENABLED, false)) {
+//            KapuaId accountId = accessToken.getScopeId();
+//            SSOData ssoDataAccount = openIDService.retrieveSSODataForAccount(accountId);
+//            if (ssoDataAccount != null) {
+//                loginInfo.setSsoData(ssoDataAccount);
+//            }
+//        }
 
         return loginInfo;
     }
