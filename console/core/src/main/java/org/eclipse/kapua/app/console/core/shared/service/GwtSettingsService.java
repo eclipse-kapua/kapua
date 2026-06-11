@@ -30,7 +30,7 @@ public interface GwtSettingsService extends RemoteService {
 
     public String getOpenIDLoginOrganizationUri() throws GwtKapuaException;
 
-    public String getOpenIDLogoutUri(String idToken) throws GwtKapuaException;
+    public String getOpenIDLogoutUri(String idToken, String accountId) throws GwtKapuaException;
 
     public String getHomeUri() throws GwtKapuaException;
 

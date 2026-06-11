@@ -35,6 +35,8 @@ public class GwtSettingsServiceImpl extends RemoteServiceServlet implements GwtS
 
     private static final long serialVersionUID = -6876999298300071273L;
 
+    public static final String ACCOUNT_ID_PARAM = "accountid";
+
     //Injection not supported here, unfortunately
     private static final ConsoleSetting CONSOLE_SETTINGS = ConsoleSetting.getInstance();
 
@@ -86,17 +88,21 @@ public class GwtSettingsServiceImpl extends RemoteServiceServlet implements GwtS
     }
 
     @Override
-    public String getOpenIDLogoutUri(String idToken) throws GwtKapuaException {
+    public String getOpenIDLogoutUri(String idToken, String accountId) throws GwtKapuaException {
         try {
             if (CONSOLE_SETTINGS.getBoolean(ConsoleSettingKeys.SSO_OPENID_USER_LOGOUT_ENABLED, true)) {
                 if (idToken.isEmpty()) {
                     throw new KapuaIllegalArgumentException("ssoIdToken", idToken);
                 }
+                String finalLogoutUri = ConsoleSsoHelper.getHomeUri();
+                if (accountId != null && !accountId.isEmpty()) {
+                    finalLogoutUri = finalLogoutUri + (finalLogoutUri.contains("?") ? "&" : "?") + ACCOUNT_ID_PARAM + "=" + accountId;
+                }
 
                 return getOpenIdService()
                         .getLogoutUri(
                                 idToken,
-                                URI.create(ConsoleSsoHelper.getHomeUri()),
+                                URI.create(finalLogoutUri),
                                 UUID.randomUUID().toString()
                         );
             }

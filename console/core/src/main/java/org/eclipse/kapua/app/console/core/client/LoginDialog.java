@@ -24,6 +24,7 @@ import com.extjs.gxt.ui.client.util.IconHelper;
 import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.Status;
 import com.extjs.gxt.ui.client.widget.button.Button;
+import com.extjs.gxt.ui.client.widget.form.LabelField;
 import com.extjs.gxt.ui.client.widget.form.TextField;
 import com.extjs.gxt.ui.client.widget.layout.FormLayout;
 import com.extjs.gxt.ui.client.widget.toolbar.FillToolItem;
@@ -45,6 +46,9 @@ import org.eclipse.kapua.app.console.module.api.client.util.CookieUtils;
 import org.eclipse.kapua.app.console.module.api.client.util.FailureHandler;
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Login Dialog
  * <p>
@@ -63,6 +67,7 @@ public class LoginDialog extends Dialog {
     private GwtSession currentSession;
     private TextField<String> username;
     private TextField<String> password;
+    private TextField<String> accountId;
 
     private Button reset;
     private Button login;
@@ -132,6 +137,20 @@ public class LoginDialog extends Dialog {
 
         add(password);
 
+        final LabelField orSeparator = new LabelField();
+        orSeparator.setStyleAttribute("margin-top", "-5px");
+        orSeparator.setStyleAttribute("color", "gray");
+        orSeparator.setStyleAttribute("font-size", "10px");
+        orSeparator.setValue("or enterprise login");
+
+        add(orSeparator);
+
+        accountId = new TextField<String>();
+        accountId.setFieldLabel("Account");
+        accountId.addListener(Events.OnBlur, changeListener);
+
+        add(accountId);
+
         GWT_SETTINGS_SERVICE.getOpenIDEnabled(new AsyncCallback<Boolean>() {
 
             @Override
@@ -141,6 +160,16 @@ public class LoginDialog extends Dialog {
 
             @Override
             public void onSuccess(Boolean result) {
+                orSeparator.setVisible(result);
+                accountId.setVisible(result);
+                if (result) {
+                    for (Map.Entry<String, List<String>> entry : Window.Location.getParameterMap().entrySet()) {
+                        if (entry.getKey().equalsIgnoreCase(ACCOUNT_ID_PARAM)) {
+                            accountId.setValue(entry.getValue().get(0));
+                            break;
+                        }
+                    }
+                }
                 ssoLogin.setVisible(result);
             }
         });
@@ -241,22 +270,6 @@ public class LoginDialog extends Dialog {
     }
 
     protected void doSsoLogin() {
-        String accountIdVal = Window.Location.getParameter("accountid");
-
-        //If not found, try the camelCase/mixedCase variant
-        //THIS IS VERY UGLY BUT USED FOR NOW UNTILE A BETTER IDEA IS IMPLEMENTED TO HAVE MORE FLEXIBILITY
-        if (accountIdVal == null || accountIdVal.isEmpty()) {
-            accountIdVal = Window.Location.getParameter("accountID");
-        }
-        if (accountIdVal == null || accountIdVal.isEmpty()) {
-            accountIdVal = Window.Location.getParameter("accountId");
-        }
-        if (accountIdVal == null || accountIdVal.isEmpty()) {
-            accountIdVal = Window.Location.getParameter("AccountId");
-        }
-
-        // Make it final so it can be safely accessed inside the anonymous inner class
-        final String accountId = accountIdVal;
         GWT_SETTINGS_SERVICE.getOpenIDLoginUri(new AsyncCallback<String>() {
 
             @Override
@@ -266,8 +279,9 @@ public class LoginDialog extends Dialog {
 
             @Override
             public void onSuccess(String result) {
-                if (accountId != null && !accountId.isEmpty()) {
-                    result = result + (result.contains("?") ? "&" : "?") + ACCOUNT_ID_PARAM + "=" + accountId;
+                final String accountIdValue = accountId.getValue();
+                if (accountIdValue != null && !accountIdValue.isEmpty()) {
+                    result = result + (result.contains("?") ? "&" : "?") + ACCOUNT_ID_PARAM + "=" + accountIdValue;
                 }
                 Window.Location.assign(result);
             }
