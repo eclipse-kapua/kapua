@@ -89,6 +89,7 @@ public class LoginDialog extends Dialog {
         setButtons(""); // don't show OK button
         setIcon(IconHelper.createStyle("user"));
         setModal(false);
+        setShadow(false);
         setBodyBorder(true);
         setBodyStyle("padding: 3px; background: none");
         setWidth(300);
@@ -159,7 +160,7 @@ public class LoginDialog extends Dialog {
 
         // User Pass Form Panel
         {
-            ContentPanel ssoPanel = new ContentPanel(new RowLayout(Style.Orientation.VERTICAL));
+            final ContentPanel ssoPanel = new ContentPanel(new RowLayout(Style.Orientation.VERTICAL));
             ssoPanel.setHeaderVisible(false);
             ssoPanel.setBorders(false);
             ssoPanel.setBodyBorder(false);
@@ -197,7 +198,6 @@ public class LoginDialog extends Dialog {
             ssoForm.add(accountId);
 
             GWT_SETTINGS_SERVICE.getOpenIDEnabled(new AsyncCallback<Boolean>() {
-
                 @Override
                 public void onFailure(Throwable caught) {
                     ConsoleInfo.display(CONSOLE_CORE_MESSAGES.loginSsoEnabledError(), caught.getLocalizedMessage());
@@ -205,7 +205,18 @@ public class LoginDialog extends Dialog {
 
                 @Override
                 public void onSuccess(Boolean result) {
-                    accountId.setVisible(result);
+                    ssoLogin.setVisible(result);
+                }
+            });
+
+            GWT_SETTINGS_SERVICE.getOpenIDAccountHintEnabled(new AsyncCallback<Boolean>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    ConsoleInfo.display(CONSOLE_CORE_MESSAGES.loginSsoEnabledError(), caught.getLocalizedMessage());
+                }
+
+                @Override
+                public void onSuccess(Boolean result) {
                     if (result) {
                         for (Map.Entry<String, List<String>> entry : Window.Location.getParameterMap().entrySet()) {
                             if (entry.getKey().equalsIgnoreCase(ACCOUNT_ID_PARAM)) {
@@ -214,7 +225,11 @@ public class LoginDialog extends Dialog {
                             }
                         }
                     }
-                    ssoLogin.setVisible(result);
+                    else {
+                        remove(ssoPanel);
+                    }
+
+                    layout();
                 }
             });
         }

@@ -118,6 +118,11 @@ public class GwtSettingsServiceImpl extends RemoteServiceServlet implements GwtS
     }
 
     @Override
+    public boolean getOpenIDAccountHintEnabled() {
+        return getOpenIdService().isAccountHintEnabled();
+    }
+
+    @Override
     public String getHomeUri() throws GwtKapuaException {
         try {
             return ConsoleSsoHelper.getHomeUri();
