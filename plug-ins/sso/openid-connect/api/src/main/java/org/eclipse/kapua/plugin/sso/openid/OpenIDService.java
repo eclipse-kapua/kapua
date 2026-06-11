@@ -86,6 +86,10 @@ public interface OpenIDService extends KapuaConfigurableService {
 
     String getId();
 
+    default boolean isAccountHintEnabled() {
+        return false;
+    }
+
     /**
      * Get the SSO data for the given account
      *
