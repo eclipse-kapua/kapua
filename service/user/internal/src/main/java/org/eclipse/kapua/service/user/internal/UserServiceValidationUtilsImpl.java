@@ -209,16 +209,19 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
         ArgumentValidator.lengthRange(user.getName(), 3, 255, "user.name");
         ArgumentValidator.match(user.getEmail(), CommonsValidationRegex.EMAIL_REGEXP, "user.email");
         ArgumentValidator.notNull(user.getStatus(), "user.status");
-        ArgumentValidator.notNull(user.getUserType(), "user.userType");
 
         // .userType
+        ArgumentValidator.notNull(user.getUserType(), "user.userType");
         if (user.getUserType() == UserType.EXTERNAL) {
-            if (user.getExternalId() != null) {
-                ArgumentValidator.notEmptyOrNull(user.getExternalId(), "user.externalId");
-                ArgumentValidator.lengthRange(user.getExternalId(), 3, 255, "user.externalId");
+            if (openIDSetting.getBoolean(OpenIDSettingKeys.SSO_OPENID_BROKERING_ENABLED, false)) {
+                SSOData ssoDataAccount = openIDService.retrieveSSODataForAccount(user.getScopeId());
+                if (ssoDataAccount.getAccountSupportsBrokering()) {
+                    validateExternalUserOnSSOBrokeringEnabledOnEdit(ssoDataAccount, user);
+                } else {
+                    validateExternalUserOnSSOBrokeringDisabledOnEdit(user);
+                }
             } else {
-                ArgumentValidator.notEmptyOrNull(user.getExternalUsername(), "user.externalUsername");
-                ArgumentValidator.lengthRange(user.getExternalUsername(), 3, 255, "user.externalUsername");
+                validateExternalUserOnSSOBrokeringDisabledOnEdit(user);
             }
         } else if (user.getUserType() == UserType.INTERNAL) {
             ArgumentValidator.isEmptyOrNull(user.getExternalId(), "user.externalId");
@@ -473,6 +476,31 @@ public final class UserServiceValidationUtilsImpl implements UserServiceValidati
             String userMailDomain = userCreator.getExternalUsername().split("@")[1];
             if (!domainsThisAccount.contains(userMailDomain)) {
                 throw new KapuaIllegalArgumentException("userCreator.externalUsername", userCreator.getExternalUsername());
+            }
+        }
+    }
+
+    //TODO: THIS METHOD HAS HEAVY REDUNDANT CODE WITH ABOVE - MEANT TO BE TEMPORARY AND REFACTORED ASAP
+    private void validateExternalUserOnSSOBrokeringDisabledOnEdit(User user) throws KapuaException {
+        if (user.getExternalId() != null) {
+            ArgumentValidator.notEmptyOrNull(user.getExternalId(), "user.externalId");
+            ArgumentValidator.lengthRange(user.getExternalId(), 3, 255, "user.externalId");
+        } else {
+            ArgumentValidator.notEmptyOrNull(user.getExternalUsername(), "user.externalUsername");
+            ArgumentValidator.lengthRange(user.getExternalUsername(), 3, 255, "user.externalUsername");
+        }
+    }
+
+    //TODO: THIS METHOD HAS HEAVY REDUNDANT CODE WITH ABOVE - MEANT TO BE TEMPORARY AND REFACTORED ASAP
+    private void validateExternalUserOnSSOBrokeringEnabledOnEdit(SSOData ssoDataAccount, User user) throws KapuaException {
+        ArgumentValidator.notEmptyOrNull(user.getExternalUsername(), "user.externalUsername");
+        ArgumentValidator.isEmptyOrNull(user.getExternalId(), "user.externalId");
+        ArgumentValidator.match(user.getExternalUsername(), CommonsValidationRegex.EMAIL_REGEXP, "user.externalUsername"); //For the current brokering implementation, we expect an email as the external user "key"
+        List<String> domainsThisAccount = ssoDataAccount.getCompanyDomainNames();
+        if (domainsThisAccount != null && !domainsThisAccount.isEmpty()) {
+            String userMailDomain = user.getExternalUsername().split("@")[1];
+            if (!domainsThisAccount.contains(userMailDomain)) {
+                throw new KapuaIllegalArgumentException("user.externalUsername", user.getExternalUsername());
             }
         }
     }

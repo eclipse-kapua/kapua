@@ -99,8 +99,8 @@ components:
           type: array
           items:
             $ref: '../role/role.yaml#/components/schemas/rolePermission'
-        ssoData:
-          $ref: '#/components/schemas/ssoData'
+#        ssoData:
+#          $ref: '#/components/schemas/ssoData'
       example:
         type: loginInfo
         accessToken:
@@ -178,15 +178,15 @@ components:
               domain: job
               targetScopeId: AQ
               forwardable: false
-        ssoData:
-          accountSupportsBrokering: true
-          accountSupportsDirectLogin: true
-          brokeringApiConnectionIssues: false
-          uriSuffixDirectLogin: '?accountid=my-account-name'
-          companyDomainNames:
-            - 'company.com'
-            - 'company.org'
-            - 'anothercompanydomain.net'
+#        ssoData:
+#          accountSupportsBrokering: true
+#          accountSupportsDirectLogin: true
+#          brokeringApiConnectionIssues: false
+#          uriSuffixDirectLogin: '?accountid=my-account-name'
+#          companyDomainNames:
+#            - 'company.com'
+#            - 'company.org'
+#            - 'anothercompanydomain.net'
     usernamePasswordCredentials:
       allOf:
       - type: object

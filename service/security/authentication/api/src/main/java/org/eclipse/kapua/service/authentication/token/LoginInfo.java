@@ -17,6 +17,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import java.util.Set;
 
@@ -121,9 +122,10 @@ public interface LoginInfo extends KapuaSerializable {
     @Deprecated
     void setGroupPermission(Set<GroupPermission> groupPermissions);
 
-    @XmlElement(name = "ssoData")
+    @XmlTransient
     SSOData getSsoData();
 
+    @XmlTransient
     void setSsoData(SSOData ssoData);
 
 
