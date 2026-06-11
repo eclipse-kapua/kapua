@@ -35,4 +35,6 @@ public interface GwtSettingsService extends RemoteService {
     public String getHomeUri() throws GwtKapuaException;
 
     public boolean getOpenIDEnabled();
+
+    public boolean getOpenIDAccountHintEnabled();
 }
