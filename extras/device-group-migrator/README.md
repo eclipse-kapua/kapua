@@ -28,5 +28,5 @@ Other useful properties from Kapua
 #### Example usage
 
 ```bash
-java -Dcommons.db.connection.host=somehost -jar kapua-device-group-migrator-2.0.0-SNAPSHOT-app.jar
+java -Dcommons.db.connection.host=somehost -jar kapua-device-group-migrator-2.0.0-BETA-M22-app.jar
 ```
