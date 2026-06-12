@@ -5,7 +5,7 @@
 Below are described most important changes, features, additions and bugfixes that needs attention while performing the upgrade from the previous version.
 
 <!-- TOC -->
-* [2.0.0-BETA-M22](#200-snapshot)
+* [2.0.0-SNAPSHOT](#200-snapshot)
   * [Changes](#changes)
     * [Deprecation of `db.pool.size.min` and `db.pool.size.max` sizing options [#4112]](#deprecation-of-dbpoolsizemin-and-dbpoolsizemax-sizing-options-4112httpsgithubcomeclipsekapuapull4112)
     * [Duplicate Name Exception is now returned as a 409 error [#4133]](#duplicate-name-exception-is-now-returned-as-a-409-error-4133httpsgithubcomeclipsekapuapull4112)
@@ -21,9 +21,9 @@ Below are described most important changes, features, additions and bugfixes tha
 
 ---
 
-# 2.0.0-BETA-M22
+# 2.0.0-SNAPSHOT
 
-This report is only partial for Eclipse Kapua release 2.0.0-BETA-M22, since we started to maintain it mid-release development.
+This report is only partial for Eclipse Kapua release 2.0.0-SNAPSHOT, since we started to maintain it mid-release development.
 
 ## Changes
 
