@@ -427,7 +427,7 @@ public class KapuaCloudConsole implements EntryPoint {
                 // Invalidating the OpenID IdToken. We must use the OpenID logout here, since we don't have the KapuSession set yet, so we don't have the
                 // openIDidToken set inside. This means we cannot realy on the OpenIDLogoutListener to invalidate the OpenID session, instead we must do that
                 // as a 'real' user initiated logout.
-                GWT_SETTINGS_SERVICE.getOpenIDLogoutUri(gwtIdToken.getIdToken(), new AsyncCallback<String>() {
+                GWT_SETTINGS_SERVICE.getOpenIDLogoutUri(gwtIdToken.getIdToken(), null, new AsyncCallback<String>() {
 
                     @Override
                     public void onFailure(Throwable caught) {

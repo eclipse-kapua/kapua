@@ -19,6 +19,8 @@ public enum KeycloakOpenIDSettingKeys implements SettingKey {
 
     KEYCLOAK_URI("sso.openid.keycloak.uri"), //
     KEYCLOAK_REALM("sso.openid.keycloak.realm"), //
+    KEYCLOAK_CLIENT_ID_API("sso.openid.keycloak.client.id.api"), //
+    KEYCLOAK_CLIENT_ID_API_SECRET("sso.openid.keycloak.client.id.api.secret"), //
     ;
 
     private final String key;

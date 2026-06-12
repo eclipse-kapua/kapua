@@ -41,6 +41,39 @@ components:
               type: string
               description: A long-lived key to be used within an authentication with MFA from a trusted machine
               pattern: '^[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*$'
+    ssoData:
+      type: object
+      description:
+        SSO-account data, refers to logged account and populated only when the platform uses a SSO broker
+      properties:
+        accountSupportsBrokering:
+          type: boolean
+          description: Whether the logged account supports SSO brokering.
+        accountSupportsDirectLogin:
+          type: boolean
+          description: Whether the logged account supports direct SSO login (without email and 2fa).
+        brokeringApiConnectionIssues:
+          type: boolean
+          description: Whether the openID brokering API is currently unreachable, which may cause SSO login issues.
+        uriSuffixDirectLogin:
+          type: string
+          description:
+            The URI query suffix to append when redirecting to the direct login page for this account.
+          example: '?accountid=my-account'
+        companyDomainNames:
+          type: array
+          items:
+            type: string
+          description: the domain names associated to the company of the account
+      example:
+        accountSupportsBrokering: true
+        accountSupportsDirectLogin: true
+        brokeringApiConnectionIssues: false
+        uriSuffixDirectLogin: '?accountid=my-account-name'
+        companyDomainNames:
+          - 'company.com'
+          - 'company.org'
+          - 'anothercompanydomain.net'
     loginInfo:
       type: object
       properties:
@@ -66,6 +99,8 @@ components:
           type: array
           items:
             $ref: '../role/role.yaml#/components/schemas/rolePermission'
+#        ssoData:
+#          $ref: '#/components/schemas/ssoData'
       example:
         type: loginInfo
         accessToken:
@@ -143,6 +178,15 @@ components:
               domain: job
               targetScopeId: AQ
               forwardable: false
+#        ssoData:
+#          accountSupportsBrokering: true
+#          accountSupportsDirectLogin: true
+#          brokeringApiConnectionIssues: false
+#          uriSuffixDirectLogin: '?accountid=my-account-name'
+#          companyDomainNames:
+#            - 'company.com'
+#            - 'company.org'
+#            - 'anothercompanydomain.net'
     usernamePasswordCredentials:
       allOf:
       - type: object

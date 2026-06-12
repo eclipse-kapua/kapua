@@ -1,0 +1,59 @@
+openapi: 3.0.3
+
+info:
+  title: Eclipse Kapua REST API - Accounts
+  version: '1.0'
+  contact:
+    name: Eclipse Kapua Dev Team
+    url: https://eclipse.org/kapua
+    email: kapua-dev@eclipse.org
+  license:
+    name: Eclipse Public License 2.0
+    url: https://www.eclipse.org/legal/epl-2.0
+
+paths:
+  /accounts:
+    get:
+      tags:
+        - Account
+      summary: Get all the Accounts in any Scope
+      operationId: accountListUnscoped
+      parameters:
+        - name: name
+          in: query
+          description: An optional string to filter Accounts according to their name
+          schema:
+            type: string
+        - $ref: '../openapi.yaml#/components/parameters/sortParam'
+        - $ref: '../openapi.yaml#/components/parameters/sortDir'
+        - $ref: '../openapi.yaml#/components/parameters/askTotalCount'
+        - $ref: '../openapi.yaml#/components/parameters/limit'
+        - $ref: '../openapi.yaml#/components/parameters/offset'
+        - name: matchTerm
+          in: query
+          description: |
+            A term to match on different fields. Every entity whose at least one of the specified fields starts with this value will be matched.
+            Matches on the following fields:
+
+            - NAME
+            - ORGANIZATION_NAME
+            - CONTACT_NAME
+            - ORGANIZATION_EMAIL
+          schema:
+            type: string
+      responses:
+        200:
+          description: The list of the Accounts available in the Scope
+          content:
+            application/json:
+              schema:
+                $ref: '../accounts/accounts.yaml#/components/schemas/accountListResult'
+        400:
+          $ref: '../openapi.yaml#/components/responses/illegalArgument'
+        401:
+          $ref: '../openapi.yaml#/components/responses/unauthenticated'
+        403:
+          $ref: '../openapi.yaml#/components/responses/subjectUnauthorized'
+        500:
+          $ref: '../openapi.yaml#/components/responses/kapuaError'
+      description: Get all the Accounts in the given Scope

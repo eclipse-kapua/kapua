@@ -44,7 +44,12 @@ public enum OpenIDSettingKeys implements SettingKey {
     /**
      * @since 2.0.0
      */
-    SSO_OPENID_CLAIMS_EXTERNAL_USERNAME_KEY("sso.openid.claims.externalUsername.key");
+    SSO_OPENID_CLAIMS_EXTERNAL_USERNAME_KEY("sso.openid.claims.externalUsername.key"),
+
+    /**
+     * @since 2.0.0
+     */
+    SSO_OPENID_BROKERING_ENABLED("sso.openid.broker.enabled");
 
     private final String key;
 

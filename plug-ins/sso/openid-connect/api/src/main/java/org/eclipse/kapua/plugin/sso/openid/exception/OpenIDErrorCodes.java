@@ -74,6 +74,13 @@ public enum OpenIDErrorCodes implements KapuaErrorCode {
      *
      * @since 1.2.0
      */
-    ILLEGAL_URI
+    ILLEGAL_URI,
+
+    /**
+     * Error in the communication with OpenID API
+     *
+     * @since 2.0.0
+     */
+    API_COMMUNICATION_ERROR;
 
 }

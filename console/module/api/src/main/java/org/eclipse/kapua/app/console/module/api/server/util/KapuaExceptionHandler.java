@@ -30,6 +30,7 @@ import org.eclipse.kapua.commons.configuration.exception.KapuaConfigurationError
 import org.eclipse.kapua.commons.configuration.exception.KapuaConfigurationException;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.commons.setting.system.SystemSettingKey;
+import org.eclipse.kapua.plugin.sso.openid.exception.OpenIDException;
 import org.eclipse.kapua.service.authentication.exception.KapuaAuthenticationErrorCodes;
 import org.eclipse.kapua.service.authentication.exception.KapuaAuthenticationException;
 import org.eclipse.kapua.service.authorization.exception.SubjectUnauthorizedException;
@@ -237,6 +238,9 @@ public class KapuaExceptionHandler {
         // Permissions
         else if (throwable instanceof KapuaException && ((KapuaException) throwable).getCode().name().equals(KapuaErrorCodes.PERMISSION_DELETE_NOT_ALLOWED.name())) {
             return new GwtKapuaException(GwtKapuaErrorCode.PERMISSION_DELETE_NOT_ALLOWED, throwable, throwable.getMessage());
+        }
+        else if (throwable instanceof OpenIDException) {
+            return new GwtKapuaException(GwtKapuaErrorCode.OPENID_ERROR, throwable);
         }
         // Default exception
         return GwtKapuaException.internalError(throwable, throwable.getMessage());

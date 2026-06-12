@@ -12,9 +12,6 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.api.resources.v1.resources;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -30,24 +27,18 @@ import javax.ws.rs.core.Response;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.app.api.core.model.CountResult;
 import org.eclipse.kapua.app.api.core.model.ScopeId;
-import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
-import org.eclipse.kapua.model.KapuaNamedEntityAttributes;
+import org.eclipse.kapua.app.api.core.resources.AccountAbstractKapuaResource;
 import org.eclipse.kapua.model.query.SortOrder;
-import org.eclipse.kapua.model.query.predicate.AndPredicate;
-import org.eclipse.kapua.model.query.predicate.MatchPredicate;
 import org.eclipse.kapua.service.KapuaService;
 import org.eclipse.kapua.service.account.Account;
-import org.eclipse.kapua.service.account.AccountAttributes;
 import org.eclipse.kapua.service.account.AccountCreator;
 import org.eclipse.kapua.service.account.AccountFactory;
 import org.eclipse.kapua.service.account.AccountListResult;
 import org.eclipse.kapua.service.account.AccountQuery;
 import org.eclipse.kapua.service.account.AccountService;
 
-import com.google.common.base.Strings;
-
 @Path("{scopeId}/accounts")
-public class Accounts extends AbstractKapuaResource {
+public class Accounts extends AccountAbstractKapuaResource {
 
     @Inject
     public AccountService accountService;
@@ -93,36 +84,7 @@ public class Accounts extends AbstractKapuaResource {
             return accountService.findChildrenRecursively(scopeId);
         }
 
-        AccountQuery query = accountFactory.newQuery(scopeId);
-        query.setAskTotalCount(askTotalCount);
-
-        AndPredicate andPredicate = query.andPredicate();
-        if (!Strings.isNullOrEmpty(name)) {
-            andPredicate.and(query.attributePredicate(KapuaNamedEntityAttributes.NAME, name));
-        }
-        if (!Strings.isNullOrEmpty(sortParam)) {
-            query.setSortCriteria(query.fieldSortCriteria(sortParam, sortDir));
-        }
-        if (matchTerm != null && !matchTerm.isEmpty()) {
-            andPredicate.and(new MatchPredicate<String>() {
-
-                @Override
-                public List<String> getAttributeNames() {
-                    return Arrays.asList(AccountAttributes.NAME, AccountAttributes.ORGANIZATION_NAME, AccountAttributes.CONTACT_NAME, AccountAttributes.ORGANIZATION_EMAIL);
-                }
-
-                @Override
-                public String getMatchTerm() {
-                    return matchTerm;
-                }
-            });
-        }
-        query.setPredicate(andPredicate);
-
-        query.setOffset(offset);
-        query.setLimit(limit);
-
-        return query(scopeId, query);
+      return queryAccounts(scopeId, name, matchTerm, sortParam, sortDir, askTotalCount, offset, limit, accountFactory, accountService);
     }
 
     /**

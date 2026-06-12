@@ -38,6 +38,8 @@ import org.eclipse.kapua.commons.service.internal.cache.CacheManagerProvider;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.query.QueryFactory;
+import org.eclipse.kapua.plugin.sso.openid.OpenIDLocator;
+import org.eclipse.kapua.plugin.sso.openid.provider.setting.OpenIDSetting;
 import org.eclipse.kapua.qa.common.MockedLocator;
 import org.eclipse.kapua.service.authentication.credential.CredentialFactory;
 import org.eclipse.kapua.service.authentication.credential.CredentialService;
@@ -279,7 +281,9 @@ public class SecurityLocatorConfiguration {
                                 Mockito.mock(ServiceConfigurationManager.class),
                                 mockTagService,
                                 mockTagFactory,
-                                new UserImplJpaRepository(jpaRepoConfig)
+                                new UserImplJpaRepository(jpaRepoConfig),
+                                Mockito.mock(OpenIDLocator.class),
+                                Mockito.mock(OpenIDSetting.class)
                         ),
                         new UserImplJpaRepository(jpaRepoConfig),
                         new EventStorerImpl(new EventStoreRecordImplJpaRepository(jpaRepoConfig))

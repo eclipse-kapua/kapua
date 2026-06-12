@@ -17,10 +17,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import java.util.Set;
 
 import org.eclipse.kapua.KapuaSerializable;
+import org.eclipse.kapua.plugin.sso.openid.SSOData;
 import org.eclipse.kapua.service.authorization.access.AccessPermission;
 import org.eclipse.kapua.service.authorization.group.GroupPermission;
 import org.eclipse.kapua.service.authorization.role.RolePermission;
@@ -119,6 +121,12 @@ public interface LoginInfo extends KapuaSerializable {
      */
     @Deprecated
     void setGroupPermission(Set<GroupPermission> groupPermissions);
+
+    @XmlTransient
+    SSOData getSsoData();
+
+    @XmlTransient
+    void setSsoData(SSOData ssoData);
 
 
 }
