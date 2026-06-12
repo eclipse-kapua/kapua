@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.core.client;
 
+import com.extjs.gxt.ui.client.Style;
 import com.extjs.gxt.ui.client.Style.HorizontalAlignment;
 import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
@@ -23,9 +24,12 @@ import com.extjs.gxt.ui.client.event.SelectionListener;
 import com.extjs.gxt.ui.client.util.IconHelper;
 import com.extjs.gxt.ui.client.widget.Dialog;
 import com.extjs.gxt.ui.client.widget.Status;
+import com.extjs.gxt.ui.client.widget.Text;
 import com.extjs.gxt.ui.client.widget.button.Button;
 import com.extjs.gxt.ui.client.widget.form.TextField;
-import com.extjs.gxt.ui.client.widget.layout.FormLayout;
+import com.extjs.gxt.ui.client.widget.layout.FitLayout;
+import com.extjs.gxt.ui.client.widget.layout.RowLayout;
+import com.extjs.gxt.ui.client.widget.layout.TableData;
 import com.extjs.gxt.ui.client.widget.toolbar.FillToolItem;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Element;
@@ -40,10 +44,15 @@ import org.eclipse.kapua.app.console.core.shared.service.GwtSettingsServiceAsync
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaErrorCode;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.client.messages.ConsoleMessages;
+import org.eclipse.kapua.app.console.module.api.client.ui.panel.ContentPanel;
+import org.eclipse.kapua.app.console.module.api.client.ui.panel.FormPanel;
 import org.eclipse.kapua.app.console.module.api.client.util.ConsoleInfo;
 import org.eclipse.kapua.app.console.module.api.client.util.CookieUtils;
-import org.eclipse.kapua.app.console.module.api.client.util.FailureHandler;
+//import org.eclipse.kapua.app.console.module.api.client.util.FailureHandler;
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Login Dialog
@@ -55,12 +64,15 @@ public class LoginDialog extends Dialog {
     private static final ConsoleMessages CONSOLE_MESSAGES = GWT.create(ConsoleMessages.class);
     private static final ConsoleCoreMessages CONSOLE_CORE_MESSAGES = GWT.create(ConsoleCoreMessages.class);
 
+    public static final String ACCOUNT_ID_PARAM = "accountid";
+
     private static final GwtAuthorizationServiceAsync GWT_AUTHORIZATION_SERVICE = GWT.create(GwtAuthorizationService.class);
     private static final GwtSettingsServiceAsync GWT_SETTINGS_SERVICE = GWT.create(GwtSettingsService.class);
 
     private GwtSession currentSession;
     private TextField<String> username;
     private TextField<String> password;
+    private TextField<String> accountId;
 
     private Button reset;
     private Button login;
@@ -72,77 +84,155 @@ public class LoginDialog extends Dialog {
     private final MfaLoginDialog mfaLoginDialog = new MfaLoginDialog(this);
 
     public LoginDialog() {
-        FormLayout layout = new FormLayout();
-
-        layout.setLabelWidth(90);
-        layout.setDefaultWidth(160);
-        setLayout(layout);
-
+        // Dialog settings
         setButtonAlign(HorizontalAlignment.LEFT);
         setButtons(""); // don't show OK button
         setIcon(IconHelper.createStyle("user"));
         setModal(false);
+        setShadow(false);
         setBodyBorder(true);
-        setBodyStyle("padding: 8px;background: none");
+        setBodyStyle("padding: 3px; background: none");
         setWidth(300);
         setResizable(false);
         setClosable(false);
 
-        KeyListener keyListener = new KeyListener() {
+        // User Pass Form Panel
+        {
+            ContentPanel userPassPanel = new ContentPanel(new FitLayout());
+            userPassPanel.setHeaderVisible(false);
+            userPassPanel.setBorders(false);
+            userPassPanel.setBodyBorder(false);
+            userPassPanel.setStyleAttribute("background-color", "transparent");
+            userPassPanel.setBodyStyle("background-color: transparent");
+            userPassPanel.setHeight(55);
+            add(userPassPanel);
 
-            @Override
-            public void componentKeyUp(ComponentEvent event) {
+            FormPanel userPassForm = new FormPanel(90);
+            userPassForm.setPadding(5);
+            userPassForm.setFrame(false);
+            userPassForm.setHeaderVisible(false);
+            userPassForm.setBodyBorder(false);
+            userPassForm.setBorders(false);
+            userPassForm.setStyleAttribute("background-color", "transparent");
+            userPassPanel.add(userPassForm);
 
-                validate();
-                if (
-                        event.getKeyCode() == 13 &&
-                                username.getValue() != null &&
-                                username.getValue().trim().length() > 0 &&
-                                password.getValue() != null &&
-                                password.getValue().trim().length() > 0) {
-                    onSubmit();
+            KeyListener keyListener = new KeyListener() {
+
+                @Override
+                public void componentKeyUp(ComponentEvent event) {
+
+                    validate();
+                    if (event.getKeyCode() == 13 &&
+                            username.getValue() != null &&
+                            !username.getValue().trim().isEmpty() &&
+                            password.getValue() != null &&
+                            !password.getValue().trim().isEmpty()) {
+                        onSubmit();
+                    }
                 }
-            }
-        };
+            };
 
-        Listener<BaseEvent> changeListener = new Listener<BaseEvent>() {
+            Listener<BaseEvent> changeListener = new Listener<BaseEvent>() {
 
-            @Override
-            public void handleEvent(BaseEvent be) {
-                validate();
-            }
-        };
+                @Override
+                public void handleEvent(BaseEvent be) {
+                    validate();
+                }
+            };
 
-        username = new TextField<String>();
-        username.setFieldLabel(CONSOLE_CORE_MESSAGES.loginUsername());
-        username.addKeyListener(keyListener);
-        username.setAllowBlank(false);
-        username.addListener(Events.OnBlur, changeListener);
+            username = new TextField<String>();
+            username.setFieldLabel(CONSOLE_CORE_MESSAGES.loginUsername());
+            username.addKeyListener(keyListener);
+            username.setAllowBlank(false);
+            username.addListener(Events.OnBlur, changeListener);
 
-        add(username);
+            userPassForm.add(username);
 
-        password = new TextField<String>();
-        password.setPassword(true);
-        password.setFieldLabel(CONSOLE_CORE_MESSAGES.loginPassword());
-        password.addKeyListener(keyListener);
-        password.setAllowBlank(false);
-        password.addListener(Events.OnBlur, changeListener);
+            password = new TextField<String>();
+            password.setPassword(true);
+            password.setFieldLabel(CONSOLE_CORE_MESSAGES.loginPassword());
+            password.addKeyListener(keyListener);
+            password.setAllowBlank(false);
+            password.addListener(Events.OnBlur, changeListener);
 
-        add(password);
+            userPassForm.add(password);
+        }
 
-        GWT_SETTINGS_SERVICE.getOpenIDEnabled(new AsyncCallback<Boolean>() {
+        // User Pass Form Panel
+        {
+            final ContentPanel ssoPanel = new ContentPanel(new RowLayout(Style.Orientation.VERTICAL));
+            ssoPanel.setHeaderVisible(false);
+            ssoPanel.setBorders(false);
+            ssoPanel.setBodyBorder(false);
+            ssoPanel.setStyleAttribute("background-color", "transparent");
+            ssoPanel.setStyleAttribute("padding-top", "10px");
+            ssoPanel.setBodyStyle("background-color: transparent");
+            ssoPanel.setHeight(55);
+            add(ssoPanel);
 
-            @Override
-            public void onFailure(Throwable caught) {
-                ConsoleInfo.display(CONSOLE_CORE_MESSAGES.loginSsoEnabledError(), caught.getLocalizedMessage());
-            }
+            // Or text info
+            TableData tableData = new TableData();
+            tableData.setHorizontalAlign(HorizontalAlignment.CENTER);
+            tableData.setVerticalAlign(Style.VerticalAlignment.MIDDLE);
 
-            @Override
-            public void onSuccess(Boolean result) {
-                ssoLogin.setVisible(result);
-            }
-        });
+            Text dialogTextInfo = new Text("or enterprise login");
+            dialogTextInfo.setStyleName("kapua-info-text");
+            dialogTextInfo.setStyleAttribute("padding-top", "5px");
+            dialogTextInfo.setStyleAttribute("text-align", "center");
+            dialogTextInfo.setStyleAttribute("border-top", "1px solid lightgrey");
 
+            ssoPanel.add(dialogTextInfo, tableData);
+
+            FormPanel ssoForm = new FormPanel(90);
+            ssoForm.setPadding(5);
+            ssoForm.setFrame(false);
+            ssoForm.setHeaderVisible(false);
+            ssoForm.setBodyBorder(false);
+            ssoForm.setBorders(false);
+            ssoForm.setStyleAttribute("background-color", "transparent");
+            ssoPanel.add(ssoForm);
+
+            // Account hint
+            accountId = new TextField<String>();
+            accountId.setFieldLabel("Account");
+            ssoForm.add(accountId);
+
+            GWT_SETTINGS_SERVICE.getOpenIDEnabled(new AsyncCallback<Boolean>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    ConsoleInfo.display(CONSOLE_CORE_MESSAGES.loginSsoEnabledError(), caught.getLocalizedMessage());
+                }
+
+                @Override
+                public void onSuccess(Boolean result) {
+                    ssoLogin.setVisible(result);
+                }
+            });
+
+            GWT_SETTINGS_SERVICE.getOpenIDAccountHintEnabled(new AsyncCallback<Boolean>() {
+                @Override
+                public void onFailure(Throwable caught) {
+                    ConsoleInfo.display(CONSOLE_CORE_MESSAGES.loginSsoEnabledError(), caught.getLocalizedMessage());
+                }
+
+                @Override
+                public void onSuccess(Boolean result) {
+                    if (result) {
+                        for (Map.Entry<String, List<String>> entry : Window.Location.getParameterMap().entrySet()) {
+                            if (entry.getKey().equalsIgnoreCase(ACCOUNT_ID_PARAM)) {
+                                accountId.setValue(entry.getValue().get(0));
+                                break;
+                            }
+                        }
+                    }
+                    else {
+                        remove(ssoPanel);
+                    }
+
+                    layout();
+                }
+            });
+        }
     }
 
     public boolean isAllowMainScreen() {
@@ -208,8 +298,8 @@ public class LoginDialog extends Dialog {
                 username.enable();
                 password.reset();
                 password.enable();
+
                 validate();
-                username.focus();
             }
         });
 
@@ -227,7 +317,6 @@ public class LoginDialog extends Dialog {
 
             @Override
             public void componentSelected(ButtonEvent ce) {
-                username.clearInvalid();
                 doSsoLogin();
             }
 
@@ -248,6 +337,13 @@ public class LoginDialog extends Dialog {
 
             @Override
             public void onSuccess(String result) {
+
+                // Adding accountId hint if present
+                String accountIdValue = accountId.getValue();
+                if (accountIdValue != null && !accountIdValue.isEmpty()) {
+                    result = result + (result.contains("?") ? "&" : "?") + ACCOUNT_ID_PARAM + "=" + accountIdValue;
+                }
+
                 Window.Location.assign(result);
             }
 
@@ -257,7 +353,6 @@ public class LoginDialog extends Dialog {
     @Override
     protected void onRender(Element parent, int pos) {
         super.onRender(parent, pos);
-        username.focus();
     }
 
     /**
@@ -281,6 +376,7 @@ public class LoginDialog extends Dialog {
 
             // Open the MFA if needed
             // trust cookie test
+            // TODO: Check code below because a lot of stuff is unused or does not make sense
             boolean existTrustCookie = CookieUtils.isCookieEnabled(CookieUtils.KAPUA_COOKIE_TRUST + username.getValue());
             status.show();
             getButtonBar().disable();
@@ -327,26 +423,40 @@ public class LoginDialog extends Dialog {
         });
     }
 
-    public void performLogout() {
-        GWT_AUTHORIZATION_SERVICE.logout(new AsyncCallback<Void>() {
-
-            @Override
-            public void onFailure(Throwable caught) {
-                FailureHandler.handle(caught);
-            }
-
-            @Override
-            public void onSuccess(Void arg0) {
-                ConsoleInfo.display(CONSOLE_MESSAGES.popupInfo(), CONSOLE_MESSAGES.loggedOut());
-                resetDialog();
-                show();
-            }
-        });
-    }
+//    public void performLogout() {
+//        GWT_AUTHORIZATION_SERVICE.logout(new AsyncCallback<Void>() {
+//
+//            @Override
+//            public void onFailure(Throwable caught) {
+//                FailureHandler.handle(caught);
+//            }
+//
+//            @Override
+//            public void onSuccess(Void arg0) {
+//                ConsoleInfo.display(CONSOLE_MESSAGES.popupInfo(), CONSOLE_MESSAGES.loggedOut());
+//                resetDialog();
+//                show();
+//            }
+//        });
+//    }
 
     public void callMainScreen() {
         setAllowMainScreen(true);
         hide();
+    }
+
+    protected void validate() {
+        login.setEnabled(true);
+
+        reset.setEnabled(hasValue(username) && hasValue(password));
+
+        if (hasValue(username)) {
+            username.clearInvalid();
+        }
+
+        if (hasValue(password)) {
+            password.clearInvalid();
+        }
     }
 
     protected boolean hasValue(TextField<String> field) {
@@ -354,24 +464,11 @@ public class LoginDialog extends Dialog {
                 !field.getValue().trim().isEmpty();
     }
 
-    protected void validate() {
-        login.setEnabled(true);
-        reset.setEnabled(hasValue(username) &&
-                hasValue(password));
-        if (hasValue(username)) {
-            username.clearInvalid();
-        }
-        if (hasValue(password)) {
-            password.clearInvalid();
-        }
-    }
-
     public void resetDialog() {
         username.reset();
         username.enable();
         password.reset();
         password.enable();
-        username.focus();
         status.hide();
         getButtonBar().enable();
         reset.disable();

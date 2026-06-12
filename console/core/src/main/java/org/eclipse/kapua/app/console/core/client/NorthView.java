@@ -34,6 +34,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.eclipse.kapua.app.console.core.client.util.TokenCleaner;
+import org.eclipse.kapua.app.console.core.client.messages.ConsoleCoreMessages;
 import org.eclipse.kapua.app.console.core.shared.service.GwtAuthorizationService;
 import org.eclipse.kapua.app.console.core.shared.service.GwtAuthorizationServiceAsync;
 import org.eclipse.kapua.app.console.core.shared.service.GwtSettingsService;
@@ -63,6 +64,7 @@ public class NorthView extends LayoutContainer {
 
     private static final ConsoleMessages CONSOLE_MESSAGES = GWT.create(ConsoleMessages.class);
     private static final ConsoleCredentialMessages CONSOLE_CREDENTIAL_MESSAGES = GWT.create(ConsoleCredentialMessages.class);
+    private static final ConsoleCoreMessages CONSOLE_CORE_MESSAGES = GWT.create(ConsoleCoreMessages.class);
 
     private static final GwtAuthorizationServiceAsync GWT_AUTHORIZATION_SERVICE = GWT.create(GwtAuthorizationService.class);
     private static final GwtAccountServiceAsync GWT_ACCOUNT_SERVICE = GWT.create(GwtAccountService.class);
@@ -223,7 +225,39 @@ public class NorthView extends LayoutContainer {
 
                 });
                 userActionMenu.add(manageMfa);
+
                 userActionMenu.add(new SeparatorMenuItem());
+                //for now the "get sso link" is not rendered
+
+//                // "Get SSO URL" menu item — only shown when SSO is enabled
+//                if (currentSession.isSsoEnabled() &&
+//                    currentSession.isSsoBrokeringEnabledForSession()) {
+//                    KapuaMenuItem getSsoUrlMenuItem = new KapuaMenuItem();
+//                    getSsoUrlMenuItem.setText(CONSOLE_CORE_MESSAGES.ssoUrlMenuItemLabel());
+//                    getSsoUrlMenuItem.setIcon(IconSet.SIGN_IN);
+//                    getSsoUrlMenuItem.addSelectionListener(new SelectionListener<MenuEvent>() {
+//
+//                        @Override
+//                        public void componentSelected(MenuEvent ce) {
+//                            GWT_SETTINGS_SERVICE.getOpenIDLoginOrganizationUri(new AsyncCallback<String>() {
+//
+//                                @Override
+//                                public void onFailure(Throwable caught) {
+//                                    FailureHandler.handle(caught);
+//                                }
+//
+//                                @Override
+//                                public void onSuccess(String ssoUrl) {
+//                                    SsoUrlDialog dialog = new SsoUrlDialog(ssoUrl);
+//                                    dialog.show();
+//                                }
+//                            });
+//                        }
+//                    });
+//                    userActionMenu.add(getSsoUrlMenuItem);
+//                    userActionMenu.add(new SeparatorMenuItem());
+//                }
+
                 // Logout menu item
                 KapuaMenuItem userLogoutMenuItem = new KapuaMenuItem();
                 userLogoutMenuItem.setText(CONSOLE_MESSAGES.consoleHeaderUserActionLogout());
@@ -242,7 +276,7 @@ public class NorthView extends LayoutContainer {
                             @Override
                             public void onSuccess(Void arg0) {
                                 if (currentSession.isSsoEnabled() && currentSession.getOpenIDIdToken() != null) {
-                                    GWT_SETTINGS_SERVICE.getOpenIDLogoutUri(currentSession.getOpenIDIdToken(), new AsyncCallback<String>() {
+                                    GWT_SETTINGS_SERVICE.getOpenIDLogoutUri(currentSession.getOpenIDIdToken(), currentSession.getAccountName(), new AsyncCallback<String>() {
 
                                         @Override
                                         public void onFailure(Throwable caught) {

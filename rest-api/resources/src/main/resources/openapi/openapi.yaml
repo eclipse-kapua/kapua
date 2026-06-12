@@ -106,6 +106,9 @@ paths:
     $ref: './accounts/accounts-accountId.yaml#/paths/~1{scopeId}~1accounts~1{accountId}'
   /accounts/{accountId}:
     $ref: './accounts/accounts-accountId.yaml#/paths/~1accounts~1{accountId}'
+  ### Accounts - unscoped ###
+  /accounts:
+    $ref: './allAccounts/allAccounts.yaml#/paths/~1accounts'
   ### Credential ###
   /{scopeId}/credentials:
     $ref: './credential/credential-scopeId.yaml#/paths/~1{scopeId}~1credentials'
