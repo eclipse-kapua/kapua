@@ -165,9 +165,8 @@ public class LoginDialog extends Dialog {
             ssoPanel.setBorders(false);
             ssoPanel.setBodyBorder(false);
             ssoPanel.setStyleAttribute("background-color", "transparent");
-            ssoPanel.setStyleAttribute("padding-top", "10px");
+            ssoPanel.setStyleAttribute("padding-top", "7px");
             ssoPanel.setBodyStyle("background-color: transparent");
-            ssoPanel.setHeight(55);
             add(ssoPanel);
 
             // Or text info
@@ -175,9 +174,9 @@ public class LoginDialog extends Dialog {
             tableData.setHorizontalAlign(HorizontalAlignment.CENTER);
             tableData.setVerticalAlign(Style.VerticalAlignment.MIDDLE);
 
-            Text dialogTextInfo = new Text("or enterprise login");
+            Text dialogTextInfo = new Text("or SSO login");
             dialogTextInfo.setStyleName("kapua-info-text");
-            dialogTextInfo.setStyleAttribute("padding-top", "5px");
+            dialogTextInfo.setStyleAttribute("padding-top", "3px");
             dialogTextInfo.setStyleAttribute("text-align", "center");
             dialogTextInfo.setStyleAttribute("border-top", "1px solid lightgrey");
 
