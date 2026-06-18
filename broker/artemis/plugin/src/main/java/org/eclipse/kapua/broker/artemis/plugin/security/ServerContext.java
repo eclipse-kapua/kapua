@@ -19,6 +19,7 @@ import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.broker.artemis.plugin.security.ServerPlugin.Failure;
 import org.eclipse.kapua.broker.artemis.plugin.security.context.SecurityContext;
 import org.eclipse.kapua.broker.artemis.plugin.security.context.SecurityContext.LockType;
+import org.eclipse.kapua.broker.artemis.plugin.security.event.BrokerEventHandler;
 import org.eclipse.kapua.broker.artemis.plugin.security.metric.LoginMetric;
 import org.eclipse.kapua.broker.artemis.plugin.utils.BrokerIdentity;
 import org.eclipse.kapua.client.security.ServiceClient;
@@ -41,6 +42,7 @@ public class ServerContext {
     protected final BrokerIdentity brokerIdentity;
     protected ActiveMQServer server;
     protected AddressAccessTracker addressAccessTracker;
+    protected BrokerEventHandler brokerEventHandler;
 
     @Inject
     public ServerContext(
@@ -48,12 +50,14 @@ public class ServerContext {
             @Named("clusterName") String clusterName,
             BrokerIdentity brokerIdentity,
             SecurityContext securityContext,
-            AddressAccessTracker accessTracker) {
+            AddressAccessTracker accessTracker,
+            BrokerEventHandler brokerEventHandler) {
+        this.authServiceClient = authServiceClient;
         this.clusterName = clusterName;
         this.brokerIdentity = brokerIdentity;
         this.securityContext = securityContext;
         this.addressAccessTracker = accessTracker;
-        this.authServiceClient = authServiceClient;
+        this.brokerEventHandler = brokerEventHandler;
     }
 
     public void init(ActiveMQServer server) throws KapuaException {
@@ -88,6 +92,10 @@ public class ServerContext {
 
     public AddressAccessTracker getAddressAccessTracker() {
         return addressAccessTracker;
+    }
+
+    public BrokerEventHandler getBrokerEventHandler() {
+        return brokerEventHandler;
     }
 
     public void closeConnection(Logger logger, LoginMetric loginMetric, RemotingConnection remotingConnection, String connectionId) {
