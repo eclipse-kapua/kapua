@@ -25,6 +25,8 @@ import org.eclipse.kapua.message.KapuaMessageFactory;
 import org.eclipse.kapua.translator.kapua.kura.TranslatorAppAssetKapuaKura;
 import org.eclipse.kapua.translator.kapua.kura.TranslatorAppBundleKapuaKura;
 import org.eclipse.kapua.translator.kapua.kura.TranslatorAppCommandKapuaKura;
+import org.eclipse.kapua.translator.kapua.kura.TranslatorAppConfigurationCreationKapuaKura;
+import org.eclipse.kapua.translator.kapua.kura.TranslatorAppConfigurationFactoriesKapuaKura;
 import org.eclipse.kapua.translator.kapua.kura.TranslatorAppConfigurationKapuaKura;
 import org.eclipse.kapua.translator.kapua.kura.TranslatorAppPackageKapuaKura;
 import org.eclipse.kapua.translator.kapua.kura.TranslatorAppRequestKapuaKura;
@@ -41,6 +43,8 @@ import org.eclipse.kapua.translator.kapua.kura.keystore.TranslatorAppKeystoreQue
 import org.eclipse.kapua.translator.kura.kapua.TranslatorAppAssetKuraKapua;
 import org.eclipse.kapua.translator.kura.kapua.TranslatorAppBundleKuraKapua;
 import org.eclipse.kapua.translator.kura.kapua.TranslatorAppCommandKuraKapua;
+import org.eclipse.kapua.translator.kura.kapua.TranslatorAppConfigurationCreationKuraKapua;
+import org.eclipse.kapua.translator.kura.kapua.TranslatorAppConfigurationFactoriesKuraKapua;
 import org.eclipse.kapua.translator.kura.kapua.TranslatorAppConfigurationKuraKapua;
 import org.eclipse.kapua.translator.kura.kapua.TranslatorAppNotifyKuraKapua;
 import org.eclipse.kapua.translator.kura.kapua.TranslatorAppPackageKuraKapua;
@@ -77,6 +81,8 @@ public class KapuaKuraTranslatorsModule extends AbstractKapuaModule {
         translatorMultibinder.addBinding().to(TranslatorAppBundleKapuaKura.class);
         translatorMultibinder.addBinding().to(TranslatorAppCommandKapuaKura.class);
         translatorMultibinder.addBinding().to(TranslatorAppConfigurationKapuaKura.class);
+        translatorMultibinder.addBinding().to(TranslatorAppConfigurationFactoriesKapuaKura.class);
+        translatorMultibinder.addBinding().to(TranslatorAppConfigurationCreationKapuaKura.class);
         translatorMultibinder.addBinding().to(TranslatorAppPackageKapuaKura.class);
         translatorMultibinder.addBinding().to(TranslatorAppRequestKapuaKura.class);
         translatorMultibinder.addBinding().to(TranslatorAppSnapshotKapuaKura.class);
@@ -96,6 +102,8 @@ public class KapuaKuraTranslatorsModule extends AbstractKapuaModule {
         translatorMultibinder.addBinding().to(TranslatorAppBundleKuraKapua.class);
         translatorMultibinder.addBinding().to(TranslatorAppCommandKuraKapua.class);
         translatorMultibinder.addBinding().to(TranslatorAppConfigurationKuraKapua.class);
+        translatorMultibinder.addBinding().to(TranslatorAppConfigurationFactoriesKuraKapua.class);
+        translatorMultibinder.addBinding().to(TranslatorAppConfigurationCreationKuraKapua.class);
         translatorMultibinder.addBinding().to(TranslatorAppPackageKuraKapua.class);
         translatorMultibinder.addBinding().to(TranslatorAppResponseKuraKapua.class);
         translatorMultibinder.addBinding().to(TranslatorAppSnapshotKuraKapua.class);

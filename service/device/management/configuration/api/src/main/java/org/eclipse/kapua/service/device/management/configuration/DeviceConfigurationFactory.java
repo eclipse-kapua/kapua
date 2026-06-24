@@ -34,4 +34,6 @@ public interface DeviceConfigurationFactory extends KapuaObjectFactory {
      * @return
      */
     DeviceConfiguration newConfigurationInstance();
+
+    DeviceComponentConfigurationFactories newComponentConfigurationFactories();
 }

@@ -36,7 +36,8 @@ public class GwtDevice extends GwtUpdatableEntityModel implements Serializable {
 
     public enum GwtDeviceApplication implements IsSerializable {
 
-        APP_CONFIGURATION("CONF-V1"), //
+        APP_CONFIGURATION_V1("CONF-V1"), //
+        APP_CONFIGURATION_V2("CONF-V2"), //
         APP_COMMAND("CMD-V1"), //
         APP_DEPLOY_V1("DEPLOY-V1"), //
         APP_DEPLOY_V2("DEPLOY-V2"), //

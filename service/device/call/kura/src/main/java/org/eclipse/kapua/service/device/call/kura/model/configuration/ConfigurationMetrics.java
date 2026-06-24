@@ -29,11 +29,18 @@ public enum ConfigurationMetrics implements DeviceAppMetrics {
     APP_ID("CONF"),
 
     /**
-     * Application version.
+     * Application version 1.
      *
      * @since 1.0.0
      */
-    APP_VERSION("V1"),
+    APP_VERSION_1("V1"),
+
+    /**
+     * Application version2.
+     *
+     * @since 1.6.10
+     */
+    APP_VERSION_2("V2"),
     ;
 
     /**
