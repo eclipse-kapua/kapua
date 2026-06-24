@@ -383,8 +383,9 @@ public class NorthView extends LayoutContainer {
                         // Add item menu entry
                         KapuaMenuItem childAccountMenuItem = new KapuaMenuItem();
                         childAccountMenuItem.setIcon(IconSet.USER);
-                        childAccountMenuItem.setText(childAccount.getName());
-                        childAccountMenuItem.setTitle(childAccount.getName());
+                        String childAccountFullName = childAccount.getName() + " (" + childAccount.getGwtOrganization().getName() + ")";
+                        childAccountMenuItem.setText(childAccountFullName);
+                        childAccountMenuItem.setTitle(childAccountFullName);
                         childAccountMenuItem.setId(String.valueOf(childAccount.getId()));
                         menu.add(childAccountMenuItem);
 
