@@ -52,11 +52,11 @@ jobs:
           echo "PROJECT_VERSION=$VERSION" >> $GITHUB_ENV
           echo "Product version: $VERSION"
 
-      - name: Publish SBOM
-        uses: eclipse-csi/workflows/.github/workflows/store-sbom-data.yml@v1
-        with:
-          projectName: '<product_name>' # product name as will be shown in DependencyTrack
-          projectVersion: ${{ env.PROJECT_VERSION }}
-          bomArtifact: '<artifact_name>' # name from upload in generate-sbom job
-          bomFilename: 'bom.json'
-          parentProject: '<parentProject_ID>' # provisioned by us in step 1
+#      - name: Publish SBOM
+#        uses: eclipse-csi/workflows/.github/workflows/store-sbom-data.yml@v1
+#        with:
+#          projectName: '<product_name>' # product name as will be shown in DependencyTrack
+#          projectVersion: ${{ env.PROJECT_VERSION }}
+#          bomArtifact: '<artifact_name>' # name from upload in generate-sbom job
+#          bomFilename: 'bom.json'
+#          parentProject: '<parentProject_ID>' # provisioned by us in step 1
