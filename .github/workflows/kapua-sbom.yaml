@@ -1,0 +1,62 @@
+name: Eclipse Kapua SBOM
+
+on:
+  release:
+    types: [published]
+  push:
+    branches:
+      - feat-softwareBom
+      - release-1.6.x
+      - release-2.0.x
+      - develop
+
+env:
+  BUILD_OPTS: ""
+  MAVEN_OPTS: "-Xmx4096m"
+
+jobs:
+  publish-sbom:
+    name: Build and publish SBOM
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up runner
+        uses: ./.github/actions/setUpRunner
+
+      - name: Set up Maven caches
+        uses: ./.github/actions/setUpMavenCaches
+        with:
+          kapua-artifact-cache-enabled: 'false'
+
+      - name: Build SBOM
+        run: mvn -B -DskipTests clean install -Psbom
+
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v5
+        with:
+          name: kapua-sbom
+          path: ./target/bom.json
+
+      - name: Extract SBOM version
+        run: |
+          VERSION="$(mvn help:evaluate -Dexpression=project.version --quiet -DforceStdout)"
+
+          echo "Product version: $VERSION"
+
+          # Substitute "-SNAPSHOT" suffix with "@dev" if present
+          VERSION="${VERSION/-SNAPSHOT/@dev}"
+
+          echo "PROJECT_VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Product version: $VERSION"
+
+      - name: Publish SBOM
+        uses: eclipse-csi/workflows/.github/workflows/store-sbom-data.yml@v1
+        with:
+          projectName: '<product_name>' # product name as will be shown in DependencyTrack
+          projectVersion: ${{ env.PROJECT_VERSION }}
+          bomArtifact: '<artifact_name>' # name from upload in generate-sbom job
+          bomFilename: 'bom.json'
+          parentProject: '<parentProject_ID>' # provisioned by us in step 1
