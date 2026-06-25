@@ -18,19 +18,20 @@ env:
 
 jobs:
   publish:
+    name: Build and Publish Release
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5 # Checks out a copy of the repository on the ubuntu-latest machine
-      - uses: actions/setup-java@v5
+      - name: Checkout repository # Checks out a copy of the repository on the runner
+        uses: actions/checkout@v5
+
+      - name: Set up runner
+        uses: ./.github/actions/setUpRunner
+
+      - name: Set up Maven caches
+        uses: ./.github/actions/setUpMavenCaches
         with:
-          distribution: 'zulu'
-          java-version: 17
-      - uses: actions/setup-node@v5 # Installs Node and NPM
-        with:
-          node-version: 16
-      - name: Install Swagger CLI # Installs Swagger CLI to bundle OpenAPI files
-        run: 'npm install -g @apidevtools/swagger-cli'
+          kapua-artifact-cache-enabled: 'false'
 
       - name: Set up Java and Maven Central credentials
         uses: actions/setup-java@v5

@@ -165,6 +165,7 @@
         <buildnumber-maven-plugin.version>3.0.0</buildnumber-maven-plugin.version>
         <central-publishing-maven-plugin.version>0.10.0</central-publishing-maven-plugin.version>
         <checkstyle.version>7.6.1</checkstyle.version>
+        <cyclonedx-maven-plugin.version>2.9.2</cyclonedx-maven-plugin.version>
         <dependency-check-maven.version>7.4.4</dependency-check-maven.version>
         <docker-maven-plugin.version>0.44.0</docker-maven-plugin.version>
         <eclipse-lifecycle-mapping.version>1.0.0</eclipse-lifecycle-mapping.version>
@@ -2797,6 +2798,35 @@
             <modules>
                 <module>dev-tools</module>
             </modules>
+        </profile>
+
+        <profile>
+            <id>sbom</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.cyclonedx</groupId>
+                        <artifactId>cyclonedx-maven-plugin</artifactId>
+                        <version>${cyclonedx-maven-plugin.version}</version>
+                        <inherited>true</inherited>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>makeAggregateBom</goal>
+                                </goals>
+                                <configuration>
+                                    <projectType>application</projectType> <!-- Is this correct?? -->
+                                    <skipNotDeployed>false</skipNotDeployed>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
 
         <profile>
