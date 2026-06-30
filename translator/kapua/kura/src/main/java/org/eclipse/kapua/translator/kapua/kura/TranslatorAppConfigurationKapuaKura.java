@@ -30,6 +30,7 @@ import org.eclipse.kapua.service.device.call.kura.model.configuration.Configurat
 import org.eclipse.kapua.service.device.call.kura.model.configuration.KuraDeviceComponentConfiguration;
 import org.eclipse.kapua.service.device.call.kura.model.configuration.KuraDeviceConfiguration;
 import org.eclipse.kapua.service.device.call.kura.model.configuration.KuraPassword;
+import org.eclipse.kapua.service.device.call.kura.model.wire.WireMetrics;
 import org.eclipse.kapua.service.device.call.message.kura.app.request.KuraRequestChannel;
 import org.eclipse.kapua.service.device.call.message.kura.app.request.KuraRequestMessage;
 import org.eclipse.kapua.service.device.call.message.kura.app.request.KuraRequestPayload;
@@ -39,6 +40,7 @@ import org.eclipse.kapua.service.device.management.configuration.DeviceConfigura
 import org.eclipse.kapua.service.device.management.configuration.message.internal.ConfigurationRequestChannel;
 import org.eclipse.kapua.service.device.management.configuration.message.internal.ConfigurationRequestMessage;
 import org.eclipse.kapua.service.device.management.configuration.message.internal.ConfigurationRequestPayload;
+import org.eclipse.kapua.service.device.management.message.KapuaMethod;
 import org.eclipse.kapua.translator.exception.InvalidChannelException;
 import org.eclipse.kapua.translator.exception.InvalidPayloadException;
 
@@ -53,6 +55,7 @@ public class TranslatorAppConfigurationKapuaKura extends AbstractTranslatorKapua
     protected DeviceConfigurationFactory deviceConfigurationFactory;
     @Inject
     private XmlUtil xmlUtil;
+    private final ThreadLocal<Boolean> isWire = new ThreadLocal<>(); //ThreadLocal should not be necessary until new translator instances are created for each request/thread, but kept here for safety (from what I understand, now translators classes and TranslatorHub are not Singletons)
 
     @Override
     protected KuraRequestChannel translateChannel(ConfigurationRequestChannel kapuaChannel) throws InvalidChannelException {
@@ -62,10 +65,20 @@ public class TranslatorAppConfigurationKapuaKura extends AbstractTranslatorKapua
             // Build resources
             List<String> resources = new ArrayList<>();
             if (kapuaChannel.getConfigurationId() == null) {
-                resources.add("configurations");
-                String componentId = kapuaChannel.getComponentId();
-                if (componentId != null) {
-                    resources.add(componentId);
+                if (kapuaChannel.getAppName().getValue().equals("WIRE")) {
+                    kuraRequestChannel = TranslatorKapuaKuraUtils.buildBaseRequestChannel(WireMetrics.APP_ID, WireMetrics.APP_VERSION, kapuaChannel.getMethod());
+                    if (kapuaChannel.getMethod() == KapuaMethod.DEL) {
+                        resources.add("graph");
+                    } else {
+                        resources.add("graph/snapshot");
+                    }
+                    isWire.set(true);
+                } else {
+                    resources.add("configurations");
+                    String componentId = kapuaChannel.getComponentId();
+                    if (componentId != null) {
+                        resources.add(componentId);
+                    }
                 }
             } else if (kapuaChannel.getConfigurationId() != null) {
                 resources.add("snapshots");
@@ -95,7 +108,12 @@ public class TranslatorAppConfigurationKapuaKura extends AbstractTranslatorKapua
                 KuraDeviceConfiguration kuraDeviceConfiguration = translate(kapuaDeviceConfiguration);
                 byte[] body;
                 try {
-                    body = xmlUtil.marshal(kuraDeviceConfiguration).getBytes();
+                    if (Boolean.TRUE.equals(isWire.get())) {
+                        body = getJsonMapper().writeValueAsBytes(kuraDeviceConfiguration);
+                    } else {
+                        body = xmlUtil.marshal(kuraDeviceConfiguration).getBytes();
+                    }
+
                 } catch (Exception e) {
                     throw new InvalidPayloadException(e, kapuaPayload);
                 }
@@ -109,6 +127,9 @@ public class TranslatorAppConfigurationKapuaKura extends AbstractTranslatorKapua
             throw ipe;
         } catch (Exception e) {
             throw new InvalidPayloadException(e, kapuaPayload);
+        } finally {
+            // Clean up ThreadLocal to prevent memory leaks
+            isWire.remove();
         }
     }
 
