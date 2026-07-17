@@ -48,13 +48,13 @@ You can check if every container is running properly by typing the following com
 The output should be similar to this: 
 
 ```
-CONTAINER ID        IMAGE                 COMMAND                  CREATED             STATUS                     PORTS                                                                  NAMES                 SIZE
-505d32a0bb9e        kapua/kapua-api       "/home/kapua/run-j..."   4 hours ago         Created                                                                                           kapua-api             0B (virtual 180MB)
-dd9852845105        kapua/kapua-console   "/home/kapua/run-c..."   4 hours ago         Up 4 hours                 0.0.0.0:8080->8080/tcp, 8778/tcp                                       kapua-console         83kB (virtual 206MB)
-65c8e15ab7e9        kapua/kapua-broker    "/maven/bin/active..."   4 hours ago         Up 4 hours                 8778/tcp, 0.0.0.0:1883->1883/tcp, 0.0.0.0:61614->61614/tcp, 8883/tcp   kapua-broker          94.4kB (virtual 212MB)
-b3309e145e84        elasticsearch:7.8.1  "/docker-entrypoin..."   4 hours ago         Up 4 hours                                                                         kapua-elasticsearch   32.8kB (virtual 352MB)
-e097f77f1758        kapua/kapua-sql       "/home/kapua/run-h2"     4 hours ago         Up 4 hours                 0.0.0.0:3306->3306/tcp, 0.0.0.0:8181->8181/tcp, 8778/tcp               kapua-sql             32.8kB (virtual 86MB)
-785efe9976cf        kapua/kapua-events-broker:latest   "/run-artemis"           About an hour ago   Up About an hour    0.0.0.0:5672->5672/tcp                                                 compose_events-broker_1   410kB (virtual 130MB)
+CONTAINER ID        IMAGE                                   COMMAND                  CREATED             STATUS                     PORTS                                                                  NAMES                 SIZE
+505d32a0bb9e        eclipsekapua/kapua-api                  "/home/kapua/run-j..."   4 hours ago         Created                                                                                           kapua-api             0B (virtual 180MB)
+dd9852845105        eclipsekapua/kapua-console              "/home/kapua/run-c..."   4 hours ago         Up 4 hours                 0.0.0.0:8080->8080/tcp, 8778/tcp                                       kapua-console         83kB (virtual 206MB)
+65c8e15ab7e9        eclipsekapua/kapua-broker               "/maven/bin/active..."   4 hours ago         Up 4 hours                 8778/tcp, 0.0.0.0:1883->1883/tcp, 0.0.0.0:61614->61614/tcp, 8883/tcp   kapua-broker          94.4kB (virtual 212MB)
+b3309e145e84        elasticsearch:7.8.1                     "/docker-entrypoin..."   4 hours ago         Up 4 hours                                                                         kapua-elasticsearch   32.8kB (virtual 352MB)
+e097f77f1758        eclipsekapua/kapua-sql                  "/home/kapua/run-h2"     4 hours ago         Up 4 hours                 0.0.0.0:3306->3306/tcp, 0.0.0.0:8181->8181/tcp, 8778/tcp               kapua-sql             32.8kB (virtual 86MB)
+785efe9976cf        eclipsekapua/kapua-events-broker:latest "/run-artemis"           About an hour ago   Up About an hour    0.0.0.0:5672->5672/tcp                                                 compose_events-broker_1   410kB (virtual 130MB)
 ```
 
 6. Kapua can be stopped by executing the script: 

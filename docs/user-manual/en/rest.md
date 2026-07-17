@@ -14,7 +14,7 @@ hostnames. It is the recommended way to access applications.
 
     $ oc status | grep api
     http://api-eclipse-kapua.1.2.3.4.xip.io to pod port http (svc/kapua-api)
-      dc/kapua-api deploys docker.io/kapua/kapua-api-jetty:latest
+      dc/kapua-api deploys docker.io/eclipsekapua/kapua-api-jetty:latest
 
 The resulting URL would be: `http://api-eclipse-kapua.1.2.3.4.xip.io`
 
