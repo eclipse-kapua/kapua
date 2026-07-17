@@ -1,4 +1,4 @@
-name: Eclipse Kapua Artifacts Release
+name: Eclipse Kapua Release
 
 on:
   release:
@@ -17,8 +17,12 @@ env:
   MAVEN_OPTS: "-Xmx4096m"
 
 jobs:
-  publish:
+  maven-artifacts:
+    name: Publish Maven Artifacts
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
+    timeout-minutes: 90
 
     steps:
       - uses: actions/checkout@v5 # Checks out a copy of the repository on the ubuntu-latest machine
@@ -43,12 +47,60 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
-#      - name: Set project version from tag
-#        run: mvn --batch-mode versions:set -DnewVersion=${{ github.event.release.tag_name }} -DgenerateBackupPoms=false
+      - name: Set up Maven caches
+        uses: ./.github/actions/setUpMavenCaches
+        with:
+          kapua-artifact-cache-enabled: 'false'
+      - name: Maven version
+        run: mvn --version
 
-      - name: Publish to Central
-        run: mvn -B clean deploy -DskipTests -Pjavadoc,sing
+      - name: Build and publish to Central
+        run: mvn -B clean deploy -DskipTests -P javadoc,sing
         env:
           MAVEN_USERNAME: ${{ secrets.CENTRAL_SONATYPE_TOKEN_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.CENTRAL_SONATYPE_TOKEN_PASSWORD }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+
+      - name: Save built Kapua Artifacts
+        uses: ./.github/actions/saveBuiltKapuaArtifacts
+
+  docker-containers:
+    name: Publish Docker Containers
+    needs: maven-artifacts
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v5 # Checks out a copy of the repository on the ubuntu-latest machine
+      - uses: actions/setup-java@v5
+        with:
+          distribution: 'zulu'
+          java-version: 8
+      - uses: actions/setup-node@v5 # Installs Node and NPM
+        with:
+          node-version: 16
+      - name: Install Swagger CLI # Installs Swagger CLI to bundle OpenAPI files
+        run: 'npm install -g @apidevtools/swagger-cli'
+
+      - name: Set up Java and Maven Central credentials
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'zulu'
+          java-version: 8
+          server-id: central
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+
+      - name: Set up Maven caches
+        uses: ./.github/actions/setUpMavenCaches
+      - name: Build and Publish Kapua Docker Images
+        run: mvn -B deploy -DskipTests -f assembly -P docker
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+      - name: Result
+        run: docker images | sort
