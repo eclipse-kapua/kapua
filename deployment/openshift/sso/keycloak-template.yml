@@ -71,7 +71,7 @@ objects:
           deploymentconfig: keycloak
       spec:
         containers:
-        - image: kapua/keycloak:latest
+        - image: eclipsekapua/keycloak:latest
           imagePullPolicy: Never
           name: keycloak
           ports:

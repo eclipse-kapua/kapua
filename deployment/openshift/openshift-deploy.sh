@@ -18,7 +18,7 @@ set -e
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . ${SCRIPT_DIR}/openshift-common.sh
 
-: DOCKER_ACCOUNT=${DOCKER_ACCOUNT:=kapua}
+: DOCKER_ACCOUNT=${DOCKER_ACCOUNT:=eclipsekapua}
 : IMAGE_VERSION=${IMAGE_VERSION:=1.6.14-SNAPSHOT}
 : JAVA_OPTS_EXTRA=${JAVA_OPTS_EXTRA:=''}
 

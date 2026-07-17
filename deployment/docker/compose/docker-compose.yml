@@ -1,7 +1,7 @@
 services:
   db:
     container_name: db
-    image: kapua/kapua-sql:${IMAGE_VERSION}
+    image: eclipsekapua/kapua-sql:${IMAGE_VERSION}
     ports:
       - "3306:3306"
   es:
@@ -18,12 +18,12 @@ services:
       - transport.tcp.connect_timeout=30s
   events-broker:
     container_name: events-broker
-    image: kapua/kapua-events-broker:${IMAGE_VERSION}
+    image: eclipsekapua/kapua-events-broker:${IMAGE_VERSION}
     ports:
       - "5672:5672"
   broker:
     container_name: broker
-    image: kapua/kapua-broker:${IMAGE_VERSION}
+    image: eclipsekapua/kapua-broker:${IMAGE_VERSION}
     expose:
       - 1893
     ports:
@@ -47,7 +47,7 @@ services:
       - LOGBACK_LOG_LEVEL
   kapua-console:
     container_name: kapua-console
-    image: kapua/kapua-console:${IMAGE_VERSION}
+    image: eclipsekapua/kapua-console:${IMAGE_VERSION}
     ports:
       - "8080:8080"
       - "8443:8443"
@@ -80,7 +80,7 @@ services:
       - KEYCLOAK_REALM
   kapua-api:
     container_name: kapua-api
-    image: kapua/kapua-api:${IMAGE_VERSION}
+    image: eclipsekapua/kapua-api:${IMAGE_VERSION}
     ports:
       - "8081:8080"
       - "8444:8443"
@@ -104,7 +104,7 @@ services:
       - SWAGGER=${KAPUA_SWAGGER_ENABLE:-true}
   job-engine:
     container_name: job-engine
-    image: kapua/kapua-job-engine:${IMAGE_VERSION}
+    image: eclipsekapua/kapua-job-engine:${IMAGE_VERSION}
     expose:
       - 8080
     depends_on:

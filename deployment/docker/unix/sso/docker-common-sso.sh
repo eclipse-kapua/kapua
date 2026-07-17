@@ -15,7 +15,7 @@
 
 SCRIPT_DIR_SSO="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-export DOCKER_ACCOUNT=${DOCKER_ACCOUNT:=kapua}
+export DOCKER_ACCOUNT=${DOCKER_ACCOUNT:=eclipsekapua}
 
 # Parse ifconfig and take the first available IP address (should work for all *nix systems)
 EXTERNAL_IP=$(ifconfig | grep -E "([0-9]{1,3}\.){3}[0-9]{1,3}" | grep -v '127.0.0.1' | awk '{ print $2 }' | cut -f2 -d: | head -n1)
@@ -30,5 +30,5 @@ export SSO_KEY="${SSO_KEY:=${SSO_CRT_DIR}/${SSO_KEY_FILE}}"
 
 export KAPUA_CONSOLE_URL="${KAPUA_CONSOLE_URL:=http://${EXTERNAL_IP}:8080}"
 
-export KEYCLOAK_IMAGE="${KEYCLOAK_IMAGE:=kapua/kapua-keycloak:${IMAGE_VERSION}}"
+export KEYCLOAK_IMAGE="${KEYCLOAK_IMAGE:=eclipsekapua/kapua-keycloak:${IMAGE_VERSION}}"
 export KEYCLOAK_URL="${KEYCLOAK_URL:=http://${EXTERNAL_IP}:9090}" # Use https://${EXTERNAL_IP}:9443} in order to enable TLS

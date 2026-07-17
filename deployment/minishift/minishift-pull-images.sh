@@ -16,7 +16,7 @@
 # This script pulls Docker images from a Docker registry
 #
 
-DOCKER_ACCOUNT=${DOCKER_ACCOUNT:=kapua}
+DOCKER_ACCOUNT=${DOCKER_ACCOUNT:=eclipsekapua}
 IMAGE_VERSION=${IMAGE_VERSION:=1.6.14-SNAPSHOT}
 SERVICES=("console" "api" "sql" "broker" "events-broker")
 
