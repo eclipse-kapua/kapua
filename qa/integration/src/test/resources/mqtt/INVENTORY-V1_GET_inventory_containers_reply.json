@@ -2,36 +2,36 @@
   "containers": [
     {
       "name": "consumer-lifecycle",
-      "version": "kapua/kapua-consumer-lifecycle:latest",
+      "version": "eclipsekapua/kapua-consumer-lifecycle:latest",
       "type": "DOCKER"
     },
     {
       "name": "consumer-telemetry",
-      "version": "kapua/kapua-consumer-telemetry:latest",
+      "version": "eclipsekapua/kapua-consumer-telemetry:latest",
       "type": "DOCKER",
       "state": "ACTIVE"
     },
     {
       "name": "job-engine",
-      "version": "kapua/kapua-job-engine:latest",
+      "version": "eclipsekapua/kapua-job-engine:latest",
       "type": "DOCKER",
       "state": "ACTIVE"
     },
     {
       "name": "kapua-console",
-      "version": "kapua/kapua-console:latest",
+      "version": "eclipsekapua/kapua-console:latest",
       "type": "DOCKER",
       "state": "ACTIVE"
     },
     {
       "name": "kapua-api",
-      "version": "kapua/kapua-api:latest",
+      "version": "eclipsekapua/kapua-api:latest",
       "type": "DOCKER",
       "state": "ACTIVE"
     },
     {
       "name": "message-broker",
-      "version": "kapua/kapua-broker:latest",
+      "version": "eclipsekapua/kapua-broker:latest",
       "type": "DOCKER",
       "state": "ACTIVE"
     },
@@ -43,13 +43,13 @@
     },
     {
       "name": "db",
-      "version": "kapua/kapua-sql:latest",
+      "version": "eclipsekapua/kapua-sql:latest",
       "type": "DOCKER",
       "state": "ACTIVE"
     },
     {
       "name": "events-broker",
-      "version": "kapua/kapua-events-broker:latest",
+      "version": "eclipsekapua/kapua-events-broker:latest",
       "type": "DOCKER",
       "state": "UNKNOWN"
     },
