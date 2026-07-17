@@ -26,6 +26,77 @@
     <artifactId>kapua-assembly-console</artifactId>
     <packaging>pom</packaging>
 
+    <properties>
+        <docker.image.name>kapua-console</docker.image.name>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>kapua-console</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>${project.basedir}/descriptors/kapua-console-jetty.xml</descriptor>
+                            </descriptors>
+                            <tarLongFileMode>posix</tarLongFileMode>
+                            <appendAssemblyId>false</appendAssemblyId>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <configuration>
+                    <excludeArtifacts>${project.artifactId}</excludeArtifacts>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <properties>
+                <timestamp>latest</timestamp>
+            </properties>
+        </profile>
+        <profile>
+            <id>docker</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.fabric8</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <configuration>
+                            <images>
+                                <image>
+                                    <build>
+                                        <assembly>
+                                            <descriptor>${project.basedir}/descriptors/kapua-console-jetty.xml</descriptor>
+                                            <mode>tgz</mode>
+                                            <tarLongFileMode>posix</tarLongFileMode>
+                                        </assembly>
+                                    </build>
+                                </image>
+                            </images>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <dependencies>
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
@@ -207,78 +278,5 @@
         </dependency>
 
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>kapua-console</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <descriptors>
-                                <descriptor>${project.basedir}/descriptors/kapua-console-jetty.xml</descriptor>
-                            </descriptors>
-                            <tarLongFileMode>posix</tarLongFileMode>
-                            <finalName>kapua-console-${project.version}</finalName>
-                            <appendAssemblyId>false</appendAssemblyId>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.sonatype.central</groupId>
-                <artifactId>central-publishing-maven-plugin</artifactId>
-                <configuration>
-                    <excludeArtifacts>${project.artifactId}</excludeArtifacts>
-                </configuration>
-            </plugin>
-
-        </plugins>
-    </build>
-
-    <profiles>
-        <profile>
-            <id>release</id>
-            <properties>
-                <timestamp>latest</timestamp>
-            </properties>
-        </profile>
-        <profile>
-            <id>docker</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>io.fabric8</groupId>
-                        <artifactId>docker-maven-plugin</artifactId>
-                        <configuration>
-                            <images>
-                                <image>
-                                    <name>${docker.account}/kapua-console</name>
-                                    <build>
-                                        <from>${docker.account}/jetty-base</from>
-                                        <assembly>
-                                            <descriptor>${project.basedir}/descriptors/kapua-console-jetty.xml</descriptor>
-                                            <basedir>/</basedir>
-                                            <mode>tgz</mode>
-                                            <tarLongFileMode>posix</tarLongFileMode>
-                                        </assembly>
-                                        <dockerFile>${project.basedir}/docker/Dockerfile</dockerFile>
-                                        <filter>@</filter>
-                                    </build>
-                                </image>
-                            </images>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
 </project>

@@ -73,8 +73,8 @@ Note that `OPENID_CLIENT_ID` and `JWT_AUDIENCE` are usually mapped with the same
 
 It is also possible to use Tomcat as a web container. For this use the following run commands instead:
 
-    docker run -td --name kapua-console --link kapua-sql:db --link kapua-broker:broker --link kapua-elasticsearch:es -p 8080:8080 kapua/kapua-console
-    docker run -td --name kapua-api --link kapua-sql:db --link kapua-broker:broker --link kapua-elasticsearch:es -p 8081:8080 kapua/kapua-api
+    docker run -td --name kapua-console --link kapua-sql:db --link kapua-broker:broker --link kapua-elasticsearch:es -p 8080:8080 eclipsekapua/kapua-console
+    docker run -td --name kapua-api --link kapua-sql:db --link kapua-broker:broker --link kapua-elasticsearch:es -p 8081:8080 eclipsekapua/kapua-api
 
 Please note that in this case you also have to append `/admin` and `/api` to the URL.
 

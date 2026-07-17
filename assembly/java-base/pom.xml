@@ -29,6 +29,8 @@
 
     <properties>
         <docker.base.image>centos:7</docker.base.image>
+        <docker.image.name>java-base</docker.image.name>
+
         <jolokia.agent.url>https://repo1.maven.org/maven2/org/jolokia/jolokia-jvm/1.3.4/jolokia-jvm-1.3.4-agent.jar</jolokia.agent.url>
     </properties>
 
@@ -58,17 +60,6 @@
                     <plugin>
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
-                        <configuration>
-                            <images>
-                                <image>
-                                    <name>${docker.account}/java-base</name>
-                                    <build>
-                                        <dockerFile>${project.basedir}/docker/Dockerfile</dockerFile>
-                                        <filter>@</filter>
-                                    </build>
-                                </image>
-                            </images>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>

@@ -27,6 +27,10 @@
     <name>${project.artifactId}</name>
     <packaging>pom</packaging>
 
+    <properties>
+        <docker.image.name>kapua-sql</docker.image.name>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -56,15 +60,12 @@
                         <configuration>
                             <images>
                                 <image>
-                                    <name>${docker.account}/kapua-sql</name>
                                     <build>
-                                        <filter>@</filter>
                                         <assembly>
                                             <descriptor>${project.basedir}/descriptors/kapua-sql.xml</descriptor>
                                             <mode>tgz</mode>
                                             <tarLongFileMode>posix</tarLongFileMode>
                                         </assembly>
-                                        <dockerFile>${project.basedir}/docker/Dockerfile</dockerFile>
                                     </build>
                                 </image>
                             </images>

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-    Copyright (c) 2017, 2022 Red Hat Inc and others
+    Copyright (c) 2017, 2025 Red Hat Inc and others
 
     This program and the accompanying materials are made
     available under the terms of the Eclipse Public License 2.0
@@ -27,28 +27,9 @@
     <name>${project.artifactId}</name>
     <packaging>pom</packaging>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-assembly-java-base</artifactId>
-            <type>pom</type>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>apache-artemis</artifactId>
-            <version>${artemis.version}</version>
-            <classifier>bin</classifier>
-            <type>tar.gz</type>
-            <!--
-            <exclusions>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-            </exclusions>
-             -->
-        </dependency>
-    </dependencies>
+    <properties>
+        <docker.image.name>kapua-events-broker</docker.image.name>
+    </properties>
 
     <build>
         <plugins>
@@ -127,13 +108,10 @@
                         <configuration>
                             <images>
                                 <image>
-                                    <name>${docker.account}/kapua-events-broker</name>
                                     <build>
                                         <assembly>
                                             <descriptor>${project.basedir}/descriptors/kapua-events-broker.xml</descriptor>
                                         </assembly>
-                                        <dockerFile>${project.basedir}/docker/Dockerfile</dockerFile>
-                                        <filter>@</filter>
                                     </build>
                                 </image>
                             </images>
@@ -143,4 +121,19 @@
             </build>
         </profile>
     </profiles>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-assembly-java-base</artifactId>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>apache-artemis</artifactId>
+            <version>${artemis.version}</version>
+            <classifier>bin</classifier>
+            <type>tar.gz</type>
+        </dependency>
+    </dependencies>
 </project>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright (c) 2021, 2022 Eurotech and/or its affiliates and others
+    Copyright (c) 2021, 2025 Eurotech and/or its affiliates and others
 
     This program and the accompanying materials are made
     available under the terms of the Eclipse Public License 2.0
@@ -12,8 +12,8 @@
         Eurotech - initial API and implementation
  -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -26,30 +26,11 @@
     <name>${project.artifactId}</name>
 
     <properties>
+        <docker.image.name>kapua-job-engine</docker.image.name>
+
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-assembly-java-base</artifactId>
-            <type>pom</type>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-job-engine-app-web</artifactId>
-            <type>war</type>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-foreignkeys</artifactId>
-        </dependency>
-    </dependencies>
 
     <build>
         <plugins>
@@ -85,6 +66,7 @@
 
         </plugins>
     </build>
+
     <profiles>
         <profile>
             <id>release</id>
@@ -102,15 +84,12 @@
                         <configuration>
                             <images>
                                 <image>
-                                    <name>${docker.account}/kapua-job-engine</name>
                                     <build>
                                         <assembly>
                                             <descriptor>${project.basedir}/descriptors/kapua-job-engine-jetty.xml</descriptor>
                                             <mode>tgz</mode>
                                             <tarLongFileMode>posix</tarLongFileMode>
                                         </assembly>
-                                        <dockerFile>${project.basedir}/docker/Dockerfile</dockerFile>
-                                        <filter>@</filter>
                                     </build>
                                 </image>
                             </images>
@@ -120,4 +99,28 @@
             </build>
         </profile>
     </profiles>
+
+    <dependencies>
+        <!-- Kapua dependencies -->
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-assembly-java-base</artifactId>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-foreignkeys</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-job-engine-app-web</artifactId>
+            <type>war</type>
+        </dependency>
+
+        <!-- External dependencies -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+        </dependency>
+    </dependencies>
 </project>

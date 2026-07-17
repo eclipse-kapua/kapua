@@ -28,7 +28,9 @@
     <packaging>pom</packaging>
 
     <properties>
-        <docker.account>kapua</docker.account>
+        <docker.account>eclipsekapua</docker.account>
+        <docker.image.name>image-name</docker.image.name>
+        <docker.push.skip.latest>true</docker.push.skip.latest>
     </properties>
 
     <modules>
@@ -88,32 +90,60 @@
                 <plugin>
                     <groupId>io.fabric8</groupId>
                     <artifactId>docker-maven-plugin</artifactId>
-                    <configuration>
-                        <images>
-                            <image>
-                                <build>
-                                    <tags>
-                                        <tag>${project.version}</tag>
-                                    </tags>
-                                </build>
-                            </image>
-                        </images>
-                    </configuration>
                     <executions>
                         <execution>
-                            <id>build</id>
+                            <id>Build Docker Container</id>
                             <phase>install</phase>
                             <goals>
                                 <goal>build</goal>
                             </goals>
+                            <configuration>
+                                <images>
+                                    <image>
+                                        <name>${docker.account}/${docker.image.name}</name>
+
+                                        <build>
+                                            <dockerFile>${project.basedir}/docker/Dockerfile</dockerFile>
+                                            <filter>@</filter>
+
+                                            <tags>
+                                                <tag>${project.version}</tag>
+                                            </tags>
+                                        </build>
+                                    </image>
+                                </images>
+                            </configuration>
                         </execution>
+
                         <execution>
-                            <id>push</id>
+                            <id>Push Docker Container</id>
                             <phase>deploy</phase>
                             <goals>
                                 <goal>push</goal>
                             </goals>
+                            <configuration>
+                                <images>
+                                    <image>
+                                        <name>${docker.account}/${docker.image.name}:latest</name>
+                                        <build>
+                                            <skipPush>${docker.push.skip.latest}</skipPush>
+                                        </build>
+                                    </image>
+                                    <image>
+                                        <name>${docker.account}/${docker.image.name}:${project.version}</name>
+                                        <build>
+                                            <skipPush>false</skipPush>
+                                        </build>
+                                    </image>
+                                </images>
+
+                                <authConfig>
+                                    <username>${env.DOCKER_USERNAME}</username>
+                                    <password>${env.DOCKER_TOKEN}</password>
+                                </authConfig>
+                            </configuration>
                         </execution>
+
                     </executions>
                 </plugin>
             </plugins>

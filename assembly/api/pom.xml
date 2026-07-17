@@ -28,6 +28,8 @@
     <packaging>pom</packaging>
 
     <properties>
+        <docker.image.name>kapua-api</docker.image.name>
+
         <swagger-cli.executable>swagger-cli</swagger-cli.executable>
     </properties>
 
@@ -338,15 +340,12 @@
                         <configuration>
                             <images>
                                 <image>
-                                    <name>${docker.account}/kapua-api</name>
                                     <build>
                                         <assembly>
                                             <descriptor>${project.basedir}/descriptors/kapua-api-jetty.xml</descriptor>
                                             <mode>tgz</mode>
                                             <tarLongFileMode>posix</tarLongFileMode>
                                         </assembly>
-                                        <dockerFile>${project.basedir}/docker/Dockerfile</dockerFile>
-                                        <filter>@</filter>
                                     </build>
                                 </image>
                             </images>
