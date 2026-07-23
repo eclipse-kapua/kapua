@@ -3,11 +3,12 @@ name: Eclipse Kapua Release
 on:
   release:
     types: [published]
-#  push:
-#    branches:
+  push:
+    branches:
 #      - release-1.6.x
 #      - release-2.0.x
 #      - develop
+      - backport-4408
 
 permissions:
   contents: read
