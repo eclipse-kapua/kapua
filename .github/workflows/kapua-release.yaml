@@ -48,10 +48,6 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
-      - name: Set up Maven caches
-        uses: ./.github/actions/setUpMavenCaches
-        with:
-          kapua-artifact-cache-enabled: 'false'
       - name: Maven version
         run: mvn --version
 
@@ -61,9 +57,6 @@ jobs:
           MAVEN_USERNAME: ${{ secrets.CENTRAL_SONATYPE_TOKEN_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.CENTRAL_SONATYPE_TOKEN_PASSWORD }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-
-      - name: Save built Kapua Artifacts
-        uses: ./.github/actions/saveBuiltKapuaArtifacts
 
   docker-containers:
     name: Publish Docker Containers
@@ -96,10 +89,8 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
-      - name: Set up Maven caches
-        uses: ./.github/actions/setUpMavenCaches
       - name: Build and Publish Kapua Docker Images
-        run: mvn -B deploy -DskipTests -f assembly -P docker
+        run: mvn -B clean deploy -DskipTests -P docker
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
           DOCKER_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
