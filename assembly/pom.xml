@@ -30,7 +30,7 @@
     <properties>
         <docker.account>eclipsekapua</docker.account>
         <docker.image.name>image-name</docker.image.name>
-        <docker.push.skip.latest>true</docker.push.skip.latest>
+        <docker.push.skip.latest>false</docker.push.skip.latest>
     </properties>
 
     <modules>
