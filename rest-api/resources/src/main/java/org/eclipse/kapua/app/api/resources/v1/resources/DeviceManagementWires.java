@@ -35,7 +35,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("{scopeId}/devices/{deviceId}/graph")
+@Path("{scopeId}/devices/{deviceId}/wire/graph")
 public class DeviceManagementWires extends AbstractKapuaResource {
 
     @Inject
