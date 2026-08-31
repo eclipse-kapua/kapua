@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.call.kura.model.configuration;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class KuraDeviceConfiguration {
 
     @XmlElement(name = "configuration")
+    @JsonProperty("configs")
     private List<KuraDeviceComponentConfiguration> configurations;
 
     // Required by JAXB

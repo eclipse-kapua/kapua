@@ -15,35 +15,28 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
-        <artifactId>kapua-device</artifactId>
         <groupId>org.eclipse.kapua</groupId>
+        <artifactId>kapua-device-management</artifactId>
         <version>2.1.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>kapua-device-management</artifactId>
-    <name>${project.artifactId}</name>
-    <packaging>pom</packaging>
+    <artifactId>kapua-device-management-wires-internal</artifactId>
 
-    <modules>
-        <module>api</module>
+    <dependencies>
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-device-management-wires-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-device-management-configuration-internal</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-device-commons</artifactId>
+        </dependency>
+    </dependencies>
 
-        <module>asset</module>
-        <module>asset-store</module>
-        <module>bundle</module>
-        <module>command</module>
-        <module>configuration</module>
-        <module>configuration-store</module>
-        <module>inventory</module>
-        <module>keystore</module>
-        <module>packages</module>
-        <module>request</module>
-        <module>wires</module>
-
-        <module>registry</module>
-        <module>job</module>
-
-        <module>all</module>
-    </modules>
 </project>
