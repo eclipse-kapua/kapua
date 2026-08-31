@@ -218,6 +218,13 @@ public class AccessPermissions extends AbstractKapuaResource {
             @PathParam("scopeId") ScopeId scopeId,
             @PathParam("accessInfoId") EntityId accessInfoId,
             @PathParam("accessPermissionId") EntityId accessPermissionId) throws KapuaException {
+
+        try {
+            find(scopeId,accessInfoId,accessPermissionId);
+        } catch (KapuaEntityNotFoundException e) {
+            throw e;
+        }
+
         accessPermissionService.delete(scopeId, accessPermissionId);
 
         return returnNoContent();
