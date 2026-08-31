@@ -12,11 +12,11 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.management.configuration.internal;
 
+import javax.inject.Singleton;
 import org.eclipse.kapua.service.device.management.configuration.DeviceComponentConfiguration;
+import org.eclipse.kapua.service.device.management.configuration.DeviceComponentConfigurationFactories;
 import org.eclipse.kapua.service.device.management.configuration.DeviceConfiguration;
 import org.eclipse.kapua.service.device.management.configuration.DeviceConfigurationFactory;
-
-import javax.inject.Singleton;
 
 /**
  * Device configuration entity service factory implementation.
@@ -34,6 +34,11 @@ public class DeviceConfigurationFactoryImpl implements DeviceConfigurationFactor
     @Override
     public DeviceConfiguration newConfigurationInstance() {
         return new DeviceConfigurationImpl();
+    }
+
+    @Override
+    public DeviceComponentConfigurationFactories newComponentConfigurationFactories() {
+        return new DeviceComponentConfigurationFactoriesImpl();
     }
 
 }

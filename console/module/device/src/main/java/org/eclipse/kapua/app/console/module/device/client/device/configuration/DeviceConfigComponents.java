@@ -21,6 +21,7 @@ import com.extjs.gxt.ui.client.data.ModelStringProvider;
 import com.extjs.gxt.ui.client.data.RpcProxy;
 import com.extjs.gxt.ui.client.event.BaseEvent;
 import com.extjs.gxt.ui.client.event.ButtonEvent;
+import com.extjs.gxt.ui.client.event.ComponentEvent;
 import com.extjs.gxt.ui.client.event.Events;
 import com.extjs.gxt.ui.client.event.Listener;
 import com.extjs.gxt.ui.client.event.MessageBoxEvent;
@@ -45,15 +46,19 @@ import com.google.gwt.dom.client.StyleInjector;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaErrorCode;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.client.messages.ConsoleMessages;
 import org.eclipse.kapua.app.console.module.api.client.resources.icons.IconSet;
 import org.eclipse.kapua.app.console.module.api.client.resources.icons.KapuaIcon;
+import org.eclipse.kapua.app.console.module.api.client.ui.button.AddButton;
 import org.eclipse.kapua.app.console.module.api.client.ui.button.DiscardButton;
 import org.eclipse.kapua.app.console.module.api.client.ui.button.KapuaButton;
 import org.eclipse.kapua.app.console.module.api.client.ui.button.RefreshButton;
 import org.eclipse.kapua.app.console.module.api.client.ui.button.SaveButton;
+import org.eclipse.kapua.app.console.module.api.client.ui.dialog.ActionDialog;
 import org.eclipse.kapua.app.console.module.api.client.ui.dialog.InfoDialog;
 import org.eclipse.kapua.app.console.module.api.client.ui.dialog.InfoDialog.InfoDialogType;
 import org.eclipse.kapua.app.console.module.api.client.ui.dialog.KapuaMessageBox;
@@ -75,9 +80,6 @@ import org.eclipse.kapua.app.console.module.device.shared.service.GwtDeviceManag
 import org.eclipse.kapua.app.console.module.device.shared.service.GwtDeviceService;
 import org.eclipse.kapua.app.console.module.device.shared.service.GwtDeviceServiceAsync;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class DeviceConfigComponents extends LayoutContainer {
 
     private static final ConsoleMessages MSGS = GWT.create(ConsoleMessages.class);
@@ -96,6 +98,9 @@ public class DeviceConfigComponents extends LayoutContainer {
 
     private Button refreshButton;
     private boolean refreshProcess;
+
+    private Button addButton;
+    private boolean addProcess;
 
     private Button apply;
     private Button reset;
@@ -211,6 +216,14 @@ public class DeviceConfigComponents extends LayoutContainer {
             }
         });
 
+        addButton = new AddButton(new SelectionListener<ButtonEvent>() {
+
+            @Override
+            public void componentSelected(ButtonEvent buttonEvent) {
+                add();
+            }
+        });
+
         apply = new SaveButton(new SelectionListener<ButtonEvent>() {
 
             @Override
@@ -258,6 +271,8 @@ public class DeviceConfigComponents extends LayoutContainer {
         gwtSession.setFormDirty(false);
 
         toolBar.add(refreshButton);
+        toolBar.add(new SeparatorToolItem());
+        toolBar.add(addButton);
         toolBar.add(new SeparatorToolItem());
         toolBar.add(apply);
         toolBar.add(new SeparatorToolItem());
@@ -499,6 +514,36 @@ public class DeviceConfigComponents extends LayoutContainer {
             configPanel.add(devConfPanel, centerData);
             configPanel.layout();
         }
+    }
+
+    public void add() {
+        if (addProcess) {
+            return;
+        }
+        addButton.setEnabled(false);
+        addProcess = true;
+
+        DeviceConfigAddDialog dialog = new DeviceConfigAddDialog(gwtSession, selectedDevice);
+        dialog.addListener(Events.Hide, new Listener<ComponentEvent>() {
+            @Override
+            public void handleEvent(ComponentEvent be) {
+                addProcess = false;
+                addButton.setEnabled(true);
+
+                // Show exit popup
+                ActionDialog dialog = be.getComponent();
+                Boolean exitStatus = dialog.getExitStatus();
+                if (exitStatus == null) {
+                    return;
+                }
+                if (exitStatus) {
+                    ConsoleInfo.display(MSGS.popupInfo(), dialog.getExitMessage());
+                } else {
+                    ConsoleInfo.display(MSGS.popupError(), dialog.getExitMessage());
+                }
+            }
+        });
+        dialog.show();
     }
 
     public void apply() {

@@ -57,7 +57,7 @@ public class TranslatorAppConfigurationKapuaKura extends AbstractTranslatorKapua
     @Override
     protected KuraRequestChannel translateChannel(ConfigurationRequestChannel kapuaChannel) throws InvalidChannelException {
         try {
-            KuraRequestChannel kuraRequestChannel = TranslatorKapuaKuraUtils.buildBaseRequestChannel(ConfigurationMetrics.APP_ID, ConfigurationMetrics.APP_VERSION, kapuaChannel.getMethod());
+            KuraRequestChannel kuraRequestChannel = TranslatorKapuaKuraUtils.buildBaseRequestChannel(ConfigurationMetrics.APP_ID, ConfigurationMetrics.APP_VERSION_1, kapuaChannel.getMethod());
 
             // Build resources
             List<String> resources = new ArrayList<>();

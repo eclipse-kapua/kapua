@@ -63,7 +63,7 @@ public class DeviceTabConfiguration extends KapuaTabItem<GwtDevice> {
 
         if (gwtDevice != null) {
             setEnabled(gwtDevice.isOnline() && currentSession.hasPermission(DeviceManagementSessionPermission.read()));
-            getHeader().setVisible(gwtDevice.hasApplication(GwtDevice.GwtDeviceApplication.APP_CONFIGURATION));
+            getHeader().setVisible(gwtDevice.hasApplication(GwtDevice.GwtDeviceApplication.APP_CONFIGURATION_V1) || gwtDevice.hasApplication(GwtDevice.GwtDeviceApplication.APP_CONFIGURATION_V2));
             setText(MSGS.tabConfiguration());
 
             if (!gwtDevice.isOnline()) {
