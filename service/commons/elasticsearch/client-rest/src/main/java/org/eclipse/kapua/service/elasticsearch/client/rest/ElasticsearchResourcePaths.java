@@ -17,7 +17,7 @@ import org.eclipse.kapua.service.elasticsearch.client.model.InsertRequest;
 import javax.validation.constraints.NotNull;
 
 /**
- * {@link RestElasticsearchClientWrapper} resource paths.
+ * {@link RestDeviceStoreClientWrapper} resource paths.
  *
  * @since 1.3.0
  */

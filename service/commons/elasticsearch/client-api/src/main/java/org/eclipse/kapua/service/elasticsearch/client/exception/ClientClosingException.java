@@ -12,10 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.elasticsearch.client.exception;
 
-import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientWrapper;
+import org.eclipse.kapua.service.elasticsearch.client.DeviceStoreClientWrapper;
 
 /**
- * {@link ClientException} to throw when {@link ElasticsearchClientWrapper} fails to close properly.
+ * {@link ClientException} to throw when {@link DeviceStoreClientWrapper} fails to close properly.
  *
  * @since 1.3.0
  */

@@ -21,26 +21,26 @@ import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
 import org.eclipse.kapua.service.datastore.model.MetricInfo;
 import org.eclipse.kapua.service.datastore.model.MetricInfoListResult;
 import org.eclipse.kapua.service.datastore.model.query.MetricInfoQuery;
-import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientProvider;
+import org.eclipse.kapua.service.elasticsearch.client.DeviceStoreClientProvider;
 import org.eclipse.kapua.service.storable.exception.MappingException;
 import org.eclipse.kapua.service.storable.model.id.StorableId;
 import org.eclipse.kapua.service.storable.model.query.predicate.StorablePredicateFactory;
 
 import javax.inject.Inject;
 
-public class MetricInfoRepositoryImpl extends DatastoreElasticSearchRepositoryBase<MetricInfo, MetricInfoListResult, MetricInfoQuery> implements MetricInfoRepository {
+public class MetricInfoRepositoryImpl extends DatastoreRepositoryBase<MetricInfo, MetricInfoListResult, MetricInfoQuery> implements MetricInfoRepository {
 
     private final DatastoreUtils datastoreUtils;
 
     @Inject
     protected MetricInfoRepositoryImpl(
-            ElasticsearchClientProvider elasticsearchClientProviderInstance,
+            DeviceStoreClientProvider deviceStoreClientProviderInstance,
             MetricInfoFactory metricInfoFactory,
             StorablePredicateFactory storablePredicateFactory,
             DatastoreSettings datastoreSettings,
             DatastoreUtils datastoreUtils,
             DatastoreCacheManager datastoreCacheManager) {
-        super(elasticsearchClientProviderInstance,
+        super(deviceStoreClientProviderInstance,
                 MetricInfo.class,
                 metricInfoFactory,
                 storablePredicateFactory,

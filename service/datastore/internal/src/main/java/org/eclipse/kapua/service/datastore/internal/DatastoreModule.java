@@ -13,6 +13,7 @@
 package org.eclipse.kapua.service.datastore.internal;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Singleton;
 
@@ -34,15 +35,19 @@ import org.eclipse.kapua.service.datastore.MessageStoreFactory;
 import org.eclipse.kapua.service.datastore.MessageStoreService;
 import org.eclipse.kapua.service.datastore.MetricInfoFactory;
 import org.eclipse.kapua.service.datastore.MetricInfoRegistryService;
-import org.eclipse.kapua.service.datastore.internal.client.DatastoreElasticsearchClientConfiguration;
+import org.eclipse.kapua.service.datastore.internal.client.TelemetryDeviceStoreClientConfiguration;
 import org.eclipse.kapua.service.datastore.internal.converter.ModelContextImpl;
+import org.eclipse.kapua.service.datastore.internal.setting.DeviceStoreClientSettings;
 import org.eclipse.kapua.service.elasticsearch.client.rest.QueryConverterImpl;
 import org.eclipse.kapua.service.datastore.internal.mediator.DatastoreUtils;
+import org.eclipse.kapua.service.datastore.internal.setting.DatastoreElasticsearchClientSettingsKey;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
-import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientProvider;
-import org.eclipse.kapua.service.elasticsearch.client.configuration.ElasticsearchClientConfiguration;
+import org.eclipse.kapua.service.elasticsearch.client.DeviceStoreClientProvider;
+import org.eclipse.kapua.service.elasticsearch.client.configuration.DeviceStoreClientConfiguration;
 import org.eclipse.kapua.service.elasticsearch.client.rest.MetricsEsClient;
-import org.eclipse.kapua.service.elasticsearch.client.rest.RestElasticsearchClientProvider;
+import org.eclipse.kapua.service.elasticsearch.client.rest.RestDeviceStoreClientProvider;
+import org.eclipse.kapua.service.elasticsearch.client.rest.lowlevel.DeviceStoreClientBuilder;
+import org.eclipse.kapua.service.elasticsearch.client.rest.lowlevel.DeviceStoreClientBuilderLocator;
 import org.eclipse.kapua.service.storable.model.id.StorableIdFactory;
 
 import com.google.inject.Provides;
@@ -54,7 +59,7 @@ public class DatastoreModule extends AbstractKapuaModule {
     protected void configureModule() {
         bind(DatastoreSettings.class).in(Singleton.class);
         bind(ClientInfoFactory.class).to(ClientInfoFactoryImpl.class).in(Singleton.class);
-        bind(ClientInfoRepository.class).to(ClientInfoElasticsearchRepository.class).in(Singleton.class);
+        bind(ClientInfoRepository.class).to(ClientInfoDeviceStoreRepository.class).in(Singleton.class);
         bind(ClientInfoRegistryFacade.class).to(ClientInfoRegistryFacadeImpl.class).in(Singleton.class);
         bind(ClientInfoRegistryService.class).to(ClientInfoRegistryServiceImpl.class).in(Singleton.class);
 
@@ -64,12 +69,12 @@ public class DatastoreModule extends AbstractKapuaModule {
         bind(MetricInfoRegistryService.class).to(MetricInfoRegistryServiceImpl.class).in(Singleton.class);
 
         bind(ChannelInfoFactory.class).to(ChannelInfoFactoryImpl.class).in(Singleton.class);
-        bind(ChannelInfoRepository.class).to(ChannelInfoElasticsearchRepository.class).in(Singleton.class);
+        bind(ChannelInfoRepository.class).to(ChannelInfoDeviceStoreRepository.class).in(Singleton.class);
         bind(ChannelInfoRegistryFacade.class).to(ChannelInfoRegistryFacadeImpl.class).in(Singleton.class);
         bind(ChannelInfoRegistryService.class).to(ChannelInfoRegistryServiceImpl.class).in(Singleton.class);
 
         bind(MessageStoreFactory.class).to(MessageStoreFactoryImpl.class).in(Singleton.class);
-        bind(MessageRepository.class).to(MessageElasticsearchRepository.class).in(Singleton.class);
+        bind(MessageRepository.class).to(MessageDeviceStoreRepository.class).in(Singleton.class);
         bind(MessageStoreFacade.class).to(MessageStoreFacadeImpl.class).in(Singleton.class);
         bind(MetricsDatastore.class).in(Singleton.class);
         bind(DatastoreUtils.class).in(Singleton.class);
@@ -83,9 +88,19 @@ public class DatastoreModule extends AbstractKapuaModule {
 
     @Provides
     @Singleton
-    ElasticsearchClientProvider elasticsearchClientProvider(MetricsEsClient metricsEsClient, StorableIdFactory storableIdFactory, DatastoreUtils datastoreUtils) {
-        ElasticsearchClientConfiguration esClientConfiguration = DatastoreElasticsearchClientConfiguration.getInstance();
-        return new RestElasticsearchClientProvider(metricsEsClient)
+    DeviceStoreClientBuilder lowLevelSearchClientBuilder(Set<DeviceStoreClientBuilder> availableDeviceStoreClientBuilders, DeviceStoreClientBuilderLocator deviceStoreClientBuilderLocator) {
+        String engine = DeviceStoreClientSettings.getInstance().getString(DatastoreElasticsearchClientSettingsKey.CLIENT_ENGINE, "elasticsearch");
+        return deviceStoreClientBuilderLocator.locate(engine, availableDeviceStoreClientBuilders);
+    }
+
+    @Provides
+    @Singleton
+    DeviceStoreClientProvider elasticsearchClientProvider(MetricsEsClient metricsEsClient,
+                                                          DeviceStoreClientBuilder deviceStoreClientBuilder,
+                                                          StorableIdFactory storableIdFactory,
+                                                          DatastoreUtils datastoreUtils) {
+        DeviceStoreClientConfiguration esClientConfiguration = TelemetryDeviceStoreClientConfiguration.getInstance(); //For now, different impls. share the same settings, until their settings that we use in the codebase don't diverge. In that case, we will need to create a new configuration class for implementations different from es.
+        return new RestDeviceStoreClientProvider(metricsEsClient, deviceStoreClientBuilder)
                 .withClientConfiguration(esClientConfiguration)
                 .withModelContext(new ModelContextImpl(storableIdFactory, datastoreUtils))
                 .withModelConverter(new QueryConverterImpl());

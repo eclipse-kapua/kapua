@@ -89,11 +89,12 @@ import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceCreator;
 import org.eclipse.kapua.service.device.registry.DeviceFactory;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
-import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientWrapper;
-import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientProvider;
+import org.eclipse.kapua.service.elasticsearch.client.DeviceStoreClientProvider;
+import org.eclipse.kapua.service.elasticsearch.client.DeviceStoreClientWrapper;
 import org.eclipse.kapua.service.elasticsearch.client.exception.ClientException;
 import org.eclipse.kapua.service.elasticsearch.client.model.IndexRequest;
 import org.eclipse.kapua.service.elasticsearch.client.rest.ElasticsearchResourcePaths;
+import org.eclipse.kapua.plugin.devicestorage.provider.elasticsearch.ElasticsearchDeviceStoreClient;
 import org.eclipse.kapua.service.storable.model.StorableListResult;
 import org.eclipse.kapua.service.storable.model.id.StorableId;
 import org.eclipse.kapua.service.storable.model.id.StorableIdFactory;
@@ -268,7 +269,7 @@ public class DatastoreSteps extends TestBase {
 
     private DeviceFactory deviceFactory;
 
-    private ElasticsearchClientWrapper<?> elasticsearchClientWrapper;
+    private DeviceStoreClientWrapper<?> deviceStoreClientWrapper;
 
     private ChannelInfoFactory channelInfoFactory;
     private ClientInfoFactory clientInfoFactory;
@@ -307,7 +308,7 @@ public class DatastoreSteps extends TestBase {
         messageFactory = locator.getFactory(KapuaMessageFactory.class);
         storableIdFactory = locator.getFactory(StorableIdFactory.class);
         channelInfoRegistryService = locator.getService(ChannelInfoRegistryService.class);
-        elasticsearchClientWrapper = locator.getComponent(ElasticsearchClientProvider.class).getElasticsearchClient();
+        deviceStoreClientWrapper = locator.getComponent(DeviceStoreClientProvider.class).getDeviceStoreClient();
         channelInfoFactory = locator.getFactory(ChannelInfoFactory.class);
         clientInfoFactory = locator.getFactory(ClientInfoFactory.class);
         messageStoreFactory = locator.getFactory(MessageStoreFactory.class);
@@ -772,7 +773,7 @@ public class DatastoreSteps extends TestBase {
         }
         Request request = new Request("POST", index + ElasticsearchResourcePaths.getBulkPath());
         request.setJsonEntity(body.toString());
-        RestClient cl = (RestClient) elasticsearchClientWrapper.getClient();
+        RestClient cl = ((ElasticsearchDeviceStoreClient) deviceStoreClientWrapper.getClient()).unwrap();
         cl.performRequest(request);
     }
 
@@ -1678,7 +1679,7 @@ public class DatastoreSteps extends TestBase {
         try {
             String[] indexes = KapuaLocator.getInstance().getComponent(DatastoreUtils.class).filterIndexesTemporalWindow(getDataIndexesByAccount(getCurrentScopeId()), KapuaDateUtils.parseDate(fromDate).toInstant(),
                     KapuaDateUtils.parseDate(toDate).toInstant(), null);
-            elasticsearchClientWrapper.deleteIndexes(indexes);
+            deviceStoreClientWrapper.deleteIndexes(indexes);
         } catch (Exception ex) {
             verifyException(ex);
         }
@@ -2457,7 +2458,7 @@ public class DatastoreSteps extends TestBase {
     }
 
     private String[] getDataIndexesByAccount(KapuaId scopeId) throws ClientException {
-        return elasticsearchClientWrapper.findIndexes(new IndexRequest(scopeId.toStringId() + "-data-message-*")).getIndexes();
+        return deviceStoreClientWrapper.findIndexes(new IndexRequest(scopeId.toStringId() + "-data-message-*")).getIndexes();
     }
 
     private void setDatastoreIndexingWindowOption(String windowOption) {

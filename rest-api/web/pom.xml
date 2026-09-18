@@ -86,6 +86,12 @@
             <groupId>org.eclipse.kapua</groupId>
             <artifactId>kapua-datastore-internal</artifactId>
         </dependency>
+        <!-- DeviceStoreClientBuilder implementations available to this assembly - picked by DatastoreModule at runtime via datastore.elasticsearch.client.engine -->
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-service-elasticsearch-client-rest-elasticsearch</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
             <artifactId>kapua-device-registry-internal</artifactId>

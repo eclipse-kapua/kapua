@@ -19,7 +19,7 @@ ENV BROKER_HOST=${BROKER_HOST:-message-broker}
 ENV BROKER_ID=broker-id
 
 ENV DATASTORE_ADDR es:9200
-ENV DATASTORE_CLIENT org.eclipse.kapua.service.elasticsearch.client.rest.RestElasticsearchClientProvider
+ENV DATASTORE_CLIENT org.eclipse.kapua.service.elasticsearch.client.rest.RestDeviceStoreClientProvider
 
 ENV SQL_DB_ADDR db
 ENV SQL_DB_PORT 3306

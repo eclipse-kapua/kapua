@@ -35,18 +35,18 @@ import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.ssl.TrustStrategy;
 import org.eclipse.kapua.commons.util.log.ConfigurationPrinter;
-import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientProvider;
+import org.eclipse.kapua.service.elasticsearch.client.DeviceStoreClientProvider;
 import org.eclipse.kapua.service.elasticsearch.client.ModelContext;
 import org.eclipse.kapua.service.elasticsearch.client.QueryConverter;
-import org.eclipse.kapua.service.elasticsearch.client.configuration.ElasticsearchClientConfiguration;
+import org.eclipse.kapua.service.elasticsearch.client.configuration.DeviceStoreClientConfiguration;
 import org.eclipse.kapua.service.elasticsearch.client.configuration.ElasticsearchClientSslConfiguration;
 import org.eclipse.kapua.service.elasticsearch.client.configuration.ElasticsearchNode;
 import org.eclipse.kapua.service.elasticsearch.client.exception.ClientInitializationException;
 import org.eclipse.kapua.service.elasticsearch.client.exception.ClientProviderInitException;
 import org.eclipse.kapua.service.elasticsearch.client.exception.ClientUnavailableException;
+import org.eclipse.kapua.service.elasticsearch.client.rest.lowlevel.DeviceStoreClient;
+import org.eclipse.kapua.service.elasticsearch.client.rest.lowlevel.DeviceStoreClientBuilder;
 import org.eclipse.kapua.service.elasticsearch.client.utils.InetAddressParser;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,50 +68,52 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
- * {@link ElasticsearchClientProvider} REST implementation.
+ * {@link DeviceStoreClientProvider} REST implementation.
  * <p>
- * Instantiates, in a Singleton fashion, and manages the {@link RestElasticsearchClientWrapper}.
+ * Instantiates, in a Singleton fashion, and manages the {@link RestDeviceStoreClientWrapper}.
  *
  * @since 1.0.0
  */
-public class RestElasticsearchClientProvider implements ElasticsearchClientProvider<RestElasticsearchClientWrapper> {
+public class RestDeviceStoreClientProvider implements DeviceStoreClientProvider<RestDeviceStoreClientWrapper> {
 
-    static final Logger LOG = LoggerFactory.getLogger(RestElasticsearchClientProvider.class);
+    static final Logger LOG = LoggerFactory.getLogger(RestDeviceStoreClientProvider.class);
 
     private static final String PROVIDER_CANNOT_CLOSE_CLIENT_MSG = "Cannot close ElasticSearch REST client. Client is already closed or not initialized";
 
-    private List<RestElasticsearchClientWrapper> restElasticsearchClientWrappers;
+    private List<RestDeviceStoreClientWrapper> restDeviceStoreClientWrappers;
 
-    private ElasticsearchClientConfiguration elasticsearchClientConfiguration;
+    private DeviceStoreClientConfiguration deviceStoreClientConfiguration;
     private ModelContext modelContext;
     private QueryConverter modelConverter;
     private MetricsEsClient metrics;
+    private final DeviceStoreClientBuilder deviceStoreClientBuilder;
     private volatile boolean initialized;
     private volatile boolean closed = true;
     private AtomicInteger nextClientIndex = new AtomicInteger(0);
 
     @Inject
-    public RestElasticsearchClientProvider(MetricsEsClient metricsEsClient) {
+    public RestDeviceStoreClientProvider(MetricsEsClient metricsEsClient, DeviceStoreClientBuilder deviceStoreClientBuilder) {
         this.metrics = metricsEsClient;
+        this.deviceStoreClientBuilder = deviceStoreClientBuilder;
     }
 
     @Override
-    public RestElasticsearchClientProvider init() throws ClientProviderInitException {
+    public RestDeviceStoreClientProvider init() throws ClientProviderInitException {
         if (!closed) {
-            LOG.warn("Elasticsearch rest client provider: closing the pool failed at a previous stage, trying to close before init.");
+            LOG.warn(deviceStoreClientBuilder.getVendorName() + " Elasticsearch rest client provider: closing the pool failed at a previous stage, trying to close before init.");
             close();
         }
         if (initialized && closed) {
             return this;
         }
-        synchronized (RestElasticsearchClientProvider.class) {
+        synchronized (RestDeviceStoreClientProvider.class) {
             if (!closed) {
                 throw new ClientProviderInitException("Client pool not closed");
             }
             if (initialized) { //this check is needed, in addition to the same above, to avoid multiple initializations with multi-threading
                 return this;
             }
-            if (elasticsearchClientConfiguration == null) {
+            if (deviceStoreClientConfiguration == null) {
                 throw new ClientProviderInitException("Client configuration not defined");
             }
             if (modelContext == null) {
@@ -127,7 +129,7 @@ public class RestElasticsearchClientProvider implements ElasticsearchClientProvi
                             .create()
                             .withLogger(LOG)
                             .withLogLevel(ConfigurationPrinter.LogLevel.INFO)
-                            .withTitle("Elasticsearch REST Provider Configuration")
+                            .withTitle(deviceStoreClientBuilder.getVendorName() + " REST Provider Configuration")
                             .addParameter("Module Name", getClientConfiguration().getModuleName())
                             .addParameter("Cluster Name", getClientConfiguration().getClusterName());
 
@@ -173,7 +175,7 @@ public class RestElasticsearchClientProvider implements ElasticsearchClientProvi
 
             // Init Kapua Elasticsearch Client
             try {
-                int poolSize = elasticsearchClientConfiguration.getPoolSize();
+                int poolSize = deviceStoreClientConfiguration.getPoolSize();
                 if (poolSize >= 1) {
                     LOG.info("Elasticsearch rest client provider: configured pool of size {}", poolSize);
                 } else {
@@ -187,7 +189,7 @@ public class RestElasticsearchClientProvider implements ElasticsearchClientProvi
                 } catch (IOException ioExc) {
                     LOG.warn(PROVIDER_CANNOT_CLOSE_CLIENT_MSG, ioExc);
                 }
-                throw new ClientProviderInitException(e, "Cannot init ElasticsearchClientWrapper");
+                throw new ClientProviderInitException(e, "Cannot init DeviceStoreClientWrapper");
             }
 
             // Start a reconnect task - commented because actually not needed now, maybe useful in the future
@@ -204,15 +206,15 @@ public class RestElasticsearchClientProvider implements ElasticsearchClientProvi
     }
 
     /**
-     * Closes the {@link RestElasticsearchClientProvider}.
+     * Closes the {@link RestDeviceStoreClientProvider}.
      * <p>
-     * It takes care of closing the {@link RestClient}.
+     * It takes care of closing the {@link DeviceStoreClient}.
      *
      * @since 1.0.0
      */
     @Override
     public void close() {
-        synchronized (RestElasticsearchClientProvider.class) {
+        synchronized (RestDeviceStoreClientProvider.class) {
             try {
                 LOG.info("Elasticsearch rest client provider: closing pool");
                 closeClientPool();
@@ -223,11 +225,11 @@ public class RestElasticsearchClientProvider implements ElasticsearchClientProvi
     }
 
     /**
-     * Closes the {@link RestClient} pool.
+     * Closes the {@link DeviceStoreClient} pool.
      * <p>
      *
      * @throws IOException
-     *         see {@link RestClient#close()} javadoc.
+     *         see {@link DeviceStoreClient#close()} javadoc.
      * @since 2.0.0
      */
     private void closeClientPool() throws IOException {
@@ -245,19 +247,19 @@ public class RestElasticsearchClientProvider implements ElasticsearchClientProvi
 //            reconnectExecutorTask = null;
 //        }
         initialized = false;
-        if (restElasticsearchClientWrappers == null) {
+        if (restDeviceStoreClientWrappers == null) {
             closed = true;
             return;
         }
         closed = false;
-        for (int i=0; i < restElasticsearchClientWrappers.size(); i++) {
-            if (restElasticsearchClientWrappers.get(i) != null) {
-                restElasticsearchClientWrappers.get(i).close();
-                restElasticsearchClientWrappers.set(i, null);
+        for (int i = 0; i < restDeviceStoreClientWrappers.size(); i++) {
+            if (restDeviceStoreClientWrappers.get(i) != null) {
+                restDeviceStoreClientWrappers.get(i).close();
+                restDeviceStoreClientWrappers.set(i, null);
             }
         }
-        restElasticsearchClientWrappers.clear();
-        restElasticsearchClientWrappers = null;
+        restDeviceStoreClientWrappers.clear();
+        restDeviceStoreClientWrappers = null;
         closed = true;
     }
 
@@ -273,7 +275,7 @@ public class RestElasticsearchClientProvider implements ElasticsearchClientProvi
      */
 //    private void reconnectClientTask(Callable<RestClient> initClientMethod) throws Exception {
 //        if (internalElasticsearchRestClient == null) {
-//            synchronized (RestElasticsearchClientProvider.class) {
+//            synchronized (RestDeviceStoreClientProvider.class) {
 //                if (internalElasticsearchRestClient == null) {
 //                    metrics.getClientReconnectCall().inc();
 //
@@ -286,28 +288,28 @@ public class RestElasticsearchClientProvider implements ElasticsearchClientProvi
 //    }
 
     /**
-     * Initializes the {@link RestClient} pool as per {@link ElasticsearchClientConfiguration}.
+     * Initializes the {@link DeviceStoreClient} pool as per {@link DeviceStoreClientConfiguration}.
      *
-     * @return The initialized {@link RestClient} pool.
+     * @return The initialized {@link DeviceStoreClient} pool.
      * @throws ClientInitializationException
-     *         if any {@link Exception} occurs while {@link RestClient} initialization.
+     *         if any {@link Exception} occurs while {@link DeviceStoreClient} initialization.
      * @since 2.0.0
      */
     private void initClientPool(int poolSize) throws ClientInitializationException {
         initialized = false;
-        restElasticsearchClientWrappers = new ArrayList<>(poolSize);
-        RestElasticsearchClientWrapper clientPoolItem;
+        restDeviceStoreClientWrappers = new ArrayList<>(poolSize);
+        RestDeviceStoreClientWrapper clientPoolItem;
         for(int i=0; i < poolSize; i++) {
             clientPoolItem = createClientWrapper();
             clientPoolItem.init();
-            restElasticsearchClientWrappers.add(clientPoolItem);
+            restDeviceStoreClientWrappers.add(clientPoolItem);
         }
         initialized = true;
     }
 
-    private RestElasticsearchClientWrapper createClientWrapper() throws ClientInitializationException {
+    private RestDeviceStoreClientWrapper createClientWrapper() throws ClientInitializationException {
 
-        ElasticsearchClientConfiguration clientConfiguration = getClientConfiguration();
+        DeviceStoreClientConfiguration clientConfiguration = getClientConfiguration();
 
         if (clientConfiguration.getNodes().isEmpty()) {
             throw new ClientInitializationException("No Elasticsearch nodes are configured");
@@ -354,7 +356,7 @@ public class RestElasticsearchClientProvider implements ElasticsearchClientProvi
             throw new ClientInitializationException(e, "Error while parsing node addresses!");
         }
 
-        RestClientBuilder restClientBuilder = RestClient.builder(hosts.toArray(new HttpHost[0]));
+        DeviceStoreClientBuilder restClientBuilder = deviceStoreClientBuilder.initializeAndSetHosts(hosts.toArray(new HttpHost[0]));
         SSLContext sslContext = null;
         if (sslEnabled) {
             try {
@@ -388,11 +390,11 @@ public class RestElasticsearchClientProvider implements ElasticsearchClientProvi
                     return requestConfigBuilder;
                 });
 
-        org.elasticsearch.client.RestClient esRestClientWrapped;
+        DeviceStoreClient esRestClientWrapped;
         esRestClientWrapped = restClientBuilder.build();
 
         // Create Client Wrapper
-        RestElasticsearchClientWrapper wrapper = new RestElasticsearchClientWrapper(metrics);
+        RestDeviceStoreClientWrapper wrapper = new RestDeviceStoreClientWrapper(metrics);
         wrapper.withClientConfiguration(clientConfiguration)
         .withModelContext(modelContext)
         .withModelConverter(modelConverter)
@@ -425,30 +427,30 @@ public class RestElasticsearchClientProvider implements ElasticsearchClientProvi
     }
 
     @Override
-    public ElasticsearchClientProvider<RestElasticsearchClientWrapper> withClientConfiguration(ElasticsearchClientConfiguration elasticsearchClientConfiguration) {
-        this.elasticsearchClientConfiguration = elasticsearchClientConfiguration;
+    public DeviceStoreClientProvider<RestDeviceStoreClientWrapper> withClientConfiguration(DeviceStoreClientConfiguration deviceStoreClientConfiguration) {
+        this.deviceStoreClientConfiguration = deviceStoreClientConfiguration;
         return this;
     }
 
     @Override
-    public ElasticsearchClientProvider<RestElasticsearchClientWrapper> withModelContext(ModelContext modelContext) {
+    public DeviceStoreClientProvider<RestDeviceStoreClientWrapper> withModelContext(ModelContext modelContext) {
         this.modelContext = modelContext;
         return this;
     }
 
     @Override
-    public ElasticsearchClientProvider<RestElasticsearchClientWrapper> withModelConverter(QueryConverter modelConverter) {
+    public DeviceStoreClientProvider<RestDeviceStoreClientWrapper> withModelConverter(QueryConverter modelConverter) {
         this.modelConverter = modelConverter;
         return this;
     }
 
     @Override
-    public RestElasticsearchClientWrapper getElasticsearchClient() throws ClientUnavailableException, ClientProviderInitException {
+    public RestDeviceStoreClientWrapper getDeviceStoreClient() throws ClientUnavailableException, ClientProviderInitException {
         this.init();
         // To evenly distribute requests among clients, calculate the index to return in a round robin style.
-        int clientIndex = Math.abs(nextClientIndex.getAndAdd(1) % restElasticsearchClientWrappers.size());
-        LOG.debug("Elasticsearch client provider pool get ES client: assign index {} in a pool of {}", clientIndex, restElasticsearchClientWrappers.size());
-        RestElasticsearchClientWrapper clientWrapper = restElasticsearchClientWrappers.get(clientIndex);
+        int clientIndex = Math.abs(nextClientIndex.getAndAdd(1) % restDeviceStoreClientWrappers.size());
+        LOG.debug("Elasticsearch client provider pool get ES client: assign index {} in a pool of {}", clientIndex, restDeviceStoreClientWrappers.size());
+        RestDeviceStoreClientWrapper clientWrapper = restDeviceStoreClientWrappers.get(clientIndex);
         return clientWrapper;
     }
     // Private methods
@@ -494,13 +496,13 @@ public class RestElasticsearchClientProvider implements ElasticsearchClientProvi
     }
 
     /**
-     * Gets the {@link ElasticsearchClientConfiguration}.
+     * Gets the {@link DeviceStoreClientConfiguration}.
      *
-     * @return The {@link ElasticsearchClientConfiguration}.
+     * @return The {@link DeviceStoreClientConfiguration}.
      * @since 1.3.0
      */
-    private ElasticsearchClientConfiguration getClientConfiguration() {
-        return elasticsearchClientConfiguration;
+    private DeviceStoreClientConfiguration getClientConfiguration() {
+        return deviceStoreClientConfiguration;
     }
 
     /**

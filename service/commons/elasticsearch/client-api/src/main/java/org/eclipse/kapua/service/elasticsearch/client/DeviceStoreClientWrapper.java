@@ -14,7 +14,7 @@ package org.eclipse.kapua.service.elasticsearch.client;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.eclipse.kapua.service.elasticsearch.client.configuration.ElasticsearchClientConfiguration;
+import org.eclipse.kapua.service.elasticsearch.client.configuration.DeviceStoreClientConfiguration;
 import org.eclipse.kapua.service.elasticsearch.client.exception.ClientException;
 import org.eclipse.kapua.service.elasticsearch.client.exception.ClientInitializationException;
 import org.eclipse.kapua.service.elasticsearch.client.exception.ClientUnavailableException;
@@ -38,7 +38,7 @@ import java.io.Closeable;
  *
  * @since 1.0.0
  */
-public interface ElasticsearchClientWrapper<C extends Closeable> {
+public interface DeviceStoreClientWrapper<C extends Closeable> {
 
     /**
      * Initializes the underlying Elasticsearch connection.
@@ -50,7 +50,7 @@ public interface ElasticsearchClientWrapper<C extends Closeable> {
     /**
      * Closes the underlying Elasticsearch connection.
      *
-     * @throws ClientUnavailableException If the {@link ElasticsearchClientWrapper} was not initialized and this is invoked.
+     * @throws ClientUnavailableException If the {@link DeviceStoreClientWrapper} was not initialized and this is invoked.
      * @since 1.0.0
      */
     void close() throws ClientUnavailableException;
@@ -64,30 +64,30 @@ public interface ElasticsearchClientWrapper<C extends Closeable> {
     C getClient();
 
     /**
-     * Sets the org.elasticsearch.Client to use with {@link ElasticsearchClientWrapper}.
+     * Sets the org.elasticsearch.Client to use with {@link DeviceStoreClientWrapper}.
      *
      * @param wrappedClient The org.elasticsearch.Client
      * @return Itself, to chain invocations.
      * @since 1.3.0
      */
-    ElasticsearchClientWrapper<C> withClient(C wrappedClient);
+    DeviceStoreClientWrapper<C> withClient(C wrappedClient);
 
     /**
-     * Gets the {@link ElasticsearchClientConfiguration}.
+     * Gets the {@link DeviceStoreClientConfiguration}.
      *
-     * @return The {@link ElasticsearchClientConfiguration}.
+     * @return The {@link DeviceStoreClientConfiguration}.
      * @since 1.3.0
      */
-    ElasticsearchClientConfiguration getClientConfiguration();
+    DeviceStoreClientConfiguration getClientConfiguration();
 
     /**
-     * Sets the {@link ElasticsearchClientConfiguration} to use with the {@link ElasticsearchClientWrapper}.
+     * Sets the {@link DeviceStoreClientConfiguration} to use with the {@link DeviceStoreClientWrapper}.
      *
-     * @param clientConfiguration The {@link ElasticsearchClientConfiguration}.
+     * @param clientConfiguration The {@link DeviceStoreClientConfiguration}.
      * @return Itself, to chain invocations.
      * @since 1.3.0
      */
-    ElasticsearchClientWrapper<C> withClientConfiguration(ElasticsearchClientConfiguration clientConfiguration);
+    DeviceStoreClientWrapper<C> withClientConfiguration(DeviceStoreClientConfiguration clientConfiguration);
 
     /**
      * Gets the {@link ModelContext}
@@ -104,7 +104,7 @@ public interface ElasticsearchClientWrapper<C extends Closeable> {
      * @return Itself, to chain invocations.
      * @since 1.3.0
      */
-    ElasticsearchClientWrapper<C> withModelContext(ModelContext modelContext);
+    DeviceStoreClientWrapper<C> withModelContext(ModelContext modelContext);
 
     /**
      * Gets the {@link QueryConverter}
@@ -121,7 +121,7 @@ public interface ElasticsearchClientWrapper<C extends Closeable> {
      * @return Itself, to chain invocations.
      * @since 1.3.0
      */
-    ElasticsearchClientWrapper<C> withModelConverter(QueryConverter modelConverter);
+    DeviceStoreClientWrapper<C> withModelConverter(QueryConverter modelConverter);
 
     /**
      * Inserts a document.

@@ -12,7 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.exception;
 
-import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientProvider;
+import org.eclipse.kapua.service.elasticsearch.client.DeviceStoreClientProvider;
 
 /**
  * {@link DatastoreServiceException} to {@code throw} when the underling Elasticsearch is not available.
@@ -36,9 +36,9 @@ public class DatastoreUnavailableException extends DatastoreServiceException {
     }
 
     /**
-     * Gets the {@link ElasticsearchClientProvider} name.
+     * Gets the {@link DeviceStoreClientProvider} name.
      *
-     * @return The {@link ElasticsearchClientProvider} name.
+     * @return The {@link DeviceStoreClientProvider} name.
      * @since 1.3.0
      */
     public String getElasticSearchProviderName() {

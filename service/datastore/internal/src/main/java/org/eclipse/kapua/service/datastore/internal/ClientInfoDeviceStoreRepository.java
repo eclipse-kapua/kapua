@@ -21,26 +21,26 @@ import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
 import org.eclipse.kapua.service.datastore.model.ClientInfo;
 import org.eclipse.kapua.service.datastore.model.ClientInfoListResult;
 import org.eclipse.kapua.service.datastore.model.query.ClientInfoQuery;
-import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientProvider;
+import org.eclipse.kapua.service.elasticsearch.client.DeviceStoreClientProvider;
 import org.eclipse.kapua.service.storable.exception.MappingException;
 import org.eclipse.kapua.service.storable.model.id.StorableId;
 import org.eclipse.kapua.service.storable.model.query.predicate.StorablePredicateFactory;
 
 import javax.inject.Inject;
 
-public class ClientInfoElasticsearchRepository extends DatastoreElasticSearchRepositoryBase<ClientInfo, ClientInfoListResult, ClientInfoQuery> implements ClientInfoRepository {
+public class ClientInfoDeviceStoreRepository extends DatastoreRepositoryBase<ClientInfo, ClientInfoListResult, ClientInfoQuery> implements ClientInfoRepository {
 
     private final DatastoreUtils datastoreUtils;
 
     @Inject
-    protected ClientInfoElasticsearchRepository(
-            ElasticsearchClientProvider elasticsearchClientProviderInstance,
+    protected ClientInfoDeviceStoreRepository(
+            DeviceStoreClientProvider deviceStoreClientProviderInstance,
             ClientInfoFactory clientInfoFactory,
             StorablePredicateFactory storablePredicateFactory,
             DatastoreSettings datastoreSettings,
             DatastoreUtils datastoreUtils,
             DatastoreCacheManager datastoreCacheManager) {
-        super(elasticsearchClientProviderInstance,
+        super(deviceStoreClientProviderInstance,
                 ClientInfo.class,
                 clientInfoFactory,
                 storablePredicateFactory,

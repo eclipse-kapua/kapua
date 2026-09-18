@@ -13,17 +13,17 @@
 package org.eclipse.kapua.service.datastore.internal.setting;
 
 import org.eclipse.kapua.commons.setting.SettingKey;
-import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientWrapper;
+import org.eclipse.kapua.service.elasticsearch.client.DeviceStoreClientWrapper;
 
 /**
- * Datastore {@link ElasticsearchClientWrapper} setting keys.
+ * Datastore {@link DeviceStoreClientWrapper} setting keys.
  *
  * @since 1.3.0
  */
 public enum DatastoreElasticsearchClientSettingsKey implements SettingKey {
 
     /**
-     * The name of the module which is managing the {@link ElasticsearchClientWrapper}.
+     * The name of the module which is managing the {@link DeviceStoreClientWrapper}.
      *
      * @since 1.3.0
      */
@@ -142,7 +142,13 @@ public enum DatastoreElasticsearchClientSettingsKey implements SettingKey {
      *
      * @since 1.6.0
     */
-    POOL_SIZE("datastore.elasticsearch.pool.size");
+    POOL_SIZE("datastore.elasticsearch.pool.size"),
+    /**
+     * The search engine the low-level REST client talks to. Either {@code elasticsearch} or for example {@code opensearch}.
+     *
+     * @since 2.1.0
+     */
+    CLIENT_ENGINE("datastore.elasticsearch.client.engine");
 
     /**
      * The key value in the configuration resources.

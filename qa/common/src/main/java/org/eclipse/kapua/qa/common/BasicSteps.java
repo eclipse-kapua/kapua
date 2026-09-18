@@ -44,7 +44,7 @@ import org.eclipse.kapua.qa.common.cucumber.CucTopic;
 import org.eclipse.kapua.qa.common.cucumber.CucTriggerProperty;
 import org.eclipse.kapua.qa.common.cucumber.CucUser;
 import org.eclipse.kapua.qa.common.cucumber.CucUserProfile;
-import org.eclipse.kapua.service.datastore.internal.setting.DatastoreElasticsearchClientSettings;
+import org.eclipse.kapua.service.datastore.internal.setting.DeviceStoreClientSettings;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreElasticsearchClientSettingsKey;
 import org.eclipse.kapua.transport.message.jms.JmsTopic;
 import org.junit.Assert;
@@ -473,7 +473,7 @@ public class BasicSteps extends TestBase {
         logger.info("{}: {}", SystemSettingKey.DB_JDBC_CONNECTION_URL_RESOLVER.key(), SystemSetting.getInstance().getString(SystemSettingKey.DB_JDBC_CONNECTION_URL_RESOLVER));
         logger.info("{}: {}", SystemSettingKey.DB_JDBC_DRIVER.key(), SystemSetting.getInstance().getString(SystemSettingKey.DB_JDBC_DRIVER));
         logger.info("{}: {}", SystemSettingKey.DB_CONNECTION_SCHEME.key(), SystemSetting.getInstance().getString(SystemSettingKey.DB_CONNECTION_SCHEME));
-        logger.info("Rest: datastore.elasticsearch.node: {}", DatastoreElasticsearchClientSettings.getInstance().getString(DatastoreElasticsearchClientSettingsKey.NODES));
+        logger.info("Rest: datastore.elasticsearch.node: {}", DeviceStoreClientSettings.getInstance().getString(DatastoreElasticsearchClientSettingsKey.NODES));
         logger.info("===============================================");
     }
 

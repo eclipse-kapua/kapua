@@ -12,12 +12,12 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.elasticsearch.client.configuration;
 
-import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientWrapper;
+import org.eclipse.kapua.service.elasticsearch.client.DeviceStoreClientWrapper;
 
 /**
  * {@link ElasticsearchNode} definition.
  * <p>
- * This is the collector of host and port for the {@link ElasticsearchClientWrapper}.
+ * This is the collector of host and port for the {@link DeviceStoreClientWrapper}.
  *
  * @since 1.3.0
  */
