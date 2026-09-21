@@ -25,7 +25,7 @@ RUN useradd -u 1000 -g 0 -d '/var/opt/jetty' -s '/sbin/nologin' jetty && \
     rm -f /tmp/jetty.tar.gz && \
     rm -rf /opt/jetty/demo-base && \
     cd /var/opt/jetty && \
-    java -jar /opt/jetty/start.jar --approve-all-licenses --create-startd --add-to-start=http,https,jsp,jstl,websocket,deploy,logging-logback,jmx,ssl,stats && \
+    java -Dmaven.repo.uri=@jetty.maven.repo.uri@ -jar /opt/jetty/start.jar --approve-all-licenses --create-startd --add-to-start=http,https,jsp,jstl,websocket,deploy,logging-logback,jmx,ssl,stats && \
     chown -R 1000:0 /opt/jetty /var/opt/jetty && \
     chmod -R g=u /opt/jetty /var/opt/jetty
 

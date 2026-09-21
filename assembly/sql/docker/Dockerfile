@@ -22,7 +22,7 @@ RUN useradd -u 1001 -g 0 -d '/var/opt/h2' -s '/sbin/nologin' h2 && \
     mkdir -p /var/opt/h2/data && chmod -R a+rw /var/opt/h2 && \
     mkdir -p /opt/h2 && chmod a+r /opt/h2 && \
     cd /opt/h2 && \
-    curl -s https://repo1.maven.org/maven2/com/h2database/h2/1.4.200/h2-1.4.200.jar -o h2.jar
+    curl -s @h2.url@ -o h2.jar
 
 VOLUME /var/opt/h2/data
 

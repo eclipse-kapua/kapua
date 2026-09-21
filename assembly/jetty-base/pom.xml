@@ -31,6 +31,7 @@
         <docker.image.name>jetty-base</docker.image.name>
 
         <jetty.url>https://repo1.maven.org/maven2/org/eclipse/jetty/jetty-distribution/${jetty.version}/jetty-distribution-${jetty.version}.tar.gz</jetty.url>
+        <jetty.maven.repo.uri>https://repo1.maven.org/maven2/</jetty.maven.repo.uri>
     </properties>
 
     <build>
