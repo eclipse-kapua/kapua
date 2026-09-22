@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright (c) 2017, 2022 Eurotech and/or its affiliates and others
+    Copyright (c) 2017, 2026 Eurotech and/or its affiliates and others
 
     This program and the accompanying materials are made
     available under the terms of the Eclipse Public License 2.0
@@ -16,18 +16,21 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd"
-        logicalFilePath="KapuaDB/changelog-user-0.2.0.xml">
+        logicalFilePath="KapuaDB/changelog-user-0.2.0-patched.xml">
 
     <property name="selectUserDomainQuery" value="(SELECT id FROM athz_domain WHERE name = 'user')"/>
 
     <include relativeToChangelogFile="true" file="../common-properties.xml"/>
 
-    <changeSet id="changelog-user-domain-0.2.0" author="eurotech">
+    <changeSet id="changelog-user-domain-0.2.0-patched" author="eurotech">
 
         <preConditions onFail="CONTINUE">
             <and>
                 <tableExists tableName="athz_domain"/>
                 <tableExists tableName="athz_domain_actions"/>
+                <sqlCheck expectedResult="0">
+                    SELECT COUNT(*) FROM athz_domain WHERE name='user';
+                </sqlCheck>
             </and>
         </preConditions>
 

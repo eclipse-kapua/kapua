@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright (c) 2017, 2022 Eurotech and/or its affiliates and others
+    Copyright (c) 2017, 2026 Eurotech and/or its affiliates and others
 
     This program and the accompanying materials are made
     available under the terms of the Eclipse Public License 2.0
@@ -29,9 +29,9 @@
     <include relativeToChangelogFile="true" file="./athz_role-configuration.xml"/>
     <include relativeToChangelogFile="true" file="./athz_role_permission.xml"/>
 
-    <include relativeToChangelogFile="true" file="./athz_access_info.xml"/>
+    <include relativeToChangelogFile="true" file="./athz_access_info-patched.xml"/>
     <include relativeToChangelogFile="true" file="./athz_access_info-domain.xml"/>
-    <include relativeToChangelogFile="true" file="./athz_access_permission.xml"/>
+    <include relativeToChangelogFile="true" file="./athz_access_permission-patched.xml"/>
     <include relativeToChangelogFile="true" file="./athz_access_role.xml"/>
 
 </databaseChangeLog>
