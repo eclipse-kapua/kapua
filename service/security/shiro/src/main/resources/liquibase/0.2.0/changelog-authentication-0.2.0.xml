@@ -21,7 +21,7 @@
     <include relativeToChangelogFile="true" file="./atht_access_token.xml"/>
     <include relativeToChangelogFile="true" file="./atht_access_token-domain.xml"/>
 
-    <include relativeToChangelogFile="true" file="./atht_credential.xml"/>
+    <include relativeToChangelogFile="true" file="./atht_credential-patched.xml"/>
     <include relativeToChangelogFile="true" file="./atht_credential-domain.xml"/>
 
 </databaseChangeLog>

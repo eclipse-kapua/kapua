@@ -16,14 +16,19 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd"
-  logicalFilePath="KapuaDB/changelog-user-0.2.0.xml">
+  logicalFilePath="KapuaDB/changelog-user-0.2.0-patched.xml">
 
     <include relativeToChangelogFile="true" file="../common-properties.xml" />
 
-    <changeSet id="changelog-user-0.2.0_createTable" author="eurotech">
+    <changeSet id="changelog-user-0.2.0-patched_createTable" author="eurotech">
         <!-- Old SQL file
         <sqlFile relativeToChangelogFile="true" path="./user.sql" />
         -->
+       <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="usr_user"/>
+            </not>
+        </preConditions>
         <createTable tableName="usr_user">
             <column name="scope_id" type="bigint(21) unsigned">
                 <constraints nullable="false" />
@@ -82,21 +87,9 @@
             <column name="optlock" value="0"/>
         </insert>
 
-        <insert tableName="usr_user">
-            <column name="scope_id" value="1"/>
-            <column name="id" value="2"/>
-            <column name="name" value="kapua-broker"/>
-            <column name="created_on" valueComputed="${now}"/>
-            <column name="created_by" value="1"/>
-            <column name="modified_on" valueComputed="${now}"/>
-            <column name="modified_by" value="1"/>
-            <column name="status" value="ENABLED"/>
-            <column name="display_name" value="Kapua Broker"/>
-            <column name="email" value="kapua-broker@eclipse.org"/>
-            <column name="phone_number" value="+1 555 123 4567"/>
-            <column name="user_type" value="INTERNAL"/>
-            <column name="optlock" value="0"/>
-        </insert>
+        <rollback>
+            <dropTable tableName="usr_user"/>
+        </rollback>
 
         <rollback>
             <dropTable tableName="usr_user"/>

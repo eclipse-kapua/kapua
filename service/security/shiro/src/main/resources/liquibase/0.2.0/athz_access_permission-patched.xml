@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright (c) 2017, 2022 Eurotech and/or its affiliates and others
+    Copyright (c) 2017, 2026 Eurotech and/or its affiliates and others
 
     This program and the accompanying materials are made
     available under the terms of the Eclipse Public License 2.0
@@ -20,10 +20,15 @@
 
     <include relativeToChangelogFile="true" file="../common-properties.xml" />
 
-    <changeSet id="changelog-authorization-access-permission-0.2.0" author="eurotech">
+    <changeSet id="changelog-authorization-access-permission-0.2.0-patched" author="eurotech">
         <!-- Old SQL file
         <sqlFile relativeToChangelogFile="true" path="./athz_access_permission.sql" />
         -->
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="athz_access_permission"/>
+            </not>
+        </preConditions>
         <createTable tableName="athz_access_permission">
             <column name="scope_id" type="bigint(21) unsigned">
                 <constraints nullable="false"/>
@@ -61,20 +66,6 @@
             <column name="target_scope_id"/>
             <column name="group_id"/>
         </createIndex>
-
-        <!-- Seed values -->
-        <insert tableName="athz_access_permission">
-            <!-- kapua-broker assigned of NOT forwardable permission: broker:connect:1:* -->
-            <column name="scope_id" value="1"/>
-            <column name="id" value="1"/>
-            <column name="created_on" valueComputed="${now}"/>
-            <column name="created_by" value="1"/>
-            <column name="access_info_id" value="2"/>
-            <column name="domain" value="broker"/>
-            <column name="action" value="connect"/>
-            <column name="target_scope_id" value="1"/>
-            <column name="forwardable" valueBoolean="false"/>
-        </insert>
 
         <rollback>
             <dropTable tableName="athz_access_permission"/>
