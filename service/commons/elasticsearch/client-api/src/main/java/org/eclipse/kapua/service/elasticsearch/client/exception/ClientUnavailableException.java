@@ -12,10 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.elasticsearch.client.exception;
 
-import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientWrapper;
+import org.eclipse.kapua.service.elasticsearch.client.DeviceStoreClientWrapper;
 
 /**
- * {@link ClientException} to throw when che {@link ElasticsearchClientWrapper} is not available.
+ * {@link ClientException} to throw when che {@link DeviceStoreClientWrapper} is not available.
  *
  * @since 1.0.0
  */

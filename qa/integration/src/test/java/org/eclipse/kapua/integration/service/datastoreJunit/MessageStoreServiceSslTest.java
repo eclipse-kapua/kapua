@@ -37,7 +37,7 @@ import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceCreator;
 import org.eclipse.kapua.service.device.registry.DeviceFactory;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
-import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientProvider;
+import org.eclipse.kapua.service.elasticsearch.client.DeviceStoreClientProvider;
 import org.eclipse.kapua.service.elasticsearch.client.exception.ClientException;
 import org.eclipse.kapua.service.storable.model.id.StorableId;
 import org.eclipse.kapua.service.storable.model.query.SortField;
@@ -74,7 +74,7 @@ public class MessageStoreServiceSslTest extends AbstractMessageStoreServiceTest 
     private final MessageStoreFacade messageStoreFacade = locator.getComponent(MessageStoreFacade.class);
     private final MessageStoreFactory messageStoreFactory = locator.getFactory(MessageStoreFactory.class);
     private final KapuaDataMessageFactory dataMessageFactory = locator.getFactory(KapuaDataMessageFactory.class);
-    private final ElasticsearchClientProvider elasticsearchClientProvider = locator.getComponent(ElasticsearchClientProvider.class);
+    private final DeviceStoreClientProvider deviceStoreClientProvider = locator.getComponent(DeviceStoreClientProvider.class);
 
     /**
      * This method deletes all indices of the current ES instance
@@ -99,13 +99,13 @@ public class MessageStoreServiceSslTest extends AbstractMessageStoreServiceTest 
         // datastore.elasticsearch.ssl.truststore.path=
         // datastore.elasticsearch.ssl.truststore.password=
         try {
-            elasticsearchClientProvider.getElasticsearchClient();
+            deviceStoreClientProvider.getDeviceStoreClient();
             storeMessage("ssl_test/no_ssl");
             Assert.fail("ClientException should be thrown!");
         } catch (ClientException e) {
             // good
         } finally {
-            elasticsearchClientProvider.close();
+            deviceStoreClientProvider.close();
         }
     }
 
@@ -119,12 +119,12 @@ public class MessageStoreServiceSslTest extends AbstractMessageStoreServiceTest 
         // datastore.elasticsearch.ssl.truststore.path=
         // datastore.elasticsearch.ssl.truststore.password=
         try {
-            elasticsearchClientProvider.getElasticsearchClient();
+            deviceStoreClientProvider.getDeviceStoreClient();
             storeMessage("ssl_test/ssl");
         } catch (ClientException e) {
             Assert.fail("No ClientException should be thrown!");
         } finally {
-            elasticsearchClientProvider.close();
+            deviceStoreClientProvider.close();
         }
     }
 
@@ -138,12 +138,12 @@ public class MessageStoreServiceSslTest extends AbstractMessageStoreServiceTest 
         // datastore.elasticsearch.ssl.truststore.path=
         // datastore.elasticsearch.ssl.truststore.password=
         try {
-            elasticsearchClientProvider.getElasticsearchClient();
+            deviceStoreClientProvider.getDeviceStoreClient();
             storeMessage("ssl_test/ssl_trust_server_no_trust_store_set");
         } catch (ClientException e) {
             Assert.fail("No ClientException should be thrown!");
         } finally {
-            elasticsearchClientProvider.close();
+            deviceStoreClientProvider.close();
         }
     }
 
@@ -157,12 +157,12 @@ public class MessageStoreServiceSslTest extends AbstractMessageStoreServiceTest 
         // datastore.elasticsearch.ssl.truststore.path=some valid truststore path
         // datastore.elasticsearch.ssl.truststore.password=trust store password
         try {
-            elasticsearchClientProvider.getElasticsearchClient();
+            deviceStoreClientProvider.getDeviceStoreClient();
             storeMessage("ssl_test/ssl_trust_server_default_trust_store_set");
         } catch (ClientException e) {
             Assert.fail("No ClientException should be thrown!");
         } finally {
-            elasticsearchClientProvider.close();
+            deviceStoreClientProvider.close();
         }
     }
 
@@ -176,12 +176,12 @@ public class MessageStoreServiceSslTest extends AbstractMessageStoreServiceTest 
         // datastore.elasticsearch.ssl.truststore.path=self signed trust store
         // datastore.elasticsearch.ssl.truststore.password=password
         try {
-            elasticsearchClientProvider.getElasticsearchClient();
+            deviceStoreClientProvider.getDeviceStoreClient();
             storeMessage("ssl_test/ssl_trust_server_self_signed_tust");
         } catch (ClientException e) {
             Assert.fail("No ClientException should be thrown!");
         } finally {
-            elasticsearchClientProvider.close();
+            deviceStoreClientProvider.close();
         }
     }
 

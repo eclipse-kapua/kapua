@@ -41,11 +41,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public abstract class ElasticsearchRepository<
+public abstract class DeviceStoreRepository<
         T extends Storable,
         L extends StorableListResult<T>,
         Q extends StorableQuery> implements StorableRepository<T, L, Q> {
-    protected final ElasticsearchClientProvider elasticsearchClientProviderInstance;
+    protected final DeviceStoreClientProvider deviceStoreClientProviderInstance;
     private final Class<T> clazz;
     private final StorableFactory<T, L, Q> storableFactory;
     protected final StorablePredicateFactory storablePredicateFactory;
@@ -63,25 +63,25 @@ public abstract class ElasticsearchRepository<
     private static final String INDEX_EXPR_SEPARATOR = ",";
     private static final String INDEX_EXPR_WILDCARD = "*";
 
-    protected ElasticsearchRepository(
-            ElasticsearchClientProvider elasticsearchClientProviderInstance,
+    protected DeviceStoreRepository(
+            DeviceStoreClientProvider deviceStoreClientProviderInstance,
             Class<T> clazz,
             StorableFactory<T, L, Q> storableFactory,
             StorablePredicateFactory storablePredicateFactory,
             LocalCache<String, Boolean> indexesCache) {
-        this.elasticsearchClientProviderInstance = elasticsearchClientProviderInstance;
+        this.deviceStoreClientProviderInstance = deviceStoreClientProviderInstance;
         this.storableFactory = storableFactory;
         this.storablePredicateFactory = storablePredicateFactory;
         this.clazz = clazz;
         this.indexUpserted = indexesCache;
     }
 
-    protected ElasticsearchRepository(
-            ElasticsearchClientProvider elasticsearchClientProviderInstance,
+    protected DeviceStoreRepository(
+            DeviceStoreClientProvider deviceStoreClientProviderInstance,
             Class<T> clazz,
             StorableFactory<T, L, Q> storableFactory,
             StorablePredicateFactory storablePredicateFactory) {
-        this.elasticsearchClientProviderInstance = elasticsearchClientProviderInstance;
+        this.deviceStoreClientProviderInstance = deviceStoreClientProviderInstance;
         this.storableFactory = storableFactory;
         this.storablePredicateFactory = storablePredicateFactory;
         this.clazz = clazz;
@@ -104,7 +104,7 @@ public abstract class ElasticsearchRepository<
 
             synchIndex(indexName);
             final T res;
-            res = (T) elasticsearchClientProviderInstance.getElasticsearchClient().<T>find(indexName, idsQuery, clazz);
+            res = (T) deviceStoreClientProviderInstance.getDeviceStoreClient().<T>find(indexName, idsQuery, clazz);
             return res;
         } catch (ClientException e) {
             throw new RuntimeException(e);
@@ -130,7 +130,7 @@ public abstract class ElasticsearchRepository<
         try {
             final String indexName = indexResolver(query.getScopeId());
             synchIndex(indexName);
-            final ResultList<T> partialResult = elasticsearchClientProviderInstance.getElasticsearchClient().query(indexName, query, clazz);
+            final ResultList<T> partialResult = deviceStoreClientProviderInstance.getDeviceStoreClient().query(indexName, query, clazz);
             final L res = storableFactory.newListResult();
             res.addItems(partialResult.getResult());
             res.setTotalCount(partialResult.getTotalCount());
@@ -157,7 +157,7 @@ public abstract class ElasticsearchRepository<
             final String indexName = indexResolver(query.getScopeId());
             synchIndex(indexName);
 
-            return elasticsearchClientProviderInstance.getElasticsearchClient().count(indexName, query);
+            return deviceStoreClientProviderInstance.getDeviceStoreClient().count(indexName, query);
         } catch (ClientException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -173,7 +173,7 @@ public abstract class ElasticsearchRepository<
         try {
             synchIndex(indexName);
 
-            elasticsearchClientProviderInstance.getElasticsearchClient().delete(indexName, id.toString());
+            deviceStoreClientProviderInstance.getDeviceStoreClient().delete(indexName, id.toString());
         } catch (ClientException e) {
             throw new RuntimeException(e);
         }
@@ -182,7 +182,7 @@ public abstract class ElasticsearchRepository<
     @Override
     public void delete(Q query) {
         try {
-            elasticsearchClientProviderInstance.getElasticsearchClient().deleteByQuery(indexResolver(query.getScopeId()), query);
+            deviceStoreClientProviderInstance.getDeviceStoreClient().deleteByQuery(indexResolver(query.getScopeId()), query);
         } catch (ClientException e) {
             throw new RuntimeException(e);
         }
@@ -196,7 +196,7 @@ public abstract class ElasticsearchRepository<
 
             final UpdateRequest request = new UpdateRequest(itemId.toString(), indexName, item);
             final UpdateResponse upsertResponse;
-            upsertResponse = elasticsearchClientProviderInstance.getElasticsearchClient().upsert(request);
+            upsertResponse = deviceStoreClientProviderInstance.getDeviceStoreClient().upsert(request);
             final String responseId = upsertResponse.getId();
             logger.debug("Upsert  successfully executed [{}, {} - {}]", indexName, itemId, responseId);
             return responseId;
@@ -221,8 +221,8 @@ public abstract class ElasticsearchRepository<
                     });
             final BulkUpdateRequest bulkUpdateRequest = new BulkUpdateRequest();
             bulkUpdateRequest.setRequest(requests);
-            final BulkUpdateResponse updateResponse = elasticsearchClientProviderInstance
-                    .getElasticsearchClient()
+            final BulkUpdateResponse updateResponse = deviceStoreClientProviderInstance
+                    .getDeviceStoreClient()
                     .upsert(bulkUpdateRequest);
             return updateResponse.getResponse()
                     .stream()
@@ -239,20 +239,20 @@ public abstract class ElasticsearchRepository<
 
 
     protected void doUpsertIndex(String indexName) {
-        final ElasticsearchClientWrapper elasticsearchClientWrapper;
+        final DeviceStoreClientWrapper deviceStoreClientWrapper;
         try {
-            elasticsearchClientWrapper = elasticsearchClientProviderInstance.getElasticsearchClient();
+            deviceStoreClientWrapper = deviceStoreClientProviderInstance.getDeviceStoreClient();
             // Check existence of the kapua internal indexes
-            IndexResponse indexExistsResponse = elasticsearchClientWrapper.isIndexExists(new IndexRequest(indexName));
+            IndexResponse indexExistsResponse = deviceStoreClientWrapper.isIndexExists(new IndexRequest(indexName));
             if (!indexExistsResponse.isIndexExists()) {
                 ObjectNode settings = getMappingSchema(indexName);
-                elasticsearchClientWrapper.createIndex(indexName, settings);
+                deviceStoreClientWrapper.createIndex(indexName, settings);
                 logger.info("Index created with name: {}, index exists check: {}", indexName, indexExistsResponse);
                 logger.debug("Index created with name: {}, index settings: {}", indexName, settings);
             }
             // Update base index mappings regardless the index existed or not
             JsonNode mappings = getIndexSchema();
-            elasticsearchClientWrapper.putMapping(indexName, mappings);
+            deviceStoreClientWrapper.putMapping(indexName, mappings);
             logger.info("Index mappings updated for index: {}, index exists check: {}", indexName, indexExistsResponse);
             logger.debug("Index mappings updated for index: {}, index mappings: {}", indexName, mappings);
         } catch (ClientException | MappingException e) {
@@ -264,7 +264,7 @@ public abstract class ElasticsearchRepository<
     public void refreshAllIndexes() {
         try {
             this.indexUpserted.invalidateAll();
-            elasticsearchClientProviderInstance.getElasticsearchClient().refreshAllIndexes();
+            deviceStoreClientProviderInstance.getDeviceStoreClient().refreshAllIndexes();
         } catch (ClientException e) {
             throw new RuntimeException(e);
         }
@@ -273,7 +273,7 @@ public abstract class ElasticsearchRepository<
     public void refreshIndex(String indexExp) {
         try {
             this.indexUpserted.invalidateAll();
-            elasticsearchClientProviderInstance.getElasticsearchClient().refreshIndex(indexExp);
+            deviceStoreClientProviderInstance.getDeviceStoreClient().refreshIndex(indexExp);
         } catch (ClientException e) {
             throw new RuntimeException(e);
         }
@@ -283,7 +283,7 @@ public abstract class ElasticsearchRepository<
     public void deleteAllIndexes() {
         try {
             this.indexUpserted.invalidateAll();
-            elasticsearchClientProviderInstance.getElasticsearchClient().deleteAllIndexes();
+            deviceStoreClientProviderInstance.getDeviceStoreClient().deleteAllIndexes();
         } catch (ClientException e) {
             throw new RuntimeException(e);
         }
@@ -293,7 +293,7 @@ public abstract class ElasticsearchRepository<
     public void deleteIndexes(String indexExp) {
         try {
             this.indexUpserted.invalidateAll();
-            elasticsearchClientProviderInstance.getElasticsearchClient().deleteIndexes(indexExp);
+            deviceStoreClientProviderInstance.getDeviceStoreClient().deleteIndexes(indexExp);
         } catch (ClientException e) {
             throw new RuntimeException(e);
         }

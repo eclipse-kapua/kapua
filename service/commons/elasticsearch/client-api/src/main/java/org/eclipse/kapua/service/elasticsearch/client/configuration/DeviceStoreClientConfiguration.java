@@ -16,14 +16,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientWrapper;
+import org.eclipse.kapua.service.elasticsearch.client.DeviceStoreClientWrapper;
 
 /**
- * The {@link ElasticsearchClientConfiguration} used to configure an instance of a {@link ElasticsearchClientWrapper}
+ * The {@link DeviceStoreClientConfiguration} used to configure an instance of a {@link DeviceStoreClientWrapper}
  *
  * @since 1.3.0
  */
-public class ElasticsearchClientConfiguration {
+public class DeviceStoreClientConfiguration {
 
     private String moduleName;
     private String clusterName;
@@ -38,9 +38,9 @@ public class ElasticsearchClientConfiguration {
     private ElasticsearchClientSslConfiguration sslConfiguration;
 
     /**
-     * Gets the module name which is managing the {@link ElasticsearchClientWrapper} instance.
+     * Gets the module name which is managing the {@link DeviceStoreClientWrapper} instance.
      *
-     * @return The module name which is managing the {@link ElasticsearchClientWrapper} instance.
+     * @return The module name which is managing the {@link DeviceStoreClientWrapper} instance.
      * @since 1.3.0
      */
     public String getModuleName() {
@@ -48,10 +48,10 @@ public class ElasticsearchClientConfiguration {
     }
 
     /**
-     * Sets the module name which is managing the {@link ElasticsearchClientWrapper} instance.
+     * Sets the module name which is managing the {@link DeviceStoreClientWrapper} instance.
      *
      * @param moduleName
-     *         The module name which is managing the {@link ElasticsearchClientWrapper} instance.
+     *         The module name which is managing the {@link DeviceStoreClientWrapper} instance.
      * @since 1.3.0
      */
     public void setModuleName(String moduleName) {
@@ -73,10 +73,10 @@ public class ElasticsearchClientConfiguration {
      *
      * @param clusterName
      *         The Elasticsearch cluster name to use.
-     * @return This {@link ElasticsearchClientConfiguration} to chain method invocation.
+     * @return This {@link DeviceStoreClientConfiguration} to chain method invocation.
      * @since 1.3.0
      */
-    public ElasticsearchClientConfiguration setClusterName(String clusterName) {
+    public DeviceStoreClientConfiguration setClusterName(String clusterName) {
         this.clusterName = clusterName;
         return this;
     }
@@ -107,10 +107,10 @@ public class ElasticsearchClientConfiguration {
      *         The host of the Elasticsearch node
      * @param port
      *         The port of the Elasticsearch node
-     * @return This {@link ElasticsearchClientConfiguration} to chain method invocation.
+     * @return This {@link DeviceStoreClientConfiguration} to chain method invocation.
      * @since 1.3.0
      */
-    public ElasticsearchClientConfiguration addNode(String address, int port) {
+    public DeviceStoreClientConfiguration addNode(String address, int port) {
         getNodes().add(new ElasticsearchNode(address, port));
         return this;
     }
@@ -120,10 +120,10 @@ public class ElasticsearchClientConfiguration {
      *
      * @param nodes
      *         The {@link List} of {@link ElasticsearchNode}s.
-     * @return This {@link ElasticsearchClientConfiguration} to chain method invocation.
+     * @return This {@link DeviceStoreClientConfiguration} to chain method invocation.
      * @since 1.3.0
      */
-    public ElasticsearchClientConfiguration setNodes(List<ElasticsearchNode> nodes) {
+    public DeviceStoreClientConfiguration setNodes(List<ElasticsearchNode> nodes) {
         this.nodes = nodes;
         return this;
     }
@@ -145,10 +145,10 @@ public class ElasticsearchClientConfiguration {
      *
      * @param username
      *         The username used to authenticate into Elasticsearch.
-     * @return This {@link ElasticsearchClientConfiguration} to chain method invocation.
+     * @return This {@link DeviceStoreClientConfiguration} to chain method invocation.
      * @since 1.3.0
      */
-    public ElasticsearchClientConfiguration setUsername(String username) {
+    public DeviceStoreClientConfiguration setUsername(String username) {
         this.username = username;
         return this;
     }
@@ -170,10 +170,10 @@ public class ElasticsearchClientConfiguration {
      *
      * @param password
      *         The password used to authenticate into Elasticsearch.
-     * @return This {@link ElasticsearchClientConfiguration} to chain method invocation.
+     * @return This {@link DeviceStoreClientConfiguration} to chain method invocation.
      * @since 1.3.0
      */
-    public ElasticsearchClientConfiguration setPassword(String password) {
+    public DeviceStoreClientConfiguration setPassword(String password) {
         this.password = password;
         return this;
     }
@@ -197,10 +197,10 @@ public class ElasticsearchClientConfiguration {
      *
      * @param reconnectConfiguration
      *         The {@link ElasticsearchClientReconnectConfiguration}.
-     * @return This {@link ElasticsearchClientConfiguration} to chain method invocation.
+     * @return This {@link DeviceStoreClientConfiguration} to chain method invocation.
      * @since 1.3.0
      */
-    public ElasticsearchClientConfiguration setReconnectConfiguration(ElasticsearchClientReconnectConfiguration reconnectConfiguration) {
+    public DeviceStoreClientConfiguration setReconnectConfiguration(ElasticsearchClientReconnectConfiguration reconnectConfiguration) {
         this.reconnectConfiguration = reconnectConfiguration;
         return this;
     }
@@ -224,10 +224,10 @@ public class ElasticsearchClientConfiguration {
      *
      * @param requestConfiguration
      *         the {@link ElasticsearchClientReconnectConfiguration}.
-     * @return This {@link ElasticsearchClientConfiguration} to chain method invocation.
+     * @return This {@link DeviceStoreClientConfiguration} to chain method invocation.
      * @since 1.3.0
      */
-    public ElasticsearchClientConfiguration setRequestConfiguration(ElasticsearchClientRequestConfiguration requestConfiguration) {
+    public DeviceStoreClientConfiguration setRequestConfiguration(ElasticsearchClientRequestConfiguration requestConfiguration) {
         this.requestConfiguration = requestConfiguration;
         return this;
     }
@@ -251,10 +251,10 @@ public class ElasticsearchClientConfiguration {
      *
      * @param sslConfiguration
      *         The {@link ElasticsearchClientSslConfiguration}
-     * @return This {@link ElasticsearchClientConfiguration} to chain method invocation.
+     * @return This {@link DeviceStoreClientConfiguration} to chain method invocation.
      * @since 1.3.0
      */
-    public ElasticsearchClientConfiguration setSslConfiguration(ElasticsearchClientSslConfiguration sslConfiguration) {
+    public DeviceStoreClientConfiguration setSslConfiguration(ElasticsearchClientSslConfiguration sslConfiguration) {
         this.sslConfiguration = sslConfiguration;
         return this;
     }
@@ -263,7 +263,7 @@ public class ElasticsearchClientConfiguration {
         return this.numberOfIOThreads;
     }
 
-    public ElasticsearchClientConfiguration setNumberOfIOThreads(Integer numberOfIOThreads) {
+    public DeviceStoreClientConfiguration setNumberOfIOThreads(Integer numberOfIOThreads) {
         this.numberOfIOThreads = Optional.ofNullable(numberOfIOThreads)
                 .filter(i -> i > 0);
         return this;
@@ -284,10 +284,10 @@ public class ElasticsearchClientConfiguration {
      *
      * @param poolSize 
      *         The size of the Elasticsearch client pool.
-     * @return This {@link ElasticsearchClientConfiguration} to chain method invocation.
+     * @return This {@link DeviceStoreClientConfiguration} to chain method invocation.
      * @since 1.6.0
      */
-    public ElasticsearchClientConfiguration setPoolSize(int poolSize) {
+    public DeviceStoreClientConfiguration setPoolSize(int poolSize) {
         this.poolSize = poolSize;
         return this;
     }

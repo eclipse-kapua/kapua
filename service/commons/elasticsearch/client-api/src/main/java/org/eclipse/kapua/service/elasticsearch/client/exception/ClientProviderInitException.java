@@ -12,10 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.elasticsearch.client.exception;
 
-import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientProvider;
+import org.eclipse.kapua.service.elasticsearch.client.DeviceStoreClientProvider;
 
 /**
- * {@link ClientException} to throw when {@link ElasticsearchClientProvider} fails to initialize.
+ * {@link ClientException} to throw when {@link DeviceStoreClientProvider} fails to initialize.
  *
  * @since 1.3.0
  */

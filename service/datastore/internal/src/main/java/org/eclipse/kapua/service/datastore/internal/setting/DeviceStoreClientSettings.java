@@ -13,15 +13,15 @@
 package org.eclipse.kapua.service.datastore.internal.setting;
 
 import org.eclipse.kapua.commons.setting.AbstractKapuaSetting;
-import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientWrapper;
+import org.eclipse.kapua.service.elasticsearch.client.DeviceStoreClientWrapper;
 
 /**
- * Datastore {@link ElasticsearchClientWrapper} {@link org.eclipse.kapua.commons.setting.AbstractKapuaSetting}
+ * Datastore {@link DeviceStoreClientWrapper} {@link org.eclipse.kapua.commons.setting.AbstractKapuaSetting}
  *
  * @since 1.3.0
  */
 //TODO: FIXME: singletons should not be handled manually, we have DI for that
-public class DatastoreElasticsearchClientSettings extends AbstractKapuaSetting<DatastoreElasticsearchClientSettingsKey> {
+public class DeviceStoreClientSettings extends AbstractKapuaSetting<DatastoreElasticsearchClientSettingsKey> {
 
     /**
      * Resource file from which source properties.
@@ -35,24 +35,24 @@ public class DatastoreElasticsearchClientSettings extends AbstractKapuaSetting<D
      *
      * @since 1.3.0
      */
-    private static final DatastoreElasticsearchClientSettings INSTANCE = new DatastoreElasticsearchClientSettings();
+    private static final DeviceStoreClientSettings INSTANCE = new DeviceStoreClientSettings();
 
     /**
-     * Initialize the {@link AbstractKapuaSetting} with the {@link DatastoreElasticsearchClientSettings#DATASTORE_ELASTICSEARCH_CONFIG_RESOURCE} value.
+     * Initialize the {@link AbstractKapuaSetting} with the {@link DeviceStoreClientSettings#DATASTORE_ELASTICSEARCH_CONFIG_RESOURCE} value.
      *
      * @since 1.3.0
      */
-    private DatastoreElasticsearchClientSettings() {
+    private DeviceStoreClientSettings() {
         super(DATASTORE_ELASTICSEARCH_CONFIG_RESOURCE);
     }
 
     /**
-     * Gets a singleton instance of {@link DatastoreElasticsearchClientSettings}.
+     * Gets a singleton instance of {@link DeviceStoreClientSettings}.
      *
-     * @return A singleton instance of {@link DatastoreElasticsearchClientSettings}.
+     * @return A singleton instance of {@link DeviceStoreClientSettings}.
      * @since 1.3.0
      */
-    public static DatastoreElasticsearchClientSettings getInstance() {
+    public static DeviceStoreClientSettings getInstance() {
         return INSTANCE;
     }
 }

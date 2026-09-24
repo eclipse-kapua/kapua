@@ -16,8 +16,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.eclipse.kapua.commons.cache.LocalCache;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettingsKey;
-import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientProvider;
-import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchRepository;
+import org.eclipse.kapua.service.elasticsearch.client.DeviceStoreClientProvider;
+import org.eclipse.kapua.service.elasticsearch.client.DeviceStoreRepository;
 import org.eclipse.kapua.service.elasticsearch.client.SchemaKeys;
 import org.eclipse.kapua.service.storable.StorableFactory;
 import org.eclipse.kapua.service.storable.exception.MappingException;
@@ -29,33 +29,33 @@ import org.eclipse.kapua.service.storable.model.utils.KeyValueEntry;
 import org.eclipse.kapua.service.storable.model.utils.MappingUtils;
 import org.eclipse.kapua.service.storable.repository.StorableRepository;
 
-public abstract class DatastoreElasticSearchRepositoryBase<
+public abstract class DatastoreRepositoryBase<
         T extends Storable,
         L extends StorableListResult<T>,
         Q extends StorableQuery>
-        extends ElasticsearchRepository<T, L, Q>
+        extends DeviceStoreRepository<T, L, Q>
         implements StorableRepository<T, L, Q> {
 
     protected final DatastoreSettings datastoreSettings;
 
-    protected DatastoreElasticSearchRepositoryBase(
-            ElasticsearchClientProvider elasticsearchClientProviderInstance,
+    protected DatastoreRepositoryBase(
+            DeviceStoreClientProvider deviceStoreClientProviderInstance,
             Class<T> clazz,
             StorableFactory<T, L, Q> storableFactory,
             StorablePredicateFactory storablePredicateFactory,
             LocalCache<String, Boolean> indexesCache,
             DatastoreSettings datastoreSettings) {
-        super(elasticsearchClientProviderInstance, clazz, storableFactory, storablePredicateFactory,
+        super(deviceStoreClientProviderInstance, clazz, storableFactory, storablePredicateFactory,
                 indexesCache);
         this.datastoreSettings = datastoreSettings;
     }
 
-    protected DatastoreElasticSearchRepositoryBase(
-            ElasticsearchClientProvider elasticsearchClientProviderInstance,
+    protected DatastoreRepositoryBase(
+            DeviceStoreClientProvider deviceStoreClientProviderInstance,
             Class<T> clazz,
             StorableFactory<T, L, Q> storableFactory,
             StorablePredicateFactory storablePredicateFactory, DatastoreSettings datastoreSettings) {
-        super(elasticsearchClientProviderInstance, clazz, storableFactory, storablePredicateFactory);
+        super(deviceStoreClientProviderInstance, clazz, storableFactory, storablePredicateFactory);
         this.datastoreSettings = datastoreSettings;
     }
 

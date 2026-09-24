@@ -26,7 +26,7 @@ import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettingsKey
 import org.eclipse.kapua.service.datastore.model.DatastoreMessage;
 import org.eclipse.kapua.service.datastore.model.MessageListResult;
 import org.eclipse.kapua.service.datastore.model.query.MessageQuery;
-import org.eclipse.kapua.service.elasticsearch.client.ElasticsearchClientProvider;
+import org.eclipse.kapua.service.elasticsearch.client.DeviceStoreClientProvider;
 import org.eclipse.kapua.service.elasticsearch.client.SchemaKeys;
 import org.eclipse.kapua.service.elasticsearch.client.exception.ClientException;
 import org.eclipse.kapua.service.elasticsearch.client.exception.DatamodelMappingException;
@@ -42,19 +42,19 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class MessageElasticsearchRepository extends DatastoreElasticSearchRepositoryBase<DatastoreMessage, MessageListResult, MessageQuery> implements MessageRepository {
+public class MessageDeviceStoreRepository extends DatastoreRepositoryBase<DatastoreMessage, MessageListResult, MessageQuery> implements MessageRepository {
     private final DatastoreUtils datastoreUtils;
     private final LocalCache<String, Map<String, Metric>> metricsByIndex;
 
     @Inject
-    public MessageElasticsearchRepository(
-            ElasticsearchClientProvider elasticsearchClientProviderInstance,
+    public MessageDeviceStoreRepository(
+            DeviceStoreClientProvider deviceStoreClientProviderInstance,
             MessageStoreFactory messageStoreFactory,
             StorablePredicateFactory storablePredicateFactory,
             DatastoreSettings datastoreSettings,
             DatastoreUtils datastoreUtils,
             DatastoreCacheManager datastoreCacheManager) {
-        super(elasticsearchClientProviderInstance,
+        super(deviceStoreClientProviderInstance,
                 DatastoreMessage.class,
                 messageStoreFactory,
                 storablePredicateFactory,
@@ -119,7 +119,7 @@ public class MessageElasticsearchRepository extends DatastoreElasticSearchReposi
             }
         }
         final InsertRequest insertRequest = new InsertRequest(idExtractor(messageToStore).toString(), indexName, messageToStore);
-        return elasticsearchClientProviderInstance.getElasticsearchClient().insert(insertRequest).getId();
+        return deviceStoreClientProviderInstance.getDeviceStoreClient().insert(insertRequest).getId();
     }
 
     private Map<String, Metric> getMessageMappingDiffs(Map<String, Metric> currentMetrics, Map<String, Metric> newMetrics) {
@@ -137,7 +137,7 @@ public class MessageElasticsearchRepository extends DatastoreElasticSearchReposi
             }
             final ObjectNode metricsMapping = getNewMessageMappingsBuilder(esMetrics);
             logger.trace("Sending dynamic message mappings: {}", metricsMapping);
-            elasticsearchClientProviderInstance.getElasticsearchClient().putMapping(index, metricsMapping);
+            deviceStoreClientProviderInstance.getDeviceStoreClient().putMapping(index, metricsMapping);
         } catch (ClientException | MappingException e) {
             throw new RuntimeException(e);
         }
