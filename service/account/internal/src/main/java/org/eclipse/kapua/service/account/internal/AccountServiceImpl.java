@@ -389,9 +389,12 @@ public class AccountServiceImpl
         // Argument validation
         ArgumentValidator.notNull(query, "query");
 
-        // Check Access
-        authorizationService.checkPermission(permissionFactory.newPermission(Domains.ACCOUNT, Actions.read, query.getScopeId()));
-
+        if (query.getScopeId() == null) {
+            authorizationService.checkPermission(permissionFactory.newPermission(Domains.ACCOUNT, Actions.read, KapuaId.ONE, null, true));
+        } else {
+            // Check Access
+            authorizationService.checkPermission(permissionFactory.newPermission(Domains.ACCOUNT, Actions.read, query.getScopeId()));
+        }
         // Do query
         return txManager.execute(tx -> accountRepository.query(tx, query));
     }
