@@ -10,10 +10,11 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.broker.artemis;
+package org.eclipse.kapua.broker.artemis.module;
 
 import com.google.inject.Provides;
 import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.broker.artemis.plugin.security.BrokerJAXBContextProvider;
 import org.eclipse.kapua.broker.artemis.plugin.security.MetricsSecurityPlugin;
 import org.eclipse.kapua.broker.artemis.plugin.security.event.BrokerEventHandler;
 import org.eclipse.kapua.broker.artemis.plugin.security.setting.BrokerSetting;
@@ -28,6 +29,8 @@ import org.eclipse.kapua.commons.core.AbstractKapuaModule;
 import org.eclipse.kapua.commons.liquibase.DatabaseCheckUpdate;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.commons.setting.system.SystemSettingKey;
+import org.eclipse.kapua.commons.util.xml.JAXBContextProvider;
+import org.eclipse.kapua.commons.util.xml.XmlUtil;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -67,6 +70,13 @@ public class AppModule extends AbstractKapuaModule {
         return brokerHostResolver.getBrokerHost();
     }
 
+    @Provides
+    @Singleton
+    JAXBContextProvider jaxbContextProvider() {
+        final JAXBContextProvider jaxbContextProvider = new BrokerJAXBContextProvider();
+        XmlUtil.setContextProvider(jaxbContextProvider);
+        return jaxbContextProvider;
+    }
 
     @Singleton
     @Provides
