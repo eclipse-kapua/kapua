@@ -54,6 +54,12 @@
             <groupId>org.eclipse.kapua</groupId>
             <artifactId>kapua-datastore-internal</artifactId>
         </dependency>
+        <!-- ElasticsearchDeviceStoreClient#unwrap() escape hatch used directly by DatastoreSteps for bulk test setup - a genuine compile-time need, not a
+             runtime engine choice, so this is deliberately a hard dependency rather than something an assembly opts into. -->
+        <dependency>
+            <groupId>org.eclipse.kapua</groupId>
+            <artifactId>kapua-service-elasticsearch-client-rest-elasticsearch</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
             <artifactId>kapua-commons</artifactId>

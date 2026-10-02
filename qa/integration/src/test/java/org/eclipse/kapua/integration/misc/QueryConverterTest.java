@@ -20,9 +20,9 @@ import org.eclipse.kapua.service.datastore.internal.model.query.MessageQueryImpl
 import org.eclipse.kapua.service.datastore.internal.schema.MessageSchema;
 import org.eclipse.kapua.service.datastore.model.query.MessageQuery;
 import org.eclipse.kapua.service.datastore.model.query.predicate.DatastorePredicateFactory;
-import org.eclipse.kapua.service.elasticsearch.client.QueryConverter;
-import org.eclipse.kapua.service.elasticsearch.client.SchemaKeys;
-import org.eclipse.kapua.service.elasticsearch.client.rest.QueryConverterImpl;
+import org.eclipse.kapua.service.storeengine.client.QueryConverter;
+import org.eclipse.kapua.service.storeengine.client.SchemaKeys;
+import org.eclipse.kapua.service.storeengine.client.rest.QueryConverterImpl;
 import org.eclipse.kapua.service.storable.model.query.SortField;
 import org.eclipse.kapua.service.storable.model.query.StorableFetchStyle;
 import org.junit.Assert;
