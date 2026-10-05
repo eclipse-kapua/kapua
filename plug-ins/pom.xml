@@ -30,6 +30,7 @@
 
     <modules>
         <module>sso</module>
+        <module>device-storage</module>
     </modules>
 
 </project>

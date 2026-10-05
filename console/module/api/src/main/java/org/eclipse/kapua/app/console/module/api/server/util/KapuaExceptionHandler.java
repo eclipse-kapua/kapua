@@ -42,7 +42,7 @@ import org.eclipse.kapua.service.device.management.exception.DeviceManagementRes
 import org.eclipse.kapua.service.device.management.exception.DeviceManagementSendException;
 import org.eclipse.kapua.service.device.management.exception.DeviceManagementTimeoutException;
 import org.eclipse.kapua.service.device.management.exception.DeviceNotConnectedException;
-import org.eclipse.kapua.service.elasticsearch.client.exception.ClientException;
+import org.eclipse.kapua.service.storeengine.client.exception.ClientException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

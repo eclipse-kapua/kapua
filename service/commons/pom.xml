@@ -27,7 +27,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>elasticsearch</module>
+        <module>store-engine</module>
         <module>storable</module>
         <module>utils</module>
     </modules>

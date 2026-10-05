@@ -37,7 +37,7 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.kapua</groupId>
-            <artifactId>kapua-service-elasticsearch-client-api</artifactId>
+            <artifactId>kapua-service-store-engine-client-api</artifactId>
         </dependency>
 
         <!-- external dependencies -->
