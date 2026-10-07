@@ -175,9 +175,9 @@ public class RestElasticsearchClientProvider implements ElasticsearchClientProvi
             try {
                 int poolSize = elasticsearchClientConfiguration.getPoolSize();
                 if (poolSize >= 1) {
-                    LOG.info("Elasticsearch rest client provider: configured pool of size {}", poolSize);
+                    LOG.info("ES Rest Client - Configured pool of size {}", poolSize);
                 } else {
-                    LOG.warn("Elasticsearch rest client provider: configured pool of size {} is invalid, set to default 1", poolSize);
+                    LOG.warn("ES Rest Client - Configured pool of size {} is invalid, set to default 1", poolSize);
                     poolSize = 1;
                 }
                 initClientPool(poolSize);
@@ -214,7 +214,7 @@ public class RestElasticsearchClientProvider implements ElasticsearchClientProvi
     public void close() {
         synchronized (RestElasticsearchClientProvider.class) {
             try {
-                LOG.info("Elasticsearch rest client provider: closing pool");
+                LOG.info("ES Rest Client - Closing pool");
                 closeClientPool();
             } catch (IOException e) {
                 LOG.warn(PROVIDER_CANNOT_CLOSE_CLIENT_MSG, e);
@@ -407,16 +407,21 @@ public class RestElasticsearchClientProvider implements ElasticsearchClientProvi
                 httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
             }
 
+            PoolingNHttpClientConnectionManager poolConnManager;
             DefaultConnectingIOReactor ioReactor = getDefaultConnectingIOReactor();
             if (sslContext != null) {
                 //we need to set SSL context inside the connectionManager because it hides SSL settings that are set directly to the builder
                 SSLIOSessionStrategy s = new SSLIOSessionStrategy(sslContext);
                 RegistryBuilder<SchemeIOSessionStrategy> rb = RegistryBuilder.create();
                 rb.register("https", s).register("http", NoopIOSessionStrategy.INSTANCE);
-                httpClientBuilder.setConnectionManager(new PoolingNHttpClientConnectionManager(ioReactor, rb.build()));
+                poolConnManager = new PoolingNHttpClientConnectionManager(ioReactor, rb.build());
             } else {
-                httpClientBuilder.setConnectionManager(new PoolingNHttpClientConnectionManager(ioReactor));
+                poolConnManager = new PoolingNHttpClientConnectionManager(ioReactor);
             }
+            getClientConfiguration().getAsyncConnConfiguration().getMaxTotal().ifPresent(val -> poolConnManager.setMaxTotal(val));
+            getClientConfiguration().getAsyncConnConfiguration().getDefaultMaxPerRoute().ifPresent(val -> poolConnManager.setDefaultMaxPerRoute(val));
+            httpClientBuilder.setConnectionManager(poolConnManager);
+            LOG.info("ES Rest Client - Client connection manager maxTotal: {}, defaultMaxPerRoute: {}", poolConnManager.getMaxTotal(), poolConnManager.getDefaultMaxPerRoute());
         } catch (IOReactorException e) {
             throw new RuntimeException(e);
         }
@@ -462,13 +467,14 @@ public class RestElasticsearchClientProvider implements ElasticsearchClientProvi
      */
     private DefaultConnectingIOReactor getDefaultConnectingIOReactor() throws IOReactorException {
         final DefaultConnectingIOReactor ioReactor;
-        final Optional<Integer> numberOfIOThreads = getClientConfiguration().getNumberOfIOThreads();
+        final Optional<Integer> numberOfIOThreads = getClientConfiguration().getAsyncConnConfiguration().getNumberOfIOThreads();
         if (numberOfIOThreads.isPresent()) {
             ioReactor = new DefaultConnectingIOReactor(
                     IOReactorConfig.custom().setIoThreadCount(
                             numberOfIOThreads.get()
                     ).build()
             );
+            LOG.info("ES Rest Client - DefaultConnectingIOReactor thread count to: {}", numberOfIOThreads.get());
         } else {
             ioReactor = new DefaultConnectingIOReactor();
         }

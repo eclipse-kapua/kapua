@@ -13,6 +13,8 @@
 package org.eclipse.kapua.service.datastore.internal.client;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreElasticsearchClientSettings;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreElasticsearchClientSettingsKey;
@@ -53,10 +55,20 @@ public class DatastoreElasticsearchClientConfiguration extends ElasticsearchClie
         getSslConfiguration().setKeyStorePassword(elasticsearchClientSettings.getString(DatastoreElasticsearchClientSettingsKey.SSL_KEYSTORE_PASSWORD));
         getSslConfiguration().setTrustStorePath(elasticsearchClientSettings.getString(DatastoreElasticsearchClientSettingsKey.SSL_TRUSTSTORE_PATH));
         getSslConfiguration().setTrustStorePassword(elasticsearchClientSettings.getString(DatastoreElasticsearchClientSettingsKey.SSL_TRUSTSTORE_PASSWORD));
-
-        setNumberOfIOThreads(elasticsearchClientSettings.getInt(DatastoreElasticsearchClientSettingsKey.NUMBER_OF_IO_THREADS, 0));
         getReconnectConfiguration().setReconnectDelay(30000);
 
+        // NUMBER_OF_IO_THREADS has been deprecated in favour of ASYNC_CONN_NUMBER_OF_IO_THREADS. If the latter is defined it will take
+        // preference otherwise the old one will be picked is any. When NUMBER_OF_IO_THREADS will be removed the only one
+        // parameter to look at will be ASYNC_CONN_NUMBER_OF_IO_THREADS
+        Optional<Integer> numberOfThreads;
+        try {
+            numberOfThreads = elasticsearchClientSettings.getInteger(DatastoreElasticsearchClientSettingsKey.ASYNC_CONN_NUMBER_OF_IO_THREADS);
+        } catch (NoSuchElementException e) {
+            numberOfThreads = Optional.of(elasticsearchClientSettings.getInt(DatastoreElasticsearchClientSettingsKey.NUMBER_OF_IO_THREADS, 0));
+        }
+        getAsyncConnConfiguration().setNumberOfIOThreads(numberOfThreads);
+        getAsyncConnConfiguration().setMaxTotal(elasticsearchClientSettings.getInteger(DatastoreElasticsearchClientSettingsKey.ASYNC_CONN_MAX_TOTAL_CONN));
+        getAsyncConnConfiguration().setDefaultMaxPerRoute(elasticsearchClientSettings.getInteger(DatastoreElasticsearchClientSettingsKey.ASYNC_CONN_DEFAULT_MAX_CONN_PER_ROUTE));
         setPoolSize(elasticsearchClientSettings.getInt(DatastoreElasticsearchClientSettingsKey.POOL_SIZE));
     }
 
