@@ -13,8 +13,11 @@
 package org.eclipse.kapua.service.datastore.internal;
 
 import java.util.Map;
+import java.util.Optional;
 
+import org.eclipse.kapua.commons.cache.ExpiryPolicy;
 import org.eclipse.kapua.commons.cache.LocalCache;
+import org.eclipse.kapua.service.datastore.internal.mediator.MessageStoreConfiguration;
 import org.eclipse.kapua.service.datastore.internal.mediator.Metric;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettingsKey;
@@ -32,6 +35,7 @@ public class DatastoreCacheManager {
     private final LocalCache<String, Boolean> channelsCache;
     private final LocalCache<String, Boolean> metricsCache;
     private final LocalCache<String, Boolean> clientsCache;
+    private final LocalCache<String, MessageStoreConfiguration> storeConfigurationCache;
 
     @Inject
     public DatastoreCacheManager(DatastoreSettings datastoreSettings) {
@@ -42,6 +46,13 @@ public class DatastoreCacheManager {
         metricsCache = new LocalCache<>(datastoreSettings.getMetricsCacheConfig(), false);
 
         schemaCache = new LocalCache<>(sizeMaxMetadata, null);
+
+        final Optional<Integer> configurationSizeMax = datastoreSettings.getInteger(DatastoreSettingsKey.CONFIG_CACHE_CONFIGURATION_LOCAL_SIZE_MAXIMUM);
+        final Optional<Integer> configurationExpireAfter = datastoreSettings.getInteger(DatastoreSettingsKey.CONFIG_CACHE_CONFIGURATION_LOCAL_EXPIRE_AFTER);
+        storeConfigurationCache = new LocalCache<>(
+                configurationSizeMax.filter(val -> val > 0).orElse(1000),
+                configurationExpireAfter.filter(val -> val >0).orElse(60),
+                ExpiryPolicy.MODIFIED, null);
     }
 
     /**
@@ -82,5 +93,15 @@ public class DatastoreCacheManager {
      */
     public LocalCache<String, Map<String, Metric>> getMetadataCache() {
         return schemaCache;
+    }
+
+    /**
+     * Get the message store configurations cache
+     *
+     * @return
+     * @since 1.6.16
+     */
+   public LocalCache<String, MessageStoreConfiguration> getStoreConfigurationCache() {
+        return storeConfigurationCache;
     }
 }

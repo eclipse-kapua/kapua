@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.configuration;
 
+import java.io.Reader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
@@ -37,8 +38,8 @@ public class ResourceBasedServiceConfigurationMetadataProvider implements Servic
             return Optional.empty();
         }
 
-        try {
-            return Optional.ofNullable(xmlUtil.unmarshal(ResourceUtils.openAsReader(url, StandardCharsets.UTF_8), KapuaTmetadata.class))
+        try (Reader reader = ResourceUtils.openAsReader(url, StandardCharsets.UTF_8)) {
+            return Optional.ofNullable(xmlUtil.unmarshal(reader, KapuaTmetadata.class))
                     .filter(v -> v.getOCD() != null && !v.getOCD().isEmpty());
         } catch (Exception e) {
             throw new RuntimeException(e);

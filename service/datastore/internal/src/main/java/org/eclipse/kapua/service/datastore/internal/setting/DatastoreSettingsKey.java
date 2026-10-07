@@ -109,7 +109,15 @@ public enum DatastoreSettingsKey implements SettingKey {
     /**
      * Elasticsearch limit+offset maximum value
      */
-    MAX_RESULT_WINDOW_VALUE("datastore.max_result_window");
+    MAX_RESULT_WINDOW_VALUE("datastore.max_result_window"),
+    /**
+     * Datastore service configurations local cache max size
+     */
+    CONFIG_CACHE_CONFIGURATION_LOCAL_SIZE_MAXIMUM("datastore.cache.configuration.local.size.maximum"),
+    /**
+     * Datastore service configurations local cache expiration time
+     */
+    CONFIG_CACHE_CONFIGURATION_LOCAL_EXPIRE_AFTER("datastore.cache.configuration.local.expire.after");
 
     private String key;
 

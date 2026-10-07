@@ -122,9 +122,30 @@ public enum DatastoreElasticsearchClientSettingsKey implements SettingKey {
     /**
      * Elastichsearch client number of IO threads. Leave &lt;=0 to use the default
      *
+     * @deprecated The parameter will be replaced by @ASYNCLIENT_NUMBER_OF_IO_THREADS
+     * with identical meaning.
      * @since 2.1.0
      */
+    @Deprecated
     NUMBER_OF_IO_THREADS("datastore.elasticsearch.numberOfIOThreads"),
+    /**
+     * Elastichsearch client number of IO threads. Leave &lt;=0 to use the default
+     *
+     * @since 2.1.0
+     */
+    ASYNC_CONN_NUMBER_OF_IO_THREADS("datastore.elasticsearch.asyncconn.numberOfIOThreads"),
+    /**
+     * Elastichsearch client number of IO threads. Leave &lt;=0 to use the default
+     *
+     * @since 2.1.0
+     */
+    ASYNC_CONN_MAX_TOTAL_CONN("datastore.elasticsearch.asyncconn.maxTotal"),
+    /**
+     * Elastichsearch client number of IO threads. Leave &lt;=0 to use the default
+     *
+     * @since 2.1.0
+     */
+    ASYNC_CONN_DEFAULT_MAX_CONN_PER_ROUTE("datastore.elasticsearch.asyncconn.defaultMaxPerRoute"),
     /**
      * Elastichsearch client request connection timeout in milliseconds. Leave &lt;0 to use the default
      *

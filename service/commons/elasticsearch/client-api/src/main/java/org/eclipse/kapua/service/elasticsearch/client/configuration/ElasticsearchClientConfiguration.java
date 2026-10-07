@@ -30,12 +30,12 @@ public class ElasticsearchClientConfiguration {
     private List<ElasticsearchNode> nodes;
     private String username;
     private String password;
-    private Optional<Integer> numberOfIOThreads;
     private int poolSize;
 
     private ElasticsearchClientReconnectConfiguration reconnectConfiguration;
     private ElasticsearchClientRequestConfiguration requestConfiguration;
     private ElasticsearchClientSslConfiguration sslConfiguration;
+    private ElasticsearchClientAsyncConnConfiguration asyncConnConfiguration;
 
     /**
      * Gets the module name which is managing the {@link ElasticsearchClientWrapper} instance.
@@ -259,13 +259,23 @@ public class ElasticsearchClientConfiguration {
         return this;
     }
 
+    /**
+     * @deprecated Replaced by corresponding method in {@link ElasticsearchClientAsyncConnConfiguration}
+     * @return
+     */
+    @Deprecated
     public Optional<Integer> getNumberOfIOThreads() {
-        return this.numberOfIOThreads;
+        return this.getAsyncConnConfiguration().getNumberOfIOThreads();
     }
 
+    /**
+     * @deprecated Replaced by corresponding method in {@link ElasticsearchClientAsyncConnConfiguration}
+     * @param numberOfIOThreads
+     * @return
+     */
+    @Deprecated
     public ElasticsearchClientConfiguration setNumberOfIOThreads(Integer numberOfIOThreads) {
-        this.numberOfIOThreads = Optional.ofNullable(numberOfIOThreads)
-                .filter(i -> i > 0);
+        this.getAsyncConnConfiguration().setNumberOfIOThreads(Optional.of(numberOfIOThreads));
         return this;
     }
 
@@ -289,6 +299,33 @@ public class ElasticsearchClientConfiguration {
      */
     public ElasticsearchClientConfiguration setPoolSize(int poolSize) {
         this.poolSize = poolSize;
+        return this;
+    }
+
+    /**
+     * Gets the {@link ElasticsearchClientAsyncConnConfiguration}
+     *
+     * @return The {@link ElasticsearchClientAsyncConnConfiguration}
+     * @since 1.6.016
+     */
+    public ElasticsearchClientAsyncConnConfiguration getAsyncConnConfiguration() {
+        if (asyncConnConfiguration == null) {
+            asyncConnConfiguration = new ElasticsearchClientAsyncConnConfiguration();
+        }
+
+        return asyncConnConfiguration;
+    }
+
+    /**
+     * Sets the {@link ElasticsearchClientAsyncConnConfiguration}
+     *
+     * @param asyncConnConfiguration
+     *         The {@link ElasticsearchClientAsyncConnConfiguration}
+     * @return This {@link ElasticsearchClientAsyncConnConfiguration} to chain method invocation.
+     * @since 1.6.16
+     */
+    public ElasticsearchClientConfiguration setAsyncConnConfiguration(ElasticsearchClientAsyncConnConfiguration asyncConnConfiguration) {
+        this.asyncConnConfiguration = asyncConnConfiguration;
         return this;
     }
 }
