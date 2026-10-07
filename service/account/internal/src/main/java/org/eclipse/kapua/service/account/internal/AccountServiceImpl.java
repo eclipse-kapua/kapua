@@ -14,6 +14,8 @@
 package org.eclipse.kapua.service.account.internal;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -49,6 +51,7 @@ import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.account.AccountUpdateRequest;
 import org.eclipse.kapua.service.account.CurrentAccountUpdateRequest;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
+import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 import org.eclipse.kapua.storage.TxContext;
 import org.eclipse.kapua.storage.TxManager;
@@ -371,16 +374,34 @@ public class AccountServiceImpl
         ArgumentValidator.notNull(scopeId, KapuaEntityAttributes.SCOPE_ID);
 
         return txManager.execute(tx -> {
-            // Check Access
             Account account = accountRepository.find(tx, KapuaId.ANY, scopeId)
                     // Make sure account exists
                     .orElseThrow(() -> new KapuaEntityNotFoundException(Account.TYPE, scopeId));
 
-            // Check access
-            checkAccountPermission(account.getScopeId(), account.getId(), Actions.read, true);
+            AccountListResult childAccounts = accountRepository.findChildAccountsRecursive(tx, account.getParentAccountPath());
+            Permission forwardablePermissionOnAccount = accountPermission(account.getScopeId(), account.getId(), Actions.read, true); //If I have this permission on the requested scope, I can read all the children accounts, no need to check each one of them
+            if (authorizationService.isPermitted(forwardablePermissionOnAccount)) {
+                return childAccounts;
+            }
 
-            // Do find
-            return accountRepository.findChildAccountsRecursive(tx, account.getParentAccountPath());
+            //filter out accounts the user doesn't have access to
+            //NOTE: in practice, permissions are granted as forwardable=false (this account only) or forwardable=true (all descendants, handled above);
+            //per-child scoping exists in the model but isn't exposed by the console, so it's effectively unused. Next logic is here to handle that case, and it is left here for completeness and future-proofing.
+            AccountListResult readableChildAccounts = new AccountListResultImpl();
+            Map<KapuaId, Boolean> permittedByScope = new HashMap<>(); //using the map to cache permission info for sibling accounts / accounts in the same scope
+            for (Account child : childAccounts.getItems()) {
+                Permission permission = accountPermission(child.getScopeId(), child.getId(), Actions.read, false);
+                Boolean permitted = permittedByScope.get(permission.getTargetScopeId());
+                if (permitted == null) {
+                    permitted = authorizationService.isPermitted(permission);
+                    permittedByScope.put(permission.getTargetScopeId(), permitted);
+                }
+                if (permitted) {
+                    readableChildAccounts.addItem(child);
+                }
+            }
+
+            return readableChildAccounts;
         });
     }
 
@@ -429,12 +450,20 @@ public class AccountServiceImpl
      *         The {@link KapuaId} of the {@link Account} to look for
      */
     private void checkAccountPermission(KapuaId scopeId, KapuaId accountId, Actions action, boolean forwardable) throws KapuaException {
-        if (KapuaSecurityUtils.getSession().getScopeId().equals(accountId)) {
-            // I'm looking for myself, so let's check if I have the correct permission
-            authorizationService.checkPermission(permissionFactory.newPermission(Domains.ACCOUNT, action, accountId, null, forwardable));
-        } else {
-            // I'm looking for another account, so I need to check the permission on the account scope
-            authorizationService.checkPermission(permissionFactory.newPermission(Domains.ACCOUNT, action, scopeId, null, forwardable));
-        }
+        authorizationService.checkPermission(accountPermission(scopeId, accountId, action, forwardable));
+    }
+
+    /**
+     * Builds the {@link Permission} required to access the {@link Account}: if the current session is looking for its own {@link Account}
+     * the {@link Permission} is on the {@link Account} itself, otherwise on the scope that contains the {@link Account}.
+     *
+     * @param scopeId
+     *         The {@link Account#getScopeId()} of the {@link Account} to look for
+     * @param accountId
+     *         The {@link KapuaId} of the {@link Account} to look for
+     */
+    private Permission accountPermission(KapuaId scopeId, KapuaId accountId, Actions action, boolean forwardable) {
+        KapuaId targetScopeId = KapuaSecurityUtils.getSession().getScopeId().equals(accountId) ? accountId : scopeId;
+        return permissionFactory.newPermission(Domains.ACCOUNT, action, targetScopeId, null, forwardable);
     }
 }

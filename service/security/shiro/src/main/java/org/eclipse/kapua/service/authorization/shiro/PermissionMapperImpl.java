@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2017, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -89,6 +89,7 @@ public class PermissionMapperImpl implements PermissionMapper {
             result = prime * result + (domain == null ? 0 : domain.hashCode());
             result = prime * result + (targetScopeId == null ? 0 : targetScopeId.hashCode());
             result = prime * result + (groupId == null ? 0 : groupId.hashCode());
+            result = prime * result + Boolean.hashCode(forwardable);
             return result;
         }
 
@@ -105,6 +106,9 @@ public class PermissionMapperImpl implements PermissionMapper {
             }
             KapuaPermission other = (KapuaPermission) obj;
             if (action != other.action) {
+                return false;
+            }
+            if (forwardable != other.forwardable) {
                 return false;
             }
             if (domain == null) {
@@ -174,13 +178,33 @@ public class PermissionMapperImpl implements PermissionMapper {
 
             boolean implies = super.implies(shiroPermission);
 
-            // If it fails try forward permission if this Permission is forwardable
-            if (!implies && targetPermission.getTargetScopeId() != null && this.getForwardable()) {
-                implies = forwardPermission(shiroPermission);
-            }
+            //shiro does not consider forwardable permissions
+            implies = applyForwardableRules(implies, shiroPermission);
 
             // Return result
             return implies;
+        }
+
+        /**
+         * Shiro does not consider the forwardable flag of the {@link org.eclipse.kapua.service.authorization.permission.Permission} when checking {@link Permission#implies(Permission)}.<br>
+         * So we check them there
+         * @since 2.0.0
+         */
+        private boolean applyForwardableRules(boolean currentImplies, Permission shiroPermission) {
+            org.eclipse.kapua.service.authorization.permission.Permission targetPermission = (org.eclipse.kapua.service.authorization.permission.Permission) shiroPermission;
+
+            if (currentImplies) { //shiro thinks this permission implies the target permission, but we still need to consider forwardable...
+                if (this.getTargetScopeId() != null && //if the target scope id is null, it means that the permission is for all scopes, so no need to check forwardable
+                        targetPermission.getForwardable()) {
+                    return this.forwardable;
+                }
+            } else { //shiro thinks this permission doesn't imply the target permission, but maybe forwardable flag is set, and we can forward this permission to the target scope id
+                if (targetPermission.getTargetScopeId() != null &&
+                        this.getForwardable()) {
+                    return forwardPermission(shiroPermission);
+                }
+            }
+            return currentImplies;
         }
 
         /**

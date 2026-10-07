@@ -518,6 +518,11 @@ public class UserServiceSteps extends TestBase {
         createPermissions(permissionList, (ComparableUser) stepData.get(LAST_USER), (Account) stepData.get(LAST_ACCOUNT));
     }
 
+    @Given("Add permissions with null target scope to the last created user")
+    public void givenPermissionsWithNullTargetScope(List<CucPermission> permissionList) throws Exception {
+        createPermissions(permissionList, (ComparableUser) stepData.get(LAST_USER), (Account) stepData.get(LAST_ACCOUNT), true);
+    }
+
     @Given("Full permissions")
     public void givenFullPermissions() throws Exception {
         createPermissions(null, (ComparableUser) stepData.get(LAST_USER), (Account) stepData.get(LAST_ACCOUNT));
@@ -978,6 +983,20 @@ public class UserServiceSteps extends TestBase {
      * @throws Exception
      */
     private void createPermissions(List<CucPermission> permissionList, ComparableUser user, Account account) throws Exception {
+        createPermissions(permissionList, user, account, false);
+    }
+
+    /**
+     * Creates permissions for user with specified account. Permissions are created in priveledged mode.
+     *
+     * @param permissionList  list of permissions for user
+     * @param user            user for whom permissions are set
+     * @param account         account in which user is defined
+     * @param nullTargetScope if true, permissions target scope id is set to null (a.k.a. all scopes),
+     *                        otherwise if targetScopeId is not set user scope that is specifed as account
+     * @throws Exception
+     */
+    private void createPermissions(List<CucPermission> permissionList, ComparableUser user, Account account, boolean nullTargetScope) throws Exception {
         KapuaSecurityUtils.doPrivileged(() -> {
             primeException();
             try {
@@ -985,7 +1004,7 @@ public class UserServiceSteps extends TestBase {
 
                 // If AccessInfo does not exist, create a new one.
                 if (accessInfo == null) {
-                    accessInfoService.create(accessInfoCreatorCreator(permissionList, user, account));
+                    accessInfoService.create(accessInfoCreatorCreator(permissionList, user, account, nullTargetScope));
                 }
                 // If Access info exists, add to the existing one.
                 else {
@@ -997,7 +1016,9 @@ public class UserServiceSteps extends TestBase {
                             permissionFactory.newPermission(
                                 cucPermission.getDomain(),
                                 cucPermission.getAction(),
-                                MoreObjects.firstNonNull(cucPermission.getTargetScopeId(), account.getId())
+                                targetScopeIdOf(cucPermission, account, nullTargetScope),
+                                null,
+                                cucPermission.getForwardable()
                             )
                         );
 
@@ -1013,15 +1034,28 @@ public class UserServiceSteps extends TestBase {
     }
 
     /**
+     * Resolves the target scope id of the given permission.
+     *
+     * @param cucPermission   the permission
+     * @param account         the account of the user, used when the permission targetScopeId is not set
+     * @param nullTargetScope if true, returns null (a.k.a. all scopes)
+     * @return the target scope id of the permission
+     */
+    private KapuaId targetScopeIdOf(CucPermission cucPermission, Account account, boolean nullTargetScope) {
+        return nullTargetScope ? null : MoreObjects.firstNonNull(cucPermission.getTargetScopeId(), account.getId());
+    }
+
+    /**
      * Create accessInfoCreator instance with data about user permissions.
      * If target scope is not defined in permission list use account scope.
      *
      * @param permissionList list of all permissions
      * @param user           user for which permissions are set
      * @param account        that user belongs to
+     * @param nullTargetScope if true, permissions target scope id is set to null (a.k.a. all scopes)
      * @return AccessInfoCreator instance for creating user permissions
      */
-    private AccessInfoCreator accessInfoCreatorCreator(List<CucPermission> permissionList, ComparableUser user, Account account) throws KapuaException {
+    private AccessInfoCreator accessInfoCreatorCreator(List<CucPermission> permissionList, ComparableUser user, Account account, boolean nullTargetScope) throws KapuaException {
         Set<Permission> permissions = new HashSet<>();
         if (permissionList != null) {
             for (CucPermission cucPermission : permissionList) {
@@ -1031,7 +1065,9 @@ public class UserServiceSteps extends TestBase {
                     permissionFactory.newPermission(
                         cucPermission.getDomain(),
                         cucPermission.getAction(),
-                        MoreObjects.firstNonNull(cucPermission.getTargetScopeId(), account.getId())
+                        targetScopeIdOf(cucPermission, account, nullTargetScope),
+                        null,
+                        cucPermission.getForwardable()
                 );
                 permissions.add(permission);
 

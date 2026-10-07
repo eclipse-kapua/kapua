@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2021, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2021, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -168,7 +168,7 @@ public class RolePermissionImplTest {
     public void hashCodeNullRoleIdTest() {
         rolePermissionImpl1.setPermission(permission1);
 
-        Assert.assertEquals("Expected and actual values should be the same.", 28630112, rolePermissionImpl1.hashCode());
+        Assert.assertEquals("Expected and actual values should be the same.", 887542989, rolePermissionImpl1.hashCode());
     }
 
     @Test
@@ -176,7 +176,7 @@ public class RolePermissionImplTest {
         rolePermissionImpl1.setRoleId(KapuaId.ONE);
         rolePermissionImpl1.setPermission(Mockito.mock(Permission.class));
 
-        Assert.assertEquals("Expected and actual values should be the same.", 28630144, rolePermissionImpl1.hashCode());
+        Assert.assertEquals("Expected and actual values should be the same.", 887543021, rolePermissionImpl1.hashCode());
     }
 
     @Test

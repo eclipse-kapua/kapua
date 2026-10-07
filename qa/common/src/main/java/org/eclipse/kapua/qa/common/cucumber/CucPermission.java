@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2017, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -30,11 +30,18 @@ public class CucPermission {
     private Integer targetScope;
     private KapuaId targetScopeId;
 
+    private boolean forwardable;
+
     public CucPermission(String domain, Actions action, Integer targetScope, KapuaId targetScopeId) {
+        this(domain, action, targetScope, targetScopeId, false);
+    }
+
+    public CucPermission(String domain, Actions action, Integer targetScope, KapuaId targetScopeId, boolean forwardable) {
         this.domain = domain;
         this.action = action;
         this.targetScope = targetScope;
         this.targetScopeId = targetScopeId;
+        this.forwardable = forwardable;
     }
 
     public String getDomain() {
@@ -66,5 +73,13 @@ public class CucPermission {
 
     public void setTargetScopeId(BigInteger targetScopeId) {
         this.targetScopeId = new KapuaEid(targetScopeId);
+    }
+
+    public boolean getForwardable() {
+        return forwardable;
+    }
+
+    public void setForwardable(boolean forwardable) {
+        this.forwardable = forwardable;
     }
 }

@@ -1465,6 +1465,423 @@ Feature: User Permission tests
     And An exception was thrown
     And I logout
 
+  Scenario: Querying all the accounts of the platform with not forwardable Account:Read permission
+  Login as kapua-sys user and add a new user0 user with the Account:Read permission, not forwardable, to the kapua-sys account.
+  Create a child account subAccount0 and a grandchild account subSubAccount0.
+  Login as user0 and query for all the accounts of the platform (query without scopeId).
+  Since the permission is not forwardable, the accounts must not be returned and the exception must be thrown.
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I select account "kapua-sys"
+    And A generic user
+      | name  | displayName  | email           | phoneNumber     | status  | userType |
+      | user0 | Kapua User 0 | user0@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password          | enabled |
+      | user0 | ToManySecrets123# | true    |
+    And Add permissions to the last created user
+      | domain  | action | forwardable |
+      | account | read   | false       |
+    And Account
+      | name        | scopeId |
+      | subAccount0 | 1       |
+    And I configure account service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And Account
+      | name           |
+      | subSubAccount0 |
+    Then I logout
+    When I login as user with name "user0" and password "ToManySecrets123#"
+    Given I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    When I query for all the accounts of the platform
+    Then An exception was thrown
+    And I logout
+
+  Scenario: Querying all the accounts of the platform with forwardable Account:Read permission
+  Login as kapua-sys user and add a new user0 user with the Account:Read permission, forwardable, to the kapua-sys account.
+  Create a child account subAccount0 and a grandchild account subSubAccount0.
+  Login as user0 and query for all the accounts of the platform (query without scopeId).
+  Since the permission is forwardable, kapua-sys and all its direct and indirect child accounts must be returned.
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I select account "kapua-sys"
+    And A generic user
+      | name  | displayName  | email           | phoneNumber     | status  | userType |
+      | user0 | Kapua User 0 | user0@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password          | enabled |
+      | user0 | ToManySecrets123# | true    |
+    And Add permissions to the last created user
+      | domain  | action | forwardable |
+      | account | read   | true        |
+    And Account
+      | name        | scopeId |
+      | subAccount0 | 1       |
+    And I configure account service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And Account
+      | name           |
+      | subSubAccount0 |
+    Then I logout
+    When I login as user with name "user0" and password "ToManySecrets123#"
+    And I query for all the accounts of the platform
+    Then No exception was thrown
+    And I find 3 accounts
+    And I logout
+
+  Scenario: Querying all the accounts of the platform with forwardable Account:Read permission on a sub-account
+  Login as kapua-sys user and create a child account subAccount0.
+  Add a new user1 user in subAccount0 with the Account:Read permission, forwardable, to the subAccount0 account.
+  Login as user1 and query for all the accounts of the platform (query without scopeId).
+  Even if the permission is forwardable, it is given on subAccount0 and not on kapua-sys, so the exception must be thrown.
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And Account
+      | name        | scopeId |
+      | subAccount0 | 1       |
+    And I configure user service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And A generic user
+      | name  | displayName  | email           | phoneNumber     | status  | userType |
+      | user1 | Kapua User 1 | user1@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password          | enabled |
+      | user1 | ToManySecrets123# | true    |
+    And Add permissions to the last created user
+      | domain  | action | forwardable |
+      | account | read   | true        |
+    Then I logout
+    When I login as user with name "user1" and password "ToManySecrets123#"
+    Given I expect the exception "SubjectUnauthorizedException" with the text "User does not have permission"
+    When I query for all the accounts of the platform
+    Then An exception was thrown
+    And I logout
+
+  Scenario: Querying all the accounts of the platform with forwardable Account:Read permission on null target scope
+  Login as kapua-sys user and create a child account subAccount0.
+  Add a new user1 user in subAccount0 with the Account:Read permission, forwardable, with null target scope (a.k.a. all scopes).
+  Login as user1 and query for all the accounts of the platform (query without scopeId).
+  Since the permission is given on all scopes, all the accounts of the platform must be returned.
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And Account
+      | name        | scopeId |
+      | subAccount0 | 1       |
+    And I configure user service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And A generic user
+      | name  | displayName  | email           | phoneNumber     | status  | userType |
+      | user1 | Kapua User 1 | user1@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password          | enabled |
+      | user1 | ToManySecrets123# | true    |
+    And Add permissions with null target scope to the last created user
+      | domain  | action | forwardable |
+      | account | read   | true        |
+    Then I logout
+    When I login as user with name "user1" and password "ToManySecrets123#"
+    And I query for all the accounts of the platform
+    Then No exception was thrown
+    And I find 2 accounts
+    And I logout
+
+  Scenario: Querying all the accounts of the platform with not forwardable Account:Read permission on null target scope
+  Login as kapua-sys user and create a child account subAccount0.
+  Add a new user1 user in subAccount0 with the Account:Read permission, not forwardable, with null target scope (a.k.a. all scopes).
+  Login as user1 and query for all the accounts of the platform (query without scopeId).
+  Since the permission is given on all scopes, all the accounts of the platform must be returned.
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And Account
+      | name        | scopeId |
+      | subAccount0 | 1       |
+    And I configure user service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And A generic user
+      | name  | displayName  | email           | phoneNumber     | status  | userType |
+      | user1 | Kapua User 1 | user1@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password          | enabled |
+      | user1 | ToManySecrets123# | true    |
+    And Add permissions with null target scope to the last created user
+      | domain  | action | forwardable |
+      | account | read   | false       |
+    Then I logout
+    When I login as user with name "user1" and password "ToManySecrets123#"
+    And I query for all the accounts of the platform
+    Then No exception was thrown
+    And I find 2 accounts
+    And I logout
+
+  Scenario: Finding child accounts recursively of the user account with forwardable Account:Read permission
+  Login as kapua-sys user and create the hierarchy kapua-sys -> subAccount0 -> subSubAccount0 -> subSubSubAccount0, plus a sibling account subAccount1.
+  Add a new user1 user in subAccount0 with the Account:Read permission, forwardable, to the subAccount0 account.
+  Login as user1 and find all the child accounts recursively of subAccount0 (the scope of the user, which is the most common usage).
+  Since the permission is forwardable, the whole hierarchy under subAccount0 must be returned: subSubAccount0 and subSubSubAccount0.
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And Account
+      | name        | scopeId |
+      | subAccount0 | 1       |
+    And I configure account service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And Account
+      | name           |
+      | subSubAccount0 |
+    And I configure account service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And Account
+      | name              |
+      | subSubSubAccount0 |
+    And Account
+      | name        | scopeId |
+      | subAccount1 | 1       |
+    And I select account "subAccount0"
+    And I configure user service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And A generic user
+      | name  | displayName  | email           | phoneNumber     | status  | userType |
+      | user1 | Kapua User 1 | user1@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password          | enabled |
+      | user1 | ToManySecrets123# | true    |
+    And Add permissions to the last created user
+      | domain  | action | forwardable |
+      | account | read   | true        |
+    Then I logout
+    When I login as user with name "user1" and password "ToManySecrets123#"
+    And I find all child accounts recursively of account "subAccount0"
+    Then No exception was thrown
+    And I find 2 accounts
+    And I logout
+
+  Scenario: Finding child accounts recursively of the user account with not forwardable Account:Read permission
+  Login as kapua-sys user and create the hierarchy kapua-sys -> subAccount0 -> subSubAccount0 -> subSubSubAccount0, plus a sibling account subAccount1.
+  Add a new user1 user in subAccount0 with the Account:Read permission, not forwardable, to the subAccount0 account.
+  Login as user1 and find all the child accounts recursively of subAccount0 (the scope of the user, which is the most common usage).
+  Since the permission is not forwardable, only the direct child subSubAccount0 must be returned, subSubSubAccount0 must be filtered out.
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And Account
+      | name        | scopeId |
+      | subAccount0 | 1       |
+    And I configure account service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And Account
+      | name           |
+      | subSubAccount0 |
+    And I configure account service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And Account
+      | name              |
+      | subSubSubAccount0 |
+    And Account
+      | name        | scopeId |
+      | subAccount1 | 1       |
+    And I select account "subAccount0"
+    And I configure user service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And A generic user
+      | name  | displayName  | email           | phoneNumber     | status  | userType |
+      | user1 | Kapua User 1 | user1@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password          | enabled |
+      | user1 | ToManySecrets123# | true    |
+    And Add permissions to the last created user
+      | domain  | action | forwardable |
+      | account | read   | false       |
+    Then I logout
+    When I login as user with name "user1" and password "ToManySecrets123#"
+    And I find all child accounts recursively of account "subAccount0"
+    Then No exception was thrown
+    And I find 1 account
+    And I logout
+
+
+  Scenario: Finding child accounts recursively with not forwardable Account:Read permission
+  Login as kapua-sys user and add a new user0 user with the Account:Read permission, not forwardable, to the kapua-sys account.
+  Create a child account subAccount0 and a grandchild account subSubAccount0.
+  Login as user0 and find all the child accounts recursively of kapua-sys.
+  Since the permission is not forwardable, only the direct child subAccount0 must be returned.
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I select account "kapua-sys"
+    And A generic user
+      | name  | displayName  | email           | phoneNumber     | status  | userType |
+      | user0 | Kapua User 0 | user0@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password          | enabled |
+      | user0 | ToManySecrets123# | true    |
+    And Add permissions to the last created user
+      | domain  | action | forwardable |
+      | account | read   | false       |
+    And Account
+      | name        | scopeId |
+      | subAccount0 | 1       |
+    And I configure account service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And Account
+      | name           |
+      | subSubAccount0 |
+    Then I logout
+    When I login as user with name "user0" and password "ToManySecrets123#"
+    And I find all child accounts recursively of account "kapua-sys"
+    Then No exception was thrown
+    And I find 1 account
+    And I logout
+
+  Scenario: Finding child accounts recursively with forwardable Account:Read permission
+  Login as kapua-sys user and add a new user0 user with the Account:Read permission, forwardable, to the kapua-sys account.
+  Create a child account subAccount0 and a grandchild account subSubAccount0.
+  Login as user0 and find all the child accounts recursively of kapua-sys.
+  Since the permission is forwardable, both the direct child subAccount0 and the indirect child subSubAccount0 must be returned.
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I select account "kapua-sys"
+    And A generic user
+      | name  | displayName  | email           | phoneNumber     | status  | userType |
+      | user0 | Kapua User 0 | user0@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password          | enabled |
+      | user0 | ToManySecrets123# | true    |
+    And Add permissions to the last created user
+      | domain  | action | forwardable |
+      | account | read   | true        |
+    And Account
+      | name        | scopeId |
+      | subAccount0 | 1       |
+    And I configure account service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And Account
+      | name           |
+      | subSubAccount0 |
+    Then I logout
+    When I login as user with name "user0" and password "ToManySecrets123#"
+    And I find all child accounts recursively of account "kapua-sys"
+    Then No exception was thrown
+    And I find 2 accounts
+    And I logout
+
+  Scenario: Finding child accounts recursively with Account:Read permission on a sub-account
+  Login as kapua-sys user and create a child account subAccount0, with a child account subSubAccount0, and a sibling account subAccount1.
+  Add a new user1 user in subAccount0 with the Account:Read permission, not forwardable, to the subAccount0 account.
+  Login as user1 and find all the child accounts recursively of kapua-sys.
+  Only subAccount0 (the account of the user) and its child subSubAccount0 must be returned, the sibling subAccount1 must be filtered out.
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And Account
+      | name        | scopeId |
+      | subAccount0 | 1       |
+    And I configure account service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And Account
+      | name           |
+      | subSubAccount0 |
+    And Account
+      | name        | scopeId |
+      | subAccount1 | 1       |
+    And I select account "subAccount0"
+    And I configure user service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And A generic user
+      | name  | displayName  | email           | phoneNumber     | status  | userType |
+      | user1 | Kapua User 1 | user1@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password          | enabled |
+      | user1 | ToManySecrets123# | true    |
+    And Add permissions to the last created user
+      | domain  | action | forwardable |
+      | account | read   | false       |
+    Then I logout
+    When I login as user with name "user1" and password "ToManySecrets123#"
+    And I find all child accounts recursively of account "kapua-sys"
+    Then No exception was thrown
+    And I find 2 accounts
+    And I logout
+
+  Scenario: Finding child accounts recursively with Account:Read permission on the last account of a chain
+  Login as kapua-sys user and create a chain of accounts kapua-sys, subAccount0, subSubAccount0 and subSubSubAccount0.
+  Add a new user3 user in subSubSubAccount0 with the Account:Read permission, not forwardable, to the subSubSubAccount0 account.
+  Login as user3 and find all the child accounts recursively of kapua-sys.
+  Only subSubSubAccount0 (the account of the user) must be returned: kapua-sys is the account passed to the method,
+  while subAccount0 and subSubAccount0 are ancestors of the user account that the user cannot read.
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And Account
+      | name        | scopeId |
+      | subAccount0 | 1       |
+    And I configure account service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And I configure user service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And Account
+      | name           |
+      | subSubAccount0 |
+    And I configure account service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And I configure user service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And Account
+      | name              |
+      | subSubSubAccount0 |
+    And I configure user service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And A generic user
+      | name  | displayName  | email           | phoneNumber     | status  | userType |
+      | user3 | Kapua User 3 | user3@kapua.com | +386 31 321 123 | ENABLED | INTERNAL |
+    And I add credentials
+      | name  | password          | enabled |
+      | user3 | ToManySecrets123# | true    |
+    And Add permissions to the last created user
+      | domain  | action | forwardable |
+      | account | read   | false       |
+    Then I logout
+    When I login as user with name "user3" and password "ToManySecrets123#"
+    And I find all child accounts recursively of account "kapua-sys"
+    Then No exception was thrown
+    And I find 1 account
+    And I logout
+
   @teardown
   Scenario: Stop full docker environment
     Given Stop full docker environment

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2021, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2021, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -170,7 +170,7 @@ public class AccessPermissionImplTest {
         Mockito.when(permission.getGroupId()).thenReturn(null);
         PermissionImpl permissionImpl = new PermissionImpl(permission);
         accessPermissionImpl1.setPermission(permissionImpl);
-        Assert.assertEquals("Expected and actual values should be the same.", 924482, accessPermissionImpl1.hashCode());
+        Assert.assertEquals("Expected and actual values should be the same.", 28631349, accessPermissionImpl1.hashCode());
     }
 
     @Test
@@ -183,7 +183,7 @@ public class AccessPermissionImplTest {
         Mockito.when(permission.getGroupId()).thenReturn(null);
         PermissionImpl permissionImpl = new PermissionImpl(permission);
         accessPermissionImpl1.setPermission(permissionImpl);
-        Assert.assertEquals("Expected and actual values should be the same.", 925474, accessPermissionImpl1.hashCode());
+        Assert.assertEquals("Expected and actual values should be the same.", 28632341, accessPermissionImpl1.hashCode());
     }
 
     @Test
