@@ -43,6 +43,13 @@ import java.util.Date;
 })
 public interface ChannelInfo extends Storable {
 
+    String TYPE = "ChannelInfo";
+
+    @Override
+    default String getType() {
+        return TYPE;
+    }
+
     /**
      * Gets the {@link StorableId}
      *

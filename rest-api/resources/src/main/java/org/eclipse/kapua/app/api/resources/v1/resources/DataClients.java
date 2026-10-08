@@ -170,6 +170,6 @@ public class DataClients extends AbstractKapuaResource {
             throws KapuaException {
         ClientInfo clientInfo = clientInfoRegistryService.find(scopeId, clientInfoId);
 
-        return returnNotNullEntity(clientInfo);
+        return returnNotNullStorable(clientInfo, ClientInfo.TYPE, clientInfoId);
     }
 }
