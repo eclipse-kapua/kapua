@@ -72,15 +72,22 @@ public class DeviceConnectionServiceImpl extends KapuaConfigurableServiceBase im
      */
     @Inject
     public DeviceConnectionServiceImpl(
-            Map<Class<?>, ServiceConfigurationManager> serviceConfigurationManagersByServiceClass,
+            ServiceConfigurationManager serviceConfigurationManager,
             AuthorizationService authorizationService,
             PermissionFactory permissionFactory,
             DeviceConnectionFactory entityFactory,
             @Named("DeviceRegistryTransactionManager") TxManager txManager,
             DeviceConnectionRepository repository,
             Map<String, DeviceConnectionCredentialAdapter> availableDeviceConnectionAdapters,
-            EventStorer eventStorer) {
-        super(txManager, serviceConfigurationManagersByServiceClass.get(DeviceConnectionService.class), Domains.DEVICE_CONNECTION, authorizationService, permissionFactory);
+            EventStorer eventStorer
+    ) {
+        super(
+            txManager,
+            serviceConfigurationManager,
+            Domains.DEVICE_CONNECTION,
+            authorizationService,
+            permissionFactory
+        );
         this.entityFactory = entityFactory;
         this.repository = repository;
         this.availableDeviceConnectionAdapters = availableDeviceConnectionAdapters;
