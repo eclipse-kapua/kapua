@@ -40,7 +40,6 @@ import org.eclipse.kapua.client.security.context.SessionContext;
 import org.eclipse.kapua.client.security.context.Utils;
 import org.eclipse.kapua.commons.core.ServiceModuleBundle;
 import org.eclipse.kapua.commons.util.KapuaDateUtils;
-import org.eclipse.kapua.commons.util.xml.XmlUtil;
 import org.eclipse.kapua.event.ServiceEvent;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.id.KapuaId;
@@ -127,9 +126,6 @@ public class ServerPlugin implements ActiveMQServerPlugin {
             // Setup service events
             ServiceModuleBundle app = KapuaLocator.getInstance().getComponent(ServiceModuleBundle.class);
             app.startup();
-
-            // Setup JAXB Context
-            XmlUtil.setContextProvider(new BrokerJAXBContextProvider());
         } catch (Exception e) {
             logger.error("Error while initializing {} plugin: {}", this.getClass().getName(), e.getMessage(), e);
         }
