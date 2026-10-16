@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -97,7 +97,7 @@ public class MetricInfoRegistryServiceImpl extends AbstractKapuaService implemen
         datastorePredicateFactory = KapuaLocator.getInstance().getFactory(DatastorePredicateFactory.class);
 
         MessageStoreService messageStoreService = KapuaLocator.getInstance().getService(MessageStoreService.class);
-        ConfigurationProviderImpl configurationProvider = new ConfigurationProviderImpl(messageStoreService, accountService);
+        ConfigurationProviderImpl configurationProvider = new ConfigurationProviderImpl(messageStoreService, accountService, DatastoreCacheManager.getInstance().getConfigurationCache());
         metricInfoRegistryFacade = new MetricInfoRegistryFacade(configurationProvider, DatastoreMediator.getInstance());
         DatastoreMediator.getInstance().setMetricInfoStoreFacade(metricInfoRegistryFacade);
     }

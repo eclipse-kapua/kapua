@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -118,7 +118,16 @@ public enum DatastoreSettingsKey implements SettingKey {
     /**
      * Elasticsearch max number of indexed metrics for the message index
      */
-    CONFIG_MESSAGES_INDEX_MAX_INDEXED_METRICS("datastore.index.message.maxIndexedMetrics");
+    CONFIG_MESSAGES_INDEX_MAX_INDEXED_METRICS("datastore.index.message.maxIndexedMetrics"),
+    /**
+     * Datastore service configurations local cache max size
+     */
+    CONFIG_CACHE_CONFIGURATION_LOCAL_SIZE_MAXIMUM("datastore.cache.configuration.local.size.maximum"),
+    /**
+     * Datastore service configurations local cache expiration time
+     */
+    CONFIG_CACHE_CONFIGURATION_LOCAL_EXPIRE_AFTER("datastore.cache.configuration.local.expire.after");
+
 
     private String key;
 

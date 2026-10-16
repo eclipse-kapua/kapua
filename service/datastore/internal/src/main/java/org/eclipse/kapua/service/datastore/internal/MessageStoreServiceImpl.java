@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -93,7 +93,7 @@ public class MessageStoreServiceImpl extends AbstractKapuaConfigurableService im
      */
     public MessageStoreServiceImpl() {
         super(MessageStoreService.class.getName(), DatastoreDomains.DATASTORE_DOMAIN, DatastoreEntityManagerFactory.getInstance());
-        ConfigurationProviderImpl configurationProvider = new ConfigurationProviderImpl(this, accountService);
+        ConfigurationProviderImpl configurationProvider = new ConfigurationProviderImpl(this, accountService, DatastoreCacheManager.getInstance().getConfigurationCache());
         messageStoreFacade = new MessageStoreFacade(configurationProvider, DatastoreMediator.getInstance());
         DatastoreMediator.getInstance().setMessageStoreFacade(messageStoreFacade);
 

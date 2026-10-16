@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2020, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -30,6 +30,7 @@ public abstract class AbstractRegistryFacade {
 
     private final ConfigurationProvider configProvider;
 
+
     public AbstractRegistryFacade(ConfigurationProvider configProvider) {
         this.configProvider = configProvider;
     }
@@ -38,8 +39,12 @@ public abstract class AbstractRegistryFacade {
         return configProvider;
     }
 
+    protected MessageStoreConfiguration getConfigurationFromCache(KapuaId scopeId) throws ConfigurationException {
+        return configProvider.getConfigurationFromCache(scopeId);
+    }
+
     protected boolean isDatastoreServiceEnabled(KapuaId scopeId) throws ConfigurationException {
-        MessageStoreConfiguration messageStoreConfiguration = configProvider.getConfiguration(scopeId);
+        MessageStoreConfiguration messageStoreConfiguration = getConfigurationFromCache(scopeId);
         long ttl = messageStoreConfiguration.getDataTimeToLiveMilliseconds();
 
         return messageStoreConfiguration.getDataStorageEnabled() && ttl != MessageStoreConfiguration.DISABLED;

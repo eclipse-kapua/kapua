@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -33,6 +33,20 @@ public interface ConfigurationProvider {
      * @throws ConfigurationException
      */
     MessageStoreConfiguration getConfiguration(KapuaId scopeId) throws ConfigurationException;
+
+
+    /**
+     * Get the configuration for the given {@code scopeId}. If a cache is configured and an entry
+     * is found for the {@code scopeId}, the cached value is returned, otherwise the configuration
+     * is read and the value is cached and returned. If no cache is defined works same as
+     * {@link getConfiguration(KapuaId scopeId)}. Cache entries expire after a configured time to
+     * allow cached configurations to be refreshed.
+     *
+     * @param scopeId
+     * @return
+     * @throws ConfigurationException
+     */
+    MessageStoreConfiguration getConfigurationFromCache(KapuaId scopeId) throws ConfigurationException;
 
     /**
      * Get the message information for the given scope

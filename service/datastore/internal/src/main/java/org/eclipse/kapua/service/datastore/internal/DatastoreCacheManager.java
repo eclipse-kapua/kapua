@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -12,12 +12,15 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.internal;
 
+import java.util.Optional;
+
+import org.eclipse.kapua.commons.cache.ExpiryPolicy;
 import org.eclipse.kapua.commons.cache.LocalCache;
+import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.service.datastore.internal.mediator.MessageStoreConfiguration;
 import org.eclipse.kapua.service.datastore.internal.schema.Metadata;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettingsKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Datastore cache manager.<br> It keeps informations about channels, metrics and clients to speed up the store operation and avoid time consuming unnecessary operations.
@@ -26,13 +29,14 @@ import org.slf4j.LoggerFactory;
  */
 public class DatastoreCacheManager {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private static final DatastoreCacheManager INSTANCE = new DatastoreCacheManager();
 
     private final LocalCache<String, Metadata> schemaCache;
     private final LocalCache<String, Boolean> channelsCache;
     private final LocalCache<String, Boolean> metricsCache;
     private final LocalCache<String, Boolean> clientsCache;
+    private final LocalCache<KapuaId, MessageStoreConfiguration> configurationCache;
+
 
     private DatastoreCacheManager() {
         final DatastoreSettings config = DatastoreSettings.getInstance();
@@ -43,6 +47,13 @@ public class DatastoreCacheManager {
         metricsCache = new LocalCache<>(config.getMetricsCacheConfig(), false);
 
         schemaCache = new LocalCache<>(sizeMaxMetadata, null);
+
+        final Optional<Integer> configurationSizeMax = config.getInteger(DatastoreSettingsKey.CONFIG_CACHE_CONFIGURATION_LOCAL_SIZE_MAXIMUM);
+        final Optional<Integer> configurationExpireAfter = config.getInteger(DatastoreSettingsKey.CONFIG_CACHE_CONFIGURATION_LOCAL_EXPIRE_AFTER);
+        configurationCache = new LocalCache<>(
+                configurationSizeMax.filter(val -> val > 0).orElse(0),
+                configurationExpireAfter.filter(val -> val > 0).orElse(0),
+                ExpiryPolicy.MODIFIED, null);
     }
 
     /**
@@ -93,5 +104,14 @@ public class DatastoreCacheManager {
      */
     public LocalCache<String, Metadata> getMetadataCache() {
         return schemaCache;
+    }
+
+    /**
+     * Get the message store configurations cache
+     *
+     * @return
+     */
+    public LocalCache<KapuaId, MessageStoreConfiguration> getConfigurationCache() {
+        return configurationCache;
     }
 }

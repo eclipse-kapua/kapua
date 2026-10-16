@@ -54,6 +54,7 @@ import javax.validation.constraints.NotNull;
 import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
 import java.io.IOException;
+import java.io.Reader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -144,7 +145,9 @@ public abstract class AbstractKapuaConfigurableService extends AbstractKapuaServ
             return null;
         }
 
-        return XmlUtil.unmarshal(ResourceUtils.openAsReader(url, StandardCharsets.UTF_8), KapuaTmetadata.class);
+        try (Reader reader = ResourceUtils.openAsReader(url, StandardCharsets.UTF_8)) {
+            return XmlUtil.unmarshal(reader, KapuaTmetadata.class);
+        }
     }
 
     /**

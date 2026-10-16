@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -12,7 +12,10 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.datastore.internal;
 
-import com.codahale.metrics.Counter;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.commons.cache.LocalCache;
@@ -30,7 +33,6 @@ import org.eclipse.kapua.service.datastore.internal.mediator.ConfigurationExcept
 import org.eclipse.kapua.service.datastore.internal.mediator.DatastoreChannel;
 import org.eclipse.kapua.service.datastore.internal.mediator.DatastoreUtils;
 import org.eclipse.kapua.service.datastore.internal.mediator.MessageField;
-import org.eclipse.kapua.service.datastore.internal.mediator.MessageInfo;
 import org.eclipse.kapua.service.datastore.internal.mediator.MessageStoreConfiguration;
 import org.eclipse.kapua.service.datastore.internal.mediator.MessageStoreMediator;
 import org.eclipse.kapua.service.datastore.internal.mediator.Metric;
@@ -70,9 +72,7 @@ import org.eclipse.kapua.service.storable.model.query.predicate.StorablePredicat
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import com.codahale.metrics.Counter;
 
 /**
  * Message store facade
@@ -139,7 +139,7 @@ public final class MessageStoreFacade extends AbstractRegistryFacade {
         // Overwrite timestamp if necessary
         // Use the account service plan to determine whether we will give
         // precede to the device time
-        MessageStoreConfiguration accountServicePlan = getConfigProvider().getConfiguration(message.getScopeId());
+        MessageStoreConfiguration accountServicePlan = getConfigurationFromCache(message.getScopeId());
         long indexedOn = KapuaDateUtils.getKapuaSysDate().toEpochMilli();
         if (DataIndexBy.DEVICE_TIMESTAMP.equals(accountServicePlan.getDataIndexBy())) {
             if (capturedOn != null) {
@@ -194,8 +194,8 @@ public final class MessageStoreFacade extends AbstractRegistryFacade {
         InsertResponse insertResponse = getElasticsearchClient().insert(insertRequest);
         messageToStore.setDatastoreId(STORABLE_ID_FACTORY.newStorableId(insertResponse.getId()));
 
-        MessageInfo messageInfo = getConfigProvider().getInfo(message.getScopeId());
-        mediator.onAfterMessageStore(messageInfo, messageToStore);
+        //MessageInfo messageInfo = getConfigProvider().getInfo(message.getScopeId());
+        mediator.onAfterMessageStore(null, messageToStore);
 
         return STORABLE_ID_FACTORY.newStorableId(insertResponse.getId());
     }
