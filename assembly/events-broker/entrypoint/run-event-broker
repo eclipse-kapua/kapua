@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ################################################################################
-#    Copyright (c) 2017, 2022 Eurotech
+#    Copyright (c) 2017, 2026 Eurotech
 #
 #    All rights reserved. This program and the accompanying materials
 #    are made available under the terms of the Eclipse Public License v1.0
@@ -10,13 +10,10 @@
 #
 ################################################################################
 
-# Configure credentials
+cd /opt/artemis/ || echo "Cannot cd to /opt/artemis/"
 
-sh
 #
-# Continue with startup
-cd /opt/artemis/
-
+# Create instance
 /opt/artemis/bin/artemis create \
     --allow-anonymous \
     --aio \
@@ -26,21 +23,22 @@ cd /opt/artemis/
     --data ./data/kapua \
     --default-port 1883 \
     --home /opt/artemis \
-    --host ${BINDING_IP:-0.0.0.0} \
+    --host "${BINDING_IP:-0.0.0.0}" \
     --name kapua \
     --password password \
     --user user \
     --verbose kapua
 
-echo 'copying configuration...'
+echo 'Copying configuration...'
 cp /opt/artemis/base-configuration/* /opt/artemis/kapua/etc
-echo 'copying configuration... DONE'
+echo 'Copying configuration... DONE'
 
-#for the values see
+# Configuring user and roles
+# For the values see
 # commons.eventbus.username=kapua-sys
 # commons.eventbus.password=kapua-password
-echo -e -n "\r\n${ARTEMIS_USER:-kapua-sys} = ENC("$(/opt/artemis/kapua/bin/artemis mask ${ARTEMIS_PASSWORD:-kapua-password} | grep "result" | cut -d" " -f2)")" >> /opt/artemis/kapua/etc/artemis-users.properties
-echo -e "\r\namq = ${ARTEMIS_USER:-kapua-sys}" >> /opt/artemis/kapua/etc/artemis-roles.properties
+printf "\n%s = ENC('%s')" "${ARTEMIS_USER:-kapua-sys}" "$(/opt/artemis/kapua/bin/artemis mask "${ARTEMIS_PASSWORD:-kapua-password}" | grep "result" | cut -d" " -f2)\")" >> /opt/artemis/kapua/etc/artemis-users.properties
+printf "\namq = %s" "${ARTEMIS_USER:-kapua-sys}" >> /opt/artemis/kapua/etc/artemis-roles.properties
 
-echo 'starting Artemis...'
+echo 'Starting Artemis...'
 exec /opt/artemis/kapua/bin/artemis run xml:/opt/artemis/kapua/etc/bootstrap.xml
