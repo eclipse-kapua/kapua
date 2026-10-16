@@ -17,6 +17,7 @@
     <packages>
         <package>org.eclipse.kapua.app.console</package>
         <package>org.eclipse.kapua.plugin.sso</package>
+        <package>org.eclipse.kapua.plugin.devicestorage</package>
         <package>org.eclipse.kapua.commons</package>
         <package>org.eclipse.kapua.model</package>
         <package>org.eclipse.kapua.job.engine.client</package>

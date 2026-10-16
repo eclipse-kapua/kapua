@@ -17,7 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.kapua.KapuaErrorCodes;
 import org.eclipse.kapua.commons.util.KapuaDateUtils;
 import org.eclipse.kapua.model.type.ByteArrayConverter;
-import org.eclipse.kapua.service.elasticsearch.client.AbstractStoreUtils;
+import org.eclipse.kapua.service.storeengine.client.AbstractStoreUtils;
 import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettingsKey;

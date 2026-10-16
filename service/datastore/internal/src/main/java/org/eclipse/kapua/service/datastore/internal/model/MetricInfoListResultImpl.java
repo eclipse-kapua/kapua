@@ -14,7 +14,7 @@ package org.eclipse.kapua.service.datastore.internal.model;
 
 import org.eclipse.kapua.service.datastore.model.MetricInfo;
 import org.eclipse.kapua.service.datastore.model.MetricInfoListResult;
-import org.eclipse.kapua.service.elasticsearch.client.model.ResultList;
+import org.eclipse.kapua.service.storeengine.client.model.ResultList;
 import org.eclipse.kapua.service.storable.model.AbstractStorableListResult;
 
 /**
