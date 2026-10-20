@@ -1,0 +1,21 @@
+name: 'Load Docker images'
+description: |
+  Loads the Docker images saved as a workflow artifact by the saveDockerImages action in a previous job of the same workflow run
+inputs:
+  artifact-name:
+    description: Name of the workflow artifact to download
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Download Docker images
+      uses: actions/download-artifact@v8
+      with:
+        name: ${{ inputs.artifact-name }}
+        path: ${{ runner.temp }}/docker-images
+
+    - name: Load Docker images
+      run: |
+        zstd -d -q -c "${RUNNER_TEMP}/docker-images/${{ inputs.artifact-name }}.tar.zst" | docker load
+        rm -f "${RUNNER_TEMP}/docker-images/${{ inputs.artifact-name }}.tar.zst"
+      shell: bash
