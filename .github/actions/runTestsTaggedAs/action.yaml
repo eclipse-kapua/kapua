@@ -42,9 +42,12 @@ runs:
         artifact-name: kapua-api-docker-image
         fallback-build-command: mvn clean install -Pdocker -pl :kapua-assembly-api
 
-    - name: Cucumber tests execution step
+    - name: Cucumber tests execution step # Runs only the modules with Cucumber runners, detected so that new test modules are never left out
       if: ${{ inputs.run-junit == 'false' }}
-      run: mvn -B -Dgroups='!org.eclipse.kapua.qa.markers.junit.JUnitTests' -Dcucumber.filter.tags="${{ inputs.tag }}" -pl ${TEST_PROJECTS} verify
+      run: |
+        TEST_PROJECTS=$(git grep -l '@CucumberOptions' -- '*/src/test/java/*.java' | sed 's|/src/test/java/.*||' | sort -u | paste -sd, -)
+        echo "Modules with Cucumber tests: ${TEST_PROJECTS}"
+        mvn -B -Dgroups='!org.eclipse.kapua.qa.markers.junit.JUnitTests' -Dcucumber.filter.tags="${{ inputs.tag }}" -pl "${TEST_PROJECTS}" verify
       shell: bash
 
     - name: Junit tests execution step
