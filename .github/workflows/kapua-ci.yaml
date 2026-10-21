@@ -1,8 +1,9 @@
 name: Kapua CI
 on: [ push, pull_request ] # Triggers the workflow on push or pull request events
 
-env: #this env variable defines the maven projects were cucumber tests resides.
+env: #these 2 env variables defines respectively the maven projects were cucumber tests resides and maven projects were consumers applications needed to build the docker images when they cannot be loaded from the workflow artifacts.
   TEST_PROJECTS: "org.eclipse.kapua:kapua-security-test,org.eclipse.kapua:kapua-qa-integration,org.eclipse.kapua:kapua-scheduler-test,org.eclipse.kapua:kapua-user-test,org.eclipse.kapua:kapua-system-test,org.eclipse.kapua:kapua-job-test,org.eclipse.kapua:kapua-device-registry-test,org.eclipse.kapua:kapua-account-test,org.eclipse.kapua:kapua-tag-test,org.eclipse.kapua:kapua-translator-test"
+  APP_PROJECTS: "org.eclipse.kapua:kapua-service-authentication-app,org.eclipse.kapua:kapua-consumer-lifecycle-app,org.eclipse.kapua:kapua-consumer-telemetry-app"
   # Secrets
   CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 

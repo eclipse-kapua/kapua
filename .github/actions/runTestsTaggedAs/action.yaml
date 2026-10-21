@@ -31,12 +31,16 @@ runs:
       uses: ./.github/actions/loadDockerImages
       with:
         artifact-name: kapua-docker-images
+        fallback-build-command: >-
+          mvn clean install -pl ${APP_PROJECTS} &&
+          mvn clean install -Pdocker -f assembly/pom.xml -pl '!:kapua-assembly-api'
 
     - name: Docker rest-api image loading
       if: ${{ inputs.needs-api-docker-image == 'true' }}
       uses: ./.github/actions/loadDockerImages
       with:
         artifact-name: kapua-api-docker-image
+        fallback-build-command: mvn clean install -Pdocker -pl :kapua-assembly-api
 
     - name: Cucumber tests execution step
       if: ${{ inputs.run-junit == 'false' }}

@@ -24,4 +24,5 @@ runs:
         path: ${{ runner.temp }}/${{ inputs.artifact-name }}.tar.zst
         retention-days: 1
         compression-level: 0 # Already compressed with zstd
+        overwrite: true # 'Re-run all jobs' uploads it again in the same workflow run
         if-no-files-found: error

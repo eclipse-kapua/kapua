@@ -15,6 +15,8 @@ This action is used in order to cache the maven dependencies.
 The Docker images needed by the tests are built only once per workflow run, by the `build-docker` job.
 The `saveDockerImages` action saves them in a single zstd-compressed archive and uploads it as a [workflow artifact](https://docs.github.com/en/actions/tutorials/store-and-share-data), kept for 1 day.
 The test jobs load them with the `loadDockerImages` action instead of building them again.
+When the artifact is not available anymore (e.g. "Re-run failed jobs" more than 1 day later) the test jobs build the images themselves and show a warning.
+When also the Kapua artifacts of the run are not in the cache anymore, the jobs fail with an error asking to use "Re-run all jobs".
 
 Workflow artifacts are used instead of the cache since they are scoped to the workflow run and do not count towards the 10 GB cache limit of the repository,
 so concurrent workflow runs cannot evict each other's images (see [#3688](https://github.com/eclipse-kapua/kapua/issues/3688)).
