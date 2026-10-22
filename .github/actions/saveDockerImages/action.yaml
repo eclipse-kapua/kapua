@@ -14,7 +14,7 @@ runs:
   using: "composite"
   steps:
     - name: Save Docker images
-      run: docker save ${{ inputs.images }} | zstd -T0 -3 -q > "${RUNNER_TEMP}/${{ inputs.artifact-name }}.tar.zst"
+      run: docker save ${{ inputs.images }} | zstd -T0 -3 -q > "${RUNNER_TEMP}/${{ inputs.artifact-name }}.tar.zst" #using zstd for its efficiency
       shell: bash
 
     - name: Upload Docker images
@@ -23,6 +23,6 @@ runs:
         name: ${{ inputs.artifact-name }}
         path: ${{ runner.temp }}/${{ inputs.artifact-name }}.tar.zst
         retention-days: 1
-        compression-level: 0 # Already compressed with zstd
+        compression-level: 0 # Already compressed with zstd, which is more space and time efficient
         overwrite: true # 'Re-run all jobs' uploads it again in the same workflow run
         if-no-files-found: error
