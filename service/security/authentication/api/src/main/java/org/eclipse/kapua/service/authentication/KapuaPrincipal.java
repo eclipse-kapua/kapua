@@ -40,7 +40,7 @@ public interface KapuaPrincipal extends Principal, java.io.Serializable {
     KapuaId getUserId();
 
     /**
-     * Retur the account it
+     * Return the account it
      *
      * @return
      */
