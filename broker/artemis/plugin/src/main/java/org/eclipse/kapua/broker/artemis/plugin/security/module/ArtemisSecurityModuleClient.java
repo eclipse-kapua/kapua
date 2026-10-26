@@ -10,7 +10,7 @@
  * Contributors:
  *     Eurotech - initial API and implementation
  *******************************************************************************/
-package org.eclipse.kapua.broker.artemis.plugin.security;
+package org.eclipse.kapua.broker.artemis.plugin.security.module;
 
 import java.util.UUID;
 

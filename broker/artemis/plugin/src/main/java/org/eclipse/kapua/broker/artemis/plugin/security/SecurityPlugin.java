@@ -86,7 +86,7 @@ public class SecurityPlugin implements ActiveMQSecurityManager5 {
         final BrokerSetting brokerSettings = kapuaLocator.getComponent(BrokerSetting.class);
         usernameScopeIdCache = new LocalCache<>(
                 brokerSettings.getInt(BrokerSettingKey.CACHE_SCOPE_ID_SIZE),
-                brokerSettings.getInt(BrokerSettingKey.CACHE_SCOPE_ID_SIZE),
+                brokerSettings.getInt(BrokerSettingKey.CACHE_SCOPE_ID_TTL),
                 null);
         logger.info("Initializing SecurityPlugin... DONE");
     }
