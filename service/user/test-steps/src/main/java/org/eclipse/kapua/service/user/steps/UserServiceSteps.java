@@ -96,6 +96,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Implementation of Gherkin steps used in user test scenarios.
@@ -610,6 +615,37 @@ public class UserServiceSteps extends TestBase {
             authenticationService.login(credentials);
         } catch (KapuaException e) {
             verifyException(e);
+        }
+    }
+
+    @When("I login concurrently {int} times as user with name {string} and password {string}")
+    public void loginUserConcurrently(int loginCount, String userName, String password) throws Exception {
+        LoginCredentials credentials = credentialsFactory.newUsernamePasswordCredentials(userName, password);
+        authenticationService.logout();
+        primeException();
+        ExecutorService executor = Executors.newFixedThreadPool(loginCount);
+        try {
+            CyclicBarrier loginStart = new CyclicBarrier(loginCount);
+            List<Future<?>> logins = new ArrayList<>();
+            for (int i = 0; i < loginCount; i++) {
+                logins.add(executor.submit(() -> {
+                    loginStart.await();
+                    try {
+                        return authenticationService.login(credentials);
+                    } finally {
+                        authenticationService.logout();
+                    }
+                }));
+            }
+            for (Future<?> login : logins) {
+                try {
+                    login.get();
+                } catch (ExecutionException e) {
+                    verifyException((Exception) e.getCause());
+                }
+            }
+        } finally {
+            executor.shutdownNow();
         }
     }
 

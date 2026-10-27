@@ -665,6 +665,39 @@ Feature: User and Credential expiration and lockout features
     Then No exception was thrown
     Then The lockout error counter for user "kapua-a" is 0
 
+  Scenario: User login concurrently with correct username and password after a login failure
+  Every concurrent login resets the lockout error counter set by the login failure, and none of them fails.
+    When I login as user with name "kapua-sys" and password "kapua-password"
+    And I configure user service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    Given Account
+      | name      | scopeId |
+      | account-a | 1       |
+    And I configure account service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And I configure user service
+      | type    | name                   | value |
+      | boolean | infiniteChildEntities  | true  |
+      | integer | maxNumberChildEntities | 5     |
+    And User A
+      | name    | displayName  | email             | phoneNumber     | status  | userType |
+      | kapua-a | Kapua User A | kapua_a@kapua.com | +386 31 323 444 | ENABLED | INTERNAL |
+    And I add credentials
+      | name    | password          | enabled |
+      | kapua-a | ToManySecrets123# | true    |
+    And I logout
+    Given I expect the exception "KapuaAuthenticationException" with the text "The provided LoginCredentials dont match."
+    When I login as user with name "kapua-a" and password "WrongPassword123#"
+    Then An exception was thrown
+    Then The lockout error counter for user "kapua-a" is 1
+    When I login concurrently 10 times as user with name "kapua-a" and password "ToManySecrets123#"
+    Then No exception was thrown
+    Then The lockout error counter for user "kapua-a" is 0
+
   @teardown
   Scenario: Reset Security Context for all scenarios
     Given Clean Locator Instance
