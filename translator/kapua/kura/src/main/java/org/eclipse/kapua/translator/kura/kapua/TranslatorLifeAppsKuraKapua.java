@@ -13,14 +13,17 @@
 package org.eclipse.kapua.translator.kura.kapua;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.eclipse.kapua.KapuaEntityNotFoundException;
+import org.eclipse.kapua.commons.cache.LocalCache;
 import org.eclipse.kapua.message.device.lifecycle.KapuaAppsChannel;
 import org.eclipse.kapua.message.device.lifecycle.KapuaAppsMessage;
 import org.eclipse.kapua.message.device.lifecycle.KapuaAppsPayload;
 import org.eclipse.kapua.message.internal.device.lifecycle.KapuaAppsChannelImpl;
 import org.eclipse.kapua.message.internal.device.lifecycle.KapuaAppsMessageImpl;
 import org.eclipse.kapua.message.internal.device.lifecycle.KapuaAppsPayloadImpl;
+import org.eclipse.kapua.model.id.KapuaId;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.device.call.message.kura.lifecycle.KuraAppsChannel;
@@ -28,6 +31,7 @@ import org.eclipse.kapua.service.device.call.message.kura.lifecycle.KuraAppsMess
 import org.eclipse.kapua.service.device.call.message.kura.lifecycle.KuraAppsPayload;
 import org.eclipse.kapua.service.device.registry.Device;
 import org.eclipse.kapua.service.device.registry.DeviceRegistryService;
+import org.eclipse.kapua.translator.AbstractAccountResolvingTranslator;
 import org.eclipse.kapua.translator.Translator;
 import org.eclipse.kapua.translator.exception.InvalidChannelException;
 import org.eclipse.kapua.translator.exception.InvalidMessageException;
@@ -39,14 +43,30 @@ import org.eclipse.kapua.translator.exception.TranslateException;
  *
  * @since 1.0.0
  */
-public class TranslatorLifeAppsKuraKapua extends Translator<KuraAppsMessage, KapuaAppsMessage> {
+public class TranslatorLifeAppsKuraKapua extends AbstractAccountResolvingTranslator<KuraAppsMessage, KapuaAppsMessage> {
 
+    private final DeviceRegistryService deviceRegistryService;
+    private final TranslatorKuraKapuaUtils translatorKuraKapuaUtils;
+
+    /**
+     * Constructor.
+     *
+     * @param accountService           The {@link AccountService} used to resolve the {@link Account} ids from the {@link Account} names.
+     * @param accountsByNameCache      The {@link LocalCache} of {@link Account}s by {@link Account#getName()}, shared among {@link Translator}s.
+     * @param deviceRegistryService    The {@link DeviceRegistryService}.
+     * @param translatorKuraKapuaUtils The {@link TranslatorKuraKapuaUtils}.
+     * @since 2.1.0
+     */
     @Inject
-    private AccountService accountService;
-    @Inject
-    private DeviceRegistryService deviceRegistryService;
-    @Inject
-    private TranslatorKuraKapuaUtils translatorKuraKapuaUtils;
+    public TranslatorLifeAppsKuraKapua(
+            AccountService accountService,
+            @Named("accountsByNameCache") LocalCache<String, Account> accountsByNameCache,
+            DeviceRegistryService deviceRegistryService,
+            TranslatorKuraKapuaUtils translatorKuraKapuaUtils) {
+        super(accountService, accountsByNameCache);
+        this.deviceRegistryService = deviceRegistryService;
+        this.translatorKuraKapuaUtils = translatorKuraKapuaUtils;
+    }
 
     @Override
     public KapuaAppsMessage translate(KuraAppsMessage kuraAppsMessage) throws TranslateException {
@@ -55,18 +75,18 @@ public class TranslatorLifeAppsKuraKapua extends Translator<KuraAppsMessage, Kap
             kapuaAppsMessage.setChannel(translate(kuraAppsMessage.getChannel()));
             kapuaAppsMessage.setPayload(translate(kuraAppsMessage.getPayload()));
 
-            Account account = accountService.findByName(kuraAppsMessage.getChannel().getScope());
-            if (account == null) {
+            KapuaId accountId = findAccountIdByName(kuraAppsMessage.getChannel().getScope());
+            if (accountId == null) {
                 throw new KapuaEntityNotFoundException(Account.TYPE, kuraAppsMessage.getChannel().getScope());
             }
 
-            Device device = deviceRegistryService.findByClientId(account.getId(), kuraAppsMessage.getChannel().getClientId());
+            Device device = deviceRegistryService.findByClientId(accountId, kuraAppsMessage.getChannel().getClientId());
             if (device == null) {
                 throw new KapuaEntityNotFoundException(Device.class.toString(), kuraAppsMessage.getChannel().getClientId());
             }
 
             kapuaAppsMessage.setDeviceId(device.getId());
-            kapuaAppsMessage.setScopeId(account.getId());
+            kapuaAppsMessage.setScopeId(accountId);
             kapuaAppsMessage.setCapturedOn(kuraAppsMessage.getPayload().getTimestamp());
             kapuaAppsMessage.setSentOn(kuraAppsMessage.getPayload().getTimestamp());
             kapuaAppsMessage.setReceivedOn(kuraAppsMessage.getTimestamp());

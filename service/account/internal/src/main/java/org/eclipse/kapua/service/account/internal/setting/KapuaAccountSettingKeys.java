@@ -25,7 +25,28 @@ public enum KapuaAccountSettingKeys implements SettingKey {
      * The key value in the configuration resources.
      */
     ACCOUNT_KEY("account.key"),
-    ACCOUNT_EVENT_ADDRESS("account.eventAddress");
+    ACCOUNT_EVENT_ADDRESS("account.eventAddress"),
+
+    /**
+     * Maximum size of the local cache of {@link org.eclipse.kapua.service.account.Account}s by name (@Named("accountsByNameCache")), shared by Translators.
+     *
+     * @since 2.1.0
+     */
+    ACCOUNT_CACHE_LOCAL_SIZE_MAXIMUM("account.cache.local.size.maximum"),
+
+    /**
+     * Expiration time (in seconds) of the local cache of {@link org.eclipse.kapua.service.account.Account}s by name (@Named("accountsByNameCache")), shared by Translators.
+     *
+     * @since 2.1.0
+     */
+    ACCOUNT_CACHE_LOCAL_EXPIRE_AFTER("account.cache.local.expire.after"),
+
+    /**
+     * Expiration strategy of the local cache of {@link org.eclipse.kapua.service.account.Account}s by name (@Named("accountsByNameCache")), shared by Translators.
+     *
+     * @since 2.1.0
+     */
+    ACCOUNT_CACHE_LOCAL_EXPIRE_STRATEGY("account.cache.local.expire.strategy");
 
     private String key;
 

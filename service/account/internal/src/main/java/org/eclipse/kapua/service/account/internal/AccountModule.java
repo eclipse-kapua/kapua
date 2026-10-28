@@ -17,6 +17,7 @@ import java.util.Map;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.eclipse.kapua.commons.cache.LocalCache;
 import org.eclipse.kapua.commons.configuration.AccountRelativeFinder;
 import org.eclipse.kapua.commons.configuration.ServiceConfigurationManager;
 import org.eclipse.kapua.commons.core.AbstractKapuaModule;
@@ -36,16 +37,20 @@ import org.eclipse.kapua.event.ServiceEventBusException;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.domain.Domain;
 import org.eclipse.kapua.model.domain.DomainEntry;
+import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountFactory;
 import org.eclipse.kapua.service.account.AccountRepository;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.account.internal.setting.KapuaAccountSetting;
+import org.eclipse.kapua.service.account.internal.setting.KapuaAccountSettingKeys;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
 
 import com.google.inject.Module;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.ProvidesIntoSet;
+import com.google.inject.name.Names;
 
 /**
  * {@code kapua-account-internal} {@link Module} implementation.
@@ -59,6 +64,20 @@ public class AccountModule extends AbstractKapuaModule implements Module {
         bind(AccountFactory.class).to(AccountFactoryImpl.class).in(Singleton.class);
         bind(KapuaAccountSetting.class).in(Singleton.class);
         bind(AccountMapper.class).to(AccountMapperImpl.class).in(Singleton.class);
+
+        // Local cache of Accounts by name, shared by the components that resolve Accounts by name on hot paths (i.e. Translators)
+        final KapuaAccountSetting kapuaAccountSetting = new KapuaAccountSetting();
+        bind(
+                new TypeLiteral<LocalCache<String, Account>>() {
+
+                })
+                .annotatedWith(Names.named("accountsByNameCache"))
+                .toInstance(new LocalCache<>(
+                        kapuaAccountSetting.getCacheConfig(
+                                KapuaAccountSettingKeys.ACCOUNT_CACHE_LOCAL_SIZE_MAXIMUM, 0,
+                                KapuaAccountSettingKeys.ACCOUNT_CACHE_LOCAL_EXPIRE_AFTER, 0,
+                                KapuaAccountSettingKeys.ACCOUNT_CACHE_LOCAL_EXPIRE_STRATEGY),
+                        null));
 
     }
 
