@@ -93,7 +93,7 @@
         <httpcomponents-asyncclient.version>4.1.5</httpcomponents-asyncclient.version>
         <httpcomponents-client.version>4.5.13</httpcomponents-client.version>
         <httpcomponents-core.version>4.4.15</httpcomponents-core.version>
-        <jackson.version>2.18.9</jackson.version>
+        <jackson.version>2.18.11</jackson.version>
         <javassist.version>3.26.0-GA</javassist.version>
         <javax-annotation-api.version>1.2</javax-annotation-api.version>
         <javax-batch-api.version>1.0.1</javax-batch-api.version>
