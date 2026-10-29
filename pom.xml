@@ -48,7 +48,7 @@
         <console.maven.toolchain.jdk.version>8</console.maven.toolchain.jdk.version>
 
         <!-- Dependencies versions -->
-        <camel.version>3.22.2</camel.version>
+        <camel.version>4.14.8</camel.version>
         <spring.version>5.3.39</spring.version>
         <spring-security.version>5.8.16</spring-security.version>
         <spring-boot.version>2.7.18</spring-boot.version>
