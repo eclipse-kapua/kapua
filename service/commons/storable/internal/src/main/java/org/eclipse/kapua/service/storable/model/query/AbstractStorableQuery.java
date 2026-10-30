@@ -38,6 +38,7 @@ public abstract class AbstractStorableQuery implements StorableQuery {
     private List<SortField> sortFields;
     private StorableFetchStyle fetchStyle;
     private List<String> fetchAttributes;
+    private AggregationField aggregationField;
 
     /**
      * Constructor.
@@ -161,6 +162,14 @@ public abstract class AbstractStorableQuery implements StorableQuery {
     @Override
     public void setSortFields(List<SortField> sortFields) {
         this.sortFields = sortFields;
+    }
+
+    public AggregationField getAggregationField() {
+        return this.aggregationField;
+    }
+
+    public void setAggregationField(AggregationField aggregationField) {
+        this.aggregationField = aggregationField;
     }
 
     @Override

@@ -23,10 +23,12 @@ import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authorization.AuthorizationService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
 import org.eclipse.kapua.service.authorization.permission.PermissionFactory;
+import org.eclipse.kapua.service.datastore.ChannelInfoFactory;
 import org.eclipse.kapua.service.datastore.ChannelInfoRegistryService;
 import org.eclipse.kapua.service.datastore.internal.mediator.ChannelInfoField;
 import org.eclipse.kapua.service.datastore.internal.mediator.MessageField;
 import org.eclipse.kapua.service.datastore.internal.model.query.MessageQueryImpl;
+import org.eclipse.kapua.service.datastore.internal.schema.ChannelInfoSchema;
 import org.eclipse.kapua.service.datastore.internal.schema.MessageSchema;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
 import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettingsKey;
@@ -38,6 +40,7 @@ import org.eclipse.kapua.service.datastore.model.query.ChannelInfoQuery;
 import org.eclipse.kapua.service.datastore.model.query.MessageQuery;
 import org.eclipse.kapua.service.datastore.model.query.predicate.DatastorePredicateFactory;
 import org.eclipse.kapua.service.storable.model.id.StorableId;
+import org.eclipse.kapua.service.storable.model.query.AggregationField;
 import org.eclipse.kapua.service.storable.model.query.SortField;
 import org.eclipse.kapua.service.storable.model.query.StorableFetchStyle;
 import org.eclipse.kapua.service.storable.model.query.predicate.AndPredicate;
@@ -52,6 +55,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Channel info registry implementation
@@ -70,8 +74,11 @@ public class ChannelInfoRegistryServiceImpl implements ChannelInfoRegistryServic
     private final ChannelInfoRegistryFacade channelInfoRegistryFacade;
     private final MessageRepository messageRepository;
     private final DatastoreSettings datastoreSettings;
+    private final ChannelInfoFactory channelInfoFactory;
     private static final String QUERY = "query";
     private static final String QUERY_SCOPE_ID = "query.scopeId";
+    private static final String DISTINCT_CHANNELS_AGGREGATION_NAME = "distinct_channels";
+    private static final int DISTINCT_CHANNELS_PAGE_SIZE = 1000;
 
     /**
      * Default constructor
@@ -86,7 +93,8 @@ public class ChannelInfoRegistryServiceImpl implements ChannelInfoRegistryServic
             PermissionFactory permissionFactory,
             MessageRepository messageStoreService,
             ChannelInfoRegistryFacade channelInfoRegistryFacade,
-            DatastoreSettings datastoreSettings) {
+            DatastoreSettings datastoreSettings,
+            ChannelInfoFactory channelInfoFactory) {
         this.datastorePredicateFactory = datastorePredicateFactory;
         this.authorizationService = authorizationService;
         this.permissionFactory = permissionFactory;
@@ -95,6 +103,7 @@ public class ChannelInfoRegistryServiceImpl implements ChannelInfoRegistryServic
         this.datastoreSettings = datastoreSettings;
         this.accountService = accountService;
         this.maxResultWindowValue = datastoreSettings.getInt(DatastoreSettingsKey.MAX_RESULT_WINDOW_VALUE);
+        this.channelInfoFactory = channelInfoFactory;
     }
 
     @Override
@@ -209,6 +218,50 @@ public class ChannelInfoRegistryServiceImpl implements ChannelInfoRegistryServic
         }
     }
 
+    @Override
+    public List<String> fetchDistinctChannelNames(KapuaId scopeId) throws KapuaException {
+        ChannelInfoQuery query = channelInfoFactory.newQuery(scopeId);
+        List<String> channelNames = new ArrayList<>();
+        List<String> page;
+        String after = null;
+        do {
+            page = fetchDistinctChannelNames(query, after, DISTINCT_CHANNELS_PAGE_SIZE);
+            channelNames.addAll(page);
+            if (!page.isEmpty()) {
+                after = page.get(page.size() - 1);
+            }
+        } while (page.size() == DISTINCT_CHANNELS_PAGE_SIZE);
+        return channelNames;
+    }
+
+    @Override
+    public List<String> fetchDistinctChannelNames(ChannelInfoQuery query, String after, int limit) throws KapuaException {
+        return fetchDistinctChannelInfos(query, after, limit).stream().map(ChannelInfo::getName).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ChannelInfo> fetchDistinctChannels(ChannelInfoQuery query, String after, int limit) throws KapuaException {
+        List<ChannelInfo> channels = fetchDistinctChannelInfos(query, after, limit);
+        for (ChannelInfo channel : channels) {
+            updateLastPublishedFields(channel);
+        }
+        return channels;
+    }
+
+    private List<ChannelInfo> fetchDistinctChannelInfos(ChannelInfoQuery query, String after, int limit) throws KapuaException {
+        ArgumentValidator.notNull(query, QUERY);
+        ArgumentValidator.notNull(query.getScopeId(), QUERY_SCOPE_ID);
+        //limit is the composite aggregation size, so it must stay below 'search.max_buckets'
+        ArgumentValidator.numRange(limit, 1, maxResultWindowValue, "limit");
+
+        ChannelInfoQuery aggregationQuery = channelInfoFactory.newQuery(query.getScopeId());
+        aggregationQuery.setPredicate(query.getPredicate());
+        aggregationQuery.setOffset(0);
+        aggregationQuery.setLimit(0); //setting size to 0 to retrieve only aggregation results and no documents
+        aggregationQuery.setAggregationField(new AggregationField(DISTINCT_CHANNELS_AGGREGATION_NAME, ChannelInfoSchema.CHANNEL_NAME, limit, after, ChannelInfoSchema.CHANNEL_TIMESTAMP));
+        return this.query(aggregationQuery).getItems();
+    }
+
     private void checkDataAccess(KapuaId scopeId, Actions action)
             throws KapuaException {
         Permission permission = permissionFactory.newPermission(Domains.DATASTORE, action, scopeId);
@@ -218,7 +271,10 @@ public class ChannelInfoRegistryServiceImpl implements ChannelInfoRegistryServic
     /**
      * Update the last published date and last published message identifier for the specified channel info, so it gets the timestamp and the message id of the last published message for the
      * account/clientId in the
-     * channel info
+     * channel info.
+     * <p>
+     * The clientId and the first message date are optional: when missing, the last message published on the channel by any client is looked for
+     * (e.g. the channel infos of a distinct channel names aggregation have no clientId, and their first message date is the earliest one among all the clients).
      *
      * @param channelInfo
      * @throws KapuaException
@@ -235,13 +291,17 @@ public class ChannelInfoRegistryServiceImpl implements ChannelInfoRegistryServic
         messageQuery.setOffset(0);
         messageQuery.setSortFields(sort);
 
-        RangePredicate messageIdPredicate = datastorePredicateFactory.newRangePredicate(ChannelInfoField.TIMESTAMP, channelInfo.getFirstMessageOn(), null);
-        TermPredicate clientIdPredicate = datastorePredicateFactory.newTermPredicate(MessageField.CLIENT_ID, channelInfo.getClientId());
         TermPredicate channelPredicate = datastorePredicateFactory.newTermPredicate(MessageField.CHANNEL, channelInfo.getName());
 
         AndPredicate andPredicate = datastorePredicateFactory.newAndPredicate();
-        andPredicate.getPredicates().add(messageIdPredicate);
-        andPredicate.getPredicates().add(clientIdPredicate);
+        if (channelInfo.getFirstMessageOn() != null) {
+            RangePredicate messageIdPredicate = datastorePredicateFactory.newRangePredicate(ChannelInfoField.TIMESTAMP, channelInfo.getFirstMessageOn(), null); //TODO: does this filter makes any sense? I guess if for performance reasons but actually it won't search in the precise index time-slices (like <scopeid>-message-timeSlice). Could be re-used to search inside specific time-slice indexes
+            andPredicate.getPredicates().add(messageIdPredicate);
+        }
+        if (channelInfo.getClientId() != null) {
+            TermPredicate clientIdPredicate = datastorePredicateFactory.newTermPredicate(MessageField.CLIENT_ID, channelInfo.getClientId());
+            andPredicate.getPredicates().add(clientIdPredicate);
+        }
         andPredicate.getPredicates().add(channelPredicate);
         messageQuery.setPredicate(andPredicate);
 
@@ -255,11 +315,11 @@ public class ChannelInfoRegistryServiceImpl implements ChannelInfoRegistryServic
             lastPublishedMessageTimestamp = messages.get(0).getTimestamp();
         } else if (messages.isEmpty()) {
             // this condition could happens due to the ttl of the messages (so if it happens, it does not necessarily mean there has been an error!)
-            LOG.warn("Cannot find last timestamp for the specified client id '{}' - account '{}'", channelInfo.getScopeId(), channelInfo.getClientId());
+            LOG.warn("Cannot find last timestamp for the specified client id '{}' - account '{}' - channel '{}'", channelInfo.getClientId(), channelInfo.getScopeId(), channelInfo.getName());
         } else {
             // this condition shouldn't never happens since the query has a limit 1
             // if happens it means than an elasticsearch internal error happens and/or our driver didn't set it correctly!
-            LOG.error("Cannot find last timestamp for the specified client id '{}' - account '{}'. More than one result returned by the query!", channelInfo.getScopeId(), channelInfo.getClientId());
+            LOG.error("Cannot find last timestamp for the specified client id '{}' - account '{}' - channel '{}'. More than one result returned by the query!", channelInfo.getClientId(), channelInfo.getScopeId(), channelInfo.getName());
         }
 
         channelInfo.setLastMessageId(lastPublishedMessageId);

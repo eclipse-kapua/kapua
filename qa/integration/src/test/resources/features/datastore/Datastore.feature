@@ -463,6 +463,143 @@ Feature: Datastore tests
     And The channel info items "AccountChannelList" match the prepared messages in "TestMessages"
     And I delete all indices
 
+  Scenario: Distinct channels are paginated with the 'after' cursor
+  Many clients can publish on the same topic (one channel info for each client and topic), so the distinct
+  channel names are fewer than the channel info documents. The pages must follow each other without
+  gaps or repetitions, whatever the page size is.
+
+    Given I delete all indices
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I select account "kapua-sys"
+    And The device "test-device-1"
+    And I set the database to device timestamp indexing
+    When I prepare a number of messages with the following details and remember the list as "TestMessages"
+      | clientId      | topic    |
+      | test-client-1 | dc_pag/a |
+      | test-client-1 | dc_pag/b |
+      | test-client-1 | dc_pag/c |
+      | test-client-1 | dc_pag/d |
+      | test-client-1 | dc_pag/e |
+      | test-client-2 | dc_pag/a |
+      | test-client-2 | dc_pag/c |
+      | test-client-2 | dc_pag/f |
+      | test-client-3 | dc_pag/a |
+    Then I store the messages from list "TestMessages" and remember the IDs as "StoredMessageIDs"
+    And I refresh all indices
+    When I query for the current account channels and store them as "AccountChannelList"
+    Then There are exactly 9 channels in the list "AccountChannelList"
+    When I fetch the distinct channels of the current account with limit 100 and store them as "AllPage"
+    Then The distinct channel names in the list "AllPage" are exactly
+      | dc_pag/a |
+      | dc_pag/b |
+      | dc_pag/c |
+      | dc_pag/d |
+      | dc_pag/e |
+      | dc_pag/f |
+    When I fetch the distinct channels of the current account with limit 4 and store them as "FirstPage"
+    Then The distinct channel names in the list "FirstPage" are exactly
+      | dc_pag/a |
+      | dc_pag/b |
+      | dc_pag/c |
+      | dc_pag/d |
+    When I fetch the distinct channels of the current account with limit 4 after "dc_pag/d" and store them as "SecondPage"
+    Then The distinct channel names in the list "SecondPage" are exactly
+      | dc_pag/e |
+      | dc_pag/f |
+    When I fetch the distinct channels of the current account with limit 2 after "dc_pag/a" and store them as "MiddlePage"
+    Then The distinct channel names in the list "MiddlePage" are exactly
+      | dc_pag/b |
+      | dc_pag/c |
+    When I fetch the distinct channels of the current account with limit 3 after "dc_pag/f" and store them as "PastTheEnd"
+    Then The distinct channel list "PastTheEnd" has exactly 0 items
+    When I fetch the distinct channels of the current account with limit 3 after "dc_pag/bb" and store them as "AfterMissingName"
+    Then The distinct channel names in the list "AfterMissingName" are exactly
+      | dc_pag/c |
+      | dc_pag/d |
+      | dc_pag/e |
+    When I walk all the distinct channels of the current account with page size 1 and store them as "WalkBy1"
+    Then The distinct channel names in the list "WalkBy1" are exactly
+      | dc_pag/a |
+      | dc_pag/b |
+      | dc_pag/c |
+      | dc_pag/d |
+      | dc_pag/e |
+      | dc_pag/f |
+    When I walk all the distinct channels of the current account with page size 4 and store them as "WalkBy4"
+    Then The distinct channel list "WalkBy4" has exactly 6 items
+    When I walk all the distinct channels of the current account with page size 6 and store them as "WalkBy6"
+    Then The distinct channel list "WalkBy6" has exactly 6 items
+    And I delete all indices
+
+  Scenario: Distinct channels report the last message published by any client
+  The same channel name is published by several clients: its last message date and id are the ones of the latest message among all of them.
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I select account "kapua-sys"
+    And The device "test-device-1"
+    And I set the database to device timestamp indexing
+    When I prepare a number of messages with the following details and remember the list as "TestMessages"
+      | clientId      | topic    | captured                 |
+      | test-client-1 | dc_lmo/t | 2017-07-03T09:00:00.000Z |
+      | test-client-1 | dc_lmo/t | 2017-07-03T09:00:10.000Z |
+      | test-client-2 | dc_lmo/t | 2017-07-03T09:00:20.000Z |
+      | test-client-2 | dc_lmo/t | 2017-07-03T09:00:05.000Z |
+      | test-client-1 | dc_lmo/u | 2017-07-03T09:00:15.000Z |
+      | test-client-2 | dc_lmo/v | 2017-07-03T09:00:30.000Z |
+    Then I store the messages from list "TestMessages" and remember the IDs as "StoredMessageIDs"
+    And I refresh all indices
+    When I fetch the distinct channels of the current account with limit 10 and store them as "Channels"
+    Then The distinct channel names in the list "Channels" are exactly
+      | dc_lmo/t |
+      | dc_lmo/u |
+      | dc_lmo/v |
+    And The distinct channel "dc_lmo/t" in the list "Channels" has last message on "2017-07-03T09:00:20.000Z"
+    And The distinct channel "dc_lmo/t" in the list "Channels" has last message id of the stored message number 2 in "StoredMessageIDs"
+    And The distinct channel "dc_lmo/u" in the list "Channels" has last message on "2017-07-03T09:00:15.000Z"
+    And The distinct channel "dc_lmo/u" in the list "Channels" has last message id of the stored message number 4 in "StoredMessageIDs"
+    And The distinct channel "dc_lmo/v" in the list "Channels" has last message on "2017-07-03T09:00:30.000Z"
+    And The distinct channel "dc_lmo/v" in the list "Channels" has last message id of the stored message number 5 in "StoredMessageIDs"
+    When I fetch the distinct channels of the current account with limit 1 after "dc_lmo/t" and store them as "NextChannel"
+    Then The distinct channel names in the list "NextChannel" are exactly
+      | dc_lmo/u |
+    And The distinct channel "dc_lmo/u" in the list "NextChannel" has last message on "2017-07-03T09:00:15.000Z"
+    And The distinct channel "dc_lmo/u" in the list "NextChannel" has last message id of the stored message number 4 in "StoredMessageIDs"
+    And I delete all indices
+
+  Scenario: Distinct channels reject an invalid page size
+
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I select account "kapua-sys"
+    Given I expect the exception "KapuaIllegalArgumentException" with the text "*"
+    When I fetch the distinct channels of the current account with limit 0 and store them as "Channels"
+    Then An exception was thrown
+    Given I expect the exception "KapuaIllegalArgumentException" with the text "*"
+    When I fetch the distinct channels of the current account with limit -1 and store them as "Channels"
+    Then An exception was thrown
+    Given I expect the exception "KapuaIllegalArgumentException" with the text "*"
+    When I fetch the distinct channels of the current account with limit 10001 and store them as "Channels"
+    Then An exception was thrown
+
+  Scenario: Create more than 10k distinct channels, test if they can all be fetched despite the internal limit on ES buckets and docs
+  A first message creates the channel index with its mapping, then the channel infos are added in bulk mode (one document
+  for each distinct channel name, so more than 10k documents and distinct names): 10001 + 1 = 10002 distinct channel names.
+
+    Given I delete all indices
+    Given I login as user with name "kapua-sys" and password "kapua-password"
+    And I select account "kapua-sys"
+    And The device "test-device-1"
+    And I set the database to device timestamp indexing
+    When I prepare a number of messages with the following details and remember the list as "TestMessages"
+      | clientId      | topic        |
+      | test-client-1 | dc_big/first |
+    Then I store the messages from list "TestMessages" and remember the IDs as "StoredMessageIDs"
+    When I store 10001 channel infos with distinct names in bulk mode to the index "1-data-channel"
+    And I refresh all indices
+    Then Walking all the distinct channel names of the current account with page size 1000 gives exactly 10002 strictly ascending names
+    And Walking all the distinct channel names of the current account with page size 9999 gives exactly 10002 strictly ascending names
+    And Fetching all the distinct channel names of the current account gives exactly 10002 strictly ascending names
+    And I delete all indices
+
   Scenario: ChannelInfo client ID and topic data based on the client id
   Check the correctness of the client ids and topics stored in the channel info data by retrieving the
   channel info by client id

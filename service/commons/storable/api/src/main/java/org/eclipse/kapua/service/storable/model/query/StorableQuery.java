@@ -188,6 +188,25 @@ public interface StorableQuery {
     void setSortFields(List<SortField> sortFields);
 
     /**
+     * Gets the {@link AggregationField}.
+     * <p>
+     * It is used internally only, so it is not part of the serialized query.
+     *
+     * @return The {@link AggregationField}, {@code null} for a non-aggregation query.
+     * @since 2.1.0
+     */
+    @XmlTransient
+    AggregationField getAggregationField();
+
+    /**
+     * Sets the {@link AggregationField}.
+     *
+     * @param aggregationField The {@link AggregationField}.
+     * @since 2.1.0
+     */
+    void setAggregationField(AggregationField aggregationField);
+
+    /**
      * Gets the included {@link StorableField}s according to the {@link StorableFetchStyle}.
      *
      * @param fetchStyle The {@link StorableFetchStyle}.

@@ -1,0 +1,60 @@
+openapi: 3.0.3
+
+info:
+  title: Eclipse Kapua REST API - Data Channel
+  version: '1.0'
+  contact:
+    name: Eclipse Kapua Dev Team
+    url: https://eclipse.org/kapua
+    email: kapua-dev@eclipse.org
+  license:
+    name: Eclipse Public License 2.0
+    url: https://www.eclipse.org/legal/epl-2.0
+
+paths:
+  /{scopeId}/data/channels/_distinct:
+    get:
+      tags:
+        - Data Channel
+      summary: Get the distinct Data Channel names
+      description: |
+        Gets one page of the distinct channel names, sorted ascending.
+        Pagination is cursor based: to get the next page pass the `after` value of the current page.
+        The last page has no `after` value.
+      operationId: dataChannelDistinctNames
+      parameters:
+        - $ref: '../openapi.yaml#/components/parameters/scopeId'
+        - name: clientId
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          description: The ClientID to filter results
+        - name: name
+          in: query
+          schema:
+            type: string
+          description: The channel name to filter results. It allows '#' wildcard in last channel level
+        - name: after
+          in: query
+          schema:
+            type: string
+          description: The channel name after which the page starts (exclusive). Omit it to get the first page
+        - $ref: '../openapi.yaml#/components/parameters/limit'
+      responses:
+        200:
+          description: One page of distinct channel names
+          content:
+            application/json:
+              schema:
+                $ref: './dataChannel.yaml#/components/schemas/distinctChannelNamesResult'
+        400:
+          $ref: '../openapi.yaml#/components/responses/illegalArgument'
+        401:
+          $ref: '../openapi.yaml#/components/responses/unauthenticated'
+        403:
+          $ref: '../openapi.yaml#/components/responses/subjectUnauthorized'
+        500:
+          $ref: '../openapi.yaml#/components/responses/kapuaError'

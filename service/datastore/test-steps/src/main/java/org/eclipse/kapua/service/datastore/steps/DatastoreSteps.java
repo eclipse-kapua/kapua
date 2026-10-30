@@ -778,6 +778,52 @@ public class DatastoreSteps extends TestBase {
     }
 
 
+    //with this method I insert in bulk mode channel info documents with distinct names (one client, one document per channel name), in order to speed up the insertion process.
+    //The index must already exist (e.g. created by storing a message), otherwise ES would map the channel field as text instead of keyword
+    @When("I store {int} channel infos with distinct names in bulk mode to the index {string}")
+    public void bulkInsertDistinctChannelInfos(int nChannels, String index) throws IOException {
+        StringBuilder body = new StringBuilder();
+        for (int i = 0; i < nChannels; i++) {
+            body.append("{ \"index\":{}}\n");
+            body.append(String.format("{\"scope_id\":\"1\",\"client_id\":\"bulkChannelsClient\",\"channel\":\"bulk/%06d\",\"message_id\":\"%s\",\"timestamp\":\"2018-10-01T13:48:36.946Z\"}\n", i, UUID.randomUUID()));
+        }
+        Request request = new Request("POST", index + ElasticsearchResourcePaths.getBulkPath());
+        request.setJsonEntity(body.toString());
+        RestClient cl = ((ElasticsearchStoreEngineClient) storeEngineClientWrapper.getClient()).unwrap();
+        cl.performRequest(request);
+    }
+
+    @Then("Walking all the distinct channel names of the current account with page size {int} gives exactly {int} strictly ascending names")
+    public void walkAllDistinctChannelNames(int pageSize, int expectedCount) throws KapuaException {
+        Account account = (Account) stepData.get(LAST_ACCOUNT);
+        ChannelInfoQuery tmpQuery = channelInfoFactory.newQuery(account.getId());
+        List<String> allNames = new ArrayList<>();
+        String after = null;
+        List<String> page;
+        do {
+            page = channelInfoRegistryService.fetchDistinctChannelNames(tmpQuery, after, pageSize);
+            Assert.assertTrue(String.format("A page can't have more than %d items, got %d", pageSize, page.size()), page.size() <= pageSize);
+            allNames.addAll(page);
+            if (!page.isEmpty()) {
+                after = page.get(page.size() - 1);
+            }
+        } while (page.size() == pageSize);
+        assertStrictlyAscending(allNames, expectedCount);
+    }
+
+    @Then("Fetching all the distinct channel names of the current account gives exactly {int} strictly ascending names")
+    public void fetchAllDistinctChannelNames(int expectedCount) throws KapuaException {
+        Account account = (Account) stepData.get(LAST_ACCOUNT);
+        assertStrictlyAscending(channelInfoRegistryService.fetchDistinctChannelNames(account.getId()), expectedCount);
+    }
+
+    private void assertStrictlyAscending(List<String> names, int expectedCount) {
+        Assert.assertEquals(expectedCount, names.size());
+        for (int i = 1; i < names.size(); i++) {
+            Assert.assertTrue(String.format("Channel names are not strictly ascending: [%s] is followed by [%s]", names.get(i - 1), names.get(i)), names.get(i - 1).compareTo(names.get(i)) < 0);
+        }
+    }
+
     @Given("I set the database to device timestamp indexing")
     public void setDatabaseToDeviceTimestampIndexing() throws KapuaException {
         Account account = (Account) stepData.get(LAST_ACCOUNT);
@@ -1032,6 +1078,76 @@ public class DatastoreSteps extends TestBase {
             }
         }
         Assert.fail(String.format("No channel matches the client id [%s]", clientId));
+    }
+
+    @When("I fetch the distinct channels of the current account with limit {int} and store them as {string}")
+    public void fetchDistinctChannels(int limit, String lstKey) throws Exception {
+        fetchDistinctChannelsAfter(limit, null, lstKey);
+    }
+
+    @When("I fetch the distinct channels of the current account with limit {int} after {string} and store them as {string}")
+    public void fetchDistinctChannelsAfter(int limit, String after, String lstKey) throws Exception {
+        Account account = (Account) stepData.get(LAST_ACCOUNT);
+        ChannelInfoQuery tmpQuery = channelInfoFactory.newQuery(account.getId());
+        primeException();
+        try {
+            stepData.put(lstKey, channelInfoRegistryService.fetchDistinctChannels(tmpQuery, after, limit));
+        } catch (KapuaException e) {
+            verifyException(e);
+        }
+    }
+
+    @When("I walk all the distinct channels of the current account with page size {int} and store them as {string}")
+    public void walkAllDistinctChannels(int pageSize, String lstKey) throws KapuaException {
+        Account account = (Account) stepData.get(LAST_ACCOUNT);
+        ChannelInfoQuery tmpQuery = channelInfoFactory.newQuery(account.getId());
+        List<ChannelInfo> allChannels = new ArrayList<>();
+        String after = null;
+        List<ChannelInfo> page;
+        do {
+            page = channelInfoRegistryService.fetchDistinctChannels(tmpQuery, after, pageSize);
+            Assert.assertTrue(String.format("A page can't have more than %d items, got %d", pageSize, page.size()), page.size() <= pageSize);
+            allChannels.addAll(page);
+            if (!page.isEmpty()) {
+                after = page.get(page.size() - 1).getName();
+            }
+        } while (page.size() == pageSize);
+        stepData.put(lstKey, allChannels);
+    }
+
+    @Then("The distinct channel list {string} has exactly {int} item(s)")
+    public void checkDistinctChannelsSize(String lstKey, int expectedSize) {
+        Assert.assertEquals(expectedSize, ((List<ChannelInfo>) stepData.get(lstKey)).size());
+    }
+
+    @Then("The distinct channel names in the list {string} are exactly")
+    public void checkDistinctChannelNames(String lstKey, List<String> expectedNames) {
+        List<String> actualNames = ((List<ChannelInfo>) stepData.get(lstKey)).stream().map(ChannelInfo::getName).collect(Collectors.toList());
+        Assert.assertEquals(expectedNames, actualNames);
+    }
+
+    @Then("The distinct channel {string} in the list {string} has last message on {string}")
+    public void checkDistinctChannelLastMessageOn(String channelName, String lstKey, String date) throws Exception {
+        Date expected = KapuaDateUtils.parseDate(date);
+        for (ChannelInfo tmpInfo : (List<ChannelInfo>) stepData.get(lstKey)) {
+            if (channelName.equals(tmpInfo.getName())) {
+                Assert.assertEquals(expected, tmpInfo.getLastMessageOn());
+                return;
+            }
+        }
+        Assert.fail(String.format("The channel [%s] is not in the list", channelName));
+    }
+
+    @Then("The distinct channel {string} in the list {string} has last message id of the stored message number {int} in {string}")
+    public void checkDistinctChannelLastMessageId(String channelName, String lstKey, int index, String idListKey) {
+        StorableId expected = ((List<StorableId>) stepData.get(idListKey)).get(index);
+        for (ChannelInfo tmpInfo : (List<ChannelInfo>) stepData.get(lstKey)) {
+            if (channelName.equals(tmpInfo.getName())) {
+                Assert.assertEquals(expected, tmpInfo.getLastMessageId());
+                return;
+            }
+        }
+        Assert.fail(String.format("The channel [%s] is not in the list", channelName));
     }
 
     @When("I delete all channels from the list {string}")
