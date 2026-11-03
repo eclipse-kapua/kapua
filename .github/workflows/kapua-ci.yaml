@@ -31,6 +31,23 @@ jobs:
       - name: Save built Kapua Artifacts
         uses: ./.github/actions/saveBuiltKapuaArtifacts
 
+  build-sbom:
+    needs: Build
+    name: Build SBOM
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repository # Checks out a copy of the repository on the runner
+        uses: actions/checkout@v5
+      - name: Set up runner
+        uses: ./.github/actions/setUpRunner
+      - name: Set up Maven caches
+        uses: ./.github/actions/setUpMavenCaches
+      - name: Build SBOM
+        run: mvn -B -DskipTests clean install -Psbom
+
   build-javadoc:
     needs: build
     name: Build Javadoc
