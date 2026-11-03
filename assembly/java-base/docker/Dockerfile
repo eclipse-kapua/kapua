@@ -16,18 +16,33 @@ FROM @docker.base.image@
 
 ENV JAVA_HOME=/usr/lib/jvm/jre-openjdk
 
-RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* && \
-    sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-* && \
-    yum install -y java-1.8.0-openjdk && \
-    yum install -y curl && \
-    yum install -y openssl && \
-    mkdir -p /opt/jolokia && \
+# Install packages
+#
+# Java 8: well is Java
+# curl: required to download jetty, H2 and others
+# openssl: SSL support
+# tar: Unpack archives
+# gzip: Unpack archives
+# shadow-utils: To run useradd command
+RUN microdnf install -y \
+    java-1.8.0-openjdk-headless \
+    curl \
+    openssl \
+    tar \
+    gzip \
+    shadow-utils && \
+    microdnf clean all
+
+
+# Install Jolokia agent
+RUN mkdir -p /opt/jolokia && \
     curl -s @jolokia.agent.url@ -o /opt/jolokia/jolokia-jvm-agent.jar
 
 # Generate X509 certificate and private key
 RUN mkdir -p /etc/opt/kapua && \
     openssl req -x509 -newkey rsa:4096 -keyout /etc/opt/kapua/key.pem -out /etc/opt/kapua/cert.pem -days 365 -nodes -subj '/O=Eclipse Kapua/C=XX' && \
     openssl pkcs8 -topk8 -in /etc/opt/kapua/key.pem -out /etc/opt/kapua/key.pk8 -nocrypt && \
+    chmod +r /etc/opt/kapua/key.pk8 && \
     rm /etc/opt/kapua/key.pem
 
 EXPOSE 8778
