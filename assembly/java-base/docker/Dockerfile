@@ -16,6 +16,10 @@ FROM @docker.base.image@
 
 ENV JAVA_HOME=/usr/lib/jvm/jre-openjdk
 
+# Update system packages to obtain recent and updated packages that also contains security fixes
+RUN microdnf upgrade -y --nodocs && \
+    microdnf clean all
+
 # Install packages
 #
 # Java 11: well is Java
