@@ -226,5 +226,11 @@ public class SchemaKeys {
      * @since 1.0.0
      */
     public static final String FIELD_NAME_PROPERTIES = "properties";
+    /**
+     * Max number of field mappings of an index.
+     *
+     * @since 1.6.0
+     */
+    public static final String KEY_MAPPING_TOTAL_FIELDS_LIMIT = "mapping.total_fields.limit";
 
 }
