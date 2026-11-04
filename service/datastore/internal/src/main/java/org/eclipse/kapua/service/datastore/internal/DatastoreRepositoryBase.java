@@ -29,6 +29,8 @@ import org.eclipse.kapua.service.storable.model.utils.KeyValueEntry;
 import org.eclipse.kapua.service.storable.model.utils.MappingUtils;
 import org.eclipse.kapua.service.storable.repository.StorableRepository;
 
+import java.util.Optional;
+
 public abstract class DatastoreRepositoryBase<
         T extends Storable,
         L extends StorableListResult<T>,
@@ -37,6 +39,10 @@ public abstract class DatastoreRepositoryBase<
         implements StorableRepository<T, L, Q> {
 
     protected final DatastoreSettings datastoreSettings;
+    // If new pre-defined mappings are added in {@link MessageSchema}, update the following value
+    // consistently. Refer to Elasticsearch documentation to find how many mappings need to be
+    // allocated for the new fields based upon their type
+    private static final int PREDEFINED_FIELD_MAPPINGS_COUNT = 23;
 
     protected DatastoreRepositoryBase(
             StoreEngineClientProvider storeEngineClientProviderInstance,
@@ -70,6 +76,10 @@ public abstract class DatastoreRepositoryBase<
         String idxRefreshInterval = String.format("%ss", datastoreSettings.getLong(DatastoreSettingsKey.INDEX_REFRESH_INTERVAL));
         Integer idxShardNumber = datastoreSettings.getInt(DatastoreSettingsKey.INDEX_SHARD_NUMBER, 1);
         Integer idxReplicaNumber = datastoreSettings.getInt(DatastoreSettingsKey.INDEX_REPLICA_NUMBER, 0);
+        Optional<Integer> maxIndexedMetrics = datastoreSettings.getInteger(DatastoreSettingsKey.CONFIG_MESSAGES_INDEX_MAX_INDEXED_METRICS);
+        if (maxIndexedMetrics.isPresent() && maxIndexedMetrics.get() <= 0) {
+            maxIndexedMetrics = Optional.of(0);
+        }
 
         ObjectNode rootNode = MappingUtils.newObjectNode();
         ObjectNode settingsNode = MappingUtils.newObjectNode();
@@ -77,6 +87,12 @@ public abstract class DatastoreRepositoryBase<
                 new KeyValueEntry(SchemaKeys.KEY_REFRESH_INTERVAL, idxRefreshInterval),
                 new KeyValueEntry(SchemaKeys.KEY_SHARD_NUMBER, idxShardNumber),
                 new KeyValueEntry(SchemaKeys.KEY_REPLICA_NUMBER, idxReplicaNumber)});
+        if (maxIndexedMetrics.isPresent()) {
+            // PREDEFINED_FIELD_MAPPINGS mappings are allocated to predefined indexed fields (e.g. the topic), then each metric takes
+            // two other mappings. One for the metric itself and one more for the type (e.g. {"temp": {"type":"dbl"}})
+            int totalRequiredMappings = PREDEFINED_FIELD_MAPPINGS_COUNT + maxIndexedMetrics.get()*2;
+            MappingUtils.appendField(refreshIntervalNode, SchemaKeys.KEY_MAPPING_TOTAL_FIELDS_LIMIT, totalRequiredMappings);
+        }
         settingsNode.set(SchemaKeys.KEY_INDEX, refreshIntervalNode);
         rootNode.set(SchemaKeys.KEY_SETTINGS, settingsNode);
         return rootNode;
