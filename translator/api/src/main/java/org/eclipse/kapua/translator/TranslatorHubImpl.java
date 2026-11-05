@@ -18,10 +18,18 @@ import org.eclipse.kapua.message.Message;
 import org.eclipse.kapua.translator.exception.TranslatorNotFoundException;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TranslatorHubImpl implements TranslatorHub {
     private final Set<Translator> availableTranslators;
+
+    /**
+     * Resolved {@link Translator}s, to avoid scanning {@link #availableTranslators} on each lookup.
+     * The available {@link Translator}s never change, so the resolution for a given pair of {@link Message} classes never changes either.
+     */
+    private final Map<TranslatorKey, Translator> resolvedTranslators = new ConcurrentHashMap<>();
 
     /**
      * Sometimes just translators-api is imported a dependency - with no implementation class. In such cases, there is not Translator implementation to inject.
@@ -41,14 +49,51 @@ public class TranslatorHubImpl implements TranslatorHub {
 
     @Override
     public <FROM_MESSAGE extends Message, TO_MESSAGE extends Message, TRANSLATOR extends Translator<FROM_MESSAGE, TO_MESSAGE>> TRANSLATOR getTranslatorFor(Class<? extends FROM_MESSAGE> fromMessageClass, Class<? extends TO_MESSAGE> toMessageClass) {
+        if (fromMessageClass == null || toMessageClass == null) {
+            throw new TranslatorNotFoundException(fromMessageClass, toMessageClass);
+        }
+
+        TranslatorKey translatorKey = new TranslatorKey(fromMessageClass, toMessageClass);
+        Translator translator = resolvedTranslators.get(translatorKey);
+        if (translator == null) {
+            translator = resolvedTranslators.computeIfAbsent(translatorKey, k -> findTranslatorFor(fromMessageClass, toMessageClass));
+        }
+        return (TRANSLATOR) translator;
+    }
+
+    private Translator findTranslatorFor(Class<?> fromMessageClass, Class<?> toMessageClass) {
         return this.availableTranslators
                 .stream()
-                .filter(t -> fromMessageClass != null)
-                .filter(t -> toMessageClass != null)
                 .filter(t -> fromMessageClass.isAssignableFrom(t.getClassFrom()))
                 .filter(t -> toMessageClass.isAssignableFrom(t.getClassTo()))
-                .map(t -> (TRANSLATOR) t)
                 .findFirst()
                 .orElseThrow(() -> new TranslatorNotFoundException(fromMessageClass, toMessageClass));
+    }
+
+    private static final class TranslatorKey {
+        private final Class<?> fromMessageClass;
+        private final Class<?> toMessageClass;
+
+        private TranslatorKey(Class<?> fromMessageClass, Class<?> toMessageClass) {
+            this.fromMessageClass = fromMessageClass;
+            this.toMessageClass = toMessageClass;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof TranslatorKey)) {
+                return false;
+            }
+            TranslatorKey that = (TranslatorKey) o;
+            return fromMessageClass == that.fromMessageClass && toMessageClass == that.toMessageClass;
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 * fromMessageClass.hashCode() + toMessageClass.hashCode();
+        }
     }
 }

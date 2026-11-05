@@ -12,9 +12,9 @@
  *******************************************************************************/
 package org.eclipse.kapua.service.device.call.message.kura;
 
+import com.google.common.collect.Maps;
 import com.google.common.primitives.Booleans;
 import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
 import org.eclipse.kapua.message.internal.MessageErrorCodes;
 import org.eclipse.kapua.message.internal.MessageException;
 import org.eclipse.kapua.service.device.call.message.DevicePayload;
@@ -24,10 +24,13 @@ import org.eclipse.kapua.service.device.call.message.kura.utils.GZIPUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 /**
  * {@link DevicePayload} {@link org.eclipse.kapua.service.device.call.kura.Kura} implementation.
@@ -37,6 +40,8 @@ import java.util.Map;
 public class KuraPayload implements DevicePayload {
 
     private static final Logger LOG = LoggerFactory.getLogger(KuraPayload.class);
+
+    private static final int GZIP_BUFFER_SIZE = 8192;
 
     /**
      * The timestamp.
@@ -166,20 +171,23 @@ public class KuraPayload implements DevicePayload {
 
     @Override
     public void readFromByteArray(byte[] bytes) throws MessageException {
-        // Decompress
-        if (GZIPUtils.isCompressed(bytes)) {
-            try {
-                bytes = GZIPUtils.decompress(bytes);
-            } catch (IOException ioe) {
-                throw new MessageException(MessageErrorCodes.INVALID_MESSAGE, ioe, (Object[]) null);
-            }
-        }
-        // Convert protobuf
-        KuraPayloadProto.KuraPayload protoMsg = null;
+        // Decompress and convert protobuf
+        KuraPayloadProto.KuraPayload protoMsg;
         try {
-            protoMsg = KuraPayloadProto.KuraPayload.parseFrom(bytes);
-        } catch (InvalidProtocolBufferException ipbe) {
-            throw new MessageException(MessageErrorCodes.INVALID_MESSAGE, ipbe, (Object[]) null);
+            if (GZIPUtils.isCompressed(bytes)) {
+                // Decompress while parsing, to avoid allocating the whole decompressed byte[]
+                try (InputStream inputStream = new GZIPInputStream(new ByteArrayInputStream(bytes), GZIP_BUFFER_SIZE)) {
+                    protoMsg = KuraPayloadProto.KuraPayload.parseFrom(inputStream);
+                }
+            } else {
+                protoMsg = KuraPayloadProto.KuraPayload.parseFrom(bytes);
+            }
+        } catch (IOException ioe) {
+            throw new MessageException(MessageErrorCodes.INVALID_MESSAGE, ioe, (Object[]) null);
+        }
+        // Pre-size metrics to avoid rehashing while adding them
+        if (metrics == null && protoMsg.getMetricCount() > 0) {
+            metrics = Maps.newHashMapWithExpectedSize(protoMsg.getMetricCount());
         }
         // Add timestamp
         if (protoMsg.hasTimestamp()) {
