@@ -1,8 +1,7 @@
 name: Kapua CI
 on: [ push, pull_request ] # Triggers the workflow on push or pull request events
 
-env: #these 2 env variables defines respectively the maven projects were cucumber tests resides and maven projects were consumers applications needed for docker images building resides.
-  TEST_PROJECTS: "org.eclipse.kapua:kapua-security-test,org.eclipse.kapua:kapua-qa-integration,org.eclipse.kapua:kapua-scheduler-test,org.eclipse.kapua:kapua-user-test,org.eclipse.kapua:kapua-system-test,org.eclipse.kapua:kapua-job-test,org.eclipse.kapua:kapua-device-registry-test,org.eclipse.kapua:kapua-account-test,org.eclipse.kapua:kapua-tag-test,org.eclipse.kapua:kapua-translator-test"
+env: #this env variable defines the maven projects of the consumers applications, needed to build the docker images when they cannot be loaded from the workflow artifacts. The maven projects with cucumber tests are detected by the runTestsTaggedAs action.
   APP_PROJECTS: "org.eclipse.kapua:kapua-service-authentication-app,org.eclipse.kapua:kapua-consumer-lifecycle-app,org.eclipse.kapua:kapua-consumer-telemetry-app"
   # Secrets
   CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
@@ -69,6 +68,23 @@ jobs:
         run: mvn -B -DskipTests install -f assembly -P docker
       - name: Result
         run: docker images | sort
+      - name: Save Kapua Docker Images # Loaded by the test jobs instead of building them again
+        uses: ./.github/actions/saveDockerImages
+        with:
+          artifact-name: kapua-docker-images
+          images: >-
+            eclipsekapua/kapua-sql
+            eclipsekapua/kapua-events-broker
+            eclipsekapua/kapua-broker-artemis
+            eclipsekapua/kapua-job-engine
+            eclipsekapua/kapua-service-authentication
+            eclipsekapua/kapua-consumer-lifecycle
+            eclipsekapua/kapua-consumer-telemetry
+      - name: Save Kapua rest-api Docker Image # Saved apart since only the REST API test jobs need it
+        uses: ./.github/actions/saveDockerImages
+        with:
+          artifact-name: kapua-api-docker-image
+          images: eclipsekapua/kapua-api
 
   junit-tests:
     needs: build
