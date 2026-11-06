@@ -147,7 +147,11 @@ public enum DatastoreSettingsKey implements SettingKey {
     /**
      * Datastore service configurations local cache expiration time
      */
-    CONFIG_CACHE_CONFIGURATION_LOCAL_EXPIRE_AFTER("datastore.cache.configuration.local.expire.after");
+    CONFIG_CACHE_CONFIGURATION_LOCAL_EXPIRE_AFTER("datastore.cache.configuration.local.expire.after"),
+    /**
+     * Elasticsearch max number of field mappings for the message index
+     */
+    CONFIG_MESSAGES_INDEX_MAX_INDEXED_METRICS("datastore.index.message.maxIndexedMetrics");
 
     private String key;
 
