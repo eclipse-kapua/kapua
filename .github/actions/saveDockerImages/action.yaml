@@ -1,0 +1,28 @@
+name: 'Save Docker images'
+description: |
+  Saves Docker images as a workflow artifact, so that the following jobs of the same workflow run can load them instead of building them again
+  - Images are saved in a single archive, so that the layers they share are stored only once
+  - The archive is compressed with zstd and kept for 1 day, which is enough to re-run failed jobs
+inputs:
+  images:
+    description: Space separated list of the Docker images to save (repository or repository:tag)
+    required: true
+  artifact-name:
+    description: Name of the workflow artifact to upload
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Save Docker images
+      run: docker save ${{ inputs.images }} | zstd -T0 -3 -q > "${RUNNER_TEMP}/${{ inputs.artifact-name }}.tar.zst" #using zstd for its efficiency
+      shell: bash
+
+    - name: Upload Docker images
+      uses: actions/upload-artifact@v7
+      with:
+        name: ${{ inputs.artifact-name }}
+        path: ${{ runner.temp }}/${{ inputs.artifact-name }}.tar.zst
+        retention-days: 1
+        compression-level: 0 # Already compressed with zstd, which is more space and time efficient
+        overwrite: true # 'Re-run all jobs' uploads it again in the same workflow run
+        if-no-files-found: error

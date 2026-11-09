@@ -24,6 +24,11 @@ runs:
         key: ${{ runner.os }}-maven-${{ github.run_number }}-kapua-artifacts
         fail-on-cache-miss: 'true'
 
+    - name: Explain missing Kapua artifacts # Re-running only the failed jobs cannot work once they are evicted from the cache
+      if: ${{ failure() && steps.cache-maven-kapua-artifacts.outcome == 'failure' }}
+      run: echo "::error title=Kapua artifacts of this run not found::The Kapua artifacts built by the 'build' job of this workflow run are not in the cache anymore (evicted). Re-running only the failed jobs will keep failing, use 'Re-run all jobs'."
+      shell: bash
+
     - name: Build full cached Maven repository # This adds the built Kapua artifact of this run to the cached repository of external dependencies. Used when re-running a job
       if: ${{ inputs.kapua-artifact-cache-enabled == 'true' }}
       run: mv ~/.m2/kapua-repository/org/eclipse/kapua ~/.m2/repository/org/eclipse/kapua

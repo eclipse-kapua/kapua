@@ -5,11 +5,11 @@ inputs:
     description: Cucumber tag of the tests to run
     required: false
   needs-docker-images:
-    description: true if this suite needs docker images, false otherwise
+    description: true if this suite needs docker images, false otherwise. They are loaded from the artifact uploaded by the 'build-docker' job, which the job must depend on
     required: false
     default: 'true'
   needs-api-docker-image:
-    description: true if this suite needs the rest-api docker image, false otherwise
+    description: true if this suite needs the rest-api docker image, false otherwise. It is loaded from the artifact uploaded by the 'build-docker' job, which the job must depend on
     required: false
     default: 'false'
   run-junit:
@@ -26,19 +26,28 @@ runs:
     - name: Set up Maven caches
       uses: ./.github/actions/setUpMavenCaches
 
-    - name: Docker images creation
+    - name: Docker images loading # Images are built once by the 'build-docker' job
       if: ${{ inputs.needs-docker-images == 'true' }}
-      run: mvn clean install -pl ${APP_PROJECTS} && mvn clean install -Pdocker -f assembly/pom.xml -pl '!:kapua-assembly-api' #api container not used in the tests at all se we don't need to build it here
-      shell: bash
+      uses: ./.github/actions/loadDockerImages
+      with:
+        artifact-name: kapua-docker-images
+        fallback-build-command: >-
+          mvn clean install -pl ${APP_PROJECTS} &&
+          mvn clean install -Pdocker -f assembly/pom.xml -pl '!:kapua-assembly-api'
 
-    - name: Docker rest-api image creation
+    - name: Docker rest-api image loading
       if: ${{ inputs.needs-api-docker-image == 'true' }}
-      run: mvn clean install -Pdocker -pl :kapua-assembly-api
-      shell: bash
+      uses: ./.github/actions/loadDockerImages
+      with:
+        artifact-name: kapua-api-docker-image
+        fallback-build-command: mvn clean install -Pdocker -pl :kapua-assembly-api
 
-    - name: Cucumber tests execution step
+    - name: Cucumber tests execution step # Runs only the modules with Cucumber runners, detected so that new test modules are never left out
       if: ${{ inputs.run-junit == 'false' }}
-      run: mvn -B -Dgroups='!org.eclipse.kapua.qa.markers.junit.JUnitTests' -Dcucumber.filter.tags="${{ inputs.tag }}" -pl ${TEST_PROJECTS} verify
+      run: |
+        TEST_PROJECTS=$(git grep -l '@CucumberOptions' -- '*/src/test/java/*.java' | sed 's|/src/test/java/.*||' | sort -u | paste -sd, -)
+        echo "Modules with Cucumber tests: ${TEST_PROJECTS}"
+        mvn -B -Dgroups='!org.eclipse.kapua.qa.markers.junit.JUnitTests' -Dcucumber.filter.tags="${{ inputs.tag }}" -pl "${TEST_PROJECTS}" verify
       shell: bash
 
     - name: Junit tests execution step

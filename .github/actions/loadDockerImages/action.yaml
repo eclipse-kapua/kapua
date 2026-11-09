@@ -1,0 +1,35 @@
+name: 'Load Docker images'
+description: |
+  Loads the Docker images saved as a workflow artifact by the saveDockerImages action in a previous job of the same workflow run
+  - If the artifact cannot be downloaded (e.g. it expired before re-running only the failed jobs) the images are built instead, and a warning is shown
+inputs:
+  artifact-name:
+    description: Name of the workflow artifact to download
+    required: true
+  fallback-build-command:
+    description: Command that builds the images when the artifact cannot be downloaded (e.g. it expired)
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Download Docker images
+      id: download
+      continue-on-error: true
+      uses: actions/download-artifact@v8
+      with:
+        name: ${{ inputs.artifact-name }}
+        path: ${{ runner.temp }}/docker-images
+
+    - name: Load Docker images
+      if: ${{ steps.download.outcome == 'success' }}
+      run: |
+        zstd -d -q -c "${RUNNER_TEMP}/docker-images/${{ inputs.artifact-name }}.tar.zst" | docker load
+        rm -f "${RUNNER_TEMP}/docker-images/${{ inputs.artifact-name }}.tar.zst"
+      shell: bash
+
+    - name: Build Docker images # Fallback when the artifact of this workflow run is not available anymore
+      if: ${{ steps.download.outcome != 'success' }}
+      run: |
+        echo "::warning title=Docker images artifact not found::The '${{ inputs.artifact-name }}' artifact of this workflow run was not found, probably because it expired (it is kept for 1 day). Building the Docker images instead, which takes a few more minutes. Use 'Re-run all jobs' to build and share them again."
+        ${{ inputs.fallback-build-command }}
+      shell: bash
