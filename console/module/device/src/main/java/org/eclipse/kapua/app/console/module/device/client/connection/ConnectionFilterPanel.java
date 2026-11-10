@@ -12,9 +12,16 @@
  *******************************************************************************/
 package org.eclipse.kapua.app.console.module.device.client.connection;
 
+import com.extjs.gxt.ui.client.data.BaseListLoadResult;
+import com.extjs.gxt.ui.client.data.BaseListLoader;
 import com.extjs.gxt.ui.client.data.BasePagingLoadConfig;
-import com.extjs.gxt.ui.client.data.PagingLoadConfig;
+import com.extjs.gxt.ui.client.data.DataProxy;
+import com.extjs.gxt.ui.client.data.ListLoadResult;
+import com.extjs.gxt.ui.client.data.ListLoader;
 import com.extjs.gxt.ui.client.data.PagingLoadResult;
+import com.extjs.gxt.ui.client.data.RpcProxy;
+import com.extjs.gxt.ui.client.event.ComponentEvent;
+import com.extjs.gxt.ui.client.event.KeyListener;
 import com.extjs.gxt.ui.client.store.ListStore;
 import com.extjs.gxt.ui.client.widget.Label;
 import com.extjs.gxt.ui.client.widget.VerticalPanel;
@@ -42,22 +49,37 @@ import org.eclipse.kapua.app.console.module.user.shared.model.permission.UserSes
 import org.eclipse.kapua.app.console.module.user.shared.service.GwtUserService;
 import org.eclipse.kapua.app.console.module.user.shared.service.GwtUserServiceAsync;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class ConnectionFilterPanel extends EntityFilterPanel<GwtDeviceConnection> {
 
     private static final int WIDTH = 193;
     private static final int MAX_LEN = 255;
     private static final ConsoleConnectionMessages MSGS = GWT.create(ConsoleConnectionMessages.class);
     private final GwtUserServiceAsync userService = GWT.create(GwtUserService.class);
-    private EntityGrid<GwtDeviceConnection> entityGrid;
+    private final EntityGrid<GwtDeviceConnection> entityGrid;
     private final GwtSession currentSession;
 
     private final KapuaTextField<String> clientIdField;
     private final KapuaTextField<String> clientIPFilter;
     private final SimpleComboBox<GwtDeviceQueryPredicates.GwtDeviceConnectionStatus> connectionStatusCombo;
     private final ComboBox<GwtUser> userCombo;
-    private GwtUser noUser;
-    private GwtUser anyUser;
-    private KapuaTextField<String> protocolField;
+
+    private long lastLoadedOn;
+    private final GwtUser noUser;
+    private final GwtUser anyUser;
+
+    private final List<Integer> escapedKeys = Arrays.asList(
+            37, // Arrow key left
+            38, // Arrow key up
+            39, // Arrow key right
+            40, // Arrow key down
+            13 // Enter
+    );
+
+    private final KapuaTextField<String> protocolField;
     private final ComboBox<GwtUser> reservedUserCombo;
     Label userLabel;
     Label reservedUserLabel;
@@ -139,10 +161,8 @@ public class ConnectionFilterPanel extends EntityFilterPanel<GwtDeviceConnection
         anyUser.setId(null);
 
         userCombo = new ComboBox<GwtUser>();
-        userCombo.setStore(new ListStore<GwtUser>());
-        userCombo.disable();
-        userCombo.setEditable(false);
-        userCombo.setEmptyText(MSGS.connectionFiltreUserEmptyText());
+        userCombo.setEditable(true);
+        userCombo.setEmptyText("Last User");
         userCombo.setDisplayField("username");
         userCombo.setValueField("id");
         userCombo.setName("userId");
@@ -152,10 +172,9 @@ public class ConnectionFilterPanel extends EntityFilterPanel<GwtDeviceConnection
         userCombo.setStyleAttribute(CssLiterals.MARGIN_RIGHT, "5px");
         userCombo.setStyleAttribute(CssLiterals.MARGIN_BOTTOM, "10px");
         userCombo.setTriggerAction(TriggerAction.ALL);
-        userCombo.setValue(anyUser);
 
         if (currentSession.hasPermission(UserSessionPermission.read())) {
-            loadUserEntries(userCombo);
+            addUserEntriesLoader(userCombo);
 
             fieldsPanel.add(userCombo);
         }
@@ -183,22 +202,20 @@ public class ConnectionFilterPanel extends EntityFilterPanel<GwtDeviceConnection
         }
 
         reservedUserCombo = new ComboBox<GwtUser>();
-        reservedUserCombo.setStore(new ListStore<GwtUser>());
-        reservedUserCombo.disable();
-        reservedUserCombo.setEditable(false);
+        reservedUserCombo.setEditable(true);
         reservedUserCombo.setEmptyText(MSGS.connectionFilterReservedUserLabel());
         reservedUserCombo.setDisplayField("username");
         reservedUserCombo.setValueField("id");
-        reservedUserCombo.setName("userId");
+        reservedUserCombo.setName("reservedUserId");
         reservedUserCombo.setWidth(WIDTH);
         reservedUserCombo.setStyleAttribute(CssLiterals.MARGIN_TOP, "0px");
         reservedUserCombo.setStyleAttribute(CssLiterals.MARGIN_LEFT, "5px");
         reservedUserCombo.setStyleAttribute(CssLiterals.MARGIN_RIGHT, "5px");
         reservedUserCombo.setStyleAttribute(CssLiterals.MARGIN_BOTTOM, "10px");
         reservedUserCombo.setTriggerAction(TriggerAction.ALL);
-        reservedUserCombo.setValue(anyUser);
+
         if (currentSession.hasPermission(UserSessionPermission.read())) {
-            loadUserEntries(reservedUserCombo);
+            addUserEntriesLoader(reservedUserCombo);
 
             fieldsPanel.add(reservedUserCombo);
         }
@@ -241,36 +258,64 @@ public class ConnectionFilterPanel extends EntityFilterPanel<GwtDeviceConnection
         entityGrid.refresh(query);
     }
 
-    private void loadUserEntries(final ComboBox<GwtUser> userComboBox) {
-        GwtUserQuery userComboFilterQuery = new GwtUserQuery();
-        userComboFilterQuery.setScopeId(currentSession.getAccountId());
-
-        PagingLoadConfig loadConfig = new BasePagingLoadConfig(0, 250);
-
-        userService.query(loadConfig, userComboFilterQuery, new AsyncCallback<PagingLoadResult<GwtUser>>() {
-
+    private void addUserEntriesLoader(final ComboBox<GwtUser> userComboBox) {
+        DataProxy<ListLoadResult<GwtUser>> userDataProxy = new RpcProxy<ListLoadResult<GwtUser>>() {
             @Override
-            public void onSuccess(PagingLoadResult<GwtUser> arg0) {
-                userComboBox.getStore().removeAll();
-                userComboBox.getStore().add(noUser);
-                userComboBox.getStore().add(anyUser);
-                userComboBox.getStore().add(arg0.getData());
-                userComboBox.setValue(anyUser);
-                userComboBox.enable();
+            protected void load(Object loadConfig, final AsyncCallback<ListLoadResult<GwtUser>> asyncCallback) {
 
+                GwtUserQuery userComboFilterQuery = new GwtUserQuery();
+                userComboFilterQuery.setScopeId(currentSession.getAccountId());
+                userComboFilterQuery.setName(userComboBox.getRawValue());
+
+                userService.query(new BasePagingLoadConfig(0, 50), userComboFilterQuery, new AsyncCallback<PagingLoadResult<GwtUser>>() {
+
+                    @Override
+                    public void onSuccess(PagingLoadResult<GwtUser> userLoadResult) {
+
+                        List<GwtUser> userList = new ArrayList<GwtUser>();
+                        if (userComboBox.getRawValue() != null && userComboBox.getRawValue().isEmpty()) {
+                            userList.add(anyUser);
+                            userList.add(noUser);
+                        }
+
+                        userList.addAll(userLoadResult.getData());
+
+                        ListLoadResult<GwtUser> userListStore = new BaseListLoadResult<GwtUser>(userList);
+
+                        asyncCallback.onSuccess(userListStore);
+                    }
+
+                    @Override
+                    public void onFailure(Throwable arg0) {
+                        userLabel.setVisible(false);
+                        userComboBox.setVisible(false);
+                        if (userComboBox.isVisible()) {
+                            ConsoleInfo.display(MSGS.connectionFilteringPopUpError(), MSGS.connectionFilteringUsersError());
+                        }
+
+                        asyncCallback.onFailure(arg0);
+                    }
+                });
             }
+        };
 
+        ListLoader<ListLoadResult<GwtUser>> userListLoader = new BaseListLoader<ListLoadResult<GwtUser>>(userDataProxy);
+        final ListStore<GwtUser> userListStore = new ListStore<GwtUser>(userListLoader);
+        userComboBox.setStore(userListStore);
+
+        userComboBox.addKeyListener(new KeyListener() {
             @Override
-            public void onFailure(Throwable arg0) {
-                userLabel.setVisible(false);
-                userComboBox.setVisible(false);
-                if (userComboBox.isVisible()) {
-                    ConsoleInfo.display(MSGS.connectionFilteringPopUpError(), MSGS.connectionFilteringUsersError());
-                }
+            public void componentKeyUp(ComponentEvent event) {
 
+                if (
+                    System.currentTimeMillis() - lastLoadedOn > 500 &&
+                    !escapedKeys.contains(event.getKeyCode())
+                ) {
+                    userComboBox.getStore().getLoader().load();
+                    lastLoadedOn = System.currentTimeMillis();
+                }
             }
         });
     }
-
 
 }
