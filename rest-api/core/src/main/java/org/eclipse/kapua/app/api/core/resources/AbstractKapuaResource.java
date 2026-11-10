@@ -15,6 +15,9 @@ package org.eclipse.kapua.app.api.core.resources;
 import org.eclipse.kapua.KapuaEntityNotFoundException;
 import org.eclipse.kapua.model.KapuaEntity;
 import org.eclipse.kapua.model.id.KapuaId;
+import org.eclipse.kapua.service.storable.exception.StorableNotFoundException;
+import org.eclipse.kapua.service.storable.model.Storable;
+import org.eclipse.kapua.service.storable.model.id.StorableId;
 
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
@@ -66,6 +69,27 @@ public abstract class AbstractKapuaResource {
         }
 
         return entity;
+    }
+
+    /**
+     * Checks id the given {@link Storable} is {@code null}.
+     * <p>
+     * Similar to {@link #returnNotNullEntity(KapuaEntity, String, KapuaId)} but for {@link Storable}s.
+     *
+     * @param storable The {@link Storable} to check.
+     * @param storableType The {@link Storable#getType()}
+     * @param storableId The {@link StorableId}
+     * @return The given {@link Storable} if not {@code null}
+     * @param <T> The type of the {@link Storable}.
+     * @throws StorableNotFoundException if given {@link Storable} is {@code null}.
+     * @since 2.0.0
+     */
+    public <T extends Storable> T returnNotNullStorable(T storable, String storableType, StorableId storableId) throws StorableNotFoundException {
+        if (storable == null) {
+            throw new StorableNotFoundException(storableType, storableId);
+        }
+
+        return storable;
     }
 
     /**

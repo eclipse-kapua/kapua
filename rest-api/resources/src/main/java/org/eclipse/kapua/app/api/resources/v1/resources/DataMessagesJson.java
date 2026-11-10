@@ -239,11 +239,11 @@ public class DataMessagesJson extends AbstractKapuaResource implements JsonSeria
     public JsonDatastoreMessage findJson(@PathParam("scopeId") ScopeId scopeId,
             @PathParam("datastoreMessageId") StorableEntityId datastoreMessageId)
             throws KapuaException {
-        DatastoreMessage datastoreMessage = returnNotNullEntity(messageStoreService.find(scopeId, datastoreMessageId, StorableFetchStyle.SOURCE_FULL));
+        DatastoreMessage datastoreMessage = returnNotNullStorable(messageStoreService.find(scopeId, datastoreMessageId, StorableFetchStyle.SOURCE_FULL), DatastoreMessage.TYPE, datastoreMessageId);
 
         JsonDatastoreMessage jsonDatastoreMessage = new JsonDatastoreMessage(datastoreMessage);
 
-        return returnNotNullEntity(jsonDatastoreMessage);
+        return returnNotNullStorable(jsonDatastoreMessage, DatastoreMessage.TYPE, datastoreMessageId);
     }
 
     private MessageQuery convertQuery(JsonMessageQuery query) {

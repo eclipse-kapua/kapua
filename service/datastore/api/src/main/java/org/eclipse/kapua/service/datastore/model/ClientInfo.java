@@ -42,6 +42,13 @@ import java.util.Date;
 })
 public interface ClientInfo extends Storable {
 
+    String TYPE = "ClientInfo";
+
+    @Override
+    default String getType() {
+        return TYPE;
+    }
+
     /**
      * Gets the {@link StorableId}
      *
