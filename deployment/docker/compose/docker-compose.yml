@@ -6,7 +6,7 @@ services:
       - "3306:3306"
   es:
     container_name: es
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.8.1
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.28
     ports:
       - "9200:9200"
       - "9300:9300"
