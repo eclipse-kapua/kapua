@@ -200,17 +200,10 @@ public class MqttFacade implements TransportFacade<MqttTopic, MqttPayload, MqttM
      * @since 1.1.0
      */
     private void waitResponse(long timeout, MqttResponseCallback mqttClientCallback) {
-
-        MqttResponseTimeoutTimer responseTimeoutTimer = new MqttResponseTimeoutTimer(borrowedClient.getClientId(), mqttClientCallback, timeout);
-
         try {
-            synchronized (mqttClientCallback) {
-                mqttClientCallback.wait();
-            }
+            mqttClientCallback.waitCompletion(timeout);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-        } finally {
-            responseTimeoutTimer.cancel();
         }
     }
 }

@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Implementation of {@link MqttCallback} interface.
@@ -58,6 +59,15 @@ public class MqttResponseCallback implements MqttCallback {
      * @since 1.0.0
      */
     private final int expectedResponses;
+
+    /**
+     * Whether the waiting for responses is over, because all expected responses arrived or the connection was lost.
+     * <p>
+     * Guarded by {@code this}.
+     *
+     * @since 2.1.0
+     */
+    private boolean completed;
 
     /**
      * Construct a {@link MqttCallback} with the given response container and 1 as expected response {@link MqttMessage}.
@@ -110,9 +120,7 @@ public class MqttResponseCallback implements MqttCallback {
 
             // Notify if all expected responses arrived
             if (expectedResponses >= responses.size()) {
-                synchronized (this) {
-                    notifyAll();
-                }
+                complete();
             }
         }
     }
@@ -138,9 +146,30 @@ public class MqttResponseCallback implements MqttCallback {
     public void connectionLost(Throwable cause) {
         LOG.warn("Connection lost detected! {}", cause.getMessage());
         LOG.error("Connection lost detected!", cause);
-        synchronized (this) {
-            notifyAll();
+        complete();
+    }
+
+    /**
+     * Waits until all expected responses arrived, the connection was lost, or the given timeout expired.
+     * <p>
+     * Returns immediately if the responses arrived before this method was invoked.
+     *
+     * @param timeout The maximum time to wait, in milliseconds.
+     * @throws InterruptedException if the current thread is interrupted while waiting.
+     * @since 2.1.0
+     */
+    public synchronized void waitCompletion(long timeout) throws InterruptedException {
+        long remainingNanos = TimeUnit.MILLISECONDS.toNanos(timeout);
+        long deadline = System.nanoTime() + remainingNanos;
+        while (!completed && remainingNanos > 0) {
+            TimeUnit.NANOSECONDS.timedWait(this, remainingNanos);
+            remainingNanos = deadline - System.nanoTime();
         }
+    }
+
+    private synchronized void complete() {
+        completed = true;
+        notifyAll();
     }
 
     /**
