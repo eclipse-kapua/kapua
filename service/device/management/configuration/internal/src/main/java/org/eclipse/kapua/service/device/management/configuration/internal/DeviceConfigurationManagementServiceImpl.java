@@ -242,7 +242,8 @@ public class DeviceConfigurationManagementServiceImpl extends AbstractDeviceMana
         // Argument Validation
         ArgumentValidator.notNull(scopeId, SCOPE_ID);
         ArgumentValidator.notNull(deviceId, DEVICE_ID);
-        ArgumentValidator.notNull(deviceConfiguration, "componentConfiguration");
+        ArgumentValidator.notNull(deviceConfiguration, "deviceConfiguration");
+        ArgumentValidator.notEmptyOrNull(deviceConfiguration.getComponentConfigurations(), "deviceConfiguration.configuration");
         // Check Access
         authorizationService.checkPermission(permissionFactory.newPermission(Domains.DEVICE_MANAGEMENT, Actions.write, scopeId));
         // Prepare the request
