@@ -85,7 +85,13 @@ public class GwtKapuaDeviceModelConverter {
             predicate.and(query.attributePredicate(DeviceConnectionAttributes.USER_ID, gwtDeviceConnectionQuery.getUserName(), Operator.LIKE));
         }
         if (gwtDeviceConnectionQuery.getGwtDeviceConnectionUser() != null) {
-            predicate = predicate.and(query.attributePredicate(DeviceConnectionAttributes.USER_ID, KapuaEid.parseCompactId(gwtDeviceConnectionQuery.getUserId())));
+            switch (gwtDeviceConnectionQuery.getGwtDeviceConnectionUser()) {
+                case NONE:
+                    predicate = predicate.and(query.attributePredicate(DeviceConnectionAttributes.USER_ID, null, Operator.IS_NULL));
+                    break;
+                default:
+                    predicate = predicate.and(query.attributePredicate(DeviceConnectionAttributes.USER_ID, KapuaEid.parseCompactId(gwtDeviceConnectionQuery.getUserId())));
+            }
         }
         if (gwtDeviceConnectionQuery.getGwtDeviceConnectionReservedUser() != null) {
             switch (gwtDeviceConnectionQuery.getGwtDeviceConnectionReservedUser()) {

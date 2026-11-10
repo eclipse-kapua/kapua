@@ -32,7 +32,7 @@ public class GwtDeviceConnectionQueryPredicates extends KapuaBaseModel implement
     }
 
     public enum GwtDeviceConnectionUser implements IsSerializable {
-        ANY;
+        ANY, NONE;
 
         private GwtDeviceConnectionUser() {
         }
