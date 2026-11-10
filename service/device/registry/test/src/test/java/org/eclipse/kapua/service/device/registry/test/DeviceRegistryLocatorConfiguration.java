@@ -160,7 +160,7 @@ public class DeviceRegistryLocatorConfiguration {
                 classServiceConfigurationManagerMap.put(DeviceConnectionService.class, Mockito.mock(ServiceConfigurationManager.class));
 
                 final DeviceConnectionService deviceConnectionService = new DeviceConnectionServiceImpl(
-                        classServiceConfigurationManagerMap,
+                        classServiceConfigurationManagerMap.get(DeviceConnectionService.class),
                         mockedAuthorization,
                         permissionFactory,
                         new DeviceConnectionFactoryImpl(),
