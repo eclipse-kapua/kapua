@@ -30,9 +30,12 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.KapuaIllegalArgumentException;
 import org.eclipse.kapua.app.api.core.model.CountResult;
 import org.eclipse.kapua.app.api.core.model.ScopeId;
 import org.eclipse.kapua.app.api.core.model.StorableEntityId;
+import org.eclipse.kapua.app.api.core.model.data.DistinctChannelName;
+import org.eclipse.kapua.app.api.core.model.data.DistinctChannelNamesResult;
 import org.eclipse.kapua.app.api.core.resources.AbstractKapuaResource;
 import org.eclipse.kapua.model.query.SortOrder;
 import org.eclipse.kapua.service.KapuaService;
@@ -95,27 +98,8 @@ public class DataChannels extends AbstractKapuaResource {
             @QueryParam("offset") @DefaultValue("0") int offset,
             @QueryParam("limit") @DefaultValue("50") int limit)
             throws KapuaException {
-        AndPredicate andPredicate = datastorePredicateFactory.newAndPredicate();
-        final List<StorablePredicate> clientPredicates = Optional.ofNullable(clientIds)
-                .orElse(new ArrayList<>())
-                .stream()
-                .filter(v -> !Strings.isNullOrEmpty(v))
-                .map(clientId -> datastorePredicateFactory.newTermPredicate(ChannelInfoField.CLIENT_ID, clientId))
-                .collect(Collectors.toList());
-
-        if (!clientPredicates.isEmpty()) {
-            final OrPredicate orPredicate = datastorePredicateFactory.newOrPredicate();
-            orPredicate.setPredicates(clientPredicates);
-            andPredicate.addPredicate(orPredicate);
-        }
-
-        if (!Strings.isNullOrEmpty(name)) {
-            ChannelMatchPredicate channelPredicate = new ChannelMatchPredicateImpl(name);
-            andPredicate.getPredicates().add(channelPredicate);
-        }
-
         ChannelInfoQuery query = channelInfoFactory.newQuery(scopeId);
-        query.setPredicate(andPredicate);
+        query.setPredicate(buildChannelPredicate(clientIds, name));
         query.setOffset(offset);
         query.setLimit(limit);
         if (!Strings.isNullOrEmpty(sortParam)) {
@@ -123,6 +107,54 @@ public class DataChannels extends AbstractKapuaResource {
             query.setSortFields(Collections.singletonList(SortField.of(sortParam, storableSortDirection)));
         }
         return query(scopeId, query);
+    }
+
+    /**
+     * Gets one page of the distinct channel names in the scope, sorted ascending, each with the id and the date of the last message published on it by any client.
+     * <p>
+     * Pagination is cursor based: to get the next page pass the {@code after} value of the current page.
+     * The last page has no {@code after} value.
+     *
+     * @param scopeId
+     *         The {@link ScopeId} in which to search results.
+     * @param clientIds
+     *         The client id(s) to filter results.
+     * @param name
+     *         The channel name to filter results. It allows '#' wildcard in last channel level
+     * @param after
+     *         The channel name after which the page starts (exclusive). Omit it to get the first page.
+     * @param limit
+     *         The maximum number of channel names in the page.
+     * @return The {@link DistinctChannelNamesResult} with the channel names of the page and the cursor of the next one.
+     * @throws KapuaException
+     *         Whenever something bad happens. See specific {@link KapuaService} exceptions.
+     * @since 2.1.0
+     */
+    @GET
+    @Path("_distinct")
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    public DistinctChannelNamesResult distinctNames(@PathParam("scopeId") ScopeId scopeId,
+            @QueryParam("clientId") List<String> clientIds,
+            @QueryParam("name") String name,
+            @QueryParam("after") String after,
+            @QueryParam("limit") @DefaultValue("50") int limit)
+            throws KapuaException {
+        if (limit < 1) {
+            throw new KapuaIllegalArgumentException("limit", String.valueOf(limit));
+        }
+        ChannelInfoQuery query = channelInfoFactory.newQuery(scopeId);
+        query.setPredicate(buildChannelPredicate(clientIds, name));
+
+        // asking for one more channel name to know whether there is a next page
+        List<DistinctChannelName> channels = channelInfoRegistryService.fetchDistinctChannels(query, Strings.emptyToNull(after), limit + 1)
+                .stream()
+                .map(channelInfo -> new DistinctChannelName(channelInfo.getName(), channelInfo.getLastMessageId() != null ? channelInfo.getLastMessageId().toString() : null, channelInfo.getLastMessageOn()))
+                .collect(Collectors.toList());
+        if (channels.size() > limit) {
+            List<DistinctChannelName> page = new ArrayList<>(channels.subList(0, limit));
+            return new DistinctChannelNamesResult(page, page.get(limit - 1).getName());
+        }
+        return new DistinctChannelNamesResult(channels, null);
     }
 
     /**
@@ -192,5 +224,27 @@ public class DataChannels extends AbstractKapuaResource {
         ChannelInfo channelInfo = channelInfoRegistryService.find(scopeId, channelInfoId);
 
         return returnNotNullEntity(channelInfo);
+    }
+
+    private AndPredicate buildChannelPredicate(List<String> clientIds, String name) {
+        AndPredicate andPredicate = datastorePredicateFactory.newAndPredicate();
+        final List<StorablePredicate> clientPredicates = Optional.ofNullable(clientIds)
+                .orElse(new ArrayList<>())
+                .stream()
+                .filter(v -> !Strings.isNullOrEmpty(v))
+                .map(clientId -> datastorePredicateFactory.newTermPredicate(ChannelInfoField.CLIENT_ID, clientId))
+                .collect(Collectors.toList());
+
+        if (!clientPredicates.isEmpty()) {
+            final OrPredicate orPredicate = datastorePredicateFactory.newOrPredicate();
+            orPredicate.setPredicates(clientPredicates);
+            andPredicate.addPredicate(orPredicate);
+        }
+
+        if (!Strings.isNullOrEmpty(name)) {
+            ChannelMatchPredicate channelPredicate = new ChannelMatchPredicateImpl(name);
+            andPredicate.getPredicates().add(channelPredicate);
+        }
+        return andPredicate;
     }
 }
