@@ -47,12 +47,6 @@
 
     <profiles>
         <profile>
-            <id>release</id>
-            <properties>
-                <timestamp>latest</timestamp>
-            </properties>
-        </profile>
-        <profile>
             <id>docker</id>
             <build>
                 <plugins>

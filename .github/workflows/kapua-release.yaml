@@ -3,8 +3,9 @@ name: Eclipse Kapua Release
 on:
   release:
     types: [published]
-#  push:
-#    branches:
+  push:
+    branches:
+      - fix-dockerReleaseImageTags
 #      - release-1.6.x
 #      - release-2.0.x
 #      - develop
@@ -68,7 +69,14 @@ jobs:
         uses: ./.github/actions/setUpRunner
       - name: Set up Maven caches
         uses: ./.github/actions/setUpMavenCaches
-      - name: Build and Publish Kapua Docker Images
+        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+      - name: Build and Publish Release Kapua Docker Images
+        run: mvn -B clean deploy -DskipTests -f assembly -P docker,release
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+        if:  ${{ !startsWith(github.ref, 'refs/tags/') }}
+      - name: Build and Publish Snapshot Kapua Docker Images
         run: mvn -B deploy -DskipTests -f assembly -P docker
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
