@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2017, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -113,21 +113,36 @@ public class KapuaExceptionUtilsTest {
         Mockito.when(mockedDatabaseException.getInternalException()).thenReturn(mockedDatabaseException);
         Assert.assertEquals("ComparisonFailure not expected for: " + exception,kapuaException.toString(), KapuaExceptionUtils.convertPersistenceException(exception).toString());
 
-        //SQL foreign key constraint violation
+        //SQL foreign key constraint violation - unknown SQL error code
         SQLIntegrityConstraintViolationException mockedDatabaseException2 = Mockito.mock(SQLIntegrityConstraintViolationException.class);
         Mockito.when(mockedDatabaseException.getInternalException()).thenReturn(mockedDatabaseException2);
         Mockito.when(mockedDatabaseException.getMessage()).thenReturn("FOREIGN KEY");
-        kapuaIntegrityConstraintViolationException ke = new kapuaIntegrityConstraintViolationException("This entity relates to other entities and cannot be deleted.");
+        kapuaIntegrityConstraintViolationException ke = new kapuaIntegrityConstraintViolationException("This operation would break a relation between this entity and other entities.");
         Assert.assertEquals("ComparisonFailure not expected for: " + exception,ke.toString(), KapuaExceptionUtils.convertPersistenceException(exception).toString());
+
+        //SQL foreign key constraint violation - referenced entity does not exist (MariaDB/MySQL: 1216, 1452 - H2: 23506)
+        kapuaIntegrityConstraintViolationException keReferencedMissing = new kapuaIntegrityConstraintViolationException("This entity references another entity that does not exist.");
+        for (int sqlErrorCode : new int[]{1216, 1452, 23506}) {
+            Mockito.when(mockedDatabaseException.getErrorCode()).thenReturn(sqlErrorCode);
+            Assert.assertEquals("ComparisonFailure not expected for SQL error code: " + sqlErrorCode, keReferencedMissing.toString(), KapuaExceptionUtils.convertPersistenceException(exception).toString());
+        }
+
+        //SQL foreign key constraint violation - entity still referenced by other entities (MariaDB/MySQL: 1217, 1451 - H2: 23503)
+        kapuaIntegrityConstraintViolationException keStillReferenced = new kapuaIntegrityConstraintViolationException("This entity is referenced by other entities and cannot be deleted.");
+        for (int sqlErrorCode : new int[]{1217, 1451, 23503}) {
+            Mockito.when(mockedDatabaseException.getErrorCode()).thenReturn(sqlErrorCode);
+            Assert.assertEquals("ComparisonFailure not expected for SQL error code: " + sqlErrorCode, keStillReferenced.toString(), KapuaExceptionUtils.convertPersistenceException(exception).toString());
+        }
+        Mockito.when(mockedDatabaseException.getErrorCode()).thenReturn(2999);
 
         //generic SQL constraint violation
         Mockito.when(mockedDatabaseException.getMessage()).thenReturn("another message different from for3ign key but always SQL integrity constraint violation stuff");
         kapuaIntegrityConstraintViolationException ke2 = new kapuaIntegrityConstraintViolationException("");
         Assert.assertEquals("ComparisonFailure not expected for: " + exception,ke2.toString(), KapuaExceptionUtils.convertPersistenceException(exception).toString());
 
-        Mockito.verify(mockedDatabaseException, Mockito.times(15)).getInternalException();
-        Mockito.verify(mockedDatabaseException, Mockito.times(14)).getMessage();
-        Mockito.verify(mockedDatabaseException, Mockito.times(15)).getErrorCode();
+        Mockito.verify(mockedDatabaseException, Mockito.times(21)).getInternalException();
+        Mockito.verify(mockedDatabaseException, Mockito.times(20)).getMessage();
+        Mockito.verify(mockedDatabaseException, Mockito.times(21)).getErrorCode();
     }
 
     @Test

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2022 Eurotech and/or its affiliates and others
+ * Copyright (c) 2016, 2026 Eurotech and/or its affiliates and others
  *
  * This program and the accompanying materials are made
  * available under the terms of the Eclipse Public License 2.0
@@ -30,6 +30,10 @@ import java.sql.SQLIntegrityConstraintViolationException;
  * @since 1.0
  */
 public class KapuaExceptionUtils {
+
+    private static final String FOREIGN_KEY_REFERENCED_ENTITY_MISSING_MESSAGE = "This entity references another entity that does not exist.";
+    private static final String FOREIGN_KEY_ENTITY_STILL_REFERENCED_MESSAGE = "This entity is referenced by other entities and cannot be deleted.";
+    private static final String FOREIGN_KEY_GENERIC_MESSAGE = "This operation would break a relation between this entity and other entities.";
 
     private KapuaExceptionUtils() {
     }
@@ -103,8 +107,7 @@ public class KapuaExceptionUtils {
                     break;
                     default: {
                         if (cve.getInternalException() instanceof SQLIntegrityConstraintViolationException) {
-                            String message = cve.getMessage().contains("FOREIGN KEY") ? "This entity relates to other entities and cannot be deleted." : "";
-                            ee = new kapuaIntegrityConstraintViolationException(message);
+                            ee = new kapuaIntegrityConstraintViolationException(integrityConstraintViolationMessage(sqlErrorCode, cve.getMessage()));
                         }
                     }
                 }
@@ -115,6 +118,31 @@ public class KapuaExceptionUtils {
             ee = KapuaException.internalError(e, "Error during Persistence Operation");
         }
         return ee;
+    }
+
+    /**
+     * Builds the detail message of a {@link kapuaIntegrityConstraintViolationException}, telling apart which side of a foreign key has been violated.
+     *
+     * @param sqlErrorCode The vendor SQL error code.
+     * @param sqlMessage   The SQL error message.
+     * @return The detail message, or an empty {@link String} if the violation is not related to a foreign key.
+     * @since 2.1.0
+     */
+    private static String integrityConstraintViolationMessage(int sqlErrorCode, String sqlMessage) {
+        switch (sqlErrorCode) {
+            // MariaDB/MySQL: 1216 ER_NO_REFERENCED_ROW, 1452 ER_NO_REFERENCED_ROW_2 - H2: 23506 REFERENTIAL_INTEGRITY_VIOLATED_PARENT_MISSING_1
+            case 1216:
+            case 1452:
+            case 23506:
+                return FOREIGN_KEY_REFERENCED_ENTITY_MISSING_MESSAGE;
+            // MariaDB/MySQL: 1217 ER_ROW_IS_REFERENCED, 1451 ER_ROW_IS_REFERENCED_2 - H2: 23503 REFERENTIAL_INTEGRITY_VIOLATED_CHILD_EXISTS_1
+            case 1217:
+            case 1451:
+            case 23503:
+                return FOREIGN_KEY_ENTITY_STILL_REFERENCED_MESSAGE;
+            default:
+                return sqlMessage != null && sqlMessage.contains("FOREIGN KEY") ? FOREIGN_KEY_GENERIC_MESSAGE : "";
+        }
     }
 
     /**
