@@ -25,7 +25,6 @@ import org.eclipse.kapua.service.storeengine.client.exception.ClientException;
 import org.eclipse.kapua.service.storable.exception.MappingException;
 import org.eclipse.kapua.service.storable.model.id.StorableId;
 import org.eclipse.kapua.service.storable.model.id.StorableIdFactory;
-import org.eclipse.kapua.service.storable.model.query.predicate.StorablePredicateFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +40,6 @@ public class ClientInfoRegistryFacadeImpl extends AbstractDatastoreFacade implem
     private static final Logger LOG = LoggerFactory.getLogger(ClientInfoRegistryFacadeImpl.class);
 
     private final StorableIdFactory storableIdFactory;
-    private final StorablePredicateFactory storablePredicateFactory;
     private final ClientInfoRepository repository;
     private final DatastoreCacheManager datastoreCacheManager;
     private final Object metadataUpdateSync = new Object();
@@ -59,12 +57,10 @@ public class ClientInfoRegistryFacadeImpl extends AbstractDatastoreFacade implem
     public ClientInfoRegistryFacadeImpl(
             ConfigurationProvider configProvider,
             StorableIdFactory storableIdFactory,
-            StorablePredicateFactory storablePredicateFactory,
             ClientInfoRepository clientInfoRepository,
             DatastoreCacheManager datastoreCacheManager) {
         super(configProvider);
         this.storableIdFactory = storableIdFactory;
-        this.storablePredicateFactory = storablePredicateFactory;
         this.repository = clientInfoRepository;
         this.datastoreCacheManager = datastoreCacheManager;
     }
@@ -89,21 +85,20 @@ public class ClientInfoRegistryFacadeImpl extends AbstractDatastoreFacade implem
         String clientInfoId = ClientInfoField.getOrDeriveId(clientInfo.getId(), clientInfo);
         StorableId storableId = storableIdFactory.newStorableId(clientInfoId);
 
-        // Store channel. Look up channel in the cache, and cache it if it doesn't exist
-        if (!datastoreCacheManager.getClientsCache().get(clientInfo.getClientId())) {
+        // Store client. Look up client in the cache, and cache it if it doesn't exist
+        if (!datastoreCacheManager.getClientsCache().get(clientInfoId)) {
             // The code is safe even without the synchronized block
             // Synchronize in order to let the first thread complete its update
             // then the others of the same type will find the cache updated and
             // skip the update.
             synchronized (metadataUpdateSync) {
-                if (!datastoreCacheManager.getClientsCache().get(clientInfo.getClientId())) {
-                    // fix #REPLACE_ISSUE_NUMBER
+                if (!datastoreCacheManager.getClientsCache().get(clientInfoId)) {
                     ClientInfo storedField = repository.find(clientInfo.getScopeId(), storableId);
                     if (storedField == null) {
                         repository.upsert(clientInfoId, clientInfo);
                     }
                     // Update cache if client update is completed successfully
-                    datastoreCacheManager.getClientsCache().put(clientInfo.getClientId(), true);
+                    datastoreCacheManager.getClientsCache().put(clientInfoId, true);
                 }
             }
         }
