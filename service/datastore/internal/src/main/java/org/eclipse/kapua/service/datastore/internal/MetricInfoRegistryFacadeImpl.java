@@ -105,7 +105,7 @@ public class MetricInfoRegistryFacadeImpl extends AbstractDatastoreFacade implem
         String metricInfoId = MetricInfoField.getOrDeriveId(metricInfo.getId(), metricInfo);
         StorableId storableId = storableIdFactory.newStorableId(metricInfoId);
 
-        // Store channel. Look up channel in the cache, and cache it if it doesn't exist
+        // Store metric. Look up metric in the cache, and cache it if it doesn't exist
         if (!datastoreCacheManager.getMetricsCache().get(metricInfoId)) {
             // fix #REPLACE_ISSUE_NUMBER
             MetricInfo storedField = null;
