@@ -20,8 +20,8 @@ if [ -n "$KEYCLOAK_URL" ] ; then
   echo "Activating OpenID Connect Keycloak integration..."
   echo "  Keycloak: $KEYCLOAK_URL"
 
-  : KEYCLOAK_REALM=${KEYCLOAK_REALM:=kapua}
-  : KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID:=rest-api}
+  KEYCLOAK_REALM=${KEYCLOAK_REALM:=kapua}
+  KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID:=rest-api}
 
   echo "  Keycloak Realm: ${KEYCLOAK_REALM}"
   echo "  OpenId ClientId: ${KEYCLOAK_CLIENT_ID}"
