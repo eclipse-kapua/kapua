@@ -33,22 +33,23 @@ if [ "${KAPUA_SSL_ENABLE}" = "true" ]; then
 
     KEYSTORE_NAME=${KEYSTORE_NAME:="kapua.pkcs12"}
     KAPUA_KEYSTORE_PASSWORD=${KAPUA_KEYSTORE_PASSWORD:="changeit"}
-
     if [ ! -f "${JETTY_BASE}/${CERTIFICATES_PATH}/${KEYSTORE_NAME}" ]; then
         if [ -z "${KAPUA_KEYSTORE}" ]; then
-            if [ -n "${KAPUA_KEY_PASSWORD}" ]; then
-                PASSWORD_PARAM="-passin pass:${KAPUA_KEY_PASSWORD}";
-            fi
-            openssl pkcs12 -export -in <(echo "${KAPUA_CRT}"; echo "${KAPUA_CA}") -inkey <(echo "${KAPUA_KEY}") "${PASSWORD_PARAM}" -name kapua -password pass:"${KAPUA_KEYSTORE_PASSWORD}" -out "${JETTY_BASE}/${CERTIFICATES_PATH}/${KEYSTORE_NAME}"
+            openssl pkcs12 -export \
+                -in <(echo "${KAPUA_CRT}"; echo "${KAPUA_CA}") -inkey <(echo "${KAPUA_KEY}") \
+                -passin pass:"${KAPUA_KEY_PASSWORD}" \
+                -name kapua \
+                -out "${JETTY_BASE}/${CERTIFICATES_PATH}/${KEYSTORE_NAME}" \
+                -passout pass:"${KAPUA_KEYSTORE_PASSWORD}"
         else
             echo "${KAPUA_KEYSTORE}" | base64 --decode > "${JETTY_BASE}/${CERTIFICATES_PATH}/${KEYSTORE_NAME}"
         fi
     fi
 
     {
-      echo "jetty.sslContext.keyStorePath=${CERTIFICATES_PATH}/${KEYSTORE_NAME}"
+      echo "jetty.sslContext.keyStorePath=${JETTY_BASE}/${CERTIFICATES_PATH}/${KEYSTORE_NAME}"
       echo "jetty.sslContext.keyStorePassword=${KAPUA_KEYSTORE_PASSWORD}"
-      echo "jetty.sslContext.trustStorePath=${CERTIFICATES_PATH}/${KEYSTORE_NAME}"
+      echo "jetty.sslContext.trustStorePath=${JETTY_BASE}/${CERTIFICATES_PATH}/${KEYSTORE_NAME}"
       echo "jetty.sslContext.trustStorePassword=${KAPUA_KEYSTORE_PASSWORD}"
       echo "jetty.sslContext.keyManagerPassword=${KAPUA_KEYSTORE_PASSWORD}"
     }  >> ${JETTY_BASE}/start.d/ssl.ini
