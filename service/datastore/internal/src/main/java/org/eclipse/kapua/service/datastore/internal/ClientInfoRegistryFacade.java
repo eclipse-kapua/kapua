@@ -92,14 +92,14 @@ public class ClientInfoRegistryFacade extends AbstractRegistryFacade {
         StorableId storableId = STORABLE_ID_FACTORY.newStorableId(clientInfoId);
 
         UpdateResponse response = null;
-        // Store channel. Look up channel in the cache, and cache it if it doesn't exist
+        // Store client. Look up client in the cache, and cache it if it doesn't exist
         if (!DatastoreCacheManager.getInstance().getClientsCache().get(clientInfo.getClientId())) {
             // The code is safe even without the synchronized block
             // Synchronize in order to let the first thread complete its update
             // then the others of the same type will find the cache updated and
             // skip the update.
             synchronized (metadataUpdateSync) {
-                if (!DatastoreCacheManager.getInstance().getClientsCache().get(clientInfo.getClientId())) {
+                if (!DatastoreCacheManager.getInstance().getClientsCache().get(clientInfoId)) {
                     // fix #REPLACE_ISSUE_NUMBER
                     ClientInfo storedField = find(clientInfo.getScopeId(), storableId);
                     if (storedField == null) {
@@ -112,7 +112,7 @@ public class ClientInfoRegistryFacade extends AbstractRegistryFacade {
                         LOG.debug("Upsert on asset successfully executed [{}.{}, {} - {}]", kapuaIndexName, ClientInfoSchema.CLIENT_TYPE_NAME, response.getId(), response.getId());
                     }
                     // Update cache if client update is completed successfully
-                    DatastoreCacheManager.getInstance().getClientsCache().put(clientInfo.getClientId(), true);
+                    DatastoreCacheManager.getInstance().getClientsCache().put(clientInfoId, true);
                 }
             }
         }

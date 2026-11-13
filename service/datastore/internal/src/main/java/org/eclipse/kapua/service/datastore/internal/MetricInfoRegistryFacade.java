@@ -95,9 +95,8 @@ public class MetricInfoRegistryFacade extends AbstractRegistryFacade {
         StorableId storableId = STORABLE_ID_FACTORY.newStorableId(metricInfoId);
 
         UpdateResponse response;
-        // Store channel. Look up channel in the cache, and cache it if it doesn't exist
+        // Store metric. Look up metric in the cache, and cache it if it doesn't exist
         if (!DatastoreCacheManager.getInstance().getMetricsCache().get(metricInfoId)) {
-            // fix #REPLACE_ISSUE_NUMBER
             MetricInfo storedField = find(metricInfo.getScopeId(), storableId);
             if (storedField == null) {
                 Metadata metadata = mediator.getMetadata(metricInfo.getScopeId(), metricInfo.getFirstMessageOn().getTime());
