@@ -32,6 +32,7 @@
         <docker.image.name>image-name</docker.image.name>
 
         <!-- For regular development do not create and push additional tags -->
+        <docker.tag.latest.skip>true</docker.tag.latest.skip>
         <docker.push.latest.skip>true</docker.push.latest.skip>
         <docker.tag.major.skip>true</docker.tag.major.skip>
         <docker.push.major.skip>true</docker.push.major.skip>
@@ -99,6 +100,7 @@
             <properties>
                 <!-- For releases create and push additional tags -->
                 <!-- latest is not pushed until actual 2.x release -->
+                <docker.tag.latest.skip>true</docker.tag.latest.skip>
                 <docker.push.latest.skip>true</docker.push.latest.skip>
                 <docker.tag.major.skip>false</docker.tag.major.skip>
                 <docker.push.major.skip>false</docker.push.major.skip>
@@ -159,7 +161,6 @@
 
                                     <tags>
                                         <tag>${project.version}</tag>
-                                        <tag>latest</tag>
                                     </tags>
                                 </build>
                             </image>
@@ -172,6 +173,18 @@
                             <goals>
                                 <goal>build</goal>
                             </goals>
+                        </execution>
+
+                        <execution>
+                            <id>Tag Docker Container - Latest</id>
+                            <phase>install</phase>
+                            <goals>
+                                <goal>tag</goal>
+                            </goals>
+                            <configuration>
+                                <skipTag>${docker.tag.latest.skip}</skipTag>
+                                <tagName>latest</tagName>
+                            </configuration>
                         </execution>
 
                         <execution>
