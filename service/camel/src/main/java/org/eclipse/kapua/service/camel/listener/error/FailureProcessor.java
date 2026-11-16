@@ -16,6 +16,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.eclipse.kapua.KapuaUnauthenticatedException;
 import org.eclipse.kapua.service.camel.application.MetricsCamel;
+import org.eclipse.kapua.service.client.message.MessageConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +41,9 @@ public class FailureProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
+        //first mark the message as dlq ready
+        //TODO refactor to get value from a common module
+        exchange.getMessage().setHeader(MessageConstants.HEADER_KAPUA_MESSAGE_TYPE, "DLQ");
         if (isUnauthenticatedException(exchange)) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Detected unauthenticated error on message processing retry!");
