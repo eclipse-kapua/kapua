@@ -81,7 +81,7 @@ public class ServerPlugin implements ActiveMQServerPlugin {
     //standard address, if customized please change it
     public static final String PREFIX_MESSAGE_TYPE_NOTIFICATION = "activemq.notifications";
     //TODO get from configuration
-    public static final String PREFIX_MESSAGE_TYPE_DLQ = "$SYS/MSG/dlq/";
+    public static final String PREFIX_MESSAGE_TYPE_DLQ = "$DLQ/";
     public static final String PREFIX_MESSAGE_TYPE_SYSTEM = "$SYS/";
     public static final String PREFIX_MESSAGE_TYPE_CONTROL = "$EDC/";
 
