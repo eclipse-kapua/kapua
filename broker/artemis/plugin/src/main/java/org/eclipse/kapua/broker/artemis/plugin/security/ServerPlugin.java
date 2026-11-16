@@ -76,6 +76,7 @@ public class ServerPlugin implements ActiveMQServerPlugin {
     public static final String MESSAGE_TYPE_TELEMETRY = "TEL";
     public static final String MESSAGE_TYPE_SYSTEM = "SYS";
     public static final String NOTIFICATION_PREFIX = "activemq.notifications";//standard address, if customized please change it
+    public static final String MESSAGE_TYPE_DLQ = "DLQ";
 
     /**
      * publish message size threshold for printing message information
