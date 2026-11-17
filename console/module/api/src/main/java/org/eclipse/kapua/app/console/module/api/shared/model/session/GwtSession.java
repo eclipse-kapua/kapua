@@ -17,6 +17,7 @@ import org.eclipse.kapua.service.authorization.permission.Permission;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +60,8 @@ public class GwtSession extends KapuaBaseModel implements Serializable {
     private String userName;
     private String userDisplayName;
     private String tokenId;
-    private String trustKey;
+    private String mfaTrustKey;
+    private Date mfaTrustKeyExpirationDate;
     private String openIDIdToken;
 
     // Permission info
@@ -279,12 +281,20 @@ public class GwtSession extends KapuaBaseModel implements Serializable {
         this.tokenId = tokenId;
     }
 
-    public String getTrustKey() {
-        return trustKey;
+    public String getMfaTrustKey() {
+        return mfaTrustKey;
     }
 
-    public void setTrustKey(String trustKey) {
-        this.trustKey = trustKey;
+    public void setMfaTrustKey(String mfaTrustKey) {
+        this.mfaTrustKey = mfaTrustKey;
+    }
+
+    public void setMfaTrustKeyExpirationDate(Date mfaTrustKeyExpirationDate) {
+        this.mfaTrustKeyExpirationDate = mfaTrustKeyExpirationDate;
+    }
+
+    public Date getMfaTrustKeyExpirationDate() {
+        return mfaTrustKeyExpirationDate;
     }
 
     public String getOpenIDIdToken() {
