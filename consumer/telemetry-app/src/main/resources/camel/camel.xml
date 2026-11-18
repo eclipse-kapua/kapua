@@ -14,7 +14,7 @@
 
 <routes xmlns="http://camel.apache.org/schema/spring">
     <route errorHandlerRef="messageErrorHandler" id="telemetryRoute" >
-        <from uri="amqp:topic://#?selector=KAPUA_MESSAGE_TYPE='TEL'&amp;asyncConsumer=true&amp;acknowledgementModeName=CLIENT_ACKNOWLEDGE&amp;subscriptionDurable=true&amp;subscriptionName=telemetryConsumers&amp;subscriptionShared=true&amp;transacted=false&amp;concurrentConsumers=2&amp;maxConcurrentConsumers=5"/>
+        <from uri="amqp:topic://#?selector=RAW(KAPUA_MESSAGE_TYPE='TEL' AND _AMQ_ORIG_ADDRESS IS NULL)&amp;asyncConsumer=true&amp;acknowledgementModeName=CLIENT_ACKNOWLEDGE&amp;subscriptionDurable=true&amp;subscriptionName=telemetryConsumers&amp;subscriptionShared=true&amp;transacted=false&amp;concurrentConsumers=2&amp;maxConcurrentConsumers=5"/>
         <!--  handling timeout and communication exceptions in a retry queue -->
         <pipeline>
             <!-- keep here the bind/unbind of the kapua session so we can avoid the null check in bind method of KapuaCamelFilter because the Artemis internal messages have no KapuaSession in their header -->
