@@ -44,12 +44,6 @@ public class JpaJobInstanceDataDAO {
         return jpaJobInstanceData;
     }
 
-    public static int deleteByName(EntityManager em, String jobName) {
-        TypedQuery<Integer> deleteByNameQuery = em.createNamedQuery("JobInstanceData.deleteByName", Integer.class);
-        deleteByNameQuery.setParameter("name", jobName);
-        return deleteByNameQuery.executeUpdate();
-    }
-
     public static JpaJobInstanceData find(EntityManager em, long id) {
         return em.find(JpaJobInstanceData.class, id);
     }
@@ -99,5 +93,17 @@ public class JpaJobInstanceDataDAO {
         List<JpaJobInstanceData> queryResult = selectQuery.getResultList();
 
         return queryResult.stream().collect(Collectors.toMap(JpaJobInstanceData::getId, JpaJobInstanceData::getName));
+    }
+
+    public static int deleteByName(EntityManager em, String jobName) {
+        TypedQuery<Integer> deleteByNameQuery = em.createNamedQuery("JobInstanceData.deleteByName", Integer.class);
+        deleteByNameQuery.setParameter("name", jobName);
+        return deleteByNameQuery.executeUpdate();
+    }
+
+    public static int deleteById(EntityManager em, long jobInstanceId) {
+        TypedQuery<Integer> deleteByNameQuery = em.createNamedQuery("JobInstanceData.deleteById", Integer.class);
+        deleteByNameQuery.setParameter("id", jobInstanceId);
+        return deleteByNameQuery.executeUpdate();
     }
 }
