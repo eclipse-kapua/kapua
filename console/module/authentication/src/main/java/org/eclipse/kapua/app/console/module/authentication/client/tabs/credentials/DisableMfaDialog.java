@@ -23,6 +23,7 @@ import org.eclipse.kapua.app.console.module.api.client.GwtKapuaErrorCode;
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.client.util.CookieUtils;
 import org.eclipse.kapua.app.console.module.api.client.util.FailureHandler;
+import org.eclipse.kapua.app.console.module.api.client.util.model.MfaTrustMachineCookie;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtXSRFToken;
 import org.eclipse.kapua.app.console.module.api.shared.service.GwtSecurityTokenService;
 import org.eclipse.kapua.app.console.module.api.shared.service.GwtSecurityTokenServiceAsync;
@@ -59,7 +60,7 @@ public class DisableMfaDialog extends Dialog {
 
         // Events
         getButtonById("yes").addSelectionListener(new SelectionListener<ButtonEvent>() {
-            public void componentSelected(final ButtonEvent ce) {
+            public void componentSelected(final ButtonEvent buttonEvent) {
 
                 gwtMfaCredentialOptionsService.find(scopeId, mfaCredentialOptionsId, selfManagement, new AsyncCallback<GwtMfaCredentialOptions>() {
 
@@ -80,6 +81,7 @@ public class DisableMfaDialog extends Dialog {
                                 @Override
                                 public void onFailure(Throwable caught) {
                                     unmask();
+
                                     FailureHandler.handle(caught);
                                 }
 
@@ -95,9 +97,10 @@ public class DisableMfaDialog extends Dialog {
 
                                         @Override
                                         public void onSuccess(Void result) {
-                                            CookieUtils.removeCookie(CookieUtils.KAPUA_COOKIE_TRUST + username);
+                                            CookieUtils.removeCookie(MfaTrustMachineCookie.COOKIE_NAME_PREFIX + username);
+
+                                            hide(buttonEvent.getButton());
                                             unmask();
-                                            hide(ce.getButton());
                                         }
                                     });
                                 }
@@ -110,7 +113,7 @@ public class DisableMfaDialog extends Dialog {
                                 throw new GwtKapuaException(GwtKapuaErrorCode.ENTITY_NOT_FOUND, null, "MfaOption", null);
                             } catch (GwtKapuaException e) {
                                 unmask();
-                                hide(ce.getButton());
+                                hide(buttonEvent.getButton());
                                 FailureHandler.handle(e);
                             }
                         }

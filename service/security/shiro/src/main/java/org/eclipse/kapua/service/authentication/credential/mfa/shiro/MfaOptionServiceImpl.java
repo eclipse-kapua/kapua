@@ -156,52 +156,6 @@ public class MfaOptionServiceImpl implements MfaOptionService {
         return option;
     }
 
-    private Account fetchAccount(MfaOptionCreator mfaOptionCreator) throws KapuaException {
-        final Account account = Optional.ofNullable(
-                KapuaSecurityUtils.doPrivileged(() ->
-                        accountService.find(KapuaId.ANY, mfaOptionCreator.getScopeId())
-                )
-        ).orElseThrow(() -> new KapuaEntityNotFoundException(Account.TYPE, mfaOptionCreator.getScopeId()));
-        return account;
-    }
-
-    private User fetchUser(MfaOptionCreator mfaOptionCreator) throws KapuaException {
-        final User user = Optional.ofNullable(
-                KapuaSecurityUtils.doPrivileged(() ->
-                        userService.find(mfaOptionCreator.getScopeId(), mfaOptionCreator.getUserId())
-                )
-        ).orElseThrow(() -> new KapuaEntityNotFoundException(User.TYPE, mfaOptionCreator.getUserId()));
-        if (!user.getUserType().equals(UserType.INTERNAL) || user.getExternalId() != null) {
-            throw new InternalUserOnlyException();
-        }
-        return user;
-    }
-
-    /**
-     * Generates all the scratch codes.
-     * The number of generated scratch codes is decided through the {@link org.eclipse.kapua.service.authentication.mfa.MfaAuthenticator} service.
-     * The scratch code provided within the scratchCodeCreator parameter is ignored.
-     *
-     * @return
-     * @throws KapuaException
-     */
-    private List<ScratchCode> createAllScratchCodes(TxContext tx, KapuaId scopeId, KapuaId mfaOptionImpl) throws KapuaException {
-        final List<String> codes = mfaAuthenticator.generateCodes();
-        final List<ScratchCode> res = new ArrayList<>();
-        for (String code : codes) {
-
-            // Crypto code (it's ok to do than if BCrypt is used when checking a provided scratch code against the stored one)
-            String encryptedCode = authenticationUtils.cryptCredential(CryptAlgorithm.BCRYPT, code);
-            // Create code
-            ScratchCode scratchCode = scratchCodeRepository.create(tx, new ScratchCodeImpl(scopeId, mfaOptionImpl, encryptedCode));
-            //return a copy of the created entity, with the code in clear to be seen by the user
-            final ScratchCodeImpl clearCodeClone = new ScratchCodeImpl(scratchCode);
-            clearCodeClone.setCode(code);
-            res.add(clearCodeClone);
-        }
-        return res;
-    }
-
     @Override
     public MfaOption update(MfaOption mfaOption) throws KapuaException {
         throw new UnsupportedOperationException();
@@ -463,14 +417,27 @@ public class MfaOptionServiceImpl implements MfaOptionService {
         });
     }
 
-    private MfaOption doDisableTrust(TxContext tx, MfaOption mfaOption) throws KapuaException {
-        // Reset the trust machine fields
-        mfaOption.setTrustKey(null);
-        mfaOption.setTrustExpirationDate(null);
 
-        return mfaOptionRepository.update(tx, mfaOption);
+    private Account fetchAccount(MfaOptionCreator mfaOptionCreator) throws KapuaException {
+        final Account account = Optional.ofNullable(
+                KapuaSecurityUtils.doPrivileged(() ->
+                        accountService.find(KapuaId.ANY, mfaOptionCreator.getScopeId())
+                )
+        ).orElseThrow(() -> new KapuaEntityNotFoundException(Account.TYPE, mfaOptionCreator.getScopeId()));
+        return account;
     }
 
+    private User fetchUser(MfaOptionCreator mfaOptionCreator) throws KapuaException {
+        final User user = Optional.ofNullable(
+                KapuaSecurityUtils.doPrivileged(() ->
+                        userService.find(mfaOptionCreator.getScopeId(), mfaOptionCreator.getUserId())
+                )
+        ).orElseThrow(() -> new KapuaEntityNotFoundException(User.TYPE, mfaOptionCreator.getUserId()));
+        if (!user.getUserType().equals(UserType.INTERNAL) || user.getExternalId() != null) {
+            throw new InternalUserOnlyException();
+        }
+        return user;
+    }
 
     /**
      * Generate the trust key string.
@@ -480,6 +447,31 @@ public class MfaOptionServiceImpl implements MfaOptionService {
      */
     private String generateTrustKey() {
         return UUID.randomUUID().toString();
+    }
+
+    /**
+     * Generates all the scratch codes.
+     * The number of generated scratch codes is decided through the {@link org.eclipse.kapua.service.authentication.mfa.MfaAuthenticator} service.
+     * The scratch code provided within the scratchCodeCreator parameter is ignored.
+     *
+     * @return
+     * @throws KapuaException
+     */
+    private List<ScratchCode> createAllScratchCodes(TxContext tx, KapuaId scopeId, KapuaId mfaOptionImpl) throws KapuaException {
+        final List<String> codes = mfaAuthenticator.generateCodes();
+        final List<ScratchCode> res = new ArrayList<>();
+        for (String code : codes) {
+
+            // Crypto code (it's ok to do than if BCrypt is used when checking a provided scratch code against the stored one)
+            String encryptedCode = authenticationUtils.cryptCredential(CryptAlgorithm.BCRYPT, code);
+            // Create code
+            ScratchCode scratchCode = scratchCodeRepository.create(tx, new ScratchCodeImpl(scopeId, mfaOptionImpl, encryptedCode));
+            //return a copy of the created entity, with the code in clear to be seen by the user
+            final ScratchCodeImpl clearCodeClone = new ScratchCodeImpl(scratchCode);
+            clearCodeClone.setCode(code);
+            res.add(clearCodeClone);
+        }
+        return res;
     }
 
     /**
@@ -509,4 +501,11 @@ public class MfaOptionServiceImpl implements MfaOptionService {
         }
     }
 
+    private MfaOption doDisableTrust(TxContext tx, MfaOption mfaOption) throws KapuaException {
+        // Reset the trust machine fields
+        mfaOption.setTrustKey(null);
+        mfaOption.setTrustExpirationDate(null);
+
+        return mfaOptionRepository.update(tx, mfaOption);
+    }
 }
