@@ -222,7 +222,7 @@ public class DataMessages extends AbstractKapuaResource {
             throws KapuaException {
         DatastoreMessage datastoreMessage = messageStoreService.find(scopeId, datastoreMessageId, StorableFetchStyle.SOURCE_FULL);
 
-        return returnNotNullEntity(datastoreMessage);
+        return returnNotNullStorable(datastoreMessage, DatastoreMessage.TYPE, datastoreMessageId);
     }
 
     //

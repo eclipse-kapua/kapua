@@ -53,6 +53,14 @@ import java.util.UUID;
 })
 public interface DatastoreMessage extends Storable {
 
+    String TYPE = "DatastoreMessage";
+
+    @Override
+    default String getType() {
+        return TYPE;
+    }
+
+
     /**
      * Get the message identifier
      *
