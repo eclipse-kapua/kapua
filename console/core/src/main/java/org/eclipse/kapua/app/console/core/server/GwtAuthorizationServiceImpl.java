@@ -48,6 +48,8 @@ import org.eclipse.kapua.service.authentication.AuthenticationService;
 import org.eclipse.kapua.service.authentication.CredentialsFactory;
 import org.eclipse.kapua.service.authentication.JwtCredentials;
 import org.eclipse.kapua.service.authentication.UsernamePasswordCredentials;
+import org.eclipse.kapua.service.authentication.credential.mfa.MfaOption;
+import org.eclipse.kapua.service.authentication.credential.mfa.MfaOptionService;
 import org.eclipse.kapua.service.authentication.exception.KapuaAuthenticationErrorCodes;
 import org.eclipse.kapua.service.authentication.exception.KapuaAuthenticationException;
 import org.eclipse.kapua.service.authentication.registration.RegistrationService;
@@ -82,6 +84,7 @@ public class GwtAuthorizationServiceImpl extends KapuaRemoteServiceServlet imple
     private static final RegistrationService REGISTRATION_SERVICE = LOCATOR.getService(RegistrationService.class);
     private static final CredentialsFactory CREDENTIALS_FACTORY = LOCATOR.getFactory(CredentialsFactory.class);
 
+    private static final MfaOptionService MFA_OPTION_SERVICE = LOCATOR.getService(MfaOptionService.class);
     private static final AccessInfoService ACCESS_INFO_SERVICE = LOCATOR.getService(AccessInfoService.class);
 
     private static final UserService USER_SERVICE = LOCATOR.getService(UserService.class);
@@ -243,6 +246,7 @@ public class GwtAuthorizationServiceImpl extends KapuaRemoteServiceServlet imple
         // Get info from session
         final KapuaSession kapuaSession = KapuaSecurityUtils.getSession();
         LOG.debug("Kapua session: {}", kapuaSession);
+
         // Get user info
         LOG.debug("Looking up - scopeId: {}, userId: {}", kapuaSession.getScopeId(), kapuaSession.getUserId());
         final User user = KapuaSecurityUtils.doPrivileged(new Callable<User>() {
@@ -252,6 +256,7 @@ public class GwtAuthorizationServiceImpl extends KapuaRemoteServiceServlet imple
                 return USER_SERVICE.find(kapuaSession.getScopeId(), kapuaSession.getUserId());
             }
         });
+
         // Get account info
         Account account = KapuaSecurityUtils.doPrivileged(new Callable<Account>() {
 
@@ -260,9 +265,11 @@ public class GwtAuthorizationServiceImpl extends KapuaRemoteServiceServlet imple
                 return ACCOUNT_SERVICE.find(kapuaSession.getScopeId());
             }
         });
+
         // Convert entities
         GwtUser gwtUser = KapuaGwtUserModelConverter.convertUser(user);
         GwtAccount gwtAccount = KapuaGwtAccountModelConverter.convertAccount(account);
+
         // Build the session
         final GwtSession gwtSession = new GwtSession();
 
@@ -273,20 +280,11 @@ public class GwtAuthorizationServiceImpl extends KapuaRemoteServiceServlet imple
         gwtSession.setBuildVersion(commonsConfig.getString(SystemSettingKey.BUILD_REVISION));
         gwtSession.setBuildNumber(commonsConfig.getString(SystemSettingKey.BUILD_NUMBER));
         gwtSession.setSsoEnabled(ConsoleSsoLocator.getLocator(this).getService().isEnabled());
-//        LoginInfo loginInfo = AUTHENTICATION_SERVICE.getLoginInfo();
-//        gwtSession.setSsoBrokeringEnabledForSession(loginInfo.getSsoData() != null &&
-//                !loginInfo.getSsoData().getBrokeringApiConnectionIssues() &&
-//                loginInfo.getSsoData().getAccountSupportsBrokering() &&
-//                loginInfo.getSsoData().getAccountSupportsDirectLogin());
-//        gwtSession.setDatastoreDisabled(DATASTORE_SETTINGS.getBoolean(DatastoreSettingsKey.DISABLE_DATASTORE, false));
 
         // Account Info
         gwtSession.setAccountId(gwtAccount.getId());
         gwtSession.setAccountName(gwtAccount.getName());
         gwtSession.setAccountPath(gwtAccount.getParentAccountPath());
-        // Following 2 have been commented after deprecation of GwtSession.getRootAccount* methods
-        // gwtSession.setRootAccountId(gwtAccount.getId());
-        // gwtSession.setRootAccountName(gwtAccount.getName());
 
         // Selected Account info
         gwtSession.setSelectedAccountId(gwtAccount.getId());
@@ -300,11 +298,19 @@ public class GwtAuthorizationServiceImpl extends KapuaRemoteServiceServlet imple
         gwtSession.setTokenId(kapuaSession.getAccessToken().getTokenId());
         gwtSession.setOpenIDIdToken(kapuaSession.getOpenIDidToken());
 
-        // Setting Mfa trust key
-        String trustKey = kapuaSession.getAccessToken().getTrustKey();
-        if (trustKey != null && !trustKey.isEmpty()) {
-            gwtSession.setTrustKey(kapuaSession.getAccessToken().getTrustKey());
-        }
+        // Setting MFA trust key
+        gwtSession.setMfaTrustKey(kapuaSession.getAccessToken().getTrustKey());
+        KapuaSecurityUtils.doPrivileged(new ThrowingRunnable() {
+                @Override
+                public void run() throws Exception {
+                    MfaOption mfaOption = MFA_OPTION_SERVICE.findByUserId(user.getScopeId(), user.getId());
+                    if (mfaOption != null) {
+                        gwtSession.setMfaTrustKeyExpirationDate(mfaOption.getTrustExpirationDate());
+                    }
+                }
+            }
+
+        );
 
         // Load permissions
         KapuaSecurityUtils.doPrivileged(new ThrowingRunnable() {
