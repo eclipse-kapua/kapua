@@ -15,6 +15,7 @@ package org.eclipse.kapua.app.console.module.authentication.client.tabs.credenti
 import org.eclipse.kapua.app.console.module.api.client.messages.ConsoleMessages;
 import org.eclipse.kapua.app.console.module.api.client.util.CookieUtils;
 import org.eclipse.kapua.app.console.module.api.client.util.FailureHandler;
+import org.eclipse.kapua.app.console.module.api.client.util.model.MfaTrustMachineCookie;
 import org.eclipse.kapua.app.console.module.api.shared.model.GwtXSRFToken;
 import org.eclipse.kapua.app.console.module.api.shared.service.GwtSecurityTokenService;
 import org.eclipse.kapua.app.console.module.api.shared.service.GwtSecurityTokenServiceAsync;
@@ -64,7 +65,7 @@ public class ForgetTrustMachineDialog extends Dialog {
 
         // Events
         getButtonById("yes").addSelectionListener(new SelectionListener<ButtonEvent>() {
-            public void componentSelected(final ButtonEvent ce) {
+            public void componentSelected(final ButtonEvent buttonEvent) {
                 mask(MSGS.maskDisableTrust());
                 // Ok - Confirm
                 // TODO Manage removal on both Frontend (Cookie) and Backend (CredentialService)
@@ -89,8 +90,9 @@ public class ForgetTrustMachineDialog extends Dialog {
 
                             @Override
                             public void onSuccess(Void result) {
-                                CookieUtils.removeCookie(CookieUtils.KAPUA_COOKIE_TRUST + username);
-                                hide(ce.getButton());
+                                CookieUtils.removeCookie(MfaTrustMachineCookie.COOKIE_NAME_PREFIX + username);
+
+                                hide(buttonEvent.getButton());
                             }
                         });
                     }

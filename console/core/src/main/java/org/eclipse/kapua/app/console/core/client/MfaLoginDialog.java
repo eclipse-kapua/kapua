@@ -37,8 +37,11 @@ import org.eclipse.kapua.app.console.core.shared.service.GwtAuthorizationService
 import org.eclipse.kapua.app.console.module.api.client.messages.ConsoleMessages;
 import org.eclipse.kapua.app.console.module.api.client.util.ConsoleInfo;
 import org.eclipse.kapua.app.console.module.api.client.util.CookieUtils;
+import org.eclipse.kapua.app.console.module.api.client.util.model.MfaTrustMachineCookie;
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
 import org.eclipse.kapua.app.console.module.authentication.client.messages.ConsoleCredentialMessages;
+
+import java.util.Date;
 
 /**
  * Multi Factor Authentication - Login second step: MFA code and trust this machine request
@@ -155,14 +158,20 @@ public class MfaLoginDialog extends Dialog {
 
                 // If trust is checked we set the cookie for the first time
                 if (trustCheckbox.getValue()) {
-                    String trustKey = gwtSession.getTrustKey();
+                    String username = gwtSession.getUserName();
+                    String mfaTrustKey = gwtSession.getMfaTrustKey();
+                    Date mfaTrustKeyExpirationDate = gwtSession.getMfaTrustKeyExpirationDate();
 
-                    String usernamePart = gwtSession.getUserName();
+                    MfaTrustMachineCookie mfaTrustMachineCookie = new MfaTrustMachineCookie(
+                            username,
+                            mfaTrustKey,
+                            mfaTrustKeyExpirationDate
+                    );
 
-                    CookieUtils cookie = new CookieUtils(usernamePart);
-                    cookie.createTrustCookie(trustKey);
+                    CookieUtils.addCookie(mfaTrustMachineCookie);
                 }
 
+                // Return to main login
                 MfaLoginDialog.this.hide();
                 loginDialog.callMainScreen();
             }

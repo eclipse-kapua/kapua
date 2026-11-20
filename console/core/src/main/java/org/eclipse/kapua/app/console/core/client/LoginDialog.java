@@ -42,7 +42,7 @@ import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.client.messages.ConsoleMessages;
 import org.eclipse.kapua.app.console.module.api.client.util.ConsoleInfo;
 import org.eclipse.kapua.app.console.module.api.client.util.CookieUtils;
-import org.eclipse.kapua.app.console.module.api.client.util.FailureHandler;
+import org.eclipse.kapua.app.console.module.api.client.util.model.MfaTrustMachineCookie;
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
 
 /**
@@ -278,40 +278,42 @@ public class LoginDialog extends Dialog {
             getButtonBar().disable();
             username.disable();
             password.disable();
-
-            // Open the MFA if needed
-            // trust cookie test
-            boolean existTrustCookie = CookieUtils.isCookieEnabled(CookieUtils.KAPUA_COOKIE_TRUST + username.getValue());
             status.show();
             getButtonBar().disable();
 
-            CookieUtils cookie = new CookieUtils(username.getValue());
-            String trustKey = cookie.getTrustKeyCookie();
-            performLogin(cookie != null ? cookie.getTrustKeyCookie() : null);
+            performLogin();
         }
 
     }
 
     // Login
 
-    public void performLogin(String trustKey) {
+    public void performLogin() {
+        // Retrieve MFA Trust Machine cookie value if present
+        String mfaTrustMachineCookieValue = CookieUtils.readCookie(MfaTrustMachineCookie.COOKIE_NAME_PREFIX + username.getValue());
 
+        // Build credentials
         GwtLoginCredential credentials = new GwtLoginCredential(username.getValue(), password.getValue());
-        credentials.setTrustKey(trustKey);
+        credentials.setTrustKey(mfaTrustMachineCookieValue);
 
+        // Login
         gwtAuthorizationService.login(credentials, false, new AsyncCallback<GwtSession>() {
 
             @Override
             public void onFailure(Throwable caught) {
                 if (caught instanceof GwtKapuaException) {
                     GwtKapuaException ex = (GwtKapuaException) caught;
+
+                    // Check if login is failed because of MFA code not provided
                     if (GwtKapuaErrorCode.REQUIRE_MFA_CODE == ex.getCode()) {
                         mfaLoginDialog.show();
                         return;
                     } else {
                         ConsoleInfo.display(CORE_MSGS.loginError(), caught.getLocalizedMessage());
                     }
-                    CookieUtils.removeCookie(CookieUtils.KAPUA_COOKIE_TRUST + username.getValue());
+
+                    // If login failed for other reasons, remove any stored MFA trust Machine Cookie
+                    CookieUtils.removeCookie(MfaTrustMachineCookie.COOKIE_NAME_PREFIX + username.getValue());
                 } else {
                     ConsoleInfo.display("Error while performing login", caught.getLocalizedMessage());
                 }
@@ -323,23 +325,6 @@ public class LoginDialog extends Dialog {
                 currentSession = gwtSession;
                 callMainScreen();
                 ConsoleInfo.hideInfo();
-            }
-        });
-    }
-
-    public void performLogout() {
-        gwtAuthorizationService.logout(new AsyncCallback<Void>() {
-
-            @Override
-            public void onFailure(Throwable caught) {
-                FailureHandler.handle(caught);
-            }
-
-            @Override
-            public void onSuccess(Void arg0) {
-                ConsoleInfo.display(MSGS.popupInfo(), MSGS.loggedOut());
-                resetDialog();
-                show();
             }
         });
     }
