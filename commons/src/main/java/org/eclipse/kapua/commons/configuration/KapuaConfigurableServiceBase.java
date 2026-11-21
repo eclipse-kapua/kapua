@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.KapuaIllegalStateException;
 import org.eclipse.kapua.commons.util.ArgumentValidator;
 import org.eclipse.kapua.model.config.metatype.EmptyTocd;
 import org.eclipse.kapua.model.config.metatype.KapuaTocd;
@@ -38,9 +39,7 @@ import org.eclipse.kapua.storage.TxManager;
  *
  * @since 2.0.0
  */
-public class KapuaConfigurableServiceBase
-        implements KapuaConfigurableService,
-        KapuaService {
+public class KapuaConfigurableServiceBase implements KapuaConfigurableService, KapuaService {
 
     protected final TxManager txManager;
     protected final ServiceConfigurationManager serviceConfigurationManager;
@@ -53,37 +52,51 @@ public class KapuaConfigurableServiceBase
             ServiceConfigurationManager serviceConfigurationManager,
             String authorizationDomain,
             AuthorizationService authorizationService,
-            PermissionFactory permissionFactory) {
+            PermissionFactory permissionFactory
+    ) {
         this.txManager = txManager;
-        this.serviceConfigurationManager = serviceConfigurationManager;
         this.domain = authorizationDomain;
+        this.serviceConfigurationManager = serviceConfigurationManager;
         this.authorizationService = authorizationService;
         this.permissionFactory = permissionFactory;
+
+        if (serviceConfigurationManager == null) {
+            throw new KapuaIllegalStateException("ServiceConfigurationManager not available! Check KapuaModule configuration!");
+        }
     }
 
     @Override
     public boolean isServiceEnabled(KapuaId scopeId) throws KapuaException {
+        //
         // Argument Validation
         ArgumentValidator.notNull(scopeId, "scopeId");
 
+        //
+        // Check service enabled
         return txManager.execute(tx -> serviceConfigurationManager.isServiceEnabled(tx, scopeId));
     }
 
     @Override
     public KapuaTocd getConfigMetadata(KapuaId scopeId) throws KapuaException {
+        //
         // Argument Validation
         ArgumentValidator.notNull(scopeId, "scopeId");
 
+        //
         // Check access
         if (!authorizationService.isPermitted(permissionFactory.newPermission(domain, Actions.read, scopeId))) {
             //Temporary, use Optional instead
             return new EmptyTocd();
         }
+
+        //
+        // Do get
         return serviceConfigurationManager.getConfigMetadata(scopeId, true).orElse(null);
     }
 
     @Override
     public Map<String, Object> getConfigValues(KapuaId scopeId) throws KapuaException {
+        //
         // Argument Validation
         ArgumentValidator.notNull(scopeId, "scopeId");
 
@@ -91,17 +104,25 @@ public class KapuaConfigurableServiceBase
         if (!authorizationService.isPermitted(permissionFactory.newPermission(domain, Actions.read, scopeId))) {
             return Collections.emptyMap();
         }
+
+        //
+        // Do get
         return serviceConfigurationManager.getConfigValues(scopeId, true);
     }
 
     @Override
     public void setConfigValues(KapuaId scopeId, KapuaId parentId, Map<String, Object> values) throws KapuaException {
+        //
         // Argument Validation
         ArgumentValidator.notNull(scopeId, "scopeId");
         ArgumentValidator.notNull(values, "values");
 
+        //
+        // Check access
         authorizationService.checkPermission(permissionFactory.newPermission(domain, Actions.write, scopeId));
 
+        //
+        // Do set
         serviceConfigurationManager.setConfigValues(scopeId, Optional.ofNullable(parentId), values);
     }
 }
