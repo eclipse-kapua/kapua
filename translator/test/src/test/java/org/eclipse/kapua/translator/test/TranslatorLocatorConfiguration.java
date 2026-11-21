@@ -13,6 +13,7 @@
 package org.eclipse.kapua.translator.test;
 
 import org.eclipse.kapua.KapuaException;
+import org.eclipse.kapua.commons.cache.LocalCache;
 import org.eclipse.kapua.commons.crypto.CryptoUtil;
 import org.eclipse.kapua.commons.crypto.CryptoUtilImpl;
 import org.eclipse.kapua.commons.crypto.setting.CryptoSettings;
@@ -30,6 +31,7 @@ import org.eclipse.kapua.message.internal.KapuaMessageFactoryImpl;
 import org.eclipse.kapua.model.id.KapuaIdFactory;
 import org.eclipse.kapua.qa.common.MockedLocator;
 import org.eclipse.kapua.qa.common.TestJAXBContextProvider;
+import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authentication.mfa.MfaAuthenticator;
 import org.eclipse.kapua.service.authentication.shiro.mfa.MfaAuthenticatorImpl;
@@ -59,6 +61,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 
 import io.cucumber.java.Before;
@@ -103,6 +106,8 @@ public class TranslatorLocatorConfiguration {
                 // Inject mocked Permission Factory
                 bind(PermissionFactory.class).toInstance(Mockito.mock(PermissionFactory.class));
                 bind(AccountService.class).toInstance(Mockito.mock(AccountService.class));
+                bind(new TypeLiteral<LocalCache<String, Account>>() {
+                }).annotatedWith(Names.named("accountsByNameCache")).toInstance(new LocalCache<>(100, 60, null));
                 bind(DeviceRegistryService.class).toInstance(Mockito.mock(DeviceRegistryService.class));
                 bind(GenericRequestFactory.class).toInstance(Mockito.mock(GenericRequestFactory.class));
                 bind(DeviceAssetFactory.class).toInstance(Mockito.mock(DeviceAssetFactory.class));
