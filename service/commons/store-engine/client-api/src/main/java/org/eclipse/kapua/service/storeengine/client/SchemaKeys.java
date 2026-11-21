@@ -77,6 +77,21 @@ public class SchemaKeys {
      * @since 1.0.0
      */
     public static final String KEY_FORMAT = "format";
+
+    public static final String KEY_AGGREGATION_SIZE = "size";
+
+    public static final String KEY_AGGREGATION_FIELD = "field";
+
+    public static final String KEY_AGGREGATION_TERMS = "terms";
+
+    public static final String KEY_AGGREGATION_NODE = "aggs";
+
+    public static final String KEY_AGGREGATION_COMPOSITE = "composite";
+
+    public static final String KEY_AGGREGATION_SOURCES = "sources";
+
+    public static final String KEY_AGGREGATION_AFTER = "after";
+    public static final String KEY_AGGREGATION_MIN = "min";
     /**
      * Index key
      *

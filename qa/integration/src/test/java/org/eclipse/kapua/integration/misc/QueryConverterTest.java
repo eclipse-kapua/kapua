@@ -23,6 +23,7 @@ import org.eclipse.kapua.service.datastore.model.query.predicate.DatastorePredic
 import org.eclipse.kapua.service.storeengine.client.QueryConverter;
 import org.eclipse.kapua.service.storeengine.client.SchemaKeys;
 import org.eclipse.kapua.service.storeengine.client.rest.QueryConverterImpl;
+import org.eclipse.kapua.service.storable.model.query.AggregationField;
 import org.eclipse.kapua.service.storable.model.query.SortField;
 import org.eclipse.kapua.service.storable.model.query.StorableFetchStyle;
 import org.junit.Assert;
@@ -83,6 +84,61 @@ public class QueryConverterTest {
         Assert.assertTrue(esQuery.has("sort"));
         Assert.assertTrue(esQuery.has("from"));
         Assert.assertTrue(esQuery.has("size"));;
+    }
+
+    @Test
+    public void aggregationConversionTest() throws Exception {
+        mq.setAggregationField(new AggregationField("distinct_channels", "channel", 50));
+        JsonNode composite = qc.convertQuery(mq).path(SchemaKeys.KEY_AGGREGATION_NODE).path("distinct_channels");
+        //composite aggregation (not terms) on the single field, with the requested page size
+        Assert.assertFalse(composite.has(SchemaKeys.KEY_AGGREGATION_TERMS));
+        Assert.assertEquals(50, composite.path(SchemaKeys.KEY_AGGREGATION_COMPOSITE).path(SchemaKeys.KEY_AGGREGATION_SIZE).asInt());
+        JsonNode sources = composite.path(SchemaKeys.KEY_AGGREGATION_COMPOSITE).path(SchemaKeys.KEY_AGGREGATION_SOURCES);
+        Assert.assertEquals(1, sources.size());
+        Assert.assertEquals("channel", sources.get(0).path("channel").path(SchemaKeys.KEY_AGGREGATION_TERMS).path(SchemaKeys.KEY_AGGREGATION_FIELD).asText());
+        //first page: no cursor and no sub-aggregation
+        Assert.assertFalse(composite.path(SchemaKeys.KEY_AGGREGATION_COMPOSITE).has(SchemaKeys.KEY_AGGREGATION_AFTER));
+        Assert.assertFalse(composite.has(SchemaKeys.KEY_AGGREGATION_NODE));
+    }
+
+    @Test
+    public void aggregationAfterConversionTest() throws Exception {
+        mq.setAggregationField(new AggregationField("distinct_channels", "channel", 50, "bus/route/one"));
+        JsonNode compositeNode = qc.convertQuery(mq).path(SchemaKeys.KEY_AGGREGATION_NODE).path("distinct_channels").path(SchemaKeys.KEY_AGGREGATION_COMPOSITE);
+        //with a single source the composite key is just the value of the field
+        JsonNode after = compositeNode.path(SchemaKeys.KEY_AGGREGATION_AFTER);
+        Assert.assertEquals(1, after.size());
+        Assert.assertEquals("bus/route/one", after.path("channel").asText());
+        Assert.assertEquals(50, compositeNode.path(SchemaKeys.KEY_AGGREGATION_SIZE).asInt());
+    }
+
+    @Test
+    public void aggregationMinSubAggregationConversionTest() throws Exception {
+        mq.setAggregationField(new AggregationField("distinct_channels", "channel", 50, null, "timestamp"));
+        JsonNode aggregation = qc.convertQuery(mq).path(SchemaKeys.KEY_AGGREGATION_NODE).path("distinct_channels");
+        Assert.assertFalse(aggregation.path(SchemaKeys.KEY_AGGREGATION_COMPOSITE).has(SchemaKeys.KEY_AGGREGATION_AFTER));
+        //the min sub-aggregation is a sibling of the composite one, so it is computed on each bucket
+        JsonNode minAggregation = aggregation.path(SchemaKeys.KEY_AGGREGATION_NODE).path(AggregationField.MIN_AGGREGATION_NAME);
+        Assert.assertEquals("timestamp", minAggregation.path(SchemaKeys.KEY_AGGREGATION_MIN).path(SchemaKeys.KEY_AGGREGATION_FIELD).asText());
+    }
+
+    @Test
+    public void aggregationKeepsOtherQueryPartsConversionTest() throws Exception {
+        mq.setPredicate(datastorePredicateFactory.newExistsPredicate("channel"));
+        mq.setLimit(0);
+        mq.setAggregationField(new AggregationField("distinct_channels", "channel", 10, "a", "timestamp"));
+        JsonNode esQuery = qc.convertQuery(mq);
+        Assert.assertTrue(esQuery.has(SchemaKeys.KEY_AGGREGATION_NODE));
+        //the aggregation runs on the documents matched by the predicate, and no hit is returned
+        Assert.assertTrue(esQuery.has(SchemaKeys.KEY_QUERY));
+        Assert.assertEquals(0, esQuery.path(SchemaKeys.KEY_SIZE).asInt());
+    }
+
+    @Test
+    public void aggregationIsIgnoredByCountAndDeleteConversionTest() throws Exception {
+        mq.setAggregationField(new AggregationField("distinct_channels", "channel", 10, "a", "timestamp"));
+        Assert.assertEquals("{}", qc.convertCountQuery(mq).toString());
+        Assert.assertEquals("{}", qc.convertDeleteQuery(mq).toString());
     }
 
     /**

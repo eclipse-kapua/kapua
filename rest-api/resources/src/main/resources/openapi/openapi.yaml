@@ -127,6 +127,8 @@ paths:
     $ref: './dataChannel/dataChannel-scopeId.yaml#/paths/~1{scopeId}~1data~1channels'
   /{scopeId}/data/channels/_count:
     $ref: './dataChannel/dataChannel-scopeId-_count.yaml#/paths/~1{scopeId}~1data~1channels~1_count'
+  /{scopeId}/data/channels/_distinct:
+    $ref: './dataChannel/dataChannel-scopeId-_distinct.yaml#/paths/~1{scopeId}~1data~1channels~1_distinct'
   /{scopeId}/data/channels/{channelInfoId}:
     $ref: './dataChannel/dataChannel-scopeId-channelInfoId.yaml#/paths/~1{scopeId}~1data~1channels~1{channelInfoId}'
   ### Data Client ###
@@ -1272,6 +1274,8 @@ components:
       $ref: './dataChannel/dataChannel.yaml#/components/schemas/channelInfo'
     channelInfoListResult:
       $ref: './dataChannel/dataChannel.yaml#/components/schemas/channelInfoListResult'
+    distinctChannelNamesResult:
+      $ref: './dataChannel/dataChannel.yaml#/components/schemas/distinctChannelNamesResult'
     ### Data Client Entities ###
     clientInfo:
       $ref: './dataClient/dataClient.yaml#/components/schemas/clientInfo'

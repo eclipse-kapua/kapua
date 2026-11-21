@@ -19,6 +19,7 @@ import org.eclipse.kapua.service.storeengine.client.QueryConverter;
 import org.eclipse.kapua.service.storeengine.client.SchemaKeys;
 import org.eclipse.kapua.service.storeengine.client.exception.QueryMappingException;
 import org.eclipse.kapua.service.storable.exception.MappingException;
+import org.eclipse.kapua.service.storable.model.query.AggregationField;
 import org.eclipse.kapua.service.storable.model.query.SortField;
 import org.eclipse.kapua.service.storable.model.query.StorableQuery;
 import org.eclipse.kapua.service.storable.model.utils.MappingUtils;
@@ -33,9 +34,9 @@ import java.util.List;
  */
 public class QueryConverterImpl implements QueryConverter {
 
-    private static ConvertOptions convertOptionsCount = new ConvertOptions(false, true, false, false, false);
+    private static ConvertOptions convertOptionsCount = new ConvertOptions(false, true, false, false, false, false);
     private static ConvertOptions convertOptionsDelete = convertOptionsCount;
-    private static ConvertOptions convertOptionsSearch = new ConvertOptions(true, true, true, true, true);
+    private static ConvertOptions convertOptionsSearch = new ConvertOptions(true, true, true, true, true, true);
 
     @Override
     public JsonNode convertQuery(Object query) throws QueryMappingException {
@@ -60,6 +61,10 @@ public class QueryConverterImpl implements QueryConverter {
         try {
             StorableQuery storableQuery = (StorableQuery) query;
             ObjectNode rootNode = MappingUtils.newObjectNode();
+
+            if (convertOptions.aggregationEnabled && storableQuery.getAggregationField() != null) {
+                rootNode.set(SchemaKeys.KEY_AGGREGATION_NODE, convertAggregation(storableQuery.getAggregationField()));
+            }
 
             if (convertOptions.sourceEnabled) {
                 ObjectNode includesFields = MappingUtils.newObjectNode();
@@ -98,6 +103,66 @@ public class QueryConverterImpl implements QueryConverter {
         }
     }
 
+    /**
+     * Converts the given {@link AggregationField} to the {@code aggs} node of the search request.
+     * <p>
+     * It is a composite aggregation (instead of a terms one) so that the buckets can be paged through {@code after} without hitting {@code search.max_buckets}.
+     * The {@code after} and the {@code min} sub-aggregation are added only when set on the {@link AggregationField}.
+     * <pre>
+     * "aggs": {
+     *   "&lt;aggregationName&gt;": {
+     *     "composite": {
+     *       "size": &lt;size&gt;,
+     *       "sources": [ { "&lt;fieldName&gt;": { "terms": { "field": "&lt;fieldName&gt;" } } } ],
+     *       "after": { "&lt;fieldName&gt;": "&lt;after&gt;" }
+     *     },
+     *     "aggs": {
+     *       "min_sub_aggregation": { "min": { "field": "&lt;minFieldName&gt;" } }
+     *     }
+     *   }
+     * }
+     * </pre>
+     *
+     * @param aggregationField The {@link AggregationField} to convert.
+     * @return The {@code aggs} node.
+     * @throws MappingException if the node cannot be built.
+     * @since 2.1.0
+     */
+    private ObjectNode convertAggregation(AggregationField aggregationField) throws MappingException {
+        ObjectNode termsNode = MappingUtils.newObjectNode();
+        termsNode.put(SchemaKeys.KEY_AGGREGATION_FIELD, aggregationField.getFieldName());
+        ObjectNode sourceTermsNode = MappingUtils.newObjectNode();
+        sourceTermsNode.set(SchemaKeys.KEY_AGGREGATION_TERMS, termsNode);
+        ObjectNode sourceNode = MappingUtils.newObjectNode();
+        sourceNode.set(aggregationField.getFieldName(), sourceTermsNode);
+
+        ObjectNode compositeNode = MappingUtils.newObjectNode();
+        compositeNode.put(SchemaKeys.KEY_AGGREGATION_SIZE, aggregationField.getSize());
+        compositeNode.set(SchemaKeys.KEY_AGGREGATION_SOURCES, MappingUtils.newArrayNode().add(sourceNode));
+        if (aggregationField.getAfter() != null) {
+            // with a single source the composite key is just the field value
+            ObjectNode afterNode = MappingUtils.newObjectNode();
+            afterNode.put(aggregationField.getFieldName(), aggregationField.getAfter());
+            compositeNode.set(SchemaKeys.KEY_AGGREGATION_AFTER, afterNode);
+        }
+
+        ObjectNode aggregationNode = MappingUtils.newObjectNode();
+        aggregationNode.set(SchemaKeys.KEY_AGGREGATION_COMPOSITE, compositeNode);
+        if (aggregationField.getMinFieldName() != null) {
+            ObjectNode minFieldNode = MappingUtils.newObjectNode();
+            minFieldNode.put(SchemaKeys.KEY_AGGREGATION_FIELD, aggregationField.getMinFieldName());
+            ObjectNode minNode = MappingUtils.newObjectNode();
+            minNode.set(SchemaKeys.KEY_AGGREGATION_MIN, minFieldNode);
+            ObjectNode subAggsNode = MappingUtils.newObjectNode();
+            subAggsNode.set(AggregationField.MIN_AGGREGATION_NAME, minNode);
+            aggregationNode.set(SchemaKeys.KEY_AGGREGATION_NODE, subAggsNode);
+        }
+
+        ObjectNode aggsNode = MappingUtils.newObjectNode();
+        aggsNode.set(aggregationField.getAggregationName(), aggregationNode);
+        return aggsNode;
+    }
+
     @Override
     public Object getFetchStyle(Object query) throws QueryMappingException {
         if (!(query instanceof StorableQuery)) {
@@ -114,13 +179,15 @@ public class QueryConverterImpl implements QueryConverter {
         protected boolean sortEnabled;
         protected boolean fromEnabled;
         protected boolean sizeEnabled;
+        protected boolean aggregationEnabled;
 
-        ConvertOptions(boolean source,boolean query,boolean sort, boolean from, boolean size) {
+        ConvertOptions(boolean source, boolean query, boolean sort, boolean from, boolean size, boolean aggregationEnabled) {
             this.sourceEnabled = source;
             this.queryEnabled = query;
             this.sortEnabled = sort;
             this.fromEnabled = from;
             this.sizeEnabled = size;
+            this.aggregationEnabled = aggregationEnabled;
         }
 
     }
