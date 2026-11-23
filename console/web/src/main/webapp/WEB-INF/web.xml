@@ -100,6 +100,7 @@
         <session-timeout>30</session-timeout>
         <cookie-config>
             <name>KAPUA_JSESSIONID</name>
+            <http-only>true</http-only>
         </cookie-config>
     </session-config>
 
