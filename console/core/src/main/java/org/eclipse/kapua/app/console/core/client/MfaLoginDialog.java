@@ -37,6 +37,7 @@ import org.eclipse.kapua.app.console.core.shared.service.GwtAuthorizationService
 import org.eclipse.kapua.app.console.module.api.client.messages.ConsoleMessages;
 import org.eclipse.kapua.app.console.module.api.client.util.ConsoleInfo;
 import org.eclipse.kapua.app.console.module.api.client.util.CookieUtils;
+import org.eclipse.kapua.app.console.module.api.client.util.model.CookieSameSitePolicy;
 import org.eclipse.kapua.app.console.module.api.client.util.model.MfaTrustMachineCookie;
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
 import org.eclipse.kapua.app.console.module.authentication.client.messages.ConsoleCredentialMessages;
@@ -166,6 +167,7 @@ public class MfaLoginDialog extends Dialog {
                             username,
                             mfaTrustKey,
                             mfaTrustKeyExpirationDate,
+                            CookieSameSitePolicy.STRICT,
                             gwtSession.isSecureCookie()
                     );
 
