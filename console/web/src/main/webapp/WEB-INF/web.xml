@@ -104,6 +104,7 @@
         <cookie-config>
             <name>KAPUA_JSESSIONID</name>
             <http-only>true</http-only>
+            <comment>__SAME_SITE_STRICT__</comment>
         </cookie-config>
     </session-config>
 
