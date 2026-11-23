@@ -26,6 +26,8 @@ import org.eclipse.kapua.app.console.module.account.shared.util.KapuaGwtAccountM
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.server.KapuaRemoteServiceServlet;
 import org.eclipse.kapua.app.console.module.api.server.util.KapuaExceptionHandler;
+import org.eclipse.kapua.app.console.module.api.setting.ConsoleSetting;
+import org.eclipse.kapua.app.console.module.api.setting.ConsoleSettingKeys;
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSessionPermission;
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSessionPermissionAction;
@@ -103,6 +105,11 @@ public class GwtAuthorizationServiceImpl extends KapuaRemoteServiceServlet imple
     private static final RegistrationService REGISTRATION_SERVICE = LOCATOR.getService(RegistrationService.class);
 
     private static final UserService USER_SERVICE = LOCATOR.getService(UserService.class);
+
+    private static final ConsoleSetting CONSOLE_SETTING = ConsoleSetting.getInstance();
+
+    private static final boolean SECURE_COOKIE = CONSOLE_SETTING.getBoolean(ConsoleSettingKeys.SECURE_COOKIE);
+
 
     /**
      * Login call in response to the login dialog.
@@ -295,6 +302,7 @@ public class GwtAuthorizationServiceImpl extends KapuaRemoteServiceServlet imple
         gwtSession.setBuildNumber(commonsConfig.getString(SystemSettingKey.BUILD_NUMBER));
         gwtSession.setSsoEnabled(ConsoleSsoLocator.getLocator(this).getService().isEnabled());
         gwtSession.setDatastoreDisabled(DatastoreSettings.getInstance().getBoolean(DatastoreSettingsKey.DISABLE_DATASTORE, false));
+        gwtSession.setSecureCookie(SECURE_COOKIE);
 
         // Account Info
         gwtSession.setAccountId(gwtAccount.getId());
