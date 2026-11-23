@@ -165,7 +165,8 @@ public class MfaLoginDialog extends Dialog {
                     MfaTrustMachineCookie mfaTrustMachineCookie = new MfaTrustMachineCookie(
                             username,
                             mfaTrustKey,
-                            mfaTrustKeyExpirationDate
+                            mfaTrustKeyExpirationDate,
+                            gwtSession.isSecureCookie()
                     );
 
                     CookieUtils.addCookie(mfaTrustMachineCookie);
