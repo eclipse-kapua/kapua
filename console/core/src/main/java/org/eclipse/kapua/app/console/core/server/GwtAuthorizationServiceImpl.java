@@ -26,6 +26,8 @@ import org.eclipse.kapua.app.console.module.account.shared.util.KapuaGwtAccountM
 import org.eclipse.kapua.app.console.module.api.client.GwtKapuaException;
 import org.eclipse.kapua.app.console.module.api.server.KapuaRemoteServiceServlet;
 import org.eclipse.kapua.app.console.module.api.server.util.KapuaExceptionHandler;
+import org.eclipse.kapua.app.console.module.api.setting.ConsoleSetting;
+import org.eclipse.kapua.app.console.module.api.setting.ConsoleSettingKeys;
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSession;
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSessionPermission;
 import org.eclipse.kapua.app.console.module.api.shared.model.session.GwtSessionPermissionAction;
@@ -41,7 +43,6 @@ import org.eclipse.kapua.commons.util.ThrowingRunnable;
 import org.eclipse.kapua.locator.KapuaLocator;
 import org.eclipse.kapua.model.domain.Actions;
 import org.eclipse.kapua.model.id.KapuaId;
-import org.eclipse.kapua.plugin.sso.openid.provider.setting.OpenIDSetting;
 import org.eclipse.kapua.service.account.Account;
 import org.eclipse.kapua.service.account.AccountService;
 import org.eclipse.kapua.service.authentication.AuthenticationService;
@@ -56,7 +57,6 @@ import org.eclipse.kapua.service.authentication.registration.RegistrationService
 import org.eclipse.kapua.service.authorization.access.AccessInfo;
 import org.eclipse.kapua.service.authorization.access.AccessInfoService;
 import org.eclipse.kapua.service.authorization.permission.Permission;
-import org.eclipse.kapua.service.datastore.internal.setting.DatastoreSettings;
 import org.eclipse.kapua.service.user.User;
 import org.eclipse.kapua.service.user.UserService;
 import org.eclipse.kapua.service.user.group.UserGroupService;
@@ -89,8 +89,9 @@ public class GwtAuthorizationServiceImpl extends KapuaRemoteServiceServlet imple
 
     private static final UserService USER_SERVICE = LOCATOR.getService(UserService.class);
     private static final UserGroupService USER_GROUP_SERVICE = LOCATOR.getService(UserGroupService.class);
-    private static final DatastoreSettings DATASTORE_SETTINGS = LOCATOR.getComponent(DatastoreSettings.class);
-    private static final OpenIDSetting OPENID_SETTING = LOCATOR.getComponent(OpenIDSetting.class);
+    private static final ConsoleSetting CONSOLE_SETTING = ConsoleSetting.getInstance();
+
+    private static final boolean SECURE_COOKIE = CONSOLE_SETTING.getBoolean(ConsoleSettingKeys.SECURE_COOKIE);
 
     /**
      * Login call in response to the login dialog.
@@ -280,6 +281,7 @@ public class GwtAuthorizationServiceImpl extends KapuaRemoteServiceServlet imple
         gwtSession.setBuildVersion(commonsConfig.getString(SystemSettingKey.BUILD_REVISION));
         gwtSession.setBuildNumber(commonsConfig.getString(SystemSettingKey.BUILD_NUMBER));
         gwtSession.setSsoEnabled(ConsoleSsoLocator.getLocator(this).getService().isEnabled());
+        gwtSession.setSecureCookie(SECURE_COOKIE);
 
         // Account Info
         gwtSession.setAccountId(gwtAccount.getId());
