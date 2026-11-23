@@ -21,4 +21,6 @@ public interface KapuaCookie {
     String getValue();
 
     Date getExpirationDate();
+
+    boolean isSecure();
 }

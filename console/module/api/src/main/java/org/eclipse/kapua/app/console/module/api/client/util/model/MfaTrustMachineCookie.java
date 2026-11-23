@@ -24,11 +24,13 @@ public class MfaTrustMachineCookie implements KapuaCookie {
 
     private final Date expirationDate;
 
-    public MfaTrustMachineCookie(String username, String trustKey, Date expirationDate) {
+    private final boolean secure;
+
+    public MfaTrustMachineCookie(String username, String trustKey, Date expirationDate, boolean secure) {
         this.username = username;
         this.trustKey = trustKey;
         this.expirationDate = expirationDate;
-
+        this.secure = secure;
     }
 
     public String getName() {
@@ -51,5 +53,10 @@ public class MfaTrustMachineCookie implements KapuaCookie {
     @Override
     public Date getExpirationDate() {
         return expirationDate;
+    }
+
+    @Override
+    public boolean isSecure() {
+        return secure;
     }
 }

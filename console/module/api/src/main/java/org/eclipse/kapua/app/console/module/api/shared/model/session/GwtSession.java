@@ -32,6 +32,7 @@ public class GwtSession extends KapuaBaseModel implements Serializable {
     private String buildNumber;
     private boolean ssoEnabled;
     private boolean datastoreDisabled;
+    private boolean secureCookie;
 
     // Account info
     private String accountId;
@@ -119,6 +120,14 @@ public class GwtSession extends KapuaBaseModel implements Serializable {
 
     public void setDatastoreDisabled(boolean datastoreDisabled) {
         this.datastoreDisabled = datastoreDisabled;
+    }
+
+    public boolean isSecureCookie() {
+        return secureCookie;
+    }
+
+    public void setSecureCookie(boolean secureCookie) {
+        this.secureCookie = secureCookie;
     }
 
     // Account info
