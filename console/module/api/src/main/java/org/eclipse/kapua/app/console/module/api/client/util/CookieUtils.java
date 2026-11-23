@@ -44,7 +44,10 @@ public class CookieUtils {
         Cookies.setCookie(
                 kapuaCookie.getName(),
                 kapuaCookie.getValue(),
-                kapuaCookie.getExpirationDate()
+                kapuaCookie.getExpirationDate(),
+                null,
+                null,
+                kapuaCookie.isSecure()
         );
     }
 
