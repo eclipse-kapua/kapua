@@ -22,5 +22,7 @@ public interface KapuaCookie {
 
     Date getExpirationDate();
 
+    String getSameSite();
+
     boolean isSecure();
 }
