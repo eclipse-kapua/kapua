@@ -56,6 +56,11 @@ public class JsonDatastoreMessage extends JsonKapuaDataMessage implements Storab
         setPayload(datastoreMessage.getPayload());
     }
 
+    @Override
+    public String getType() {
+        return DatastoreMessage.TYPE;
+    }
+
     @XmlElement(name = "datastoreId")
     @XmlJavaTypeAdapter(StorableIdXmlAdapter.class)
     public StorableId getDatastoreId() {

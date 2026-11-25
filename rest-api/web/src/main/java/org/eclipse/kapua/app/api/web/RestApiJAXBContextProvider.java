@@ -59,6 +59,7 @@ import org.eclipse.kapua.commons.rest.model.errors.MfaRequiredExceptionInfo;
 import org.eclipse.kapua.commons.rest.model.errors.SelfManagedOnlyExceptionInfo;
 import org.eclipse.kapua.commons.rest.model.errors.ServiceConfigurationLimitExceededExceptionInfo;
 import org.eclipse.kapua.commons.rest.model.errors.ServiceConfigurationParentLimitExceededExceptionInfo;
+import org.eclipse.kapua.commons.rest.model.errors.StorableNotFoundExceptionInfo;
 import org.eclipse.kapua.commons.rest.model.errors.SubjectUnauthorizedExceptionInfo;
 import org.eclipse.kapua.commons.rest.model.errors.ThrowableInfo;
 import org.eclipse.kapua.commons.service.event.store.api.EventStoreRecordCreator;
@@ -366,6 +367,7 @@ public class RestApiJAXBContextProvider implements JAXBContextProvider {
                     IllegalArgumentExceptionInfo.class,
                     IllegalNullArgumentExceptionInfo.class,
                     MfaRequiredExceptionInfo.class,
+                    StorableNotFoundExceptionInfo.class,
 
                     // Jobs Exception Info
                     CleanJobDataExceptionInfo.class,
