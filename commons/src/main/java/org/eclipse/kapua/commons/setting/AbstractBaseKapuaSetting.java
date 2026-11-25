@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.kapua.commons.setting;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -23,6 +24,8 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.DataConfiguration;
 import org.apache.commons.configuration.MapConfiguration;
 import org.apache.commons.configuration.PropertyConverter;
+import org.eclipse.kapua.commons.cache.CacheConfig;
+import org.eclipse.kapua.commons.cache.ExpiryPolicy;
 import org.eclipse.kapua.commons.setting.system.SystemSettingKey;
 
 /**
@@ -453,5 +456,30 @@ public class AbstractBaseKapuaSetting<K extends SettingKey> {
 
     public void setSystemPropertyHotSwap(boolean systemPropertyHotSwap) {
         this.systemPropertyHotSwap = systemPropertyHotSwap;
+    }
+
+    /**
+     * Gets the {@link CacheConfig} of a {@link org.eclipse.kapua.commons.cache.LocalCache} from the given keys.
+     * <p>
+     * A maximum size or an expiration time less than or equal to 0 results in a cache that never retains any entry.
+     *
+     * @param maxSizeKey           The maximum size key.
+     * @param defaultMaxSize       The maximum size to use if the key is not set.
+     * @param expireAfterKey       The expiration time (in seconds) key.
+     * @param defaultExpireAfter   The expiration time (in seconds) to use if the key is not set.
+     * @param expireStrategyKey    The {@link ExpiryPolicy} key. {@link ExpiryPolicy#MODIFIED} is used if the key is not set or its value is not valid.
+     * @return The {@link CacheConfig}.
+     * @since 2.1.0
+     */
+    public CacheConfig getCacheConfig(K maxSizeKey, int defaultMaxSize, K expireAfterKey, int defaultExpireAfter, K expireStrategyKey) {
+        int maxSize = Math.max(0, getInteger(maxSizeKey).orElse(defaultMaxSize));
+        int expireAfter = Math.max(0, getInteger(expireAfterKey).orElse(defaultExpireAfter));
+        ExpiryPolicy expiryPolicy = Optional.ofNullable(getString(expireStrategyKey))
+                .flatMap(v -> Arrays.stream(ExpiryPolicy.values())
+                        .filter(e -> e.name().equalsIgnoreCase(v.trim()))
+                        .findFirst())
+                .orElse(ExpiryPolicy.MODIFIED);
+
+        return new CacheConfig(maxSize, expireAfter, expiryPolicy);
     }
 }
