@@ -99,6 +99,7 @@ public class ServerPlugin implements ActiveMQServerPlugin {
     protected AcceptorHandler acceptorHandler;
     protected String version;
     protected ServerContext serverContext;
+    protected ServiceModuleBundle app;
 
     protected DeviceConnectionEventListenerService deviceConnectionEventListenerService;
 
@@ -130,7 +131,7 @@ public class ServerPlugin implements ActiveMQServerPlugin {
             deviceConnectionEventListenerService.addReceiver(serviceEvent -> processDeviceConnectionEvent(serviceEvent));
 
             // Setup service events
-            ServiceModuleBundle app = KapuaLocator.getInstance().getComponent(ServiceModuleBundle.class);
+            app = KapuaLocator.getInstance().getComponent(ServiceModuleBundle.class);
             app.startup();
         } catch (Exception e) {
             logger.error("Error while initializing {} plugin: {}", this.getClass().getName(), e.getMessage(), e);
@@ -144,6 +145,10 @@ public class ServerPlugin implements ActiveMQServerPlugin {
         logger.info("Unregistering plugin {}...", this.getClass().getName());
         ActiveMQServerPlugin.super.unregistered(server);
         try {
+            if (app!=null) {
+                app.shutdown();
+                app = null;
+            }
             serverContext.shutdown(server);
         } catch (Exception e) {
             logger.error("Error while stopping {} plugin: {}", this.getClass().getName(), e.getMessage(), e);
