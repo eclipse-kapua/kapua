@@ -17,6 +17,7 @@ import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.apache.qpid.jms.JmsConnection;
 import org.apache.qpid.jms.jndi.JmsInitialContextFactory;
 import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.KapuaRuntimeException;
@@ -48,6 +49,7 @@ import javax.jms.TextMessage;
 import javax.jms.Topic;
 import javax.naming.Context;
 import javax.naming.NamingException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -166,24 +168,19 @@ public class JMSServiceEventBus implements ServiceEventBus, ServiceEventBusDrive
     private synchronized void restart() throws ServiceEventBusException, JMSException {
         // restart the event bus connection bridge with a new instance
         // so no synchronization is needed
-        EventBusJMSConnectionBridge instanceToCleanUp = null;
-        EventBusJMSConnectionBridge newInstance = null;
         try {
-            newInstance = new EventBusJMSConnectionBridge();
-            newInstance.start();
+            eventBusJMSConnectionBridge.start();
             // restore subscriptions
             for (Subscription subscription : subscriptionList) {
-                newInstance.subscribe(subscription);
+                eventBusJMSConnectionBridge.subscribe(subscription);
             }
-            instanceToCleanUp = eventBusJMSConnectionBridge;
-            eventBusJMSConnectionBridge = newInstance;
         } catch (Exception e) {
             LOGGER.warn("Error while creating new Service Event Bus instance: {}", e.getMessage());
             //try to cleanup the messy instance
-            if (newInstance != null) {
+            if (eventBusJMSConnectionBridge != null) {
                 try {
                     LOGGER.warn("Stopping new Service Event Bus instance...");
-                    newInstance.stop();
+                    eventBusJMSConnectionBridge.stop();
                     LOGGER.warn("Stopping new Service Event Bus instance... DONE");
                 } catch (Exception e1) {
                     //don't throw this exception since the real exception is the first one
@@ -191,31 +188,18 @@ public class JMSServiceEventBus implements ServiceEventBus, ServiceEventBusDrive
                 }
             }
             throw new ServiceEventBusException(e);
-        } finally {
-            try {
-                if (instanceToCleanUp != null) {
-                    LOGGER.info("Stopping old Service Event Bus instance...");
-                    instanceToCleanUp.stop();
-                } else {
-                    LOGGER.warn("Stopping old Service Event Bus instance. Null instance found so nothig to do...");
-                }
-            } catch (ServiceEventBusException e) {
-                LOGGER.error("Stopping old Service Event Bus instance. Cannot destroy instance: {}", e.getMessage(), e);
-            } finally {
-                instanceToCleanUp = null;
-            }
         }
     }
 
     private class EventBusJMSConnectionBridge {
 
-        private Connection jmsConnection;
+        private JmsConnection jmsConnection;
         private Map<String, SenderPool> senders = new HashMap<>();
-        private ExceptionListenerImpl exceptionListener;
+        private KapuaExceptionListener exceptionListener;
         private Boolean connected;
 
         public EventBusJMSConnectionBridge() {
-            this.exceptionListener = new ExceptionListenerImpl();
+            this.exceptionListener = new KapuaExceptionListener();
             connected = Boolean.FALSE;
         }
 
@@ -238,7 +222,7 @@ public class JMSServiceEventBus implements ServiceEventBus, ServiceEventBusDrive
             Context context = initialContextFactory.getInitialContext(environment);
             ConnectionFactory jmsConnectionFactory = (ConnectionFactory) context.lookup("eventBusUrl");
 
-            jmsConnection = jmsConnectionFactory.createConnection(eventbusUsername, eventbusPassword);
+            jmsConnection = (JmsConnection) jmsConnectionFactory.createConnection(eventbusUsername, eventbusPassword);
             jmsConnection.setExceptionListener(exceptionListener);
             connected = Boolean.TRUE;
             jmsConnection.start();
@@ -254,7 +238,6 @@ public class JMSServiceEventBus implements ServiceEventBus, ServiceEventBusDrive
             try {
                 if (jmsConnection != null) {
                     exceptionListener.stop();
-                    jmsConnection.setExceptionListener(null);
                     jmsConnection.stop();
                     jmsConnection.close();
                 }
@@ -445,7 +428,7 @@ public class JMSServiceEventBus implements ServiceEventBus, ServiceEventBusDrive
 
         }
 
-        private class ExceptionListenerImpl implements ExceptionListener {
+        private class KapuaExceptionListener implements ExceptionListener {
 
             private boolean active = true;
 
@@ -474,6 +457,7 @@ public class JMSServiceEventBus implements ServiceEventBus, ServiceEventBusDrive
             public void stop() {
                 active = false;
             }
+
         }
     }
 
