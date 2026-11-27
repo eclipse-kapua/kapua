@@ -14,7 +14,6 @@ package org.eclipse.kapua.broker.artemis.plugin.security.context;
 
 import org.apache.activemq.artemis.core.server.ActiveMQServer;
 import org.apache.activemq.artemis.spi.core.protocol.RemotingConnection;
-import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.broker.artemis.plugin.security.MetricsSecurityPlugin;
 import org.eclipse.kapua.broker.artemis.plugin.security.PluginUtility;
 import org.eclipse.kapua.broker.artemis.plugin.security.metric.LoginMetric;
@@ -125,17 +124,11 @@ public final class SecurityContext {
                 logger.warn("ServerReportTask already started!");
             }
         }
-        try {
-            metricsSecurityPlugin.init(server,
-                    () -> sessionContextMap.size(),
-                    () -> sessionContextMapByClient.size(),
-                    () -> aclMap.size(),
-                    () -> activeConnections.size());
-        } catch (KapuaException e) {
-            //do nothing
-            //in this case one or more metrics are not registered but it's not a blocking issue
-            logger.error("Cannot register one or more broker core metrics!", e);
-        }
+        metricsSecurityPlugin.init(server,
+                () -> sessionContextMap.size(),
+                () -> sessionContextMapByClient.size(),
+                () -> aclMap.size(),
+                () -> activeConnections.size());
     }
 
     public void shutdown(ActiveMQServer server) {

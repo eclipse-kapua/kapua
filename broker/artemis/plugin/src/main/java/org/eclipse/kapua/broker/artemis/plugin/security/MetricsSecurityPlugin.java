@@ -15,7 +15,6 @@ package org.eclipse.kapua.broker.artemis.plugin.security;
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.Gauge;
 import org.apache.activemq.artemis.core.server.ActiveMQServer;
-import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.broker.artemis.plugin.security.metric.LoginMetric;
 import org.eclipse.kapua.commons.metric.MetricsLabel;
 import org.eclipse.kapua.commons.metric.MetricsService;
@@ -56,7 +55,7 @@ public class MetricsSecurityPlugin {
         enqueuedEvent = metricsService.getCounter(metricModuleName, SECURITY_PLUGIN_EVENT, "enqueued");
     }
 
-    public void init(ActiveMQServer server, Gauge<Integer> mapSize, Gauge<Integer> mapByClientSize, Gauge<Integer> aclSize, Gauge<Integer> activeConnection) throws KapuaException {
+    public void init(ActiveMQServer server, Gauge<Integer> mapSize, Gauge<Integer> mapByClientSize, Gauge<Integer> aclSize, Gauge<Integer> activeConnection) {
         metricsService.registerGauge(mapSize, metricModuleName, LoginMetric.COMPONENT_LOGIN, SESSION_CONTEXT);
         metricsService.registerGauge(mapByClientSize, metricModuleName, LoginMetric.COMPONENT_LOGIN, SESSION_CONTEXT_BY_CLIENT);
         metricsService.registerGauge(aclSize, metricModuleName, LoginMetric.COMPONENT_LOGIN, ACL);

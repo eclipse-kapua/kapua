@@ -16,7 +16,6 @@ import com.codahale.metrics.Counter;
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.Histogram;
 import com.codahale.metrics.Timer;
-import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.service.KapuaService;
 
 /**
@@ -57,13 +56,12 @@ public interface MetricsService extends KapuaService {
     public Timer getTimer(String module, String component, String... names);
 
     /**
-     * Register a Gauge for the specified name. If the Gauge exists the method throws exception.
+     * Register a Gauge for the specified name. If the Gauge exists the method must catch possible exception from underlying service.
      *
      * @param module
      * @param component
      * @param names
-     * @throws KapuaException if the metric is already defined
      */
-    public void registerGauge(Gauge<?> gauge, String module, String component, String... names) throws KapuaException;
+    public void registerGauge(Gauge<?> gauge, String module, String component, String... names);
 
 }

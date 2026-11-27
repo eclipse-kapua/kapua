@@ -19,7 +19,6 @@ import com.codahale.metrics.JmxReporter;
 import com.codahale.metrics.JmxReporter.Builder;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import org.eclipse.kapua.KapuaException;
 import org.eclipse.kapua.commons.setting.system.SystemSetting;
 import org.eclipse.kapua.commons.setting.system.SystemSettingKey;
 import org.slf4j.Logger;
@@ -104,10 +103,10 @@ public class MetricsServiceImpl implements MetricsService {
     }
 
     @Override
-    public void registerGauge(Gauge<?> gauge, String module, String component, String... names) throws KapuaException {
+    public void registerGauge(Gauge<?> gauge, String module, String component, String... names) {
         String name = getMetricName(module, component, names);
         if (metricRegistry.getGauges().get(name) != null) {
-            throw KapuaException.internalError(MessageFormat.format("A metric with the name {0} is already defined!", name));
+            logger.warn(MessageFormat.format("A metric with the name {0} is already defined!", name));
         } else {
             metricRegistry.register(name, gauge);
         }

@@ -64,7 +64,7 @@ public class MockitoLocator extends KapuaLocator {
             }
 
             @Override
-            public void registerGauge(Gauge<?> gauge, String module, String component, String... names) throws KapuaException {
+            public void registerGauge(Gauge<?> gauge, String module, String component, String... names) {
 
             }
         };
