@@ -14,6 +14,7 @@ package org.eclipse.kapua.broker.artemis.plugin.security;
 
 import java.util.Base64;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.apache.activemq.artemis.api.core.ActiveMQException;
 import org.apache.activemq.artemis.api.core.ActiveMQSecurityException;
@@ -144,15 +145,16 @@ public class ServerPlugin implements ActiveMQServerPlugin {
     public void unregistered(ActiveMQServer server) {
         logger.info("Unregistering plugin {}...", this.getClass().getName());
         ActiveMQServerPlugin.super.unregistered(server);
-        try {
-            if (app!=null) {
-                app.shutdown();
-                app = null;
-            }
+        exec("Cannot stop ServiceModuleBundles", app, () ->{
+            app.shutdown();
+            app = null;
+            return (Void) null;
+        });
+        exec("Cannot shutdown serverContext", serverContext, () ->{
             serverContext.shutdown(server);
-        } catch (Exception e) {
-            logger.error("Error while stopping {} plugin: {}", this.getClass().getName(), e.getMessage(), e);
-        }
+            serverContext = null;
+            return (Void) null;
+        });
         logger.info("Unregistering plugin {}... DONE", this.getClass().getName());
     }
 
@@ -444,6 +446,21 @@ public class ServerPlugin implements ActiveMQServerPlugin {
                     return (Void) null;
                 });
         }
+    }
+
+    private Void exec(String message, Object instance, Callable<Void> operation) {
+        try {
+            if (instance != null) {
+                operation.call();
+            }
+            else {
+                logger.info("{}. Instance null", message);
+            }
+        } catch (Exception e) {
+            logger.error("{}: {}", message, e.getMessage());
+            logger.debug("", e);
+        }
+        return (Void) null;
     }
 
 }
